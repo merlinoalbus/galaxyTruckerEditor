@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  galaxy-trucker-editor:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../:/app/game-data:rw
+      - ./src:/app/src:rw
+      - ./public:/app/public:rw
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - REACT_APP_GAME_DATA_PATH=/app/game-data
+    stdin_open: true
+    tty: true
