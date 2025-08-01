@@ -1,0 +1,521 @@
+import React, { useState, useEffect } from 'react';
+import { useRealGameData } from '../../contexts/RealGameDataContext';
+import { 
+  Languages, 
+  Save, 
+  Search, 
+  Filter, 
+  Download, 
+  Upload, 
+  AlertTriangle, 
+  CheckCircle, 
+  XCircle, 
+  Percent, 
+  Globe,
+  Eye,
+  Edit3,
+  RotateCcw
+} from 'lucide-react';
+import * as yaml from 'js-yaml';
+
+interface LocalizationString {
+  key: string;
+  category: string;
+  translations: Record<string, string>;
+  status: 'complete' | 'partial' | 'missing';
+  completionPercent: number;
+}
+
+interface TranslationStats {
+  total: number;
+  complete: number;
+  partial: number;
+  missing: number;
+  byLanguage: Record<string, number>;
+}
+
+export function AdvancedLocalizationEditor() {
+  const { localizationFiles, loading } = useRealGameData();
+  const [strings, setStrings] = useState<LocalizationString[]>([]);
+  const [languages, setLanguages] = useState<string[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [stats, setStats] = useState<TranslationStats>({
+    total: 0, complete: 0, partial: 0, missing: 0, byLanguage: {}
+  });
+  
+  // Filters and search
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'complete' | 'partial' | 'missing'>('all');
+  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
+  
+  // UI state
+  const [saving, setSaving] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [selectedString, setSelectedString] = useState<LocalizationString | null>(null);
+
+  useEffect(() => {
+    loadAndProcessLocalizationData();
+  }, [localizationFiles]);
+
+  const loadAndProcessLocalizationData = async () => {
+    if (!localizationFiles.length) return;
+
+    try {
+      const stringMap = new Map<string, LocalizationString>();
+      const discoveredLanguages = new Set<string>();
+      const discoveredCategories = new Set<string>();
+
+      // Process files in batches
+      const batchSize = 3;
+      for (let i = 0; i < localizationFiles.length; i += batchSize) {
+        const batch = localizationFiles.slice(i, i + batchSize);
+        
+        await Promise.all(batch.map(async (file) => {
+          const match = file.name.match(/^([^_]+)_strings_([A-Z]{2})\.yaml$/);
+          if (match) {
+            const [, category, language] = match;
+            discoveredLanguages.add(language);
+            discoveredCategories.add(category);
+            
+            try {
+              const response = await fetch(`http://localhost:3001/api/localization/${file.name}`);
+              if (response.ok) {
+                const data = await response.json();
+                const content = yaml.load(data.content) as Record<string, string>;
+                
+                Object.entries(content).forEach(([key, value]) => {
+                  const fullKey = `${category}.${key}`;
+                  
+                  if (!stringMap.has(fullKey)) {
+                    stringMap.set(fullKey, {
+                      key: fullKey,
+                      category,
+                      translations: {},
+                      status: 'missing',
+                      completionPercent: 0
+                    });
+                  }
+                  
+                  const stringObj = stringMap.get(fullKey)!;
+                  stringObj.translations[language] = value;
+                });
+              }
+            } catch (error) {
+              console.error(`Error loading ${file.name}:`, error);
+            }
+          }
+        }));
+        
+        if (i + batchSize < localizationFiles.length) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      }
+
+      // Calculate completion status for each string
+      const languageArray = Array.from(discoveredLanguages);
+      const processedStrings = Array.from(stringMap.values()).map(str => {
+        const translatedCount = languageArray.filter(lang => str.translations[lang]?.trim()).length;
+        const completionPercent = Math.round((translatedCount / languageArray.length) * 100);
+        
+        let status: 'complete' | 'partial' | 'missing' = 'missing';
+        if (completionPercent === 100) status = 'complete';
+        else if (completionPercent > 0) status = 'partial';
+        
+        return {
+          ...str,
+          status,
+          completionPercent
+        };
+      });
+
+      // Calculate stats
+      const newStats: TranslationStats = {
+        total: processedStrings.length,
+        complete: processedStrings.filter(s => s.status === 'complete').length,
+        partial: processedStrings.filter(s => s.status === 'partial').length,
+        missing: processedStrings.filter(s => s.status === 'missing').length,
+        byLanguage: {}
+      };
+
+      languageArray.forEach(lang => {
+        newStats.byLanguage[lang] = processedStrings.filter(s => s.translations[lang]?.trim()).length;
+      });
+
+      setStrings(processedStrings);
+      setLanguages(languageArray.sort());
+      setCategories(Array.from(discoveredCategories).sort());
+      setStats(newStats);
+    } catch (error) {
+      console.error('Error processing localization data:', error);
+    }
+  };
+
+  const filteredStrings = strings.filter(str => {
+    const matchesSearch = str.key.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      Object.values(str.translations).some(text => text.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesCategory = !selectedCategory || str.category === selectedCategory;
+    const matchesLanguage = !selectedLanguage || str.translations[selectedLanguage]?.trim();
+    const matchesStatus = statusFilter === 'all' || str.status === statusFilter;
+    
+    return matchesSearch && matchesCategory && matchesLanguage && matchesStatus;
+  });
+
+  const updateStringTranslation = (stringKey: string, language: string, value: string) => {
+    const newStrings = strings.map(str => {
+      if (str.key === stringKey) {
+        const newTranslations = { ...str.translations, [language]: value };
+        const translatedCount = languages.filter(lang => newTranslations[lang]?.trim()).length;
+        const completionPercent = Math.round((translatedCount / languages.length) * 100);
+        
+        let status: 'complete' | 'partial' | 'missing' = 'missing';
+        if (completionPercent === 100) status = 'complete';
+        else if (completionPercent > 0) status = 'partial';
+        
+        return {
+          ...str,
+          translations: newTranslations,
+          status,
+          completionPercent
+        };
+      }
+      return str;
+    });
+    
+    setStrings(newStrings);
+    setHasChanges(true);
+  };
+
+  const handleSave = async () => {
+    if (!hasChanges || saving) return;
+    
+    setSaving(true);
+    try {
+      // Group strings back by category and language
+      const filesByCategory: Record<string, Record<string, any>> = {};
+      
+      strings.forEach(str => {
+        const { category } = str;
+        const actualKey = str.key.replace(`${category}.`, '');
+        
+        if (!filesByCategory[category]) {
+          filesByCategory[category] = {};
+        }
+        
+        languages.forEach(lang => {
+          if (!filesByCategory[category][lang]) {
+            filesByCategory[category][lang] = {};
+          }
+          if (str.translations[lang]) {
+            filesByCategory[category][lang][actualKey] = str.translations[lang];
+          }
+        });
+      });
+      
+      // Save each file
+      for (const [category, langData] of Object.entries(filesByCategory)) {
+        for (const [lang, stringData] of Object.entries(langData)) {
+          const filename = `${category}_strings_${lang}.yaml`;
+          const yamlContent = `# Generated by Galaxy Trucker Editor\n\n${Object.entries(stringData).map(([key, value]) => `${key}: "${value}"`).join('\n')}`;
+          
+          const response = await fetch(`http://localhost:3001/api/localization/${filename}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: yamlContent })
+          });
+          
+          if (!response.ok) {
+            throw new Error(`Failed to save ${filename}`);
+          }
+        }
+      }
+      
+      setHasChanges(false);
+      console.log('All localization files saved successfully');
+      
+    } catch (error) {
+      console.error('Error saving localization files:', error);
+      alert('Errore durante il salvataggio delle traduzioni');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'complete': return 'text-green-400 bg-green-900/20';
+      case 'partial': return 'text-yellow-400 bg-yellow-900/20';
+      case 'missing': return 'text-red-400 bg-red-900/20';
+      default: return 'text-gray-400 bg-gray-900/20';
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'complete': return <CheckCircle className="w-4 h-4" />;
+      case 'partial': return <AlertTriangle className="w-4 h-4" />;
+      case 'missing': return <XCircle className="w-4 h-4" />;
+      default: return <XCircle className="w-4 h-4" />;
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gt-accent"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Editor Localizzazione Avanzato</h1>
+          <p className="text-gray-400">
+            {stats.total} stringhe totali • {languages.length} lingue • {categories.length} categorie
+          </p>
+        </div>
+        
+        <div className="flex items-center space-x-3">
+          <button 
+            className="btn-primary flex items-center space-x-2"
+            disabled={saving || !hasChanges}
+            onClick={handleSave}
+          >
+            <Save className="w-4 h-4" />
+            <span>{saving ? 'Salvataggio...' : 'Salva Modifiche'}</span>
+          </button>
+          {hasChanges && (
+            <span className="text-yellow-400 text-sm flex items-center space-x-1">
+              <Edit3 className="w-4 h-4" />
+              <span>Modifiche non salvate</span>
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Statistics Dashboard */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="card">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-blue-600 rounded-lg">
+              <Globe className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-400">Totale</p>
+              <p className="text-xl font-bold text-white">{stats.total}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="card">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-green-600 rounded-lg">
+              <CheckCircle className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-400">Complete</p>
+              <p className="text-xl font-bold text-green-400">{stats.complete}</p>
+              <p className="text-xs text-gray-500">
+                {stats.total > 0 ? Math.round((stats.complete / stats.total) * 100) : 0}%
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="card">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-yellow-600 rounded-lg">
+              <AlertTriangle className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-400">Parziali</p>
+              <p className="text-xl font-bold text-yellow-400">{stats.partial}</p>
+              <p className="text-xs text-gray-500">
+                {stats.total > 0 ? Math.round((stats.partial / stats.total) * 100) : 0}%
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="card">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-red-600 rounded-lg">
+              <XCircle className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-400">Mancanti</p>
+              <p className="text-xl font-bold text-red-400">{stats.missing}</p>
+              <p className="text-xs text-gray-500">
+                {stats.total > 0 ? Math.round((stats.missing / stats.total) * 100) : 0}%
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Language Progress */}
+      <div className="card">
+        <h3 className="section-header mb-4">
+          <Languages className="w-5 h-5" />
+          Progresso per Lingua
+        </h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {languages.map(lang => {
+            const completed = stats.byLanguage[lang] || 0;
+            const percentage = stats.total > 0 ? Math.round((completed / stats.total) * 100) : 0;
+            return (
+              <div key={lang} className="text-center">
+                <div className="mb-2">
+                  <span className="text-white font-medium">{lang}</span>
+                </div>
+                <div className="w-full bg-gray-700 rounded-full h-2 mb-2">
+                  <div 
+                    className="bg-gt-accent h-2 rounded-full transition-all duration-300" 
+                    style={{ width: `${percentage}%` }}
+                  ></div>
+                </div>
+                <div className="text-sm">
+                  <span className="text-gt-accent font-medium">{percentage}%</span>
+                  <span className="text-gray-400 ml-1">({completed}/{stats.total})</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="card">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <input
+              type="text"
+              placeholder="Cerca stringhe..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 form-input"
+            />
+          </div>
+          
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="form-input form-select"
+          >
+            <option value="">Tutte le categorie</option>
+            {categories.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
+
+          <select
+            value={selectedLanguage}
+            onChange={(e) => setSelectedLanguage(e.target.value)}
+            className="form-input form-select"
+          >
+            <option value="">Tutte le lingue</option>
+            {languages.map(lang => (
+              <option key={lang} value={lang}>{lang}</option>
+            ))}
+          </select>
+
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as any)}
+            className="form-input form-select"
+          >
+            <option value="all">Tutti gli stati</option>
+            <option value="complete">Complete</option>
+            <option value="partial">Parziali</option>
+            <option value="missing">Mancanti</option>
+          </select>
+
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setViewMode('cards')}
+              className={`p-2 rounded ${viewMode === 'cards' ? 'bg-gt-accent text-white' : 'bg-gt-secondary text-gray-400'}`}
+            >
+              <Eye className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('table')}
+              className={`p-2 rounded ${viewMode === 'table' ? 'bg-gt-accent text-white' : 'bg-gt-secondary text-gray-400'}`}
+            >
+              <Filter className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+        
+        <div className="mt-4 text-sm text-gray-400">
+          {filteredStrings.length} di {strings.length} stringhe mostrate
+        </div>
+      </div>
+
+      {/* Strings Display */}
+      <div className="card">
+        <h2 className="section-header mb-4">
+          <Languages className="w-5 h-5" />
+          Stringhe di Localizzazione
+        </h2>
+        
+        {filteredStrings.length === 0 ? (
+          <div className="text-center py-8 text-gray-400">
+            <Globe className="w-12 h-12 mx-auto mb-4 opacity-50" />
+            <p>Nessuna stringa trovata</p>
+            <p className="text-sm">Prova a modificare i filtri di ricerca</p>
+          </div>
+        ) : (
+          <div className="space-y-4 max-h-96 overflow-y-auto">
+            {filteredStrings.slice(0, 50).map((str) => (
+              <div key={str.key} className="p-4 bg-gt-secondary/30 rounded-lg border border-slate-600">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center space-x-3">
+                    <h3 className="font-medium text-white text-sm font-mono">{str.key}</h3>
+                    <span className={`px-2 py-1 rounded text-xs flex items-center space-x-1 ${getStatusColor(str.status)}`}>
+                      {getStatusIcon(str.status)}
+                      <span>{str.status}</span>
+                    </span>
+                    <span className="text-xs text-gray-400 bg-gray-700 px-2 py-1 rounded">
+                      {str.completionPercent}%
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                  {languages.map(lang => (
+                    <div key={lang} className="form-group">
+                      <label className="form-label text-xs flex items-center space-x-2">
+                        <span>{lang}</span>
+                        {str.translations[lang] && (
+                          <CheckCircle className="w-3 h-3 text-green-400" />
+                        )}
+                      </label>
+                      <textarea
+                        value={str.translations[lang] || ''}
+                        onChange={(e) => updateStringTranslation(str.key, lang, e.target.value)}
+                        className="form-input text-sm resize-none"
+                        rows={2}
+                        placeholder={`Traduzione in ${lang}...`}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+            
+            {filteredStrings.length > 50 && (
+              <div className="text-center py-4 text-gray-400 text-sm">
+                Mostrate prime 50 stringhe di {filteredStrings.length}. Usa i filtri per restringere la ricerca.
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
