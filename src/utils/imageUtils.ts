@@ -16,7 +16,14 @@ export function getCampaignMapImage(imageName: string): string {
 }
 
 export function getCampaignCharacterImage(imageName: string): string {
-  return getImageUrl(`campaign/${imageName || 'unknown.png'}`);
+  if (!imageName) return getImageUrl('campaign/unknown.png');
+  
+  // Se l'immagine inizia già con "campaign/", non aggiungere il prefisso
+  if (imageName.startsWith('campaign/')) {
+    return getImageUrl(imageName);
+  }
+  
+  return getImageUrl(`campaign/${imageName}`);
 }
 
 export function getPartsImage(imageName: string): string {

@@ -37,7 +37,9 @@ export interface CampaignAnalysis {
   scripts: ParsedScript[];
   scriptMap: Map<string, ParsedScript>;
   scriptConnections: Map<string, string[]>;
-  variables: Set<string>;
+  variables: Set<string>; // Legacy - contains all mixed
+  semafori: Set<string>; // Boolean semafori (SET/RESET)
+  realVariables: Set<string>; // Numeric variables (SET_TO) 
   characters: Set<string>;
   missions: Set<string>;
   labels: Set<string>;
@@ -76,7 +78,9 @@ export class CampaignScriptParser {
     const scripts: ParsedScript[] = [];
     const scriptMap = new Map<string, ParsedScript>();
     const scriptConnections = new Map<string, string[]>();
-    const variables = new Set<string>();
+    const variables = new Set<string>(); // Legacy mixed
+    const semafori = new Set<string>(); // Boolean semafori
+    const realVariables = new Set<string>(); // Numeric variables
     const characters = new Set<string>();
     const missions = new Set<string>();
     const labels = new Set<string>();
@@ -101,8 +105,21 @@ export class CampaignScriptParser {
                   scripts.push(script);
                   scriptMap.set(script.name, script);
                   
-                  // Extract variables, characters, etc.
+                  // Extract variables, characters, etc. - Legacy (mixed)
                   script.variables.forEach(v => variables.add(v));
+                  
+                  // Separate semafori and variables based on command usage
+                  script.commands.forEach(cmd => {
+                    if (cmd.type === 'variable_set' || cmd.type === 'variable_reset') {
+                      if (cmd.parameters?.variable) {
+                        semafori.add(cmd.parameters.variable);
+                      }
+                    } else if (cmd.type === 'variable_set_to') {
+                      if (cmd.parameters?.variable) {
+                        realVariables.add(cmd.parameters.variable);
+                      }
+                    }
+                  });
                   script.characters.forEach(c => characters.add(c));
                   script.missions.forEach(m => missions.add(m));
                   script.labels.forEach(l => labels.add(l));
@@ -157,7 +174,9 @@ export class CampaignScriptParser {
       scripts,
       scriptMap,
       scriptConnections,
-      variables,
+      variables, // Legacy mixed
+      semafori, // Boolean semafori
+      realVariables, // Numeric variables
       characters,
       missions,
       labels,
@@ -296,9 +315,89 @@ export class CampaignScriptParser {
     } else if (upperLine.startsWith('EXIT_MENU')) {
       type = 'menu_exit';
     } else if (upperLine.startsWith('IF_TUTORIAL_SEEN')) {
-      type = 'condition_tutorial_seen';
+      type = 'condition_predefined';
+      parameters = {
+        predefinedType: 'IF_TUTORIAL_SEEN',
+        condition: 'IF_TUTORIAL_SEEN'
+      };
     } else if (upperLine.startsWith('IF_FROM_CAMPAIGN')) {
-      type = 'condition_from_campaign';
+      type = 'condition_predefined';
+      parameters = {
+        predefinedType: 'IF_FROM_CAMPAIGN',
+        condition: 'IF_FROM_CAMPAIGN'
+      };
+    } else if (upperLine.startsWith('IF_DEBUG')) {
+      type = 'condition_predefined';
+      parameters = {
+        predefinedType: 'IF_DEBUG',
+        condition: 'IF_DEBUG'
+      };
+    } else if (upperLine.startsWith('IF_MISSION_WON')) {
+      type = 'condition_predefined';
+      parameters = {
+        predefinedType: 'IF_MISSION_WON',
+        condition: 'IF_MISSION_WON'
+      };
+    } else if (upperLine.startsWith('IF_PROB ')) {
+      type = 'condition_predefined';
+      const probValue = trimmed.substring(8).trim();
+      parameters = {
+        predefinedType: 'IF_PROB',
+        condition: 'IF_PROB',
+        probability: probValue
+      };
+    } else if (upperLine.startsWith('IF_MIN ')) {
+      type = 'condition_predefined';
+      const parts = trimmed.substring(7).trim().split(' ');
+      const variable = parts[0];
+      const minValue = parts.slice(1).join(' ');
+      parameters = {
+        predefinedType: 'IF_MIN',
+        condition: 'IF_MIN',
+        variable: variable,
+        minValue: minValue
+      };
+    } else if (upperLine.startsWith('IF_MAX ')) {
+      type = 'condition_predefined';
+      const parts = trimmed.substring(7).trim().split(' ');
+      const variable = parts[0];
+      const maxValue = parts.slice(1).join(' ');
+      parameters = {
+        predefinedType: 'IF_MAX',
+        condition: 'IF_MAX',
+        variable: variable,
+        maxValue: maxValue
+      };
+    } else if (upperLine.startsWith('IF_IS ')) {
+      type = 'condition_predefined';
+      const parts = trimmed.substring(6).trim().split(' ');
+      const variable = parts[0];
+      const exactValue = parts.slice(1).join(' ');
+      parameters = {
+        predefinedType: 'IF_IS',
+        condition: 'IF_IS',
+        variable: variable,
+        exactValue: exactValue
+      };
+    } else if (upperLine.startsWith('IF_HAS_CREDITS ')) {
+      type = 'condition_predefined';
+      const creditsAmount = trimmed.substring(15).trim();
+      parameters = {
+        predefinedType: 'IF_HAS_CREDITS',
+        condition: 'IF_HAS_CREDITS',
+        creditsAmount: creditsAmount
+      };
+    } else if (upperLine.startsWith('IF_ORDER ')) {
+      type = 'condition_predefined';
+      const parts = trimmed.substring(9).trim().split(' ');
+      const playerIndex = parts[0];
+      const positionValue = parts.slice(1).join(' ');
+      parameters = {
+        predefinedType: 'IF_ORDER',
+        condition: 'IF_ORDER',
+        playerIndex: playerIndex,
+        positionValue: positionValue
+      };
     } else if (upperLine.startsWith('IF ')) {
       type = 'condition_start';
       parameters = {
@@ -322,6 +421,13 @@ export class CampaignScriptParser {
       type = 'variable_reset';
       parameters = {
         variable: trimmed.substring(6).trim()
+      };
+    } else if (upperLine.startsWith('SET_TO ')) {
+      type = 'variable_set_to';
+      const parts = trimmed.substring(7).trim().split(' ');
+      parameters = {
+        variable: parts[0] || 'newVariable',
+        value: parts.slice(1).join(' ') || '0'
       };
     } else if (upperLine.startsWith('DELAY ')) {
       type = 'delay';
@@ -392,6 +498,7 @@ export class CampaignScriptParser {
         
       case 'variable_set':
       case 'variable_reset':
+      case 'variable_set_to':
         if (command.parameters?.variable) {
           script.variables!.push(command.parameters.variable);
         }
@@ -509,8 +616,7 @@ export class CampaignScriptParser {
       'menu_option',
       'condition_start',
       'condition_start_not',
-      'condition_tutorial_seen',
-      'condition_from_campaign'
+      'condition_predefined'
     ].includes(type);
   }
 
