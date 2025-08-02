@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { CampaignScriptParser } from '../../services/CampaignEditor/CampaignScriptParser';
-import { CampaignAnalysis, MapNode } from '../../types/CampaignEditor';
+import { CampaignAnalysis, CampaignScript } from '../../types/CampaignEditor';
+import { MapNode } from '../../types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 
 export const useCampaignEditor = () => {
   const [activeTab, setActiveTab] = useState('map');
@@ -31,12 +32,19 @@ export const useCampaignEditor = () => {
 
   const handleNodeClick = (node: MapNode) => {
     setSelectedNode(node);
-    setSelectedScript(node.script || '');
+    // For now, clear selected script when clicking a node
+    // Script selection will be handled by InteractiveMap component
+    setSelectedScript('');
   };
 
   const handleScriptChange = (newScript: string) => {
     setSelectedScript(newScript);
     // TODO: Save script changes
+  };
+
+  const handleScriptSelect = (script: CampaignScript) => {
+    setSelectedScript(script.name);
+    setActiveTab('flow');
   };
 
   const handleSaveAll = () => {
@@ -54,6 +62,7 @@ export const useCampaignEditor = () => {
     error,
     handleNodeClick,
     handleScriptChange,
+    handleScriptSelect,
     handleSaveAll
   };
 };

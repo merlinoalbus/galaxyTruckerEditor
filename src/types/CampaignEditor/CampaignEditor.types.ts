@@ -1,10 +1,4 @@
-export interface MapNode {
-  name: string;
-  coordinates: [number, number];
-  image: string;
-  script?: string;
-}
-
+// Legacy types - use InteractiveMap types instead
 export interface Connection {
   from: string;
   to: string;

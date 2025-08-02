@@ -1,12 +1,10 @@
 import React from 'react';
 import { Save } from 'lucide-react';
-import { InteractiveMap } from './InteractiveMap';
+import { InteractiveMap } from './InteractiveMap/InteractiveMap';
 import { VisualFlowEditor } from './components/VisualFlowEditor';
 import { VariablesSystem } from './VariablesSystem';
 import { Overview } from './Overview';
 import { useCampaignEditor } from '../../hooks/CampaignEditor';
-import { useInteractiveMap } from '../../hooks/CampaignEditor';
-import { Connection } from '../../types/CampaignEditor';
 
 export const CampaignEditor: React.FC = () => {
   const {
@@ -17,12 +15,10 @@ export const CampaignEditor: React.FC = () => {
     selectedScript,
     isLoading,
     error,
-    handleNodeClick,
     handleScriptChange,
-    handleSaveAll
+    handleSaveAll,
+    handleScriptSelect
   } = useCampaignEditor();
-
-  const { handleConnectionClick } = useInteractiveMap();
 
   const tabs = [
     { id: 'map', label: 'Interactive Map' },
@@ -105,8 +101,7 @@ export const CampaignEditor: React.FC = () => {
       <div className="bg-gt-primary rounded-lg min-h-96">
         {activeTab === 'map' && (
           <InteractiveMap 
-            onNodeClick={handleNodeClick}
-            onConnectionClick={handleConnectionClick}
+            onScriptSelect={handleScriptSelect}
           />
         )}
 
