@@ -5,7 +5,7 @@ import {
   ValidationResult, 
   Position,
   AnchorPoint as AnchorPointType 
-} from '../../../../../../types/CampaignEditor/types/VisualFlowEditor/VisualFlowEditor.types';
+} from '@/types/CampaignEditor/types/VisualFlowEditor/VisualFlowEditor.types';
 import { FlowBlock } from '../FlowBlock';
 import { AnchorPoint } from '../AnchorPoint';
 

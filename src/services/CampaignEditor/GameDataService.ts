@@ -314,4 +314,4 @@ class GameDataService {
   }
 }
 
-export default new GameDataService();
+export const gameDataService = new GameDataService();

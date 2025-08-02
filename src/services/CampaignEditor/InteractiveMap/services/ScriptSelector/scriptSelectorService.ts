@@ -1,4 +1,4 @@
-import { CampaignScript } from '../../../../../types/CampaignEditor/InteractiveMap/InteractiveMap.types';
+import { CampaignScript } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 
 class ScriptSelectorService {
   filterScripts(scripts: CampaignScript[], searchTerm: string): CampaignScript[] {

@@ -23,9 +23,9 @@
     "uuid": "^11.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
     "eject": "react-scripts eject",
     "docker:build": "docker build -t galaxy-trucker-editor .",
     "docker:run": "docker run -p 3000:3000 -v \"$(pwd)/../:/app/game-data\" galaxy-trucker-editor"
@@ -49,6 +49,7 @@
     ]
   },
   "devDependencies": {
+    "@craco/craco": "^7.1.0",
     "@types/js-yaml": "^4.0.5",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",

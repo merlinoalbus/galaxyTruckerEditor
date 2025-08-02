@@ -1,9 +1,11 @@
 import React from 'react';
-import { InteractiveMapProps } from '../../../types/CampaignEditor/InteractiveMap/InteractiveMap.types';
-import { useInteractiveMap } from '../../../hooks/CampaignEditor/InteractiveMap/useInteractiveMap';
+
+import { InteractiveMapProps } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
+import { useInteractiveMap } from '@/hooks/CampaignEditor/InteractiveMap/useInteractiveMap';
+import { interactiveMapStyles } from '@/styles/CampaignEditor/InteractiveMap/InteractiveMap.styles';
+
 import { MapCanvas } from './components/MapCanvas/MapCanvas';
 import { ScriptSelector } from './components/ScriptSelector/ScriptSelector';
-import { interactiveMapStyles } from '../../../styles/CampaignEditor/InteractiveMap/InteractiveMap.styles';
 
 export const InteractiveMap: React.FC<InteractiveMapProps> = ({
   onNodeClick,
@@ -31,25 +33,15 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
   } = useInteractiveMap(onScriptSelect);
 
   const handleNodeClickInternal = (node: any) => {
-    handleNodeClick(node);
+    const relatedScripts = handleNodeClick(node);
     if (onNodeClick) {
-      const relatedScripts = scripts.filter(script => 
-        script.relatedNodes.includes(node.name) ||
-        (node.buttons && node.buttons.some((btn: any) => 
-          script.name.toLowerCase().includes(btn[1].toLowerCase())
-        ))
-      );
       onNodeClick(node, relatedScripts);
     }
   };
 
   const handleConnectionClickInternal = (connection: any) => {
-    handleConnectionClick(connection);
+    const relatedScripts = handleConnectionClick(connection);
     if (onConnectionClick) {
-      const connectionId = `${connection.from}-${connection.to}`;
-      const relatedScripts = scripts.filter(script => 
-        script.relatedConnections.includes(connectionId)
-      );
       onConnectionClick(connection, relatedScripts);
     }
   };

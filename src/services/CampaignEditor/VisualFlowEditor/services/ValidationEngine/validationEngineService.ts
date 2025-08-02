@@ -4,7 +4,7 @@ import {
   ValidationResult, 
   ValidationRule,
   FlowBlockType 
-} from '../../../../../types/CampaignEditor/types/VisualFlowEditor/VisualFlowEditor.types';
+} from '@/types/CampaignEditor/types/VisualFlowEditor/VisualFlowEditor.types';
 import { flowStateManagerService } from '../FlowStateManager/flowStateManagerService';
 
 export const validationEngineService = {

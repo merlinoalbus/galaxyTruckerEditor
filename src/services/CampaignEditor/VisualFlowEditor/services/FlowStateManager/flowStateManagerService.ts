@@ -6,7 +6,7 @@ import {
   BranchContext,
   ValidationResult,
   ValidationRule 
-} from '../../../../../types/CampaignEditor/types/VisualFlowEditor/VisualFlowEditor.types';
+} from '@/types/CampaignEditor/types/VisualFlowEditor/VisualFlowEditor.types';
 
 export const flowStateManagerService = {
   calculateFlowStateAtBlock(blocks: FlowBlock[], targetBlockId: string, characters: any[]): FlowState {

@@ -73,12 +73,10 @@ function AppContent() {
   );
 }
 
-function RealApp() {
+export function RealApp() {
   return (
     <RealGameDataProvider>
       <AppContent />
     </RealGameDataProvider>
   );
 }
-
-export default RealApp;

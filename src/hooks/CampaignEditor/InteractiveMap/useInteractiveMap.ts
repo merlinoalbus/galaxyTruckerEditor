@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { MapNode, MapConnection, CampaignScript, MapViewport } from '../../../types/CampaignEditor/InteractiveMap/InteractiveMap.types';
-import { interactiveMapService } from '../../../services/CampaignEditor/InteractiveMap/interactiveMapService';
+import { MapNode, MapConnection, CampaignScript, MapViewport } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
+import { interactiveMapService } from '@/services/CampaignEditor/InteractiveMap/interactiveMapService';
 
 export interface UseInteractiveMapReturn {
   nodes: MapNode[];
@@ -17,12 +17,14 @@ export interface UseInteractiveMapReturn {
     scripts: CampaignScript[];
     title: string;
   };
-  handleNodeClick: (node: MapNode) => void;
-  handleConnectionClick: (connection: MapConnection) => void;
+  handleNodeClick: (node: MapNode, openSelector?: boolean) => CampaignScript[];
+  handleConnectionClick: (connection: MapConnection, openSelector?: boolean) => CampaignScript[];
   handleScriptSelect: (script: CampaignScript) => void;
   handleScriptSelectorClose: () => void;
   setHoveredElement: (element: string | null) => void;
   setViewport: (viewport: MapViewport) => void;
+  getNodeRelatedScripts: (node: MapNode) => CampaignScript[];
+  getConnectionRelatedScripts: (connection: MapConnection) => CampaignScript[];
 }
 
 export const useInteractiveMap = (
@@ -93,43 +95,56 @@ export const useInteractiveMap = (
     loadMapData();
   }, [loadMapData]);
 
-  const handleNodeClick = useCallback((node: MapNode) => {
-    const relatedScripts = scripts.filter(script => 
+  const getNodeRelatedScripts = useCallback((node: MapNode): CampaignScript[] => {
+    return scripts.filter(script => 
       script.relatedNodes.includes(node.name) ||
       (node.buttons && node.buttons.some(btn => 
         script.name.toLowerCase().includes(btn[1].toLowerCase())
       ))
     );
+  }, [scripts]);
+
+  const getConnectionRelatedScripts = useCallback((connection: MapConnection): CampaignScript[] => {
+    const connectionId = `${connection.from}-${connection.to}`;
+    return scripts.filter(script => 
+      script.relatedConnections.includes(connectionId)
+    );
+  }, [scripts]);
+
+  const handleNodeClick = useCallback((node: MapNode, openSelector: boolean = true) => {
+    const relatedScripts = getNodeRelatedScripts(node);
     
     setSelectedNode(node.name);
     setSelectedConnection(null);
     
-    if (relatedScripts.length > 0) {
+    if (openSelector && relatedScripts.length > 0) {
       setScriptSelectorData({
         scripts: relatedScripts,
         title: `Scripts for ${node.caption}`
       });
       setScriptSelectorOpen(true);
     }
-  }, [scripts]);
+    
+    return relatedScripts;
+  }, [getNodeRelatedScripts]);
 
-  const handleConnectionClick = useCallback((connection: MapConnection) => {
+  const handleConnectionClick = useCallback((connection: MapConnection, openSelector: boolean = true) => {
     const connectionId = `${connection.from}-${connection.to}`;
-    const relatedScripts = scripts.filter(script => 
-      script.relatedConnections.includes(connectionId)
-    );
+    const relatedScripts = getConnectionRelatedScripts(connection);
     
     setSelectedConnection(connectionId);
     setSelectedNode(null);
     
-    if (relatedScripts.length > 0) {
+    if (openSelector && relatedScripts.length > 0) {
       setScriptSelectorData({
         scripts: relatedScripts,
         title: `Scripts for ${connection.from} → ${connection.to}`
       });
       setScriptSelectorOpen(true);
     }
-  }, [scripts]);
+    
+    return relatedScripts;
+  }, [getConnectionRelatedScripts]);
 
   const handleScriptSelect = useCallback((script: CampaignScript) => {
     setScriptSelectorOpen(false);
@@ -159,6 +174,8 @@ export const useInteractiveMap = (
     handleScriptSelect,
     handleScriptSelectorClose,
     setHoveredElement,
-    setViewport
+    setViewport,
+    getNodeRelatedScripts,
+    getConnectionRelatedScripts
   };
 };

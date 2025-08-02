@@ -1,6 +1,6 @@
 import React from 'react';
-import { MapNodeProps } from '../../../../../types/CampaignEditor/InteractiveMap/types/MapNode/MapNode.types';
-import { mapNodeStyles } from '../../../../../styles/CampaignEditor/InteractiveMap/styles/MapNode/MapNode.styles';
+import { MapNodeProps } from '@/types/CampaignEditor/InteractiveMap/types/MapNode/MapNode.types';
+import { mapNodeStyles } from '@/styles/CampaignEditor/InteractiveMap/styles/MapNode/MapNode.styles';
 
 export const MapNode: React.FC<MapNodeProps> = ({
   node,

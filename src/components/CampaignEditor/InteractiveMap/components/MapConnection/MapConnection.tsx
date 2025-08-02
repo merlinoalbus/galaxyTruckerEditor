@@ -1,6 +1,6 @@
 import React from 'react';
-import { MapConnectionProps } from '../../../../../types/CampaignEditor/InteractiveMap/types/MapConnection/MapConnection.types';
-import { mapConnectionStyles } from '../../../../../styles/CampaignEditor/InteractiveMap/styles/MapConnection/MapConnection.styles';
+import { MapConnectionProps } from '@/types/CampaignEditor/InteractiveMap/types/MapConnection/MapConnection.types';
+import { mapConnectionStyles } from '@/styles/CampaignEditor/InteractiveMap/styles/MapConnection/MapConnection.styles';
 
 export const MapConnection: React.FC<MapConnectionProps> = ({
   connection,

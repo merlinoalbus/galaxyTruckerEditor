@@ -4,7 +4,7 @@ import {
   Position, 
   AvailableBlockType,
   FlowBlockType 
-} from '../../../../../../types/CampaignEditor/types/VisualFlowEditor/VisualFlowEditor.types';
+} from '@/types/CampaignEditor/types/VisualFlowEditor/VisualFlowEditor.types';
 
 interface AddBlockMenuProps {
   isOpen: boolean;
