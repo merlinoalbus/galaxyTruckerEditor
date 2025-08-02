@@ -1,5 +1,5 @@
 import React from 'react';
-import { AnchorPoint as AnchorPointType } from '../../../../../../types/CampaignEditor/types/VisualFlowEditor/VisualFlowEditor.types';
+import { AnchorPoint as AnchorPointType } from '@/types/CampaignEditor/types/VisualFlowEditor/VisualFlowEditor.types';
 
 interface AnchorPointProps {
   anchor: AnchorPointType;

@@ -1,9 +1,11 @@
 import React from 'react';
-import { MapCanvasProps } from '../../../../../types/CampaignEditor/InteractiveMap/types/MapCanvas/MapCanvas.types';
-import { useMapCanvas } from '../../../../../hooks/CampaignEditor/InteractiveMap/hooks/MapCanvas/useMapCanvas';
+
+import { MapCanvasProps } from '@/types/CampaignEditor/InteractiveMap/types/MapCanvas/MapCanvas.types';
+import { useMapCanvas } from '@/hooks/CampaignEditor/InteractiveMap/hooks/MapCanvas/useMapCanvas';
+import { mapCanvasStyles } from '@/styles/CampaignEditor/InteractiveMap/styles/MapCanvas/MapCanvas.styles';
+
 import { MapNode } from '../MapNode/MapNode';
 import { MapConnection } from '../MapConnection/MapConnection';
-import { mapCanvasStyles } from '../../../../../styles/CampaignEditor/InteractiveMap/styles/MapCanvas/MapCanvas.styles';
 
 export const MapCanvas: React.FC<MapCanvasProps> = ({
   nodes,

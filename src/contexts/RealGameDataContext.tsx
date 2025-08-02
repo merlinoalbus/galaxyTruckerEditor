@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Mission, DeckScript, ValidationError } from '../types/GameTypes';
-import GameDataService, { FileMetadata } from '../services/CampaignEditor/GameDataService';
+import { gameDataService, FileMetadata } from '../services/CampaignEditor/GameDataService';
 
 interface GameDataContextType {
   // File metadata arrays
@@ -86,7 +86,7 @@ export function RealGameDataProvider({ children }: GameDataProviderProps) {
       setLoading(true);
       setError(null);
       
-      const health = await GameDataService.healthCheck();
+      const health = await gameDataService.healthCheck();
       setGameRoot(health.gameRoot);
       setConnected(true);
       
@@ -106,7 +106,7 @@ export function RealGameDataProvider({ children }: GameDataProviderProps) {
   // Missions
   const loadMissions = async () => {
     try {
-      const files = await GameDataService.getMissions();
+      const files = await gameDataService.getMissions();
       setMissionFiles(files);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load missions';
@@ -118,10 +118,10 @@ export function RealGameDataProvider({ children }: GameDataProviderProps) {
   const loadMission = async (filename: string): Promise<Mission | null> => {
     try {
       setLoading(true);
-      const response = await GameDataService.getMission(filename);
+      const response = await gameDataService.getMission(filename);
       
       // Parse the mission from YAML
-      const mission = GameDataService.parseMissionYAML(response.content);
+      const mission = gameDataService.parseMissionYAML(response.content);
       setCurrentMission(mission);
       
       return mission;
@@ -139,8 +139,8 @@ export function RealGameDataProvider({ children }: GameDataProviderProps) {
       setLoading(true);
       setError(null);
       
-      const yamlContent = GameDataService.serializeMissionYAML(mission);
-      await GameDataService.saveMission(filename, yamlContent);
+      const yamlContent = gameDataService.serializeMissionYAML(mission);
+      await gameDataService.saveMission(filename, yamlContent);
       
       // Refresh mission list
       await loadMissions();
@@ -157,7 +157,7 @@ export function RealGameDataProvider({ children }: GameDataProviderProps) {
   const deleteMission = async (filename: string) => {
     try {
       setLoading(true);
-      await GameDataService.deleteMission(filename);
+      await gameDataService.deleteMission(filename);
       
       // Refresh mission list
       await loadMissions();
@@ -179,7 +179,7 @@ export function RealGameDataProvider({ children }: GameDataProviderProps) {
   // Deck Scripts
   const loadDeckScripts = async () => {
     try {
-      const files = await GameDataService.getDeckScripts();
+      const files = await gameDataService.getDeckScripts();
       setDeckScriptFiles(files);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load deck scripts';
@@ -191,7 +191,7 @@ export function RealGameDataProvider({ children }: GameDataProviderProps) {
   const loadDeckScript = async (filename: string): Promise<DeckScript | null> => {
     try {
       setLoading(true);
-      const response = await GameDataService.getDeckScript(filename);
+      const response = await gameDataService.getDeckScript(filename);
       
       // Parse deck script from text content
       const script = parseDeckScriptContent(response.content);
@@ -213,7 +213,7 @@ export function RealGameDataProvider({ children }: GameDataProviderProps) {
       setError(null);
       
       const textContent = serializeDeckScript(script);
-      await GameDataService.saveDeckScript(filename, textContent);
+      await gameDataService.saveDeckScript(filename, textContent);
       
       // Refresh deck script list
       await loadDeckScripts();
@@ -230,7 +230,7 @@ export function RealGameDataProvider({ children }: GameDataProviderProps) {
   // Adventure Cards
   const loadAdventureCards = async () => {
     try {
-      const files = await GameDataService.getAdventureCards();
+      const files = await gameDataService.getAdventureCards();
       setAdventureCardFiles(files);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load adventure cards';
@@ -242,7 +242,7 @@ export function RealGameDataProvider({ children }: GameDataProviderProps) {
   // Ship Parts
   const loadShipParts = async () => {
     try {
-      const files = await GameDataService.getShipParts();
+      const files = await gameDataService.getShipParts();
       setShipPartFiles(files);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load ship parts';
@@ -254,7 +254,7 @@ export function RealGameDataProvider({ children }: GameDataProviderProps) {
   // Localization
   const loadLocalizationFiles = async () => {
     try {
-      const files = await GameDataService.getLocalizationFiles();
+      const files = await gameDataService.getLocalizationFiles();
       setLocalizationFiles(files);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load localization files';
@@ -266,7 +266,7 @@ export function RealGameDataProvider({ children }: GameDataProviderProps) {
   // Ships
   const loadShips = async () => {
     try {
-      const files = await GameDataService.getShips();
+      const files = await gameDataService.getShips();
       setShipFiles(files);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load ships';
@@ -278,7 +278,7 @@ export function RealGameDataProvider({ children }: GameDataProviderProps) {
   // Validation
   const validateContent = async (category: string, content: string): Promise<ValidationError[]> => {
     try {
-      const result = await GameDataService.validateContent(category, content);
+      const result = await gameDataService.validateContent(category, content);
       
       return [
         ...result.errors.map(msg => ({ field: 'content', message: msg, severity: 'error' as const })),
@@ -324,7 +324,7 @@ export function RealGameDataProvider({ children }: GameDataProviderProps) {
 
   const getBackups = async (): Promise<any[]> => {
     try {
-      const result = await GameDataService.getBackups();
+      const result = await gameDataService.getBackups();
       return result.backups;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to get backups');
@@ -334,7 +334,7 @@ export function RealGameDataProvider({ children }: GameDataProviderProps) {
 
   const healthCheck = async (): Promise<boolean> => {
     try {
-      await GameDataService.healthCheck();
+      await gameDataService.healthCheck();
       setConnected(true);
       setError(null);
       return true;

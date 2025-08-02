@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
-import { CampaignScript } from '../../../../../types/CampaignEditor/InteractiveMap/InteractiveMap.types';
-import { scriptSelectorService } from '../../../../../services/CampaignEditor/InteractiveMap/services/ScriptSelector/scriptSelectorService';
+import { CampaignScript } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
+import { scriptSelectorService } from '@/services/CampaignEditor/InteractiveMap/services/ScriptSelector/scriptSelectorService';
 
 export interface UseScriptSelectorReturn {
   searchTerm: string;

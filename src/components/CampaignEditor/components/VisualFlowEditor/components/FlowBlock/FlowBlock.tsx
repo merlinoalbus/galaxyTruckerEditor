@@ -4,7 +4,7 @@ import {
   FlowBlock as FlowBlockType, 
   ValidationResult, 
   Position 
-} from '../../../../../../types/CampaignEditor/types/VisualFlowEditor/VisualFlowEditor.types';
+} from '@/types/CampaignEditor/types/VisualFlowEditor/VisualFlowEditor.types';
 
 interface FlowBlockProps {
   block: FlowBlockType;

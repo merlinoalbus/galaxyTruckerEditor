@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
-import { MapViewport } from '../../../../../types/CampaignEditor/InteractiveMap/InteractiveMap.types';
-import { CanvasInteraction } from '../../../../../types/CampaignEditor/InteractiveMap/types/MapCanvas/MapCanvas.types';
+import { MapViewport } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
+import { CanvasInteraction } from '@/types/CampaignEditor/InteractiveMap/types/MapCanvas/MapCanvas.types';
 
 export interface UseMapCanvasReturn {
   canvasRef: React.RefObject<SVGSVGElement>;

@@ -1,8 +1,8 @@
 import React from 'react';
 import { X, Search } from 'lucide-react';
-import { ScriptSelectorProps } from '../../../../../types/CampaignEditor/InteractiveMap/types/ScriptSelector/ScriptSelector.types';
-import { useScriptSelector } from '../../../../../hooks/CampaignEditor/InteractiveMap/hooks/ScriptSelector/useScriptSelector';
-import { scriptSelectorStyles } from '../../../../../styles/CampaignEditor/InteractiveMap/styles/ScriptSelector/ScriptSelector.styles';
+import { ScriptSelectorProps } from '@/types/CampaignEditor/InteractiveMap/types/ScriptSelector/ScriptSelector.types';
+import { useScriptSelector } from '@/hooks/CampaignEditor/InteractiveMap/hooks/ScriptSelector/useScriptSelector';
+import { scriptSelectorStyles } from '@/styles/CampaignEditor/InteractiveMap/styles/ScriptSelector/ScriptSelector.styles';
 
 export const ScriptSelector: React.FC<ScriptSelectorProps> = ({
   isOpen,
