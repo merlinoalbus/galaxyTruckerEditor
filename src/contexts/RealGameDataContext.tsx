@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Mission, DeckScript, ValidationError } from '../types/GameTypes';
-import GameDataService, { FileMetadata } from '../services/GameDataService';
+import GameDataService, { FileMetadata } from '../services/CampaignEditor/GameDataService';
 
 interface GameDataContextType {
   // File metadata arrays
