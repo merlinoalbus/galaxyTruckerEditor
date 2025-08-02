@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { RealGameDataProvider, useRealGameData } from '../contexts/RealGameDataContext';
-import { Header } from './Layout/Header';
-import { Sidebar } from './Layout/Sidebar';
-// import { Traduzioni } from './Editors/Traduzioni';
-import { CampaignEditor } from './Editors/CampaignEditor';
+import { Header } from '../components/CampaignEditor/components/Header';
+import { Sidebar } from '../components/CampaignEditor/components/Sidebar';
+// import { Traduzioni } from '../components/Editors/Traduzioni';
+import { CampaignEditor } from '../components/CampaignEditor/CampaignEditor';
 import '../App.css';
 
 function AppContent() {
