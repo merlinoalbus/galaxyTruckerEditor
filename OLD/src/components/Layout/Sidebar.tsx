@@ -3,7 +3,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
   Map, 
   Languages, 
-  Rocket
+  FileText,
+  Rocket,
+  Zap
 } from 'lucide-react';
 
 const menuItems = [
@@ -11,7 +13,10 @@ const menuItems = [
   { path: '/localization', icon: Languages, label: 'Traduzioni', color: 'text-cyan-400' },
 ];
 
-// Azioni Rapide rimosse come richiesto
+const quickActions = [
+  { label: 'Nuovo Script', icon: FileText, action: 'create-script' },
+  { label: 'Valida Script', icon: Zap, action: 'validate-scripts' },
+];
 
 export function Sidebar() {
   const location = useLocation();
@@ -63,7 +68,28 @@ export function Sidebar() {
           </ul>
         </div>
 
-        {/* Azioni Rapide rimosse */}
+        {/* Quick Actions */}
+        <div className="px-3 mt-8">
+          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+            Azioni Rapide
+          </h3>
+          <ul className="space-y-1">
+            {quickActions.map((action) => {
+              const Icon = action.icon;
+              return (
+                <li key={action.action}>
+                  <button
+                    className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-300 hover:bg-gt-secondary hover:text-white transition-colors text-left"
+                    onClick={() => console.log(`Action: ${action.action}`)}
+                  >
+                    <Icon className="w-4 h-4 text-gray-400" />
+                    <span className="text-sm">{action.label}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </nav>
 
       {/* Footer */}

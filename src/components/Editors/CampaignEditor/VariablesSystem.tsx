@@ -1,0 +1,19 @@
+import React from 'react';
+
+interface VariablesSystemProps {
+  analysis: any;
+}
+
+export const VariablesSystem: React.FC<VariablesSystemProps> = ({ analysis }) => {
+  return (
+    <div className="p-6">
+      <h3 className="text-lg font-bold text-white mb-4">Campaign Variables & System</h3>
+      <div className="bg-gray-800 rounded-lg p-8 text-center">
+        <p className="text-gray-400">Variables & System component da implementare</p>
+        <p className="text-sm text-gray-500 mt-2">
+          Recuperare da old/CampaignEditor.tsx sezione variables
+        </p>
+      </div>
+    </div>
+  );
+};

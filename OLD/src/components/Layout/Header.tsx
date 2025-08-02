@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRealGameData } from '../../contexts/RealGameDataContext';
-import { RefreshCw, Download, Upload } from 'lucide-react';
+import { RefreshCw, Save, Download, Upload, Settings } from 'lucide-react';
 
 export function Header() {
   const { loading, error, refreshAll } = useRealGameData();
@@ -39,6 +39,10 @@ export function Header() {
           <button className="btn-secondary flex items-center space-x-2 tooltip" data-tooltip="Importa file">
             <Upload className="w-4 h-4" />
             <span>Importa</span>
+          </button>
+          
+          <button className="btn-secondary flex items-center space-x-2 tooltip" data-tooltip="Impostazioni">
+            <Settings className="w-4 h-4" />
           </button>
         </div>
       </div>
