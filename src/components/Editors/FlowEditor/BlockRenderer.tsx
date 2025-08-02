@@ -16,6 +16,10 @@ import {
   BarChart3
 } from 'lucide-react';
 
+// Import the new modular block components
+import { renderBlockContent as renderModularBlock } from './BlockRendererRefactored';
+import { CharacterState } from './blocks/index';
+
 // Import interfaces from the main file to avoid conflicts
 interface Character {
   name: string;
@@ -57,17 +61,39 @@ interface BlockRendererProps {
   availableNodes: any[];
   variables: Map<string, boolean>;
   characters: Character[];
-  characterStates: Map<string, string>;
+  characterStates: Map<string, CharacterState>;
   languages: string[];
   onStartEditing: (blockId: string, field: string, currentValue: string, language?: string) => void;
   onSaveEdit: () => void;
   onEditingValueChange: (value: string) => void;
   onOpenCharacterPicker: (blockId: string, field: string, current?: string) => void;
+  onOpenVariablePicker: (blockId: string, field: string, current?: string, action?: string) => void;
   onOpenNodeSelector: (blockId: string, field: string, current?: string) => void;
   onOpenButtonSelector: (blockId: string, field: string, current?: string) => void;
+  onMoveUp?: (blockId: string) => void;
+  onMoveDown?: (blockId: string) => void;
+  onDeleteBlock?: (blockId: string) => void;
 }
 
 export const renderBlockContent = (props: BlockRendererProps): JSX.Element => {
+  // Try the new modular renderer first
+  try {
+    return renderModularBlock({
+      ...props,
+      onDeleteBlock: props.onDeleteBlock,
+      onMoveUp: props.onMoveUp,
+      onMoveDown: props.onMoveDown,
+      onOpenVariablePicker: props.onOpenVariablePicker || (() => {})
+    });
+  } catch (error) {
+    console.warn('Modular renderer failed, falling back to legacy renderer:', error);
+    // Fall back to legacy implementation if needed
+    return renderLegacyBlockContent(props);
+  }
+};
+
+// Legacy implementation kept as fallback
+const renderLegacyBlockContent = (props: BlockRendererProps): JSX.Element => {
   const {
     block,
     isEditing,
@@ -218,22 +244,16 @@ export const renderBlockContent = (props: BlockRendererProps): JSX.Element => {
               <span>{characterName || 'Select Character'}</span>
               <span className="text-xs text-gray-400">👤</span>
             </span>
-            {/* Character Image Preview - Shows CURRENT character image from flow */}
+            {/* Character Image Preview - Shows BASE character image */}
             {characterName && (() => {
-              // Get current character image from tracked state
-              let currentCharacterImage = characterStates.get(characterName);
+              const characterData = characters.find(c => c.name === characterName);
+              const baseCharacterImage = characterData?.images[0];
               
-              // If no tracked state, use the default first image
-              if (!currentCharacterImage) {
-                const characterData = characters.find(c => c.name === characterName);
-                currentCharacterImage = characterData?.images[0];
-              }
-              
-              return currentCharacterImage ? (
+              return baseCharacterImage ? (
                 <div className="ml-2">
                   <img 
-                    src={`/campaign/${currentCharacterImage}`}
-                    alt={`${characterName} (current)`}
+                    src={`/campaign/${baseCharacterImage}`}
+                    alt={`${characterName} (base)`}
                     className="w-8 h-8 rounded border border-gray-600"
                     onError={(e) => {
                       const img = e.target as HTMLImageElement;

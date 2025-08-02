@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useCharacterStates, calculateCharacterStatesUpToBlock } from './FlowEditor/hooks/useCharacterStates';
+import { getCampaignCharacterImage } from '../../utils/imageUtils';
 import { 
   Play, 
   Pause, 
@@ -17,6 +19,7 @@ import {
   Menu as MenuIcon,
   GitBranch,
   Variable,
+  Plus as PlusIcon,
   CheckCircle,
   XCircle,
   ArrowUpRight,
@@ -41,6 +44,8 @@ import {
 import yaml from 'js-yaml';
 import { CampaignScriptParser, ParsedScript, ScriptBlock, ScriptCommand } from '../../services/CampaignScriptParser';
 import { renderBlockContent } from './FlowEditor/BlockRenderer';
+import { IfBlock } from './FlowEditor/blocks/IfBlock';
+import { ScriptSyncManager } from './FlowEditor/components/ScriptSyncManager';
 
 interface Character {
   name: string;
@@ -128,7 +133,9 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
   const [editingBlock, setEditingBlock] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentCharacter, setCurrentCharacter] = useState<{ name: string; image: string; position: string } | null>(null);
-  const [variables, setVariables] = useState<Map<string, boolean>>(new Map());
+  const [variables, setVariables] = useState<Map<string, boolean>>(new Map()); // Legacy mixed
+  const [semafori, setSemafori] = useState<Map<string, boolean>>(new Map()); // Boolean semafori
+  const [realVariables, setRealVariables] = useState<Map<string, any>>(new Map()); // Numeric variables
   const [showAllScripts, setShowAllScripts] = useState(false);
   const [allScriptsList, setAllScriptsList] = useState<ParsedScript[]>([]);
   const [translations, setTranslations] = useState<Map<string, DialogueTranslations>>(new Map());
@@ -142,10 +149,15 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [addMenuPosition, setAddMenuPosition] = useState<{ x: number; y: number } | null>(null);
   const [showCharacterPicker, setShowCharacterPicker] = useState(false);
-  const [characterPickerData, setCharacterPickerData] = useState<{ blockId: string; field: string; current?: string } | null>(null);
+  const [characterPickerData, setCharacterPickerData] = useState<{ blockId: string; field: string; current?: string; blockType?: string } | null>(null);
+  const [showVariablePicker, setShowVariablePicker] = useState(false);
+  const [variablePickerData, setVariablePickerData] = useState<{ blockId: string; field: string; current?: string; action?: string } | null>(null);
+  const [variableSearchFilter, setVariableSearchFilter] = useState('');
   const [showImagePicker, setShowImagePicker] = useState(false);
   const [imagePickerData, setImagePickerData] = useState<{ blockId: string; characterName: string; currentImage?: string } | null>(null);
   const [insertPosition, setInsertPosition] = useState<{ parentId: string | null; index: number } | null>(null);
+  const [showIfTypeSelector, setShowIfTypeSelector] = useState(false);
+  const [pendingIfCreation, setPendingIfCreation] = useState<{ parentId: string | null; index: number } | null>(null);
   
   // Node and Button Selectors
   const [showNodeSelector, setShowNodeSelector] = useState(false);
@@ -155,42 +167,15 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
   const [availableNodes, setAvailableNodes] = useState<MapNode[]>([]);
   const [availableButtons, setAvailableButtons] = useState<GameButton[]>([]);
   
-  // Track current character images in the script flow
-  const [characterStates, setCharacterStates] = useState<Map<string, string>>(new Map());
-  
-  // Update character states by walking through all blocks
-  const updateCharacterStates = useCallback((blocks: StructuredBlock[]) => {
-    const newStates = new Map<string, string>();
-    
-    const walkBlocks = (blockList: StructuredBlock[]) => {
-      for (const block of blockList) {
-        // Track ChangeCharacter commands
-        if (block.command.type === 'change_character' && 
-            block.command.parameters?.character && 
-            block.command.parameters?.image) {
-          newStates.set(block.command.parameters.character, block.command.parameters.image);
-        }
-        
-        // Walk children recursively
-        if (block.children.length > 0) {
-          walkBlocks(block.children);
-        }
-      }
-    };
-    
-    walkBlocks(blocks);
-    setCharacterStates(newStates);
-  }, []);
+  // Character states map - tracks character visibility and current images
+  const characterStates = useCharacterStates(structuredBlocks, CHARACTERS);
 
   useEffect(() => {
     initializeEditor();
     loadGameData();
   }, []);
   
-  // Update character states whenever blocks change
-  useEffect(() => {
-    updateCharacterStates(structuredBlocks);
-  }, [structuredBlocks, updateCharacterStates]);
+  // No need to track character states since Hide Character shows base image
 
   const loadGameData = async () => {
     try {
@@ -247,11 +232,24 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
       setAnalysis(campaignAnalysis);
       
       // Initialize variables with common campaign variables
-      const variableMap = new Map<string, boolean>();
+      const variableMap = new Map<string, boolean>(); // Legacy mixed
       campaignAnalysis.variables.forEach((variable: string) => {
         variableMap.set(variable, false);
       });
       setVariables(variableMap);
+      
+      // Initialize separated semafori and variables
+      const semaforoMap = new Map<string, boolean>();
+      campaignAnalysis.semafori.forEach((semaforo: string) => {
+        semaforoMap.set(semaforo, false);
+      });
+      setSemafori(semaforoMap);
+      
+      const realVarMap = new Map<string, any>();
+      campaignAnalysis.realVariables.forEach((variable: string) => {
+        realVarMap.set(variable, 0); // Default value for numeric variables
+      });
+      setRealVariables(realVarMap);
       
       // Load all scripts for navigation
       setAllScriptsList(campaignAnalysis.scripts);
@@ -415,6 +413,7 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
         case 'condition_start_not':
         case 'condition_tutorial_seen':
         case 'condition_from_campaign':
+        case 'condition_predefined':
           // IF/IFNOT starts a condition container
           const conditionContainer: StructuredBlock = {
             id: `${blockId}_condition`,
@@ -427,7 +426,14 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
               hasElse: false,
               elseIndex: -1,
               condition: command.parameters?.condition || command.content.replace(/^(IF|IFNOT|IF_TUTORIAL_SEEN|IF_FROM_CAMPAIGN)\s*/i, ''),
-              isNot: command.type.includes('not') || command.content.toUpperCase().startsWith('IFNOT')
+              isNot: command.type.includes('not') || command.content.toUpperCase().startsWith('IFNOT'),
+              // Add predefined condition metadata
+              ...(command.type === 'condition_predefined' && {
+                ifType: 'predefined',
+                predefinedType: command.parameters?.predefinedType,
+                // Include all parsed parameters for predefined conditions
+                ...command.parameters
+              })
             }
           };
           addBlockToStructure(conditionContainer, blocks, stack);
@@ -711,14 +717,109 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
     }
   };
 
+  const serializeBlocksToScript = (blocks: StructuredBlock[], indentLevel: number = 0): string[] => {
+    const lines: string[] = [];
+    const indent = '  '.repeat(indentLevel);
+
+    for (const block of blocks) {
+      if (block.type === 'condition_container') {
+        // Handle IF conditions
+        const ifType = block.metadata?.ifType;
+        const predefinedType = block.metadata?.predefinedType;
+        
+        if (ifType === 'predefined' && predefinedType) {
+          // Serialize predefined IF types with their parameters
+          switch (predefinedType) {
+            case 'IF_PROB':
+              lines.push(`${indent}IF_PROB ${block.metadata.probability || '50'}`);
+              break;
+            case 'IF_MIN':
+              lines.push(`${indent}IF_MIN ${block.metadata.variable || 'visited'} ${block.metadata.minValue || '7'}`);
+              break;
+            case 'IF_MAX':
+              lines.push(`${indent}IF_MAX ${block.metadata.variable || 'opponents'} ${block.metadata.maxValue || '2'}`);
+              break;
+            case 'IF_IS':
+              lines.push(`${indent}IF_IS ${block.metadata.variable || 'sailor'} ${block.metadata.exactValue || '4'}`);
+              break;
+            case 'IF_HAS_CREDITS':
+              lines.push(`${indent}IF_HAS_CREDITS ${block.metadata.creditsAmount || '3'}`);
+              break;
+            case 'IF_ORDER':
+              lines.push(`${indent}IF_ORDER ${block.metadata.playerIndex || '0'} ${block.metadata.positionValue || '1'}`);
+              break;
+            default:
+              // Simple predefined types without parameters
+              lines.push(`${indent}${predefinedType}`);
+              break;
+          }
+        } else {
+          // Standard IF/IFNOT with variables
+          const condition = block.metadata?.condition || 'newVariable';
+          const isNot = block.metadata?.isNot;
+          lines.push(`${indent}${isNot ? 'IFNOT' : 'IF'} ${condition}`);
+        }
+
+        // Handle ELSE section if present
+        const hasElse = block.metadata?.hasElse;
+        const elseIndex = block.metadata?.elseIndex || block.children.length;
+        
+        if (hasElse && elseIndex > 0) {
+          // Serialize IF section children
+          const ifChildren = block.children.slice(0, elseIndex);
+          lines.push(...serializeBlocksToScript(ifChildren, indentLevel + 1));
+          
+          // Add ELSE
+          lines.push(`${indent}ELSE`);
+          
+          // Serialize ELSE section children
+          const elseChildren = block.children.slice(elseIndex);
+          lines.push(...serializeBlocksToScript(elseChildren, indentLevel + 1));
+        } else {
+          // Serialize all children
+          lines.push(...serializeBlocksToScript(block.children, indentLevel + 1));
+        }
+
+        // Close condition
+        lines.push(`${indent}END_OF_IF`);
+        
+      } else if (block.type === 'dialog_container') {
+        lines.push(`${indent}ShowDlgScene`);
+        lines.push(...serializeBlocksToScript(block.children, indentLevel + 1));
+        lines.push(`${indent}HideDlgScene`);
+        
+      } else if (block.type === 'menu_container') {
+        lines.push(`${indent}MENU`);
+        lines.push(...serializeBlocksToScript(block.children, indentLevel + 1));
+        lines.push(`${indent}END_OF_MENU`);
+        
+      } else {
+        // Regular blocks - use their command content
+        lines.push(`${indent}${block.command.content}`);
+        
+        // Serialize children if any
+        if (block.children && block.children.length > 0) {
+          lines.push(...serializeBlocksToScript(block.children, indentLevel + 1));
+        }
+      }
+    }
+
+    return lines;
+  };
+
   const saveScriptChanges = async () => {
     if (!currentScript) return;
 
     console.log('Saving script changes for:', currentScript.name);
     
-    // TODO: Convert structured blocks back to script format and save
+    // Convert structured blocks back to script format
+    const scriptLines = serializeBlocksToScript(structuredBlocks);
+    const scriptContent = scriptLines.join('\n');
+    
+    console.log('Generated script content:', scriptContent);
+    
     if (onScriptChange) {
-      onScriptChange(currentScript.name, structuredBlocks);
+      onScriptChange(currentScript.name, scriptContent);
     }
   };
 
@@ -933,9 +1034,25 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
           type: 'variable_reset',
           command: {
             line: 0,
-            content: 'RESET newVariable',
+            content: 'RESET newSemaforo',
             type: 'variable_reset',
-            parameters: { variable: 'newVariable' }
+            parameters: { variable: 'newSemaforo' }
+          },
+          children: [],
+          depth: 0,
+          metadata: { scriptName: currentScript?.name || '' }
+        };
+        break;
+        
+      case 'variable_set_to':
+        newBlock = {
+          id: newComponentId,
+          type: 'variable_set_to',
+          command: {
+            line: 0,
+            content: 'SET_TO newVariable 0',
+            type: 'variable_set_to',
+            parameters: { variable: 'newVariable', value: '0' }
           },
           children: [],
           depth: 0,
@@ -1184,26 +1301,11 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
         break;
         
       case 'condition_container':
-        newBlock = {
-          id: newComponentId,
-          type: 'condition_container',
-          command: {
-            line: 0,
-            content: 'IF newVariable',
-            type: 'condition_start',
-            parameters: { condition: 'newVariable' }
-          },
-          children: [],
-          depth: 0,
-          metadata: { 
-            scriptName: currentScript?.name || '', 
-            condition: 'newVariable',
-            hasElse: false,
-            elseIndex: -1,
-            isNot: false
-          }
-        };
-        break;
+        // Open IF type selector instead of creating directly
+        setPendingIfCreation({ parentId: parentBlockId, index: insertIndex || 0 });
+        setShowIfTypeSelector(true);
+        setShowAddMenu(false);
+        return; // Don't create block yet
         
       case 'dialog_container':
         newBlock = {
@@ -1390,8 +1492,140 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
   };
 
   const openCharacterPicker = (blockId: string, field: string, current?: string) => {
-    setCharacterPickerData({ blockId, field, current });
+    // Find the block to determine its type
+    const findBlock = (blocks: any[]): any => {
+      for (const block of blocks) {
+        if (block.id === blockId) return block;
+        if (block.children) {
+          const found = findBlock(block.children);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+    
+    const block = findBlock(structuredBlocks);
+    const blockType = block?.command?.type;
+    
+    setCharacterPickerData({ blockId, field, current, blockType });
     setShowCharacterPicker(true);
+  };
+
+  const openVariablePicker = (blockId: string, field: string, current?: string, action?: string) => {
+    setVariablePickerData({ blockId, field, current, action });
+    setShowVariablePicker(true);
+  };
+
+  const createIfBlockWithType = (ifType: 'predefined' | 'standard', predefinedType?: string) => {
+    if (!pendingIfCreation) return;
+    
+    const { parentId, index } = pendingIfCreation;
+    const newComponentId = Date.now().toString();
+    
+    let condition: string;
+    let commandContent: string;
+    const ifMode = false; // Always start with IF (not IFNOT) for simplicity
+    
+    // Initialize metadata with default parameters for predefined types
+    let metadata: any = { 
+      scriptName: currentScript?.name || '', 
+      hasElse: false,
+      elseIndex: -1,
+      isNot: ifMode,
+      ifType,
+      predefinedType: ifType === 'predefined' ? predefinedType : undefined
+    };
+
+    if (ifType === 'predefined' && predefinedType) {
+      condition = predefinedType;
+      commandContent = predefinedType; // Start with base predefined type
+      
+      // Set default parameters based on predefined type
+      switch (predefinedType) {
+        case 'IF_PROB':
+          metadata.probability = '50';
+          commandContent = 'IF_PROB 50';
+          break;
+        case 'IF_MIN':
+          metadata.variable = 'visited';
+          metadata.minValue = '7';
+          commandContent = 'IF_MIN visited 7';
+          break;
+        case 'IF_MAX':
+          metadata.variable = 'opponents';
+          metadata.maxValue = '2';
+          commandContent = 'IF_MAX opponents 2';
+          break;
+        case 'IF_IS':
+          metadata.variable = 'sailor';
+          metadata.exactValue = '4';
+          commandContent = 'IF_IS sailor 4';
+          break;
+        case 'IF_HAS_CREDITS':
+          metadata.creditsAmount = '3';
+          commandContent = 'IF_HAS_CREDITS 3';
+          break;
+        case 'IF_ORDER':
+          metadata.playerIndex = '0';
+          metadata.positionValue = '1';
+          commandContent = 'IF_ORDER 0 1';
+          break;
+        default:
+          // Simple predefined types (IF_TUTORIAL_SEEN, IF_DEBUG, etc.) - no parameters needed
+          commandContent = predefinedType;
+          break;
+      }
+    } else {
+      condition = 'newVariable';
+      commandContent = `${ifMode ? 'IFNOT' : 'IF'} ${condition}`;
+    }
+    
+    // Add condition to metadata for both types
+    metadata.condition = condition;
+    
+    const newBlock: StructuredBlock = {
+      id: newComponentId,
+      type: 'condition_container',
+      command: {
+        line: 0,
+        content: commandContent,
+        type: 'condition_start',
+        parameters: { condition: commandContent }
+      },
+      children: [],
+      depth: 0,
+      metadata
+    };
+
+    // Insert the block
+    const insertBlock = (blocks: StructuredBlock[]): StructuredBlock[] => {
+      if (!parentId) {
+        // Insert at root level
+        const newBlocks = [...blocks];
+        newBlocks.splice(index, 0, newBlock);
+        return newBlocks;
+      } else {
+        // Insert into parent's children
+        return blocks.map(block => {
+          if (block.id === parentId) {
+            const newChildren = [...block.children];
+            newChildren.splice(index, 0, newBlock);
+            return { ...block, children: newChildren };
+          }
+          if (block.children.length > 0) {
+            return { ...block, children: insertBlock(block.children) };
+          }
+          return block;
+        });
+      }
+    };
+
+    setStructuredBlocks(insertBlock(structuredBlocks));
+    saveScriptChanges();
+    
+    // Close selectors
+    setShowIfTypeSelector(false);
+    setPendingIfCreation(null);
   };
 
   const openNodeSelector = (blockId: string, field: string, current?: string) => {
@@ -1482,6 +1716,46 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
     setCharacterPickerData(null);
   };
 
+  const selectVariable = (variableName: string) => {
+    if (!variablePickerData) return;
+
+    const { blockId, field } = variablePickerData;
+    
+    const updateBlock = (blocks: StructuredBlock[]): boolean => {
+      for (const block of blocks) {
+        if (block.id === blockId) {
+          // Handle condition_container specially
+          if (block.type === 'condition_container' && field === 'condition') {
+            // Block changes to predefined conditions
+            if (block.metadata.ifType === 'predefined') {
+              console.warn('Cannot change variable for predefined condition type');
+              return false;
+            }
+            block.metadata.condition = variableName;
+            block.command.content = `${block.metadata.isNot ? 'IFNOT' : 'IF'} ${variableName}`;
+            block.command.parameters = { condition: variableName };
+          } else {
+            // Handle regular blocks
+            if (!block.command.parameters) block.command.parameters = {};
+            block.command.parameters[field] = variableName;
+          }
+          return true;
+        }
+        
+        if (updateBlock(block.children)) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    updateBlock(structuredBlocks);
+    setStructuredBlocks([...structuredBlocks]);
+    saveScriptChanges();
+    setShowVariablePicker(false);
+    setVariablePickerData(null);
+  };
+
   const openInsertMenu = (event: React.MouseEvent, parentId: string | null, index: number) => {
     event.preventDefault();
     event.stopPropagation();
@@ -1558,11 +1832,12 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
         {isContainer && (
           <div 
             className={`
-              flex items-center space-x-2 mb-2 cursor-pointer p-2 rounded
+              flex items-center justify-between mb-2 cursor-pointer p-2 rounded
               ${isSelected ? 'bg-gt-accent/20' : 'hover:bg-gt-secondary/50'}
             `}
             onClick={() => toggleBlockExpanded(block.id)}
           >
+            <div className="flex items-center space-x-2">
             {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
             {block.type === 'dialog_container' && <MessageCircle className="w-5 h-5 text-blue-400" />}
             {block.type === 'menu_container' && <MenuIcon className="w-5 h-5 text-purple-400" />}
@@ -1683,20 +1958,423 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
                 </>
               )}
               {block.type === 'condition_container' && (
-                <>
-                  {block.metadata.isNot ? 'IFNOT' : 'IF'} 
-                  <span className="ml-1 text-yellow-300">{block.metadata.condition}</span>
-                </>
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-1">
+                    {/* Display predefined conditions differently */}
+                    {block.metadata.ifType === 'predefined' ? (
+                      <>
+                        <span className="text-sm px-2 py-1 rounded bg-yellow-900/30 text-yellow-300 font-mono mr-2">
+                          {block.command.content}
+                        </span>
+                        <select
+                          value={block.metadata.predefinedType || 'IF_MIN'}
+                          onChange={(e) => {
+                            const newType = e.target.value;
+                            block.metadata.predefinedType = newType;
+                            
+                            // Set default values based on type
+                            switch (newType) {
+                              case 'IF_TUTORIAL_SEEN':
+                                block.command.content = 'IF_TUTORIAL_SEEN';
+                                break;
+                              case 'IF_FROM_CAMPAIGN':
+                                block.command.content = 'IF_FROM_CAMPAIGN';
+                                break;
+                              case 'IF_DEBUG':
+                                block.command.content = 'IF_DEBUG';
+                                break;
+                              case 'IF_MISSION_WON':
+                                block.command.content = 'IF_MISSION_WON';
+                                break;
+                              case 'IF_PROB':
+                                block.metadata.probability = '50';
+                                block.command.content = 'IF_PROB 50';
+                                break;
+                              case 'IF_MIN':
+                                block.metadata.variable = 'visited';
+                                block.metadata.minValue = '7';
+                                block.command.content = 'IF_MIN visited 7';
+                                break;
+                              case 'IF_MAX':
+                                block.metadata.variable = 'opponents';
+                                block.metadata.maxValue = '2';
+                                block.command.content = 'IF_MAX opponents 2';
+                                break;
+                              case 'IF_IS':
+                                block.metadata.variable = 'sailor';
+                                block.metadata.exactValue = '4';
+                                block.command.content = 'IF_IS sailor 4';
+                                break;
+                              case 'IF_HAS_CREDITS':
+                                block.metadata.creditsAmount = '3';
+                                block.command.content = 'IF_HAS_CREDITS 3';
+                                break;
+                              case 'IF_ORDER':
+                                block.metadata.orderPositions = '0';
+                                block.command.content = 'IF_ORDER 0';
+                                break;
+                            }
+                            
+                            // Update child content
+                            if (block.children?.[0]) {
+                              (block.children[0] as any).content = block.command.content;
+                            }
+                            
+                            setStructuredBlocks([...structuredBlocks]);
+                            saveScriptChanges();
+                          }}
+                          className="text-xs px-2 py-1 bg-yellow-950/50 border border-yellow-800 rounded text-yellow-100 mr-2"
+                        >
+                          <option value="IF_TUTORIAL_SEEN">Tutorial Seen</option>
+                          <option value="IF_FROM_CAMPAIGN">From Campaign</option>
+                          <option value="IF_DEBUG">Debug Mode</option>
+                          <option value="IF_MISSION_WON">Mission Won</option>
+                          <option value="IF_PROB">Probability</option>
+                          <option value="IF_MIN">Minimum</option>
+                          <option value="IF_MAX">Maximum</option>
+                          <option value="IF_IS">Exact</option>
+                          <option value="IF_HAS_CREDITS">Credits</option>
+                          <option value="IF_ORDER">Turn Order</option>
+                        </select>
+                        
+                        {/* Inline parameter inputs based on type */}
+                        {block.metadata.predefinedType === 'IF_PROB' && (
+                          <div className="flex items-center space-x-1">
+                            <input
+                              type="range"
+                              min="0"
+                              max="100"
+                              step="5"
+                              value={block.metadata.probability || '50'}
+                              onChange={(e) => {
+                                block.metadata.probability = e.target.value;
+                                block.command.content = `IF_PROB ${e.target.value}`;
+                                if (block.children?.[0]) {
+                                  (block.children[0] as any).content = block.command.content;
+                                }
+                                setStructuredBlocks([...structuredBlocks]);
+                              }}
+                              className="w-20 mx-2"
+                            />
+                            <span className="text-xs text-yellow-300 font-mono min-w-8">{block.metadata.probability || '50'}%</span>
+                          </div>
+                        )}
+                        
+                        {(block.metadata.predefinedType === 'IF_MIN' || block.metadata.predefinedType === 'IF_MAX' || block.metadata.predefinedType === 'IF_IS') && (
+                          <>
+                            <select
+                              value={block.metadata.variable || 'visited'}
+                              onChange={(e) => {
+                                block.metadata.variable = e.target.value;
+                                const op = block.metadata.predefinedType === 'IF_MIN' ? block.metadata.minValue : 
+                                          block.metadata.predefinedType === 'IF_MAX' ? block.metadata.maxValue : block.metadata.exactValue;
+                                block.command.content = `${block.metadata.predefinedType} ${e.target.value} ${op || '7'}`;
+                                if (block.children?.[0]) {
+                                  (block.children[0] as any).content = block.command.content;
+                                }
+                                setStructuredBlocks([...structuredBlocks]);
+                              }}
+                              className="text-xs px-1 py-1 bg-yellow-950/50 border border-yellow-800 rounded text-yellow-100 mx-1"
+                            >
+                              {Array.from(variables?.keys() || []).map(name => (
+                                <option key={name} value={name}>{name}</option>
+                              ))}
+                            </select>
+                            <input
+                              type="number"
+                              value={block.metadata.predefinedType === 'IF_MIN' ? (block.metadata.minValue || '7') :
+                                    block.metadata.predefinedType === 'IF_MAX' ? (block.metadata.maxValue || '2') : 
+                                    (block.metadata.exactValue || '4')}
+                              onChange={(e) => {
+                                const field = block.metadata.predefinedType === 'IF_MIN' ? 'minValue' :
+                                            block.metadata.predefinedType === 'IF_MAX' ? 'maxValue' : 'exactValue';
+                                block.metadata[field] = e.target.value;
+                                block.command.content = `${block.metadata.predefinedType} ${block.metadata.variable || 'visited'} ${e.target.value}`;
+                                if (block.children?.[0]) {
+                                  (block.children[0] as any).content = block.command.content;
+                                }
+                                setStructuredBlocks([...structuredBlocks]);
+                              }}
+                              className="w-12 text-xs px-1 py-1 bg-yellow-950/50 border border-yellow-800 rounded text-yellow-100 mx-1"
+                            />
+                          </>
+                        )}
+                        
+                        {block.metadata.predefinedType === 'IF_HAS_CREDITS' && (
+                          <input
+                            type="number"
+                            value={block.metadata.creditsAmount || '3'}
+                            onChange={(e) => {
+                              block.metadata.creditsAmount = e.target.value;
+                              block.command.content = `IF_HAS_CREDITS ${e.target.value}`;
+                              if (block.children?.[0]) {
+                                (block.children[0] as any).content = block.command.content;
+                              }
+                              setStructuredBlocks([...structuredBlocks]);
+                            }}
+                            className="w-12 text-xs px-1 py-1 bg-yellow-950/50 border border-yellow-800 rounded text-yellow-100 mx-1"
+                          />
+                        )}
+                        
+                        {block.metadata.predefinedType === 'IF_ORDER' && (
+                          <div className="flex items-center space-x-2">
+                            <span className="text-xs text-yellow-300">Positions:</span>
+                            <div className="flex items-center space-x-1">
+                              {[0, 1, 2, 3, 4, 5].map(pos => {
+                                const isSelected = (block.metadata.orderPositions || '0').split(' ').includes(pos.toString());
+                                const labels = ['🥇', '🥈', '🥉', '4th', '5th', '6th'];
+                                return (
+                                  <label key={pos} className="flex items-center space-x-1 cursor-pointer">
+                                    <input
+                                      type="checkbox"
+                                      checked={isSelected}
+                                      onChange={(e) => {
+                                        const currentPositions = (block.metadata.orderPositions || '0').split(' ').filter((p: string) => p);
+                                        let newPositions;
+                                        if (e.target.checked) {
+                                          newPositions = [...currentPositions, pos.toString()].sort();
+                                        } else {
+                                          newPositions = currentPositions.filter((p: string) => p !== pos.toString());
+                                        }
+                                        if (newPositions.length === 0) newPositions = ['0']; // At least one position
+                                        block.metadata.orderPositions = newPositions.join(' ');
+                                        block.command.content = `IF_ORDER ${newPositions.join(' ')}`;
+                                        if (block.children?.[0]) {
+                                          (block.children[0] as any).content = block.command.content;
+                                        }
+                                        setStructuredBlocks([...structuredBlocks]);
+                                      }}
+                                      className="w-3 h-3 text-yellow-500 rounded border-yellow-600 focus:ring-yellow-500"
+                                    />
+                                    <span className="text-xs text-yellow-300">{labels[pos]}</span>
+                                  </label>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <span className={`text-sm px-2 py-1 rounded ${block.metadata.isNot ? 'bg-red-900/30 text-red-300' : 'bg-green-900/30 text-green-300'} mr-2`}>
+                          {block.metadata.isNot ? 'IFNOT' : 'IF'}
+                        </span>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setVariablePickerData({ 
+                              blockId: block.id, 
+                              field: 'condition', 
+                              current: block.metadata.condition,
+                              action: 'condition'
+                            });
+                            setShowVariablePicker(true);
+                          }}
+                          className="text-yellow-300 font-medium hover:text-yellow-200 hover:bg-yellow-900/20 px-2 py-1 rounded transition-colors mr-2"
+                          title="Click to change variable"
+                        >
+                          {block.metadata.condition}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                  
+                  {/* Quick Config Buttons - ONLY for standard conditions */}
+                  {block.metadata.ifType !== 'predefined' && (
+                    <div className="flex items-center space-x-1">
+                      {/* IF/IFNOT Toggle */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          block.metadata.isNot = !block.metadata.isNot;
+                          block.command.content = `${block.metadata.isNot ? 'IFNOT' : 'IF'} ${block.metadata.condition}`;
+                          setStructuredBlocks([...structuredBlocks]);
+                          saveScriptChanges();
+                        }}
+                        className="text-xs px-2 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded transition-colors"
+                      title={`Switch to ${block.metadata.isNot ? 'IF' : 'IFNOT'}`}
+                    >
+                      ⇄
+                      </button>
+                      
+                    </div>
+                  )}
+                  
+                  {/* ELSE Toggle - available for all IF types */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      block.metadata.hasElse = !block.metadata.hasElse;
+                      if (block.metadata.hasElse && block.metadata.elseIndex === -1) {
+                        // Default ELSE position: middle of existing children, or 0 if no children
+                        block.metadata.elseIndex = Math.floor(block.children.length / 2);
+                      } else if (!block.metadata.hasElse) {
+                        block.metadata.elseIndex = -1;
+                      }
+                      setStructuredBlocks([...structuredBlocks]);
+                      saveScriptChanges();
+                    }}
+                    className={`text-xs px-2 py-1 rounded transition-colors ${
+                      block.metadata.hasElse 
+                        ? 'bg-yellow-700 hover:bg-yellow-600 text-white' 
+                        : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+                    }`}
+                    title={`${block.metadata.hasElse ? 'Remove' : 'Add'} ELSE block`}
+                  >
+                    {block.metadata.hasElse ? 'ELSE ✓' : 'ELSE'}
+                  </button>
+                    
+                    {/* ELSE Position Controls */}
+                    {block.metadata.hasElse && (
+                      <>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (block.metadata.elseIndex > 0) {
+                              block.metadata.elseIndex--;
+                              setStructuredBlocks([...structuredBlocks]);
+                              saveScriptChanges();
+                            }
+                          }}
+                          className="text-xs px-1 py-1 bg-yellow-800 hover:bg-yellow-700 text-white rounded transition-colors"
+                          title="Move ELSE up"
+                          disabled={block.metadata.elseIndex <= 0}
+                        >
+                          ↑
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (block.metadata.elseIndex < block.children.length) {
+                              block.metadata.elseIndex++;
+                              setStructuredBlocks([...structuredBlocks]);
+                              saveScriptChanges();
+                            }
+                          }}
+                          className="text-xs px-1 py-1 bg-yellow-800 hover:bg-yellow-700 text-white rounded transition-colors"
+                          title="Move ELSE down"
+                          disabled={block.metadata.elseIndex >= block.children.length}
+                        >
+                          ↓
+                        </button>
+                      </>
+                    )}
+                    
+                    {/* Type Toggle Button - Switch between standard and predefined */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const isCurrentlyPredefined = block.metadata.ifType === 'predefined';
+                        
+                        if (isCurrentlyPredefined) {
+                          // Switch to standard IF/IFNOT
+                          const variableName = block.metadata.variable || block.metadata.condition || 'newVariable';
+                          block.metadata = {
+                            ...block.metadata,
+                            ifType: 'standard',
+                            predefinedType: undefined,
+                            isNot: false,
+                            condition: variableName
+                          };
+                          block.command.content = `IF ${variableName}`;
+                          block.command.parameters = { condition: variableName };
+                          
+                          // Update condition_start child
+                          if (block.children?.[0]) {
+                            (block.children[0] as any).content = block.command.content;
+                            (block.children[0] as any).parameters = { condition: variableName };
+                          }
+                        } else {
+                          // Switch to predefined - default to IF_MIN
+                          block.metadata = {
+                            ...block.metadata,
+                            ifType: 'predefined',
+                            predefinedType: 'IF_MIN',
+                            condition: 'IF_MIN',
+                            variable: block.metadata.condition || 'visited',
+                            minValue: '7'
+                          };
+                          block.command.content = `IF_MIN ${block.metadata.variable} ${block.metadata.minValue}`;
+                          block.command.parameters = { condition: block.command.content };
+                          
+                          // Update condition_start child
+                          if (block.children?.[0]) {
+                            (block.children[0] as any).content = block.command.content;
+                            (block.children[0] as any).parameters = { condition: block.command.content };
+                          }
+                        }
+                        
+                        setStructuredBlocks([...structuredBlocks]);
+                        saveScriptChanges();
+                      }}
+                      className="text-xs px-2 py-1 bg-purple-700 hover:bg-purple-600 text-white rounded transition-colors"
+                      title={`Switch to ${block.metadata.ifType === 'predefined' ? 'Standard' : 'Predefined'} IF type`}
+                    >
+                      {block.metadata.ifType === 'predefined' ? '📝' : '⚙️'}
+                      <span className="ml-1">{block.metadata.ifType === 'predefined' ? 'STD' : 'PRE'}</span>
+                    </button>
+                </div>
               )}
             </span>
             <span className="text-xs text-gray-400">
               ({block.children.length} items)
             </span>
+            </div>
             
-            {/* Container Controls */}
-            {isContainer && (
-              <div className="flex items-center space-x-1 ml-2">
-                {block.type === 'menu_container' && (
+            {/* Container Controls - Same style as other blocks */}
+            <div className="flex items-center space-x-1 flex-shrink-0">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  moveBlock(block.id, 'up');
+                }}
+                className="w-6 h-6 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs flex items-center justify-center transition-colors"
+                title="Move Up"
+              >
+                ↑
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  moveBlock(block.id, 'down');
+                }}
+                className="w-6 h-6 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs flex items-center justify-center transition-colors"
+                title="Move Down"
+              >
+                ↓
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const removeBlock = (blocks: StructuredBlock[]): boolean => {
+                    for (let i = 0; i < blocks.length; i++) {
+                      if (blocks[i].id === block.id) {
+                        blocks.splice(i, 1);
+                        return true;
+                      }
+                      if (removeBlock(blocks[i].children)) return true;
+                    }
+                    return false;
+                  };
+                  if (removeBlock(structuredBlocks)) {
+                    setStructuredBlocks([...structuredBlocks]);
+                    saveScriptChanges();
+                    setSelectedBlock(null);
+                  }
+                }}
+                className="w-6 h-6 bg-red-700 hover:bg-red-600 text-white rounded text-xs flex items-center justify-center transition-colors"
+                title="Delete Container"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        )}
+        
+        {/* Container Specific Controls */}
+        {isContainer && (
+          <div className="mb-2 flex items-center justify-center space-x-2">
+            {block.type === 'menu_container' && (
                   <>
                     <button
                       onClick={(e) => {
@@ -1736,14 +2414,45 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
                 >
                   + ⚡
                 </button>
-              </div>
-            )}
           </div>
         )}
 
         {/* Container Children or Regular Block Content */}
         {isContainer && isExpanded ? (
           <div className="ml-4">
+            
+            {isEditing && block.type === 'dialog_container' && (
+              <div className="mb-4">
+                {renderBlockContent({
+                  block,
+                  isEditing,
+                  editingField,
+                  editingValue,
+                  selectedLanguage,
+                  showAllLanguages,
+                  translations,
+                  availableNodes,
+                  variables: block.command.type === 'variable_set_to' ? realVariables : semafori,
+                  characters: CHARACTERS,
+                  characterStates,
+                  languages: ['EN', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU'],
+                  onStartEditing: startEditing,
+                  onSaveEdit: () => {
+                    setStructuredBlocks([...structuredBlocks]);
+                    saveScriptChanges();
+                  },
+                  onEditingValueChange: setEditingValue,
+                  onOpenCharacterPicker: openCharacterPicker,
+                  onOpenVariablePicker: openVariablePicker,
+                  onOpenNodeSelector: openNodeSelector,
+                  onOpenButtonSelector: openButtonSelector,
+                  onDeleteBlock: (blockId: string) => {
+                    // Handle block deletion
+                    console.log('Delete block:', blockId);
+                  }
+                })}
+              </div>
+            )}
             {/* Insert zone before first child */}
             <div key={`insert_${block.id}_0`}>
               {renderInsertZone(block.id, 0, true)}
@@ -1751,22 +2460,45 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
             
             {block.children.map((child, index) => {
               const elements = [];
+              const isInElseSection = block.type === 'condition_container' && 
+                                     block.metadata.hasElse && 
+                                     index >= block.metadata.elseIndex;
               
-              // Handle ELSE in condition containers
+              // Handle ELSE separator in condition containers
               if (block.type === 'condition_container' && 
                   block.metadata.hasElse && 
                   index === block.metadata.elseIndex) {
                 elements.push(
-                  <div key={`else_${child.id}`} className="flex items-center space-x-2 my-2 text-yellow-400">
-                    <div className="flex-1 h-px bg-yellow-400/30"></div>
-                    <span className="text-sm font-medium">ELSE</span>
-                    <div className="flex-1 h-px bg-yellow-400/30"></div>
+                  <div key={`else_separator_${index}`} className="flex items-center space-x-2 my-3 text-yellow-400">
+                    <div className="flex-1 h-px bg-yellow-400/50"></div>
+                    <div className="flex items-center space-x-2 bg-yellow-900/30 px-3 py-1 rounded-lg border border-yellow-600">
+                      <span className="text-sm font-medium">ELSE</span>
+                      <span className="text-xs opacity-75">({block.children.length - block.metadata.elseIndex} items)</span>
+                    </div>
+                    <div className="flex-1 h-px bg-yellow-400/50"></div>
                   </div>
                 );
               }
               
-              // Add the block
-              elements.push(renderStructuredBlock(child, true));
+              // Add section indicator for IF/ELSE visual distinction
+              const childWithSection = (
+                <div key={child.id} className={`${isInElseSection ? 'border-l-2 border-yellow-400/30 pl-2' : ''}`}>
+                  {isInElseSection && index === block.metadata.elseIndex && (
+                    <div className="text-xs text-yellow-400 mb-1 opacity-75">
+                      ELSE Section
+                    </div>
+                  )}
+                  {!isInElseSection && index === 0 && block.metadata.hasElse && (
+                    <div className="text-xs text-green-400 mb-1 opacity-75">
+                      IF Section
+                    </div>
+                  )}
+                  {renderStructuredBlock(child, true)}
+                </div>
+              );
+              
+              // Add the block with section styling
+              elements.push(childWithSection);
               
               // Add insert zone after each block (except the last one, handled separately)
               if (index < block.children.length - 1) {
@@ -1812,21 +2544,40 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
                   showAllLanguages,
                   translations,
                   availableNodes,
-                  variables,
+                  variables: block.command.type === 'variable_set_to' ? realVariables : semafori,
                   characters: CHARACTERS,
-                  characterStates,
+                  characterStates: calculateCharacterStatesUpToBlock(structuredBlocks, CHARACTERS, block.id),
                   languages: LANGUAGES,
                   onStartEditing: startEditing,
                   onSaveEdit: saveEdit,
                   onEditingValueChange: setEditingValue,
                   onOpenCharacterPicker: openCharacterPicker,
+                  onOpenVariablePicker: openVariablePicker,
                   onOpenNodeSelector: openNodeSelector,
-                  onOpenButtonSelector: openButtonSelector
+                  onOpenButtonSelector: openButtonSelector,
+                  onMoveUp: (blockId: string) => moveBlock(blockId, 'up'),
+                  onMoveDown: (blockId: string) => moveBlock(blockId, 'down'),
+                  onDeleteBlock: (blockId: string) => {
+                    const removeBlock = (blocks: StructuredBlock[]): boolean => {
+                      for (let i = 0; i < blocks.length; i++) {
+                        if (blocks[i].id === blockId) {
+                          blocks.splice(i, 1);
+                          return true;
+                        }
+                        if (removeBlock(blocks[i].children)) return true;
+                      }
+                      return false;
+                    };
+                    removeBlock(structuredBlocks);
+                    setStructuredBlocks([...structuredBlocks]);
+                    saveScriptChanges();
+                  }
                 })}
               </div>
               
-              {/* Block Controls - Always Visible */}
-              <div className="flex items-center space-x-1 ml-3 flex-shrink-0">
+              {/* Block Controls - Always Visible (except for container blocks) */}
+              {block.type !== 'dialog_container' && (
+                <div className="flex items-center space-x-1 ml-3 flex-shrink-0">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -1873,6 +2624,7 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
                   ×
                 </button>
               </div>
+              )}
             </div>
           </div>
         ) : null}
@@ -2099,12 +2851,13 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
                     ]
                   },
                   variables: {
-                    title: '📝 Variables',
+                    title: '📝 Variables & Semafori',
                     color: '#f59e0b',
                     bgColor: 'rgba(245, 158, 11, 0.1)',
                     components: [
-                      { type: 'variable_set', label: 'SET Variable', icon: '📝', description: 'Set boolean variable to true' },
-                      { type: 'variable_reset', label: 'RESET Variable', icon: '🗑️', description: 'Set boolean variable to false' },
+                      { type: 'variable_set', label: 'SET Semaforo', icon: '🚦', description: 'Set boolean semaforo to true' },
+                      { type: 'variable_reset', label: 'RESET Semaforo', icon: '🗑️', description: 'Set boolean semaforo to false' },
+                      { type: 'variable_set_to', label: 'SET_TO Variable', icon: '📝', description: 'Set variable to specific value' },
                     ]
                   },
                   containers: {
@@ -2216,7 +2969,12 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-gt-primary rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[80vh] overflow-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-white">Select Character</h3>
+              <div>
+                <h3 className="text-lg font-bold text-white">Select Character</h3>
+                <div className="text-sm text-gray-400 mt-1">
+                  For {characterPickerData.blockType?.replace('_', ' ').toUpperCase()} block
+                </div>
+              </div>
               <button 
                 onClick={() => setShowCharacterPicker(false)}
                 className="text-gray-400 hover:text-white"
@@ -2225,42 +2983,163 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
               </button>
             </div>
             
+            {/* Legend */}
+            <div className="mb-4 p-3 bg-gray-800/50 rounded-lg">
+              <div className="text-sm text-gray-300 mb-2 font-medium">Legend:</div>
+              <div className="flex flex-wrap gap-4 text-xs">
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">✓</div>
+                  <span className="text-green-400">Visible character (selectable)</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 bg-gray-500 rounded-full flex items-center justify-center text-gray-300 font-bold">○</div>
+                  <span className="text-gray-400">Hidden character {characterPickerData.blockType === 'show_character' ? '(selectable)' : '(not selectable)'}</span>
+                </div>
+              </div>
+            </div>
+            
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {CHARACTERS.map(character => (
-                <div 
-                  key={character.name}
-                  className={`
-                    p-4 rounded-lg cursor-pointer transition-all border-2
-                    ${characterPickerData.current === character.name 
-                      ? 'border-blue-500 bg-blue-900/20' 
-                      : 'border-gray-600 hover:border-gray-400 bg-gt-secondary hover:bg-slate-600'
-                    }
-                  `}
-                  onClick={() => selectCharacter(character.name)}
-                >
-                  <div className="text-center">
-                    <div className="mb-3">
-                      <img 
-                        src={`http://localhost:3001/static/campaign/${character.images[0]}`}
-                        alt={character.displayName}
-                        className="w-16 h-16 object-contain mx-auto rounded border border-gray-500"
-                        onError={(e) => {
-                          e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjMzc0MTUxIi8+Cjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOWNhM2FmIiBmb250LXNpemU9IjE0Ij7wn5GKPC90ZXh0Pgo8L3N2Zz4K';
-                        }}
-                      />
-                    </div>
-                    <div className="font-medium text-white text-sm mb-1">
-                      {character.displayName}
-                    </div>
-                    <div className="text-xs text-gray-400 mb-2">
-                      {character.name}
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {character.images.length} images
+              {CHARACTERS.map(character => {
+                // Calculate character state up to the current block
+                const currentBlockCharacterStates = calculateCharacterStatesUpToBlock(
+                  structuredBlocks, 
+                  CHARACTERS, 
+                  characterPickerData.blockId
+                );
+                const characterState = currentBlockCharacterStates.get(character.name);
+                const isShown = characterState?.isShown || false;
+                
+                // Determine if character is selectable based on block type
+                const isSelectable = characterPickerData.blockType === 'show_character' || isShown;
+                const isCurrentSelection = characterPickerData.current === character.name;
+                
+                return (
+                  <div 
+                    key={character.name}
+                    className={`
+                      p-4 rounded-lg transition-all border-2 relative
+                      ${isCurrentSelection 
+                        ? 'border-blue-500 bg-blue-900/20' 
+                        : isSelectable 
+                          ? 'border-gray-600 hover:border-gray-400 bg-gt-secondary hover:bg-slate-600 cursor-pointer'
+                          : 'border-red-800 bg-red-900/10 cursor-not-allowed opacity-60'
+                      }
+                    `}
+                    onClick={() => isSelectable && selectCharacter(character.name)}
+                  >
+                    <div className="text-center">
+                      <div className="mb-3 relative">
+                        <img 
+                          src={getCampaignCharacterImage(character.images[0])}
+                          alt={character.displayName}
+                          className="w-16 h-16 object-contain mx-auto rounded border border-gray-500"
+                          onError={(e) => {
+                            e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjMzc0MTUxIi8+Cjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOWNhM2FmIiBmb250LXNpemU9IjE0Ij7wn5GKPC90ZXh0Pgo8L3N2Zz4K';
+                          }}
+                        />
+                        {/* Status indicator */}
+                        <div className={`absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                          isShown ? 'bg-green-500 text-white' : 'bg-gray-500 text-gray-300'
+                        }`}>
+                          {isShown ? '✓' : '○'}
+                        </div>
+                      </div>
+                      <div className="font-medium text-white text-sm mb-1">
+                        {character.displayName}
+                      </div>
+                      <div className="text-xs text-gray-400 mb-2">
+                        {character.name}
+                      </div>
+                      <div className={`text-xs ${isShown ? 'text-green-400' : 'text-gray-500'}`}>
+                        {isShown ? 'VISIBLE' : 'HIDDEN'}
+                      </div>
+                      {!isSelectable && (
+                        <div className="text-xs text-red-400 mt-1">
+                          Not available
+                        </div>
+                      )}
                     </div>
                   </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* IF Type Selector Modal */}
+      {showIfTypeSelector && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gt-primary rounded-lg p-6 max-w-2xl w-full mx-4">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-white flex items-center space-x-2">
+                <GitBranch className="w-6 h-6 text-yellow-400" />
+                <span>Select IF Block Type</span>
+              </h3>
+              <button 
+                onClick={() => {
+                  setShowIfTypeSelector(false);
+                  setPendingIfCreation(null);
+                }}
+                className="text-gray-400 hover:text-white text-xl"
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <p className="text-gray-300 text-sm mb-4">
+                Choose the type of IF condition you want to create:
+              </p>
+              
+              {/* Predefined IF Option */}
+              <div className="space-y-3">
+                <h4 className="text-lg font-medium text-yellow-300">Predefined IF Conditions</h4>
+                <p className="text-sm text-gray-400 mb-3">
+                  Use predefined game state conditions found in Galaxy Trucker scripts:
+                </p>
+                
+                <div className="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto">
+                  {[
+                    { value: 'IF_TUTORIAL_SEEN', label: 'Tutorial Seen', description: 'Player has seen the tutorial before' },
+                    { value: 'IF_FROM_CAMPAIGN', label: 'From Campaign', description: 'Called from campaign mode' },
+                    { value: 'IF_DEBUG', label: 'Debug Mode', description: 'Debug mode is enabled' },
+                    { value: 'IF_MISSION_WON', label: 'Mission Won', description: 'Player won the current mission' },
+                    { value: 'IF_PROB', label: 'Probability Check', description: 'Random probability check (requires number)' },
+                    { value: 'IF_MIN', label: 'Minimum Value', description: 'Variable is at least minimum value' },
+                    { value: 'IF_MAX', label: 'Maximum Value', description: 'Variable is at most maximum value' },
+                    { value: 'IF_IS', label: 'Exact Value', description: 'Variable equals exact value' },
+                    { value: 'IF_HAS_CREDITS', label: 'Has Credits', description: 'Player has enough credits (requires amount)' },
+                    { value: 'IF_ORDER', label: 'Turn Order', description: 'Player position in turn order (requires parameters)' }
+                  ].map(type => (
+                    <button
+                      key={type.value}
+                      onClick={() => createIfBlockWithType('predefined', type.value)}
+                      className="p-3 bg-blue-900/30 hover:bg-blue-800/50 border border-blue-700 rounded-lg text-left transition-colors"
+                    >
+                      <div className="font-medium text-blue-200">{type.label}</div>
+                      <div className="text-xs text-blue-300 mt-1">{type.value}</div>
+                      <div className="text-xs text-gray-400 mt-1">{type.description}</div>
+                    </button>
+                  ))}
                 </div>
-              ))}
+              </div>
+              
+              <div className="border-t border-gray-600 pt-4">
+                <h4 className="text-lg font-medium text-green-300 mb-3">Standard IF/IFNOT with Variables</h4>
+                <p className="text-sm text-gray-400 mb-3">
+                  Create custom IF conditions using variables/semafori:
+                </p>
+                
+                <button
+                  onClick={() => createIfBlockWithType('standard')}
+                  className="w-full p-4 bg-green-900/30 hover:bg-green-800/50 border border-green-700 rounded-lg text-left transition-colors"
+                >
+                  <div className="font-medium text-green-200">Standard IF Block</div>
+                  <div className="text-sm text-green-300 mt-1">IF/IFNOT with custom variables</div>
+                  <div className="text-xs text-gray-400 mt-1">Create conditions using your own variables and semafori</div>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -2385,6 +3264,146 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
         </div>
       )}
 
+      {/* Variable Picker Modal */}
+      {showVariablePicker && variablePickerData && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gt-primary rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[80vh] overflow-auto">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-lg font-bold text-white flex items-center space-x-2">
+                  <Variable className="w-5 h-5 text-purple-400" />
+                  <span>Select Variable/Semaforo</span>
+                </h3>
+                <div className="text-sm text-gray-400 mt-1">
+                  For {variablePickerData.action?.toUpperCase()} action - {variablePickerData.action === 'set' ? 'turns semaforo ON' : 'turns semaforo OFF'}
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowVariablePicker(false)}
+                className="text-gray-400 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+            
+            {/* Search Filter */}
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="Search variables/semafori... (case sensitive)"
+                className="w-full bg-gray-800 text-white px-4 py-2 rounded-lg border border-gray-600 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-colors"
+                value={variableSearchFilter || ''}
+                onChange={(e) => setVariableSearchFilter(e.target.value)}
+              />
+            </div>
+
+            {/* Legend */}
+            <div className="mb-4 p-3 bg-gray-800/50 rounded-lg">
+              <div className="text-sm text-gray-300 mb-2 font-medium">Legend:</div>
+              <div className="flex flex-wrap gap-4 text-xs">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <span className="text-green-400">Variable ON/True</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                  <span className="text-red-400">Variable OFF/False</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-gray-500 rounded-full border-2 border-dashed border-gray-400"></div>
+                  <span className="text-gray-400">Create New Variable (always first option)</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {/* Create New Variable Option - ALWAYS FIRST */}
+              <div 
+                className="p-4 rounded-lg cursor-pointer transition-all border-2 border-dashed border-purple-500 hover:border-purple-400 bg-purple-900/10 hover:bg-purple-900/20 order-first"
+                onClick={() => {
+                  const newVariableName = prompt('Enter new variable/semaforo name:');
+                  if (newVariableName && newVariableName.trim()) {
+                    selectVariable(newVariableName.trim());
+                  }
+                }}
+              >
+                <div className="text-center">
+                  <div className="mb-3">
+                    <div className="w-16 h-16 mx-auto bg-purple-700/30 rounded-full flex items-center justify-center border-2 border-dashed border-purple-500">
+                      <PlusIcon className="w-8 h-8 text-purple-400" />
+                    </div>
+                  </div>
+                  <div className="font-medium text-purple-300 text-sm mb-1">
+                    Create New Variable
+                  </div>
+                  <div className="text-xs text-purple-400">
+                    Click to add new semaforo
+                  </div>
+                </div>
+              </div>
+
+              {/* Existing Variables - Filtered and Sorted */}
+              {Array.from(variables.entries())
+                .filter(([variableName]) => 
+                  !variableSearchFilter || variableName.includes(variableSearchFilter)
+                )
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([variableName, variableState]) => (
+                <div 
+                  key={variableName}
+                  className={`
+                    p-4 rounded-lg cursor-pointer transition-all border-2 relative
+                    ${variablePickerData.current === variableName 
+                      ? 'border-purple-500 bg-purple-900/20' 
+                      : 'border-gray-600 hover:border-gray-400 bg-gt-secondary hover:bg-slate-600'
+                    }
+                  `}
+                  onClick={() => selectVariable(variableName)}
+                >
+                  <div className="text-center">
+                    <div className="mb-3 relative">
+                      <div className="w-16 h-16 mx-auto bg-purple-600/20 rounded-full flex items-center justify-center border border-purple-500/30">
+                        <Variable className="w-8 h-8 text-purple-400" />
+                      </div>
+                      {/* Status indicator */}
+                      <div className={`absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center ${
+                        variableState ? 'bg-green-500' : 'bg-red-500'
+                      } shadow-lg`}>
+                        <div className="w-2 h-2 bg-white rounded-full"></div>
+                      </div>
+                    </div>
+                    <div className="font-medium text-white text-sm mb-1">
+                      {variableName}
+                    </div>
+                    <div className={`text-xs font-medium ${variableState ? 'text-green-400' : 'text-red-400'}`}>
+                      {variableState ? 'ON (TRUE)' : 'OFF (FALSE)'}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      Will become: {variablePickerData.action === 'set' ? 'ON' : 'OFF'}
+                    </div>
+                  </div>
+                </div>
+              ))}
+              
+              {/* No Results Message */}
+              {variableSearchFilter && 
+               Array.from(variables.entries()).filter(([variableName]) => 
+                 variableName.includes(variableSearchFilter)
+               ).length === 0 && (
+                <div className="col-span-full text-center py-8">
+                  <div className="text-gray-400 text-sm">
+                    No variables found matching "{variableSearchFilter}"
+                  </div>
+                  <div className="text-gray-500 text-xs mt-1">
+                    Search is case-sensitive. Try adjusting your search term.
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Navigation Stack */}
       {navigationStack.length > 0 && (
         <div className="fixed bottom-4 right-4 bg-gt-primary rounded-lg p-3 shadow-xl border border-gray-600">
@@ -2430,6 +3449,7 @@ export function StructuredCampaignFlowEditor({ selectedScript, selectedNode, onS
           </div>
         </div>   
       )}
+
     </div>
   );
 }
