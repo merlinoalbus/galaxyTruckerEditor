@@ -1,4 +1,4 @@
 export * from './useCampaignEditor';
-export * from './useOverview';
-export * from './useVariablesSystem';
+export * from './Overview/useOverview';
+export * from './VariablesSystem/useVariablesSystem';
 export * from './VisualFlowEditor/useVisualFlowEditor';

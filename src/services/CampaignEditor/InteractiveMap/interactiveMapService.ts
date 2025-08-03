@@ -1,5 +1,5 @@
-import { MapNode, MapConnection, CampaignScript, Mission } from '../../../types/CampaignEditor/InteractiveMap/InteractiveMap.types';
-import { ScriptCommand } from '../../../types/CampaignEditor/CampaignEditor.types';
+import { MapNode, MapConnection, CampaignScript, Mission } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
+import { ScriptCommand } from '@/types/CampaignEditor/CampaignEditor.types';
 
 const API_BASE = 'http://localhost:3001/api';
 

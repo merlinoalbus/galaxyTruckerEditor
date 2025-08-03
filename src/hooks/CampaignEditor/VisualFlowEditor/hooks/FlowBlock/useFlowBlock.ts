@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { FlowBlock, FlowBlockType } from '@/types/CampaignEditor/types/VisualFlowEditor/VisualFlowEditor.types';
 import { CampaignScript } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 
-export interface UseFlowBlocksReturn {
+export interface UseFlowBlockReturn {
   blocks: FlowBlock[];
   selectedBlockId: string | undefined;
   setSelectedBlockId: (id: string | undefined) => void;
@@ -14,7 +14,7 @@ export interface UseFlowBlocksReturn {
   duplicateBlock: (blockId: string) => void;
 }
 
-export const useFlowBlocks = (): UseFlowBlocksReturn => {
+export const useFlowBlock = (): UseFlowBlockReturn => {
   const [blocks, setBlocks] = useState<FlowBlock[]>([]);
   const [selectedBlockId, setSelectedBlockId] = useState<string | undefined>();
 

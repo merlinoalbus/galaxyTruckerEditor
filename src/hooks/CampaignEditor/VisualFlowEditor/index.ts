@@ -1,4 +1,4 @@
 export { useVisualFlowEditor } from './useVisualFlowEditor';
-export { useFlowBlocks } from './useFlowBlocks';
+export { useFlowBlock } from './hooks/FlowBlock/useFlowBlock';
 export { useDragOperations } from './useDragOperations';
-export { useAddBlockMenu } from './useAddBlockMenu';
+export { useAddBlockMenu } from './hooks/AddBlockMenu/useAddBlockMenu';
