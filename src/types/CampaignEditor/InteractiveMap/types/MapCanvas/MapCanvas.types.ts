@@ -1,4 +1,4 @@
-import { MapNode, MapConnection, MapViewport, MapDimensions } from '../../InteractiveMap.types';
+import { MapNode, MapConnection, MapViewport, MapDimensions, CampaignScript } from '../../InteractiveMap.types';
 
 export interface MapCanvasProps {
   nodes: MapNode[];
@@ -7,6 +7,8 @@ export interface MapCanvasProps {
   onNodeClick: (node: MapNode) => void;
   onConnectionClick: (connection: MapConnection) => void;
   onViewportChange: (viewport: MapViewport) => void;
+  getNodeRelatedScripts?: (node: MapNode) => CampaignScript[];
+  getConnectionRelatedScripts?: (connection: MapConnection) => CampaignScript[];
 }
 
 export interface CanvasInteraction {

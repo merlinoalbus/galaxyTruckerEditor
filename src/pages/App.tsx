@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { RealGameDataProvider, useRealGameData } from '../contexts/RealGameDataContext';
+import { GameDataProvider, useGameData } from '@/contexts/GameDataContext';
 import { Header } from '../components/CampaignEditor/components/Header';
 import { Sidebar } from '../components/CampaignEditor/components/Sidebar';
 // import { Traduzioni } from '../components/Editors/Traduzioni';
@@ -8,7 +8,7 @@ import { CampaignEditor } from '../components/CampaignEditor/CampaignEditor';
 import '../App.css';
 
 function AppContent() {
-  const { connected, loading, error } = useRealGameData();
+  const { connected, loading, error } = useGameData();
 
   if (loading) {
     return (
@@ -73,10 +73,10 @@ function AppContent() {
   );
 }
 
-export function RealApp() {
+export function App() {
   return (
-    <RealGameDataProvider>
+    <GameDataProvider>
       <AppContent />
-    </RealGameDataProvider>
+    </GameDataProvider>
   );
 }

@@ -1,9 +1,11 @@
 import React from 'react';
-import { useRealGameData } from '../../../contexts/RealGameDataContext';
+
 import { RefreshCw, Download, Upload } from 'lucide-react';
 
+import { useGameData } from '@/contexts/GameDataContext';
+
 export function Header() {
-  const { loading, error, refreshAll } = useRealGameData();
+  const { loading, error, refreshAll } = useGameData();
 
   return (
     <header className="bg-gt-primary border-b border-slate-700 px-6 py-4">

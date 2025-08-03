@@ -49,7 +49,7 @@ interface GameDataContextType {
   
   // Utility
   refreshAll: () => Promise<void>;
-  getBackups: () => Promise<any[]>;
+  getBackups: () => Promise<{ name: string; size: number; created: string; path: string }[]>;
   healthCheck: () => Promise<boolean>;
 }
 
@@ -59,7 +59,7 @@ interface GameDataProviderProps {
   children: ReactNode;
 }
 
-export function RealGameDataProvider({ children }: GameDataProviderProps) {
+export function GameDataProvider({ children }: GameDataProviderProps) {
   // State
   const [missionFiles, setMissionFiles] = useState<FileMetadata[]>([]);
   const [deckScriptFiles, setDeckScriptFiles] = useState<FileMetadata[]>([]);
@@ -322,7 +322,7 @@ export function RealGameDataProvider({ children }: GameDataProviderProps) {
     }
   };
 
-  const getBackups = async (): Promise<any[]> => {
+  const getBackups = async (): Promise<{ name: string; size: number; created: string; path: string }[]> => {
     try {
       const result = await gameDataService.getBackups();
       return result.backups;
@@ -348,7 +348,7 @@ export function RealGameDataProvider({ children }: GameDataProviderProps) {
   // Helper functions for parsing
   const parseDeckScriptContent = (content: string): DeckScript => {
     const lines = content.split('\n').map(line => line.trim()).filter(line => line && !line.startsWith('#'));
-    const commands: any[] = [];
+    const commands: { type: string; content: string; line: number }[] = [];
     let scriptName = 'Unnamed Script';
 
     for (const line of lines) {
@@ -360,21 +360,21 @@ export function RealGameDataProvider({ children }: GameDataProviderProps) {
       if (line.startsWith('TmpDeckLoad ')) {
         const deckFile = line.replace('TmpDeckLoad ', '').replace(/"/g, '');
         commands.push({
-          type: 'TmpDeckLoad',
-          deckFile
+          type: 'TmpDeckLoad' as const,
+          content: line,
+          line: lines.indexOf(line) + 1
         });
       } else if (line.startsWith('DeckAddCardType ')) {
         const parts = line.replace('DeckAddCardType ', '').split(' ');
         commands.push({
-          type: 'DeckAddCardType',
-          flight: parseInt(parts[0]),
-          cardType: parts[1],
-          count: parseInt(parts[2])
+          type: 'DeckAddCardType' as const,
+          content: line,
+          line: lines.indexOf(line) + 1
         });
       }
     }
 
-    return { name: scriptName, commands };
+    return { name: scriptName, commands: commands as any };
   };
 
   const serializeDeckScript = (script: DeckScript): string => {
@@ -436,7 +436,7 @@ export function RealGameDataProvider({ children }: GameDataProviderProps) {
   );
 }
 
-export function useRealGameData() {
+export function useGameData() {
   const context = useContext(GameDataContext);
   if (context === undefined) {
     throw new Error('useRealGameData must be used within a RealGameDataProvider');
