@@ -33,6 +33,7 @@ export interface CampaignScript {
   commands: ScriptCommand[];
   relatedNodes: string[];
   relatedConnections: string[];
+  blocks?: any[]; // Blocchi parsati dal backend per Visual Flow Editor
 }
 
 import { ScriptCommand } from '../CampaignEditor.types';

@@ -185,7 +185,8 @@ function parseCommand(line, lineNumber) {
   } else if (upperLine.startsWith('OPT ')) {
     type = 'menu_option';
     parameters = {
-      text: trimmed.substring(4).replace(/^"|"$/g, '')
+      text: trimmed.substring(4).replace(/^"|"$/g, ''),
+      isLocalizable: true
     };
   } else if (upperLine === 'END_OF_OPT') {
     type = 'menu_option_end';
@@ -195,7 +196,8 @@ function parseCommand(line, lineNumber) {
     if (match) {
       parameters = {
         condition: match[1],
-        text: match[2]
+        text: match[2],
+        isLocalizable: true
       };
     }
   } else if (upperLine.startsWith('OPT_IFNOT ')) {
@@ -205,7 +207,8 @@ function parseCommand(line, lineNumber) {
       parameters = {
         condition: match[1],
         conditionType: 'not',
-        text: match[2]
+        text: match[2],
+        isLocalizable: true
       };
     }
   } else if (upperLine === 'EXIT_MENU') {
@@ -267,17 +270,40 @@ function parseCommand(line, lineNumber) {
   } else if (upperLine.startsWith('SAY ')) {
     type = 'dialogue';
     parameters = {
-      text: trimmed.substring(4).replace(/^"|"$/g, '')
+      text: trimmed.substring(4).replace(/^"|"$/g, ''),
+      isLocalizable: true
+    };
+  } else if (upperLine.startsWith('SAYCHAR ')) {
+    type = 'dialogue';
+    const parts = trimmed.split(' ');
+    const character = parts[1];
+    const text = trimmed.substring(trimmed.indexOf('"')).replace(/^"|"$/g, '');
+    parameters = {
+      character: character,
+      text: text,
+      isLocalizable: true
     };
   } else if (upperLine.startsWith('ASK ')) {
     type = 'question';
     parameters = {
-      text: trimmed.substring(4).replace(/^"|"$/g, '')
+      text: trimmed.substring(4).replace(/^"|"$/g, ''),
+      isLocalizable: true
+    };
+  } else if (upperLine.startsWith('ASKCHAR ')) {
+    type = 'question';
+    const parts = trimmed.split(' ');
+    const character = parts[1];
+    const text = trimmed.substring(trimmed.indexOf('"')).replace(/^"|"$/g, '');
+    parameters = {
+      character: character,
+      text: text,
+      isLocalizable: true
     };
   } else if (upperLine.startsWith('ANNOUNCE ')) {
     type = 'announce';
     parameters = {
-      text: trimmed.substring(9).replace(/^"|"$/g, '')
+      text: trimmed.substring(9).replace(/^"|"$/g, ''),
+      isLocalizable: true
     };
   
   // Variable commands
@@ -390,8 +416,10 @@ function parseScriptToBlocks(commands) {
     // Container blocks (apertura)
     if (command.type === 'conditional_start') {
       const block = createConditionalBlock(command, commands, i);
-      const result = parseNestedBlock(commands, i, 'conditional_end');
-      block.children = result.children;
+      const result = parseConditionalWithElse(commands, i, 'conditional_end');
+      block.children = result.trueBranch;
+      block.hasElse = result.hasElse;
+      block.elseBranch = result.elseBranch || [];
       blocks.push(block);
       i = result.nextIndex;
       
@@ -446,10 +474,13 @@ function parseScriptToBlocks(commands) {
   return blocks;
 }
 
-function parseNestedBlock(commands, startIndex, endType) {
-  const children = [];
-  let i = startIndex + 1; // Skip opening command
+function parseConditionalWithElse(commands, startIndex, endType, maxDepth = 50) {
+  const trueBranch = [];
+  const elseBranch = [];
+  let hasElse = false;
+  let i = startIndex + 1; // Skip opening IF command
   let depth = 1;
+  let inElseBranch = false;
   
   while (i < commands.length && depth > 0) {
     const command = commands[i];
@@ -460,6 +491,52 @@ function parseNestedBlock(commands, startIndex, endType) {
     } else if (command.type === endType) {
       depth--;
       if (depth === 0) break;
+    } else if (command.type === 'else' && depth === 1) {
+      // ELSE allo stesso livello del nostro IF
+      hasElse = true;
+      inElseBranch = true;
+      i++;
+      continue;
+    }
+    
+    // Parse nested content solo al nostro livello
+    if (depth === 1) {
+      const nestedBlocks = parseScriptToBlocks([command]);
+      if (inElseBranch) {
+        elseBranch.push(...nestedBlocks);
+      } else {
+        trueBranch.push(...nestedBlocks);
+      }
+    }
+    
+    i++;
+  }
+  
+  return {
+    trueBranch,
+    elseBranch,
+    hasElse,
+    nextIndex: i + 1 // Skip END_OF_IF command
+  };
+}
+
+function parseNestedBlock(commands, startIndex, endType, maxDepth = 50) {
+  const children = [];
+  let i = startIndex + 1; // Skip opening command
+  let depth = 1;
+  let currentDepth = 0;
+  
+  while (i < commands.length && depth > 0 && currentDepth < maxDepth) {
+    const command = commands[i];
+    
+    // Check for nested containers of same type
+    if (isOpeningCommand(command.type, endType)) {
+      depth++;
+      currentDepth++;
+    } else if (command.type === endType) {
+      depth--;
+      if (depth === 0) break;
+      currentDepth = Math.max(0, currentDepth - 1);
     }
     
     // Parse nested content
@@ -469,6 +546,10 @@ function parseNestedBlock(commands, startIndex, endType) {
     }
     
     i++;
+  }
+  
+  if (currentDepth >= maxDepth) {
+    console.warn(`Maximum nesting depth ${maxDepth} reached in parseNestedBlock`);
   }
   
   return {
@@ -503,16 +584,37 @@ function parseOptionContent(commands, optionIndex) {
 }
 
 function createConditionalBlock(command, commands, index) {
+  // Determina il tipo specifico di IF
+  let ifType = 'standard';
+  let condition = '';
+  
+  if (command.parameters.type) {
+    ifType = command.parameters.type; // probability, semaforo_not, variable_equals, etc.
+  }
+  
+  if (command.parameters.condition) {
+    condition = command.parameters.condition;
+  } else if (command.parameters.semaforo) {
+    condition = command.parameters.semaforo;
+  } else if (command.parameters.variable) {
+    condition = `${command.parameters.variable} ${command.parameters.value || ''}`.trim();
+  }
+
   return {
     id: generateBlockId(),
     type: 'conditional',
-    subtype: command.type, // if_start, unless_start, etc.
+    subtype: command.type,
+    ifType: ifType, // standard, probability, semaforo_not, variable_equals, debug_mode, etc.
+    condition: condition,
     parameters: command.parameters || {},
     children: [],
+    hasElse: false, // Sarà aggiornato durante il parsing se trova ELSE
+    elseBranch: [], // Branch ELSE se presente
     position: { x: 0, y: index * 100 },
     metadata: {
       line: command.line,
-      originalContent: command.content
+      originalContent: command.content,
+      maxNestingDepth: 50
     }
   };
 }
@@ -620,6 +722,56 @@ function isEndCommand(commandType) {
 
 function generateBlockId() {
   return 'block_' + Math.random().toString(36).substr(2, 9);
+}
+
+// Funzione per consolidare comandi localizzabili da tutte le lingue
+function consolidateMultilingualCommands(allLanguagesData) {
+  const consolidated = {};
+  
+  // Per ogni script
+  for (const [scriptName, scriptData] of Object.entries(allLanguagesData)) {
+    if (!consolidated[scriptName]) {
+      consolidated[scriptName] = {
+        ...scriptData,
+        commands: [],
+        blocks: []
+      };
+    }
+    
+    // Prendi la versione EN come base di riferimento
+    const baseCommands = scriptData.languages?.EN?.content || scriptData.commands || [];
+    const consolidatedCommands = [];
+    
+    // Per ogni comando base (EN)
+    baseCommands.forEach((baseCommand, index) => {
+      const consolidatedCommand = { ...baseCommand };
+      
+      // Se il comando è localizzabile, crea l'array multilingua
+      if (baseCommand.parameters?.isLocalizable && baseCommand.parameters?.text) {
+        consolidatedCommand.parameters.localizedText = {};
+        
+        // Aggiungi tutte le lingue disponibili
+        Object.keys(scriptData.languages || {}).forEach(lang => {
+          const langCommands = scriptData.languages[lang]?.content || [];
+          const langCommand = langCommands[index];
+          
+          if (langCommand && langCommand.parameters?.text) {
+            consolidatedCommand.parameters.localizedText[lang] = langCommand.parameters.text;
+          }
+        });
+        
+        // Rimuovi il testo singolo, ora abbiamo l'array
+        delete consolidatedCommand.parameters.text;
+        delete consolidatedCommand.parameters.isLocalizable;
+      }
+      
+      consolidatedCommands.push(consolidatedCommand);
+    });
+    
+    consolidated[scriptName].commands = consolidatedCommands;
+  }
+  
+  return consolidated;
 }
 
 // Writer strutturale per conversione blocks-to-script
@@ -746,11 +898,14 @@ function convertOptionBlock(block, indentLevel = 0) {
   const indent = '  '.repeat(indentLevel);
   let script = '';
   
-  // Option line
+  // Option line con supporto multilingua
+  const optionText = block.parameters.localizedText?.EN || block.parameters.text || '';
+  
   if (block.subtype === 'menu_option_conditional') {
-    script += `${indent}OPT_IF ${block.parameters.condition || ''} "${block.parameters.text || ''}"\n`;
+    const conditionType = block.parameters.conditionType === 'not' ? 'OPT_IFNOT' : 'OPT_IF';
+    script += `${indent}${conditionType} ${block.parameters.condition || ''} "${optionText}"\n`;
   } else {
-    script += `${indent}OPT "${block.parameters.text || ''}"\n`;
+    script += `${indent}OPT "${optionText}"\n`;
   }
   
   // Option content (annidamenti misti supportati)
@@ -772,11 +927,16 @@ function convertAtomicBlock(block, indentLevel = 0) {
   // Ricostruzione da parametri per comandi principali
   switch (block.subtype) {
     case 'dialogue':
-      return `${indent}SAY "${block.parameters.text || ''}"\n`;
+      const dialogText = block.parameters.localizedText?.EN || block.parameters.text || '';
+      const dialogChar = block.parameters.character ? `SAYCHAR ${block.parameters.character} ` : 'SAY ';
+      return `${indent}${dialogChar}"${dialogText}"\n`;
     case 'question':
-      return `${indent}ASK "${block.parameters.text || ''}"\n`;
+      const questionText = block.parameters.localizedText?.EN || block.parameters.text || '';
+      const questionChar = block.parameters.character ? `ASKCHAR ${block.parameters.character} ` : 'ASK ';
+      return `${indent}${questionChar}"${questionText}"\n`;
     case 'announce':
-      return `${indent}ANNOUNCE "${block.parameters.text || ''}"\n`;
+      const announceText = block.parameters.localizedText?.EN || block.parameters.text || '';
+      return `${indent}ANNOUNCE "${announceText}"\n`;
     case 'semaforo_set':
       return `${indent}SET ${block.parameters.variable || ''}\n`;
     case 'semaforo_reset':
@@ -1598,7 +1758,34 @@ app.get('/api/campaign/scripts/parsed', async (req, res) => {
       const script = result.scripts[scriptName];
       if (script.commands && script.commands.length > 0) {
         try {
-          script.blocks = parseScriptToBlocks(script.commands);
+          // Consolida comandi multilingua per questo script specifico
+          const consolidatedCommands = [];
+          script.commands.forEach((baseCommand, index) => {
+            const consolidatedCommand = { ...baseCommand };
+            
+            // Se il comando è localizzabile, crea l'array multilingua
+            if (baseCommand.parameters?.isLocalizable && baseCommand.parameters?.text) {
+              consolidatedCommand.parameters.localizedText = {};
+              
+              // Aggiungi tutte le lingue disponibili
+              Object.keys(script.languages || {}).forEach(lang => {
+                const langCommands = script.languages[lang]?.content || [];
+                const langCommand = langCommands[index];
+                
+                if (langCommand && langCommand.parameters?.text) {
+                  consolidatedCommand.parameters.localizedText[lang] = langCommand.parameters.text;
+                }
+              });
+              
+              // Rimuovi il testo singolo, ora abbiamo l'array
+              delete consolidatedCommand.parameters.text;
+              delete consolidatedCommand.parameters.isLocalizable;
+            }
+            
+            consolidatedCommands.push(consolidatedCommand);
+          });
+          
+          script.blocks = parseScriptToBlocks(consolidatedCommands);
         } catch (parseError) {
           logger.error(`Error parsing script ${scriptName} to blocks: ${parseError.message}`);
           script.blocks = [];
@@ -1615,47 +1802,126 @@ app.get('/api/campaign/scripts/parsed', async (req, res) => {
 });
 
 // API per conversione specifica script-to-blocks
+// Endpoint per parsare contenuto script in blocchi
+app.post('/api/campaign/script/parse-content', async (req, res) => {
+  try {
+    const { script, fileName = 'unknown.txt' } = req.body;
+    
+    if (!script || typeof script !== 'string') {
+      return res.status(400).json({ error: 'Script content is required as string' });
+    }
+    
+    // Parsa il contenuto dello script
+    const parsedScripts = parseScriptContent(script, fileName, 'EN');
+    
+    if (parsedScripts.length === 0) {
+      return res.json({ 
+        blocks: [],
+        scripts: [],
+        message: 'No scripts found in content'
+      });
+    }
+    
+    // Prendi il primo script se ce ne sono più di uno
+    const scriptData = parsedScripts[0];
+    
+    // Converti in blocchi strutturati
+    const blocks = parseScriptToBlocks(scriptData.commands);
+    
+    res.json({
+      blocks: blocks,
+      scriptName: scriptData.name,
+      commands: scriptData.commands,
+      variables: scriptData.variables || [],
+      characters: scriptData.characters || [],
+      totalBlocks: blocks.length,
+      fileName: fileName
+    });
+    
+  } catch (error) {
+    console.error('Error parsing script content:', error);
+    res.status(500).json({ 
+      error: 'Internal server error', 
+      details: error.message 
+    });
+  }
+});
+
 app.post('/api/campaign/script/convert-to-blocks', async (req, res) => {
   try {
-    const { scriptName, language = 'EN' } = req.body;
+    const { scriptName, includeAllLanguages = true } = req.body;
     
     if (!scriptName) {
       return res.status(400).json({ error: 'Script name is required' });
     }
     
-    // Trova il file script
-    const campaignDir = path.join(GAME_ROOT, `campaign/campaignScripts${language}`);
-    const filePath = path.join(campaignDir, `${scriptName}.txt`);
+    const languages = ['EN', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU'];
+    const scriptData = {
+      name: scriptName,
+      languages: {},
+      commands: [],
+      blocks: []
+    };
     
-    if (!await fs.pathExists(filePath)) {
+    // Carica script da tutte le lingue
+    for (const lang of languages) {
+      const campaignDir = path.join(GAME_ROOT, `campaign/campaignScripts${lang}`);
+      
+      if (await fs.pathExists(campaignDir)) {
+        const files = await fs.readdir(campaignDir);
+        
+        for (const filename of files) {
+          if (filename.endsWith('.txt')) {
+            const filePath = path.join(campaignDir, filename);
+            const content = await fs.readFile(filePath, 'utf8');
+            const scripts = parseScriptContent(content, filename, lang);
+            
+            const targetScript = scripts.find(s => s.name === scriptName);
+            if (targetScript) {
+              scriptData.languages[lang] = {
+                content: targetScript.commands,
+                lastModified: (await fs.stat(filePath)).mtime
+              };
+              
+              // Usa EN come base
+              if (lang === 'EN') {
+                scriptData.commands = targetScript.commands;
+                scriptData.variables = targetScript.variables;
+                scriptData.characters = targetScript.characters;
+                scriptData.labels = targetScript.labels;
+                scriptData.nodes = targetScript.nodes;
+                scriptData.missions = targetScript.missions;
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
+    
+    if (!scriptData.commands || scriptData.commands.length === 0) {
       return res.status(404).json({ error: `Script not found: ${scriptName}` });
     }
     
-    // Leggi e parsa il file
-    const content = await fs.readFile(filePath, 'utf8');
-    const scripts = parseGameScriptFile(content, `${scriptName}.txt`);
-    
-    if (scripts.length === 0) {
-      return res.status(404).json({ error: `No scripts found in file: ${scriptName}` });
-    }
-    
-    // Prendi il primo script (dovrebbe corrispondere al nome file)
-    const script = scripts.find(s => s.name === scriptName) || scripts[0];
+    // Consolida comandi multilingua
+    const consolidated = consolidateMultilingualCommands({ [scriptName]: scriptData });
+    const consolidatedScript = consolidated[scriptName];
     
     // Converti in blocchi
-    const blocks = parseScriptToBlocks(script.commands);
+    const blocks = parseScriptToBlocks(consolidatedScript.commands);
     
     res.json({
-      scriptName: script.name,
-      language,
-      originalCommands: script.commands,
+      scriptName: consolidatedScript.name,
+      availableLanguages: Object.keys(scriptData.languages),
+      originalCommands: consolidatedScript.commands,
       blocks,
       metadata: {
-        variables: script.variables,
-        characters: script.characters,
-        labels: script.labels,
-        nodes: script.nodes,
-        missions: script.missions
+        variables: consolidatedScript.variables || [],
+        characters: consolidatedScript.characters || [],
+        labels: consolidatedScript.labels || [],
+        nodes: consolidatedScript.nodes || [],
+        missions: consolidatedScript.missions || [],
+        unknownCommands: consolidatedScript.unknownCommands || []
       }
     });
     
