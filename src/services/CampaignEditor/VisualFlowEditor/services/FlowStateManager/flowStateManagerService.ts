@@ -5,11 +5,12 @@ import {
   VariableState,
   BranchContext,
   ValidationResult,
-  ValidationRule 
+  ValidationRule,
+  Character 
 } from '@/types/CampaignEditor/types/VisualFlowEditor/VisualFlowEditor.types';
 
 export const flowStateManagerService = {
-  calculateFlowStateAtBlock(blocks: FlowBlock[], targetBlockId: string, characters: any[]): FlowState {
+  calculateFlowStateAtBlock(blocks: FlowBlock[], targetBlockId: string, characters: Character[]): FlowState {
     const flowState: FlowState = {
       characterStates: new Map(),
       variables: new Map(),
@@ -22,8 +23,8 @@ export const flowStateManagerService = {
       flowState.characterStates.set(char.name, {
         name: char.name,
         isVisible: false,
-        currentImage: char.images[0],
-        baseImage: char.images[0]
+        currentImage: char.images?.[0] || char.image || '',
+        baseImage: char.images?.[0] || char.image || ''
       });
     });
 

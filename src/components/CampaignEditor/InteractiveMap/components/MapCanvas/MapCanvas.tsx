@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { MapCanvasProps } from '@/types/CampaignEditor/InteractiveMap/types/MapCanvas/MapCanvas.types';
+import { MapNode as MapNodeType, MapConnection as MapConnectionType } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { useMapCanvas } from '@/hooks/CampaignEditor/InteractiveMap/hooks/MapCanvas/useMapCanvas';
 import { mapCanvasStyles } from '@/styles/CampaignEditor/InteractiveMap/styles/MapCanvas/MapCanvas.styles';
 import { API_CONFIG, PATHS } from '@/config/constants';
@@ -99,13 +100,13 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
     return positions;
   }, [visibleConnections, nodes]);
 
-  const handleNodeClickInternal = (node: any) => {
+  const handleNodeClickInternal = (node: MapNodeType) => {
     setSelectedNode(node.name);
     setSelectedConnection(null);
     onNodeClick(node);
   };
 
-  const handleConnectionClickInternal = (connection: any) => {
+  const handleConnectionClickInternal = (connection: MapConnectionType) => {
     const connectionId = `${connection.from}-${connection.to}`;
     setSelectedConnection(connectionId);
     setSelectedNode(null);

@@ -1,6 +1,8 @@
 import React, { forwardRef, useCallback } from 'react';
 import { 
   FlowBlock as FlowBlockType, 
+  FlowConnection,
+  BlockData,
   DragState, 
   ValidationResult, 
   Position,
@@ -11,7 +13,7 @@ import { AnchorPoint } from '../AnchorPoint';
 
 interface FlowCanvasProps {
   blocks: FlowBlockType[];
-  connections: any[];
+  connections: FlowConnection[];
   dragState: DragState;
   selectedBlockId?: string;
   validationResults: ValidationResult[];
@@ -20,7 +22,7 @@ interface FlowCanvasProps {
   onBlockSelect: (blockId: string) => void;
   onBlockMove: (blockId: string, position: Position) => void;
   onBlockDelete: (blockId: string) => void;
-  onBlockUpdate: (blockId: string, data: any) => void;
+  onBlockUpdate: (blockId: string, updates: Partial<FlowBlockType>) => void;
   onDragStart: (blockId: string, position: Position) => void;
   onDragUpdate: (position: Position) => void;
   onDragEnd: () => void;

@@ -3,12 +3,13 @@ import {
   FlowState, 
   ValidationResult, 
   ValidationRule,
-  FlowBlockType 
+  FlowBlockType,
+  Character 
 } from '@/types/CampaignEditor/types/VisualFlowEditor/VisualFlowEditor.types';
 import { flowStateManagerService } from '../FlowStateManager/flowStateManagerService';
 
 export const validationEngineService = {
-  validateBlocks(blocks: FlowBlock[], characters: any[]): ValidationResult[] {
+  validateBlocks(blocks: FlowBlock[], characters: Character[]): ValidationResult[] {
     const results: ValidationResult[] = [];
     
     for (let i = 0; i < blocks.length; i++) {

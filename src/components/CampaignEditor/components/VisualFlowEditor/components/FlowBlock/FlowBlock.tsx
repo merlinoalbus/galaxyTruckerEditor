@@ -13,7 +13,7 @@ interface FlowBlockProps {
   validationResults: ValidationResult[];
   onSelect: () => void;
   onDelete: () => void;
-  onUpdate: (data: any) => void;
+  onUpdate: (updates: Partial<FlowBlockType>) => void;
   onDragStart: (position: Position) => void;
   onDropZoneClick: (position: 'before' | 'after') => void;
 }
