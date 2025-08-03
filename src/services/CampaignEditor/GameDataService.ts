@@ -141,6 +141,17 @@ class GameDataService {
     });
   }
 
+  async deleteDeckScript(filename: string, createBackup = true): Promise<{
+    filename: string;
+    deleted: boolean;
+    backup: boolean;
+  }> {
+    return this.request(`/deckScripts/${filename}`, {
+      method: 'DELETE',
+      body: JSON.stringify({ createBackup })
+    });
+  }
+
   // Adventure Cards
   async getAdventureCards(): Promise<FileMetadata[]> {
     const response = await this.request<{
