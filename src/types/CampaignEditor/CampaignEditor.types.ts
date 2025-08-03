@@ -5,8 +5,55 @@ export interface Connection {
   image: string;
 }
 
-// CampaignAnalysis is defined in CampaignScriptParser.ts - import from there
-export type { CampaignAnalysis } from '../../services/CampaignEditor/CampaignScriptParser';
+// Interfaces for script parsing and analysis
+export interface ScriptCommand {
+  line: number;
+  content: string;
+  type: string;
+  parameters?: any;
+  metadata?: any;
+}
+
+export interface ParsedScript {
+  name: string;
+  fileName: string;
+  language: string;
+  commands: ScriptCommand[];
+  labels: string[];
+  references: string[];
+  subScripts: string[];
+  missions: string[];
+  variables: string[];
+  characters: string[];
+  nodes: string[];
+  relatedScripts: string[];
+}
+
+export interface ScriptBlock {
+  id: string;
+  type: string;
+  content: string;
+  startLine: number;
+  endLine?: number;
+  parameters: any;
+  children?: ScriptBlock[];
+  parent?: string;
+  metadata: any;
+}
+
+export interface CampaignAnalysis {
+  scripts: ParsedScript[];
+  scriptMap: Map<string, ParsedScript>;
+  scriptConnections: Map<string, string[]>;
+  variables: Set<string>; // Legacy - contains all mixed
+  semafori: Set<string>; // Boolean semafori (SET/RESET)
+  realVariables: Set<string>; // Numeric variables (SET_TO) 
+  characters: Set<string>;
+  missions: Set<string>;
+  labels: Set<string>;
+  nodeScriptMap: Map<string, string[]>;
+  flowStructure: Map<string, ScriptBlock[]>;
+}
 
 export interface TabInfo {
   id: string;

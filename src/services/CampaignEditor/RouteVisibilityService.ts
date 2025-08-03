@@ -1,5 +1,4 @@
 import { MapConnection } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
-import { FLIGHT_ROUTE_CONFIG } from '@/config/constants';
 
 export interface GameState {
   unlockedRoutes: Set<string>;
