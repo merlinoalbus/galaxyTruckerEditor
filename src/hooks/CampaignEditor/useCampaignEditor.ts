@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CampaignScriptParser } from '../../services/CampaignEditor/CampaignScriptParser';
+import { campaignScriptParserService } from '@/services/CampaignEditor/CampaignScriptParserService';
 import { CampaignAnalysis, CampaignScript } from '../../types/CampaignEditor';
 import { MapNode } from '../../types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 
@@ -16,8 +16,7 @@ export const useCampaignEditor = () => {
       try {
         setIsLoading(true);
         setError(null);
-        const parser = new CampaignScriptParser();
-        const analysisResult = await parser.loadAndAnalyzeAllScripts();
+        const analysisResult = await campaignScriptParserService.loadAndAnalyzeAllScripts();
         setAnalysis(analysisResult);
       } catch (error) {
         console.error('Error loading campaign data:', error);
