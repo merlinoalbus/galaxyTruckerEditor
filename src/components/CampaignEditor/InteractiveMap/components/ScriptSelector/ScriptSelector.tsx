@@ -20,21 +20,6 @@ export const ScriptSelector: React.FC<ScriptSelectorProps> = ({
     isStartScript
   } = useScriptSelector(scripts, startScripts);
 
-  // Debug logging
-  console.log('ScriptSelector - startScripts:', startScripts);
-  console.log('ScriptSelector - script names:', scripts.map(s => s.name));
-  
-  // Test start script detection
-  startScripts?.forEach(startScript => {
-    const foundByName = scripts.find(script => script.name === startScript);
-    const foundByContent = scripts.find(script => isStartScript(script));
-    console.log(`Looking for "${startScript}"`);
-    console.log(`  - By name: ${foundByName?.name || 'NOT FOUND'}`);
-    console.log(`  - By content check: ${foundByContent?.name || 'NOT FOUND'}`);
-  });
-  
-  const detectedStartScripts = scripts.filter(script => isStartScript(script));
-  console.log('Detected start scripts:', detectedStartScripts.map(s => s.name));
 
   if (!isOpen) return null;
 

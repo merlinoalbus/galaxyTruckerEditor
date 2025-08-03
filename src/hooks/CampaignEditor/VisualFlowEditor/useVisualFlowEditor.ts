@@ -8,9 +8,9 @@ import {
 import { CampaignScript, MapNode } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { flowStateManagerService } from '@/services/CampaignEditor/VisualFlowEditor/services/FlowStateManager/flowStateManagerService';
 import { validationEngineService } from '@/services/CampaignEditor/VisualFlowEditor/services/ValidationEngine/validationEngineService';
-import { useFlowBlocks } from './useFlowBlocks';
+import { useFlowBlock } from './hooks/FlowBlock/useFlowBlock';
 import { useDragOperations } from './useDragOperations';
-import { useAddBlockMenu } from './useAddBlockMenu';
+import { useAddBlockMenu } from './hooks/AddBlockMenu/useAddBlockMenu';
 
 interface UseVisualFlowEditorProps {
   selectedScript?: CampaignScript | null;
@@ -36,7 +36,7 @@ export const useVisualFlowEditor = ({ selectedScript, selectedNode, onScriptChan
     removeBlock,
     moveBlock,
     duplicateBlock
-  } = useFlowBlocks();
+  } = useFlowBlock();
 
   const {
     dragState,

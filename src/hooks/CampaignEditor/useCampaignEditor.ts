@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { campaignScriptParserService } from '@/services/CampaignEditor/CampaignScriptParserService';
-import { CampaignAnalysis, CampaignScript } from '../../types/CampaignEditor';
-import { MapNode } from '../../types/CampaignEditor/InteractiveMap/InteractiveMap.types';
+import { CampaignAnalysis, CampaignScript } from '@/types/CampaignEditor';
+import { MapNode } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 
 export const useCampaignEditor = () => {
   const [activeTab, setActiveTab] = useState('map');

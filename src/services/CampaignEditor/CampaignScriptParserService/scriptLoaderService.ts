@@ -1,49 +1,118 @@
 import { ParsedScript } from '@/types/CampaignEditor';
 
+// Cache per evitare richieste duplicate
+const fileCache = new Map<string, string | null>();
+const existsCache = new Map<string, boolean>();
+
 export const scriptLoaderService = {
-  async loadScriptFile(fileName: string, lang: string = 'EN'): Promise<string> {
+  // Metodo principale - usa la nuova API centralizzata
+  async loadParsedScripts(): Promise<any> {
+    const cacheKey = 'parsed_scripts';
+    
+    // Controlla cache
+    if (fileCache.has(cacheKey)) {
+      const cached = fileCache.get(cacheKey);
+      return cached || null;
+    }
+
     try {
-      const url = `http://localhost:3001/api/campaign/${lang}/${fileName}`;
-      const response = await fetch(url);
+      const url = `http://localhost:3001/api/campaign/scripts/parsed`;
+      const response = await fetch(url, { 
+        method: 'GET',
+        headers: { 'Accept': 'application/json' }
+      });
       
       if (!response.ok) {
-        throw new Error(`Failed to fetch ${fileName} for ${lang}: ${response.statusText}`);
+        console.error('Failed to load parsed scripts:', response.status);
+        fileCache.set(cacheKey, null);
+        return null;
       }
       
       const data = await response.json();
-      return data.content || '';
+      
+      // Cache risultato positivo
+      fileCache.set(cacheKey, data);
+      console.log(`Loaded ${data.metadata.totalScripts} parsed scripts with detailed entities`);
+      return data;
     } catch (error) {
-      console.warn(`Could not load ${fileName} for ${lang}:`, error);
+      console.error('Error loading parsed scripts:', error);
+      fileCache.set(cacheKey, null);
+      return null;
+    }
+  },
+
+  // Legacy methods mantenuti per compatibilità
+  async loadScriptFile(fileName: string, lang: string = 'EN'): Promise<string> {
+    const cacheKey = fileName;
+    
+    if (fileCache.has(cacheKey)) {
+      const cached = fileCache.get(cacheKey);
+      return cached || '';
+    }
+
+    try {
+      const url = `http://localhost:3001/api/campaign/${fileName}`;
+      const response = await fetch(url, { 
+        method: 'GET',
+        headers: { 'Accept': 'application/json' }
+      });
+      
+      if (!response.ok) {
+        fileCache.set(cacheKey, null);
+        return '';
+      }
+      
+      const data = await response.json();
+      const content = data.content || '';
+      
+      fileCache.set(cacheKey, content);
+      return content;
+    } catch (error) {
+      fileCache.set(cacheKey, null);
       return '';
     }
   },
 
-  async loadAllScriptFiles(): Promise<{ [key: string]: string }> {
-    const languages = ['EN', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU'];
-    const scriptFiles = [
-      'tutorials.txt',
-      'scripts1.txt', 
-      'scripts2.txt', 
-      'scripts3.txt', 
-      'scripts4.txt', 
-      'scripts5.txt',
-      'missions.txt',
-      'inits.txt',
-      'base_inits.txt',
-      'ms_scripts.txt',
-      'stdMissions.txt',
-      'missions2.txt'
-    ];
-
-    const loadedFiles: { [key: string]: string } = {};
-
-    for (const lang of languages) {
-      for (const fileName of scriptFiles) {
-        const key = `${lang}/${fileName}`;
-        loadedFiles[key] = await this.loadScriptFile(fileName, lang);
-      }
+  async checkFileExists(fileName: string, lang: string = 'EN'): Promise<boolean> {
+    const cacheKey = fileName;
+    
+    if (existsCache.has(cacheKey)) {
+      return existsCache.get(cacheKey)!;
     }
 
-    return loadedFiles;
+    try {
+      const url = `http://localhost:3001/api/campaign/${fileName}`;
+      const response = await fetch(url, { method: 'HEAD' });
+      const exists = response.ok;
+      
+      existsCache.set(cacheKey, exists);
+      return exists;
+    } catch {
+      existsCache.set(cacheKey, false);
+      return false;
+    }
+  },
+
+  async loadAllScriptFiles(): Promise<{ [key: string]: string }> {
+    console.warn('loadAllScriptFiles is deprecated. Use loadParsedScripts() instead.');
+    
+    // Per compatibilità, usa la nuova API e converte il formato
+    const parsedData = await this.loadParsedScripts();
+    if (!parsedData) return {};
+    
+    const result: { [key: string]: string } = {};
+    Object.values(parsedData.scripts).forEach((script: any) => {
+      if (script.languages?.EN?.content) {
+        result[script.fileName] = script.languages.EN.content.map((cmd: any) => cmd.content).join('\n');
+      }
+    });
+    
+    return result;
+  },
+
+  // Svuota cache quando necessario
+  clearCache() {
+    fileCache.clear();
+    existsCache.clear();
   }
 };

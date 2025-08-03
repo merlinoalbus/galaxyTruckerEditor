@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { GameDataProvider, useGameData } from '@/contexts/GameDataContext';
-import { Header } from '../components/CampaignEditor/components/Header';
-import { Sidebar } from '../components/CampaignEditor/components/Sidebar';
-// import { Traduzioni } from '../components/Editors/Traduzioni';
-import { CampaignEditor } from '../components/CampaignEditor/CampaignEditor';
-import '../App.css';
+import { Header } from '@/components/CampaignEditor/components/Header';
+import { Sidebar } from '@/components/CampaignEditor/components/Sidebar';
+// import { Traduzioni } from '@/components/Editors/Traduzioni';
+import { CampaignEditor } from '@/components/CampaignEditor/CampaignEditor';
+import '@/App.css';
 
 function AppContent() {
   const { connected, loading, error } = useGameData();

@@ -16,6 +16,7 @@ interface CampaignScriptParserService {
   analyzeScripts: typeof scriptAnalysisService.analyzeScripts;
   buildFlowStructure: typeof scriptAnalysisService.buildFlowStructure;
   loadAndAnalyzeAllScripts(): Promise<CampaignAnalysis>;
+  getEmptyAnalysis(): CampaignAnalysis;
   getInstance(): CampaignScriptParserService;
 }
 
@@ -30,27 +31,111 @@ export const campaignScriptParserService: CampaignScriptParserService = {
 
   async loadAndAnalyzeAllScripts(): Promise<CampaignAnalysis> {
     try {
-      // Load all script files
-      const loadedFiles = await scriptLoaderService.loadAllScriptFiles();
+      // Use new centralized API
+      const parsedData = await scriptLoaderService.loadParsedScripts();
       
-      // Parse all scripts
-      const allScripts: ParsedScript[] = [];
-      Object.entries(loadedFiles).forEach(([key, content]) => {
-        const [lang, fileName] = key.split('/');
-        if (content.trim()) {
-          const scripts = scriptParserService.parseScriptContent(content, fileName, lang);
-          allScripts.push(...scripts);
-        }
+      if (!parsedData) {
+        console.info('No parsed scripts data received - providing empty analysis');
+        return this.getEmptyAnalysis();
+      }
+      
+      // Convert backend format to frontend CampaignAnalysis format
+      const scripts: ParsedScript[] = [];
+      const scriptMap = new Map<string, ParsedScript>();
+      const scriptConnections = new Map<string, string[]>();
+      const variables = new Set<string>();
+      const semafori = new Set<string>();
+      const realVariables = new Set<string>();
+      const characters = new Set<string>();
+      const missions = new Set<string>();
+      const labels = new Set<string>();
+      const nodeScriptMap = new Map<string, string[]>();
+      const flowStructure = new Map<string, ScriptBlock[]>();
+
+      // Process scripts from backend
+      Object.values(parsedData.scripts).forEach((scriptData: any) => {
+        const script: ParsedScript = {
+          name: scriptData.name,
+          fileName: scriptData.fileName,
+          language: 'EN', // Primary language
+          commands: scriptData.commands || [],
+          variables: scriptData.variables || [],
+          characters: scriptData.characters || [],
+          missions: scriptData.missions || [],
+          labels: scriptData.labels || [],
+          nodes: scriptData.nodes || [],
+          references: [],
+          subScripts: [],
+          relatedScripts: []
+        };
+        
+        scripts.push(script);
+        scriptMap.set(script.name, script);
+        
+        // Add to global sets (legacy compatibility)
+        script.variables.forEach(v => variables.add(v));
+        script.characters.forEach(c => characters.add(c));
+        script.missions.forEach(m => missions.add(m));
+        script.labels.forEach(l => labels.add(l));
+        script.nodes.forEach(n => {
+          if (!nodeScriptMap.has(n)) {
+            nodeScriptMap.set(n, []);
+          }
+          nodeScriptMap.get(n)!.push(script.name);
+        });
       });
+
+      // Add backend entities to global sets
+      Object.keys(parsedData.semafori || {}).forEach(s => semafori.add(s));
+      Object.keys(parsedData.variables || {}).forEach(v => realVariables.add(v));
+      Object.keys(parsedData.characters || {}).forEach(c => characters.add(c));
+      Object.keys(parsedData.labels || {}).forEach(l => labels.add(l));
+
+      console.info(`Loaded ${scripts.length} scripts with detailed backend parsing`);
       
-      // Analyze scripts
-      const analysis = scriptAnalysisService.analyzeScripts(allScripts);
+      return {
+        scripts,
+        scriptMap,
+        scriptConnections,
+        variables,
+        characters,
+        missions,
+        semafori,
+        realVariables,
+        labels,
+        nodeScriptMap,
+        flowStructure,
+        // Add backend detailed data
+        backendData: {
+          semafori: parsedData.semafori,
+          variables: parsedData.variables,
+          characters: parsedData.characters,
+          labels: parsedData.labels,
+          nodes: parsedData.nodes,
+          metadata: parsedData.metadata
+        }
+      } as any;
       
-      return analysis;
     } catch (error) {
       console.error('Error loading and analyzing scripts:', error);
-      throw error;
+      return this.getEmptyAnalysis();
     }
+  },
+
+  getEmptyAnalysis(): CampaignAnalysis {
+    return {
+      scripts: [],
+      scriptMap: new Map(),
+      scriptConnections: new Map(),
+      variables: new Set(),
+      characters: new Set(), 
+      missions: new Set(),
+      semafori: new Set(),
+      realVariables: new Set(),
+      labels: new Set(),
+      nodeScriptMap: new Map(),
+      flowStructure: new Map()
+    };
   },
 
   // Legacy compatibility method
