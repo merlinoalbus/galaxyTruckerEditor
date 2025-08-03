@@ -123,8 +123,8 @@ class GameDataService {
     filename: string;
     path: string;
     content: string;
-    parsed: any;
-    metadata: any;
+    parsed: DeckScript;
+    metadata: FileOperationMetadata;
   }> {
     return this.request(`/deckScripts/${filename}`);
   }
@@ -133,7 +133,7 @@ class GameDataService {
     filename: string;
     path: string;
     saved: boolean;
-    metadata: any;
+    metadata: FileOperationMetadata;
   }> {
     return this.request(`/deckScripts/${filename}`, {
       method: 'PUT',
@@ -155,8 +155,8 @@ class GameDataService {
     filename: string;
     path: string;
     content: string;
-    parsed: any;
-    metadata: any;
+    parsed: Record<string, unknown>;
+    metadata: FileOperationMetadata;
   }> {
     return this.request(`/adventureCards/${filename}`);
   }
@@ -182,8 +182,8 @@ class GameDataService {
     filename: string;
     path: string;
     content: string;
-    parsed: any;
-    metadata: any;
+    parsed: Record<string, unknown>;
+    metadata: FileOperationMetadata;
   }> {
     return this.request(`/shipParts/${filename}`);
   }
@@ -209,8 +209,8 @@ class GameDataService {
     filename: string;
     path: string;
     content: string;
-    parsed: any;
-    metadata: any;
+    parsed: Record<string, unknown>;
+    metadata: FileOperationMetadata;
   }> {
     return this.request(`/localization/${filename}`);
   }
@@ -246,8 +246,8 @@ class GameDataService {
     filename: string;
     path: string;
     content: string;
-    parsed: any;
-    metadata: any;
+    parsed: Record<string, unknown>;
+    metadata: FileOperationMetadata;
   }> {
     return this.request(`/ships/${filename}`);
   }
