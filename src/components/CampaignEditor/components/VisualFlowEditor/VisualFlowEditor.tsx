@@ -3,8 +3,8 @@ import React, { useEffect, useRef } from 'react';
 import { VisualFlowEditorProps } from '@/types/CampaignEditor/types/VisualFlowEditor/VisualFlowEditor.types';
 import { useVisualFlowEditor } from '@/hooks/CampaignEditor/VisualFlowEditor/useVisualFlowEditor';
 
-import { FlowCanvas } from './components/FlowCanvas';
-import { AddBlockMenu } from './components/AddBlockMenu';
+import { FlowCanvas } from './components/FlowCanvas/FlowCanvas';
+import { AddBlockMenu } from './components/AddBlockMenu/AddBlockMenu';
 
 export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
   selectedScript,
