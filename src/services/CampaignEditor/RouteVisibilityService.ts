@@ -1,9 +1,11 @@
 import { MapConnection } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 
+export type VariableValue = string | number | boolean;
+
 export interface GameState {
   unlockedRoutes: Set<string>;
   completedMissions: Set<string>;
-  variables: Map<string, any>;
+  variables: Map<string, VariableValue>;
   semafori: Map<string, boolean>;
 }
 
@@ -136,7 +138,7 @@ export class RouteVisibilityService {
     this.gameState.completedMissions.add(missionName);
   }
 
-  setVariable(name: string, value: any) {
+  setVariable(name: string, value: VariableValue) {
     this.gameState.variables.set(name, value);
   }
 

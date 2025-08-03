@@ -1,4 +1,5 @@
-import { MapNode, MapConnection, CampaignScript } from '../../../types/CampaignEditor/InteractiveMap/InteractiveMap.types';
+import { MapNode, MapConnection, CampaignScript, Mission } from '../../../types/CampaignEditor/InteractiveMap/InteractiveMap.types';
+import { ScriptCommand } from '../../../types/CampaignEditor/CampaignEditor.types';
 
 const API_BASE = 'http://localhost:3001/api';
 
@@ -25,7 +26,7 @@ class InteractiveMapService {
     }
   }
 
-  async loadMissions(): Promise<any[]> {
+  async loadMissions(): Promise<Mission[]> {
     try {
       const response = await fetch(`${API_BASE}/campaignMissions/missions.yaml`);
       if (!response.ok) {
@@ -36,7 +37,7 @@ class InteractiveMapService {
       const yaml = await import('js-yaml');
       
       if (data.content) {
-        const parsedMissions = yaml.load(data.content) as any[];
+        const parsedMissions = yaml.load(data.content) as Mission[];
         return Array.isArray(parsedMissions) ? parsedMissions : [];
       }
       
@@ -78,12 +79,12 @@ class InteractiveMapService {
     return allScripts;
   }
 
-  async buildConnections(nodes: MapNode[], missions: any[]): Promise<MapConnection[]> {
+  async buildConnections(nodes: MapNode[], missions: Mission[]): Promise<MapConnection[]> {
     const connections: MapConnection[] = [];
     const processedRoutes = new Set<string>();
     
     // Create a map of missions by route
-    const missionMap = new Map<string, any[]>();
+    const missionMap = new Map<string, Mission[]>();
     missions.forEach(mission => {
       if (mission.source && mission.destination) {
         const routeKey = `${mission.source}-${mission.destination}`;
@@ -184,7 +185,7 @@ class InteractiveMapService {
     const scripts: CampaignScript[] = [];
     const lines = content.split('\n');
     let currentScript: Partial<CampaignScript> | null = null;
-    let currentCommands: any[] = [];
+    let currentCommands: ScriptCommand[] = [];
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();

@@ -37,14 +37,8 @@ export const useCampaignEditor = () => {
     setSelectedScript(null);
   };
 
-  const handleScriptChange = (newScript: string) => {
-    if (selectedScript) {
-      // Update the script content
-      setSelectedScript({
-        ...selectedScript,
-        commands: selectedScript.commands // TODO: Parse newScript content
-      });
-    }
+  const handleScriptChange = (newScript: CampaignScript) => {
+    setSelectedScript(newScript);
     // TODO: Save script changes
   };
 

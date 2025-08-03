@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { 
   FlowBlock, 
+  BlockData,
   FlowState, 
   DragState, 
   AddBlockMenuState, 
@@ -10,13 +11,14 @@ import {
   FlowBlockType,
   AvailableBlockType
 } from '../../../types/CampaignEditor/types/VisualFlowEditor/VisualFlowEditor.types';
+import { CampaignScript, MapNode } from '../../../types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { flowStateManagerService } from '../../../services/CampaignEditor/VisualFlowEditor/services/FlowStateManager/flowStateManagerService';
 import { validationEngineService } from '../../../services/CampaignEditor/VisualFlowEditor/services/ValidationEngine/validationEngineService';
 
 interface UseVisualFlowEditorProps {
-  selectedScript?: any;
-  selectedNode?: any;
-  onScriptChange?: (script: any) => void;
+  selectedScript?: CampaignScript | null;
+  selectedNode?: MapNode | null;
+  onScriptChange?: (script: CampaignScript) => void;
 }
 
 export const useVisualFlowEditor = ({ selectedScript, selectedNode, onScriptChange }: UseVisualFlowEditorProps) => {
@@ -97,7 +99,7 @@ export const useVisualFlowEditor = ({ selectedScript, selectedNode, onScriptChan
   }, [blocks, characters]);
 
   // Actions
-  const initializeFromScript = useCallback((script: any) => {
+  const initializeFromScript = useCallback((script: CampaignScript) => {
     // TODO: Parse script into blocks
     const parsedBlocks: FlowBlock[] = [
       {
@@ -134,9 +136,9 @@ export const useVisualFlowEditor = ({ selectedScript, selectedNode, onScriptChan
     setBlocks(prev => [...prev, newBlock]);
   }, [blocks]);
 
-  const updateBlock = useCallback((blockId: string, data: Partial<FlowBlock>) => {
+  const updateBlock = useCallback((blockId: string, updates: Partial<FlowBlock>) => {
     setBlocks(prev => prev.map(block => 
-      block.id === blockId ? { ...block, ...data } : block
+      block.id === blockId ? { ...block, ...updates } : block
     ));
   }, []);
 

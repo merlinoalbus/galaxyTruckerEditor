@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { InteractiveMapProps } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
+import { InteractiveMapProps, MapNode, MapConnection } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { useInteractiveMap } from '@/hooks/CampaignEditor/InteractiveMap/useInteractiveMap';
 import { interactiveMapStyles } from '@/styles/CampaignEditor/InteractiveMap/InteractiveMap.styles';
 
@@ -33,14 +33,14 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
     setViewport
   } = useInteractiveMap(onScriptSelect);
 
-  const handleNodeClickInternal = (node: any) => {
+  const handleNodeClickInternal = (node: MapNode) => {
     const relatedScripts = handleNodeClick(node);
     if (onNodeClick) {
       onNodeClick(node, relatedScripts);
     }
   };
 
-  const handleConnectionClickInternal = (connection: any) => {
+  const handleConnectionClickInternal = (connection: MapConnection) => {
     const relatedScripts = handleConnectionClick(connection);
     if (onConnectionClick) {
       onConnectionClick(connection, relatedScripts);

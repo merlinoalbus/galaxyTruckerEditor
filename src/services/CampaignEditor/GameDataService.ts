@@ -19,6 +19,28 @@ export interface ApiResponse<T> {
   message?: string;
 }
 
+export interface GameStructure {
+  directories: string[];
+  files: string[];
+  fileTypes: Record<string, number>;
+  totalSize: number;
+}
+
+export interface GameStructureResponse {
+  gameRoot: string;
+  structure: GameStructure;
+  version: string;
+  timestamp: string;
+}
+
+export interface FileOperationMetadata {
+  size: number;
+  modified: string;
+  encoding: string;
+  lineCount?: number;
+  backupCreated?: boolean;
+}
+
 class GameDataService {
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${API_BASE}${endpoint}`;
@@ -41,12 +63,7 @@ class GameDataService {
 
   // Struttura del gioco
   async getGameStructure() {
-    return this.request<{
-      gameRoot: string;
-      structure: Record<string, any>;
-      version: string;
-      timestamp: string;
-    }>('/structure');
+    return this.request<GameStructureResponse>('/structure');
   }
 
   // Missioni
@@ -64,7 +81,7 @@ class GameDataService {
     path: string;
     content: string;
     parsed: Mission;
-    metadata: any;
+    metadata: FileOperationMetadata;
   }> {
     return this.request(`/missions/${filename}`);
   }
@@ -73,7 +90,7 @@ class GameDataService {
     filename: string;
     path: string;
     saved: boolean;
-    metadata: any;
+    metadata: FileOperationMetadata;
   }> {
     return this.request(`/missions/${filename}`, {
       method: 'PUT',

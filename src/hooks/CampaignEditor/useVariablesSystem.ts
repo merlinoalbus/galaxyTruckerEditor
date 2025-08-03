@@ -1,4 +1,5 @@
 import { CampaignAnalysis } from '../../types/CampaignEditor';
+import { VariableValue } from '../../services/CampaignEditor/RouteVisibilityService';
 
 export const useVariablesSystem = (analysis: CampaignAnalysis | null) => {
   const getVariablesList = () => {
@@ -10,7 +11,7 @@ export const useVariablesSystem = (analysis: CampaignAnalysis | null) => {
     console.log('Validating variables...');
   };
 
-  const updateVariable = (variableName: string, newValue: any) => {
+  const updateVariable = (variableName: string, newValue: VariableValue) => {
     // TODO: Update variable logic
     console.log(`Updating variable ${variableName} to:`, newValue);
   };

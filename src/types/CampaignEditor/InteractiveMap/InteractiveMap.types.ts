@@ -18,7 +18,7 @@ export interface MapConnection {
   availableLicenses?: ('STI' | 'STII' | 'STIII')[]; // All available licenses
   startScripts?: string[]; // ⭐ Mission start scripts
   hasUniqueMissions?: boolean;
-  missions?: any[]; // Full mission data
+  missions?: Mission[]; // Full mission data
   visibilityCondition?: {
     type: 'unlocked' | 'completed' | 'available' | 'always' | 'never';
     variable?: string;
@@ -36,6 +36,29 @@ export interface CampaignScript {
 }
 
 import { ScriptCommand } from '../CampaignEditor.types';
+
+export interface Mission {
+  id?: string;
+  name?: string;
+  description?: string;
+  from?: string;
+  to?: string;
+  source?: string; // Alias for from
+  destination?: string; // Alias for to
+  cost?: number;
+  flightClass?: 'I' | 'II' | 'III' | 'IV';
+  license?: 'STI' | 'STII' | 'STIII';
+  scripts?: string[];
+  uniqueRewards?: boolean;
+  button?: [string, string, string]; // Button data array
+  missiontype?: string;
+  visibility?: {
+    type: 'unlocked' | 'completed' | 'available' | 'always' | 'never';
+    variable?: string;
+    condition?: string;
+  };
+  [key: string]: any; // Temporary flexibility for migration
+}
 
 export interface InteractiveMapProps {
   onNodeClick?: (node: MapNode, scripts: CampaignScript[]) => void;

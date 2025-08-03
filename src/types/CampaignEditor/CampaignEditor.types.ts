@@ -5,13 +5,38 @@ export interface Connection {
   image: string;
 }
 
+// Specific parameter types for different command types
+export interface ScriptParameters {
+  character?: string;
+  text?: string;
+  image?: string;
+  variable?: string;
+  value?: string | number | boolean;
+  target?: string;
+  condition?: string;
+  options?: string[];
+  name?: string;
+  scriptName?: string;
+  missionName?: string;
+  nodeName?: string;
+  [key: string]: string | number | boolean | string[] | undefined;
+}
+
+export interface ScriptMetadata {
+  line?: number;
+  file?: string;
+  comments?: string[];
+  tags?: string[];
+  [key: string]: string | number | string[] | undefined;
+}
+
 // Interfaces for script parsing and analysis
 export interface ScriptCommand {
   line: number;
   content: string;
   type: string;
-  parameters?: any;
-  metadata?: any;
+  parameters?: ScriptParameters;
+  metadata?: ScriptMetadata;
 }
 
 export interface ParsedScript {
@@ -35,10 +60,10 @@ export interface ScriptBlock {
   content: string;
   startLine: number;
   endLine?: number;
-  parameters: any;
+  parameters: ScriptParameters;
   children?: ScriptBlock[];
   parent?: string;
-  metadata: any;
+  metadata: ScriptMetadata;
 }
 
 export interface CampaignAnalysis {

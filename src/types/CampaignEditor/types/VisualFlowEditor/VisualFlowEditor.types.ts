@@ -30,7 +30,15 @@ export interface Position {
 }
 
 export interface BlockData {
-  [key: string]: any;
+  text?: string;
+  character?: string;
+  image?: string;
+  variable?: string;
+  value?: string | number | boolean;
+  target?: string;
+  condition?: string;
+  options?: string[];
+  [key: string]: string | number | boolean | string[] | undefined;
 }
 
 export interface BlockMetadata {
@@ -124,8 +132,15 @@ export interface FlowConnection {
 
 import { CampaignScript, MapNode } from '../../InteractiveMap/InteractiveMap.types';
 
+export interface Character {
+  name: string;
+  image?: string;
+  images?: string[];
+  isVisible?: boolean;
+}
+
 export interface VisualFlowEditorProps {
   selectedScript?: CampaignScript | null;
   selectedNode?: MapNode | null;
-  onScriptChange?: (script: string) => void;
+  onScriptChange?: (script: CampaignScript) => void;
 }
