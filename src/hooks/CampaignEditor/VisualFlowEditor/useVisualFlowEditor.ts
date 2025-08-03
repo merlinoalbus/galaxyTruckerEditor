@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { 
   FlowState, 
   ValidationResult,
@@ -19,6 +19,7 @@ interface UseVisualFlowEditorProps {
 }
 
 export const useVisualFlowEditor = ({ selectedScript, selectedNode, onScriptChange }: UseVisualFlowEditorProps) => {
+  
   // Mock characters data - TODO: get from context
   const characters = [
     { name: 'character1', images: ['image1.png'], displayName: 'Character 1' },
@@ -37,6 +38,57 @@ export const useVisualFlowEditor = ({ selectedScript, selectedNode, onScriptChan
     moveBlock,
     duplicateBlock
   } = useFlowBlock();
+  
+  // Effect per caricare lo script quando viene selezionato
+  useEffect(() => {
+    if (selectedScript) {
+      const loadScriptBlocks = async () => {
+        try {
+          // Se lo script ha già i blocchi parsati, usali
+          if (selectedScript.blocks && Array.isArray(selectedScript.blocks)) {
+            initializeFromScript(selectedScript);
+            return;
+          }
+          
+          // Altrimenti richiedi il parsing al backend
+          const response = await fetch('http://localhost:3001/api/campaign/script/convert-to-blocks', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              scriptName: selectedScript.name,
+              includeAllLanguages: true
+            }),
+          });
+          
+          if (response.ok) {
+            const parsed = await response.json();
+            console.log('Parsed script from backend:', parsed);
+            
+            // Aggiorna lo script con i blocchi parsati
+            const scriptWithBlocks = {
+              ...selectedScript,
+              blocks: parsed.blocks
+            };
+            
+            initializeFromScript(scriptWithBlocks);
+            onScriptChange?.(scriptWithBlocks);
+          } else {
+            console.error('Failed to parse script:', response.statusText);
+            // Fallback ai demo data
+            initializeFromScript(selectedScript);
+          }
+        } catch (error) {
+          console.error('Error parsing script:', error);
+          // Fallback ai demo data
+          initializeFromScript(selectedScript);
+        }
+      };
+      
+      loadScriptBlocks();
+    }
+  }, [selectedScript, initializeFromScript, onScriptChange]);
 
   const {
     dragState,
@@ -135,7 +187,14 @@ function getBlockIcon(type: FlowBlockType): string {
     'set_to_variable': '📊',
     'dialog_container': '📝',
     'menu_container': '📋',
-    'if_container': '🔀'
+    'if_container': '🔀',
+    'menu_option': '☰',
+    'label': '🏷️',
+    'goto': '➡️',
+    'return': '↩️',
+    'delay': '⏱️',
+    'script_call': '📞',
+    'unknown': '❓'
   };
   return icons[type] || '❔';
 }

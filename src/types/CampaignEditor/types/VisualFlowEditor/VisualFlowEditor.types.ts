@@ -6,6 +6,8 @@ export interface FlowBlock {
   parentId?: string;
   branchType?: BranchType;
   metadata?: BlockMetadata;
+  children?: string[]; // IDs dei blocchi figli
+  elseBranch?: string[]; // IDs dei blocchi nel branch else
 }
 
 export type FlowBlockType = 
@@ -20,7 +22,14 @@ export type FlowBlockType =
   | 'set_to_variable'
   | 'dialog_container'
   | 'menu_container'
-  | 'if_container';
+  | 'if_container'
+  | 'menu_option'
+  | 'label'
+  | 'goto'
+  | 'return'
+  | 'delay'
+  | 'script_call'
+  | 'unknown';
 
 export type BranchType = 'main' | 'if' | 'else' | 'menu_option';
 
@@ -37,8 +46,16 @@ export interface BlockData {
   value?: string | number | boolean;
   target?: string;
   condition?: string;
+  conditionType?: string;
   options?: string[];
-  [key: string]: string | number | boolean | string[] | undefined;
+  label?: string;
+  script?: string;
+  milliseconds?: number;
+  originalLine?: string;
+  originalType?: string;
+  hasElse?: boolean;
+  localizedText?: Record<string, string>; // Testi multilingua
+  [key: string]: string | number | boolean | string[] | Record<string, string> | undefined;
 }
 
 export interface BlockMetadata {
@@ -93,10 +110,25 @@ export type ValidationRule =
 export interface AnchorPoint {
   id: string;
   blockId: string;
-  position: 'before' | 'after' | 'inside';
+  position: 'before' | 'after' | 'inside' | 'true_branch' | 'else_branch' | 'menu_options';
   coordinates: Position;
   isValid: boolean;
   reason?: string;
+}
+
+export interface ContainerArea {
+  id: string;
+  blockId: string;
+  type: 'if_true' | 'if_else' | 'menu_options';
+  bounds: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+  childBlocks: string[];
+  maxBlocks?: number;
+  isDropTarget?: boolean;
 }
 
 export interface DragState {
