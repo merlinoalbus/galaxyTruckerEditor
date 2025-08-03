@@ -1,6 +1,7 @@
 import React from 'react';
 import { MapNodeProps } from '@/types/CampaignEditor/InteractiveMap/types/MapNode/MapNode.types';
 import { mapNodeStyles } from '@/styles/CampaignEditor/InteractiveMap/styles/MapNode/MapNode.styles';
+import { API_CONFIG, PATHS } from '@/config/constants';
 
 export const MapNode: React.FC<MapNodeProps> = ({
   node,
@@ -36,14 +37,22 @@ export const MapNode: React.FC<MapNodeProps> = ({
         {...circleAttrs}
       />
 
-      <circle
-        cx={position.x}
-        cy={position.y}
-        className={mapNodeStyles.nodeImage.className}
-        r={mapNodeStyles.nodeImage.r}
-        fill={mapNodeStyles.nodeImage.fill}
-        stroke={mapNodeStyles.nodeImage.stroke}
-        strokeWidth={mapNodeStyles.nodeImage.strokeWidth}
+      {/* Node Image */}
+      <clipPath id={`node-clip-${node.name}`}>
+        <circle
+          cx={position.x}
+          cy={position.y}
+          r={radius}
+        />
+      </clipPath>
+      <image
+        href={`${API_CONFIG.ASSETS_BASE_URL}${PATHS.CAMPAIGN.BIG}/${node.image}`}
+        x={position.x - radius}
+        y={position.y - radius}
+        width={radius * 2}
+        height={radius * 2}
+        clipPath={`url(#node-clip-${node.name})`}
+        preserveAspectRatio="xMidYMid slice"
       />
 
       <text

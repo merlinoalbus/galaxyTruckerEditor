@@ -25,6 +25,28 @@ class InteractiveMapService {
     }
   }
 
+  async loadMissions(): Promise<any[]> {
+    try {
+      const response = await fetch(`${API_BASE}/campaignMissions/missions.yaml`);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      const yaml = await import('js-yaml');
+      
+      if (data.content) {
+        const parsedMissions = yaml.load(data.content) as any[];
+        return Array.isArray(parsedMissions) ? parsedMissions : [];
+      }
+      
+      return [];
+    } catch (error) {
+      console.error('Error loading missions:', error);
+      return [];
+    }
+  }
+
   async loadAllScripts(): Promise<CampaignScript[]> {
     const scriptFiles = [
       'tutorials.txt',
@@ -56,16 +78,93 @@ class InteractiveMapService {
     return allScripts;
   }
 
-  buildConnections(nodes: MapNode[]): MapConnection[] {
+  async buildConnections(nodes: MapNode[], missions: any[]): Promise<MapConnection[]> {
     const connections: MapConnection[] = [];
+    const processedRoutes = new Set<string>();
+    
+    // Create a map of missions by route
+    const missionMap = new Map<string, any[]>();
+    missions.forEach(mission => {
+      if (mission.source && mission.destination) {
+        const routeKey = `${mission.source}-${mission.destination}`;
+        if (!missionMap.has(routeKey)) {
+          missionMap.set(routeKey, []);
+        }
+        missionMap.get(routeKey)!.push(mission);
+      }
+    });
     
     nodes.forEach(node => {
       if (node.shuttles) {
         node.shuttles.forEach(([targetNode, cost]) => {
+          const routeKey = `${node.name}-${targetNode}`;
+          const reverseRouteKey = `${targetNode}-${node.name}`;
+          
+          // Skip if we already processed this route or its reverse
+          if (processedRoutes.has(routeKey) || processedRoutes.has(reverseRouteKey)) {
+            return;
+          }
+          
+          processedRoutes.add(routeKey);
+          const routeMissions = missionMap.get(routeKey) || [];
+          
+          // Collect all available license classes and mission data
+          let availableLicenses: ('STI' | 'STII' | 'STIII')[] = [];
+          let hasSTIII = false, hasSTII = false, hasSTI = false;
+          let startScripts: string[] = [];
+          let hasUniqueMissions = false;
+          
+          routeMissions.forEach(mission => {
+            if (mission.license === 'STIII') hasSTIII = true;
+            else if (mission.license === 'STII') hasSTII = true;
+            else if (mission.license === 'STI') hasSTI = true;
+            
+            // Collect start scripts (⭐ scripts)
+            if (mission.button && mission.button[2]) {
+              startScripts.push(mission.button[2]);
+            }
+            
+            if (mission.missiontype === 'UNIQUE') {
+              hasUniqueMissions = true;
+            }
+          });
+          
+          // Build array of available licenses
+          if (hasSTI) availableLicenses.push('STI');
+          if (hasSTII) availableLicenses.push('STII');
+          if (hasSTIII) availableLicenses.push('STIII');
+          
+          // Get highest license for primary display
+          let highestLicense: 'STI' | 'STII' | 'STIII' | undefined;
+          if (hasSTIII) highestLicense = 'STIII';
+          else if (hasSTII) highestLicense = 'STII';
+          else if (hasSTI) highestLicense = 'STI';
+
+          // Convert available licenses to flight classes for display
+          let flightClasses: ('I' | 'II' | 'III')[] = [];
+          availableLicenses.forEach(license => {
+            if (license === 'STIII') flightClasses.push('III');
+            else if (license === 'STII') flightClasses.push('II');
+            else if (license === 'STI') flightClasses.push('I');
+          });
+          
+          let flightClass: 'I' | 'II' | 'III' | undefined = flightClasses[0];
+
           connections.push({
             from: node.name,
             to: targetNode,
-            cost: cost
+            cost: cost,
+            flightClass,
+            flightClasses, // All available classes
+            license: highestLicense,
+            availableLicenses, // All available licenses
+            startScripts: [...new Set(startScripts)], // Remove duplicates
+            hasUniqueMissions,
+            missions: routeMissions,
+            visibilityCondition: {
+              type: 'always' // All routes visible for now
+            },
+            isVisible: true
           });
         });
       }

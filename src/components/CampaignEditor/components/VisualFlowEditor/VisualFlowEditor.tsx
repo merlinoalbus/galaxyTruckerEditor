@@ -87,25 +87,38 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
       <div className="flex items-center justify-between p-4 bg-gray-700 border-b border-gray-600">
         <div className="flex items-center gap-4">
           <h2 className="text-lg font-semibold text-gray-200">Visual Flow Editor</h2>
-          <div className="text-sm text-gray-400">
-            Blocks: {blocks.length}
-          </div>
-          {validationResults.length > 0 && (
-            <div className="text-sm text-red-400">
-              Issues: {validationResults.length}
+          {selectedScript ? (
+            <>
+              <div className="text-sm text-blue-400 bg-blue-900 px-2 py-1 rounded">
+                {selectedScript.name} ({selectedScript.fileName})
+              </div>
+              <div className="text-sm text-gray-400">
+                Blocks: {blocks.length}
+              </div>
+              {validationResults.length > 0 && (
+                <div className="text-sm text-red-400">
+                  Issues: {validationResults.length}
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="text-sm text-gray-400">
+              No script selected - Select a script from the Interactive Map
             </div>
           )}
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => selectedScript && initializeFromScript(selectedScript)}
-            className="px-3 py-1 text-sm bg-gray-600 text-gray-200 rounded hover:bg-gray-500 transition-colors"
+            disabled={!selectedScript}
+            className="px-3 py-1 text-sm bg-gray-600 text-gray-200 rounded hover:bg-gray-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Refresh
           </button>
           <button
             onClick={generateScript}
-            className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-500 transition-colors"
+            disabled={!selectedScript}
+            className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Export
           </button>

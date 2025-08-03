@@ -12,6 +12,19 @@ export interface MapConnection {
   from: string;
   to: string;
   cost: number;
+  flightClass?: 'I' | 'II' | 'III' | 'IV';
+  flightClasses?: ('I' | 'II' | 'III' | 'IV')[]; // All available classes
+  license?: 'STI' | 'STII' | 'STIII';
+  availableLicenses?: ('STI' | 'STII' | 'STIII')[]; // All available licenses
+  startScripts?: string[]; // ⭐ Mission start scripts
+  hasUniqueMissions?: boolean;
+  missions?: any[]; // Full mission data
+  visibilityCondition?: {
+    type: 'unlocked' | 'completed' | 'available' | 'always' | 'never';
+    variable?: string;
+    scriptCondition?: string;
+  };
+  isVisible?: boolean;
 }
 
 export interface CampaignScript {

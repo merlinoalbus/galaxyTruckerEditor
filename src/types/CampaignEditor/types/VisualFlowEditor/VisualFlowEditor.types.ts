@@ -122,8 +122,11 @@ export interface FlowConnection {
   branchLabel?: string;
 }
 
+import { CampaignScript } from '../../CampaignEditor.types';
+import { MapNode } from '../../InteractiveMap/InteractiveMap.types';
+
 export interface VisualFlowEditorProps {
-  selectedScript?: any;
-  selectedNode?: any;
-  onScriptChange?: (script: any) => void;
+  selectedScript?: CampaignScript | null;
+  selectedNode?: MapNode | null;
+  onScriptChange?: (script: string) => void;
 }
