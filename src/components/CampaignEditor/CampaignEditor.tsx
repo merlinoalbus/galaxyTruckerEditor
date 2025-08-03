@@ -5,9 +5,9 @@ import { Save } from 'lucide-react';
 import { useCampaignEditor } from '@/hooks/CampaignEditor';
 
 import { InteractiveMap } from './InteractiveMap/InteractiveMap';
-import { VisualFlowEditor } from './components/VisualFlowEditor';
-import { VariablesSystem } from './VariablesSystem';
-import { Overview } from './Overview';
+import { VisualFlowEditor } from './components/VisualFlowEditor/VisualFlowEditor';
+import { VariablesSystem } from './VariablesSystem/VariablesSystem';
+import { Overview } from './Overview/Overview';
 
 export const CampaignEditor: React.FC = () => {
   const {

@@ -8,8 +8,8 @@ import {
   Position,
   AnchorPoint as AnchorPointType 
 } from '@/types/CampaignEditor/types/VisualFlowEditor/VisualFlowEditor.types';
-import { FlowBlock } from '../FlowBlock';
-import { AnchorPoint } from '../AnchorPoint';
+import { FlowBlock } from '../FlowBlock/FlowBlock';
+import { AnchorPoint } from '../AnchorPoint/AnchorPoint';
 
 interface FlowCanvasProps {
   blocks: FlowBlockType[];
