@@ -57,7 +57,7 @@ export interface Mission {
     variable?: string;
     condition?: string;
   };
-  [key: string]: any; // Temporary flexibility for migration
+  // Removed temporary any - now fully typed
 }
 
 export interface InteractiveMapProps {

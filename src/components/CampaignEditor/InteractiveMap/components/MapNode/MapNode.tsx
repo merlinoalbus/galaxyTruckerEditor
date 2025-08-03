@@ -59,7 +59,8 @@ export const MapNode: React.FC<MapNodeProps> = ({
         x={position.x}
         y={position.y + 55}
         textAnchor="middle"
-        className={mapNodeStyles.nodeText(isHovered)}
+        className={mapNodeStyles.nodeText(isHovered).className}
+        style={mapNodeStyles.nodeText(isHovered).style}
         dy="0.3em"
       >
         {node.caption}

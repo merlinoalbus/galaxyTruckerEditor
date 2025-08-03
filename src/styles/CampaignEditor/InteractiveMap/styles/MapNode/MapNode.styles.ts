@@ -16,7 +16,15 @@ export const mapNodeStyles = {
     strokeWidth: 1,
     className: 'pointer-events-none'
   },
-  nodeText: (isHovered: boolean) => `fill-white text-sm pointer-events-none ${isHovered ? 'font-bold' : ''}`,
+  nodeText: (isHovered: boolean) => ({
+    className: `fill-white text-sm pointer-events-none ${isHovered ? 'font-bold' : ''}`,
+    style: {
+      fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      fontSize: '14px',
+      fontWeight: isHovered ? 'bold' : 'normal',
+      fontVariant: 'small-caps'
+    }
+  }),
   scriptCount: {
     group: "cursor-pointer",
     circle: {

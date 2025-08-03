@@ -203,8 +203,8 @@ export class CampaignScriptParser {
     const upperLine = trimmed.toUpperCase();
     
     let type = 'unknown';
-    let parameters: any = {};
-    let metadata: any = {};
+    let parameters: Record<string, string | number | boolean> = {};
+    let metadata: Record<string, string | number | string[]> = {};
 
     // Identify command type and extract parameters
     if (upperLine.startsWith('SHOWDLGSCENE')) {

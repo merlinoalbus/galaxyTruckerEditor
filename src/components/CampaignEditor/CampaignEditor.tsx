@@ -1,10 +1,13 @@
 import React from 'react';
+
 import { Save } from 'lucide-react';
+
+import { useCampaignEditor } from '@/hooks/CampaignEditor';
+
 import { InteractiveMap } from './InteractiveMap/InteractiveMap';
 import { VisualFlowEditor } from './components/VisualFlowEditor';
 import { VariablesSystem } from './VariablesSystem';
 import { Overview } from './Overview';
-import { useCampaignEditor } from '../../hooks/CampaignEditor';
 
 export const CampaignEditor: React.FC = () => {
   const {

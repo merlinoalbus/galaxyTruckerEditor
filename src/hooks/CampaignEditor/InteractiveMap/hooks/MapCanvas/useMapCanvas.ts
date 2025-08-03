@@ -1,6 +1,7 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
-import { MapViewport } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
+import { MapViewport, MapNode, MapConnection } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { CanvasInteraction } from '@/types/CampaignEditor/InteractiveMap/types/MapCanvas/MapCanvas.types';
+import { RouteVisibilityService } from '@/services/CampaignEditor/RouteVisibilityService';
 
 export interface UseMapCanvasReturn {
   canvasRef: React.RefObject<SVGSVGElement>;
@@ -8,11 +9,21 @@ export interface UseMapCanvasReturn {
   handleMouseDown: (event: React.MouseEvent) => void;
   handleMouseUp: () => void;
   getViewBox: (viewport: MapViewport) => string;
+  hoveredElement: string | null;
+  setHoveredElement: (element: string | null) => void;
+  selectedNode: string | null;
+  setSelectedNode: (node: string | null) => void;
+  selectedConnection: string | null;
+  setSelectedConnection: (connection: string | null) => void;
+  visibleConnections: MapConnection[];
+  shipPositions: Map<string, any>;
 }
 
 export const useMapCanvas = (
   viewport: MapViewport,
-  onViewportChange: (viewport: MapViewport) => void
+  onViewportChange: (viewport: MapViewport) => void,
+  nodes: MapNode[],
+  connections: MapConnection[]
 ): UseMapCanvasReturn => {
   const canvasRef = useRef<SVGSVGElement>(null);
   const [interaction, setInteraction] = useState<CanvasInteraction>({
@@ -23,6 +34,69 @@ export const useMapCanvas = (
   });
   
   const [dragThreshold] = useState(3); // Minimum pixels to start dragging
+  
+  // Selection and hover state
+  const [hoveredElement, setHoveredElement] = useState<string | null>(null);
+  const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const [selectedConnection, setSelectedConnection] = useState<string | null>(null);
+  
+  // Filter connections based on visibility
+  const visibleConnections = useMemo(() => {
+    const service = RouteVisibilityService.getInstance();
+    return service.filterVisibleConnections(connections);
+  }, [connections]);
+
+  // Calculate ship positions for all connections to detect overlaps
+  const shipPositions = useMemo(() => {
+    const positions = new Map();
+    const minDistance = 60; // Minimum distance between ships
+    const testPositions = [0.5, 0.4, 0.6, 0.3, 0.7, 0.2, 0.8, 0.1, 0.9];
+    
+    visibleConnections.forEach((connection, connectionIndex) => {
+      const fromNode = nodes.find(n => n.name === connection.from);
+      const toNode = nodes.find(n => n.name === connection.to);
+      
+      if (!fromNode || !toNode || connection.isVisible === false) return;
+      
+      const connectionId = `${connection.from}-${connection.to}`;
+      
+      // Try each test position until we find one without conflicts
+      for (const testPos of testPositions) {
+        const testPoint = {
+          x: fromNode.coordinates[0] + (toNode.coordinates[0] - fromNode.coordinates[0]) * testPos,
+          y: fromNode.coordinates[1] + (toNode.coordinates[1] - fromNode.coordinates[1]) * testPos
+        };
+        
+        // Check for conflicts with existing positions
+        let hasConflict = false;
+        for (const existingPos of positions.values()) {
+          const distance = Math.sqrt(
+            Math.pow(testPoint.x - existingPos.x, 2) + 
+            Math.pow(testPoint.y - existingPos.y, 2)
+          );
+          if (distance < minDistance) {
+            hasConflict = true;
+            break;
+          }
+        }
+        
+        if (!hasConflict) {
+          positions.set(connectionId, testPoint);
+          break;
+        }
+      }
+      
+      // Fallback if all positions have conflicts
+      if (!positions.has(connectionId)) {
+        positions.set(connectionId, {
+          x: fromNode.coordinates[0] + (toNode.coordinates[0] - fromNode.coordinates[0]) * 0.5,
+          y: fromNode.coordinates[1] + (toNode.coordinates[1] - fromNode.coordinates[1]) * 0.5
+        });
+      }
+    });
+    
+    return positions;
+  }, [visibleConnections, nodes]);
 
   const handleMouseDown = useCallback((event: React.MouseEvent) => {
     if (event.button !== 0) return; // Only left mouse button
@@ -191,6 +265,14 @@ export const useMapCanvas = (
     interaction,
     handleMouseDown,
     handleMouseUp,
-    getViewBox
+    getViewBox,
+    hoveredElement,
+    setHoveredElement,
+    selectedNode,
+    setSelectedNode,
+    selectedConnection,
+    setSelectedConnection,
+    visibleConnections,
+    shipPositions
   };
 };
