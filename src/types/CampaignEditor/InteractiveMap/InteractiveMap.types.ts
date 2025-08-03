@@ -35,12 +35,7 @@ export interface CampaignScript {
   relatedConnections: string[];
 }
 
-export interface ScriptCommand {
-  line: number;
-  content: string;
-  type: string;
-  parameters?: Record<string, any>;
-}
+import { ScriptCommand } from '../CampaignEditor.types';
 
 export interface InteractiveMapProps {
   onNodeClick?: (node: MapNode, scripts: CampaignScript[]) => void;
