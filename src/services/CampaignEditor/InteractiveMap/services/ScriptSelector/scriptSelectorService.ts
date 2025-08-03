@@ -17,13 +17,25 @@ class ScriptSelectorService {
     );
   }
 
-  sortScripts(scripts: CampaignScript[]): CampaignScript[] {
+  sortScripts(scripts: CampaignScript[], startScripts: string[] = []): CampaignScript[] {
     return scripts.sort((a, b) => {
+      const aIsStart = this.isStartScript(a, startScripts);
+      const bIsStart = this.isStartScript(b, startScripts);
+      
+      // Start scripts first
+      if (aIsStart && !bIsStart) return -1;
+      if (!aIsStart && bIsStart) return 1;
+      
+      // Then sort by file name and script name
       if (a.fileName !== b.fileName) {
         return a.fileName.localeCompare(b.fileName);
       }
       return a.name.localeCompare(b.name);
     });
+  }
+
+  isStartScript(script: CampaignScript, startScripts: string[] = []): boolean {
+    return startScripts.includes(script.name);
   }
 
   getScriptPreview(script: CampaignScript): string {

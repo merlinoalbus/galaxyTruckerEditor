@@ -4,6 +4,7 @@ export interface MapConnectionProps {
   connection: MapConnection;
   fromPosition: { x: number; y: number };
   toPosition: { x: number; y: number };
+  shipPosition?: { x: number; y: number };
   isSelected: boolean;
   isHovered: boolean;
   relatedScripts: CampaignScript[];

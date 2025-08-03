@@ -7,7 +7,7 @@ export const useCampaignEditor = () => {
   const [activeTab, setActiveTab] = useState('map');
   const [analysis, setAnalysis] = useState<CampaignAnalysis | null>(null);
   const [selectedNode, setSelectedNode] = useState<MapNode | null>(null);
-  const [selectedScript, setSelectedScript] = useState<string>('');
+  const [selectedScript, setSelectedScript] = useState<CampaignScript | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,16 +34,22 @@ export const useCampaignEditor = () => {
     setSelectedNode(node);
     // For now, clear selected script when clicking a node
     // Script selection will be handled by InteractiveMap component
-    setSelectedScript('');
+    setSelectedScript(null);
   };
 
   const handleScriptChange = (newScript: string) => {
-    setSelectedScript(newScript);
+    if (selectedScript) {
+      // Update the script content
+      setSelectedScript({
+        ...selectedScript,
+        commands: selectedScript.commands // TODO: Parse newScript content
+      });
+    }
     // TODO: Save script changes
   };
 
   const handleScriptSelect = (script: CampaignScript) => {
-    setSelectedScript(script.name);
+    setSelectedScript(script);
     setActiveTab('flow');
   };
 

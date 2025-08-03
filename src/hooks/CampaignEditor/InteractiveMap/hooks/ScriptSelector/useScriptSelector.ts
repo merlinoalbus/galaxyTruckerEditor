@@ -7,24 +7,33 @@ export interface UseScriptSelectorReturn {
   filteredScripts: CampaignScript[];
   setSearchTerm: (term: string) => void;
   getScriptPreview: (script: CampaignScript) => string;
+  isStartScript: (script: CampaignScript) => boolean;
 }
 
-export const useScriptSelector = (scripts: CampaignScript[]): UseScriptSelectorReturn => {
+export const useScriptSelector = (
+  scripts: CampaignScript[], 
+  startScripts: string[] = []
+): UseScriptSelectorReturn => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredScripts = useMemo(() => {
     const filtered = scriptSelectorService.filterScripts(scripts, searchTerm);
-    return scriptSelectorService.sortScripts(filtered);
-  }, [scripts, searchTerm]);
+    return scriptSelectorService.sortScripts(filtered, startScripts);
+  }, [scripts, searchTerm, startScripts]);
 
   const getScriptPreview = (script: CampaignScript): string => {
     return scriptSelectorService.getScriptPreview(script);
+  };
+
+  const isStartScript = (script: CampaignScript): boolean => {
+    return scriptSelectorService.isStartScript(script, startScripts);
   };
 
   return {
     searchTerm,
     filteredScripts,
     setSearchTerm,
-    getScriptPreview
+    getScriptPreview,
+    isStartScript
   };
 };

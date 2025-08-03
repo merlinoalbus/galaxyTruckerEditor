@@ -5,6 +5,7 @@ import { useInteractiveMap } from '@/hooks/CampaignEditor/InteractiveMap/useInte
 import { interactiveMapStyles } from '@/styles/CampaignEditor/InteractiveMap/InteractiveMap.styles';
 
 import { MapCanvas } from './components/MapCanvas/MapCanvas';
+import { MapControls } from './components/MapControls/MapControls';
 import { ScriptSelector } from './components/ScriptSelector/ScriptSelector';
 
 export const InteractiveMap: React.FC<InteractiveMapProps> = ({
@@ -74,16 +75,20 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
         <h3 className={interactiveMapStyles.title}>Interactive Campaign Map</h3>
         <div className={interactiveMapStyles.legend}>
           <div className={interactiveMapStyles.legendItem}>
-            <div className={`${interactiveMapStyles.legendDot} bg-yellow-400`} />
-            <span>Has Scripts</span>
+            <div className={`${interactiveMapStyles.legendDot} bg-emerald-500`} />
+            <span>Class I (Easy)</span>
+          </div>
+          <div className={interactiveMapStyles.legendItem}>
+            <div className={`${interactiveMapStyles.legendDot} bg-blue-500`} />
+            <span>Class II (Medium)</span>
+          </div>
+          <div className={interactiveMapStyles.legendItem}>
+            <div className={`${interactiveMapStyles.legendDot} bg-amber-500`} />
+            <span>Class III (Hard)</span>
           </div>
           <div className={interactiveMapStyles.legendItem}>
             <div className={`${interactiveMapStyles.legendDot} bg-red-500`} />
-            <span>Script Count</span>
-          </div>
-          <div className={interactiveMapStyles.legendItem}>
-            <div className={`${interactiveMapStyles.legendDot} bg-green-500`} />
-            <span>Interactive Buttons</span>
+            <span>Class IV (Very Hard)</span>
           </div>
         </div>
       </div>
@@ -97,12 +102,17 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
           onConnectionClick={handleConnectionClickInternal}
           onViewportChange={setViewport}
         />
+        <MapControls
+          viewport={viewport}
+          onViewportChange={setViewport}
+        />
       </div>
 
       <ScriptSelector
         isOpen={scriptSelectorOpen}
         scripts={scriptSelectorData.scripts}
         title={scriptSelectorData.title}
+        startScripts={scriptSelectorData.startScripts}
         onScriptSelect={handleScriptSelect}
         onClose={handleScriptSelectorClose}
       />

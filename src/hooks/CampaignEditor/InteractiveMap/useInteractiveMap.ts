@@ -2,6 +2,43 @@ import { useState, useEffect, useCallback } from 'react';
 import { MapNode, MapConnection, CampaignScript, MapViewport } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { interactiveMapService } from '@/services/CampaignEditor/InteractiveMap/interactiveMapService';
 
+// Function to resolve node overlaps
+const resolveNodeOverlaps = (nodes: MapNode[]): MapNode[] => {
+  const adjustedNodes = [...nodes];
+  const minDistance = 80; // Minimum distance between nodes
+  const maxAttempts = 10; // Maximum adjustment attempts per node
+  
+  for (let i = 0; i < adjustedNodes.length; i++) {
+    for (let j = i + 1; j < adjustedNodes.length; j++) {
+      const nodeA = adjustedNodes[i];
+      const nodeB = adjustedNodes[j];
+      
+      const distance = Math.sqrt(
+        Math.pow(nodeA.coordinates[0] - nodeB.coordinates[0], 2) + 
+        Math.pow(nodeA.coordinates[1] - nodeB.coordinates[1], 2)
+      );
+      
+      if (distance < minDistance) {
+        // Calculate adjustment vector
+        const angle = Math.atan2(
+          nodeB.coordinates[1] - nodeA.coordinates[1],
+          nodeB.coordinates[0] - nodeA.coordinates[0]
+        );
+        
+        const adjustmentDistance = (minDistance - distance) / 2 + 5;
+        
+        // Move both nodes apart
+        nodeA.coordinates[0] -= Math.cos(angle) * adjustmentDistance;
+        nodeA.coordinates[1] -= Math.sin(angle) * adjustmentDistance;
+        nodeB.coordinates[0] += Math.cos(angle) * adjustmentDistance;
+        nodeB.coordinates[1] += Math.sin(angle) * adjustmentDistance;
+      }
+    }
+  }
+  
+  return adjustedNodes;
+};
+
 export interface UseInteractiveMapReturn {
   nodes: MapNode[];
   connections: MapConnection[];
@@ -16,6 +53,7 @@ export interface UseInteractiveMapReturn {
   scriptSelectorData: {
     scripts: CampaignScript[];
     title: string;
+    startScripts?: string[];
   };
   handleNodeClick: (node: MapNode, openSelector?: boolean) => CampaignScript[];
   handleConnectionClick: (connection: MapConnection, openSelector?: boolean) => CampaignScript[];
@@ -42,14 +80,15 @@ export const useInteractiveMap = (
   const [scriptSelectorData, setScriptSelectorData] = useState<{
     scripts: CampaignScript[];
     title: string;
+    startScripts?: string[];
   }>({ scripts: [], title: '' });
 
   const [viewport, setViewport] = useState<MapViewport>({
     x: 0,
     y: 0,
-    width: 2200,
-    height: 2800,
-    scale: 1
+    width: 800,
+    height: 600,
+    scale: 1  // Scala iniziale 100%
   });
 
   const loadMapData = useCallback(async () => {
@@ -57,16 +96,20 @@ export const useInteractiveMap = (
       setIsLoading(true);
       setError(null);
 
-      const [loadedNodes, loadedScripts] = await Promise.all([
+      const [loadedNodes, loadedScripts, loadedMissions] = await Promise.all([
         interactiveMapService.loadNodes(),
-        interactiveMapService.loadAllScripts()
+        interactiveMapService.loadAllScripts(),
+        interactiveMapService.loadMissions()
       ]);
 
-      const loadedConnections = interactiveMapService.buildConnections(loadedNodes);
+      const loadedConnections = await interactiveMapService.buildConnections(loadedNodes, loadedMissions);
       
       interactiveMapService.analyzeScriptConnections(loadedScripts, loadedNodes, loadedConnections);
 
-      setNodes(loadedNodes);
+      // Resolve node overlaps
+      const adjustedNodes = resolveNodeOverlaps(loadedNodes);
+
+      setNodes(adjustedNodes);
       setConnections(loadedConnections);
       setScripts(loadedScripts);
 
@@ -78,8 +121,8 @@ export const useInteractiveMap = (
         
         setViewport(prev => ({
           ...prev,
-          x: centerX - prev.width / 2,
-          y: centerY - prev.height / 2
+          x: centerX - (prev.width / prev.scale) / 2,
+          y: centerY - (prev.height / prev.scale) / 2
         }));
       }
 
@@ -118,9 +161,27 @@ export const useInteractiveMap = (
     setSelectedConnection(null);
     
     if (openSelector && relatedScripts.length > 0) {
+      // For nodes, check which scripts are referenced by node buttons
+      // node.buttons = [[buttonId, scriptName, displayText], ...]
+      const nodeStartScripts: string[] = [];
+      if (node.buttons) {
+        node.buttons.forEach((button) => {
+          const scriptName = button[1]; // Script name is at index 1
+          if (scriptName && relatedScripts.some(script => script.name === scriptName)) {
+            nodeStartScripts.push(scriptName);
+          }
+        });
+      }
+      
+      console.log('Node click - node:', node);
+      console.log('Node click - node.buttons:', node.buttons);
+      console.log('Node click - nodeStartScripts:', nodeStartScripts);
+      console.log('Node click - relatedScripts:', relatedScripts.map(s => s.name));
+      
       setScriptSelectorData({
         scripts: relatedScripts,
-        title: `Scripts for ${node.caption}`
+        title: `Scripts for ${node.caption}`,
+        startScripts: nodeStartScripts
       });
       setScriptSelectorOpen(true);
     }
@@ -136,9 +197,16 @@ export const useInteractiveMap = (
     setSelectedNode(null);
     
     if (openSelector && relatedScripts.length > 0) {
+      console.log('Connection click - connection:', connection);
+      console.log('Connection click - startScripts:', connection.startScripts);
+      console.log('Connection click - relatedScripts:', relatedScripts.map(s => s.name));
+      
+      // For connections, startScripts are mission names, not dialog script names
+      // So we don't show stars for connections (no direct correlation)
       setScriptSelectorData({
         scripts: relatedScripts,
-        title: `Scripts for ${connection.from} → ${connection.to}`
+        title: `Scripts for ${connection.from} → ${connection.to}`,
+        startScripts: [] // No stars for connection scripts
       });
       setScriptSelectorOpen(true);
     }

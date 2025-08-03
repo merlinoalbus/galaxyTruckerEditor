@@ -10,6 +10,7 @@ export interface MapCanvasProps {
 }
 
 export interface CanvasInteraction {
+  isMouseDown: boolean;
   isDragging: boolean;
   dragStart: { x: number; y: number };
   lastPanPoint: { x: number; y: number };

@@ -44,9 +44,9 @@ export const CampaignEditor: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="h-full flex flex-col gap-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-shrink-0">
         <div>
           <h1 className="text-2xl font-bold text-white">Complete Campaign Editor</h1>
           <p className="text-gray-400">Interactive map-based script editing with complete flow visualization</p>
@@ -62,7 +62,7 @@ export const CampaignEditor: React.FC = () => {
 
       {/* Stats */}
       {analysis && (
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-4 gap-4 flex-shrink-0">
           <div className="bg-gt-secondary rounded-lg p-4">
             <p className="text-gt-accent font-bold text-lg">{analysis.scripts?.length || 0} scripts loaded</p>
           </div>
@@ -79,7 +79,7 @@ export const CampaignEditor: React.FC = () => {
       )}
 
       {/* Tabs */}
-      <div className="border-b border-gray-700">
+      <div className="border-b border-gray-700 flex-shrink-0">
         <div className="flex space-x-8">
           {tabs.map((tab) => (
             <button
@@ -98,7 +98,7 @@ export const CampaignEditor: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className="bg-gt-primary rounded-lg min-h-96">
+      <div className="bg-gt-primary rounded-lg flex-1 min-h-0">
         {activeTab === 'map' && (
           <InteractiveMap 
             onScriptSelect={handleScriptSelect}
