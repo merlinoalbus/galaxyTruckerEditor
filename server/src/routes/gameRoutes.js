@@ -2,7 +2,9 @@
 const express = require('express');
 const { getLogger } = require('../utils/logger');
 const { findCharacterImages } = require('../utils/characterUtils');
-const { GAME_ROOT, SUPPORTED_LANGUAGES } = require('../config/config');
+const config = require('../config/config');
+const { GAME_ROOT, SUPPORTED_LANGUAGES } = config;
+const { isValidFilePath } = require('../utils/fileUtils');
 const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
@@ -18,7 +20,7 @@ router.get('/characters', async (req, res) => {
     const characters = [];
     
     // Carica campaign/characters.yaml
-    const charactersPath = path.join(GAME_ROOT, 'campaign', 'characters.yaml');
+    const charactersPath = config.PATH_TEMPLATES.charactersYaml;
     
     if (!await fs.pathExists(charactersPath)) {
       logger.warn('characters.yaml not found');
@@ -319,7 +321,7 @@ router.get('/nodes', async (req, res) => {
     const nodesMap = {};
     
     for (const lang of languages) {
-      const nodesPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`, 'nodes.yaml');
+      const nodesPath = config.PATH_TEMPLATES.nodesYaml(lang);
       
       if (await fs.pathExists(nodesPath)) {
         try {
@@ -599,14 +601,14 @@ async function loadButtonLocalizedStrings(languages) {
     
     try {
       // Cerca file strings per buttons in localization_strings/
-      const stringsPath = path.join(GAME_ROOT, 'localization_strings', `button_strings_${lang}.yaml`);
+      const stringsPath = config.PATH_TEMPLATES.buttonStrings(lang);
       
       if (await fs.pathExists(stringsPath)) {
         const content = await fs.readFile(stringsPath, 'utf8');
         buttonStrings[lang] = yaml.load(content) || {};
       } else {
         // Fallback: cerca file alternativi
-        const altPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`, 'button_labels.yaml');
+        const altPath = config.PATH_TEMPLATES.buttonLabelsYaml(lang);
         if (await fs.pathExists(altPath)) {
           const content = await fs.readFile(altPath, 'utf8');
           buttonStrings[lang] = yaml.load(content) || {};
@@ -749,7 +751,7 @@ async function collectRouteButtons() {
   
   // Carica missions.yaml multilingua
   for (const lang of languages) {
-    const missionsPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`, 'missions.yaml');
+    const missionsPath = config.PATH_TEMPLATES.missionsYaml(lang);
     
     if (await fs.pathExists(missionsPath)) {
       try {
@@ -1230,21 +1232,6 @@ router.post('/file/binary', async (req, res) => {
   }
 });
 
-// Funzione validazione path sicuro (per tutti i tipi di file)
-function isValidFilePath(filePath) {
-  if (!filePath || typeof filePath !== 'string') return false;
-  
-  // Normalizza path
-  const normalized = path.normalize(filePath);
-  
-  // Controlla traversal
-  if (normalized.includes('..')) return false;
-  
-  // Controlla caratteri non sicuri
-  if (normalized.includes('\0') || normalized.includes('<') || normalized.includes('>')) return false;
-  
-  return true;
-}
 
 // Determina tipo file dall'estensione
 function determineFileType(filePath) {

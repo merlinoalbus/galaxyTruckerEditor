@@ -6,9 +6,11 @@ const {
   validateImagePaths, 
   loadImageBinary, 
   scanDirectoryForImages,
-  isValidFilePath 
+  isValidFilePath,
+  isValidImagePath
 } = require('../utils/fileUtils');
-const { GAME_ROOT } = require('../config/config');
+const config = require('../config/config');
+const { GAME_ROOT } = config;
 const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
@@ -153,7 +155,7 @@ router.post('/images/binary', async (req, res) => {
       });
     }
     
-    const fallbackImagePath = path.join(GAME_ROOT, 'avatars', 'common', 'avatar_no_avatar.png');
+    const fallbackImagePath = config.PATH_TEMPLATES.fallbackImage;
     let fallbackBinary = null;
     
     // Pre-carica immagine fallback
@@ -215,20 +217,6 @@ router.post('/images/binary', async (req, res) => {
       }
     }
     
-    // Funzione validazione path sicuro
-    function isValidImagePath(imagePath) {
-      if (!imagePath || typeof imagePath !== 'string') return false;
-      
-      // Normalizza path
-      const normalized = path.normalize(imagePath);
-      
-      // Controlla traversal
-      if (normalized.includes('..')) return false;
-      
-      // Controlla estensione
-      const ext = path.extname(normalized).toLowerCase();
-      return ['.jpg', '.jpeg', '.png'].includes(ext);
-    }
     
     const successful = results.filter(r => r.successo).length;
     const failed = results.filter(r => !r.successo).length;
