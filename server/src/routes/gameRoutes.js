@@ -11,6 +11,7 @@ const yaml = require('js-yaml');
 
 const router = express.Router();
 const logger = getLogger();
+const { findAllRelatedScripts } = require('../utils/scriptAnalyzer');
 
 // API 6: Lista personaggi secondo specifica
 router.get('/characters', async (req, res) => {
@@ -367,6 +368,28 @@ router.get('/nodes', async (req, res) => {
     const nodeUsage = new Map();
     await scanCampaignFilesForNodes(nodeUsage);
     
+    // Carica tutti gli script per analisi ricorsiva
+    let allScripts = [];
+    try {
+      const http = require('http');
+      const scriptsData = await new Promise((resolve, reject) => {
+        http.get(`http://localhost:${config.SERVER_PORT}/api/scripts`, (res) => {
+          let data = '';
+          res.on('data', chunk => data += chunk);
+          res.on('end', () => {
+            try {
+              resolve(JSON.parse(data));
+            } catch (e) {
+              reject(e);
+            }
+          });
+        }).on('error', reject);
+      });
+      allScripts = scriptsData.data || [];
+    } catch (error) {
+      logger.warn('Could not load scripts for recursive analysis:', error.message);
+    }
+    
     // Processa ogni nodo
     for (const [nodeName, nodeData] of Object.entries(nodesMap)) {
       const usage = nodeUsage.get(nodeName) || {
@@ -374,6 +397,9 @@ router.get('/nodes', async (req, res) => {
         script_che_lo_usano: [],
         comandi_utilizzati: []
       };
+      
+      // Trova tutti gli script collegati ricorsivamente
+      const allRelatedScripts = findAllRelatedScripts(nodeName, allScripts, 'node');
       
       // Carica immagine del nodo
       const imageResult = await loadNodeImage(nodeData.image);
@@ -393,7 +419,8 @@ router.get('/nodes', async (req, res) => {
         imageBinary: imageResult.imageBinary,
         utilizzi_totali: usage.utilizzi_totali,
         script_che_lo_usano: Array.from(usage.script_che_lo_usano),
-        comandi_utilizzati: Array.from(usage.comandi_utilizzati)
+        comandi_utilizzati: Array.from(usage.comandi_utilizzati),
+        script_collegati_ricorsivamente: allRelatedScripts
       });
     }
     

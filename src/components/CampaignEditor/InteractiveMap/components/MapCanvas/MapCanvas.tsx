@@ -15,6 +15,8 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
   viewport,
   onNodeClick,
   onConnectionClick,
+  onNodeHover,
+  onConnectionHover,
   onViewportChange,
   getNodeRelatedScripts,
   getConnectionRelatedScripts
@@ -94,9 +96,9 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
         fill={mapCanvasStyles.background.fill}
       />
 
-      {/* Background image anchored bottom-left, full size */}
+      {/* Background image from API */}
       <image
-        href={`${API_CONFIG.ASSETS_BASE_URL}${PATHS.CAMPAIGN.BIG}/bg.jpg`}
+        href={`${API_CONFIG.API_BASE_URL}/file/campaign/campaignMap/big/bg.jpg`}
         x={viewport.x}
         y={viewport.y}
         width={viewport.width / viewport.scale}
@@ -131,8 +133,24 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
             isHovered={hoveredElement === connectionId}
             relatedScripts={getConnectionRelatedScripts ? getConnectionRelatedScripts(connection) : []}
             onClick={handleConnectionClickInternal}
-            onMouseEnter={() => setHoveredElement(connectionId)}
-            onMouseLeave={() => setHoveredElement(null)}
+            onMouseEnter={(e) => {
+              setHoveredElement(connectionId);
+              if (onConnectionHover) {
+                const rect = canvasRef.current?.getBoundingClientRect();
+                if (rect) {
+                  // Convert mouse position to SVG coordinates
+                  const svgX = ((e.clientX - rect.left) / viewport.scale) + viewport.x;
+                  const svgY = ((e.clientY - rect.top) / viewport.scale) + viewport.y;
+                  onConnectionHover(connection, { x: svgX, y: svgY });
+                }
+              }
+            }}
+            onMouseLeave={() => {
+              setHoveredElement(null);
+              if (onConnectionHover) {
+                onConnectionHover(null);
+              }
+            }}
           />
         );
       })}
@@ -149,8 +167,24 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
           isHovered={hoveredElement === node.name}
           relatedScripts={getNodeRelatedScripts ? getNodeRelatedScripts(node) : []}
           onClick={handleNodeClickInternal}
-          onMouseEnter={() => setHoveredElement(node.name)}
-          onMouseLeave={() => setHoveredElement(null)}
+          onMouseEnter={(e) => {
+            setHoveredElement(node.name);
+            if (onNodeHover) {
+              const rect = canvasRef.current?.getBoundingClientRect();
+              if (rect) {
+                // Convert mouse position to SVG coordinates
+                const svgX = ((e.clientX - rect.left) / viewport.scale) + viewport.x;
+                const svgY = ((e.clientY - rect.top) / viewport.scale) + viewport.y;
+                onNodeHover(node, { x: svgX, y: svgY });
+              }
+            }
+          }}
+          onMouseLeave={() => {
+            setHoveredElement(null);
+            if (onNodeHover) {
+              onNodeHover(null);
+            }
+          }}
         />
       ))}
     </svg>

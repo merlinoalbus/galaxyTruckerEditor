@@ -7,8 +7,8 @@ export interface MapNodeProps {
   isHovered: boolean;
   relatedScripts: CampaignScript[];
   onClick: (node: MapNode) => void;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
+  onMouseEnter: (e: React.MouseEvent) => void;
+  onMouseLeave: (e: React.MouseEvent) => void;
 }
 
 export interface NodeVisualState {

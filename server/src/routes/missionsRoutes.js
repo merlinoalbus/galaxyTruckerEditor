@@ -8,6 +8,7 @@ const { GAME_ROOT, SUPPORTED_LANGUAGES } = config;
 const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
+const { findAllRelatedScripts } = require('../utils/scriptAnalyzer');
 
 const router = express.Router();
 const logger = getLogger();
@@ -69,6 +70,28 @@ router.get('/routes', async (req, res) => {
     const routeUsage = new Map();
     await scanCampaignFilesForRoutes(routeUsage);
     
+    // Carica tutti gli script per analisi ricorsiva
+    let allScripts = [];
+    try {
+      const http = require('http');
+      const scriptsData = await new Promise((resolve, reject) => {
+        http.get(`http://localhost:${config.SERVER_PORT}/api/scripts`, (res) => {
+          let data = '';
+          res.on('data', chunk => data += chunk);
+          res.on('end', () => {
+            try {
+              resolve(JSON.parse(data));
+            } catch (e) {
+              reject(e);
+            }
+          });
+        }).on('error', reject);
+      });
+      allScripts = scriptsData.data || [];
+    } catch (error) {
+      logger.warn('Could not load scripts for recursive analysis:', error.message);
+    }
+    
     // Processa ogni arco
     for (const [routeName, routeData] of Object.entries(routesMap)) {
       const usage = routeUsage.get(routeName) || {
@@ -76,6 +99,10 @@ router.get('/routes', async (req, res) => {
         script_che_lo_usano: [],
         comandi_utilizzati: []
       };
+      
+      // Trova tutti gli script collegati ricorsivamente alla rotta
+      const routeIdentifier = `${routeData.source}-${routeData.destination}`;
+      const allRelatedScripts = findAllRelatedScripts(routeIdentifier, allScripts, 'route');
       
       // Parsa button in formato strutturato
       const parsedButton = parseRouteButton(routeData.button);
@@ -91,7 +118,8 @@ router.get('/routes', async (req, res) => {
         localizedDescriptions: routeData.localizedDescriptions,
         utilizzi_totali: usage.utilizzi_totali,
         script_che_lo_usano: Array.from(usage.script_che_lo_usano),
-        comandi_utilizzati: Array.from(usage.comandi_utilizzati)
+        comandi_utilizzati: Array.from(usage.comandi_utilizzati),
+        script_collegati_ricorsivamente: allRelatedScripts
       });
     }
     

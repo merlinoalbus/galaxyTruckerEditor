@@ -1,22 +1,20 @@
 import { MapNode, MapConnection, CampaignScript, Mission } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { ScriptCommand } from '@/types/CampaignEditor/CampaignEditor.types';
-
-const API_BASE = 'http://localhost:3001/api';
+import { API_CONFIG, API_ENDPOINTS } from '@/config/constants';
 
 class InteractiveMapService {
   async loadNodes(): Promise<MapNode[]> {
     try {
-      const response = await fetch(`${API_BASE}/campaignMissions/nodes.yaml`);
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.GAME_NODES}`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       
       const data = await response.json();
-      const yaml = await import('js-yaml');
       
-      if (data.content) {
-        const parsedNodes = yaml.load(data.content) as MapNode[];
-        return Array.isArray(parsedNodes) ? parsedNodes : [];
+      // API /game/nodes ritorna già i nodi processati secondo documentazione
+      if (data.success && data.data) {
+        return data.data;
       }
       
       return [];
@@ -28,17 +26,16 @@ class InteractiveMapService {
 
   async loadMissions(): Promise<Mission[]> {
     try {
-      const response = await fetch(`${API_BASE}/campaignMissions/missions.yaml`);
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.MISSIONS_ROUTES}`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       
       const data = await response.json();
-      const yaml = await import('js-yaml');
       
-      if (data.content) {
-        const parsedMissions = yaml.load(data.content) as Mission[];
-        return Array.isArray(parsedMissions) ? parsedMissions : [];
+      // API /missions/routes ritorna già le rotte/missions processate secondo documentazione
+      if (data.success && data.data) {
+        return data.data;
       }
       
       return [];
@@ -49,41 +46,40 @@ class InteractiveMapService {
   }
 
   async loadAllScripts(): Promise<CampaignScript[]> {
-    const scriptFiles = [
-      'tutorials.txt',
-      'scripts1.txt',
-      'scripts2.txt', 
-      'scripts3.txt',
-      'scripts4.txt',
-      'scripts5.txt',
-      'missions.txt',
-      'inits.txt'
-    ];
-
-    const allScripts: CampaignScript[] = [];
-
-    for (const fileName of scriptFiles) {
-      try {
-        const response = await fetch(`${API_BASE}/campaign/${fileName}`);
-        if (response.ok) {
-          const data = await response.json();
-          const scriptContent = data.content || '';
-          const parsedScripts = this.parseScriptFile(scriptContent, fileName);
-          allScripts.push(...parsedScripts);
-        }
-      } catch (error) {
-        console.warn(`Could not load ${fileName}:`, error);
+    try {
+      // Usa API /scripts per ottenere lista completa scripts
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS}`);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
+      
+      const data = await response.json();
+      
+      if (data.success && data.data) {
+        // Ritorna i dati così come arrivano dall'API, aggiungendo backward compatibility
+        return data.data.map((scriptInfo: any) => ({
+          ...scriptInfo,
+          // Backward compatibility fields
+          name: scriptInfo.nomescript,
+          fileName: scriptInfo.nomefile,
+          commands: [], // I comandi verranno caricati separatamente se necessario
+          relatedNodes: scriptInfo.nodi_referenziati || [],
+          relatedConnections: []
+        }));
+      }
+      
+      return [];
+    } catch (error) {
+      console.error('Error loading all scripts:', error);
+      return [];
     }
-
-    return allScripts;
   }
 
   async buildConnections(nodes: MapNode[], missions: Mission[]): Promise<MapConnection[]> {
     const connections: MapConnection[] = [];
     const processedRoutes = new Set<string>();
     
-    // Create a map of missions by route
+    // Create a map of missions by route - ora usando i dati dall'API /missions/routes
     const missionMap = new Map<string, Mission[]>();
     missions.forEach(mission => {
       if (mission.source && mission.destination) {
@@ -120,9 +116,11 @@ class InteractiveMapService {
             else if (mission.license === 'STII') hasSTII = true;
             else if (mission.license === 'STI') hasSTI = true;
             
-            // Collect start scripts (⭐ scripts)
-            if (mission.button && mission.button[2]) {
-              startScripts.push(mission.button[2]);
+            // Collect start scripts (⭐ scripts) - ora dal campo button dell'API
+            if (mission.button && typeof mission.button === 'object' && mission.button.script) {
+              if (!startScripts.includes(mission.button.script)) {
+                startScripts.push(mission.button.script);
+              }
             }
             
             if (mission.missiontype === 'UNIQUE') {
@@ -176,115 +174,166 @@ class InteractiveMapService {
 
   analyzeScriptConnections(scripts: CampaignScript[], nodes: MapNode[], connections: MapConnection[]): void {
     scripts.forEach(script => {
-      script.relatedNodes = this.findRelatedNodes(script, nodes);
+      // Ora usa i dati già processati dall'API /scripts invece di parsing manuale
+      script.relatedNodes = script.relatedNodes || this.findRelatedNodes(script, nodes);
       script.relatedConnections = this.findRelatedConnections(script, connections);
     });
   }
 
-  private parseScriptFile(content: string, fileName: string): CampaignScript[] {
-    const scripts: CampaignScript[] = [];
-    const lines = content.split('\n');
-    let currentScript: Partial<CampaignScript> | null = null;
-    let currentCommands: ScriptCommand[] = [];
-
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
-      
-      if (line.startsWith('SCRIPT ')) {
-        if (currentScript) {
-          scripts.push({
-            name: currentScript.name!,
-            fileName,
-            commands: currentCommands,
-            relatedNodes: [],
-            relatedConnections: []
-          });
-        }
-        
-        const scriptName = line.replace('SCRIPT ', '').trim();
-        currentScript = { name: scriptName, fileName };
-        currentCommands = [];
-        
-      } else if (line === 'END_OF_SCRIPT') {
-        if (currentScript) {
-          scripts.push({
-            name: currentScript.name!,
-            fileName,
-            commands: currentCommands,
-            relatedNodes: [],
-            relatedConnections: []
-          });
-          currentScript = null;
-          currentCommands = [];
-        }
-        
-      } else if (currentScript && line && !line.startsWith('SCRIPTS')) {
-        currentCommands.push({
-          line: i + 1,
-          content: line,
-          type: this.identifyCommandType(line)
-        });
-      }
-    }
-
-    return scripts;
-  }
-
-  private identifyCommandType(line: string): string {
-    const upperLine = line.toUpperCase().trim();
-    
-    if (upperLine.startsWith('CENTERMAPBYNODE')) return 'center_map';
-    if (upperLine.startsWith('SUB_SCRIPT')) return 'subscript';
-    if (upperLine.startsWith('SAY')) return 'dialogue';
-    if (upperLine.startsWith('ASK')) return 'question';
-    if (upperLine.startsWith('SHOWCHAR')) return 'show_character';
-    if (upperLine.startsWith('HIDECHAR')) return 'hide_character';
-    if (upperLine.startsWith('SET ')) return 'variable_set';
-    if (upperLine.startsWith('IF ')) return 'condition_start';
-    if (upperLine.startsWith('MENU')) return 'menu_start';
-    if (upperLine.startsWith('OPT ')) return 'menu_option';
-    if (upperLine.startsWith('GO ')) return 'goto';
-    if (upperLine.startsWith('LABEL ')) return 'label';
-    
-    return 'unknown';
-  }
-
   private findRelatedNodes(script: CampaignScript, nodes: MapNode[]): string[] {
-    const relatedNodes: string[] = [];
-    const scriptContent = script.commands.map(cmd => cmd.content).join(' ').toLowerCase();
+    // Se l'API /scripts fornisce già nodi_referenziati, usali
+    if (script.nodi_referenziati && script.nodi_referenziati.length > 0) {
+      return script.nodi_referenziati;
+    }
+    if (script.relatedNodes && script.relatedNodes.length > 0) {
+      return script.relatedNodes;
+    }
     
-    nodes.forEach(node => {
-      if (scriptContent.includes(node.name.toLowerCase()) ||
-          scriptContent.includes(node.caption.toLowerCase().replace(/\s+/g, ''))) {
-        relatedNodes.push(node.name);
-      }
-    });
-
-    script.commands.forEach(cmd => {
-      if (cmd.type === 'center_map') {
-        const match = cmd.content.match(/CenterMapByNode\s+(\w+)/i);
-        if (match && !relatedNodes.includes(match[1])) {
-          relatedNodes.push(match[1]);
+    // Fallback alla logica esistente se necessario
+    const relatedNodes: string[] = [];
+    if (script.commands && script.commands.length > 0) {
+      const scriptContent = script.commands.map(cmd => cmd.content).join(' ').toLowerCase();
+      
+      nodes.forEach(node => {
+        const nodeName = node.name?.toLowerCase() || '';
+        const nodeCaption = node.localizedCaptions?.EN?.toLowerCase().replace(/\s+/g, '') || 
+                          node.caption?.toLowerCase().replace(/\s+/g, '') || '';
+        
+        if (scriptContent.includes(nodeName) || scriptContent.includes(nodeCaption)) {
+          relatedNodes.push(node.name);
         }
-      }
-    });
+      });
+
+      script.commands.forEach(cmd => {
+        if (cmd.type === 'center_map') {
+          const match = cmd.content.match(/CenterMapByNode\s+(\w+)/i);
+          if (match && !relatedNodes.includes(match[1])) {
+            relatedNodes.push(match[1]);
+          }
+        }
+      });
+    }
 
     return relatedNodes;
   }
 
   private findRelatedConnections(script: CampaignScript, connections: MapConnection[]): string[] {
     const relatedConnections: string[] = [];
-    const scriptContent = script.commands.map(cmd => cmd.content).join(' ').toLowerCase();
     
-    connections.forEach(conn => {
-      const connectionId = `${conn.from}-${conn.to}`;
-      if (scriptContent.includes(conn.from.toLowerCase()) && 
-          scriptContent.includes(conn.to.toLowerCase())) {
-        relatedConnections.push(connectionId);
-      }
-    });
+    if (script.commands && script.commands.length > 0) {
+      const scriptContent = script.commands.map(cmd => cmd.content).join(' ').toLowerCase();
+      
+      connections.forEach(conn => {
+        const connectionId = `${conn.from}-${conn.to}`;
+        if (scriptContent.includes(conn.from.toLowerCase()) && 
+            scriptContent.includes(conn.to.toLowerCase())) {
+          relatedConnections.push(connectionId);
+        }
+      });
+    }
 
     return relatedConnections;
+  }
+
+  // Nuovi metodi per recuperare altre entità tramite API
+  async loadVariables(): Promise<any[]> {
+    try {
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_VARIABLES}`);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      return data.success && data.data ? data.data : [];
+    } catch (error) {
+      console.error('Error loading variables:', error);
+      return [];
+    }
+  }
+
+  async loadCharacters(): Promise<any[]> {
+    try {
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.GAME_CHARACTERS}`);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      return data.success && data.data ? data.data : [];
+    } catch (error) {
+      console.error('Error loading characters:', error);
+      return [];
+    }
+  }
+
+  async loadButtons(): Promise<any[]> {
+    try {
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.GAME_BUTTONS}`);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      return data.success && data.data ? data.data : [];
+    } catch (error) {
+      console.error('Error loading buttons:', error);
+      return [];
+    }
+  }
+
+  async loadSemaphores(): Promise<any[]> {
+    try {
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_SEMAPHORES}`);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      return data.success && data.data ? data.data : [];
+    } catch (error) {
+      console.error('Error loading semaphores:', error);
+      return [];
+    }
+  }
+
+  async loadLabels(): Promise<any[]> {
+    try {
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_LABELS}`);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      return data.success && data.data ? data.data : [];
+    } catch (error) {
+      console.error('Error loading labels:', error);
+      return [];
+    }
+  }
+
+  // Metodo per caricare immagini tramite API
+  async loadImages(imagePaths: string[]): Promise<any[]> {
+    if (!imagePaths || imagePaths.length === 0) return [];
+    
+    try {
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.IMAGES_BINARY}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ percorsi: imagePaths })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      return data.success && data.data ? data.data : [];
+    } catch (error) {
+      console.error('Error loading images:', error);
+      return [];
+    }
   }
 }
 

@@ -66,19 +66,24 @@ export const useInteractiveMap = (
   }, [loadMapData]);
 
   const getNodeRelatedScripts = useCallback((node: MapNode): CampaignScript[] => {
-    return scripts.filter(script => 
-      script.relatedNodes.includes(node.name) ||
-      (node.buttons && node.buttons.some(btn => 
-        script.name.toLowerCase().includes(btn[1].toLowerCase())
-      ))
-    );
+    return scripts.filter(script => {
+      // Usa prima i dati della nuova API, poi fallback alla vecchia struttura
+      const relatedNodes = script.nodi_referenziati || script.relatedNodes || [];
+      const scriptName = script.nomescript || script.name || '';
+      
+      return relatedNodes.includes(node.name) ||
+        (node.buttons && node.buttons.some(btn => 
+          scriptName.toLowerCase().includes(btn.script?.toLowerCase() || '')
+        ));
+    });
   }, [scripts]);
 
   const getConnectionRelatedScripts = useCallback((connection: MapConnection): CampaignScript[] => {
     const connectionId = `${connection.from}-${connection.to}`;
-    return scripts.filter(script => 
-      script.relatedConnections.includes(connectionId)
-    );
+    return scripts.filter(script => {
+      const relatedConnections = script.relatedConnections || [];
+      return relatedConnections.includes(connectionId);
+    });
   }, [scripts]);
 
   const handleNodeClick = useCallback((node: MapNode, openSelector: boolean = true) => {
@@ -91,16 +96,18 @@ export const useInteractiveMap = (
       const nodeStartScripts: string[] = [];
       if (node.buttons) {
         node.buttons.forEach((button) => {
-          const scriptName = button[1];
-          if (scriptName && relatedScripts.some(script => script.name === scriptName)) {
+          const scriptName = button.script;
+          const scriptActualName = (script: CampaignScript) => script.nomescript || script.name || '';
+          if (scriptName && relatedScripts.some(script => scriptActualName(script) === scriptName)) {
             nodeStartScripts.push(scriptName);
           }
         });
       }
       
+      const nodeCaption = node.localizedCaptions?.EN || node.caption || node.name;
       openScriptSelector(
         relatedScripts,
-        `Scripts for ${node.caption}`,
+        `Scripts for ${nodeCaption}`,
         nodeStartScripts
       );
     }
@@ -110,21 +117,45 @@ export const useInteractiveMap = (
 
   const handleConnectionClick = useCallback((connection: MapConnection, openSelector: boolean = true) => {
     const connectionId = `${connection.from}-${connection.to}`;
-    const relatedScripts = getConnectionRelatedScripts(connection);
+    
+    // Get all scripts related to this connection
+    const allRelatedScripts: CampaignScript[] = [];
+    
+    // Add scripts from script_collegati_ricorsivamente if available
+    if (connection.missions && connection.missions.length > 0) {
+      connection.missions.forEach(mission => {
+        if (mission.script_collegati_ricorsivamente) {
+          mission.script_collegati_ricorsivamente.forEach(scriptName => {
+            const script = scripts.find(s => 
+              (s.nomescript || s.name) === scriptName
+            );
+            if (script && !allRelatedScripts.some(s => (s.nomescript || s.name) === scriptName)) {
+              allRelatedScripts.push(script);
+            }
+          });
+        }
+      });
+    }
+    
+    // If no recursive scripts found, fallback to old method
+    if (allRelatedScripts.length === 0) {
+      const relatedScripts = getConnectionRelatedScripts(connection);
+      allRelatedScripts.push(...relatedScripts);
+    }
     
     setSelectedConnection(connectionId);
     setSelectedNode(null);
     
-    if (openSelector && relatedScripts.length > 0) {
+    if (openSelector && allRelatedScripts.length > 0) {
       openScriptSelector(
-        relatedScripts,
+        allRelatedScripts,
         `Scripts for ${connection.from} → ${connection.to}`,
-        []
+        connection.startScripts || []
       );
     }
     
-    return relatedScripts;
-  }, [getConnectionRelatedScripts, openScriptSelector]);
+    return allRelatedScripts;
+  }, [getConnectionRelatedScripts, openScriptSelector, scripts]);
 
 
   return {

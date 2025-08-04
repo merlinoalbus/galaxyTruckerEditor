@@ -18,7 +18,12 @@ export const MapConnection: React.FC<MapConnectionProps> = ({
   const hasScripts = relatedScripts.length > 0;
   const midX = (fromPosition.x + toPosition.x) / 2;
   const midY = (fromPosition.y + toPosition.y) / 2;
-  const lineAttrs = mapConnectionStyles.connectionLine.getAttributes(hasScripts, isSelected, isHovered, connection.flightClass);
+  // Get license and mission type from first mission
+  const firstMission = connection.missions?.[0];
+  const license = firstMission?.license;
+  const missionType = firstMission?.missiontype;
+  
+  const lineAttrs = mapConnectionStyles.connectionLine.getAttributes(hasScripts, isSelected, isHovered, license, missionType);
 
   // Calculate position on line to avoid overlaps
   const calculateShipPosition = () => {
@@ -74,6 +79,7 @@ export const MapConnection: React.FC<MapConnectionProps> = ({
     onClick(connection);
   };
 
+
   // Get license configuration
   const licenseConfig = connection.license ? 
     MISSION_CONFIG.LICENSE_CLASSES[connection.license] : null;
@@ -118,9 +124,9 @@ export const MapConnection: React.FC<MapConnectionProps> = ({
             
             return (
               <g key={`${flightClass}-${index}`}>
-                {/* Ship class image */}
+                {/* Ship class image from API */}
                 <image
-                  href={`${API_CONFIG.ASSETS_BASE_URL}${PATHS.IMAGES.SHIP_CLASS_ICON(licenseConfig.shipImage)}`}
+                  href={`${API_CONFIG.API_BASE_URL}/file/campaign/campaignMap/${licenseConfig.shipImage}.cacheship.png`}
                   x={shipPos.x - 30 + offsetX}
                   y={shipPos.y - 20}
                   width="60"
@@ -146,18 +152,30 @@ export const MapConnection: React.FC<MapConnectionProps> = ({
         </g>
       )}
 
-      {hasScripts && (
-        <circle
-          cx={midX}
-          cy={midY + 15}
-          className={mapConnectionStyles.scriptIndicator.className}
-          r={mapConnectionStyles.scriptIndicator.r}
-          fill={mapConnectionStyles.scriptIndicator.fill}
-          stroke={mapConnectionStyles.scriptIndicator.stroke}
-          strokeWidth={mapConnectionStyles.scriptIndicator.strokeWidth}
-        >
-          <title>Scripts available for this connection</title>
-        </circle>
+      {(hasScripts || (connection.startScripts && connection.startScripts.length > 0)) && (
+        <g>
+          <circle
+            cx={midX}
+            cy={midY + 15}
+            className={mapConnectionStyles.scriptIndicator.className}
+            r={mapConnectionStyles.scriptIndicator.r}
+            fill={mapConnectionStyles.scriptIndicator.fill}
+            stroke={mapConnectionStyles.scriptIndicator.stroke}
+            strokeWidth={mapConnectionStyles.scriptIndicator.strokeWidth}
+          >
+            <title>{relatedScripts.length + (connection.startScripts?.length || 0)} scripts available</title>
+          </circle>
+          {/* Show script count */}
+          <text
+            x={midX}
+            y={midY + 15}
+            textAnchor="middle"
+            className="fill-white text-xs font-bold pointer-events-none"
+            dy="0.3em"
+          >
+            {relatedScripts.length + (connection.startScripts?.length || 0)}
+          </text>
+        </g>
       )}
     </g>
   );

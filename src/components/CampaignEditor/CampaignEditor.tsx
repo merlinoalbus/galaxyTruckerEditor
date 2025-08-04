@@ -7,6 +7,7 @@ import { useCampaignEditor } from '@/hooks/CampaignEditor';
 import { InteractiveMap } from './InteractiveMap/InteractiveMap';
 import { VariablesSystem } from './VariablesSystem/VariablesSystem';
 import { Overview } from './Overview/Overview';
+import { ElementCounters } from './components/Header/components/ElementCounters/ElementCounters';
 
 export const CampaignEditor: React.FC = () => {
   const {
@@ -62,22 +63,7 @@ export const CampaignEditor: React.FC = () => {
       </div>
 
       {/* Stats */}
-      {analysis && (
-        <div className="grid grid-cols-4 gap-4 flex-shrink-0">
-          <div className="bg-gt-secondary rounded-lg p-4">
-            <p className="text-gt-accent font-bold text-lg">{analysis.scripts?.length || 0} scripts loaded</p>
-          </div>
-          <div className="bg-gt-secondary rounded-lg p-4">
-            <p className="text-gt-accent font-bold text-lg">{analysis.variables?.size || 0} variables</p>
-          </div>
-          <div className="bg-gt-secondary rounded-lg p-4">
-            <p className="text-gt-accent font-bold text-lg">{analysis.characters?.size || 0} characters</p>
-          </div>
-          <div className="bg-gt-secondary rounded-lg p-4">
-            <p className="text-gt-accent font-bold text-lg">{analysis.missions?.size || 0} missions</p>
-          </div>
-        </div>
-      )}
+      <ElementCounters scriptsCount={analysis?.scripts?.length} />
 
       {/* Tabs */}
       <div className="border-b border-gray-700 flex-shrink-0">

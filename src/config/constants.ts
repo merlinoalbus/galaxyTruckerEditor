@@ -17,6 +17,38 @@ export const API_CONFIG = {
   }
 } as const;
 
+export const API_ENDPOINTS = {
+  // Scripts API
+  SCRIPTS: '/scripts',
+  SCRIPT_BY_NAME: (name: string) => `/scripts/${name}`,
+  SCRIPT_SAVE: (name: string) => `/scripts/${name}/save`,
+  SCRIPTS_VARIABLES: '/scripts/variables',
+  SCRIPTS_SEMAPHORES: '/scripts/semaphores',
+  SCRIPTS_LABELS: '/scripts/labels',
+
+  // Missions API  
+  MISSIONS: '/missions',
+  MISSION_BY_NAME: (name: string) => `/missions/${name}`,
+  MISSION_SAVE: (name: string) => `/missions/${name}/save`,
+  MISSIONS_ROUTES: '/missions/routes',
+
+  // Game Elements API
+  GAME_CHARACTERS: '/game/characters',
+  GAME_NODES: '/game/nodes',
+  GAME_BUTTONS: '/game/buttons',
+  GAME_ACHIEVEMENTS: '/game/achievements',
+  GAME_ACHIEVEMENTS_IMAGES: '/game/achievements/images',
+
+  // Generic API
+  IMAGES: '/images',
+  IMAGES_BINARY: '/images/binary',
+  FILE_GENERIC: (path: string) => `/file/${path}`,
+  GAME_FILE_BINARY: '/game/file/binary',
+
+  // Health
+  HEALTH: '/health'
+} as const;
+
 export const PATHS = {
   CAMPAIGN: {
     MAP: '/campaign/campaignMap',

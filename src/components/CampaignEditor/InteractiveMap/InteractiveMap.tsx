@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { InteractiveMapProps, MapNode, MapConnection } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { useInteractiveMap } from '@/hooks/CampaignEditor/InteractiveMap/useInteractiveMap';
@@ -7,12 +7,21 @@ import { interactiveMapStyles } from '@/styles/CampaignEditor/InteractiveMap/Int
 import { MapCanvas } from './components/MapCanvas/MapCanvas';
 import { MapControls } from './components/MapControls/MapControls';
 import { ScriptSelector } from './components/ScriptSelector/ScriptSelector';
+import { NodeInfoTooltip } from './components/NodeInfoTooltip/NodeInfoTooltip';
+import { ConnectionInfoTooltip } from './components/ConnectionInfoTooltip/ConnectionInfoTooltip';
+import { MapLegend } from './components/MapLegend/MapLegend';
+import { TooltipPortal } from './components/TooltipPortal/TooltipPortal';
 
 export const InteractiveMap: React.FC<InteractiveMapProps> = ({
   onNodeClick,
   onConnectionClick,
   onScriptSelect
 }) => {
+  const [hoveredNode, setHoveredNode] = useState<MapNode | null>(null);
+  const [hoveredConnection, setHoveredConnection] = useState<MapConnection | null>(null);
+  const [hoveredNodePosition, setHoveredNodePosition] = useState<{ x: number; y: number } | null>(null);
+  const [hoveredConnectionPosition, setHoveredConnectionPosition] = useState<{ x: number; y: number } | null>(null);
+
   const {
     nodes,
     connections,
@@ -40,10 +49,24 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
     }
   };
 
+  const handleNodeHover = (node: MapNode | null, position?: { x: number; y: number }) => {
+    setHoveredNode(node);
+    if (position) {
+      setHoveredNodePosition(position);
+    }
+  };
+
   const handleConnectionClickInternal = (connection: MapConnection) => {
     const relatedScripts = handleConnectionClick(connection);
     if (onConnectionClick) {
       onConnectionClick(connection, relatedScripts);
+    }
+  };
+
+  const handleConnectionHover = (connection: MapConnection | null, position?: { x: number; y: number }) => {
+    setHoveredConnection(connection);
+    if (position) {
+      setHoveredConnectionPosition(position);
     }
   };
 
@@ -73,33 +96,18 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
     <div className={interactiveMapStyles.container}>
       <div className={interactiveMapStyles.header}>
         <h3 className={interactiveMapStyles.title}>Interactive Campaign Map</h3>
-        <div className={interactiveMapStyles.legend}>
-          <div className={interactiveMapStyles.legendItem}>
-            <div className={`${interactiveMapStyles.legendDot} bg-emerald-500`} />
-            <span>Class I (Easy)</span>
-          </div>
-          <div className={interactiveMapStyles.legendItem}>
-            <div className={`${interactiveMapStyles.legendDot} bg-blue-500`} />
-            <span>Class II (Medium)</span>
-          </div>
-          <div className={interactiveMapStyles.legendItem}>
-            <div className={`${interactiveMapStyles.legendDot} bg-amber-500`} />
-            <span>Class III (Hard)</span>
-          </div>
-          <div className={interactiveMapStyles.legendItem}>
-            <div className={`${interactiveMapStyles.legendDot} bg-red-500`} />
-            <span>Class IV (Very Hard)</span>
-          </div>
-        </div>
       </div>
 
       <div className={interactiveMapStyles.viewport}>
+        <MapLegend />
         <MapCanvas
           nodes={nodes}
           connections={connections}
           viewport={viewport}
           onNodeClick={handleNodeClickInternal}
           onConnectionClick={handleConnectionClickInternal}
+          onNodeHover={handleNodeHover}
+          onConnectionHover={handleConnectionHover}
           onViewportChange={setViewport}
         />
         <MapControls
@@ -116,6 +124,18 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
         onScriptSelect={handleScriptSelect}
         onClose={handleScriptSelectorClose}
       />
+      
+      {!scriptSelectorOpen && hoveredNode && hoveredNodePosition && (
+        <TooltipPortal targetPosition={hoveredNodePosition} viewport={viewport}>
+          <NodeInfoTooltip node={hoveredNode} />
+        </TooltipPortal>
+      )}
+      
+      {!scriptSelectorOpen && hoveredConnection && hoveredConnectionPosition && (
+        <TooltipPortal targetPosition={hoveredConnectionPosition} viewport={viewport}>
+          <ConnectionInfoTooltip connection={hoveredConnection} />
+        </TooltipPortal>
+      )}
     </div>
   );
 };
