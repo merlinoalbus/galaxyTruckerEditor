@@ -165,9 +165,9 @@ const COMMAND_CATALOG = {
   'SHOWINFOWINDOW': { params: ['image'], pattern: /^SHOWINFOWINDOW\s+(.+)$/ },
   
   // ACHIEVEMENTS
-  'SETACHIEVEMENTPROGRESS': { params: ['achievement', 'value:number'], pattern: /^SETACHIEVEMENTPROGRESS\s+(\w+)\s+(\d+)$/ },
-  'SETACHIEVEMENTATTEMPT': { params: ['achievement', 'value:number'], pattern: /^SETACHIEVEMENTATTEMPT\s+(\w+)\s+(\d+)$/ },
-  'UNLOCKACHIEVEMENT': { params: ['achievement'], pattern: /^UNLOCKACHIEVEMENT\s+(\w+)$/ },
+  'SETACHIEVEMENTPROGRESS': { params: ['achievement', 'value:number'], pattern: /^SetAchievementProgress\s+([\w_]+)\s+(\d+)$/i },
+  'SETACHIEVEMENTATTEMPT': { params: ['achievement', 'value:number'], pattern: /^SetAchievementAttempt\s+([\w_]+)\s+(\d+)$/i },
+  'UNLOCKACHIEVEMENT': { params: ['achievement'], pattern: /^UnlockAchievement\s+([\w_]+)$/i },
   'UNLOCKSHIPPLAN': { params: ['plan'], pattern: /^UNLOCKSHIPPLAN\s+(\w+)$/ },
   'UNLOCKSHUTTLES': { params: [], pattern: /^UNLOCKSHUTTLES$/ },
   
@@ -214,6 +214,7 @@ function parseScriptToBlocks(lines, language = 'EN', recursionDepth = 0) {
   let parserData = []; // Array temporaneo per raccogliere righe del parser delegato
   let parserCount = 0; // Contatore livelli blocco per parser delegato
   let blockFamily = null; // Famiglia del blocco in raccolta (IF, MENU, etc.)
+  let isInElseBranch = false; // Indica se stiamo raccogliendo nel ramo else
   
   while (currentIndex < lines.length) {
     const line = lines[currentIndex]?.trim();
@@ -255,12 +256,29 @@ function parseScriptToBlocks(lines, language = 'EN', recursionDepth = 0) {
         }
       }
       
+      // Controlla se è ELSE (elemento strutturale speciale)
+      if (line.match(/^ELSE$/)) {
+        if (parserCount > 0) {
+          // STO RACCOGLIENDO - AGGIUNGO ALL'ARRAY TEMPORANEO
+          parserData.push(line);
+        } else {
+          // ELSE del mio blocco corrente - switch al ramo else
+          if (currentBlock && (currentBlock.type === 'IF' || currentBlock.type === 'IFNOT')) {
+            isInElseBranch = true;
+          }
+        }
+        currentIndex++;
+        continue;
+      }
+      
       // Controlla se è la chiusura del MIO blocco corrente
       if (currentBlock && parserCount === 0) {
         const myCloseMatch = identifyCloseElement(line, currentBlock.type);
         if (myCloseMatch) {
-          // NON aggiungo ai children, uso solo per validazione
-          // Il blocco è completo, sarà aggiunto alla fine
+          // Il blocco è completo, lo aggiungo al risultato
+          result.blocks.push(currentBlock);
+          currentBlock = null;
+          isInElseBranch = false; // Reset stato ELSE
           currentIndex++;
           continue;
         }
@@ -276,7 +294,16 @@ function parseScriptToBlocks(lines, language = 'EN', recursionDepth = 0) {
           // RACCOLTA COMPLETATA - CHIAMO IL PARSER
           const parserResult = parseScriptToBlocks(parserData, language, recursionDepth + 1);
           if (parserResult.blocks.length > 0) {
-            currentBlock.children.push(...parserResult.blocks);
+            // Aggiungi al ramo appropriato per blocchi IF/IFNOT
+            if (currentBlock && (currentBlock.type === 'IF' || currentBlock.type === 'IFNOT')) {
+              if (isInElseBranch) {
+                currentBlock.elseBranch.push(...parserResult.blocks);
+              } else {
+                currentBlock.thenBranch.push(...parserResult.blocks);
+              }
+            } else {
+              currentBlock.children.push(...parserResult.blocks);
+            }
           }
           if (parserResult.errors.length > 0) {
             result.errors.push(...parserResult.errors);
@@ -298,7 +325,16 @@ function parseScriptToBlocks(lines, language = 'EN', recursionDepth = 0) {
         // HO UN BLOCCO IN LAVORAZIONE - AGGIUNGO COMANDO AL MIO BLOCCO
         const commandObj = parseSimpleCommand(line, currentIndex + 1, language);
         if (commandObj) {
-          currentBlock.children.push(commandObj);
+          // Aggiungi al ramo appropriato per blocchi IF/IFNOT
+          if (currentBlock.type === 'IF' || currentBlock.type === 'IFNOT') {
+            if (isInElseBranch) {
+              currentBlock.elseBranch.push(commandObj);
+            } else {
+              currentBlock.thenBranch.push(commandObj);
+            }
+          } else {
+            currentBlock.children.push(commandObj);
+          }
         }
       } else {
         // NON HO BLOCCHI - COMANDO DIRETTO AL RISULTATO
@@ -369,11 +405,64 @@ function createBlockObject(blockMatch, lineNumber) {
       break;
     case 'IF':
       baseBlock.ifType = variant?.type || 'IF_SEMAPHORE';
+      // Inizializza i rami then e else per TUTTI i tipi di IF
+      baseBlock.thenBranch = [];
+      baseBlock.elseBranch = [];
+      
       if (variant?.type === 'IF_SEMAPHORE' || variant?.type === 'IFNOT_SEMAPHORE') {
         baseBlock.condition = match[1];
         baseBlock.negated = variant.type === 'IFNOT_SEMAPHORE';
+      } else if (variant?.type === 'IF_INVENTORY_GREATER') {
+        baseBlock.itemName = match[1];
+        baseBlock.threshold = parseInt(match[2]);
+      } else if (variant?.type === 'IF_INVENTORY_LESS') {
+        baseBlock.itemName = match[1];
+        baseBlock.threshold = parseInt(match[2]);
+      } else if (variant?.type === 'IF_INVENTORY_EQUALS') {
+        baseBlock.itemName = match[1];
+        baseBlock.value = parseInt(match[2]);
+      } else if (variant?.type === 'IF_SHIP_SIZE_EQUALS') {
+        baseBlock.size = parseInt(match[1]);
+      } else if (variant?.type === 'IF_SHIP_PARTS_GREATER') {
+        baseBlock.partType = match[1];
+        baseBlock.threshold = parseInt(match[2]);
+      } else if (variant?.type === 'IF_SHIP_PARTS_LESS') {
+        baseBlock.partType = match[1];
+        baseBlock.threshold = parseInt(match[2]);
+      } else if (variant?.type === 'IF_SHIP_PARTS_EQUALS') {
+        baseBlock.partType = match[1];
+        baseBlock.value = parseInt(match[2]);
+      } else if (variant?.type === 'IF_FACTION_AFFINITY_GREATER') {
+        baseBlock.faction = match[1];
+        baseBlock.threshold = parseInt(match[2]);
+      } else if (variant?.type === 'IF_FACTION_AFFINITY_LESS') {
+        baseBlock.faction = match[1];
+        baseBlock.threshold = parseInt(match[2]);
+      } else if (variant?.type === 'IF_PLANET_VISITED') {
+        baseBlock.planet = match[1];
+      } else if (variant?.type === 'IF_COMPLETED_MISSIONS_GREATER') {
+        baseBlock.threshold = parseInt(match[1]);
+      } else if (variant?.type === 'IF_COMPLETED_MISSIONS_LESS') {
+        baseBlock.threshold = parseInt(match[1]);
+      } else if (variant?.type === 'IF_AVAILABLE_MISSIONS_GREATER') {
+        baseBlock.threshold = parseInt(match[1]);
+      } else if (variant?.type === 'IF_AVAILABLE_MISSIONS_LESS') {
+        baseBlock.threshold = parseInt(match[1]);
+      } else if (variant?.type === 'IF_MONEY_GREATER') {
+        baseBlock.threshold = parseInt(match[1]);
+      } else if (variant?.type === 'IF_MONEY_LESS') {
+        baseBlock.threshold = parseInt(match[1]);
+      } else if (variant?.type === 'IF_DAY_GREATER') {
+        baseBlock.threshold = parseInt(match[1]);
+      } else if (variant?.type === 'IF_DAY_LESS') {
+        baseBlock.threshold = parseInt(match[1]);
+      } else if (variant?.type === 'IF_CREW_SIZE_GREATER') {
+        baseBlock.threshold = parseInt(match[1]);
+      } else if (variant?.type === 'IF_CREW_SIZE_LESS') {
+        baseBlock.threshold = parseInt(match[1]);
+      } else if (variant?.type === 'IF_CREW_SIZE_EQUALS') {
+        baseBlock.value = parseInt(match[1]);
       }
-      // Altri tipi IF...
       break;
     case 'MENU':
       // Menu non ha parametri iniziali
@@ -381,8 +470,16 @@ function createBlockObject(blockMatch, lineNumber) {
     case 'OPT':
       if (variant?.type === 'OPT_SIMPLE') {
         baseBlock.text = match[1];
+        baseBlock.optType = 'OPT_SIMPLE';
+      } else if (variant?.type === 'OPT_CONDITIONAL') {
+        baseBlock.condition = match[1];
+        baseBlock.text = match[2];
+        baseBlock.optType = 'OPT_CONDITIONAL';
+      } else if (variant?.type === 'OPT_CONDITIONAL_NOT') {
+        baseBlock.condition = match[1];
+        baseBlock.text = match[2];
+        baseBlock.optType = 'OPT_CONDITIONAL_NOT';
       }
-      // Altri tipi OPT...
       break;
   }
   
@@ -396,7 +493,9 @@ function parseSimpleCommand(line, lineNumber, language) {
   // Usa il sistema esistente per i comandi
   const commandMatch = identifyCommand(line);
   if (commandMatch) {
-    return parseCommand(line, commandMatch, language, lineNumber - 1);
+    const result = parseCommand(line, commandMatch, language, lineNumber - 1);
+    // Restituisci solo l'oggetto comando, non il wrapper con nextIndex
+    return result.object;
   }
   
   // Comando generico
@@ -775,94 +874,133 @@ function parseGenericCommand(line, lineIndex) {
 /**
  * Serializer bidirezionale - BLOCKS to TEXT
  */
-function convertBlocksToScript(blocks) {
+function convertBlocksToScript(blocks, targetLanguage = null) {
   if (!Array.isArray(blocks)) {
     throw new Error('Blocks must be an array');
   }
   
-  return blocks.map(block => serializeElement(block)).join('\\n');
+  return blocks.map(block => serializeElement(block, targetLanguage)).join('\n');
 }
 
 /**
  * Serializza elemento singolo
  */
-function serializeElement(element) {
+function serializeElement(element, targetLanguage = null) {
   if (!element || !element.type) {
     return '';
   }
+  
   
   switch (element.type) {
     case 'SCRIPT':
       const scriptLines = [`SCRIPT ${element.name}`];
       if (element.children) {
-        scriptLines.push(...element.children.map(child => serializeElement(child)));
+        element.children.forEach(child => {
+          const childLines = serializeElement(child, targetLanguage).split('\n');
+          childLines.forEach(line => {
+            if (line.trim()) scriptLines.push(`  ${line}`); // Aggiungi indentazione di 2 spazi
+          });
+        });
       }
-      scriptLines.push('END_OF_SCRIPTS');
-      return scriptLines.join('\\n');
+      scriptLines.push('END_OF_SCRIPT');
+      return scriptLines.join('\n');
       
     case 'MISSION':
       const missionLines = [`MISSION ${element.name}`];
       if (element.children) {
-        missionLines.push(...element.children.map(child => serializeElement(child)));
+        element.children.forEach(child => {
+          const childLines = serializeElement(child, targetLanguage).split('\n');
+          childLines.forEach(line => {
+            if (line.trim()) missionLines.push(`  ${line}`); // Aggiungi indentazione di 2 spazi
+          });
+        });
       }
       if (element.finishSection) {
         missionLines.push('FINISH_MISSION');
-        missionLines.push(...element.finishSection.map(child => serializeElement(child)));
+        element.finishSection.forEach(child => {
+          const childLines = serializeElement(child, targetLanguage).split('\n');
+          childLines.forEach(line => {
+            if (line.trim()) missionLines.push(`  ${line}`); // Aggiungi indentazione di 2 spazi
+          });
+        });
       }
       missionLines.push('END_OF_MISSION');
-      return missionLines.join('\\n');
+      return missionLines.join('\n');
       
     case 'IF':
-      return serializeIfBlock(element);
+      return serializeIfBlock(element, targetLanguage);
       
     case 'MENU':
       const menuLines = ['MENU'];
-      if (element.options) {
-        menuLines.push(...element.options.map(opt => serializeElement(opt)));
+      // Supporta sia 'options' (legacy) che 'children' (nuovo formato)
+      const menuContent = element.options || element.children || [];
+      if (menuContent.length > 0) {
+        menuContent.forEach(opt => {
+          const optLines = serializeElement(opt, targetLanguage).split('\n');
+          optLines.forEach(line => {
+            if (line.trim()) menuLines.push(`  ${line}`); // Aggiungi indentazione di 2 spazi
+          });
+        });
       }
       menuLines.push('END_OF_MENU');
-      return menuLines.join('\\n');
+      return menuLines.join('\n');
       
     case 'OPT':
-      return serializeOptBlock(element);
+      return serializeOptBlock(element, targetLanguage);
       
     case 'BUILD':
     case 'FLIGHT':
       const phaseCommand = getPhaseCommand(element.type, element.phase);
       const phaseLines = [phaseCommand];
       if (element.children) {
-        phaseLines.push(...element.children.map(child => serializeElement(child)));
+        element.children.forEach(child => {
+          const childLines = serializeElement(child, targetLanguage).split('\n');
+          childLines.forEach(line => {
+            if (line.trim()) phaseLines.push(`  ${line}`); // Aggiungi indentazione di 2 spazi
+          });
+        });
       }
-      return phaseLines.join('\\n');
+      return phaseLines.join('\n');
       
     default:
-      return serializeCommand(element);
+      return serializeCommand(element, targetLanguage);
   }
 }
 
 /**
  * Serializza blocco IF
  */
-function serializeIfBlock(ifElement) {
+function serializeIfBlock(ifElement, targetLanguage = 'EN') {
   const lines = [];
   
   // Comando apertura IF
   const ifCommand = buildIfCommand(ifElement);
   lines.push(ifCommand);
   
-  // Contenuto then
-  if (ifElement.thenBranch) {
-    lines.push(...ifElement.thenBranch.map(child => serializeElement(child)));
+  // Contenuto then - supporta sia thenBranch che children
+  const thenContent = ifElement.thenBranch || ifElement.children || [];
+  if (thenContent.length > 0) {
+    thenContent.forEach(child => {
+      const childLines = serializeElement(child, targetLanguage).split('\n');
+      childLines.forEach(line => {
+        if (line.trim()) lines.push(`  ${line}`); // Aggiungi indentazione di 2 spazi
+      });
+    });
   }
   
   // Contenuto else
   if (ifElement.elseBranch && ifElement.elseBranch.length > 0) {
     lines.push('ELSE');
-    lines.push(...ifElement.elseBranch.map(child => serializeElement(child)));
+    ifElement.elseBranch.forEach(child => {
+      const childLines = serializeElement(child, targetLanguage).split('\n');
+      childLines.forEach(line => {
+        if (line.trim()) lines.push(`  ${line}`); // Aggiungi indentazione di 2 spazi
+      });
+    });
   }
   
   lines.push('END_OF_IF');
-  return lines.join('\\n');
+  return lines.join('\n');
 }
 
 /**
@@ -909,34 +1047,47 @@ function getSystemIfCommand(systemVar) {
 /**
  * Serializza blocco OPT
  */
-function serializeOptBlock(optElement) {
+function serializeOptBlock(optElement, targetLanguage = 'EN') {
   const lines = [];
+  
+  // Estrai il testo dell'OPT - supporta diversi formati
+  let optText = '';
+  if (optElement.text) {
+    optText = getTextForLanguage(optElement.text, targetLanguage);
+  } else if (optElement.parameters && optElement.parameters.text) {
+    optText = getTextForLanguage(optElement.parameters.text, targetLanguage);
+  }
   
   // Comando apertura OPT
   let optCommand;
   switch (optElement.optType) {
     case 'OPT_SIMPLE':
-      optCommand = `OPT "${getTextForLanguage(optElement.text, 'EN')}"`;
+      optCommand = `OPT "${optText}"`;
       break;
     case 'OPT_CONDITIONAL':
-      optCommand = `OPT_IF ${optElement.condition} "${getTextForLanguage(optElement.text, 'EN')}"`;
+      optCommand = `OPT_IF ${optElement.condition} "${optText}"`;
       break;
     case 'OPT_CONDITIONAL_NOT':
-      optCommand = `OPT_IFNOT ${optElement.condition} "${getTextForLanguage(optElement.text, 'EN')}"`;
+      optCommand = `OPT_IFNOT ${optElement.condition} "${optText}"`;
       break;
     default:
-      optCommand = `OPT "${getTextForLanguage(optElement.text, 'EN')}"`;
+      optCommand = `OPT "${optText}"`;
   }
   
   lines.push(optCommand);
   
   // Contenuto OPT
   if (optElement.children) {
-    lines.push(...optElement.children.map(child => serializeElement(child)));
+    optElement.children.forEach(child => {
+      const childLines = serializeElement(child, targetLanguage).split('\n');
+      childLines.forEach(line => {
+        if (line.trim()) lines.push(`  ${line}`); // Aggiungi indentazione di 2 spazi
+      });
+    });
   }
   
   lines.push('END_OF_OPT');
-  return lines.join('\\n');
+  return lines.join('\n');
 }
 
 /**
@@ -962,10 +1113,52 @@ function getPhaseCommand(blockType, phase) {
   return 'UNKNOWN_PHASE';
 }
 
+// Mapping da tipo comando (maiuscolo) a sintassi corretta del gioco
+const COMMAND_SYNTAX_MAP = {
+  // Dialog commands
+  'SHOWDLGSCENE': 'ShowDlgScene',
+  'HIDEDLGSCENE': 'HideDlgScene',
+  'SHOWCHAR': 'ShowChar',
+  'HIDECHAR': 'HideChar',
+  'CHANGECHAR': 'ChangeChar',
+  'SAY': 'Say',
+  'SAYCHAR': 'SayChar',
+  'ASK': 'Ask',
+  
+  // Map/UI commands
+  'SHOWNODE': 'ShowNode',
+  'HIDENODE': 'HideNode',
+  'SHOWPATH': 'ShowPath',
+  'HIDEPATH': 'HidePath',
+  'SHOWBUTTON': 'ShowButton',
+  'HIDEBUTTON': 'HideButton',
+  'SETFOCUS': 'SetFocus',
+  'RESETFOCUS': 'ResetFocus',
+  'CENTERMAPBYNODE': 'CenterMapByNode',
+  'CENTERMAPBYPATH': 'CenterMapByPath',
+  'MOVEPLAYERTONODE': 'MovePlayerToNode',
+  'ADDNODE': 'AddNode',
+  
+  // Control flow
+  'DELAY': 'Delay',
+  'RETURN': 'RETURN',
+  'SUB_SCRIPT': 'SUB_SCRIPT',
+  'SET': 'SET',
+  'RESET': 'RESET',
+  'ADD': 'ADD',
+  'ANNOUNCE': 'Announce',
+  'ADDCREDITS': 'AddCredits',
+  
+  // System commands
+  'SETACHIEVEMENTPROGRESS': 'SetAchievementProgress',
+  'UNLOCKACHIEVEMENT': 'UnlockAchievement',
+  'UNLOCKSHIPPLAN': 'UnlockShipPlan'
+};
+
 /**
  * Serializza comando atomico
  */
-function serializeCommand(element) {
+function serializeCommand(element, targetLanguage = 'EN') {
   if (element.type === 'UNKNOWN_COMMAND') {
     return `${element.name} ${element.parameters.raw || ''}`.trim();
   }
@@ -975,8 +1168,9 @@ function serializeCommand(element) {
     return `${element.type} ${JSON.stringify(element.parameters)}`;
   }
   
-  // Ricostruzione comando da parametri
-  const parts = [element.type];
+  // Usa la sintassi corretta del gioco invece del tipo maiuscolo
+  const commandSyntax = COMMAND_SYNTAX_MAP[element.type] || element.type;
+  const parts = [commandSyntax];
   
   if (commandDef.params && element.parameters) {
     commandDef.params.forEach(paramDef => {
@@ -984,7 +1178,7 @@ function serializeCommand(element) {
       const paramValue = element.parameters[paramName];
       
       if (paramType === 'multilingual') {
-        parts.push(`"${getTextForLanguage(paramValue, 'EN')}"`);
+        parts.push(`"${getTextForLanguage(paramValue, targetLanguage)}"`);
       } else {
         parts.push(paramValue);
       }

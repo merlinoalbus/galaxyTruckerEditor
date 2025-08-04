@@ -2,15 +2,13 @@
 const express = require('express');
 const { getLogger } = require('../utils/logger');
 const { findCharacterImages } = require('../utils/characterUtils');
+const { GAME_ROOT, SUPPORTED_LANGUAGES } = require('../config/config');
 const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
 
 const router = express.Router();
 const logger = getLogger();
-
-// Define GAME_ROOT - temporary until moved to config
-const GAME_ROOT = path.join(process.cwd(), '..', '..');
 
 // API 6: Lista personaggi secondo specifica
 router.get('/characters', async (req, res) => {
@@ -317,7 +315,7 @@ router.get('/nodes', async (req, res) => {
     const nodes = [];
     
     // Carica nodes.yaml multilingua
-    const languages = ['EN', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU'];
+    const languages = SUPPORTED_LANGUAGES;
     const nodesMap = {};
     
     for (const lang of languages) {
@@ -562,16 +560,24 @@ async function parseNodeButtons(buttonsArray, languages) {
     return parsedButtons;
   }
   
+  // Carica stringhe localizzate per buttons da file yaml
+  const buttonStrings = await loadButtonLocalizedStrings(languages);
+  
   for (const buttonDef of buttonsArray) {
     if (Array.isArray(buttonDef) && buttonDef.length >= 3) {
       const [buttonId, scriptName, labelEN] = buttonDef;
       
-      // Per ora manteniamo solo l'inglese, ma struttura pronta per multilingua
+      // Costruisce labels multilingua usando i file di localizzazione
       const localizedLabels = {
         'EN': labelEN
       };
       
-      // TODO: In futuro caricare labels da altri file di localizzazione
+      // Carica labels dalle altre lingue se disponibili
+      for (const lang of languages) {
+        if (lang !== 'EN' && buttonStrings[lang] && buttonStrings[lang][buttonId]) {
+          localizedLabels[lang] = buttonStrings[lang][buttonId];
+        }
+      }
       
       parsedButtons.push({
         id: buttonId,
@@ -582,6 +588,37 @@ async function parseNodeButtons(buttonsArray, languages) {
   }
   
   return parsedButtons;
+}
+
+// Carica stringhe localizzate per buttons da file di localizzazione
+async function loadButtonLocalizedStrings(languages) {
+  const buttonStrings = {};
+  
+  for (const lang of languages) {
+    if (lang === 'EN') continue; // EN è già nel nodes.yaml
+    
+    try {
+      // Cerca file strings per buttons in localization_strings/
+      const stringsPath = path.join(GAME_ROOT, 'localization_strings', `button_strings_${lang}.yaml`);
+      
+      if (await fs.pathExists(stringsPath)) {
+        const content = await fs.readFile(stringsPath, 'utf8');
+        buttonStrings[lang] = yaml.load(content) || {};
+      } else {
+        // Fallback: cerca file alternativi
+        const altPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`, 'button_labels.yaml');
+        if (await fs.pathExists(altPath)) {
+          const content = await fs.readFile(altPath, 'utf8');
+          buttonStrings[lang] = yaml.load(content) || {};
+        }
+      }
+    } catch (error) {
+      logger.warn(`Cannot load button strings for ${lang}: ${error.message}`);
+      buttonStrings[lang] = {};
+    }
+  }
+  
+  return buttonStrings;
 }
 
 // API 9: Lista bottoni completa calcolata da nodi + archi + analisi utilizzo
@@ -639,7 +676,7 @@ router.get('/buttons', async (req, res) => {
 // Raccoglie bottoni dai nodi
 async function collectNodeButtons() {
   const buttons = [];
-  const languages = ['EN', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU'];
+  const languages = SUPPORTED_LANGUAGES;
   const nodesMap = {};
   
   // Carica nodes.yaml multilingua
@@ -707,7 +744,7 @@ async function collectNodeButtons() {
 // Raccoglie bottoni dagli archi
 async function collectRouteButtons() {
   const buttons = [];
-  const languages = ['EN', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU'];
+  const languages = SUPPORTED_LANGUAGES;
   const routesMap = {};
   
   // Carica missions.yaml multilingua
@@ -900,7 +937,7 @@ router.get('/achievements', async (req, res) => {
     }
     
     // Carica stringhe localizzate
-    const languages = ['EN', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU'];
+    const languages = SUPPORTED_LANGUAGES;
     const localizedStrings = {};
     
     for (const lang of languages) {

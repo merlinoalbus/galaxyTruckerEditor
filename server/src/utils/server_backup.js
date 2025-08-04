@@ -3050,16 +3050,21 @@ app.get('/api/character/image/:characterName', async (req, res) => {
       }
     }
     
-    // Se ancora non trovata, usa placeholder
+    // Se ancora non trovata, usa placeholder con fallback completo
     if (!await fs.pathExists(imagePath)) {
-      const placeholderPath = path.join(imageDir, 'placeholder.png');
-      if (await fs.pathExists(placeholderPath)) {
-        imagePath = placeholderPath;
-      } else {
+      imagePath = await findPlaceholderImage(imageDir, characterName);
+      
+      if (!imagePath) {
         return res.status(404).json({ 
-          error: 'Character image not found',
+          error: 'Character image not found and no placeholder available',
           character: characterName,
-          variant: variant
+          variant: variant,
+          searchedPaths: [
+            `${characterName}_${variant}.png/jpg`,
+            `${characterName}.png/jpg`,
+            'placeholder.png',
+            'avatars/common/avatar_no_avatar.png'
+          ]
         });
       }
     }
@@ -4031,6 +4036,82 @@ watcher.on('change', (filePath) => {
   logger.info(`File changed: ${filePath}`);
   // Qui potresti implementare notifiche WebSocket se necessario
 });
+
+// Trova immagine placeholder con fallback multipli
+async function findPlaceholderImage(searchDir, characterName) {
+  // Lista percorsi fallback in ordine di priorità
+  const fallbackPaths = [
+    path.join(searchDir, 'placeholder.png'),
+    path.join(searchDir, 'unknown.png'),
+    path.join(searchDir, 'default.png'),
+    path.join(GAME_ROOT, 'avatars', 'common', 'avatar_no_avatar.png'),
+    path.join(GAME_ROOT, 'campaign', 'placeholder.png'),
+    path.join(GAME_ROOT, 'assets', 'placeholder.png')
+  ];
+  
+  // Cerca ogni percorso fallback
+  for (const fallbackPath of fallbackPaths) {
+    if (await fs.pathExists(fallbackPath)) {
+      logger.info(`Using placeholder image for ${characterName}: ${path.relative(GAME_ROOT, fallbackPath)}`);
+      return fallbackPath;
+    }
+  }
+  
+  // Ultimo tentativo: genera placeholder dinamico se possibile
+  try {
+    const dynamicPlaceholder = await generateDynamicPlaceholder(searchDir, characterName);
+    if (dynamicPlaceholder) {
+      return dynamicPlaceholder;
+    }
+  } catch (error) {
+    logger.warn(`Cannot generate dynamic placeholder: ${error.message}`);
+  }
+  
+  return null;
+}
+
+// Genera placeholder dinamico semplice (file vuoto PNG valido)
+async function generateDynamicPlaceholder(targetDir, characterName) {
+  try {
+    // Path per placeholder generato
+    const generatedPath = path.join(targetDir, 'generated_placeholder.png');
+    
+    // Se già esiste, usalo
+    if (await fs.pathExists(generatedPath)) {
+      return generatedPath;
+    }
+    
+    // Crea directory se non esiste
+    await fs.ensureDir(targetDir);
+    
+    // Genera PNG 1x1 trasparente (minimo PNG valido)
+    const pngData = Buffer.from([
+      0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, // PNG signature
+      0x00, 0x00, 0x00, 0x0D, // IHDR chunk size
+      0x49, 0x48, 0x44, 0x52, // IHDR
+      0x00, 0x00, 0x00, 0x01, // width: 1
+      0x00, 0x00, 0x00, 0x01, // height: 1
+      0x08, 0x06, 0x00, 0x00, 0x00, // bit depth, color type, compression, filter, interlace
+      0x1F, 0x15, 0xC4, 0x89, // CRC
+      0x00, 0x00, 0x00, 0x0B, // IDAT chunk size
+      0x49, 0x44, 0x41, 0x54, // IDAT
+      0x78, 0x9C, 0x62, 0x00, 0x02, 0x00, 0x00, 0x05, 0x00, 0x01,
+      0x0D, 0x0A, 0x2D, 0xB4, // compressed data + CRC
+      0x00, 0x00, 0x00, 0x00, // IEND chunk size
+      0x49, 0x45, 0x4E, 0x44, // IEND
+      0xAE, 0x42, 0x60, 0x82  // CRC
+    ]);
+    
+    await fs.writeFile(generatedPath, pngData);
+    logger.info(`Generated dynamic placeholder: ${path.relative(GAME_ROOT, generatedPath)}`);
+    
+    return generatedPath;
+    
+  } catch (error) {
+    logger.error(`Failed to generate dynamic placeholder: ${error.message}`);
+    return null;
+  }
+}
 
 app.listen(PORT, () => {
   logger.info(`Galaxy Trucker Editor Server running on port ${PORT}`);

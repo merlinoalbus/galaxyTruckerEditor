@@ -2,11 +2,9 @@
 const fs = require('fs-extra');
 const path = require('path');
 const { getLogger } = require('./logger');
+const { GAME_ROOT } = require('../config/config');
 
 const logger = getLogger();
-
-// Define GAME_ROOT - temporary until moved to config
-const GAME_ROOT = process.cwd();
 
 // Funzione per trovare tutte le immagini di un personaggio
 async function findCharacterImages(characterName) {

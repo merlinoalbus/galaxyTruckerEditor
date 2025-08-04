@@ -1,19 +1,16 @@
 // scriptsRoutes.js - Routes per gestione scripts
 const express = require('express');
 const { parseScriptContent } = require('../parsers/scriptParser');
-const { parseScriptToBlocks, convertBlocksToScript } = require('../parsers/blockParser');
 const { parseScriptToBlocks: parseScriptToBlocksComplete, convertBlocksToScript: convertBlocksToScriptComplete } = require('../parsers/blockParserComplete');
 const { getLogger } = require('../utils/logger');
 const { loadMultilingualContent } = require('../utils/fileUtils');
+const { GAME_ROOT, SUPPORTED_LANGUAGES } = require('../config/config');
 const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
 
 const router = express.Router();
 const logger = getLogger();
-
-// Define GAME_ROOT - temporary until moved to config  
-const GAME_ROOT = path.join(process.cwd(), '..', '..');
 
 // API 3: Lista variabili con scansione ricorsiva campaign
 router.get('/variables', async (req, res) => {
@@ -417,7 +414,7 @@ router.get('/', async (req, res) => {
     logger.info('API call: GET /api/scripts - Lista script con stellato e collegamenti completi');
     
     const scripts = [];
-    const languages = ['EN', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU'];
+    const languages = SUPPORTED_LANGUAGES;
     const allScriptsData = new Map();
     
     // 1. Scansiona tutti i file script multilingua
@@ -783,7 +780,7 @@ async function parseScriptSingleLanguage(scriptName, language, format) {
 // Funzione parsing script multilingua con merge
 async function parseScriptMultilingual(scriptName, format) {
   try {
-    const languages = ['EN', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU'];
+    const languages = SUPPORTED_LANGUAGES;
     const parsedScripts = {};
     let referenceScript = null;
     
@@ -849,7 +846,7 @@ function mergeMultilingualBlocks(parsedScripts, referenceScript) {
   }
   
   // Merge testi multilingua
-  result.blocks = mergeBlocksTextContent(result.blocks, parsedScripts);
+  result.blocks = mergeBlocksTextContent(result.blocks, parsedScripts, []);
   result.availableLanguages = languages;
   result.multilingualMerged = true;
   
@@ -891,10 +888,155 @@ function compareBlockStructures(blocks1, blocks2) {
 }
 
 // Merge contenuto testuale multilingua nei blocchi
-function mergeBlocksTextContent(blocks, parsedScripts) {
-  return blocks.map(block => {
+function mergeBlocksTextContent(blocks, parsedScripts, path = []) {
+  return blocks.map((block, index) => {
     const mergedBlock = { ...block };
     
+    // Merge campi specifici per OPT dalle altre lingue
+    if (block.type === 'OPT') {
+      // Assicurati che optType e condition siano preservati dall'originale
+      if (block.optType && !mergedBlock.optType) {
+        mergedBlock.optType = block.optType;
+      }
+      if (block.condition && !mergedBlock.condition) {
+        mergedBlock.condition = block.condition;
+      }
+      
+      // Se mancano ancora, prendili dalle altre lingue
+      if (!mergedBlock.optType || !mergedBlock.condition) {
+        for (const [lang, scriptData] of Object.entries(parsedScripts)) {
+          // Naviga al blocco corrispondente seguendo il path
+          let correspondingBlocks = scriptData.blocks;
+          for (const pathStep of path) {
+            if (correspondingBlocks && correspondingBlocks[pathStep.index] && correspondingBlocks[pathStep.index][pathStep.prop]) {
+              correspondingBlocks = correspondingBlocks[pathStep.index][pathStep.prop];
+            } else {
+              correspondingBlocks = null;
+              break;
+            }
+          }
+          
+          // Prendi il blocco all'indice corrente
+          const correspondingBlock = correspondingBlocks ? correspondingBlocks[index] : null;
+          
+          // PATCH SPECIFICO per OPT con SET merchAlienQuestion che ha testo vuoto in EN
+          if (correspondingBlock && correspondingBlock.type === 'OPT' && 
+              correspondingBlock.children && correspondingBlock.children.some(child => 
+                child.type === 'SET' && child.parameters && child.parameters.semaphore === 'merchAlienQuestion')) {
+            // Se questo OPT ha optType e condition ma il merged non li ha, forzali
+            if (correspondingBlock.optType && !mergedBlock.optType) {
+              mergedBlock.optType = correspondingBlock.optType;
+            }
+            if (correspondingBlock.condition && !mergedBlock.condition) {
+              mergedBlock.condition = correspondingBlock.condition;
+            }
+            // Se manca il testo multilingua, copialo
+            if (correspondingBlock.text && (!mergedBlock.text || typeof mergedBlock.text === 'undefined')) {
+              mergedBlock.text = correspondingBlock.text;
+            }
+          }
+          
+          if (correspondingBlock && correspondingBlock.type === 'OPT') {
+            if (!mergedBlock.optType && correspondingBlock.optType) {
+              mergedBlock.optType = correspondingBlock.optType;
+            }
+            if (!mergedBlock.condition && correspondingBlock.condition) {
+              mergedBlock.condition = correspondingBlock.condition;
+            }
+            
+            // Se abbiamo trovato entrambi, possiamo fermarci
+            if (mergedBlock.optType && mergedBlock.condition) {
+              break;
+            }
+          }
+        }
+      }
+      
+      // Fallback finale se manca ancora optType - GARANTISCE che tutte le OPT abbiano optType
+      if (!mergedBlock.optType) {
+        if (mergedBlock.condition) {
+          mergedBlock.optType = 'OPT_CONDITIONAL';
+        } else {
+          mergedBlock.optType = 'OPT_SIMPLE';
+        }
+      }
+      
+    } else {
+      // Aggiungi optType anche per OPT che non sono nel blocco IF sopra
+      if (mergedBlock.type === 'OPT' && !mergedBlock.optType) {
+        mergedBlock.optType = mergedBlock.condition ? 'OPT_CONDITIONAL' : 'OPT_SIMPLE';
+      }
+    }
+    
+    // Merge campo 'text' per OPT (che è direttamente sul blocco, non in parameters)
+    if (mergedBlock.text) {
+      // Se il text è già un oggetto multilingua (EN: "..."), mantieni la struttura
+      if (typeof mergedBlock.text === 'object' && mergedBlock.text !== null && !Array.isArray(mergedBlock.text)) {
+        const mergedText = { ...mergedBlock.text };
+        
+        for (const [lang, scriptData] of Object.entries(parsedScripts)) {
+          if (lang === 'EN') continue;
+          
+          // Naviga al blocco corrispondente seguendo il path
+          let correspondingBlocks = scriptData.blocks;
+          for (const pathStep of path) {
+            if (correspondingBlocks && correspondingBlocks[pathStep.index] && correspondingBlocks[pathStep.index][pathStep.prop]) {
+              correspondingBlocks = correspondingBlocks[pathStep.index][pathStep.prop];
+            } else {
+              correspondingBlocks = null;
+              break;
+            }
+          }
+          
+          // Ora prendi il blocco all'indice corrente
+          const correspondingBlock = correspondingBlocks ? correspondingBlocks[index] : null;
+          
+          if (correspondingBlock && correspondingBlock.text) {
+            if (typeof correspondingBlock.text === 'object' && correspondingBlock.text !== null) {
+              // Prende il valore dalla lingua corrente (ogni script ha una sola chiave lingua)
+              const langValues = Object.values(correspondingBlock.text);
+              if (langValues.length > 0) {
+                mergedText[lang] = langValues[0];
+              }
+            } else if (typeof correspondingBlock.text === 'string') {
+              // Se è una stringa, la lingua è quella dello script
+              mergedText[lang] = correspondingBlock.text;
+            }
+          }
+        }
+        
+        mergedBlock.text = mergedText;
+      } else if (typeof mergedBlock.text === 'string') {
+        // Se il text è una stringa semplice, crea l'oggetto multilingua
+        const mergedText = { EN: mergedBlock.text };
+        
+        for (const [lang, scriptData] of Object.entries(parsedScripts)) {
+          if (lang === 'EN') continue;
+          
+          // Naviga al blocco corrispondente seguendo il path
+          let correspondingBlocks = scriptData.blocks;
+          for (const pathStep of path) {
+            if (correspondingBlocks && correspondingBlocks[pathStep.index] && correspondingBlocks[pathStep.index][pathStep.prop]) {
+              correspondingBlocks = correspondingBlocks[pathStep.index][pathStep.prop];
+            } else {
+              correspondingBlocks = null;
+              break;
+            }
+          }
+          
+          // Ora prendi il blocco all'indice corrente
+          const correspondingBlock = correspondingBlocks ? correspondingBlocks[index] : null;
+          
+          
+          if (correspondingBlock && correspondingBlock.text && typeof correspondingBlock.text === 'string') {
+            mergedText[lang] = correspondingBlock.text;
+          }
+        }
+        
+        mergedBlock.text = mergedText;
+      }
+    }
+
     // Merge parametri multilingua
     if (mergedBlock.parameters) {
       for (const [paramName, paramValue] of Object.entries(mergedBlock.parameters)) {
@@ -905,11 +1047,28 @@ function mergeBlocksTextContent(blocks, parsedScripts) {
           for (const [lang, scriptData] of Object.entries(parsedScripts)) {
             if (lang === 'EN') continue;
             
-            const correspondingBlock = findCorrespondingBlock(scriptData.blocks, block, blocks.indexOf(block));
+            // Naviga al blocco corrispondente seguendo il path
+            let correspondingBlocks = scriptData.blocks;
+            for (const pathStep of path) {
+              if (correspondingBlocks && correspondingBlocks[pathStep.index] && correspondingBlocks[pathStep.index][pathStep.prop]) {
+                correspondingBlocks = correspondingBlocks[pathStep.index][pathStep.prop];
+              } else {
+                correspondingBlocks = null;
+                break;
+              }
+            }
+            
+            // Ora prendi il blocco all'indice corrente
+            const correspondingBlock = correspondingBlocks ? correspondingBlocks[index] : null;
+            
             if (correspondingBlock && correspondingBlock.parameters && correspondingBlock.parameters[paramName]) {
               const otherLangValue = correspondingBlock.parameters[paramName];
-              if (typeof otherLangValue === 'object' && otherLangValue[lang]) {
-                mergedParam[lang] = otherLangValue[lang];
+              if (typeof otherLangValue === 'object' && otherLangValue !== null) {
+                // Prende il valore dalla lingua corrente (ogni script ha una sola chiave lingua)
+                const langValues = Object.values(otherLangValue);
+                if (langValues.length > 0) {
+                  mergedParam[lang] = langValues[0];
+                }
               }
             }
           }
@@ -921,12 +1080,20 @@ function mergeBlocksTextContent(blocks, parsedScripts) {
     
     // Merge ricorsivo per children
     if (mergedBlock.children) {
-      mergedBlock.children = mergeBlocksTextContent(mergedBlock.children, parsedScripts);
+      const childPath = [...path, { prop: 'children', index }];
+      mergedBlock.children = mergeBlocksTextContent(mergedBlock.children, parsedScripts, childPath);
+    }
+    
+    // Merge ricorsivo per thenBranch
+    if (mergedBlock.thenBranch) {
+      const thenPath = [...path, { prop: 'thenBranch', index }];
+      mergedBlock.thenBranch = mergeBlocksTextContent(mergedBlock.thenBranch, parsedScripts, thenPath);
     }
     
     // Merge ricorsivo per elseBranch
     if (mergedBlock.elseBranch) {
-      mergedBlock.elseBranch = mergeBlocksTextContent(mergedBlock.elseBranch, parsedScripts);
+      const elsePath = [...path, { prop: 'elseBranch', index }];
+      mergedBlock.elseBranch = mergeBlocksTextContent(mergedBlock.elseBranch, parsedScripts, elsePath);
     }
     
     return mergedBlock;
@@ -1071,7 +1238,109 @@ router.get('/:scriptName', async (req, res) => {
   }
 });
 
-// API 14: Salvataggio script multilingua da JSON  
+// API 14: Salvataggio script singolo o multiplo
+router.post('/saveScript', async (req, res) => {
+  try {
+    const body = req.body;
+    
+    // Determina se è un singolo script o un array
+    const isSingleScript = body.name && body.fileName && body.blocks;
+    const scripts = isSingleScript ? [body] : body;
+    
+    logger.info(`API call: POST /api/scripts/saveScript - ${isSingleScript ? 'single' : 'multiple'} mode, ${scripts.length} script(s)`);
+    
+    // Validazione
+    if (!Array.isArray(scripts) && !isSingleScript) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Body must be either a single script object or an array of script objects' 
+      });
+    }
+    
+    // Valida ogni script
+    for (let i = 0; i < scripts.length; i++) {
+      const script = scripts[i];
+      if (!script.name || !script.fileName || !script.blocks) {
+        return res.status(400).json({ 
+          success: false, 
+          error: `Script at index ${i} missing required parameters: name, fileName, blocks` 
+        });
+      }
+      if (!Array.isArray(script.blocks)) {
+        return res.status(400).json({ 
+          success: false, 
+          error: `Script at index ${i}: blocks must be an array` 
+        });
+      }
+    }
+    
+    try {
+      // Raggruppa gli script per fileName
+      const scriptsByFile = {};
+      for (const script of scripts) {
+        if (!scriptsByFile[script.fileName]) {
+          scriptsByFile[script.fileName] = [];
+        }
+        scriptsByFile[script.fileName].push(script);
+      }
+      
+      // Risultati per ogni script processato
+      const results = [];
+      const fileResults = {};
+      
+      // Processa ogni file
+      for (const [fileName, fileScripts] of Object.entries(scriptsByFile)) {
+        
+        // Verifica se i blocchi contengono dati multilingua
+        const hasMultilingualData = checkForMultilingualData(fileScripts);
+        
+        if (hasMultilingualData) {
+          // Modalità multilingua - genera un file per ogni lingua
+          const languages = SUPPORTED_LANGUAGES;
+          
+          for (const lang of languages) {
+            const filePath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`, fileName);
+            await processFileForLanguage(filePath, fileScripts, lang, results);
+          }
+        } else {
+          // Modalità singola lingua (default EN)
+          const filePath = path.join(GAME_ROOT, 'campaign', 'campaignScriptsEN', fileName);
+          await processFileForLanguage(filePath, fileScripts, 'EN', results);
+        }
+      }
+      
+      res.json({
+        success: true,
+        data: {
+          mode: isSingleScript ? 'single' : 'multiple',
+          totalScripts: scripts.length,
+          filesModified: Object.keys(scriptsByFile).length,
+          savedAt: new Date().toISOString(),
+          fileResults: fileResults,
+          scriptResults: results
+        }
+      });
+      
+    } catch (conversionError) {
+      logger.error(`Error converting/saving script: ${conversionError.message}`);
+      res.status(400).json({
+        success: false,
+        error: 'Failed to convert or save script',
+        message: conversionError.message
+      });
+    }
+    
+  } catch (error) {
+    logger.error(`Error in saveScript: ${error.message}`);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to save script',
+      message: error.message 
+    });
+  }
+});
+
+// API 14-OLD: Salvataggio script multilingua da JSON (mantenuta per compatibilità)
 router.post('/:scriptName/save', async (req, res) => {
   try {
     const { scriptName } = req.params;
@@ -1087,32 +1356,21 @@ router.post('/:scriptName/save', async (req, res) => {
     }
     
     try {
-      if (saveMode === 'multilingual') {
-        // SALVATAGGIO MULTILINGUA: genera un file per ogni lingua
-        const saveResults = await saveScriptMultilingual(scriptName, blocks, languages);
-        
-        res.json({
-          success: true,
-          data: {
-            scriptName,
-            saveMode: 'multilingual',
-            languagesProcessed: saveResults.languagesProcessed,
-            filesGenerated: saveResults.filesGenerated,
-            blockCount: blocks.length,
-            savedAt: new Date().toISOString(),
-            validation: saveResults.validation
-          }
-        });
-      } else {
-        // SALVATAGGIO SINGOLA LINGUA (modalità legacy)
-        const singleLang = languages[0] || 'EN';
-        const saveResult = await saveScriptSingleLanguage(scriptName, blocks, singleLang);
-        
-        res.json({
-          success: true,
-          data: saveResult
-        });
-      }
+      // SEMPRE usa il parser multilingua per supportare testi multilingua corretti
+      const saveResults = await saveScriptMultilingual(scriptName, blocks, languages);
+      
+      res.json({
+        success: true,
+        data: {
+          scriptName,
+          saveMode: saveMode || 'multilingual',
+          languagesProcessed: saveResults.languagesProcessed,
+          filesGenerated: saveResults.filesGenerated,
+          blockCount: blocks.length,
+          savedAt: new Date().toISOString(),
+          validation: saveResults.validation
+        }
+      });
       
     } catch (conversionError) {
       logger.error(`Error converting blocks to script: ${conversionError.message}`);
@@ -1140,7 +1398,7 @@ async function getStellatedScriptsAndButtons() {
   
   try {
     // Implementa direttamente la logica per raccogliere bottoni
-    const languages = ['EN', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU'];
+    const languages = SUPPORTED_LANGUAGES;
     
     // 1. Raccoglie bottoni dai nodi
     const nodesMap = {};
@@ -1378,13 +1636,14 @@ async function saveScriptMultilingual(scriptName, blocks, languages) {
   
   try {
     // Supporta tutte le lingue del gioco
-    const allLanguages = ['EN', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU'];
+    const allLanguages = SUPPORTED_LANGUAGES;
     const targetLanguages = languages.filter(lang => allLanguages.includes(lang));
+    
     
     for (const language of targetLanguages) {
       try {
         // Serializza script per la lingua specifica
-        const scriptContent = convertBlocksToScriptCompleteMultilingual(blocks, language);
+        const scriptContent = convertBlocksToScriptComplete(blocks, language);
         
         // Prepara contenuto con header SCRIPT
         const fullScriptContent = `SCRIPT ${scriptName}\n${scriptContent}\nEND_OF_SCRIPTS\n`;
@@ -1433,7 +1692,7 @@ async function saveScriptMultilingual(scriptName, blocks, languages) {
 // Funzione salvataggio script singola lingua (legacy)
 async function saveScriptSingleLanguage(scriptName, blocks, language) {
   try {
-    const scriptContent = convertBlocksToScriptComplete(blocks);
+    const scriptContent = convertBlocksToScriptComplete(blocks, language);
     const fullScriptContent = `SCRIPT ${scriptName}\n${scriptContent}\nEND_OF_SCRIPTS\n`;
     
     const scriptPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${language}`, `${scriptName}.txt`);
@@ -1462,176 +1721,6 @@ async function saveScriptSingleLanguage(scriptName, blocks, language) {
   }
 }
 
-// Serializzazione completa con supporto multilingua
-function convertBlocksToScriptCompleteMultilingual(blocks, targetLanguage) {
-  return blocks.map(block => serializeElementMultilingual(block, targetLanguage)).join('\n');
-}
-
-function serializeElementMultilingual(element, targetLanguage) {
-  if (!element || !element.type) {
-    return '';
-  }
-  
-  switch (element.type) {
-    case 'SCRIPT':
-      const scriptLines = [`SCRIPT ${element.name}`];
-      if (element.children) {
-        scriptLines.push(...element.children.map(child => serializeElementMultilingual(child, targetLanguage)));
-      }
-      scriptLines.push('END_OF_SCRIPTS');
-      return scriptLines.join('\n');
-      
-    case 'IF':
-      return serializeIfBlockMultilingual(element, targetLanguage);
-      
-    case 'MENU':
-      const menuLines = ['MENU'];
-      if (element.options) {
-        menuLines.push(...element.options.map(opt => serializeElementMultilingual(opt, targetLanguage)));
-      }
-      menuLines.push('END_OF_MENU');
-      return menuLines.join('\n');
-      
-    case 'OPT':
-      return serializeOptBlockMultilingual(element, targetLanguage);
-      
-    default:
-      return serializeCommandMultilingual(element, targetLanguage);
-  }
-}
-
-function serializeCommandMultilingual(element, targetLanguage) {
-  if (element.type === 'UNKNOWN_COMMAND') {
-    return `${element.name} ${element.parameters.raw || ''}`.trim();
-  }
-  
-  const commandDef = require('../parsers/blockParserComplete').COMMAND_CATALOG[element.type];
-  if (!commandDef) {
-    return `${element.type} ${JSON.stringify(element.parameters)}`;
-  }
-  
-  const parts = [element.type];
-  
-  if (commandDef.params && element.parameters) {
-    commandDef.params.forEach(paramDef => {
-      const [paramName, paramType] = paramDef.split(':');
-      const paramValue = element.parameters[paramName];
-      
-      if (paramType === 'multilingual') {
-        // Gestione testo multilingua con fallback a EN
-        const text = getTextForLanguageWithFallback(paramValue, targetLanguage);
-        parts.push(`"${text}"`);
-      } else {
-        parts.push(paramValue);
-      }
-    });
-  }
-  
-  return parts.join(' ');
-}
-
-function serializeIfBlockMultilingual(ifElement, targetLanguage) {
-  const lines = [];
-  
-  // Comando apertura IF
-  const ifCommand = buildIfCommandFromElement(ifElement);
-  lines.push(ifCommand);
-  
-  // Contenuto then
-  if (ifElement.thenBranch) {
-    lines.push(...ifElement.thenBranch.map(child => serializeElementMultilingual(child, targetLanguage)));
-  }
-  
-  // Contenuto else
-  if (ifElement.elseBranch && ifElement.elseBranch.length > 0) {
-    lines.push('ELSE');
-    lines.push(...ifElement.elseBranch.map(child => serializeElementMultilingual(child, targetLanguage)));
-  }
-  
-  lines.push('END_OF_IF');
-  return lines.join('\n');
-}
-
-function serializeOptBlockMultilingual(optElement, targetLanguage) {
-  const lines = [];
-  
-  // Comando apertura OPT con testo multilingua
-  let optCommand;
-  const text = getTextForLanguageWithFallback(optElement.text, targetLanguage);
-  
-  switch (optElement.optType) {
-    case 'OPT_SIMPLE':
-      optCommand = `OPT "${text}"`;
-      break;
-    case 'OPT_CONDITIONAL':
-      optCommand = `OPT_IF ${optElement.condition} "${text}"`;
-      break;
-    case 'OPT_CONDITIONAL_NOT':
-      optCommand = `OPT_IFNOT ${optElement.condition} "${text}"`;
-      break;
-    default:
-      optCommand = `OPT "${text}"`;
-  }
-  
-  lines.push(optCommand);
-  
-  // Contenuto OPT
-  if (optElement.children) {
-    lines.push(...optElement.children.map(child => serializeElementMultilingual(child, targetLanguage)));
-  }
-  
-  lines.push('END_OF_OPT');
-  return lines.join('\n');
-}
-
-function buildIfCommandFromElement(ifElement) {
-  switch (ifElement.ifType) {
-    case 'IF_SEMAPHORE':
-      return `IF ${ifElement.condition}`;
-    case 'IFNOT_SEMAPHORE':
-      return `IFNOT ${ifElement.condition}`;
-    case 'IF_VARIABLE_EXACT':
-      return `IF_IS ${ifElement.variable} ${ifElement.value}`;
-    case 'IF_VARIABLE_MIN':
-      return `IF_MIN ${ifElement.variable} ${ifElement.value}`;
-    case 'IF_VARIABLE_MAX':
-      return `IF_MAX ${ifElement.variable} ${ifElement.value}`;
-    case 'IF_CREDITS':
-      return `IF_HAS_CREDITS ${ifElement.value}`;
-    case 'IF_PROBABILITY':
-      return `IF_PROB ${ifElement.value}`;
-    case 'IF_ORDER':
-      return `IF_ORDER ${ifElement.positions.join(' ')}`;
-    case 'IF_SYSTEM':
-      return getSystemIfCommandFromVar(ifElement.systemVariable);
-    default:
-      return `IF ${ifElement.condition || 'UNKNOWN'}`;
-  }
-}
-
-function getSystemIfCommandFromVar(systemVar) {
-  switch (systemVar) {
-    case 'debug': return 'IF_DEBUG';
-    case 'from_campaign': return 'IF_FROM_CAMPAIGN';
-    case 'mission_won': return 'IF_MISSION_WON';
-    case 'tutorial_seen': return 'IF_TUTORIAL_SEEN';
-    default: return `IF_${systemVar.toUpperCase()}`;
-  }
-}
-
-function getTextForLanguageWithFallback(textObj, targetLanguage) {
-  if (typeof textObj === 'string') return textObj;
-  if (typeof textObj === 'object' && textObj !== null) {
-    // Prima prova la lingua target
-    if (textObj[targetLanguage]) return textObj[targetLanguage];
-    // Fallback a inglese  
-    if (textObj['EN']) return textObj['EN'];
-    // Ultima risorsa: prima lingua disponibile
-    const availableTexts = Object.values(textObj).filter(t => t && t.trim());
-    return availableTexts[0] || '';
-  }
-  return '';
-}
 
 async function updateScriptInFileMultilingual(filePath, scriptName, newContent) {
   let existingContent = '';
@@ -1666,6 +1755,270 @@ async function updateScriptInFileMultilingual(filePath, scriptName, newContent) 
   
   // Salva file aggiornato
   await fs.writeFile(filePath, updatedContent, 'utf8');
+}
+
+// Verifica se i blocchi contengono dati multilingua
+function checkForMultilingualData(scripts) {
+  for (const script of scripts) {
+    if (hasMultilingualParameters(script.blocks)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// Verifica ricorsivamente se ci sono parametri multilingua
+function hasMultilingualParameters(blocks) {
+  for (const block of blocks) {
+    if (block.parameters) {
+      for (const param of Object.values(block.parameters)) {
+        if (typeof param === 'object' && param !== null && !Array.isArray(param)) {
+          const keys = Object.keys(param);
+          if (keys.length > 1 || (keys.length === 1 && keys[0].length === 2 && keys[0] !== 'EN')) {
+            return true;
+          }
+        }
+      }
+    }
+    
+    // Verifica ricorsiva in tutte le proprietà che contengono array di blocchi
+    if (block.children && hasMultilingualParameters(block.children)) return true;
+    if (block.thenBranch && hasMultilingualParameters(block.thenBranch)) return true;
+    if (block.elseBranch && hasMultilingualParameters(block.elseBranch)) return true;
+  }
+  return false;
+}
+
+// Processa un file per una lingua specifica
+async function processFileForLanguage(filePath, fileScripts, language, results) {
+  const fileExists = await fs.pathExists(filePath);
+  
+  let fileContent = '';
+  let existingScripts = {};
+  
+  if (fileExists) {
+    // Leggi e parsa il file esistente
+    fileContent = await fs.readFile(filePath, 'utf8');
+    const lines = fileContent.split('\n');
+    
+    // Estrai tutti gli script esistenti
+    let currentScript = null;
+    let scriptLines = [];
+    
+    for (const line of lines) {
+      const trimmedLine = line.trim();
+      
+      if (trimmedLine.startsWith('SCRIPT ')) {
+        currentScript = trimmedLine.replace('SCRIPT ', '').trim();
+        scriptLines = [line];
+      } else if (trimmedLine === 'END_OF_SCRIPT' && currentScript) {
+        scriptLines.push(line);
+        existingScripts[currentScript] = scriptLines.join('\n');
+        currentScript = null;
+        scriptLines = [];
+      } else if (currentScript) {
+        scriptLines.push(line);
+      }
+    }
+  }
+  
+  // Processa ogni script per questo file
+  for (const script of fileScripts) {
+    try {
+      // Estrai i blocchi reali - se c'è un wrapper SCRIPT, usa i suoi children
+      let actualBlocks = script.blocks;
+      if (actualBlocks.length === 1 && actualBlocks[0].type === 'SCRIPT' && actualBlocks[0].children) {
+        actualBlocks = actualBlocks[0].children;
+      }
+      
+      // Usa la serializzazione multilingua per la lingua target (non estrarre prima)
+      const scriptContent = convertBlocksToScriptComplete(actualBlocks, language);
+      const contentLines = scriptContent.split('\n').filter(line => line.trim());
+      
+      // Costruisci il contenuto dello script con SCRIPT name ... END_OF_SCRIPT
+      const fullScriptContent = [
+        `SCRIPT ${script.name}`,
+        ...contentLines,
+        'END_OF_SCRIPT'
+      ].join('\n');
+      
+      // Aggiorna o aggiungi lo script
+      existingScripts[script.name] = fullScriptContent;
+      
+      results.push({
+        name: script.name,
+        fileName: path.basename(filePath),
+        language: language,
+        status: 'success',
+        action: fileExists ? 'updated' : 'created'
+      });
+      
+    } catch (error) {
+      logger.error(`Error processing script ${script.name} for ${language}: ${error.message}`);
+      results.push({
+        name: script.name,
+        fileName: path.basename(filePath),
+        language: language,
+        status: 'error',
+        error: error.message
+      });
+    }
+  }
+  
+  // Sostituisci solo gli script specifici richiesti
+  if (fileExists) {
+    // Per ogni script, sostituiscilo nel file esistente
+    for (const script of fileScripts) {
+      const actualBlocks = script.blocks.length === 1 && script.blocks[0].type === 'SCRIPT' && script.blocks[0].children 
+        ? script.blocks[0].children 
+        : script.blocks;
+      const scriptContent = convertBlocksToScriptComplete(actualBlocks, language);
+      const contentLines = scriptContent.split('\n').filter(line => line.trim());
+      
+      const newScriptLines = [
+        `  SCRIPT ${script.name}`,
+        ...contentLines.map(line => `  ${line}`),
+        '  END_OF_SCRIPT'
+      ];
+      
+      await replaceScriptInFile(filePath, script.name, newScriptLines);
+    }
+  } else {
+    // Crea nuovo file con tutti gli script richiesti
+    const scriptContents = [];
+    for (const script of fileScripts) {
+      const actualBlocks = script.blocks.length === 1 && script.blocks[0].type === 'SCRIPT' && script.blocks[0].children 
+        ? script.blocks[0].children 
+        : script.blocks;
+      const scriptContent = convertBlocksToScriptComplete(actualBlocks, language);
+      const contentLines = scriptContent.split('\n').filter(line => line.trim());
+      
+      scriptContents.push(`  SCRIPT ${script.name}`);
+      scriptContents.push(...contentLines.map(line => `  ${line}`));
+      scriptContents.push('  END_OF_SCRIPT');
+    }
+    
+    const finalContent = [
+      'SCRIPTS',
+      '',
+      ...scriptContents,
+      '',
+      'END_OF_SCRIPTS'
+    ].join('\n');
+    
+    await fs.ensureDir(path.dirname(filePath));
+    await fs.writeFile(filePath, finalContent, 'utf8');
+  }
+}
+
+// Funzione helper per sostituire uno script specifico in un file
+async function replaceScriptInFile(filePath, scriptName, newScriptLines) {
+  const fileContent = await fs.readFile(filePath, 'utf8');
+  const lines = fileContent.split('\n');
+  const resultLines = [];
+  
+  // Rileva l'indentazione esistente degli script e del contenuto nel file
+  let scriptIndent = '  '; // Default per SCRIPT
+  let contentIndent = '    '; // Default per contenuto (2 spazi aggiuntivi)
+  
+  let foundScript = false;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (/^\s*SCRIPT\s+/.test(line)) {
+      const match = line.match(/^(\s*)/);
+      scriptIndent = match[1];
+      foundScript = true;
+      
+      // Cerca la prima riga di contenuto dopo SCRIPT per rilevare l'indentazione del contenuto
+      for (let j = i + 1; j < lines.length; j++) {
+        const contentLine = lines[j];
+        if (contentLine.trim() && !contentLine.trim().startsWith('SCRIPT') && contentLine.trim() !== 'END_OF_SCRIPT') {
+          const contentMatch = contentLine.match(/^(\s*)/);
+          contentIndent = contentMatch[1];
+          break;
+        }
+      }
+      break;
+    }
+  }
+  
+  // Adatta l'indentazione del nuovo script a quella esistente
+  const adaptedScriptLines = newScriptLines.map(line => {
+    if (line.trim().startsWith('SCRIPT ') || line.trim() === 'END_OF_SCRIPT') {
+      // Per SCRIPT e END_OF_SCRIPT usa l'indentazione degli script
+      return scriptIndent + line.trim();
+    } else if (line.startsWith('  ') && line.trim()) {
+      // Per il contenuto, usa l'indentazione del contenuto
+      return contentIndent + line.substring(2);
+    } else {
+      // Righe vuote o altre
+      return line;
+    }
+  });
+  
+  let inTargetScript = false;
+  let scriptStartPattern = new RegExp(`^\\s*SCRIPT\\s+${scriptName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*$`);
+  let scriptFound = false;
+  
+  for (const line of lines) {
+    if (scriptStartPattern.test(line)) {
+      // Inizio dello script target - sostituisci con il nuovo contenuto
+      inTargetScript = true;
+      scriptFound = true;
+      resultLines.push(...adaptedScriptLines);
+    } else if (inTargetScript && line.trim() === 'END_OF_SCRIPT') {
+      // Fine dello script target - è già incluso nel nuovo contenuto
+      inTargetScript = false;
+    } else if (!inTargetScript) {
+      // Mantieni tutte le righe fuori dallo script target
+      resultLines.push(line);
+    }
+    // Ignora le righe dentro lo script target (verranno sostituite)
+  }
+  
+  // Se lo script non esisteva, aggiungilo prima di END_OF_SCRIPTS
+  if (!scriptFound) {
+    const endScriptsIndex = resultLines.findIndex(line => line.trim() === 'END_OF_SCRIPTS');
+    if (endScriptsIndex !== -1) {
+      resultLines.splice(endScriptsIndex, 0, '', ...adaptedScriptLines);
+    } else {
+      // Se non c'è END_OF_SCRIPTS, aggiungi alla fine
+      resultLines.push('', ...adaptedScriptLines);
+    }
+  }
+  
+  await fs.writeFile(filePath, resultLines.join('\n'), 'utf8');
+}
+
+// Estrae i blocchi convertendo i parametri multilingua per una singola lingua
+function extractBlocksForLanguage(blocks, language) {
+  return blocks.map(block => {
+    const newBlock = { ...block };
+    
+    // Converti parametri multilingua
+    if (newBlock.parameters) {
+      newBlock.parameters = { ...newBlock.parameters };
+      for (const [paramName, paramValue] of Object.entries(newBlock.parameters)) {
+        if (typeof paramValue === 'object' && paramValue !== null && !Array.isArray(paramValue)) {
+          // È un oggetto multilingua - estrai il valore per questa lingua
+          newBlock.parameters[paramName] = paramValue[language] || paramValue['EN'] || Object.values(paramValue)[0] || '';
+        }
+      }
+    }
+    
+    // Processo ricorsivo per tutte le proprietà che contengono array di blocchi
+    if (newBlock.children) {
+      newBlock.children = extractBlocksForLanguage(newBlock.children, language);
+    }
+    if (newBlock.thenBranch) {
+      newBlock.thenBranch = extractBlocksForLanguage(newBlock.thenBranch, language);
+    }
+    if (newBlock.elseBranch) {
+      newBlock.elseBranch = extractBlocksForLanguage(newBlock.elseBranch, language);
+    }
+    
+    return newBlock;
+  });
 }
 
 // Mantieni compatibilità con export precedente
