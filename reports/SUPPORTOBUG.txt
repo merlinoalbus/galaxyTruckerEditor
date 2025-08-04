@@ -182,775 +182,246 @@ FOCUSCHAR            |     7 (0.01%)
 QUITCAMPAIGN         |     7 (0.01%)
 (CLIQUEZ             |     2 (0.00%) | questo non è un comando
 (CHOISISSEZ          |     2 (0.00%) | questo non è un comando
-
-EXAMPLES OF EACH COMMAND TYPE:
-
-SAY (8876 occurrences):
-  missions.txt:EN - Say "*Sigh*"
-  missions.txt:EN - Say "Gambling's gonna ruin me."
-  missions.txt:EN - Say "I won. Time to pay up[g(, pal|, sister)]."
-  missions.txt:EN - Say "Huh. So much for our race. We both got crushed."
-  missions.txt:EN - Say "I guess that means no one won."
-
-DELAY (5152 occurrences):
-  missions.txt:EN - Delay 500
-  missions.txt:EN - Delay 300
-  missions.txt:EN - Delay 200
-  missions.txt:EN - Delay 300
-  missions.txt:EN - Delay 300
-
-END_OF_IF (4732 occurrences):
-  base_inits.txt:EN - END_OF_IF
-  base_inits.txt:EN - END_OF_IF
-  base_inits.txt:EN - END_OF_IF
-  base_inits.txt:EN - END_OF_IF
-  base_inits.txt:EN - END_OF_IF
-
-END_OF_OPT (4410 occurrences):
-  inits.txt:EN - END_OF_OPT
-  inits.txt:EN - END_OF_OPT
-  inits.txt:EN - END_OF_OPT
-  inits.txt:EN - END_OF_OPT
-  inits.txt:EN - END_OF_OPT
-
-OPT (3171 occurrences):
-  inits.txt:EN - OPT "Get 40 credits"
-  inits.txt:EN - OPT "Lose 10 credits."
-  inits.txt:EN - OPT "Done."
-  inits.txt:EN - OPT "Show the entire map"
-  inits.txt:EN - OPT "Skip to a node (phase I)"
-
-CHANGECHAR (3094 occurrences):
-  missions.txt:EN - ChangeChar ambassador campaign/ambassador-peek.png
-  missions.txt:EN - ChangeChar ambassador campaign/ambassador-peek.png
-  missions.txt:EN - ChangeChar bartender campaign/bartender-warehouse.png
-  missions.txt:EN - ChangeChar bartender campaign/bartender-overIntercom.png
-  missions.txt:EN - ChangeChar bartender campaign/bartender-overIntercom1.png
-
-SET (3024 occurrences):
-  base_inits.txt:EN - SET newbieInitialized
-  base_inits.txt:EN - SET merchantLeftAtPurple
-  base_inits.txt:EN - SET outpostInitialized
-  base_inits.txt:EN - SET tutor_moremissions
-  base_inits.txt:EN - SET barInitialized
-
-GO (2170 occurrences):
-  inits.txt:EN - GO startA
-  inits.txt:EN - GO startO
-  inits.txt:EN - GO startP
-  inits.txt:EN - GO startR
-  inits.txt:EN - GO startB
-
-SUB_SCRIPT (1967 occurrences):
-  base_inits.txt:EN - SUB_SCRIPT registerVisited
-  base_inits.txt:EN - SUB_SCRIPT registerVisited
-  base_inits.txt:EN - SUB_SCRIPT registerVisited
-  base_inits.txt:EN - SUB_SCRIPT registerVisited
-  base_inits.txt:EN - SUB_SCRIPT registerVisited
-
-MENU (1904 occurrences):
-  inits.txt:EN - MENU
-  inits.txt:EN - MENU
-  inits.txt:EN - MENU
-  inits.txt:EN - MENU
-  inits.txt:EN - MENU
-
-END_OF_MENU (1904 occurrences):
-  inits.txt:EN - END_OF_MENU
-  inits.txt:EN - END_OF_MENU
-  inits.txt:EN - END_OF_MENU
-  inits.txt:EN - END_OF_MENU
-  inits.txt:EN - END_OF_MENU
-
-ASK (1897 occurrences):
-  missions.txt:EN - Ask "Kzwrrr' kh! Hr ghz trrzk! TRRZK!"
-  missions.txt:EN - Ask "Just to be safe, don't put two cabins next to each other, okay? Otherwise, people might get sick."
-  missions.txt:EN - Ask "Can I catch a ride with you?"
-  missions.txt:EN - Ask "What's up?"
-  missions.txt:EN - Ask "Those are the rules. Straight from Regula."
-
-IF (1792 occurrences):
-  base_inits.txt:EN - IF newbieInitialized
-  base_inits.txt:EN - IF newbieInitialized
-  base_inits.txt:EN - IF outpostInitialized
-  base_inits.txt:EN - IF barInitialized
-  base_inits.txt:EN - IF forgeInitialized
-
-ELSE (1680 occurrences):
-  base_inits.txt:EN - ELSE
-  base_inits.txt:EN - ELSE
-  base_inits.txt:EN - ELSE
-  base_inits.txt:EN - ELSE
-  missions.txt:EN - ELSE
-
-EXIT_MENU (1610 occurrences):
-  inits.txt:EN - EXIT_MENU
-  inits.txt:EN - EXIT_MENU
-  inits.txt:EN - EXIT_MENU
-  inits.txt:EN - EXIT_MENU
-  inits.txt:EN - EXIT_MENU
-
-HIDECHAR (1582 occurrences):
-  missions.txt:EN - HideChar roughtrucker
-  missions.txt:EN - HideChar ambassador
-  missions.txt:EN - HideChar purpleGuard
-  missions.txt:EN - HideChar purpleDipl
-  missions.txt:EN - HideChar purpleGuard
-
-SHOWCHAR (1435 occurrences):
-  missions.txt:EN - ShowChar roughtrucker left
-  missions.txt:EN - ShowChar ambassador right
-  missions.txt:EN - ShowChar ambassador right
-  missions.txt:EN - ShowChar purpleGuard left
-  missions.txt:EN - ShowChar purpleDipl right
-
-HIDEDLGSCENE (1106 occurrences):
-  inits.txt:EN - HideDlgScene
-  inits.txt:EN - HideDlgScene
-  inits.txt:EN - HideDlgScene
-  inits.txt:EN - HideDlgScene
-  inits.txt:EN - HideDlgScene
-
-RESET (1015 occurrences):
-  base_inits.txt:EN - RESET visited
-  base_inits.txt:EN - RESET labWorkshopPending
-  base_inits.txt:EN - RESET shortcutEnabled
-  base_inits.txt:EN - RESET shortcutEnabled
-  base_inits.txt:EN - RESET treasurePlanet
-
-LABEL (924 occurrences):
-  inits.txt:EN - LABEL startN
-  inits.txt:EN - LABEL startB
-  inits.txt:EN - LABEL startH
-  inits.txt:EN - LABEL startR
-  inits.txt:EN - LABEL startW
-
-ADDOPPONENT (910 occurrences):
-  missions.txt:EN - AddOpponent "roughTrucker"
-  missions.txt:EN - AddOpponent richGirl
-  missions.txt:EN - AddOpponent richGirl
-  missions.txt:EN - AddOpponent medium_safe
-  missions.txt:EN - AddOpponent merchant
-
-SHOWPATH (882 occurrences):
-  base_inits.txt:EN - ShowPath "R1-4a"
-  base_inits.txt:EN - ShowPath "R1-4b1"
-  base_inits.txt:EN - ShowPath "R1-4b1"
-  base_inits.txt:EN - ShowPath "R1-2a"
-  base_inits.txt:EN - ShowPath "R1-2b"
-
-SHOWDLGSCENE (805 occurrences):
-  inits.txt:EN - ShowDlgScene
-  inits.txt:EN - ShowDlgScene
-  missions.txt:EN - ShowDlgScene
-  missions.txt:EN - ShowDlgScene
-  missions.txt:EN - ShowDlgScene
-
-OPT_IFNOT (630 occurrences):
-  ms_scripts.txt:EN - OPT_IFNOT roughintroduced "Hello. What are you doing here?"
-  ms_scripts.txt:EN - OPT_IFNOT triedRaise "Why so low? Let's make it 30 credits."
-  ms_scripts.txt:EN - OPT_IFNOT triedRaise "I never gamble."
-  ms_scripts.txt:EN - OPT_IFNOT merchEnoughGoods "What if you don't pick up enough goods?"
-  ms_scripts.txt:EN - OPT_IFNOT merchGiveUp "What if one of us has to give up on the flight?"
-
-IF_PROB (623 occurrences):
-  missions.txt:EN - IF_PROB 50
-  missions.txt:EN - IF_PROB 50
-  missions.txt:EN - IF_PROB 50
-  missions.txt:EN - IF_PROB 75
-  missions.txt:EN - IF_PROB 50
-
-OPT_IF (609 occurrences):
-  missions2.txt:EN - OPT_IF labBooze2 "Yeah. I know how it is. At least I delivered these two crates. They're a gift from the lab."
-  missions2.txt:EN - OPT_IF labBooze1 "Yeah. I know how it is. I even lost one of the crates they sent you as a gift."
-  missions2.txt:EN - OPT_IF labBooze0 "That's okay. What bugs me is that I lost the gift they sent you."
-  missions2.txt:EN - OPT_IF labBooze2 "Thanks. Oh. They also sent you these 2 crates of beverage."
-  missions2.txt:EN - OPT_IF labBooze1 "Thanks. They also sent you two crates of beverage, but I lost one."
-
-IFNOT (602 occurrences):
-  base_inits.txt:EN - IFNOT tutor_moremissions
-  base_inits.txt:EN - IFNOT outpostInitialized
-  base_inits.txt:EN - IFNOT regulaInitialized
-  base_inits.txt:EN - IFNOT tutor_moremissions
-  base_inits.txt:EN - IFNOT class3
-
-RETURN (588 occurrences):
-  base_inits.txt:EN - RETURN
-  base_inits.txt:EN - RETURN
-  base_inits.txt:EN - RETURN
-  base_inits.txt:EN - RETURN
-  base_inits.txt:EN - RETURN
-
-ANNOUNCE (497 occurrences):
-  base_inits.txt:EN - Announce "5 planets visited."
-  base_inits.txt:EN - Announce "7 planet visited."
-  base_inits.txt:EN - Announce "Treasure found."
-  base_inits.txt:EN - Announce "No further progress here."
-  missions.txt:EN - Announce "You received 3 credits from your fellow trucker."
-
-IF_IS (497 occurrences):
-  missions2.txt:EN - IF_IS explosives 2
-  missions2.txt:EN - IF_IS explosives 4
-  missions2.txt:EN - IF_IS explosives 6
-  missions2.txt:EN - IF_IS destination 0
-  missions2.txt:EN - IF_IS destination 1
-
-SAYCHAR (448 occurrences):
-  missions.txt:EN - SayChar purpleGuard "Kh gz kwrr-g. Zhg."
-  missions.txt:EN - SayChar purpleDipl "Kzzh."
-  missions2.txt:EN - SayChar pirate "Do not underestimate my foxlike cunning. You will stop on some planet ..."
-  missions2.txt:EN - SayChar policeBot "You will be silent. Or else the use of persuasive force will be authorized."
-  missions2.txt:EN - SayChar pirate "Humph!"
-
-SHOWNODE (406 occurrences):
-  base_inits.txt:EN - ShowNode newbie
-  base_inits.txt:EN - ShowNode "regula"
-  base_inits.txt:EN - ShowNode "regula"
-  base_inits.txt:EN - ShowNode "bar"
-  base_inits.txt:EN - ShowNode "outpost"
-
-SETDECKPREPARATIONSCRIPT (399 occurrences):
-  missions.txt:EN - SetDeckPreparationScript "meteor1Deck"
-  missions.txt:EN - SetDeckPreparationScript "originalDeck"
-  missions.txt:EN - SetDeckPreparationScript "meteor1LeftDeck"
-  missions.txt:EN - SetDeckPreparationScript "meteor1RightDeck"
-  missions.txt:EN - SetDeckPreparationScript "meteor2SidesDeck"
-
-INIT_BUILD (399 occurrences):
-  missions.txt:EN - INIT_BUILD
-  missions.txt:EN - INIT_BUILD
-  missions.txt:EN - INIT_BUILD
-  missions.txt:EN - INIT_BUILD
-  missions.txt:EN - INIT_BUILD
-
-SETSHIPTYPE (399 occurrences):
-  missions.txt:EN - SetShipType STI
-  missions.txt:EN - SetShipType STI
-  missions.txt:EN - SetShipType STI
-  missions.txt:EN - SetShipType STII
-  missions.txt:EN - SetShipType STI
-
-START_BUILDING (399 occurrences):
-  missions.txt:EN - START_BUILDING
-  missions.txt:EN - START_BUILDING
-  missions.txt:EN - START_BUILDING
-  missions.txt:EN - START_BUILDING
-  missions.txt:EN - START_BUILDING
-
-END_BUILDING (399 occurrences):
-  missions.txt:EN - END_BUILDING
-  missions.txt:EN - END_BUILDING
-  missions.txt:EN - END_BUILDING
-  missions.txt:EN - END_BUILDING
-  missions.txt:EN - END_BUILDING
-
-INIT_FLIGHT (399 occurrences):
-  missions.txt:EN - INIT_FLIGHT
-  missions.txt:EN - INIT_FLIGHT
-  missions.txt:EN - INIT_FLIGHT
-  missions.txt:EN - INIT_FLIGHT
-  missions.txt:EN - INIT_FLIGHT
-
-START_FLIGHT (399 occurrences):
-  missions.txt:EN - START_FLIGHT
-  missions.txt:EN - START_FLIGHT
-  missions.txt:EN - START_FLIGHT
-  missions.txt:EN - START_FLIGHT
-  missions.txt:EN - START_FLIGHT
-
-EVALUATE_FLIGHT (399 occurrences):
-  missions.txt:EN - EVALUATE_FLIGHT
-  missions.txt:EN - EVALUATE_FLIGHT
-  missions.txt:EN - EVALUATE_FLIGHT
-  missions.txt:EN - EVALUATE_FLIGHT
-  missions.txt:EN - EVALUATE_FLIGHT
-
-END_FLIGHT (399 occurrences):
-  missions.txt:EN - END_FLIGHT
-  missions.txt:EN - END_FLIGHT
-  missions.txt:EN - END_FLIGHT
-  missions.txt:EN - END_FLIGHT
-  missions.txt:EN - END_FLIGHT
-
-ADDPARTTOSHIP (392 occurrences):
-  missions.txt:EN - AddPartToShip 1 7 alienEngine 3333 0
-  missions.txt:EN - AddPartToShip 1 17 alienEngine 3333 0
-  missions.txt:EN - AddPartToShip 1 22 alienEngine 3333 0
-  missions.txt:EN - AddPartToShip 0 17 ingot2 2323 0
-  missions.txt:EN - AddPartToShip 0 17 ingot3 1212 0
-
-MISSION (385 occurrences):
-  missions.txt:EN - MISSION roughMission
-  missions.txt:EN - MISSION purpleAlienEscort
-  missions.txt:EN - MISSION meteorsSide
-  missions.txt:EN - MISSION meteorsSide2
-  missions.txt:EN - MISSION meteorsSideWithBot
-
-FINISH_MISSION (385 occurrences):
-  missions.txt:EN - FINISH_MISSION
-  missions.txt:EN - FINISH_MISSION
-  missions.txt:EN - FINISH_MISSION
-  missions.txt:EN - FINISH_MISSION
-  missions.txt:EN - FINISH_MISSION
-
-END_OF_MISSION (385 occurrences):
-  missions.txt:EN - END_OF_MISSION
-  missions.txt:EN - END_OF_MISSION
-  missions.txt:EN - END_OF_MISSION
-  missions.txt:EN - END_OF_MISSION
-  missions.txt:EN - END_OF_MISSION
-
-SET_TO (371 occurrences):
-  base_inits.txt:EN - SET_TO visited 5
-  base_inits.txt:EN - SET_TO visited 7
-  missions2.txt:EN - SET_TO explosives 0
-  missions2.txt:EN - SET_TO destination 0
-  missions2.txt:EN - SET_TO explosives 0
-
-SHOWBUTTON (336 occurrences):
-  base_inits.txt:EN - ShowButton btutor
-  base_inits.txt:EN - ShowButton bdebugstart
-  base_inits.txt:EN - ShowButton bambassador
-  base_inits.txt:EN - ShowButton bvip
-  base_inits.txt:EN - ShowButton bbartender
-
-IF_ORDER (336 occurrences):
-  ms_scripts.txt:EN - IF_ORDER 0 1
-  ms_scripts.txt:EN - IF_ORDER 1 1
-  ms_scripts.txt:EN - IF_ORDER 2 1
-  ms_scripts.txt:EN - IF_ORDER 3 1
-  scripts4.txt:EN - IF_ORDER 0 1
-
-SETFOCUS (294 occurrences):
-  base_inits.txt:EN - SetFocus btutor
-  base_inits.txt:EN - SetFocus btutor
-  base_inits.txt:EN - SetFocus bambassador
-  base_inits.txt:EN - SetFocus bbartender
-  base_inits.txt:EN - SetFocus bguests
-
-ADDPARTTOASIDESLOT (294 occurrences):
-  missions.txt:EN - AddPartToAsideSlot alienGun 2 1 2 0
-  missions.txt:EN - AddPartToAsideSlot booze 2 1 2 0
-  missions.txt:EN - AddPartToAsideSlot booze 1 2 1 0
-  missions.txt:EN - AddPartToAsideSlot booze 2 1 2 0
-  missions.txt:EN - AddPartToAsideSlot ingot2 2 1 0 0
-
-ADD (266 occurrences):
-  base_inits.txt:EN - ADD visited 1
-  missions.txt:EN - ADD totalBooze 2
-  missions.txt:EN - ADD totalBooze 1
-  missions.txt:EN - ADD totalBooze 1
-  missions2.txt:EN - ADD achExplTotal 1
-
-HIDEPATH (259 occurrences):
-  base_inits.txt:EN - HidePath "R1-4b"
-  base_inits.txt:EN - HidePath U2-17a
-  missions.txt:EN - HidePath "U1-4a"
-  missions.txt:EN - HidePath R1-3a2
-  missions.txt:EN - HidePath R1-3a1
-
-ADDINFOWINDOW (245 occurrences):
-  missions.txt:EN - AddInfoWindow "tutorial/infoPurpleLifeSupport.png"
-  missions.txt:EN - AddInfoWindow "tutorial/infoPurpleAliens.png"
-  missions.txt:EN - AddInfoWindow "tutorial/infoBrownLifeSupport.png"
-  missions.txt:EN - AddInfoWindow "tutorial/infoBrownAliens.png"
-  missions.txt:EN - AddInfoWindow "tutorial/infoBigSideMeteor.png"
-
-ADDMISSIONCREDITS (238 occurrences):
-  missions.txt:EN - AddMissionCredits 3
-  missions.txt:EN - AddMissionCredits -3
-  missions.txt:EN - AddMissionCredits 10
-  missions.txt:EN - AddMissionCredits -10
-  missions.txt:EN - AddMissionCredits -5
-
-IFMISSIONRESULTMIN (231 occurrences):
-  missions.txt:EN - IfMissionResultMin 1
-  missions.txt:EN - IfMissionResultMin 0
-  missions.txt:EN - IfMissionResultMin 1
-  missions.txt:EN - IfMissionResultMin 0
-  missions.txt:EN - IfMissionResultMin 1
-
-HIDEBUTTON (224 occurrences):
-  base_inits.txt:EN - HideButton bcyanshortcut
-  base_inits.txt:EN - HideButton bcyanshortcut
-  base_inits.txt:EN - HideButton bvip2
-  base_inits.txt:EN - HideButton bvip
-  missions.txt:EN - HideButton bvip
-
-SETSECRETADVPILE (217 occurrences):
-  missions.txt:EN - SetSecretAdvPile 1 3
-  missions.txt:EN - SetSecretAdvPile 1 3
-  missions.txt:EN - SetSecretAdvPile 1 1
-  missions.txt:EN - SetSecretAdvPile 2 3
-  missions.txt:EN - SetSecretAdvPile 1 1
-
-IFMISSIONRESULTIS (189 occurrences):
-  missions.txt:EN - IfMissionResultIs 1
-  missions.txt:EN - IfMissionResultIs 0
-  missions.txt:EN - IfMissionResultIs 1
-  missions.txt:EN - IfMissionResultIs 0
-  missions.txt:EN - IfMissionResultIs 0
-
-ACT_MISSION (189 occurrences):
-  missions2.txt:EN - ACT_MISSION explosivesDelivery
-  missions2.txt:EN - ACT_MISSION explosivesDelivery
-  missions2.txt:EN - ACT_MISSION explosivesDelivery
-  missions2.txt:EN - ACT_MISSION explosivesDelivery
-  missions2.txt:EN - ACT_MISSION explosivesDelivery
-
-SETADVPILE (182 occurrences):
-  missions.txt:EN - SetAdvPile 1 3
-  missions.txt:EN - SetAdvPile 1 3
-  missions.txt:EN - SetAdvPile 1 1
-  missions.txt:EN - SetAdvPile 2 3
-  missions.txt:EN - SetAdvPile 1 1
-
-CENTERMAPBYNODE (175 occurrences):
-  ms_scripts.txt:EN - CenterMapByNode newbie
-  scripts1.txt:EN - CenterMapByNode bar
-  scripts1.txt:EN - CenterMapByNode bar
-  scripts1.txt:EN - CenterMapByNode outpost
-  scripts2.txt:EN - CenterMapByNode cyanHome
-
-RESETFOCUS (161 occurrences):
-  base_inits.txt:EN - ResetFocus btutor
-  base_inits.txt:EN - ResetFocus btutor
-  scripts1.txt:EN - ResetFocus btutor
-  scripts1.txt:EN - ResetFocus bambassador
-  scripts1.txt:EN - ResetFocus bbartender
-
-SETSPECCONDITION (154 occurrences):
-  missions.txt:EN - SetSpecCondition "bet"
-  missions.txt:EN - SetSpecCondition "purplealien"
-  missions.txt:EN - SetSpecCondition "tilesBet"
-  missions.txt:EN - SetSpecCondition "tilesBet"
-  missions.txt:EN - SetSpecCondition "booze"
-
-IF_MIN (140 occurrences):
-  base_inits.txt:EN - IF_MIN visited 7
-  base_inits.txt:EN - IF_MIN visited 7
-  missions2.txt:EN - IF_MIN explosives 3
-  missions2.txt:EN - IF_MIN explosives 2
-  missions2.txt:EN - IF_MIN explosives 1
-
-IF_MISSION_WON (140 occurrences):
-  missions.txt:EN - IF_MISSION_WON
-  missions.txt:EN - IF_MISSION_WON
-  missions.txt:EN - IF_MISSION_WON
-  missions.txt:EN - IF_MISSION_WON
-  missions.txt:EN - IF_MISSION_WON
-
-ADDCREDITS (133 occurrences):
-  inits.txt:EN - AddCredits 40
-  inits.txt:EN - AddCredits -10
-  inits.txt:EN - AddCredits 5
-  inits.txt:EN - AddCredits 5
-  inits.txt:EN - AddCredits 127
-
-SHOWINFOWINDOW (133 occurrences):
-  missions.txt:EN - ShowInfoWindow "tutorial/infoPurpleLifeSupport.png"
-  missions.txt:EN - ShowInfoWindow "tutorial/infoPurpleAliens.png"
-  missions.txt:EN - ShowInfoWindow "tutorial/infoBrownLifeSupport.png"
-  missions.txt:EN - ShowInfoWindow "tutorial/infoBigSideMeteor.png"
-  missions.txt:EN - ShowInfoWindow "tutorial/infoFragileCargo.png"
-
-MOVEPLAYERTONODE (119 occurrences):
-  base_inits.txt:EN - MovePlayerToNode newbie
-  base_inits.txt:EN - MovePlayerToNode pirateHaven
-  inits.txt:EN - MovePlayerToNode newbie
-  inits.txt:EN - MovePlayerToNode bar
-  inits.txt:EN - MovePlayerToNode pirateHaven
-
-SETACHIEVEMENTPROGRESS (119 occurrences):
-  missions.txt:EN - SetAchievementProgress camp_design_sporty 1
-  missions.txt:EN - SetAchievementProgress camp_design_sporty 2
-  missions.txt:EN - SetAchievementProgress camp_merchant 1
-  missions.txt:EN - SetAchievementProgress camp_merchant 2
-  missions.txt:EN - SetAchievementProgress camp_merchant 3
-
-SETNODEKNOWN (112 occurrences):
-  base_inits.txt:EN - SetNodeKnown newbie
-  base_inits.txt:EN - SetNodeKnown outpost
-  base_inits.txt:EN - SetNodeKnown bar
-  base_inits.txt:EN - SetNodeKnown regula
-  base_inits.txt:EN - SetNodeKnown workshop
-
-BUILDINGHELPSCRIPT (105 occurrences):
-  missions.txt:EN - BuildingHelpScript 500 "tutorialAdditionalConcepts"
-  missions.txt:EN - BuildingHelpScript 1000 "purpleSupportInfo"
-  missions.txt:EN - BuildingHelpScript 500 "tutorialSideMeteors"
-  missions.txt:EN - BuildingHelpScript 500 "tutorialBooze"
-  missions.txt:EN - BuildingHelpScript 500 "tutorialBooze"
-
-UNLOCKACHIEVEMENT (91 occurrences):
-  missions.txt:EN - UnlockAchievement camp_bet
-  missions.txt:EN - UnlockAchievement camp_booze
-  missions.txt:EN - UnlockAchievement camp_kiss
-  missions2.txt:EN - UnlockAchievement camp_pirate
-  missions2.txt:EN - UnlockAchievement camp_four_cargo
-
-END_OF_SCRIPTS (84 occurrences):
-  base_inits.txt:EN - END_OF_SCRIPTS
-  inits.txt:EN - END_OF_SCRIPTS
-  missions.txt:EN - END_OF_SCRIPTS
-  missions2.txt:EN - END_OF_SCRIPTS
-  ms_scripts.txt:EN - END_OF_SCRIPTS
-
-UNLOCKSHIPPLAN (84 occurrences):
-  inits.txt:EN - UnlockShipPlan "I-sport"
-  inits.txt:EN - UnlockShipPlan "II-sport"
-  inits.txt:EN - UnlockShipPlan "III-amoeba"
-  inits.txt:EN - UnlockShipPlan "I-double"
-  inits.txt:EN - UnlockShipPlan "II-double"
-
-MODIFYOPPONENTSBUILDSPEED (77 occurrences):
-  missions.txt:EN - ModifyOpponentsBuildSpeed 75
-  missions.txt:EN - ModifyOpponentsBuildSpeed 75
-  missions.txt:EN - ModifyOpponentsBuildSpeed 75
-  missions.txt:EN - ModifyOpponentsBuildSpeed 75
-  missions2.txt:EN - ModifyOpponentsBuildSpeed 95
-
-ASKCHAR (70 occurrences):
-  missions.txt:EN - AskChar purpleDipl "Wrwg'gg kwrr-g. W'wg zhg-k."
-  ms_scripts.txt:EN - AskChar securitybot2 "IT IS MY DUTY TO WORRY, MISS."
-  ms_scripts.txt:EN - AskChar prisoner1 "I took two cannons, just in case. Lost them both, though. Along with everything else."
-  scripts1.txt:EN - AskChar tutor "Full of dangers and horrible things, it is."
-  scripts1.txt:EN - AskChar purpleDipl "Wzrr kh'gwh qt Th'kzw-r!"
-
-IF_HAS_CREDITS (70 occurrences):
-  missions2.txt:EN - IF_HAS_CREDITS 3
-  missions2.txt:EN - IF_HAS_CREDITS 6
-  missions2.txt:EN - IF_HAS_CREDITS 9
-  scripts1.txt:EN - IF_HAS_CREDITS 1
-  scripts1.txt:EN - IF_HAS_CREDITS 1
-
-CENTERMAPBYPATH (63 occurrences):
-  scripts1.txt:EN - CenterMapByPath R1-1a
-  scripts1.txt:EN - CenterMapByPath R1-1a
-  scripts1.txt:EN - CenterMapByPath "R1-2a"
-  scripts2.txt:EN - CenterMapByPath U2-19a
-  scripts3.txt:EN - CenterMapByPath U2-14a
-
-SETACHIEVEMENTATTEMPT (56 occurrences):
-  missions.txt:EN - SetAchievementAttempt camp_ingots 9
-  missions.txt:EN - SetAchievementAttempt camp_ingots 12
-  missions.txt:EN - SetAchievementAttempt camp_ingots 15
-  missions.txt:EN - SetAchievementAttempt camp_ingots 18
-  missions.txt:EN - SetAchievementAttempt camp_ingots 12
-
-SETTURNBASED (49 occurrences):
-  stdMissions.txt:EN - SetTurnBased
-  stdMissions.txt:EN - SetTurnBased
-  stdMissions.txt:EN - SetTurnBased
-  stdMissions.txt:EN - SetTurnBased
-  stdMissions.txt:EN - SetTurnBased
-
-ADDSHIPPARTS (42 occurrences):
-  stdMissions.txt:EN - AddShipParts "parts/allParts.yaml"
-  stdMissions.txt:EN - AddShipParts "parts/noBrown.yaml"
-  stdMissions.txt:EN - AddShipParts "parts/noAliens.yaml"
-  stdMissions.txt:EN - AddShipParts "parts/allParts-universal.yaml"
-  stdMissions.txt:EN - AddShipParts "parts/noBrown-universal.yaml"
-
-IF_MAX (35 occurrences):
-  base_inits.txt:EN - IF_MAX visited 4
-  base_inits.txt:EN - IF_MAX visited 6
-  stdMissions.txt:EN - IF_MAX opponents 2
-  stdMissions.txt:EN - IF_MAX opponents 2
-  stdMissions.txt:EN - IF_MAX opponents 2
-
-UNLOCKSHUTTLES (35 occurrences):
-  inits.txt:EN - UnlockShuttles
-  inits.txt:EN - UnlockShuttles
-  inits.txt:EN - UnlockShuttles
-  scripts5.txt:EN - UnlockShuttles
-  scripts5.txt:EN - UnlockShuttles
-
-SETMISSIONASFAILED (35 occurrences):
-  missions.txt:EN - SetMissionAsFailed
-  missions.txt:EN - SetMissionAsFailed
-  missions.txt:EN - SetMissionAsFailed
-  missions.txt:EN - SetMissionAsFailed
-  missions2.txt:EN - SetMissionAsFailed
-
-ALLSHIPSGIVEUP (35 occurrences):
-  missions.txt:EN - AllShipsGiveUp
-  missions.txt:EN - AllShipsGiveUp
-  missions.txt:EN - AllShipsGiveUp
-  missions.txt:EN - AllShipsGiveUp
-  missions.txt:EN - AllShipsGiveUp
-
-HIDEALLPATHS (35 occurrences):
-  missions.txt:EN - HideAllPaths forge workshop
-  scripts3.txt:EN - HideAllPaths forge workshop
-  scripts3.txt:EN - HideAllPaths forge workshop
-  scripts3.txt:EN - HideAllPaths forge mine0
-  scripts4.txt:EN - HideAllPaths mine0 forge
-
-IF_FROM_CAMPAIGN (35 occurrences):
-  tutorials.txt:EN - IF_FROM_CAMPAIGN
-  tutorials.txt:EN - IF_FROM_CAMPAIGN
-  tutorials.txt:EN - IF_FROM_CAMPAIGN
-  tutorials.txt:EN - IF_FROM_CAMPAIGN
-  tutorials.txt:EN - IF_FROM_CAMPAIGN
-
-IF_TUTORIAL_SEEN (28 occurrences):
-  missions.txt:EN - IF_TUTORIAL_SEEN
-  scripts5.txt:EN - IF_TUTORIAL_SEEN
-  tutorials.txt:EN - IF_TUTORIAL_SEEN
-  tutorials.txt:EN - IF_TUTORIAL_SEEN
-  missions.txt:CS - IF_TUTORIAL_SEEN
-
-ADDMISSIONCREDITSBYRESULT (28 occurrences):
-  missions.txt:EN - AddMissionCreditsByResult
-  missions.txt:EN - AddMissionCreditsByResult
-  missions.txt:EN - AddMissionCreditsByResult
-  missions.txt:EN - AddMissionCreditsByResult
-  missions.txt:CS - AddMissionCreditsByResult
-
-SUBOPPONENTCREDITSBYRESULT (21 occurrences):
-  missions.txt:EN - SubOpponentCreditsByResult
-  missions.txt:EN - SubOpponentCreditsByResult
-  missions.txt:EN - SubOpponentCreditsByResult
-  missions.txt:CS - SubOpponentCreditsByResult
-  missions.txt:CS - SubOpponentCreditsByResult
-
-IF_DEBUG (14 occurrences):
-  base_inits.txt:EN - IF_DEBUG
-  base_inits.txt:EN - IF_DEBUG
-  base_inits.txt:CS - IF_DEBUG
-  base_inits.txt:CS - IF_DEBUG
-  base_inits.txt:DE - IF_DEBUG
-
-SETFOCUSIFCREDITS (14 occurrences):
-  base_inits.txt:EN - SetFocusIfCredits bclerk 450
-  scripts1.txt:EN - SetFocusIfCredits bclerk 100
-  base_inits.txt:CS - SetFocusIfCredits bclerk 450
-  scripts1.txt:CS - SetFocusIfCredits bclerk 100
-  base_inits.txt:DE - SetFocusIfCredits bclerk 450
-
-FLIGHTHELPSCRIPT (14 occurrences):
-  missions.txt:EN - FlightHelpScript "tutorialAdditionalFlightConcepts"
-  missions.txt:EN - FlightHelpScript "tutorialAdditionalFlightConcepts"
-  missions.txt:CS - FlightHelpScript "tutorialAdditionalFlightConcepts"
-  missions.txt:CS - FlightHelpScript "tutorialAdditionalFlightConcepts"
-  missions.txt:DE - FlightHelpScript "tutorialAdditionalFlightConcepts"
-
-ADDOPPONENTSCREDITS (14 occurrences):
-  missions.txt:EN - AddOpponentsCredits 1 -3
-  missions.txt:EN - AddOpponentsCredits 1 3
-  missions.txt:CS - AddOpponentsCredits 1 -3
-  missions.txt:CS - AddOpponentsCredits 1 3
-  missions.txt:DE - AddOpponentsCredits 1 -3
-
-SETCREDITS (14 occurrences):
-  tutorials.txt:EN - SetCredits 0
-  tutorials.txt:EN - SetCredits 0
-  tutorials.txt:CS - SetCredits 0
-  tutorials.txt:CS - SetCredits 0
-  tutorials.txt:DE - SetCredits 0
-
-SETFLIGHTSTATUSBAR (14 occurrences):
-  tutorials.txt:EN - SetFlightStatusBar "Listen carefully to your instructor."
-  tutorials.txt:EN - SetFlightStatusBar "[v(Tap|Click)] the button to say you understand."
-  tutorials.txt:CS - SetFlightStatusBar "Pozorně poslouchej instruktora."
-  tutorials.txt:CS - SetFlightStatusBar "[v(Ťap|Klik)]ni na tlačítko s odpovědí."
-  tutorials.txt:DE - SetFlightStatusBar "Höre deinem Ausbilder aufmerksam zu."
-
-HIDENODE (7 occurrences):
-  base_inits.txt:EN - HideNode pirateTrap
-  base_inits.txt:CS - HideNode pirateTrap
-  base_inits.txt:DE - HideNode pirateTrap
-  base_inits.txt:ES - HideNode pirateTrap
-  base_inits.txt:FR - HideNode pirateTrap
-
-ALIENHELPSCRIPT (7 occurrences):
-  missions.txt:EN - AlienHelpScript "purpleAlienInfo"
-  missions.txt:CS - AlienHelpScript "purpleAlienInfo"
-  missions.txt:DE - AlienHelpScript "purpleAlienInfo"
-  missions.txt:ES - AlienHelpScript "purpleAlienInfo"
-  missions.txt:FR - AlienHelpScript "purpleAlienInfo"
-
-SETFLIGHTDECKPREPARATIONSCRIPT (7 occurrences):
-  missions2.txt:EN - SetFlightDeckPreparationScript "pirateAmbush2"
-  missions2.txt:CS - SetFlightDeckPreparationScript "pirateAmbush2"
-  missions2.txt:DE - SetFlightDeckPreparationScript "pirateAmbush2"
-  missions2.txt:ES - SetFlightDeckPreparationScript "pirateAmbush2"
-  missions2.txt:FR - SetFlightDeckPreparationScript "pirateAmbush2"
-
-GIVEUPFLIGHT (7 occurrences):
-  missions2.txt:EN - GiveUpFlight
-  missions2.txt:CS - GiveUpFlight
-  missions2.txt:DE - GiveUpFlight
-  missions2.txt:ES - GiveUpFlight
-  missions2.txt:FR - GiveUpFlight
-
-SETMISSIONASCOMPLETED (7 occurrences):
-  missions2.txt:EN - SetMissionAsCompleted
-  missions2.txt:CS - SetMissionAsCompleted
-  missions2.txt:DE - SetMissionAsCompleted
-  missions2.txt:ES - SetMissionAsCompleted
-  missions2.txt:FR - SetMissionAsCompleted
-
-SHOWHELPIMAGE (7 occurrences):
-  ms_scripts.txt:EN - ShowHelpImage 40 50 70 campaign/tutorial-purple.png
-  ms_scripts.txt:CS - ShowHelpImage 40 50 70 campaign/tutorial-purple.png
-  ms_scripts.txt:DE - ShowHelpImage 40 50 70 campaign/tutorial-purple.png
-  ms_scripts.txt:ES - ShowHelpImage 40 50 70 campaign/tutorial-purple.png
-  ms_scripts.txt:FR - ShowHelpImage 40 50 70 campaign/tutorial-purple.png
-
-SAVESTATE (7 occurrences):
-  ms_scripts.txt:EN - SaveState
-  ms_scripts.txt:CS - SaveState
-  ms_scripts.txt:DE - SaveState
-  ms_scripts.txt:ES - SaveState
-  ms_scripts.txt:FR - SaveState
-
-LOADSTATE (7 occurrences):
-  ms_scripts.txt:EN - LoadState
-  ms_scripts.txt:CS - LoadState
-  ms_scripts.txt:DE - LoadState
-  ms_scripts.txt:ES - LoadState
-  ms_scripts.txt:FR - LoadState
-
-ADDNODE (7 occurrences):
-  scripts2.txt:EN - AddNode workshop
-  scripts2.txt:CS - AddNode workshop
-  scripts2.txt:DE - AddNode workshop
-  scripts2.txt:ES - AddNode workshop
-  scripts2.txt:FR - AddNode workshop
-
-FOCUSCHAR (7 occurrences):
-  scripts3.txt:EN - FocusChar sailor
-  scripts3.txt:CS - FocusChar sailor
-  scripts3.txt:DE - FocusChar sailor
-  scripts3.txt:ES - FocusChar sailor
-  scripts3.txt:FR - FocusChar sailor
-
-QUITCAMPAIGN (7 occurrences):
-  tutorials.txt:EN - QuitCampaign
-  tutorials.txt:CS - QuitCampaign
-  tutorials.txt:DE - QuitCampaign
-  tutorials.txt:ES - QuitCampaign
-  tutorials.txt:FR - QuitCampaign
-
-(CLIQUEZ (2 occurrences):
-  tutorials.txt:FR - (Cliquez n'importe où pour continuer.)"
-  tutorials.txt:FR - (Cliquez n'importe où pour continuer.)"
-
-(CHOISISSEZ (2 occurrences):
-  tutorials.txt:FR - (Choisissez une réponse.)"
-  tutorials.txt:FR - (Choisissez une réponse.)"
-
-## ❓ DUBBI DA CHIARIRE
-
-1. **Gestione annidamento**: Qual è la profondità massima consentita per IF nested? (considera infiniti )
-2. **Scope variables**: Le variabili sono globali o hanno scope per script? (globali)
-3. **Dialog state persistence**: Lo stato finestra dialogo persiste tra SUB_SCRIPT? (sì e anche tra salti a una label. va calcolata seguendo il flusso)
-4. **GO target validation**: GO può saltare a LABEL in altri script? (no)
-5. **Menu nesting**: I MENU possono essere annidati dentro IF blocks? (SI)
-6. **Mission blocks context**: Quando INIT_BUILD/INIT_FLIGHT sono obbligatori? (Sempre ma possono non contenere comandi)
-7. **Error handling**: Come gestire comandi con parametri mancanti/invalidi? (segnalare i comandi come in errore nello script ma visualizzare il possibile)
-8. **Localization**: Come gestire testi multilingua nell'editor? (mi aspetto che vengano visualizzate tutte le localizzazioni insieme. tutti i comandi con testo sono comandi multilingua)
-9. **Script dependencies**: Come visualizzare dipendenze tra script (SUB_SCRIPT)? (nidificazione)
-10. **Performance constraints**: Limiti su dimensione script/numero comandi? (nessuno)
+ 
+ ANALISI COMPLETA DEI COMANDI E ELEMENTI
+
+Basandomi sul file SUPPORTOBUG.txt, ecco la classificazione completa:
+
+  1. ELEMENTI DI BLOCCO (Container)
+
+  BLOCCHI SCRIPT/MISSION: Questi elementi diventano 2 oggetti container distinti SCRIPT e MISSION
+
+  - SCRIPT <nomescript> - Apre un blocco script
+  - END_OF_SCRIPTS - Chiude tutti gli script nel file
+  - MISSION <nomemission> - Apre un blocco mission
+  - END_OF_MISSION - Chiude il blocco mission
+  - FINISH_MISSION - Marca l'inizio della sezione conclusiva della mission
+
+  BLOCCHI IF (Condizionali):
+
+  - IF <semaforo> - IF standard su semaforo
+  - IF_DEBUG - IF attivo solo in modalità debug **QUESTO IF PREDEFINITo è ANCORATO NATIVAMENTE A VARIABILI DI SISTEMA questa controlla la variabile debug**
+  - IF_FROM_CAMPAIGN - IF attivo se siamo in campagna ** QUESTO IF PREDEFINITO è ANCORATO NATIVAMENTE ALLA VARIABILE from_campaign e controlla il valore di questa variabile**
+  - IF_HAS_CREDITS <amount> - IF attivo se ha almeno X crediti
+  - IF_IS <variabile> <valore> - IF su variabile numerica esatta
+  - IF_MAX <variabile> <valore> - IF su variabile <= valore
+  - IF_MIN <variabile> <valore> - IF su variabile >= valore
+  - IF_MISSION_WON - IF attivo se mission vinta **QUESTO IF PREDEFINITO è ANCORATO NATIVAMENTE ALLA VARIABILE di sistema**
+  - IF_ORDER <posizioni...> - IF su posizione arrivo (0=primo) ** Puo avere da 1 a 4 valori indicando tutte le posizioni valide es. 0 2 indicano 1 o 3 posto**
+  - IF_PROB <percentuale> - IF probabilistico
+  - IF_TUTORIAL_SEEN - IF se tutorial già visto **QUESTO IF PREDEFINITO è ANCORATO NATIVAMENTE ALLA VARIABILE di sistema**
+  - IFMISSIONRESULTIS <risultato> - IF su risultato mission specifico (risultato valore intero)
+  - IFMISSIONRESULTMIN <risultato> - IF su risultato mission minimo (risultato valore intero)
+  - IFNOT <semaforo> - IF negato su semaforo
+  - ELSE - Ramo alternativo di IF
+  - END_OF_IF - Chiude blocco IF
+
+  BLOCCHI MENU : Questi elementi diventano 2 oggetti container distinti MENU e OPT
+
+  - MENU - Apre blocco menu
+  - END_OF_MENU - Chiude blocco menu
+  - OPT "<testo>" - Opzione semplice
+  - OPT_IF <semaforo> "<testo>" - Opzione se semaforo ON
+  - OPT_IFNOT <semaforo> "<testo>" - Opzione se semaforo OFF
+  - END_OF_OPT - Chiude blocco opzione (implicito)
+
+  BLOCCHI MISSION (Fasi): Questi elementi diventano 2 container distinti BUILD e FLIGHT
+
+  - INIT_BUILD - Inizializza fase build
+  - START_BUILDING - Avvia fase build
+  - END_BUILDING - Termina fase build
+  - INIT_FLIGHT - Inizializza fase flight
+  - START_FLIGHT - Avvia fase flight
+  - EVALUATE_FLIGHT - Valuta risultati flight
+  - END_FLIGHT - Termina fase flight
+
+  2. COMANDI ATOMICI
+
+  DIALOGO:
+
+  - SAY "<testo>" - Mostra testo **(multilingua)**
+  - ASK "<testo>" - Mostra domanda (richiede MENU dopo) **(multilingua)**
+  - SAYCHAR <personaggio> "<testo>" - Say con personaggio **(multilingua)**
+  - ASKCHAR <personaggio> "<testo>" - Ask con personaggio **(multilingua)**
+  - ANNOUNCE "<testo>" - Messaggio su barra stato **(multilingua)**
+  - SETFLIGHTSTATUSBAR "<testo>" - Testo barra status **(multilingua)**
+
+  GESTIONE PERSONAGGI:
+
+  - SHOWCHAR <personaggio> <posizione> - Mostra personaggio
+  - HIDECHAR <personaggio> - Nasconde personaggio
+  - CHANGECHAR <personaggio> <immagine> - Cambia immagine
+  - FOCUSCHAR <personaggio> - Focus su personaggio
+
+  GESTIONE FINESTRA DIALOGO:
+
+  - SHOWDLGSCENE - Apre finestra dialogo ( elementi di dialogo usabili solo se nel flow è stato aperto prima una finestra di dialogo)
+  - HIDEDLGSCENE - Chiude finestra dialogo
+
+  VARIABILI E SEMAFORI:
+
+  - SET <semaforo> - Attiva semaforo (TRUE)
+  - RESET <semaforo> - Disattiva semaforo (FALSE)
+  - SET_TO <variabile> <valore> - Imposta variabile numerica
+  - ADD <variabile> <valore> - Aggiunge a variabile il valore
+
+  CONTROLLO FLUSSO:
+
+  - LABEL <nome> - Definisce etichetta
+  - GO <label> - Salta a etichetta
+  - SUB_SCRIPT <nomescript> - Esegue subscript
+  - RETURN - Ritorna da script **NO SIGNIFICA RITORNA ALLO SCRIPT CHIAMANTE... IL FLOW DICIAMO**
+  - EXIT_MENU - Esce da menu **(definisce come comando successivo del flow il primo comando/blocco dopo il prossimo [END_OF_MENU])**
+  - DELAY <millisecondi> - Pausa
+
+  MAPPA E NAVIGAZIONE:
+
+  - SHOWPATH <rotta> - Mostra rotta
+  - HIDEPATH <rotta> - Nasconde rotta
+  - HIDEALLPATHS <nodo1> <nodo2> - Nasconde rotte tra nodi
+  - SHOWNODE <nodo> - Mostra nodo
+  - HIDENODE <nodo> - Nasconde nodo
+  - SHOWBUTTON <bottone> - Mostra bottone
+  - HIDEBUTTON <bottone> - Nasconde bottone
+  - CENTERMAPBYNODE <nodo> - Centra mappa su nodo
+  - CENTERMAPBYPATH <rotta> - Centra mappa su rotta
+  - MOVEPLAYERTONODE <nodo> - Sposta giocatore
+
+  GESTIONE MISSION:
+
+  - ADDOPPONENT <personaggio> - Aggiunge avversario **ad array interno con indice da 0 a 3 **
+  - ADDOPPONENTSCREDITS <index> <crediti> - Modifica crediti avversario **valore da 0 a 3 che indica il personaggio**
+  - MODIFYOPPONENTSBUILDSPEED <percentuale> - Modifica velocità build
+  - SETSHIPTYPE <tipo> - Imposta tipo nave (STI/STII/STIII)
+  - SETDECKPREPARATIONSCRIPT <script> - Script preparazione deck
+  - SETFLIGHTDECKPREPARATIONSCRIPT <script> - Script deck flight
+  ** I COMANDI SEGUENTI GESTIAMOLI COME SEGUE: <TIPO COMANDO> <STRINGA PARAMS> riportando un esempio di valorizzazione di quel comando e lasciamo editabile come stringa**
+  - SETADVPILE <pile> <number> - Imposta pile avventura
+  - SETSECRETADVPILE <pile> <number> - Pile avventura segreta
+  - ADDPARTTOSHIP <params...> - Aggiunge parte a nave
+  - ADDPARTTOASIDESLOT <params...> - Aggiunge parte aside
+  - SETSPECCONDITION <condizione> - Condizione speciale mission
+  - ADDSHIPPARTS <file> - Aggiunge parti nave da file
+  
+  ** RIPRENDIAMO LA GESTIONE ORDINARIA DEI COMANDI **
+  - ACT_MISSION <mission> - Attiva mission
+  - SETTURNBASED - Imposta modalità turni
+
+  CREDITI E REWARDS:
+
+  - ADDCREDITS <amount> - Aggiunge crediti **valore numerico**
+  - SETCREDITS <amount> - Imposta crediti **valore numerico**
+  - ADDMISSIONCREDITS <amount> - Crediti reward mission **valore numerico**
+  - ADDMISSIONCREDITSBYRESULT - Crediti basati su risultato **nessun parametro**
+  - SUBOPPONENTCREDITSBYRESULT - Sottrae crediti avversario **nessun parametro**
+
+  ALTRI COMANDI:
+
+  - SETFOCUS <bottone> - Focus su bottone
+  - RESETFOCUS <bottone> - Rimuove focus
+  - SETFOCUSIFCREDITS <bottone> <crediti> - Focus condizionale **valido solo se si hanno abbastanza crediti** 
+  - SETNODEKNOWN <nodo> - Marca nodo come conosciuto
+  - ADDINFOWINDOW <immagine> - Aggiunge info window
+  - SHOWINFOWINDOW <immagine> - Mostra info window
+  - SETACHIEVEMENTPROGRESS <achievement> <value> - Progress achievement
+  - SETACHIEVEMENTATTEMPT <achievement> <value> - Attempt achievement
+  - UNLOCKACHIEVEMENT <achievement> - Sblocca achievement
+**hai individuato un altro elemento che deve essere gestito in anagrafica con API... che restituiscono i dati di tutti gli achievement la lista completa degli achievement è dentro ./achievement/archi.yaml**
+** le immagini degli achievement sono dentro ./achievement/images**
+
+  - UNLOCKSHIPPLAN <plan> - Sblocca piano nave
+  - UNLOCKSHUTTLES - Sblocca shuttle
+  - BUILDINGHELPSCRIPT <delay> <script> - Script help build
+  - FLIGHTHELPSCRIPT <script> - Script help flight
+  - ALIENHELPSCRIPT <script> - Script help alieni
+  - SETMISSIONASFAILED - Marca mission fallita (riferimento a semaforo di sistema)
+  - SETMISSIONASCOMPLETED - Marca mission completata (riferimento a semaforo di sistema)
+  - ALLSHIPSGIVEUP - Tutte navi si arrendono
+  - GIVEUPFLIGHT - Arrendi flight (riferimento a semaforo di sistema)
+  - SHOWHELPIMAGE <x> <y> <scale> <image> - Mostra help image **parametri complessi da gestire come stringa**
+  - SAVESTATE - Salva stato
+  - LOADSTATE - Carica stato
+  - ADDNODE <nodo> - Aggiunge nodo dinamicamente
+  - QUITCAMPAIGN - Esce da campagna
+
+  DOMANDE DA CHIARIRE:
+
+  1. Parsing delle mission: Le mission hanno una struttura più complessa con le fasi BUILD e FLIGHT. Come vuoi che vengano rappresentate nell'oggetto mission? Come sottoblocchi separati o come sequenza      
+  lineare? **Mi aspetto un oggetto ad hoc la definizione di un componente che permetta di gestire al suo interno gli altri componenti chiave**
+  2. Comandi non documentati: Nel server ci sono alcuni comandi parsati che non sono in SUPPORTOBUG.txt (es. RUNSCRIPT, CENTER_MAP, SHOW_NODE). Li includiamo o seguiamo solo la specifica? **ELENCAMI TUTTI I COMANDI MANCANTI E ALLA LUCE DI QUANTO INDICATO PROBABILMENTE POTRAI TU STESSO IDENTIFICARE GRUPPO DI APPARTENENZA E TIPO DI PARAMETRI/GESTIOEN**
+  3. Parametri dei comandi: Alcuni comandi hanno parametri complessi (es. ADDPARTTOSHIP ha 5 parametri numerici). Devo creare strutture specifiche per ogni tipo di parametro? **HO GIA' RISPOSTO SOPRA DIRETTAMENTE SUL BLOCCO DI COMANDI, GESTIAMO COMANDO, PARAMETRO STRINGA CON ESEMPIO DI VALORIZZAZIONE**
+  4. Gestione multilingua: Per i comandi con testo localizzabile (SAY, ASK, etc.), come vuoi che venga gestita la struttura? Array di lingue o oggetto con chiavi lingua? **MI ASPETTO CHE IL TESTO SIA GIà NELL'OGGETTO CON TUTTI I VALORI LINGUA**
+  5. Validazione: Vuoi che il parser verifichi la correttezza dei parametri (es. posizioni valide: left/center/right) o accetti qualsiasi valore? **il parser deve leggere e scrivere gli script. la validazione è fatta a FE.
+
+## COMANDI MANCANTI NEL PARSER ATTUALE (da implementare):
+
+### BLOCCHI CONDIZIONALI MANCANTI:
+- IF_ORDER <posizioni...> - Array di posizioni valide (es. "0 2" = 1° o 3° posto)
+- IFMISSIONRESULTIS <risultato> - IF su risultato mission specifico
+- IFMISSIONRESULTMIN <risultato> - IF su risultato mission minimo
+
+### COMANDI MANCANTI (parametri semplici):
+- FOCUSCHAR <personaggio>
+- ADD <variabile> <valore>
+- HIDEALLPATHS <nodo1> <nodo2>
+- HIDENODE <nodo>
+- SHOWBUTTON <bottone>
+- HIDEBUTTON <bottone>
+- CENTERMAPBYNODE <nodo>
+- CENTERMAPBYPATH <rotta>
+- MOVEPLAYERTONODE <nodo>
+- ADDOPPONENTSCREDITS <index> <crediti>
+- MODIFYOPPONENTSBUILDSPEED <percentuale>
+- SETSHIPTYPE <tipo>
+- SETDECKPREPARATIONSCRIPT <script>
+- SETFLIGHTDECKPREPARATIONSCRIPT <script>
+- ACT_MISSION <mission>
+- SETTURNBASED
+- ADDCREDITS <amount>
+- SETCREDITS <amount>
+- ADDMISSIONCREDITS <amount>
+- ADDMISSIONCREDITSBYRESULT
+- SUBOPPONENTCREDITSBYRESULT
+- SETFOCUS <bottone>
+- RESETFOCUS <bottone>
+- SETFOCUSIFCREDITS <bottone> <crediti>
+- SETNODEKNOWN <nodo>
+- ADDINFOWINDOW <immagine>
+- SHOWINFOWINDOW <immagine>
+- SETACHIEVEMENTPROGRESS <achievement> <value>
+- SETACHIEVEMENTATTEMPT <achievement> <value>
+- UNLOCKACHIEVEMENT <achievement>
+- UNLOCKSHIPPLAN <plan>
+- UNLOCKSHUTTLES
+- BUILDINGHELPSCRIPT <delay> <script>
+- FLIGHTHELPSCRIPT <script>
+- ALIENHELPSCRIPT <script>
+- SETMISSIONASFAILED
+- SETMISSIONASCOMPLETED
+- ALLSHIPSGIVEUP
+- GIVEUPFLIGHT
+- SAVESTATE
+- LOADSTATE
+- ADDNODE <nodo>
+- QUITCAMPAIGN
+
+### COMANDI PARAMETRI COMPLESSI (stringa con esempio):
+- SETADVPILE <pile> <number> - es. "1 3"
+- SETSECRETADVPILE <pile> <number> - es. "2 1"
+- ADDPARTTOSHIP <params...> - es. "1 7 alienEngine 3333 0"
+- ADDPARTTOASIDESLOT <params...> - es. "alienGun 2 1 2 0"
+- SETSPECCONDITION <condizione> - es. "bet"
+- ADDSHIPPARTS <file> - es. "parts/allParts.yaml"
+- SHOWHELPIMAGE <x> <y> <scale> <image> - es. "40 50 70 campaign/tutorial-purple.png"
+
+### COMANDI DA RIMUOVERE (nel parser ma non nella specifica):
+- RUNSCRIPT (sostituito da SUB_SCRIPT)
+- WAIT (non nella specifica)
+- CENTER_MAP (sostituito da CENTERMAPBYNODE)
+- SHOW_NODE (sostituito da SHOWNODE)
+
+## API AGGIUNTIVE IDENTIFICATE:
+
+### API ACHIEVEMENTS:
+- API 16: Lista achievement (da ./achievement/archi.yaml)
+- API 17: Immagini achievement (da ./achievement/images)
