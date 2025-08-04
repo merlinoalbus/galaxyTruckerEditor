@@ -1,0 +1,1236 @@
+import { SupportedLanguage } from '@/contexts/LanguageContext';
+import { useLanguage } from '@/contexts/LanguageContext';
+
+export type TranslationKey = 
+  // Common
+  | 'common.loading'
+  | 'common.error'
+  | 'common.save'
+  | 'common.cancel'
+  | 'common.close'
+  | 'common.search'
+  | 'common.refresh'
+  | 'common.export'
+  | 'common.import'
+  | 'common.connected'
+  | 'common.connecting'
+  | 'common.noData'
+  
+  // Header
+  | 'header.title'
+  | 'header.saveAll'
+  | 'header.update'
+  | 'header.exportTooltip'
+  | 'header.importTooltip'
+  | 'header.refreshTooltip'
+  
+  // Tabs
+  | 'tabs.interactiveMap'
+  | 'tabs.variablesSystem'
+  | 'tabs.overview'
+  
+  // Map Controls
+  | 'mapControls.title'
+  | 'mapControls.zoomIn'
+  | 'mapControls.zoomOut'
+  | 'mapControls.centerNewbie'
+  | 'mapControls.resetView'
+  
+  // Map Legend
+  | 'mapLegend.title'
+  | 'mapLegend.flightLicenses'
+  | 'mapLegend.routeTypes'
+  | 'mapLegend.normalMissions'
+  | 'mapLegend.uniqueMissions'
+  | 'mapLegend.shuttles'
+  
+  // Element Counters
+  | 'elements.scripts'
+  | 'elements.missions'
+  | 'elements.semaphores'
+  | 'elements.labels'
+  | 'elements.characters'
+  | 'elements.variables'
+  | 'elements.images'
+  | 'elements.achievements'
+  
+  // Variables System
+  | 'variablesSystem.title'
+  | 'variablesSystem.description'
+  | 'variablesSystem.searchPlaceholder'
+  | 'variablesSystem.loadingData'
+  | 'variablesSystem.errorLoading'
+  | 'variablesSystem.retry'
+  | 'variablesSystem.sortBy'
+  | 'variablesSystem.name'
+  | 'variablesSystem.usage'
+  | 'variablesSystem.noResults'
+  | 'variablesSystem.tryDifferentSearch'
+  | 'variablesSystem.selectItem'
+  | 'variablesSystem.usedIn'
+  | 'variablesSystem.others'
+  | 'variablesSystem.operations'
+  | 'variablesSystem.position'
+  | 'variablesSystem.objectives'
+  | 'variablesSystem.hidden'
+  | 'variablesSystem.repeatable'
+  | 'variablesSystem.points'
+  
+  // Script Selector
+  | 'scriptSelector.searchScripts'
+  | 'scriptSelector.starScripts'
+  | 'scriptSelector.otherScripts'
+  | 'scriptSelector.uniqueMissions'
+  | 'scriptSelector.normalMissions'
+  | 'scriptSelector.noScriptsFound'
+  | 'scriptSelector.noMissionsFound'
+  | 'scriptSelector.noScriptsAvailable'
+  | 'scriptSelector.noMissionsAvailable'
+  
+  // Tooltips
+  | 'tooltip.interactiveButtons'
+  | 'tooltip.routes'
+  | 'tooltip.scripts'
+  | 'tooltip.buttons'
+  | 'tooltip.license'
+  | 'tooltip.type'
+  
+  // Common
+  | 'common.usedIn'
+  | 'common.others'
+  
+  // ListView
+  | 'listView.noElementsFound'
+  | 'listView.tryModifyingSearch'
+  
+  // CharacterView
+  | 'characterView.character'
+  | 'characterView.uses'
+  | 'characterView.availableImages'
+  
+  // VariableView
+  | 'variableView.numericVariable'
+  | 'variableView.uses'
+  | 'variableView.values'
+  
+  // LabelView
+  | 'labelView.label'
+  | 'labelView.uses'
+  | 'labelView.script'
+  | 'labelView.line'
+  | 'labelView.references'
+  | 'labelView.otherReferences'
+  
+  // AchievementView
+  | 'achievementView.objectives'
+  | 'achievementView.hidden'
+  | 'achievementView.repeatable'
+  
+  // SemaforoView
+  | 'semaforoView.semaphore'
+  | 'semaforoView.uses'
+  | 'semaforoView.finalState'
+  
+  // ImageView
+  | 'imageView.modified'
+  | 'imageView.depth';
+
+type Translations = {
+  [key in SupportedLanguage]: {
+    [key in TranslationKey]: string;
+  };
+};
+
+export const translations: Translations = {
+  EN: {
+    // Common
+    'common.loading': 'Loading...',
+    'common.error': 'Error',
+    'common.save': 'Save',
+    'common.cancel': 'Cancel',
+    'common.close': 'Close',
+    'common.search': 'Search',
+    'common.refresh': 'Refresh',
+    'common.export': 'Export',
+    'common.import': 'Import',
+    'common.connected': 'Connected',
+    'common.connecting': 'Connecting...',
+    'common.noData': 'No data available',
+    
+    // Header
+    'header.title': 'Galaxy Trucker Editor',
+    'header.saveAll': 'Save All',
+    'header.update': 'Update',
+    'header.exportTooltip': 'Export all',
+    'header.importTooltip': 'Import file',
+    'header.refreshTooltip': 'Reload data',
+    
+    // Tabs
+    'tabs.interactiveMap': 'Interactive Map',
+    'tabs.variablesSystem': 'Variables & System',
+    'tabs.overview': 'Overview',
+    
+    // Map Controls
+    'mapControls.title': 'Controls',
+    'mapControls.zoomIn': 'Zoom In (+)',
+    'mapControls.zoomOut': 'Zoom Out (-)',
+    'mapControls.centerNewbie': 'Center on Port Newbie',
+    'mapControls.resetView': 'Reset View (Center + 100%)',
+    
+    // Map Legend
+    'mapLegend.title': 'Legend',
+    'mapLegend.flightLicenses': 'Flight Licenses',
+    'mapLegend.routeTypes': 'Route Types',
+    'mapLegend.normalMissions': 'Normal Missions',
+    'mapLegend.uniqueMissions': 'Unique Missions',
+    'mapLegend.shuttles': 'Shuttles',
+    
+    // Element Counters
+    'elements.scripts': 'Scripts',
+    'elements.missions': 'Missions',
+    'elements.semaphores': 'Semaphores',
+    'elements.labels': 'Labels',
+    'elements.characters': 'Characters',
+    'elements.variables': 'Variables',
+    'elements.images': 'Images',
+    'elements.achievements': 'Achievements',
+    
+    // Variables System
+    'variablesSystem.title': 'Variables & System',
+    'variablesSystem.description': 'Manage and analyze all campaign elements',
+    'variablesSystem.searchPlaceholder': 'Search',
+    'variablesSystem.loadingData': 'Loading data...',
+    'variablesSystem.errorLoading': 'Error loading',
+    'variablesSystem.retry': 'Retry',
+    'variablesSystem.sortBy': 'Sort by',
+    'variablesSystem.name': 'Name',
+    'variablesSystem.usage': 'Usage',
+    'variablesSystem.noResults': 'No items found',
+    'variablesSystem.tryDifferentSearch': 'Try modifying your search criteria',
+    'variablesSystem.selectItem': 'Select an item to view details',
+    'variablesSystem.usedIn': 'Used in:',
+    'variablesSystem.others': 'others',
+    'variablesSystem.operations': 'Operations',
+    'variablesSystem.position': 'Position',
+    'variablesSystem.objectives': 'objectives',
+    'variablesSystem.hidden': 'Hidden',
+    'variablesSystem.repeatable': 'Repeatable',
+    'variablesSystem.points': 'pts',
+    
+    // Script Selector
+    'scriptSelector.searchScripts': 'Search scripts and missions...',
+    'scriptSelector.starScripts': 'Star Scripts',
+    'scriptSelector.otherScripts': 'Other Scripts',
+    'scriptSelector.uniqueMissions': 'Unique Missions',
+    'scriptSelector.normalMissions': 'Normal Missions',
+    'scriptSelector.noScriptsFound': 'No scripts found',
+    'scriptSelector.noMissionsFound': 'No missions found',
+    'scriptSelector.noScriptsAvailable': 'No scripts available',
+    'scriptSelector.noMissionsAvailable': 'No missions available',
+    
+    // Tooltips
+    'tooltip.interactiveButtons': 'Interactive Buttons:',
+    'tooltip.routes': 'Routes:',
+    'tooltip.scripts': 'Scripts:',
+    'tooltip.buttons': 'Buttons:',
+    'tooltip.license': 'License:',
+    'tooltip.type': 'Type:',
+    
+    // Common
+    'common.usedIn': 'Used in:',
+    'common.others': 'others',
+    
+    // ListView
+    'listView.noElementsFound': 'No elements found',
+    'listView.tryModifyingSearch': 'Try modifying search criteria',
+    
+    // CharacterView
+    'characterView.character': 'Character',
+    'characterView.uses': 'uses',
+    'characterView.availableImages': 'available images',
+    
+    // VariableView
+    'variableView.numericVariable': 'Numeric Variable',
+    'variableView.uses': 'uses',
+    'variableView.values': 'Values',
+    
+    // LabelView
+    'labelView.label': 'Label',
+    'labelView.uses': 'uses',
+    'labelView.script': 'Script',
+    'labelView.line': 'Line',
+    'labelView.references': 'References',
+    'labelView.otherReferences': 'other references',
+    
+    // AchievementView
+    'achievementView.objectives': 'objectives',
+    'achievementView.hidden': 'Hidden',
+    'achievementView.repeatable': 'Repeatable',
+    
+    // SemaforoView
+    'semaforoView.semaphore': 'Semaphore',
+    'semaforoView.uses': 'uses',
+    'semaforoView.finalState': 'Final state',
+    
+    // ImageView
+    'imageView.modified': 'Modified',
+    'imageView.depth': 'Depth'
+  },
+  
+  IT: {
+    // Common
+    'common.loading': 'Caricamento...',
+    'common.error': 'Errore',
+    'common.save': 'Salva',
+    'common.cancel': 'Annulla',
+    'common.close': 'Chiudi',
+    'common.search': 'Cerca',
+    'common.refresh': 'Aggiorna',
+    'common.export': 'Esporta',
+    'common.import': 'Importa',
+    'common.connected': 'Connesso',
+    'common.connecting': 'Connessione...',
+    'common.noData': 'Nessun dato disponibile',
+    
+    // Header
+    'header.title': 'Galaxy Trucker Editor',
+    'header.saveAll': 'Salva Tutto',
+    'header.update': 'Aggiorna',
+    'header.exportTooltip': 'Esporta tutto',
+    'header.importTooltip': 'Importa file',
+    'header.refreshTooltip': 'Ricarica dati',
+    
+    // Tabs
+    'tabs.interactiveMap': 'Mappa Interattiva',
+    'tabs.variablesSystem': 'Variabili e Sistema',
+    'tabs.overview': 'Panoramica',
+    
+    // Map Controls
+    'mapControls.title': 'Controlli',
+    'mapControls.zoomIn': 'Zoom Avanti (+)',
+    'mapControls.zoomOut': 'Zoom Indietro (-)',
+    'mapControls.centerNewbie': 'Centra su Port Newbie',
+    'mapControls.resetView': 'Ripristina Vista (Centro + 100%)',
+    
+    // Map Legend
+    'mapLegend.title': 'Legenda',
+    'mapLegend.flightLicenses': 'Licenze di Volo',
+    'mapLegend.routeTypes': 'Tipo Rotte',
+    'mapLegend.normalMissions': 'Missioni Normal',
+    'mapLegend.uniqueMissions': 'Missioni Unique',
+    'mapLegend.shuttles': 'Shuttles',
+    
+    // Element Counters
+    'elements.scripts': 'Scripts',
+    'elements.missions': 'Missioni',
+    'elements.semaphores': 'Semafori',
+    'elements.labels': 'Etichette',
+    'elements.characters': 'Personaggi',
+    'elements.variables': 'Variabili',
+    'elements.images': 'Immagini',
+    'elements.achievements': 'Obiettivi',
+    
+    // Variables System
+    'variablesSystem.title': 'Variables & System',
+    'variablesSystem.description': 'Gestisci e analizza tutti gli elementi della campagna',
+    'variablesSystem.searchPlaceholder': 'Cerca',
+    'variablesSystem.loadingData': 'Caricamento dati in corso...',
+    'variablesSystem.errorLoading': 'Errore nel caricamento',
+    'variablesSystem.retry': 'Riprova',
+    'variablesSystem.sortBy': 'Ordina per',
+    'variablesSystem.name': 'Nome',
+    'variablesSystem.usage': 'Utilizzo',
+    'variablesSystem.noResults': 'Nessun elemento trovato',
+    'variablesSystem.tryDifferentSearch': 'Prova a modificare i criteri di ricerca',
+    'variablesSystem.selectItem': 'Seleziona un elemento per vedere i dettagli',
+    'variablesSystem.usedIn': 'Usato in:',
+    'variablesSystem.others': 'altri',
+    'variablesSystem.operations': 'Operazioni',
+    'variablesSystem.position': 'Posizione',
+    'variablesSystem.objectives': 'obiettivi',
+    'variablesSystem.hidden': 'Nascosto',
+    'variablesSystem.repeatable': 'Ripetibile',
+    'variablesSystem.points': 'pts',
+    
+    // Script Selector
+    'scriptSelector.searchScripts': 'Cerca scripts e missioni...',
+    'scriptSelector.starScripts': 'Script Stella',
+    'scriptSelector.otherScripts': 'Altri Script',
+    'scriptSelector.uniqueMissions': 'Missioni Unique',
+    'scriptSelector.normalMissions': 'Missioni Normal',
+    'scriptSelector.noScriptsFound': 'Nessuno script trovato',
+    'scriptSelector.noMissionsFound': 'Nessuna missione trovata',
+    'scriptSelector.noScriptsAvailable': 'Nessuno script disponibile',
+    'scriptSelector.noMissionsAvailable': 'Nessuna missione disponibile',
+    
+    // Tooltips
+    'tooltip.interactiveButtons': 'Pulsanti Interattivi:',
+    'tooltip.routes': 'Rotte:',
+    'tooltip.scripts': 'Script:',
+    'tooltip.buttons': 'Pulsanti:',
+    'tooltip.license': 'Licenza:',
+    'tooltip.type': 'Tipo:',
+    
+    // Common
+    'common.usedIn': 'Usato in:',
+    'common.others': 'altri',
+    
+    // ListView
+    'listView.noElementsFound': 'Nessun elemento trovato',
+    'listView.tryModifyingSearch': 'Prova a modificare i criteri di ricerca',
+    
+    // CharacterView
+    'characterView.character': 'Personaggio',
+    'characterView.uses': 'utilizzi',
+    'characterView.availableImages': 'immagini disponibili',
+    
+    // VariableView
+    'variableView.numericVariable': 'Variabile Numerica',
+    'variableView.uses': 'utilizzi',
+    'variableView.values': 'Valori',
+    
+    // LabelView
+    'labelView.label': 'Etichetta',
+    'labelView.uses': 'utilizzi',
+    'labelView.script': 'Script',
+    'labelView.line': 'Linea',
+    'labelView.references': 'Riferimenti',
+    'labelView.otherReferences': 'altri riferimenti',
+    
+    // AchievementView
+    'achievementView.objectives': 'obiettivi',
+    'achievementView.hidden': 'Nascosto',
+    'achievementView.repeatable': 'Ripetibile',
+    
+    // SemaforoView
+    'semaforoView.semaphore': 'Semaforo',
+    'semaforoView.uses': 'utilizzi',
+    'semaforoView.finalState': 'Stato finale',
+    
+    // ImageView
+    'imageView.modified': 'Modificato',
+    'imageView.depth': 'Profondità'
+  },
+  
+  CS: {
+    // Common
+    'common.loading': 'Načítání...',
+    'common.error': 'Chyba',
+    'common.save': 'Uložit',
+    'common.cancel': 'Zrušit',
+    'common.close': 'Zavřít',
+    'common.search': 'Hledat',
+    'common.refresh': 'Obnovit',
+    'common.export': 'Export',
+    'common.import': 'Import',
+    'common.connected': 'Připojeno',
+    'common.connecting': 'Připojování...',
+    'common.noData': 'Žádná data k dispozici',
+    
+    // Header
+    'header.title': 'Galaxy Trucker Editor',
+    'header.saveAll': 'Uložit vše',
+    'header.update': 'Aktualizovat',
+    'header.exportTooltip': 'Exportovat vše',
+    'header.importTooltip': 'Importovat soubor',
+    'header.refreshTooltip': 'Znovu načíst data',
+    
+    // Tabs
+    'tabs.interactiveMap': 'Interaktivní mapa',
+    'tabs.variablesSystem': 'Proměnné a systém',
+    'tabs.overview': 'Přehled',
+    
+    // Map Controls
+    'mapControls.title': 'Ovládání',
+    'mapControls.zoomIn': 'Přiblížit (+)',
+    'mapControls.zoomOut': 'Oddálit (-)',
+    'mapControls.centerNewbie': 'Vystředit na Port Newbie',
+    'mapControls.resetView': 'Obnovit zobrazení (Střed + 100%)',
+    
+    // Map Legend
+    'mapLegend.title': 'Legenda',
+    'mapLegend.flightLicenses': 'Letové licence',
+    'mapLegend.routeTypes': 'Typy tras',
+    'mapLegend.normalMissions': 'Normální mise',
+    'mapLegend.uniqueMissions': 'Jedinečné mise',
+    'mapLegend.shuttles': 'Kyvadlová doprava',
+    
+    // Element Counters
+    'elements.scripts': 'Skripty',
+    'elements.missions': 'Mise',
+    'elements.semaphores': 'Semafory',
+    'elements.labels': 'Štítky',
+    'elements.characters': 'Postavy',
+    'elements.variables': 'Proměnné',
+    'elements.images': 'Obrázky',
+    'elements.achievements': 'Úspěchy',
+    
+    // Variables System
+    'variablesSystem.title': 'Proměnné a systém',
+    'variablesSystem.description': 'Spravujte a analyzujte všechny prvky kampaně',
+    'variablesSystem.searchPlaceholder': 'Hledat',
+    'variablesSystem.loadingData': 'Načítání dat...',
+    'variablesSystem.errorLoading': 'Chyba při načítání',
+    'variablesSystem.retry': 'Zkusit znovu',
+    'variablesSystem.sortBy': 'Seřadit podle',
+    'variablesSystem.name': 'Název',
+    'variablesSystem.usage': 'Použití',
+    'variablesSystem.noResults': 'Žádné položky nenalezeny',
+    'variablesSystem.tryDifferentSearch': 'Zkuste upravit kritéria vyhledávání',
+    'variablesSystem.selectItem': 'Vyberte položku pro zobrazení podrobností',
+    'variablesSystem.usedIn': 'Použito v:',
+    'variablesSystem.others': 'další',
+    'variablesSystem.operations': 'Operace',
+    'variablesSystem.position': 'Pozice',
+    'variablesSystem.objectives': 'cíle',
+    'variablesSystem.hidden': 'Skryté',
+    'variablesSystem.repeatable': 'Opakovatelné',
+    'variablesSystem.points': 'bodů',
+    
+    // Script Selector
+    'scriptSelector.searchScripts': 'Hledat skripty a mise...',
+    'scriptSelector.starScripts': 'Hvězdné skripty',
+    'scriptSelector.otherScripts': 'Ostatní skripty',
+    'scriptSelector.uniqueMissions': 'Jedinečné mise',
+    'scriptSelector.normalMissions': 'Normální mise',
+    'scriptSelector.noScriptsFound': 'Žádné skripty nenalezeny',
+    'scriptSelector.noMissionsFound': 'Žádné mise nenalezeny',
+    'scriptSelector.noScriptsAvailable': 'Žádné skripty k dispozici',
+    'scriptSelector.noMissionsAvailable': 'Žádné mise k dispozici',
+    
+    // Tooltips
+    'tooltip.interactiveButtons': 'Interaktivní tlačítka:',
+    'tooltip.routes': 'Trasy:',
+    'tooltip.scripts': 'Skripty:',
+    'tooltip.buttons': 'Tlačítka:',
+    'tooltip.license': 'Licence:',
+    'tooltip.type': 'Typ:',
+    
+    // Common
+    'common.usedIn': 'Použito v:',
+    'common.others': 'další',
+    
+    // ListView
+    'listView.noElementsFound': 'Žádné prvky nenalezeny',
+    'listView.tryModifyingSearch': 'Zkuste upravit kritéria vyhledávání',
+    
+    // CharacterView
+    'characterView.character': 'Postava',
+    'characterView.uses': 'použití',
+    'characterView.availableImages': 'dostupné obrázky',
+    
+    // VariableView
+    'variableView.numericVariable': 'Číselná proměnná',
+    'variableView.uses': 'použití',
+    'variableView.values': 'Hodnoty',
+    
+    // LabelView
+    'labelView.label': 'Štítek',
+    'labelView.uses': 'použití',
+    'labelView.script': 'Skript',
+    'labelView.line': 'Řádek',
+    'labelView.references': 'Reference',
+    'labelView.otherReferences': 'další reference',
+    
+    // AchievementView
+    'achievementView.objectives': 'cíle',
+    'achievementView.hidden': 'Skryté',
+    'achievementView.repeatable': 'Opakovatelné',
+    
+    // SemaforoView
+    'semaforoView.semaphore': 'Semafor',
+    'semaforoView.uses': 'použití',
+    'semaforoView.finalState': 'Konečný stav',
+    
+    // ImageView
+    'imageView.modified': 'Upraveno',
+    'imageView.depth': 'Hloubka'
+  },
+  
+  DE: {
+    // Common
+    'common.loading': 'Lädt...',
+    'common.error': 'Fehler',
+    'common.save': 'Speichern',
+    'common.cancel': 'Abbrechen',
+    'common.close': 'Schließen',
+    'common.search': 'Suchen',
+    'common.refresh': 'Aktualisieren',
+    'common.export': 'Exportieren',
+    'common.import': 'Importieren',
+    'common.connected': 'Verbunden',
+    'common.connecting': 'Verbinde...',
+    'common.noData': 'Keine Daten verfügbar',
+    
+    // Header
+    'header.title': 'Galaxy Trucker Editor',
+    'header.saveAll': 'Alles speichern',
+    'header.update': 'Aktualisieren',
+    'header.exportTooltip': 'Alles exportieren',
+    'header.importTooltip': 'Datei importieren',
+    'header.refreshTooltip': 'Daten neu laden',
+    
+    // Tabs
+    'tabs.interactiveMap': 'Interaktive Karte',
+    'tabs.variablesSystem': 'Variablen & System',
+    'tabs.overview': 'Übersicht',
+    
+    // Map Controls
+    'mapControls.title': 'Steuerung',
+    'mapControls.zoomIn': 'Vergrößern (+)',
+    'mapControls.zoomOut': 'Verkleinern (-)',
+    'mapControls.centerNewbie': 'Auf Port Newbie zentrieren',
+    'mapControls.resetView': 'Ansicht zurücksetzen (Mitte + 100%)',
+    
+    // Map Legend
+    'mapLegend.title': 'Legende',
+    'mapLegend.flightLicenses': 'Fluglizenzen',
+    'mapLegend.routeTypes': 'Routentypen',
+    'mapLegend.normalMissions': 'Normale Missionen',
+    'mapLegend.uniqueMissions': 'Einzigartige Missionen',
+    'mapLegend.shuttles': 'Shuttles',
+    
+    // Element Counters
+    'elements.scripts': 'Skripte',
+    'elements.missions': 'Missionen',
+    'elements.semaphores': 'Semaphore',
+    'elements.labels': 'Etiketten',
+    'elements.characters': 'Charaktere',
+    'elements.variables': 'Variablen',
+    'elements.images': 'Bilder',
+    'elements.achievements': 'Erfolge',
+    
+    // Variables System
+    'variablesSystem.title': 'Variablen & System',
+    'variablesSystem.description': 'Verwalten und analysieren Sie alle Kampagnenelemente',
+    'variablesSystem.searchPlaceholder': 'Suchen',
+    'variablesSystem.loadingData': 'Daten werden geladen...',
+    'variablesSystem.errorLoading': 'Fehler beim Laden',
+    'variablesSystem.retry': 'Erneut versuchen',
+    'variablesSystem.sortBy': 'Sortieren nach',
+    'variablesSystem.name': 'Name',
+    'variablesSystem.usage': 'Verwendung',
+    'variablesSystem.noResults': 'Keine Elemente gefunden',
+    'variablesSystem.tryDifferentSearch': 'Versuchen Sie, Ihre Suchkriterien zu ändern',
+    'variablesSystem.selectItem': 'Wählen Sie ein Element aus, um Details anzuzeigen',
+    'variablesSystem.usedIn': 'Verwendet in:',
+    'variablesSystem.others': 'andere',
+    'variablesSystem.operations': 'Operationen',
+    'variablesSystem.position': 'Position',
+    'variablesSystem.objectives': 'Ziele',
+    'variablesSystem.hidden': 'Versteckt',
+    'variablesSystem.repeatable': 'Wiederholbar',
+    'variablesSystem.points': 'Pkt',
+    
+    // Script Selector
+    'scriptSelector.searchScripts': 'Skripte und Missionen suchen...',
+    'scriptSelector.starScripts': 'Stern-Skripte',
+    'scriptSelector.otherScripts': 'Andere Skripte',
+    'scriptSelector.uniqueMissions': 'Einzigartige Missionen',
+    'scriptSelector.normalMissions': 'Normale Missionen',
+    'scriptSelector.noScriptsFound': 'Keine Skripte gefunden',
+    'scriptSelector.noMissionsFound': 'Keine Missionen gefunden',
+    'scriptSelector.noScriptsAvailable': 'Keine Skripte verfügbar',
+    'scriptSelector.noMissionsAvailable': 'Keine Missionen verfügbar',
+    
+    // Tooltips
+    'tooltip.interactiveButtons': 'Interaktive Schaltflächen:',
+    'tooltip.routes': 'Routen:',
+    'tooltip.scripts': 'Skripte:',
+    'tooltip.buttons': 'Schaltflächen:',
+    'tooltip.license': 'Lizenz:',
+    'tooltip.type': 'Typ:',
+    
+    // Common
+    'common.usedIn': 'Verwendet in:',
+    'common.others': 'andere',
+    
+    // ListView
+    'listView.noElementsFound': 'Keine Elemente gefunden',
+    'listView.tryModifyingSearch': 'Versuchen Sie, die Suchkriterien zu ändern',
+    
+    // CharacterView
+    'characterView.character': 'Charakter',
+    'characterView.uses': 'Verwendungen',
+    'characterView.availableImages': 'verfügbare Bilder',
+    
+    // VariableView
+    'variableView.numericVariable': 'Numerische Variable',
+    'variableView.uses': 'Verwendungen',
+    'variableView.values': 'Werte',
+    
+    // LabelView
+    'labelView.label': 'Etikett',
+    'labelView.uses': 'Verwendungen',
+    'labelView.script': 'Skript',
+    'labelView.line': 'Zeile',
+    'labelView.references': 'Referenzen',
+    'labelView.otherReferences': 'weitere Referenzen',
+    
+    // AchievementView
+    'achievementView.objectives': 'Ziele',
+    'achievementView.hidden': 'Versteckt',
+    'achievementView.repeatable': 'Wiederholbar',
+    
+    // SemaforoView
+    'semaforoView.semaphore': 'Semaphor',
+    'semaforoView.uses': 'Verwendungen',
+    'semaforoView.finalState': 'Endzustand',
+    
+    // ImageView
+    'imageView.modified': 'Geändert',
+    'imageView.depth': 'Tiefe'
+  },
+  
+  ES: {
+    // Common
+    'common.loading': 'Cargando...',
+    'common.error': 'Error',
+    'common.save': 'Guardar',
+    'common.cancel': 'Cancelar',
+    'common.close': 'Cerrar',
+    'common.search': 'Buscar',
+    'common.refresh': 'Actualizar',
+    'common.export': 'Exportar',
+    'common.import': 'Importar',
+    'common.connected': 'Conectado',
+    'common.connecting': 'Conectando...',
+    'common.noData': 'No hay datos disponibles',
+    
+    // Header
+    'header.title': 'Galaxy Trucker Editor',
+    'header.saveAll': 'Guardar todo',
+    'header.update': 'Actualizar',
+    'header.exportTooltip': 'Exportar todo',
+    'header.importTooltip': 'Importar archivo',
+    'header.refreshTooltip': 'Recargar datos',
+    
+    // Tabs
+    'tabs.interactiveMap': 'Mapa interactivo',
+    'tabs.variablesSystem': 'Variables y sistema',
+    'tabs.overview': 'Vista general',
+    
+    // Map Controls
+    'mapControls.title': 'Controles',
+    'mapControls.zoomIn': 'Acercar (+)',
+    'mapControls.zoomOut': 'Alejar (-)',
+    'mapControls.centerNewbie': 'Centrar en Port Newbie',
+    'mapControls.resetView': 'Restablecer vista (Centro + 100%)',
+    
+    // Map Legend
+    'mapLegend.title': 'Leyenda',
+    'mapLegend.flightLicenses': 'Licencias de vuelo',
+    'mapLegend.routeTypes': 'Tipos de rutas',
+    'mapLegend.normalMissions': 'Misiones normales',
+    'mapLegend.uniqueMissions': 'Misiones únicas',
+    'mapLegend.shuttles': 'Lanzaderas',
+    
+    // Element Counters
+    'elements.scripts': 'Scripts',
+    'elements.missions': 'Misiones',
+    'elements.semaphores': 'Semáforos',
+    'elements.labels': 'Etiquetas',
+    'elements.characters': 'Personajes',
+    'elements.variables': 'Variables',
+    'elements.images': 'Imágenes',
+    'elements.achievements': 'Logros',
+    
+    // Variables System
+    'variablesSystem.title': 'Variables y Sistema',
+    'variablesSystem.description': 'Gestiona y analiza todos los elementos de la campaña',
+    'variablesSystem.searchPlaceholder': 'Buscar',
+    'variablesSystem.loadingData': 'Cargando datos...',
+    'variablesSystem.errorLoading': 'Error al cargar',
+    'variablesSystem.retry': 'Reintentar',
+    'variablesSystem.sortBy': 'Ordenar por',
+    'variablesSystem.name': 'Nombre',
+    'variablesSystem.usage': 'Uso',
+    'variablesSystem.noResults': 'No se encontraron elementos',
+    'variablesSystem.tryDifferentSearch': 'Intenta modificar tus criterios de búsqueda',
+    'variablesSystem.selectItem': 'Selecciona un elemento para ver detalles',
+    'variablesSystem.usedIn': 'Usado en:',
+    'variablesSystem.others': 'otros',
+    'variablesSystem.operations': 'Operaciones',
+    'variablesSystem.position': 'Posición',
+    'variablesSystem.objectives': 'objetivos',
+    'variablesSystem.hidden': 'Oculto',
+    'variablesSystem.repeatable': 'Repetible',
+    'variablesSystem.points': 'pts',
+    
+    // Script Selector
+    'scriptSelector.searchScripts': 'Buscar scripts y misiones...',
+    'scriptSelector.starScripts': 'Scripts estrella',
+    'scriptSelector.otherScripts': 'Otros scripts',
+    'scriptSelector.uniqueMissions': 'Misiones únicas',
+    'scriptSelector.normalMissions': 'Misiones normales',
+    'scriptSelector.noScriptsFound': 'No se encontraron scripts',
+    'scriptSelector.noMissionsFound': 'No se encontraron misiones',
+    'scriptSelector.noScriptsAvailable': 'No hay scripts disponibles',
+    'scriptSelector.noMissionsAvailable': 'No hay misiones disponibles',
+    
+    // Tooltips
+    'tooltip.interactiveButtons': 'Botones interactivos:',
+    'tooltip.routes': 'Rutas:',
+    'tooltip.scripts': 'Scripts:',
+    'tooltip.buttons': 'Botones:',
+    'tooltip.license': 'Licencia:',
+    'tooltip.type': 'Tipo:',
+    
+    // Common
+    'common.usedIn': 'Usado en:',
+    'common.others': 'otros',
+    
+    // ListView
+    'listView.noElementsFound': 'No se encontraron elementos',
+    'listView.tryModifyingSearch': 'Intenta modificar los criterios de búsqueda',
+    
+    // CharacterView
+    'characterView.character': 'Personaje',
+    'characterView.uses': 'usos',
+    'characterView.availableImages': 'imágenes disponibles',
+    
+    // VariableView
+    'variableView.numericVariable': 'Variable Numérica',
+    'variableView.uses': 'usos',
+    'variableView.values': 'Valores',
+    
+    // LabelView
+    'labelView.label': 'Etiqueta',
+    'labelView.uses': 'usos',
+    'labelView.script': 'Script',
+    'labelView.line': 'Línea',
+    'labelView.references': 'Referencias',
+    'labelView.otherReferences': 'otras referencias',
+    
+    // AchievementView
+    'achievementView.objectives': 'objetivos',
+    'achievementView.hidden': 'Oculto',
+    'achievementView.repeatable': 'Repetible',
+    
+    // SemaforoView
+    'semaforoView.semaphore': 'Semáforo',
+    'semaforoView.uses': 'usos',
+    'semaforoView.finalState': 'Estado final',
+    
+    // ImageView
+    'imageView.modified': 'Modificado',
+    'imageView.depth': 'Profundidad'
+  },
+  
+  FR: {
+    // Common
+    'common.loading': 'Chargement...',
+    'common.error': 'Erreur',
+    'common.save': 'Enregistrer',
+    'common.cancel': 'Annuler',
+    'common.close': 'Fermer',
+    'common.search': 'Rechercher',
+    'common.refresh': 'Actualiser',
+    'common.export': 'Exporter',
+    'common.import': 'Importer',
+    'common.connected': 'Connecté',
+    'common.connecting': 'Connexion...',
+    'common.noData': 'Aucune donnée disponible',
+    
+    // Header
+    'header.title': 'Galaxy Trucker Editor',
+    'header.saveAll': 'Tout enregistrer',
+    'header.update': 'Mettre à jour',
+    'header.exportTooltip': 'Tout exporter',
+    'header.importTooltip': 'Importer un fichier',
+    'header.refreshTooltip': 'Recharger les données',
+    
+    // Tabs
+    'tabs.interactiveMap': 'Carte interactive',
+    'tabs.variablesSystem': 'Variables et système',
+    'tabs.overview': 'Vue d\'ensemble',
+    
+    // Map Controls
+    'mapControls.title': 'Contrôles',
+    'mapControls.zoomIn': 'Zoom avant (+)',
+    'mapControls.zoomOut': 'Zoom arrière (-)',
+    'mapControls.centerNewbie': 'Centrer sur Port Newbie',
+    'mapControls.resetView': 'Réinitialiser la vue (Centre + 100%)',
+    
+    // Map Legend
+    'mapLegend.title': 'Légende',
+    'mapLegend.flightLicenses': 'Licences de vol',
+    'mapLegend.routeTypes': 'Types de routes',
+    'mapLegend.normalMissions': 'Missions normales',
+    'mapLegend.uniqueMissions': 'Missions uniques',
+    'mapLegend.shuttles': 'Navettes',
+    
+    // Element Counters
+    'elements.scripts': 'Scripts',
+    'elements.missions': 'Missions',
+    'elements.semaphores': 'Sémaphores',
+    'elements.labels': 'Étiquettes',
+    'elements.characters': 'Personnages',
+    'elements.variables': 'Variables',
+    'elements.images': 'Images',
+    'elements.achievements': 'Succès',
+    
+    // Variables System
+    'variablesSystem.title': 'Variables et Système',
+    'variablesSystem.description': 'Gérez et analysez tous les éléments de la campagne',
+    'variablesSystem.searchPlaceholder': 'Rechercher',
+    'variablesSystem.loadingData': 'Chargement des données...',
+    'variablesSystem.errorLoading': 'Erreur de chargement',
+    'variablesSystem.retry': 'Réessayer',
+    'variablesSystem.sortBy': 'Trier par',
+    'variablesSystem.name': 'Nom',
+    'variablesSystem.usage': 'Utilisation',
+    'variablesSystem.noResults': 'Aucun élément trouvé',
+    'variablesSystem.tryDifferentSearch': 'Essayez de modifier vos critères de recherche',
+    'variablesSystem.selectItem': 'Sélectionnez un élément pour voir les détails',
+    'variablesSystem.usedIn': 'Utilisé dans :',
+    'variablesSystem.others': 'autres',
+    'variablesSystem.operations': 'Opérations',
+    'variablesSystem.position': 'Position',
+    'variablesSystem.objectives': 'objectifs',
+    'variablesSystem.hidden': 'Caché',
+    'variablesSystem.repeatable': 'Répétable',
+    'variablesSystem.points': 'pts',
+    
+    // Script Selector
+    'scriptSelector.searchScripts': 'Rechercher scripts et missions...',
+    'scriptSelector.starScripts': 'Scripts étoile',
+    'scriptSelector.otherScripts': 'Autres scripts',
+    'scriptSelector.uniqueMissions': 'Missions uniques',
+    'scriptSelector.normalMissions': 'Missions normales',
+    'scriptSelector.noScriptsFound': 'Aucun script trouvé',
+    'scriptSelector.noMissionsFound': 'Aucune mission trouvée',
+    'scriptSelector.noScriptsAvailable': 'Aucun script disponible',
+    'scriptSelector.noMissionsAvailable': 'Aucune mission disponible',
+    
+    // Tooltips
+    'tooltip.interactiveButtons': 'Boutons interactifs :',
+    'tooltip.routes': 'Routes :',
+    'tooltip.scripts': 'Scripts :',
+    'tooltip.buttons': 'Boutons :',
+    'tooltip.license': 'Licence :',
+    'tooltip.type': 'Type :',
+    
+    // Common
+    'common.usedIn': 'Utilisé dans :',
+    'common.others': 'autres',
+    
+    // ListView
+    'listView.noElementsFound': 'Aucun élément trouvé',
+    'listView.tryModifyingSearch': 'Essayez de modifier les critères de recherche',
+    
+    // CharacterView
+    'characterView.character': 'Personnage',
+    'characterView.uses': 'utilisations',
+    'characterView.availableImages': 'images disponibles',
+    
+    // VariableView
+    'variableView.numericVariable': 'Variable Numérique',
+    'variableView.uses': 'utilisations',
+    'variableView.values': 'Valeurs',
+    
+    // LabelView
+    'labelView.label': 'Étiquette',
+    'labelView.uses': 'utilisations',
+    'labelView.script': 'Script',
+    'labelView.line': 'Ligne',
+    'labelView.references': 'Références',
+    'labelView.otherReferences': 'autres références',
+    
+    // AchievementView
+    'achievementView.objectives': 'objectifs',
+    'achievementView.hidden': 'Caché',
+    'achievementView.repeatable': 'Répétable',
+    
+    // SemaforoView
+    'semaforoView.semaphore': 'Sémaphore',
+    'semaforoView.uses': 'utilisations',
+    'semaforoView.finalState': 'État final',
+    
+    // ImageView
+    'imageView.modified': 'Modifié',
+    'imageView.depth': 'Profondeur'
+  },
+  
+  PL: {
+    // Common
+    'common.loading': 'Ładowanie...',
+    'common.error': 'Błąd',
+    'common.save': 'Zapisz',
+    'common.cancel': 'Anuluj',
+    'common.close': 'Zamknij',
+    'common.search': 'Szukaj',
+    'common.refresh': 'Odśwież',
+    'common.export': 'Eksportuj',
+    'common.import': 'Importuj',
+    'common.connected': 'Połączono',
+    'common.connecting': 'Łączenie...',
+    'common.noData': 'Brak dostępnych danych',
+    
+    // Header
+    'header.title': 'Galaxy Trucker Editor',
+    'header.saveAll': 'Zapisz wszystko',
+    'header.update': 'Aktualizuj',
+    'header.exportTooltip': 'Eksportuj wszystko',
+    'header.importTooltip': 'Importuj plik',
+    'header.refreshTooltip': 'Przeładuj dane',
+    
+    // Tabs
+    'tabs.interactiveMap': 'Interaktywna mapa',
+    'tabs.variablesSystem': 'Zmienne i system',
+    'tabs.overview': 'Przegląd',
+    
+    // Map Controls
+    'mapControls.title': 'Sterowanie',
+    'mapControls.zoomIn': 'Powiększ (+)',
+    'mapControls.zoomOut': 'Pomniejsz (-)',
+    'mapControls.centerNewbie': 'Wyśrodkuj na Port Newbie',
+    'mapControls.resetView': 'Resetuj widok (Środek + 100%)',
+    
+    // Map Legend
+    'mapLegend.title': 'Legenda',
+    'mapLegend.flightLicenses': 'Licencje lotnicze',
+    'mapLegend.routeTypes': 'Typy tras',
+    'mapLegend.normalMissions': 'Normalne misje',
+    'mapLegend.uniqueMissions': 'Unikalne misje',
+    'mapLegend.shuttles': 'Promy',
+    
+    // Element Counters
+    'elements.scripts': 'Skrypty',
+    'elements.missions': 'Misje',
+    'elements.semaphores': 'Semafory',
+    'elements.labels': 'Etykiety',
+    'elements.characters': 'Postacie',
+    'elements.variables': 'Zmienne',
+    'elements.images': 'Obrazy',
+    'elements.achievements': 'Osiągnięcia',
+    
+    // Variables System
+    'variablesSystem.title': 'Zmienne i System',
+    'variablesSystem.description': 'Zarządzaj i analizuj wszystkie elementy kampanii',
+    'variablesSystem.searchPlaceholder': 'Szukaj',
+    'variablesSystem.loadingData': 'Ładowanie danych...',
+    'variablesSystem.errorLoading': 'Błąd ładowania',
+    'variablesSystem.retry': 'Spróbuj ponownie',
+    'variablesSystem.sortBy': 'Sortuj według',
+    'variablesSystem.name': 'Nazwa',
+    'variablesSystem.usage': 'Użycie',
+    'variablesSystem.noResults': 'Nie znaleziono elementów',
+    'variablesSystem.tryDifferentSearch': 'Spróbuj zmienić kryteria wyszukiwania',
+    'variablesSystem.selectItem': 'Wybierz element, aby zobaczyć szczegóły',
+    'variablesSystem.usedIn': 'Używane w:',
+    'variablesSystem.others': 'inne',
+    'variablesSystem.operations': 'Operacje',
+    'variablesSystem.position': 'Pozycja',
+    'variablesSystem.objectives': 'cele',
+    'variablesSystem.hidden': 'Ukryte',
+    'variablesSystem.repeatable': 'Powtarzalne',
+    'variablesSystem.points': 'pkt',
+    
+    // Script Selector
+    'scriptSelector.searchScripts': 'Szukaj skryptów i misji...',
+    'scriptSelector.starScripts': 'Skrypty gwiazd',
+    'scriptSelector.otherScripts': 'Inne skrypty',
+    'scriptSelector.uniqueMissions': 'Unikalne misje',
+    'scriptSelector.normalMissions': 'Normalne misje',
+    'scriptSelector.noScriptsFound': 'Nie znaleziono skryptów',
+    'scriptSelector.noMissionsFound': 'Nie znaleziono misji',
+    'scriptSelector.noScriptsAvailable': 'Brak dostępnych skryptów',
+    'scriptSelector.noMissionsAvailable': 'Brak dostępnych misji',
+    
+    // Tooltips
+    'tooltip.interactiveButtons': 'Interaktywne przyciski:',
+    'tooltip.routes': 'Trasy:',
+    'tooltip.scripts': 'Skrypty:',
+    'tooltip.buttons': 'Przyciski:',
+    'tooltip.license': 'Licencja:',
+    'tooltip.type': 'Typ:',
+    
+    // Common
+    'common.usedIn': 'Używane w:',
+    'common.others': 'inne',
+    
+    // ListView
+    'listView.noElementsFound': 'Nie znaleziono elementów',
+    'listView.tryModifyingSearch': 'Spróbuj zmienić kryteria wyszukiwania',
+    
+    // CharacterView
+    'characterView.character': 'Postać',
+    'characterView.uses': 'użyć',
+    'characterView.availableImages': 'dostępne obrazy',
+    
+    // VariableView
+    'variableView.numericVariable': 'Zmienna Numeryczna',
+    'variableView.uses': 'użyć',
+    'variableView.values': 'Wartości',
+    
+    // LabelView
+    'labelView.label': 'Etykieta',
+    'labelView.uses': 'użyć',
+    'labelView.script': 'Skrypt',
+    'labelView.line': 'Linia',
+    'labelView.references': 'Odniesienia',
+    'labelView.otherReferences': 'inne odniesienia',
+    
+    // AchievementView
+    'achievementView.objectives': 'cele',
+    'achievementView.hidden': 'Ukryte',
+    'achievementView.repeatable': 'Powtarzalne',
+    
+    // SemaforoView
+    'semaforoView.semaphore': 'Semafor',
+    'semaforoView.uses': 'użyć',
+    'semaforoView.finalState': 'Stan końcowy',
+    
+    // ImageView
+    'imageView.modified': 'Zmodyfikowany',
+    'imageView.depth': 'Głębokość'
+  },
+  
+  RU: {
+    // Common
+    'common.loading': 'Загрузка...',
+    'common.error': 'Ошибка',
+    'common.save': 'Сохранить',
+    'common.cancel': 'Отмена',
+    'common.close': 'Закрыть',
+    'common.search': 'Поиск',
+    'common.refresh': 'Обновить',
+    'common.export': 'Экспорт',
+    'common.import': 'Импорт',
+    'common.connected': 'Подключено',
+    'common.connecting': 'Подключение...',
+    'common.noData': 'Нет доступных данных',
+    
+    // Header
+    'header.title': 'Galaxy Trucker Editor',
+    'header.saveAll': 'Сохранить всё',
+    'header.update': 'Обновить',
+    'header.exportTooltip': 'Экспортировать всё',
+    'header.importTooltip': 'Импортировать файл',
+    'header.refreshTooltip': 'Перезагрузить данные',
+    
+    // Tabs
+    'tabs.interactiveMap': 'Интерактивная карта',
+    'tabs.variablesSystem': 'Переменные и система',
+    'tabs.overview': 'Обзор',
+    
+    // Map Controls
+    'mapControls.title': 'Управление',
+    'mapControls.zoomIn': 'Увеличить (+)',
+    'mapControls.zoomOut': 'Уменьшить (-)',
+    'mapControls.centerNewbie': 'Центрировать на Port Newbie',
+    'mapControls.resetView': 'Сбросить вид (Центр + 100%)',
+    
+    // Map Legend
+    'mapLegend.title': 'Легенда',
+    'mapLegend.flightLicenses': 'Лётные лицензии',
+    'mapLegend.routeTypes': 'Типы маршрутов',
+    'mapLegend.normalMissions': 'Обычные миссии',
+    'mapLegend.uniqueMissions': 'Уникальные миссии',
+    'mapLegend.shuttles': 'Челноки',
+    
+    // Element Counters
+    'elements.scripts': 'Скрипты',
+    'elements.missions': 'Миссии',
+    'elements.semaphores': 'Семафоры',
+    'elements.labels': 'Метки',
+    'elements.characters': 'Персонажи',
+    'elements.variables': 'Переменные',
+    'elements.images': 'Изображения',
+    'elements.achievements': 'Достижения',
+    
+    // Variables System
+    'variablesSystem.title': 'Переменные и Система',
+    'variablesSystem.description': 'Управляйте и анализируйте все элементы кампании',
+    'variablesSystem.searchPlaceholder': 'Поиск',
+    'variablesSystem.loadingData': 'Загрузка данных...',
+    'variablesSystem.errorLoading': 'Ошибка загрузки',
+    'variablesSystem.retry': 'Повторить',
+    'variablesSystem.sortBy': 'Сортировать по',
+    'variablesSystem.name': 'Имя',
+    'variablesSystem.usage': 'Использование',
+    'variablesSystem.noResults': 'Элементы не найдены',
+    'variablesSystem.tryDifferentSearch': 'Попробуйте изменить критерии поиска',
+    'variablesSystem.selectItem': 'Выберите элемент для просмотра деталей',
+    'variablesSystem.usedIn': 'Используется в:',
+    'variablesSystem.others': 'другие',
+    'variablesSystem.operations': 'Операции',
+    'variablesSystem.position': 'Позиция',
+    'variablesSystem.objectives': 'цели',
+    'variablesSystem.hidden': 'Скрыто',
+    'variablesSystem.repeatable': 'Повторяемое',
+    'variablesSystem.points': 'очк',
+    
+    // Script Selector
+    'scriptSelector.searchScripts': 'Поиск скриптов и миссий...',
+    'scriptSelector.starScripts': 'Звёздные скрипты',
+    'scriptSelector.otherScripts': 'Другие скрипты',
+    'scriptSelector.uniqueMissions': 'Уникальные миссии',
+    'scriptSelector.normalMissions': 'Обычные миссии',
+    'scriptSelector.noScriptsFound': 'Скрипты не найдены',
+    'scriptSelector.noMissionsFound': 'Миссии не найдены',
+    'scriptSelector.noScriptsAvailable': 'Нет доступных скриптов',
+    'scriptSelector.noMissionsAvailable': 'Нет доступных миссий',
+    
+    // Tooltips
+    'tooltip.interactiveButtons': 'Интерактивные кнопки:',
+    'tooltip.routes': 'Маршруты:',
+    'tooltip.scripts': 'Скрипты:',
+    'tooltip.buttons': 'Кнопки:',
+    'tooltip.license': 'Лицензия:',
+    'tooltip.type': 'Тип:',
+    
+    // Common
+    'common.usedIn': 'Используется в:',
+    'common.others': 'другие',
+    
+    // ListView
+    'listView.noElementsFound': 'Элементы не найдены',
+    'listView.tryModifyingSearch': 'Попробуйте изменить критерии поиска',
+    
+    // CharacterView
+    'characterView.character': 'Персонаж',
+    'characterView.uses': 'использований',
+    'characterView.availableImages': 'доступные изображения',
+    
+    // VariableView
+    'variableView.numericVariable': 'Числовая переменная',
+    'variableView.uses': 'использований',
+    'variableView.values': 'Значения',
+    
+    // LabelView
+    'labelView.label': 'Метка',
+    'labelView.uses': 'использований',
+    'labelView.script': 'Скрипт',
+    'labelView.line': 'Строка',
+    'labelView.references': 'Ссылки',
+    'labelView.otherReferences': 'другие ссылки',
+    
+    // AchievementView
+    'achievementView.objectives': 'цели',
+    'achievementView.hidden': 'Скрыто',
+    'achievementView.repeatable': 'Повторяемое',
+    
+    // SemaforoView
+    'semaforoView.semaphore': 'Семафор',
+    'semaforoView.uses': 'использований',
+    'semaforoView.finalState': 'Конечное состояние',
+    
+    // ImageView
+    'imageView.modified': 'Изменено',
+    'imageView.depth': 'Глубина'
+  }
+};
+
+// Custom hook for translations
+export function useTranslation() {
+  const { currentLanguage } = useLanguage();
+  
+  const t = (key: TranslationKey): string => {
+    return translations[currentLanguage][key] || translations.EN[key] || key;
+  };
+  
+  return { t };
+}
+

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { MapNode, MapConnection, CampaignScript, MapViewport } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
+import { MapNode, MapConnection, CampaignScript, MapViewport, Mission } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { useMapData } from './useMapData';
 import { useScriptSelection } from './useScriptSelection';
 
@@ -16,12 +16,14 @@ export interface UseInteractiveMapReturn {
   scriptSelectorOpen: boolean;
   scriptSelectorData: {
     scripts: CampaignScript[];
+    missions: Mission[];
     title: string;
     startScripts?: string[];
   };
   handleNodeClick: (node: MapNode, openSelector?: boolean) => CampaignScript[];
   handleConnectionClick: (connection: MapConnection, openSelector?: boolean) => CampaignScript[];
   handleScriptSelect: (script: CampaignScript) => void;
+  handleMissionSelectInternal: (mission: Mission) => void;
   handleScriptSelectorClose: () => void;
   setHoveredElement: (element: string | null) => void;
   setViewport: (viewport: MapViewport) => void;
@@ -53,13 +55,19 @@ export const useInteractiveMap = (
     loadMapData
   } = useMapData(setViewport);
 
+  const handleMissionSelect = useCallback((mission: Mission) => {
+    // Per ora logghiamo solo la selezione della missione
+    console.log('Mission selected:', mission);
+  }, []);
+
   const {
     scriptSelectorOpen,
     scriptSelectorData,
     handleScriptSelect,
+    handleMissionSelect: handleMissionSelectInternal,
     handleScriptSelectorClose,
     openScriptSelector
-  } = useScriptSelection(onScriptSelect);
+  } = useScriptSelection(onScriptSelect, handleMissionSelect);
 
   useEffect(() => {
     loadMapData();
@@ -108,7 +116,8 @@ export const useInteractiveMap = (
       openScriptSelector(
         relatedScripts,
         `Scripts for ${nodeCaption}`,
-        nodeStartScripts
+        nodeStartScripts,
+        [] // Nessuna missione per i nodi
       );
     }
     
@@ -146,11 +155,12 @@ export const useInteractiveMap = (
     setSelectedConnection(connectionId);
     setSelectedNode(null);
     
-    if (openSelector && allRelatedScripts.length > 0) {
+    if (openSelector && (allRelatedScripts.length > 0 || (connection.missions && connection.missions.length > 0))) {
       openScriptSelector(
         allRelatedScripts,
-        `Scripts for ${connection.from} → ${connection.to}`,
-        connection.startScripts || []
+        `${connection.from} → ${connection.to}`,
+        connection.startScripts || [],
+        connection.missions || []
       );
     }
     
@@ -173,6 +183,7 @@ export const useInteractiveMap = (
     handleNodeClick,
     handleConnectionClick,
     handleScriptSelect,
+    handleMissionSelectInternal,
     handleScriptSelectorClose,
     setHoveredElement,
     setViewport,

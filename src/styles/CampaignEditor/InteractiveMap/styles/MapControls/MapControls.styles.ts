@@ -1,6 +1,17 @@
 export const mapControlsStyles = {
-  // Container posizionato in alto a destra come richiesto nella specifica
+  // Container originale (mantenuto per retrocompatibilità)
   container: "absolute top-4 right-4 flex flex-col gap-2 z-50",
+  
+  // Container chiudibile con stile consistente alla legenda
+  containerCollapsible: "absolute top-4 right-4 bg-gray-900 bg-opacity-90 border border-gray-700 rounded-lg z-10 text-xs",
+  
+  // Header chiudibile
+  header: "flex items-center justify-between p-2 cursor-pointer hover:bg-gray-800 hover:bg-opacity-50 transition-colors",
+  headerContent: "flex items-center gap-2 text-gray-400",
+  headerTitle: "uppercase tracking-wider text-xs font-semibold",
+  
+  // Wrapper controlli
+  controlsWrapper: "flex flex-col gap-2 p-3 pt-0",
   
   // Riga per raggruppare controlli
   row: "flex gap-2",

@@ -37,6 +37,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
     handleNodeClick,
     handleConnectionClick,
     handleScriptSelect,
+    handleMissionSelectInternal,
     handleScriptSelectorClose,
     setHoveredElement,
     setViewport
@@ -119,9 +120,11 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
       <ScriptSelector
         isOpen={scriptSelectorOpen}
         scripts={scriptSelectorData.scripts}
+        missions={scriptSelectorData.missions}
         title={scriptSelectorData.title}
         startScripts={scriptSelectorData.startScripts}
         onScriptSelect={handleScriptSelect}
+        onMissionSelect={handleMissionSelectInternal}
         onClose={handleScriptSelectorClose}
       />
       

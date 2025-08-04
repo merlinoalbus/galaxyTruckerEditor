@@ -8,8 +8,11 @@ import { InteractiveMap } from './InteractiveMap/InteractiveMap';
 import { VariablesSystem } from './VariablesSystem/VariablesSystem';
 import { Overview } from './Overview/Overview';
 import { ElementCounters } from './components/Header/components/ElementCounters/ElementCounters';
+import { useTranslation } from '@/locales/translations';
 
 export const CampaignEditor: React.FC = () => {
+  const { t } = useTranslation();
+  
   const {
     activeTab,
     setActiveTab,
@@ -24,15 +27,15 @@ export const CampaignEditor: React.FC = () => {
   } = useCampaignEditor();
 
   const tabs = [
-    { id: 'map', label: 'Interactive Map' },
-    { id: 'variables', label: 'Variables & System' },
-    { id: 'overview', label: 'Overview' }
+    { id: 'map', label: t('tabs.interactiveMap') },
+    { id: 'variables', label: t('tabs.variablesSystem') },
+    { id: 'overview', label: t('tabs.overview') }
   ];
 
   if (error) {
     return (
       <div className="space-y-6">
-        <div className="text-red-500">Error loading campaign data: {error}</div>
+        <div className="text-red-500">{t('common.error')}: {error}</div>
       </div>
     );
   }
@@ -40,7 +43,7 @@ export const CampaignEditor: React.FC = () => {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="text-white">Loading campaign data...</div>
+        <div className="text-white">{t('common.loading')}</div>
       </div>
     );
   }
@@ -58,12 +61,21 @@ export const CampaignEditor: React.FC = () => {
           className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white transition-colors"
         >
           <Save className="w-4 h-4" />
-          <span>Save All</span>
+          <span>{t('header.saveAll')}</span>
         </button>
       </div>
 
       {/* Stats */}
-      <ElementCounters scriptsCount={analysis?.scripts?.length} />
+      <ElementCounters 
+        scriptsCount={analysis?.scripts?.length} 
+        onElementClick={(elementType) => {
+          setActiveTab('variables');
+          // We'll need to pass this to VariablesSystem
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('setVariablesTab', { detail: elementType }));
+          }, 100);
+        }}
+      />
 
       {/* Tabs */}
       <div className="border-b border-gray-700 flex-shrink-0">

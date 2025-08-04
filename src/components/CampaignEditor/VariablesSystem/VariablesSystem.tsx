@@ -1,187 +1,159 @@
 import React from 'react';
-import { Database, Search, Filter, SortAsc, Hash, ToggleLeft } from 'lucide-react';
-
-import { CampaignAnalysis } from '@/types/CampaignEditor';
-import { useVariablesSystem } from '@/hooks/CampaignEditor/VariablesSystem/useVariablesSystem';
-import { variablesSystemService } from '@/services/CampaignEditor/VariablesSystem/variablesSystemService';
-import { variablesSystemStyles } from '@/styles/CampaignEditor/VariablesSystem/VariablesSystem.styles';
+import { Database, Search, SortAsc, Hash, ToggleLeft, Tag, Users, Image, Trophy } from 'lucide-react';
+import { useVariablesSystemData } from '@/hooks/CampaignEditor/VariablesSystem/useVariablesSystemData';
+import { ElementType } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
+import { ListView } from './components/ListView/ListView';
+import { useTranslation } from '@/locales/translations';
 
 interface VariablesSystemProps {
-  analysis?: CampaignAnalysis | null;
+  analysis?: any;
 }
 
 export const VariablesSystem: React.FC<VariablesSystemProps> = ({ analysis }) => {
+  const { t } = useTranslation();
+  
   const {
-    filteredVariables,
-    statistics,
-    selectedCategory,
-    setSelectedCategory,
+    activeTab,
     searchTerm,
-    setSearchTerm,
     sortBy,
+    selectedItem,
+    loading,
+    error,
+    currentItems,
+    tabCounts,
+    setActiveTab,
+    setSearchTerm,
     setSortBy,
-    isLoading,
-    hasData
-  } = useVariablesSystem(analysis || null);
+    setSelectedItem,
+    refreshData
+  } = useVariablesSystemData();
 
-  const categorizedVariables = variablesSystemService.categorizeVariables(analysis || null);
+  // Listen for tab change events from ElementCounters
+  React.useEffect(() => {
+    const handleSetTab = (event: CustomEvent) => {
+      const elementType = event.detail;
+      if (elementType) {
+        setActiveTab(elementType as ElementType);
+      }
+    };
 
-  if (isLoading) {
+    window.addEventListener('setVariablesTab', handleSetTab as EventListener);
+    return () => {
+      window.removeEventListener('setVariablesTab', handleSetTab as EventListener);
+    };
+  }, [setActiveTab]);
+
+  const tabs: { id: ElementType; label: string; icon: React.FC<any>; color: string }[] = [
+    { id: 'variables', label: t('elements.variables'), icon: Hash, color: 'text-cyan-400' },
+    { id: 'semafori', label: t('elements.semaphores'), icon: ToggleLeft, color: 'text-yellow-400' },
+    { id: 'labels', label: t('elements.labels'), icon: Tag, color: 'text-green-400' },
+    { id: 'characters', label: t('elements.characters'), icon: Users, color: 'text-purple-400' },
+    { id: 'images', label: t('elements.images'), icon: Image, color: 'text-pink-400' },
+    { id: 'achievements', label: t('elements.achievements'), icon: Trophy, color: 'text-orange-400' }
+  ];
+
+  if (loading) {
     return (
-      <div className={variablesSystemStyles.loadingState}>
-        Loading variables data...
+      <div className="flex items-center justify-center h-full">
+        <div className="text-white">{t('variablesSystem.loadingData')}</div>
       </div>
     );
   }
 
-  if (!hasData) {
+  if (error) {
     return (
-      <div className={variablesSystemStyles.emptyState.container}>
-        <Database className={`w-16 h-16 ${variablesSystemStyles.emptyState.icon}`} />
-        <h3 className={variablesSystemStyles.emptyState.title}>No Variables Found</h3>
-        <p className={variablesSystemStyles.emptyState.subtitle}>
-          Load campaign scripts to analyze variables and semafori
-        </p>
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center">
+          <Database className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-white mb-2">{t('variablesSystem.errorLoading')}</h3>
+          <p className="text-gray-400">{error}</p>
+          <button
+            onClick={refreshData}
+            className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+          >
+            {t('variablesSystem.retry')}
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className={variablesSystemStyles.container}>
-      <div className={variablesSystemStyles.header.title}>Variables & System</div>
-      <p className={variablesSystemStyles.header.subtitle}>
-        Manage and analyze campaign variables, semafori, and their usage across scripts
-      </p>
-
-      {/* Statistics */}
-      <div className={variablesSystemStyles.stats.container}>
-        <div className={variablesSystemStyles.stats.card}>
-          <div className={variablesSystemStyles.stats.title}>Total Variables</div>
-          <div className={variablesSystemStyles.stats.value}>{statistics.totalVariables}</div>
-        </div>
-        <div className={variablesSystemStyles.stats.card}>
-          <div className={variablesSystemStyles.stats.title}>Semafori</div>
-          <div className={variablesSystemStyles.stats.value}>{statistics.semaforiCount}</div>
-          <div className={variablesSystemStyles.stats.subtitle}>Boolean flags</div>
-        </div>
-        <div className={variablesSystemStyles.stats.card}>
-          <div className={variablesSystemStyles.stats.title}>Variables</div>
-          <div className={variablesSystemStyles.stats.value}>{statistics.realVariablesCount}</div>
-          <div className={variablesSystemStyles.stats.subtitle}>Numeric values</div>
-        </div>
-        <div className={variablesSystemStyles.stats.card}>
-          <div className={variablesSystemStyles.stats.title}>Most Used</div>
-          <div className={variablesSystemStyles.stats.value}>{statistics.mostUsedVariable.usage.length}</div>
-          <div className={variablesSystemStyles.stats.subtitle}>{statistics.mostUsedVariable.name}</div>
-        </div>
+    <div className="h-full flex flex-col p-6">
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-white mb-2">{t('variablesSystem.title')}</h2>
+        <p className="text-gray-400">
+          {t('variablesSystem.description')}
+        </p>
       </div>
 
-      {/* Controls */}
-      <div className={variablesSystemStyles.controls.container}>
-        <div className="flex items-center space-x-2 flex-1">
-          <Search className="w-4 h-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search variables..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className={variablesSystemStyles.controls.searchInput}
-          />
-        </div>
-        
-        <div className="flex items-center space-x-2">
-          <Filter className="w-4 h-4 text-gray-400" />
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value as any)}
-            className={variablesSystemStyles.controls.filterSelect}
-          >
-            <option value="all">All Types</option>
-            <option value="semafori">Semafori Only</option>
-            <option value="variables">Variables Only</option>
-          </select>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <SortAsc className="w-4 h-4 text-gray-400" />
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
-            className={variablesSystemStyles.controls.sortSelect}
-          >
-            <option value="name">Sort by Name</option>
-            <option value="usage">Sort by Usage</option>
-            <option value="type">Sort by Type</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Variables List */}
-      <div className={variablesSystemStyles.variablesList.container}>
-        {filteredVariables.map((variable) => {
-          const categorizedVar = categorizedVariables.find(v => v.name === variable.name);
-          const categoryStyle = variablesSystemStyles.categoryBadge[categorizedVar?.category as keyof typeof variablesSystemStyles.categoryBadge] 
-            || variablesSystemStyles.categoryBadge.General;
-
+      {/* Tabs */}
+      <div className="flex space-x-1 mb-6 border-b border-gray-700">
+        {tabs.map(tab => {
+          const Icon = tab.icon;
+          const count = tabCounts[tab.id];
+          const isActive = activeTab === tab.id;
+          
           return (
-            <div key={variable.name} className={variablesSystemStyles.variablesList.item}>
-              <div className={variablesSystemStyles.variablesList.header}>
-                <div className="flex items-center space-x-3">
-                  <h4 className={variablesSystemStyles.variablesList.name}>{variable.name}</h4>
-                  <span className={`${variablesSystemStyles.variablesList.type.base} ${
-                    variable.type === 'semaforo' 
-                      ? variablesSystemStyles.variablesList.type.semaforo
-                      : variablesSystemStyles.variablesList.type.variable
-                  }`}>
-                    {variable.type === 'semaforo' ? (
-                      <><ToggleLeft className="w-3 h-3 inline mr-1" />Semaforo</>
-                    ) : (
-                      <><Hash className="w-3 h-3 inline mr-1" />Variable</>
-                    )}
-                  </span>
-                  {categorizedVar && (
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${categoryStyle}`}>
-                      {categorizedVar.category}
-                    </span>
-                  )}
-                </div>
-                <span className="text-gray-400 text-sm">
-                  Used in {variable.usage.length} script{variable.usage.length !== 1 ? 's' : ''}
-                </span>
-              </div>
-
-              {categorizedVar?.description && (
-                <p className={variablesSystemStyles.variablesList.description}>
-                  {categorizedVar.description}
-                </p>
-              )}
-
-              {variable.usage.length > 0 && (
-                <div className={variablesSystemStyles.variablesList.usage.container}>
-                  <div className={variablesSystemStyles.variablesList.usage.title}>Used in scripts:</div>
-                  <div className={variablesSystemStyles.variablesList.usage.list}>
-                    {variable.usage.map((scriptName) => (
-                      <span key={scriptName} className={variablesSystemStyles.variablesList.usage.item}>
-                        {scriptName}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`
+                flex items-center gap-2 px-4 py-3 transition-all
+                ${isActive 
+                  ? 'border-b-2 border-blue-500 text-white bg-gray-800/50' 
+                  : 'text-gray-400 hover:text-gray-300 hover:bg-gray-800/30'
+                }
+              `}
+            >
+              <Icon className={`w-5 h-5 ${isActive ? tab.color : ''}`} />
+              <span>{tab.label}</span>
+              <span className={`
+                text-xs px-2 py-1 rounded-full
+                ${isActive ? 'bg-gray-700 text-white' : 'bg-gray-800 text-gray-400'}
+              `}>
+                {count}
+              </span>
+            </button>
           );
         })}
       </div>
 
-      {filteredVariables.length === 0 && searchTerm && (
-        <div className={variablesSystemStyles.emptyState.container}>
-          <Search className={`w-12 h-12 ${variablesSystemStyles.emptyState.icon}`} />
-          <h3 className={variablesSystemStyles.emptyState.title}>No Results</h3>
-          <p className={variablesSystemStyles.emptyState.subtitle}>
-            No variables found matching "{searchTerm}"
-          </p>
+      {/* Controls */}
+      <div className="flex gap-4 mb-6">
+        <div className="flex items-center gap-2 flex-1">
+          <Search className="w-5 h-5 text-gray-400" />
+          <input
+            type="text"
+            placeholder={`${t('variablesSystem.searchPlaceholder')} ${tabs.find(t => t.id === activeTab)?.label.toLowerCase()}...`}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+          />
         </div>
-      )}
+
+        <div className="flex items-center gap-2">
+          <SortAsc className="w-5 h-5 text-gray-400" />
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500"
+          >
+            <option value="name">{t('variablesSystem.sortBy')} {t('variablesSystem.name')}</option>
+            <option value="usage">{t('variablesSystem.sortBy')} {t('variablesSystem.usage')}</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 overflow-hidden">
+        <ListView
+          type={activeTab}
+          items={currentItems}
+          selectedItem={selectedItem}
+          onSelectItem={setSelectedItem}
+        />
+      </div>
     </div>
   );
 };

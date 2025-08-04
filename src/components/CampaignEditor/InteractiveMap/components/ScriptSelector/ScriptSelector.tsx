@@ -1,17 +1,24 @@
 import React from 'react';
-import { X, Search } from 'lucide-react';
+import { X, Search, FileCode, Rocket, Star } from 'lucide-react';
 import { ScriptSelectorProps } from '@/types/CampaignEditor/InteractiveMap/types/ScriptSelector/ScriptSelector.types';
 import { useScriptSelector } from '@/hooks/CampaignEditor/InteractiveMap/hooks/ScriptSelector/useScriptSelector';
 import { scriptSelectorStyles } from '@/styles/CampaignEditor/InteractiveMap/styles/ScriptSelector/ScriptSelector.styles';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { getLocalizedString } from '@/utils/localization';
+import { useTranslation } from '@/locales/translations';
 
 export const ScriptSelector: React.FC<ScriptSelectorProps> = ({
   isOpen,
   scripts,
+  missions = [],
   title,
   startScripts = [],
   onScriptSelect,
+  onMissionSelect,
   onClose
 }) => {
+  const { currentLanguage } = useLanguage();
+  const { t } = useTranslation();
   const {
     searchTerm,
     filteredScripts,
@@ -19,7 +26,6 @@ export const ScriptSelector: React.FC<ScriptSelectorProps> = ({
     getScriptPreview,
     isStartScript
   } = useScriptSelector(scripts, startScripts);
-
 
   if (!isOpen) return null;
 
@@ -29,24 +35,43 @@ export const ScriptSelector: React.FC<ScriptSelectorProps> = ({
     }
   };
 
+  // Filtra anche le missioni
+  const filteredMissions = missions.filter(mission => {
+    const searchLower = searchTerm.toLowerCase();
+    const missionName = getLocalizedString(mission.localizedCaptions, currentLanguage, mission.id || '');
+    const missionDesc = getLocalizedString(mission.localizedDescriptions, currentLanguage, '');
+    
+    return missionName.toLowerCase().includes(searchLower) ||
+           missionDesc.toLowerCase().includes(searchLower) ||
+           (mission.id && mission.id.toLowerCase().includes(searchLower));
+  });
+
+  // Separa scripts star e altri
+  const starScripts = filteredScripts.filter(script => isStartScript(script));
+  const otherScripts = filteredScripts.filter(script => !isStartScript(script));
+
+  // Separa missioni unique e normal
+  const uniqueMissions = filteredMissions.filter(m => m.missiontype === 'UNIQUE');
+  const normalMissions = filteredMissions.filter(m => m.missiontype !== 'UNIQUE');
+
   return (
     <div className={scriptSelectorStyles.overlay} onClick={handleOverlayClick}>
-      <div className={scriptSelectorStyles.modal}>
-        <div className={scriptSelectorStyles.header}>
-          <h3 className={scriptSelectorStyles.title}>{title}</h3>
-          <button className={scriptSelectorStyles.closeButton} onClick={onClose}>
+      <div className={scriptSelectorStyles.modalEnhanced}>
+        <div className={scriptSelectorStyles.headerEnhanced}>
+          <h3 className={scriptSelectorStyles.titleEnhanced}>{title}</h3>
+          <button className={scriptSelectorStyles.closeButtonEnhanced} onClick={onClose}>
             <X size={20} />
           </button>
         </div>
 
-        <div className={scriptSelectorStyles.searchContainer}>
+        <div className={scriptSelectorStyles.searchContainerEnhanced}>
           <div className="relative">
             <input
               type="text"
-              placeholder="Search scripts..."
+              placeholder={t('scriptSelector.searchScripts')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={scriptSelectorStyles.searchInput}
+              className={scriptSelectorStyles.searchInputEnhanced}
             />
             <Search 
               size={16} 
@@ -55,67 +80,160 @@ export const ScriptSelector: React.FC<ScriptSelectorProps> = ({
           </div>
         </div>
 
-        <div className={scriptSelectorStyles.scriptList}>
-          {filteredScripts.length === 0 ? (
-            <div className={scriptSelectorStyles.emptyState}>
-              {searchTerm ? 'No scripts found matching your search.' : 'No scripts available.'}
+        <div className={scriptSelectorStyles.contentWrapper}>
+          {/* Colonna Scripts (Sinistra) */}
+          <div className={scriptSelectorStyles.column}>
+            <div className={scriptSelectorStyles.columnHeader}>
+              <FileCode className="w-4 h-4" />
+              <span>Scripts</span>
+              <span className={scriptSelectorStyles.badge}>{filteredScripts.length}</span>
             </div>
-          ) : (
-            (() => {
-              const startScripts = filteredScripts.filter(script => isStartScript(script));
-              const regularScripts = filteredScripts.filter(script => !isStartScript(script));
-              
-              return (
+            
+            <div className={scriptSelectorStyles.listContainer}>
+              {filteredScripts.length === 0 ? (
+                <div className={scriptSelectorStyles.emptyState}>
+                  {searchTerm ? t('scriptSelector.noScriptsFound') : t('scriptSelector.noScriptsAvailable')}
+                </div>
+              ) : (
                 <>
-                  {/* Start Scripts Section */}
-                  {startScripts.length > 0 && (
+                  {/* Star Scripts */}
+                  {starScripts.length > 0 && (
                     <>
-                      <div className={scriptSelectorStyles.separatorLabel}>
-                        ⭐ Mission Start Scripts
+                      <div className={scriptSelectorStyles.sectionLabel}>
+                        <Star className="w-3 h-3" />
+                        <span>{t('scriptSelector.starScripts')}</span>
                       </div>
-                      {startScripts.map((script, index) => (
+                      {starScripts.map((script, index) => (
                         <div
-                          key={`start-${script.fileName}-${script.name}-${index}`}
+                          key={`star-${script.fileName}-${script.name}-${index}`}
                           onClick={() => onScriptSelect(script)}
-                          className={scriptSelectorStyles.startScriptItem}
+                          className={scriptSelectorStyles.scriptItemStar}
                         >
-                          <div className="flex items-center gap-2">
-                            <span className="text-yellow-400 text-sm">⭐</span>
-                            <span className={scriptSelectorStyles.scriptName}>{script.name}</span>
+                          <div className="flex-1">
+                            <div className={scriptSelectorStyles.itemName}>{script.name}</div>
+                            <div className={scriptSelectorStyles.itemFile}>{script.fileName}</div>
                           </div>
-                          <span className={scriptSelectorStyles.scriptFile}>({script.fileName})</span>
+                          <Star className="w-4 h-4 text-yellow-400" />
                         </div>
                       ))}
-                      
-                      {/* Separator */}
-                      {regularScripts.length > 0 && (
-                        <>
-                          <div className={scriptSelectorStyles.separator}></div>
-                          <div className={scriptSelectorStyles.separatorLabel}>
-                            Other Scripts
-                          </div>
-                        </>
-                      )}
                     </>
                   )}
                   
-                  {/* Regular Scripts */}
-                  {regularScripts.map((script, index) => (
-                    <div
-                      key={`regular-${script.fileName}-${script.name}-${index}`}
-                      onClick={() => onScriptSelect(script)}
-                      className={scriptSelectorStyles.scriptItem}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className={scriptSelectorStyles.scriptName}>{script.name}</span>
+                  {/* Altri Scripts */}
+                  {otherScripts.length > 0 && (
+                    <>
+                      {starScripts.length > 0 && <div className={scriptSelectorStyles.divider} />}
+                      <div className={scriptSelectorStyles.sectionLabel}>
+                        <FileCode className="w-3 h-3" />
+                        <span>{t('scriptSelector.otherScripts')}</span>
                       </div>
-                      <span className={scriptSelectorStyles.scriptFile}>({script.fileName})</span>
-                    </div>
-                  ))}
+                      {otherScripts.map((script, index) => (
+                        <div
+                          key={`regular-${script.fileName}-${script.name}-${index}`}
+                          onClick={() => onScriptSelect(script)}
+                          className={scriptSelectorStyles.scriptItem}
+                        >
+                          <div className="flex-1">
+                            <div className={scriptSelectorStyles.itemName}>{script.name}</div>
+                            <div className={scriptSelectorStyles.itemFile}>{script.fileName}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </>
+                  )}
                 </>
-              );
-            })()
-          )}
+              )}
+            </div>
+          </div>
+
+          {/* Divisore centrale */}
+          <div className={scriptSelectorStyles.centerDivider} />
+
+          {/* Colonna Missions (Destra) */}
+          <div className={scriptSelectorStyles.column}>
+            <div className={scriptSelectorStyles.columnHeaderMission}>
+              <Rocket className="w-4 h-4" />
+              <span>Missioni</span>
+              <span className={scriptSelectorStyles.badge}>{filteredMissions.length}</span>
+            </div>
+            
+            <div className={scriptSelectorStyles.listContainer}>
+              {filteredMissions.length === 0 ? (
+                <div className={scriptSelectorStyles.emptyState}>
+                  {searchTerm ? t('scriptSelector.noMissionsFound') : t('scriptSelector.noMissionsAvailable')}
+                </div>
+              ) : (
+                <>
+                  {/* Missioni Unique */}
+                  {uniqueMissions.length > 0 && (
+                    <>
+                      <div className={scriptSelectorStyles.sectionLabel}>
+                        <Star className="w-3 h-3" />
+                        <span>{t('scriptSelector.uniqueMissions')}</span>
+                      </div>
+                      {uniqueMissions.map((mission, index) => (
+                        <div
+                          key={`unique-${mission.id}-${index}`}
+                          onClick={() => onMissionSelect && onMissionSelect(mission)}
+                          className={scriptSelectorStyles.missionItemUnique}
+                        >
+                          <div className="flex-1">
+                            <div className={scriptSelectorStyles.itemName}>
+                              {getLocalizedString(mission.localizedCaptions, currentLanguage, mission.id || '')}
+                            </div>
+                            <div className={scriptSelectorStyles.itemDetails}>
+                              <span className={scriptSelectorStyles.licenseTag(mission.license)}>
+                                {mission.license || 'STI'}
+                              </span>
+                              {mission.button && (
+                                <span className={scriptSelectorStyles.buttonTag}>
+                                  {mission.button.id}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </>
+                  )}
+                  
+                  {/* Missioni Normal */}
+                  {normalMissions.length > 0 && (
+                    <>
+                      {uniqueMissions.length > 0 && <div className={scriptSelectorStyles.divider} />}
+                      <div className={scriptSelectorStyles.sectionLabel}>
+                        <Rocket className="w-3 h-3" />
+                        <span>{t('scriptSelector.normalMissions')}</span>
+                      </div>
+                      {normalMissions.map((mission, index) => (
+                        <div
+                          key={`normal-${mission.id}-${index}`}
+                          onClick={() => onMissionSelect && onMissionSelect(mission)}
+                          className={scriptSelectorStyles.missionItem}
+                        >
+                          <div className="flex-1">
+                            <div className={scriptSelectorStyles.itemName}>
+                              {getLocalizedString(mission.localizedCaptions, currentLanguage, mission.id || '')}
+                            </div>
+                            <div className={scriptSelectorStyles.itemDetails}>
+                              <span className={scriptSelectorStyles.licenseTag(mission.license)}>
+                                {mission.license || 'STI'}
+                              </span>
+                              {mission.button && (
+                                <span className={scriptSelectorStyles.buttonTag}>
+                                  {mission.button.id}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
