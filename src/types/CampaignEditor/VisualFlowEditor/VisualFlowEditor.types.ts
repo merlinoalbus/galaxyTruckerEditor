@@ -1,6 +1,7 @@
-import { FlowBlock } from './types/FlowBlock/FlowBlock.types';
-import { FlowValidation } from './types/FlowValidation/FlowValidation.types';
-import { FlowConnection } from './types/FlowConnection/FlowConnection.types';
+// Types temporaneamente commentati per compatibilità
+// import { FlowBlock } from './types/FlowBlock/FlowBlock.types';
+// import { FlowValidation } from './types/FlowValidation/FlowValidation.types';
+// import { FlowConnection } from './types/FlowConnection/FlowConnection.types';
 
 export interface VisualFlowEditorProps {
   selectedScript: any;
@@ -9,9 +10,9 @@ export interface VisualFlowEditorProps {
 }
 
 export interface VisualFlowEditorState {
-  blocks: FlowBlock[];
-  connections: FlowConnection[];
-  validation: FlowValidation;
+  blocks: any[]; // FlowBlock[]
+  connections: any[]; // FlowConnection[]
+  validation: any; // FlowValidation
   isLoading: boolean;
   isDirty: boolean;
   dragState: DragState;
@@ -20,7 +21,7 @@ export interface VisualFlowEditorState {
 
 export interface DragState {
   isDragging: boolean;
-  draggedBlock: FlowBlock | null;
+  draggedBlock: any | null; // FlowBlock | null
   dragOffset: { x: number; y: number };
   targetAnchor: AnchorPoint | null;
 }

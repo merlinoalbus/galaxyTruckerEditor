@@ -1,7 +1,11 @@
 import { useMemo } from 'react';
 import { MapConnection } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
-import { Position } from '@/types/CampaignEditor/types/VisualFlowEditor/VisualFlowEditor.types';
 import { MISSION_CONFIG } from '@/config/constants';
+
+interface Position {
+  x: number;
+  y: number;
+}
 
 export const useMapConnection = (
   connection: MapConnection,

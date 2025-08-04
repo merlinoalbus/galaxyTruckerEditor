@@ -5,7 +5,6 @@ import { Save } from 'lucide-react';
 import { useCampaignEditor } from '@/hooks/CampaignEditor';
 
 import { InteractiveMap } from './InteractiveMap/InteractiveMap';
-import { VisualFlowEditor } from './components/VisualFlowEditor/VisualFlowEditor';
 import { VariablesSystem } from './VariablesSystem/VariablesSystem';
 import { Overview } from './Overview/Overview';
 
@@ -25,7 +24,6 @@ export const CampaignEditor: React.FC = () => {
 
   const tabs = [
     { id: 'map', label: 'Interactive Map' },
-    { id: 'flow', label: 'Visual Flow Editor' },
     { id: 'variables', label: 'Variables & System' },
     { id: 'overview', label: 'Overview' }
   ];
@@ -108,13 +106,6 @@ export const CampaignEditor: React.FC = () => {
           />
         )}
 
-        {activeTab === 'flow' && (
-          <VisualFlowEditor
-            selectedScript={selectedScript}
-            selectedNode={selectedNode}
-            onScriptChange={handleScriptChange}
-          />
-        )}
 
         {activeTab === 'variables' && (
           <VariablesSystem analysis={analysis} />

@@ -6,4 +6,3 @@ export * from './InteractiveMap/types/MapConnection/MapConnection.types';
 export * from './InteractiveMap/types/ScriptSelector/ScriptSelector.types';
 export * from './types/Overview/Overview.types';
 export * from './types/VariablesSystem/VariablesSystem.types';
-export * from './types/VisualFlowEditor/VisualFlowEditor.types';
