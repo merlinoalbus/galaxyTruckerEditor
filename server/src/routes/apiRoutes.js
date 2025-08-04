@@ -18,6 +18,18 @@ const yaml = require('js-yaml');
 const router = express.Router();
 const logger = getLogger();
 
+// Health check per API
+router.get('/health', (req, res) => {
+  logger.info('API call: GET /api/health');
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    version: '2.0.0-modular',
+    gameRoot: GAME_ROOT,
+    backupDir: path.join(process.cwd(), 'backups')
+  });
+});
+
 // API 1: Lista immagini JPG/PNG con ricerca ricorsiva e deduplicazione intelligente
 router.get('/images', async (req, res) => {
   try {

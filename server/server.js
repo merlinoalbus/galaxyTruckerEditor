@@ -1,4 +1,5 @@
 // server_new.js - Server modulare per Galaxy Trucker Editor Backend
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');

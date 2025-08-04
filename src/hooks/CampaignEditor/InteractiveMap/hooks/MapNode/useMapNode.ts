@@ -1,6 +1,10 @@
 import { useMemo } from 'react';
 import { MapNode } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
-import { Position } from '@/types/CampaignEditor/types/VisualFlowEditor/VisualFlowEditor.types';
+
+interface Position {
+  x: number;
+  y: number;
+}
 
 export const useMapNode = (
   node: MapNode,
