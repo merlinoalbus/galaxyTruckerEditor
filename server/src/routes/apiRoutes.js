@@ -1,7 +1,6 @@
 // apiRoutes.js - Tutte le routes API del server
 const express = require('express');
 const { parseScriptContent } = require('../parsers/scriptParser');
-const { parseScriptToBlocks, convertBlocksToScript } = require('../parsers/blockParser');
 const { getLogger } = require('../utils/logger');
 const { 
   validateImagePaths, 
@@ -9,15 +8,13 @@ const {
   scanDirectoryForImages,
   isValidFilePath 
 } = require('../utils/fileUtils');
+const { GAME_ROOT } = require('../config/config');
 const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
 
 const router = express.Router();
 const logger = getLogger();
-
-// Define GAME_ROOT - temporary until moved to config
-const GAME_ROOT = process.cwd();
 
 // API 1: Lista immagini JPG/PNG con ricerca ricorsiva e deduplicazione intelligente
 router.get('/images', async (req, res) => {

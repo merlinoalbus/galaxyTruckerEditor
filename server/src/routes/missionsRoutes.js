@@ -1,19 +1,16 @@
 // missionsRoutes.js - Routes per gestione missions
 const express = require('express');
 const { parseScriptContent } = require('../parsers/scriptParser');
-const { parseScriptToBlocks, convertBlocksToScript } = require('../parsers/blockParser');
 const { parseScriptToBlocks: parseScriptToBlocksComplete, convertBlocksToScript: convertBlocksToScriptComplete } = require('../parsers/blockParserComplete');
 const { getLogger } = require('../utils/logger');
 const { loadMultilingualContent } = require('../utils/fileUtils');
+const { GAME_ROOT, SUPPORTED_LANGUAGES } = require('../config/config');
 const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
 
 const router = express.Router();
 const logger = getLogger();
-
-// Define GAME_ROOT - temporary until moved to config
-const GAME_ROOT = path.join(process.cwd(), '..', '..');
 
 // API 8: Lista archi mappa da missions.yaml secondo specifica
 router.get('/routes', async (req, res) => {
@@ -23,7 +20,7 @@ router.get('/routes', async (req, res) => {
     const routes = [];
     
     // Carica missions.yaml multilingua
-    const languages = ['EN', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU'];
+    const languages = SUPPORTED_LANGUAGES;
     const routesMap = {};
     
     for (const lang of languages) {
@@ -257,7 +254,7 @@ router.get('/', async (req, res) => {
     logger.info('API call: GET /api/missions - Lista missions con stellato e collegamenti completi');
     
     const missions = [];
-    const languages = ['EN', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU'];
+    const languages = SUPPORTED_LANGUAGES;
     const allMissionsData = new Map();
     
     // 1. Scansiona tutti i file mission multilingua
@@ -654,7 +651,7 @@ function buildMissionConnectionGraph(allMissionsData) {
 async function getStellatedMissionsAndButtons() {
   const stellatedMissions = new Set();
   const routeButtons = [];
-  const languages = ['EN', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU'];
+  const languages = SUPPORTED_LANGUAGES;
   
   try {
     for (const lang of languages) {
