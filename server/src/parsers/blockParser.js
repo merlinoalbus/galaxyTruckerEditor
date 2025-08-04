@@ -1,563 +1,1207 @@
-// blockParser.js - Parser per conversione script-to-blocks e blocks-to-script
-const { parseCommand } = require('./scriptParser');
+// blockParser.js - Parser completo bidirezionale per script e mission
+const { getLogger } = require('../utils/logger');
+const logger = getLogger();
 
-// Parser strutturale per conversione script-to-blocks con supporto annidamenti misti
-function parseScriptToBlocks(commands) {
-  const blocks = [];
-  const stack = []; // Stack per tracking annidamenti misti
-  let i = 0;
+// CATALOGO COMPLETO BLOCCHI CONTAINER
+const BLOCK_CATALOG = {
+  'SCRIPT': {
+    type: 'CONTAINER',
+    openPattern: /^SCRIPT\s+(.+)$/,
+    closePattern: /^END_OF_SCRIPT$/,
+    canContain: ['ALL'],
+    structure: { name: 'string', children: 'array' }
+  },
+  
+  'MISSION': {
+    type: 'CONTAINER', 
+    openPattern: /^MISSION\s+(.+)$/,
+    closePattern: /^END_OF_MISSION$/,
+    hasFinishSection: /^FINISH_MISSION$/,
+    canContain: ['ALL'],
+    structure: { name: 'string', children: 'array', finishSection: 'array' }
+  },
+  
+  'IF': {
+    type: 'CONDITIONAL_BLOCK',
+    variants: [
+      { pattern: /^IF\s+(.+)$/, type: 'IF_SEMAPHORE' },
+      { pattern: /^IFNOT\s+(.+)$/, type: 'IFNOT_SEMAPHORE' },
+      { pattern: /^IF_DEBUG$/, type: 'IF_SYSTEM', systemVar: 'debug' },
+      { pattern: /^IF_FROM_CAMPAIGN$/, type: 'IF_SYSTEM', systemVar: 'from_campaign' },
+      { pattern: /^IF_HAS_CREDITS\s+(\d+)$/, type: 'IF_CREDITS' },
+      { pattern: /^IF_IS\s+(\w+)\s+(\d+)$/, type: 'IF_VARIABLE_EXACT' },
+      { pattern: /^IF_MIN\s+(\w+)\s+(\d+)$/, type: 'IF_VARIABLE_MIN' },
+      { pattern: /^IF_MAX\s+(\w+)\s+(\d+)$/, type: 'IF_VARIABLE_MAX' },
+      { pattern: /^IF_MISSION_WON$/, type: 'IF_SYSTEM', systemVar: 'mission_won' },
+      { pattern: /^IF_ORDER\s+(.+)$/, type: 'IF_ORDER' },
+      { pattern: /^IF_PROB\s+(\d+)$/, type: 'IF_PROBABILITY' },
+      { pattern: /^IF_TUTORIAL_SEEN$/, type: 'IF_SYSTEM', systemVar: 'tutorial_seen' },
+      { pattern: /^IFMISSIONRESULTIS\s+(\d+)$/, type: 'IF_MISSION_RESULT_EXACT' },
+      { pattern: /^IFMISSIONRESULTMIN\s+(\d+)$/, type: 'IF_MISSION_RESULT_MIN' }
+    ],
+    closePattern: /^END_OF_IF$/,
+    hasElse: /^ELSE$/,
+    canContain: ['ALL'],
+    structure: { ifType: 'string', condition: 'mixed', thenBranch: 'array', elseBranch: 'array' }
+  },
+  
+  'MENU': {
+    type: 'MENU_BLOCK',
+    openPattern: /^MENU$/,
+    closePattern: /^END_OF_MENU$/,
+    canContain: ['OPT_BLOCKS_ONLY'],
+    requiresPrecedingASK: true,
+    structure: { options: 'array' }
+  },
+  
+  'OPT': {
+    type: 'OPTION_BLOCK',
+    variants: [
+      { pattern: /^OPT\s+"(.+)"$/, type: 'OPT_SIMPLE' },
+      { pattern: /^OPT_IF\s+(\w+)\s+"(.+)"$/, type: 'OPT_CONDITIONAL' },
+      { pattern: /^OPT_IFNOT\s+(\w+)\s+"(.+)"$/, type: 'OPT_CONDITIONAL_NOT' }
+    ],
+    closePattern: /^END_OF_OPT$/,
+    parentMustBe: 'MENU',
+    canContain: ['ALL'],
+    structure: { optType: 'string', condition: 'string', text: 'multilingual', children: 'array' }
+  },
+  
+  'BUILD': {
+    type: 'MISSION_PHASE_BLOCK',
+    phases: [
+      { pattern: /^INIT_BUILD$/, phase: 'init' },
+      { pattern: /^START_BUILDING$/, phase: 'start' },
+      { pattern: /^END_BUILDING$/, phase: 'end' }
+    ],
+    parentMustBe: 'MISSION',
+    canContain: ['ALL'],
+    structure: { phase: 'string', children: 'array' }
+  },
+  
+  'FLIGHT': {
+    type: 'MISSION_PHASE_BLOCK', 
+    phases: [
+      { pattern: /^INIT_FLIGHT$/, phase: 'init' },
+      { pattern: /^START_FLIGHT$/, phase: 'start' },
+      { pattern: /^EVALUATE_FLIGHT$/, phase: 'evaluate' },
+      { pattern: /^END_FLIGHT$/, phase: 'end' }
+    ],
+    parentMustBe: 'MISSION',
+    canContain: ['ALL'],
+    structure: { phase: 'string', children: 'array' }
+  }
+};
 
-  while (i < commands.length) {
-    const command = commands[i];
-    
-    // Container blocks (apertura)
-    if (command.type === 'conditional_start') {
-      const block = createConditionalBlock(command, commands, i);
-      const result = parseConditionalWithElse(commands, i, 'conditional_end');
-      block.children = result.trueBranch;
-      block.hasElse = result.hasElse;
-      block.elseBranch = result.elseBranch || [];
-      blocks.push(block);
-      i = result.nextIndex;
-      
-    } else if (command.type === 'menu_start') {
-      const block = createMenuBlock(command, commands, i);
-      const result = parseNestedBlock(commands, i, 'menu_end');
-      block.options = result.children;
-      blocks.push(block);
-      i = result.nextIndex;
-      
-    } else if (command.type === 'subscript_start') {
-      const block = createSubscriptBlock(command, commands, i);
-      const result = parseNestedBlock(commands, i, 'subscript_end');
-      block.children = result.children;
-      blocks.push(block);
-      i = result.nextIndex;
-      
-    } else if (command.type === 'loop_start') {
-      const block = createLoopBlock(command, commands, i);
-      const result = parseNestedBlock(commands, i, 'loop_end');
-      block.children = result.children;
-      blocks.push(block);
-      i = result.nextIndex;
-      
-    } else if (command.type === 'parallel_start') {
-      const block = createParallelBlock(command, commands, i);
-      const result = parseNestedBlock(commands, i, 'parallel_end');
-      block.children = result.children;
-      blocks.push(block);
-      i = result.nextIndex;
-      
-    // Menu option (caso speciale - può contenere blocchi annidati)
-    } else if (command.type === 'menu_option' || command.type === 'menu_option_conditional') {
-      const block = createOptionBlock(command, commands, i);
-      const result = parseOptionContent(commands, i);
-      block.children = result.children;
-      blocks.push(block);
-      i = result.nextIndex;
-      
-    // Atomic commands
-    } else if (!isEndCommand(command.type)) {
-      const block = createAtomicBlock(command);
-      blocks.push(block);
-      i++;
-      
-    } else {
-      // End command - should be handled by parent parser
-      i++;
-    }
+// CATALOGO COMPLETO COMANDI ATOMICI
+const COMMAND_CATALOG = {
+  // DIALOGO (multilingua)
+  'SAY': { params: ['text:multilingual'], pattern: /^Say\s+"(.+)"$/ },
+  'ASK': { params: ['text:multilingual'], pattern: /^Ask\s+"(.+)"$/ },
+  'SAYCHAR': { params: ['character', 'text:multilingual'], pattern: /^SayChar\s+(\w+)\s+"(.+)"$/ },
+  'ASKCHAR': { params: ['character', 'text:multilingual'], pattern: /^AskChar\s+(\w+)\s+"(.+)"$/ },
+  'ANNOUNCE': { params: ['text:multilingual'], pattern: /^Announce\s+"(.+)"$/ },
+  'SETFLIGHTSTATUSBAR': { params: ['text:multilingual'], pattern: /^SetFlightStatusBar\s+"(.+)"$/ },
+  
+  // PERSONAGGI
+  'SHOWCHAR': { params: ['character', 'position:enum'], pattern: /^ShowChar\s+(\w+)\s+(left|center|right)$/ },
+  'HIDECHAR': { params: ['character'], pattern: /^HideChar\s+(\w+)$/ },
+  'CHANGECHAR': { params: ['character', 'image'], pattern: /^ChangeChar\s+(\w+)\s+(.+)$/ },
+  'FOCUSCHAR': { params: ['character'], pattern: /^FocusChar\s+(\w+)$/ },
+  
+  // FINESTRA DIALOGO
+  'SHOWDLGSCENE': { params: [], pattern: /^ShowDlgScene$/ },
+  'HIDEDLGSCENE': { params: [], pattern: /^HideDlgScene$/ },
+  
+  // VARIABILI/SEMAFORI
+  'SET': { params: ['semaphore'], pattern: /^SET\s+(\w+)$/ },
+  'RESET': { params: ['semaphore'], pattern: /^RESET\s+(\w+)$/ },
+  'SET_TO': { params: ['variable', 'value:number'], pattern: /^SET_TO\s+(\w+)\s+(\d+)$/ },
+  'ADD': { params: ['variable', 'value:number'], pattern: /^ADD\s+(\w+)\s+(\d+)$/ },
+  
+  // CONTROLLO FLUSSO
+  'LABEL': { params: ['name'], pattern: /^LABEL\s+(\w+)$/i },
+  'GO': { params: ['label'], pattern: /^GO\s+(\w+)$/i },
+  'SUB_SCRIPT': { params: ['script'], pattern: /^SUB_SCRIPT\s+(\w+)$/i },
+  'RETURN': { params: [], pattern: /^RETURN$/i },
+  'EXIT_MENU': { params: [], pattern: /^EXIT_MENU$/i },
+  'DELAY': { params: ['milliseconds:number'], pattern: /^DELAY\s+(\d+)$/i },
+  
+  // MAPPA/NAVIGAZIONE
+  'SHOWPATH': { params: ['route'], pattern: /^SHOWPATH\s+(.+)$/i },
+  'HIDEPATH': { params: ['route'], pattern: /^HIDEPATH\s+(.+)$/i },
+  'HIDEALLPATHS': { params: ['node1', 'node2'], pattern: /^HIDEALLPATHS\s+(\w+)\s+(\w+)$/i },
+  'SHOWNODE': { params: ['node'], pattern: /^SHOWNODE\s+(.+)$/i },
+  'HIDENODE': { params: ['node'], pattern: /^HIDENODE\s+(.+)$/i },
+  'SHOWBUTTON': { params: ['button'], pattern: /^SHOWBUTTON\s+(\w+)$/i },
+  'HIDEBUTTON': { params: ['button'], pattern: /^HIDEBUTTON\s+(\w+)$/i },
+  'CENTERMAPBYNODE': { params: ['node'], pattern: /^CENTERMAPBYNODE\s+(\w+)$/i },
+  'CENTERMAPBYPATH': { params: ['route'], pattern: /^CENTERMAPBYPATH\s+(.+)$/i },
+  'MOVEPLAYERTONODE': { params: ['node'], pattern: /^MOVEPLAYERTONODE\s+(\w+)$/i },
+  
+  // MISSION MANAGEMENT  
+  'ADDOPPONENT': { params: ['character'], pattern: /^ADDOPPONENT\s+(\w+)$/ },
+  'ACT_MISSION': { params: ['mission'], pattern: /^ACT_MISSION\s+(\w+)$/ },
+  'ADDOPPONENTSCREDITS': { params: ['index:number', 'credits:number'], pattern: /^ADDOPPONENTSCREDITS\s+(\d+)\s+(\d+)$/ },
+  'MODIFYOPPONENTSBUILDSPEED': { params: ['percentage:number'], pattern: /^MODIFYOPPONENTSBUILDSPEED\s+(\d+)$/ },
+  'SETSHIPTYPE': { params: ['type'], pattern: /^SETSHIPTYPE\s+(\w+)$/ },
+  'SETDECKPREPARATIONSCRIPT': { params: ['script'], pattern: /^SETDECKPREPARATIONSCRIPT\s+(\w+)$/ },
+  'SETFLIGHTDECKPREPARATIONSCRIPT': { params: ['script'], pattern: /^SETFLIGHTDECKPREPARATIONSCRIPT\s+(\w+)$/ },
+  'SETTURNBASED': { params: [], pattern: /^SETTURNBASED$/ },
+  
+  // CREDITI
+  'ADDCREDITS': { params: ['amount:number'], pattern: /^ADDCREDITS\s+(\d+)$/ },
+  'SETCREDITS': { params: ['amount:number'], pattern: /^SETCREDITS\s+(\d+)$/ },
+  'ADDMISSIONCREDITS': { params: ['amount:number'], pattern: /^ADDMISSIONCREDITS\s+(\d+)$/ },
+  'ADDMISSIONCREDITSBYRESULT': { params: [], pattern: /^ADDMISSIONCREDITSBYRESULT$/ },
+  'SUBOPPONENTCREDITSBYRESULT': { params: [], pattern: /^SUBOPPONENTCREDITSBYRESULT$/ },
+  
+  // FOCUS E UI
+  'SETFOCUS': { params: ['button'], pattern: /^SETFOCUS\s+(\w+)$/i },
+  'RESETFOCUS': { params: ['button'], pattern: /^RESETFOCUS\s+(\w+)$/i },
+  'SETFOCUSIFCREDITS': { params: ['button', 'credits:number'], pattern: /^SETFOCUSIFCREDITS\s+(\w+)\s+(\d+)$/i },
+  'SETNODEKNOWN': { params: ['node'], pattern: /^SETNODEKNOWN\s+(\w+)$/ },
+  'ADDINFOWINDOW': { params: ['image'], pattern: /^ADDINFOWINDOW\s+(.+)$/ },
+  'SHOWINFOWINDOW': { params: ['image'], pattern: /^SHOWINFOWINDOW\s+(.+)$/ },
+  
+  // ACHIEVEMENTS
+  'SETACHIEVEMENTPROGRESS': { params: ['achievement', 'value:number'], pattern: /^SetAchievementProgress\s+([\w_]+)\s+(\d+)$/i },
+  'SETACHIEVEMENTATTEMPT': { params: ['achievement', 'value:number'], pattern: /^SetAchievementAttempt\s+([\w_]+)\s+(\d+)$/i },
+  'UNLOCKACHIEVEMENT': { params: ['achievement'], pattern: /^UnlockAchievement\s+([\w_]+)$/i },
+  'UNLOCKSHIPPLAN': { params: ['plan'], pattern: /^UNLOCKSHIPPLAN\s+(\w+)$/ },
+  'UNLOCKSHUTTLES': { params: [], pattern: /^UNLOCKSHUTTLES$/ },
+  
+  // HELP SCRIPTS
+  'BUILDINGHELPSCRIPT': { params: ['delay:number', 'script'], pattern: /^BUILDINGHELPSCRIPT\s+(\d+)\s+(\w+)$/ },
+  'FLIGHTHELPSCRIPT': { params: ['script'], pattern: /^FLIGHTHELPSCRIPT\s+(\w+)$/ },
+  'ALIENHELPSCRIPT': { params: ['script'], pattern: /^ALIENHELPSCRIPT\s+(\w+)$/ },
+  
+  // MISSION STATUS
+  'SETMISSIONASFAILED': { params: [], pattern: /^SETMISSIONASFAILED$/ },
+  'SETMISSIONASCOMPLETED': { params: [], pattern: /^SETMISSIONASCOMPLETED$/ },
+  'ALLSHIPSGIVEUP': { params: [], pattern: /^ALLSHIPSGIVEUP$/ },
+  'GIVEUPFLIGHT': { params: [], pattern: /^GIVEUPFLIGHT$/ },
+  
+  // STATO
+  'SAVESTATE': { params: [], pattern: /^SAVESTATE$/ },
+  'LOADSTATE': { params: [], pattern: /^LOADSTATE$/ },
+  'ADDNODE': { params: ['node'], pattern: /^ADDNODE\s+(\w+)$/ },
+  'QUITCAMPAIGN': { params: [], pattern: /^QUITCAMPAIGN$/ },
+  
+  // PARAMETRI COMPLESSI (gestiti come stringa unica)
+  'ADDPARTTOSHIP': { params: ['params:complex'], pattern: /^ADDPARTTOSHIP\s+(.+)$/, example: '1 7 alienEngine 3333 0' },
+  'ADDPARTTOASIDESLOT': { params: ['params:complex'], pattern: /^ADDPARTTOASIDESLOT\s+(.+)$/, example: 'alienGun 2 1 2 0' },
+  'SETADVPILE': { params: ['params:complex'], pattern: /^SETADVPILE\s+(.+)$/, example: '1 3' },
+  'SETSECRETADVPILE': { params: ['params:complex'], pattern: /^SETSECRETADVPILE\s+(.+)$/, example: '2 1' },
+  'SETSPECCONDITION': { params: ['params:complex'], pattern: /^SETSPECCONDITION\s+(.+)$/, example: 'bet' },
+  'ADDSHIPPARTS': { params: ['params:complex'], pattern: /^ADDSHIPPARTS\s+(.+)$/, example: 'parts/allParts.yaml' },
+  'SHOWHELPIMAGE': { params: ['params:complex'], pattern: /^SHOWHELPIMAGE\s+(.+)$/, example: '40 50 70 campaign/tutorial-purple.png' }
+};
+
+/**
+ * Parser ricorsivo principale - TEXT to BLOCKS
+ */
+function parseScriptToBlocks(lines, language = 'EN', recursionDepth = 0) {
+  if (!Array.isArray(lines)) {
+    throw new Error('Lines must be an array');
   }
   
-  return blocks;
-}
-
-function parseConditionalWithElse(commands, startIndex, endType, maxDepth = 50) {
-  const trueBranch = [];
-  const elseBranch = [];
-  let hasElse = false;
-  let i = startIndex + 1; // Skip opening IF command
-  let depth = 1;
-  let inElseBranch = false;
+  const result = { blocks: [], errors: [] };
+  let currentIndex = 0;
   
-  while (i < commands.length && depth > 0) {
-    const command = commands[i];
+  // Stato del parser sequenziale
+  let currentBlock = null; // Blocco attualmente in lavorazione
+  let parserData = []; // Array temporaneo per raccogliere righe del parser delegato
+  let parserCount = 0; // Contatore livelli blocco per parser delegato
+  let blockFamily = null; // Famiglia del blocco in raccolta (IF, MENU, etc.)
+  let isInElseBranch = false; // Indica se stiamo raccogliendo nel ramo else
+  
+  while (currentIndex < lines.length) {
+    const line = lines[currentIndex]?.trim();
     
-    // Check for nested containers of same type
-    if (isOpeningCommand(command.type, endType)) {
-      depth++;
-    } else if (command.type === endType) {
-      depth--;
-      if (depth === 0) break;
-    } else if (command.type === 'else' && depth === 1) {
-      // ELSE allo stesso livello del nostro IF
-      hasElse = true;
-      inElseBranch = true;
-      i++;
+    // Skip righe vuote e commenti
+    if (!line || line.startsWith('//')) {
+      currentIndex++;
       continue;
     }
     
-    // Parse nested content solo al nostro livello
-    if (depth === 1) {
-      const nestedBlocks = parseScriptToBlocks([command]);
-      if (inElseBranch) {
-        elseBranch.push(...nestedBlocks);
+    try {
+      // Controlla se è un blocco
+      const blockMatch = identifyBlock(line);
+      
+      if (blockMatch) {
+        // È UN BLOCCO
+        if (!currentBlock && parserCount === 0) {
+          // NON HO OGGETTO IN LAVORAZIONE - INIZIO A LAVORARLO IO
+          currentBlock = createBlockObject(blockMatch, currentIndex + 1);
+          currentIndex++;
+          continue;
+          
+        } else if (currentBlock && parserCount === 0) {
+          // HO GIà UN BLOCCO IN LAVORAZIONE - CHIAMO PARSER PER QUESTO NUOVO BLOCCO
+          parserData = [line];
+          parserCount = 1;
+          blockFamily = blockMatch.blockName;
+          currentIndex++;
+          continue;
+          
+        } else {
+          // STO GIà RACCOGLIENDO PER UN PARSER - AGGIUNGO ALL'ARRAY TEMPORANEO
+          parserData.push(line);
+          if (blockMatch.blockName === blockFamily) {
+            parserCount++;
+          }
+          currentIndex++;
+          continue;
+        }
+      }
+      
+      // Controlla se è ELSE (elemento strutturale speciale)
+      if (line.match(/^ELSE$/)) {
+        if (parserCount > 0) {
+          // STO RACCOGLIENDO - AGGIUNGO ALL'ARRAY TEMPORANEO
+          parserData.push(line);
+        } else {
+          // ELSE del mio blocco corrente - switch al ramo else
+          if (currentBlock && (currentBlock.type === 'IF' || currentBlock.type === 'IFNOT')) {
+            isInElseBranch = true;
+          }
+        }
+        currentIndex++;
+        continue;
+      }
+      
+      // Controlla se è la chiusura del MIO blocco corrente
+      if (currentBlock && parserCount === 0) {
+        const myCloseMatch = identifyCloseElement(line, currentBlock.type);
+        if (myCloseMatch) {
+          // Il blocco è completo, lo aggiungo al risultato
+          result.blocks.push(currentBlock);
+          currentBlock = null;
+          isInElseBranch = false; // Reset stato ELSE
+          currentIndex++;
+          continue;
+        }
+      }
+      
+      // Controlla se è un elemento di chiusura per parser delegato
+      const closeMatch = identifyCloseElement(line, blockFamily);
+      if (closeMatch && parserCount > 0) {
+        parserData.push(line);
+        parserCount--;
+        
+        if (parserCount === 0) {
+          // RACCOLTA COMPLETATA - CHIAMO IL PARSER
+          const parserResult = parseScriptToBlocks(parserData, language, recursionDepth + 1);
+          if (parserResult.blocks.length > 0) {
+            // Aggiungi al ramo appropriato per blocchi IF/IFNOT
+            if (currentBlock && (currentBlock.type === 'IF' || currentBlock.type === 'IFNOT')) {
+              if (isInElseBranch) {
+                currentBlock.elseBranch.push(...parserResult.blocks);
+              } else {
+                currentBlock.thenBranch.push(...parserResult.blocks);
+              }
+            } else {
+              currentBlock.children.push(...parserResult.blocks);
+            }
+          }
+          if (parserResult.errors.length > 0) {
+            result.errors.push(...parserResult.errors);
+          }
+          
+          // Reset stato raccolta
+          parserData = [];
+          blockFamily = null;
+        }
+        currentIndex++;
+        continue;
+      }
+      
+      // È UN COMANDO NORMALE
+      if (parserCount > 0) {
+        // STO RACCOGLIENDO - AGGIUNGO ALL'ARRAY TEMPORANEO
+        parserData.push(line);
+      } else if (currentBlock) {
+        // HO UN BLOCCO IN LAVORAZIONE - AGGIUNGO COMANDO AL MIO BLOCCO
+        const commandObj = parseSimpleCommand(line, currentIndex + 1, language);
+        if (commandObj) {
+          // Aggiungi al ramo appropriato per blocchi IF/IFNOT
+          if (currentBlock.type === 'IF' || currentBlock.type === 'IFNOT') {
+            if (isInElseBranch) {
+              currentBlock.elseBranch.push(commandObj);
+            } else {
+              currentBlock.thenBranch.push(commandObj);
+            }
+          } else {
+            currentBlock.children.push(commandObj);
+          }
+        }
       } else {
-        trueBranch.push(...nestedBlocks);
+        // NON HO BLOCCHI - COMANDO DIRETTO AL RISULTATO
+        const commandObj = parseSimpleCommand(line, currentIndex + 1, language);
+        if (commandObj) {
+          result.blocks.push(commandObj);
+        }
+      }
+      
+      currentIndex++;
+      
+    } catch (error) {
+      result.errors.push(`Parse error at line ${currentIndex + 1}: ${error.message}`);
+      currentIndex++;
+    }
+  }
+  
+  // Finalizzazione
+  if (currentBlock) {
+    result.blocks.push(currentBlock);
+  }
+  
+  if (parserCount > 0) {
+    result.errors.push(`Unclosed block collection for ${blockFamily}, missing ${parserCount} closing elements`);
+  }
+  
+  return result;
+}
+
+/**
+ * Identifica elemento di chiusura per famiglia blocco
+ */
+function identifyCloseElement(line, blockFamily) {
+  if (!blockFamily) return null;
+  
+  const closePatterns = {
+    'SCRIPT': /^END_OF_SCRIPT$/,
+    'MISSION': /^END_OF_MISSION$/,
+    'IF': /^END_OF_IF$/,
+    'MENU': /^END_OF_MENU$/,
+    'OPT': /^END_OF_OPT$/
+  };
+  
+  const pattern = closePatterns[blockFamily];
+  if (!pattern) return null;
+  
+  return line.match(pattern) ? { blockFamily, pattern } : null;
+}
+
+/**
+ * Crea oggetto blocco iniziale
+ */
+function createBlockObject(blockMatch, lineNumber) {
+  const { blockName, blockDef, match, variant } = blockMatch;
+  
+  const baseBlock = {
+    type: blockName,
+    line: lineNumber,
+    children: []
+  };
+  
+  switch (blockName) {
+    case 'SCRIPT':
+      baseBlock.name = match[1];
+      break;
+    case 'MISSION':
+      baseBlock.name = match[1];
+      break;
+    case 'IF':
+      baseBlock.ifType = variant?.type || 'IF_SEMAPHORE';
+      // Inizializza i rami then e else per TUTTI i tipi di IF
+      baseBlock.thenBranch = [];
+      baseBlock.elseBranch = [];
+      
+      if (variant?.type === 'IF_SEMAPHORE' || variant?.type === 'IFNOT_SEMAPHORE') {
+        baseBlock.condition = match[1];
+        baseBlock.negated = variant.type === 'IFNOT_SEMAPHORE';
+      } else if (variant?.type === 'IF_INVENTORY_GREATER') {
+        baseBlock.itemName = match[1];
+        baseBlock.threshold = parseInt(match[2]);
+      } else if (variant?.type === 'IF_INVENTORY_LESS') {
+        baseBlock.itemName = match[1];
+        baseBlock.threshold = parseInt(match[2]);
+      } else if (variant?.type === 'IF_INVENTORY_EQUALS') {
+        baseBlock.itemName = match[1];
+        baseBlock.value = parseInt(match[2]);
+      } else if (variant?.type === 'IF_SHIP_SIZE_EQUALS') {
+        baseBlock.size = parseInt(match[1]);
+      } else if (variant?.type === 'IF_SHIP_PARTS_GREATER') {
+        baseBlock.partType = match[1];
+        baseBlock.threshold = parseInt(match[2]);
+      } else if (variant?.type === 'IF_SHIP_PARTS_LESS') {
+        baseBlock.partType = match[1];
+        baseBlock.threshold = parseInt(match[2]);
+      } else if (variant?.type === 'IF_SHIP_PARTS_EQUALS') {
+        baseBlock.partType = match[1];
+        baseBlock.value = parseInt(match[2]);
+      } else if (variant?.type === 'IF_FACTION_AFFINITY_GREATER') {
+        baseBlock.faction = match[1];
+        baseBlock.threshold = parseInt(match[2]);
+      } else if (variant?.type === 'IF_FACTION_AFFINITY_LESS') {
+        baseBlock.faction = match[1];
+        baseBlock.threshold = parseInt(match[2]);
+      } else if (variant?.type === 'IF_PLANET_VISITED') {
+        baseBlock.planet = match[1];
+      } else if (variant?.type === 'IF_COMPLETED_MISSIONS_GREATER') {
+        baseBlock.threshold = parseInt(match[1]);
+      } else if (variant?.type === 'IF_COMPLETED_MISSIONS_LESS') {
+        baseBlock.threshold = parseInt(match[1]);
+      } else if (variant?.type === 'IF_AVAILABLE_MISSIONS_GREATER') {
+        baseBlock.threshold = parseInt(match[1]);
+      } else if (variant?.type === 'IF_AVAILABLE_MISSIONS_LESS') {
+        baseBlock.threshold = parseInt(match[1]);
+      } else if (variant?.type === 'IF_MONEY_GREATER') {
+        baseBlock.threshold = parseInt(match[1]);
+      } else if (variant?.type === 'IF_MONEY_LESS') {
+        baseBlock.threshold = parseInt(match[1]);
+      } else if (variant?.type === 'IF_DAY_GREATER') {
+        baseBlock.threshold = parseInt(match[1]);
+      } else if (variant?.type === 'IF_DAY_LESS') {
+        baseBlock.threshold = parseInt(match[1]);
+      } else if (variant?.type === 'IF_CREW_SIZE_GREATER') {
+        baseBlock.threshold = parseInt(match[1]);
+      } else if (variant?.type === 'IF_CREW_SIZE_LESS') {
+        baseBlock.threshold = parseInt(match[1]);
+      } else if (variant?.type === 'IF_CREW_SIZE_EQUALS') {
+        baseBlock.value = parseInt(match[1]);
+      }
+      break;
+    case 'MENU':
+      // Menu non ha parametri iniziali
+      break;
+    case 'OPT':
+      if (variant?.type === 'OPT_SIMPLE') {
+        baseBlock.text = match[1];
+        baseBlock.optType = 'OPT_SIMPLE';
+      } else if (variant?.type === 'OPT_CONDITIONAL') {
+        baseBlock.condition = match[1];
+        baseBlock.text = match[2];
+        baseBlock.optType = 'OPT_CONDITIONAL';
+      } else if (variant?.type === 'OPT_CONDITIONAL_NOT') {
+        baseBlock.condition = match[1];
+        baseBlock.text = match[2];
+        baseBlock.optType = 'OPT_CONDITIONAL_NOT';
+      }
+      break;
+  }
+  
+  return baseBlock;
+}
+
+/**
+ * Parser comando semplice
+ */
+function parseSimpleCommand(line, lineNumber, language) {
+  // Usa il sistema esistente per i comandi
+  const commandMatch = identifyCommand(line);
+  if (commandMatch) {
+    const result = parseCommand(line, commandMatch, language, lineNumber - 1);
+    // Restituisci solo l'oggetto comando, non il wrapper con nextIndex
+    return result.object;
+  }
+  
+  // Comando generico
+  return {
+    type: 'UNKNOWN_COMMAND',
+    line: lineNumber,
+    content: line,
+    originalLine: line
+  };
+}
+
+/**
+ * Parser elemento singolo con gestione ricorsiva blocchi
+ */
+function parseNextElement(lines, startIndex, language = 'EN', recursionDepth = 0) {
+  const line = lines[startIndex]?.trim();
+  if (!line) {
+    return { nextIndex: startIndex + 1, object: null };
+  }
+  
+  // BLACKLIST: Delimitatori strutturali che non devono essere parsati come comandi
+  const structuralDelimiters = [
+    /^END_OF_IF$/i,
+    /^END_OF_MENU$/i, 
+    /^END_OF_OPT$/i,
+    /^END_OF_SCRIPT$/i,
+    /^END_OF_SCRIPTS$/i,
+    /^END_OF_MISSION$/i,
+    /^FINISH_MISSION$/i,
+    /^ELSE$/i
+  ];
+  
+  for (const delimiter of structuralDelimiters) {
+    if (line.match(delimiter)) {
+      // Delimitatore strutturale trovato fuori contesto - errore di parsing
+      return {
+        nextIndex: startIndex + 1,
+        object: null,
+        error: `Structural delimiter '${line}' found outside of proper block context at line ${startIndex + 1}`
+      };
+    }
+  }
+  
+  // 1. Controlla se è un BLOCCO
+  const blockMatch = identifyBlock(line);
+  if (blockMatch) {
+    return parseBlock(lines, startIndex, blockMatch, language, recursionDepth);
+  }
+  
+  // 2. Controlla se è un COMANDO
+  const commandMatch = identifyCommand(line);
+  if (commandMatch) {
+    return parseCommand(line, commandMatch, language, startIndex, recursionDepth);
+  }
+  
+  // 3. Fallback comando generico
+  return parseGenericCommand(line, startIndex, recursionDepth);
+}
+
+/**
+ * Identifica tipo di BLOCCO
+ */
+function identifyBlock(line) {
+  for (const [blockName, blockDef] of Object.entries(BLOCK_CATALOG)) {
+    // Controllo pattern apertura standard
+    if (blockDef.openPattern) {
+      const match = line.match(blockDef.openPattern);
+      if (match) {
+        return { blockName, blockDef, match, type: 'standard' };
       }
     }
     
-    i++;
-  }
-  
-  return {
-    trueBranch,
-    elseBranch,
-    hasElse,
-    nextIndex: i + 1 // Skip END_OF_IF command
-  };
-}
-
-function parseNestedBlock(commands, startIndex, endType, maxDepth = 50) {
-  const children = [];
-  let i = startIndex + 1; // Skip opening command
-  let depth = 1;
-  let currentDepth = 0;
-  
-  while (i < commands.length && depth > 0 && currentDepth < maxDepth) {
-    const command = commands[i];
-    
-    // Check for nested containers of same type
-    if (isOpeningCommand(command.type, endType)) {
-      depth++;
-      currentDepth++;
-    } else if (command.type === endType) {
-      depth--;
-      if (depth === 0) break;
-      currentDepth = Math.max(0, currentDepth - 1);
+    // Controllo varianti (per IF)
+    if (blockDef.variants) {
+      for (const variant of blockDef.variants) {
+        const match = line.match(variant.pattern);
+        if (match) {
+          return { blockName, blockDef, match, variant, type: 'variant' };
+        }
+      }
     }
     
-    // Parse nested content
-    if (depth === 1) {
-      const nestedBlocks = parseScriptToBlocks([command]);
-      children.push(...nestedBlocks);
+    // Controllo fasi (per BUILD/FLIGHT)
+    if (blockDef.phases) {
+      for (const phase of blockDef.phases) {
+        const match = line.match(phase.pattern);
+        if (match) {
+          return { blockName, blockDef, match, phase, type: 'phase' };
+        }
+      }
+    }
+  }
+  
+  return null;
+}
+
+/**
+ * Parser blocco con gestione ricorsiva
+ */
+function parseBlock(lines, startIndex, blockMatch, language, recursionDepth = 0) {
+  const depthId = recursionDepth === 0 ? 'ROOT' : `PARSER${recursionDepth.toString().padStart(2, '0')}`;
+  const { blockName, blockDef, match, variant, phase } = blockMatch;
+  let blockContent = [];
+  let elseContent = [];
+  let finishContent = [];
+  let currentIndex = startIndex + 1;
+  let blockLevel = 1;
+  let inElse = false;
+  let inFinish = false;
+  
+  const startLine = lines[startIndex]?.trim() || '';
+  logger.info(`${depthId}: [${startIndex + 1}] 🔵 PARSING BLOCK: ${blockName} at line ${startIndex + 1}, blockLevel=${blockLevel} ---> [NEXT: ${startIndex + 2}]`);
+  logger.info(`${depthId}: [${startIndex + 1}] 🔵 START LINE: "${startLine}"`);
+  
+  // Determina pattern di chiusura
+  let closePattern = blockDef.closePattern;
+  logger.info(`${depthId}: [${startIndex + 1}] 🔵 Close pattern for ${blockName}: ${closePattern}`);
+  
+  while (currentIndex < lines.length && blockLevel > 0) {
+    const currentLine = lines[currentIndex]?.trim();
+    if (!currentLine || currentLine.startsWith('//')) {
+      currentIndex++;
+      continue;
     }
     
-    i++;
-  }
-  
-  if (currentDepth >= maxDepth) {
-    console.warn(`Maximum nesting depth ${maxDepth} reached in parseNestedBlock`);
-  }
-  
-  return {
-    children,
-    nextIndex: i + 1 // Skip end command
-  };
-}
-
-function parseOptionContent(commands, optionIndex) {
-  const children = [];
-  let i = optionIndex + 1;
-  
-  // Parse until next option or menu end
-  while (i < commands.length) {
-    const command = commands[i];
-    
-    if (command.type === 'menu_option' || 
-        command.type === 'menu_option_conditional' || 
-        command.type === 'menu_end') {
-      break;
+    // Controllo elementi speciali
+    if (blockDef.hasElse && currentLine.match(blockDef.hasElse) && blockLevel === 1) {
+      logger.info(`${depthId}: [${currentIndex + 1}] 🟡 ELSE found for ${blockName} at line ${currentIndex + 1}, switching to else branch ---> [NEXT: ${currentIndex + 2}]`);
+      inElse = true;
+      currentIndex++;
+      continue;
     }
     
-    const nestedBlocks = parseScriptToBlocks([command]);
-    children.push(...nestedBlocks);
-    i++;
-  }
-  
-  return {
-    children,
-    nextIndex: i
-  };
-}
-
-function createConditionalBlock(command, commands, index) {
-  // Determina il tipo specifico di IF
-  let ifType = 'standard';
-  let condition = '';
-  
-  if (command.parameters.type) {
-    ifType = command.parameters.type; // probability, semaforo_not, variable_equals, etc.
-  }
-  
-  if (command.parameters.condition) {
-    condition = command.parameters.condition;
-  } else if (command.parameters.semaforo) {
-    condition = command.parameters.semaforo;
-  } else if (command.parameters.variable) {
-    condition = `${command.parameters.variable} ${command.parameters.value || ''}`.trim();
-  }
-
-  return {
-    id: generateBlockId(),
-    type: 'conditional',
-    subtype: command.type,
-    ifType: ifType, // standard, probability, semaforo_not, variable_equals, debug_mode, etc.
-    condition: condition,
-    parameters: command.parameters || {},
-    children: [],
-    hasElse: false, // Sarà aggiornato durante il parsing se trova ELSE
-    elseBranch: [], // Branch ELSE se presente
-    position: { x: 0, y: index * 100 },
-    metadata: {
-      line: command.line,
-      originalContent: command.content,
-      maxNestingDepth: 50
+    if (blockDef.hasFinishSection && currentLine.match(blockDef.hasFinishSection) && blockLevel === 1) {
+      logger.info(`${depthId}: [${currentIndex + 1}] 🟡 FINISH section found for ${blockName} at line ${currentIndex + 1} ---> [NEXT: ${currentIndex + 2}]`);
+      inFinish = true;
+      currentIndex++;
+      continue;  
     }
-  };
-}
-
-function createMenuBlock(command, commands, index) {
-  return {
-    id: generateBlockId(),
-    type: 'menu',
-    parameters: command.parameters || {},
-    options: [],
-    position: { x: 0, y: index * 100 },
-    metadata: {
-      line: command.line,
-      originalContent: command.content
+    
+    // Controllo chiusura blocco
+    if (currentLine.match(closePattern)) {
+      blockLevel--;
+      logger.info(`${depthId}: [${currentIndex + 1}] 🔴 CLOSING ${blockName} at line ${currentIndex + 1}, blockLevel now=${blockLevel} ---> [NEXT: ${currentIndex + 2}]`);
+      logger.info(`${depthId}: [${currentIndex + 1}] 🔴 CLOSING LINE: "${currentLine}"`);
+      if (blockLevel === 0) {
+        logger.info(`${depthId}: [${currentIndex + 1}] ✅ BLOCK ${blockName} COMPLETED from line ${startIndex + 1} to ${currentIndex + 1}`);
+        currentIndex++;
+        break;
+      }
     }
-  };
-}
-
-function createSubscriptBlock(command, commands, index) {
-  return {
-    id: generateBlockId(),
-    type: 'subscript',
-    parameters: command.parameters || {},
-    children: [],
-    position: { x: 0, y: index * 100 },
-    metadata: {
-      line: command.line,
-      originalContent: command.content
+    
+    // Controllo apertura blocchi della stessa famiglia (per tracking livello)
+    const innerBlockMatch = identifyBlock(currentLine);
+    if (innerBlockMatch && innerBlockMatch.blockName === blockName) {
+      // Solo incrementa se è della stessa famiglia (es. IF dentro IF)
+      blockLevel++;
+      logger.info(`${depthId}: [${currentIndex + 1}] 🟢 NESTED ${blockName} found at line ${currentIndex + 1}, blockLevel now=${blockLevel} ---> [NEXT: ${currentIndex + 2}]`);
+      logger.info(`${depthId}: [${currentIndex + 1}] 🟢 NESTED LINE: "${currentLine}"`);
+    } else if (innerBlockMatch) {
+      logger.info(`${depthId}: [${currentIndex + 1}] 🟠 OTHER BLOCK ${innerBlockMatch.blockName} found at line ${currentIndex + 1}, delegating to parseNextElement ---> [NEXT: ?]`);
+      logger.info(`${depthId}: [${currentIndex + 1}] 🟠 OTHER LINE: "${currentLine}"`);
     }
-  };
-}
-
-function createLoopBlock(command, commands, index) {
-  return {
-    id: generateBlockId(),
-    type: 'loop',
-    parameters: command.parameters || {},
-    children: [],
-    position: { x: 0, y: index * 100 },
-    metadata: {
-      line: command.line,
-      originalContent: command.content
-    }
-  };
-}
-
-function createParallelBlock(command, commands, index) {
-  return {
-    id: generateBlockId(),
-    type: 'parallel',
-    parameters: command.parameters || {},
-    children: [],
-    position: { x: 0, y: index * 100 },
-    metadata: {
-      line: command.line,
-      originalContent: command.content
-    }
-  };
-}
-
-function createOptionBlock(command, commands, index) {
-  return {
-    id: generateBlockId(),
-    type: 'option',
-    subtype: command.type, // menu_option or menu_option_conditional
-    parameters: command.parameters || {},
-    children: [],
-    position: { x: 50, y: index * 80 }, // Indented for menu options
-    metadata: {
-      line: command.line,
-      originalContent: command.content
-    }
-  };
-}
-
-function createAtomicBlock(command) {
-  return {
-    id: generateBlockId(),
-    type: 'atomic',
-    subtype: command.type,
-    parameters: command.parameters || {},
-    position: { x: 0, y: 0 }, // Will be recalculated during layout
-    metadata: {
-      line: command.line,
-      originalContent: command.content
-    }
-  };
-}
-
-function isOpeningCommand(commandType, correspondingEndType) {
-  const openingMap = {
-    'conditional_end': ['conditional_start', 'if_start', 'unless_start'],
-    'menu_end': ['menu_start'],
-    'subscript_end': ['subscript_start'],
-    'loop_end': ['loop_start'],
-    'parallel_end': ['parallel_start']
-  };
-  
-  return openingMap[correspondingEndType]?.includes(commandType) || false;
-}
-
-function isEndCommand(commandType) {
-  return ['conditional_end', 'menu_end', 'subscript_end', 'loop_end', 'parallel_end'].includes(commandType);
-}
-
-function generateBlockId() {
-  return 'block_' + Math.random().toString(36).substr(2, 9);
-}
-
-// Writer strutturale per conversione blocks-to-script
-function convertBlocksToScript(blocks, indentLevel = 0) {
-  let script = '';
-  const indent = '  '.repeat(indentLevel);
-  
-  for (const block of blocks) {
-    if (block.type === 'conditional') {
-      script += convertConditionalBlock(block, indentLevel);
-    } else if (block.type === 'menu') {
-      script += convertMenuBlock(block, indentLevel);
-    } else if (block.type === 'subscript') {
-      script += convertSubscriptBlock(block, indentLevel);
-    } else if (block.type === 'loop') {
-      script += convertLoopBlock(block, indentLevel);
-    } else if (block.type === 'parallel') {
-      script += convertParallelBlock(block, indentLevel);
-    } else if (block.type === 'option') {
-      script += convertOptionBlock(block, indentLevel);
-    } else if (block.type === 'atomic') {
-      script += convertAtomicBlock(block, indentLevel);
+    
+    // Parsing ricorsivo contenuto
+    try {
+      const element = parseNextElement(lines, currentIndex, language, recursionDepth + 1);
+      if (element.object) {
+        const target = inFinish ? 'finish' : inElse ? 'else' : 'main';
+        logger.info(`${depthId}: [${currentIndex + 1}] 📝 Adding element ${element.object.type} to ${target} branch of ${blockName} ---> [NEXT: ${element.nextIndex + 1}]`);
+        if (inFinish) {
+          finishContent.push(element.object);
+        } else if (inElse) {
+          elseContent.push(element.object);
+        } else {
+          blockContent.push(element.object);
+        }
+      }
+      currentIndex = element.nextIndex;
+    } catch (error) {
+      return {
+        nextIndex: currentIndex + 1,
+        error: `Block parse error at line ${currentIndex + 1}: ${error.message}`,
+        object: null
+      };
     }
   }
   
-  return script;
-}
-
-function convertConditionalBlock(block, indentLevel = 0) {
-  const indent = '  '.repeat(indentLevel);
-  let script = '';
+  // Costruzione oggetto blocco
+  const blockObject = buildBlockObject(blockName, blockDef, match, variant, phase, blockContent, elseContent, finishContent);
   
-  // Opening
-  if (block.subtype === 'if_start') {
-    script += `${indent}IF ${block.parameters.condition || ''}\n`;
-  } else if (block.subtype === 'unless_start') {
-    script += `${indent}UNLESS ${block.parameters.condition || ''}\n`;
-  }
-  
-  // Children
-  if (block.children && block.children.length > 0) {
-    script += convertBlocksToScript(block.children, indentLevel + 1);
-  }
-  
-  // Closing
-  script += `${indent}END_IF\n`;
-  
-  return script;
-}
-
-function convertMenuBlock(block, indentLevel = 0) {
-  const indent = '  '.repeat(indentLevel);
-  let script = '';
-  
-  // Opening
-  script += `${indent}MENU\n`;
-  
-  // Options
-  if (block.options && block.options.length > 0) {
-    script += convertBlocksToScript(block.options, indentLevel + 1);
-  }
-  
-  // Closing
-  script += `${indent}END_OF_MENU\n`;
-  
-  return script;
-}
-
-function convertSubscriptBlock(block, indentLevel = 0) {
-  const indent = '  '.repeat(indentLevel);
-  let script = '';
-  
-  // Opening
-  script += `${indent}SUB_SCRIPT ${block.parameters.name || ''}\n`;
-  
-  // Children
-  if (block.children && block.children.length > 0) {
-    script += convertBlocksToScript(block.children, indentLevel + 1);
-  }
-  
-  // Closing
-  script += `${indent}END_SUB_SCRIPT\n`;
-  
-  return script;
-}
-
-function convertLoopBlock(block, indentLevel = 0) {
-  const indent = '  '.repeat(indentLevel);
-  let script = '';
-  
-  // Opening
-  script += `${indent}LOOP ${block.parameters.condition || ''}\n`;
-  
-  // Children
-  if (block.children && block.children.length > 0) {
-    script += convertBlocksToScript(block.children, indentLevel + 1);
-  }
-  
-  // Closing
-  script += `${indent}END_LOOP\n`;
-  
-  return script;
-}
-
-function convertParallelBlock(block, indentLevel = 0) {
-  const indent = '  '.repeat(indentLevel);
-  let script = '';
-  
-  // Opening
-  script += `${indent}PARALLEL\n`;
-  
-  // Children
-  if (block.children && block.children.length > 0) {
-    script += convertBlocksToScript(block.children, indentLevel + 1);
-  }
-  
-  // Closing
-  script += `${indent}END_PARALLEL\n`;
-  
-  return script;
-}
-
-function convertOptionBlock(block, indentLevel = 0) {
-  const indent = '  '.repeat(indentLevel);
-  let script = '';
-  
-  // Option line con supporto multilingua
-  const optionText = block.parameters.localizedText?.EN || block.parameters.text || '';
-  
-  if (block.subtype === 'menu_option_conditional') {
-    const conditionType = block.parameters.conditionType === 'not' ? 'OPT_IFNOT' : 'OPT_IF';
-    script += `${indent}${conditionType} ${block.parameters.condition || ''} "${optionText}"\n`;
+  if (blockLevel > 0) {
+    logger.error(`${depthId}: [${startIndex + 1}] ❌ UNCLOSED BLOCK ${blockName} from line ${startIndex + 1}, blockLevel=${blockLevel}`);
+    logger.error(`${depthId}: [${startIndex + 1}] ❌ Started with: "${startLine}"`);
+    logger.error(`${depthId}: [${startIndex + 1}] ❌ Expected close pattern: ${closePattern}`);
   } else {
-    script += `${indent}OPT "${optionText}"\n`;
+    logger.info(`${depthId}: [${startIndex + 1}] ✅ parseBlock ENDED successfully {${startIndex + 1} || ${currentIndex}}`);
   }
   
-  // Option content (annidamenti misti supportati)
-  if (block.children && block.children.length > 0) {
-    script += convertBlocksToScript(block.children, indentLevel + 1);
-  }
-  
-  return script;
+  return {
+    nextIndex: currentIndex,
+    object: blockObject,
+    error: blockLevel > 0 ? `Unclosed block ${blockName} starting at line ${startIndex + 1}` : null
+  };
 }
 
-function convertAtomicBlock(block, indentLevel = 0) {
-  const indent = '  '.repeat(indentLevel);
-  
-  // Ricostruisci il comando originale o usa i parametri
-  if (block.metadata && block.metadata.originalContent) {
-    return `${indent}${block.metadata.originalContent}\n`;
-  }
-  
-  // Ricostruzione da parametri per comandi principali
-  switch (block.subtype) {
-    case 'dialogue':
-      const dialogText = block.parameters.localizedText?.EN || block.parameters.text || '';
-      const dialogChar = block.parameters.character ? `SAYCHAR ${block.parameters.character} ` : 'SAY ';
-      return `${indent}${dialogChar}"${dialogText}"\n`;
-    case 'question':
-      const questionText = block.parameters.localizedText?.EN || block.parameters.text || '';
-      const questionChar = block.parameters.character ? `ASKCHAR ${block.parameters.character} ` : 'ASK ';
-      return `${indent}${questionChar}"${questionText}"\n`;
-    case 'announce':
-      const announceText = block.parameters.localizedText?.EN || block.parameters.text || '';
-      return `${indent}ANNOUNCE "${announceText}"\n`;
-    case 'flight_status_bar':
-      const statusText = block.parameters.localizedText?.EN || block.parameters.text || '';
-      return `${indent}SETFLIGHTSTATUSBAR "${statusText}"\n`;
-    case 'semaforo_set':
-      return `${indent}SET ${block.parameters.variable || ''}\n`;
-    case 'semaforo_reset':
-      return `${indent}RESET ${block.parameters.variable || ''}\n`;
-    case 'variable_set':
-      return `${indent}SET_TO ${block.parameters.variable || ''} ${block.parameters.value || ''}\n`;
-    case 'variable_add':
-      return `${indent}ADD ${block.parameters.variable || ''} ${block.parameters.value || ''}\n`;
-    case 'show_character':
-      return `${indent}SHOWCHAR ${block.parameters.character || ''} ${block.parameters.position || 'center'} ${block.parameters.image || 'default'}\n`;
-    case 'hide_character':
-      return `${indent}HIDECHAR ${block.parameters.character || ''}\n`;
-    case 'change_character':
-      return `${indent}CHANGECHAR ${block.parameters.character || ''} ${block.parameters.image || ''}\n`;
-    case 'focus_character':
-      return `${indent}FOCUSCHAR ${block.parameters.character || ''}\n`;
-    case 'dialog_scene_open':
-      return `${indent}SHOWDLGSCENE\n`;
-    case 'dialog_scene_close':
-      return `${indent}HIDEDLGSCENE\n`;
-    case 'label':
-      return `${indent}LABEL ${block.parameters.label || ''}\n`;
-    case 'goto':
-      return `${indent}GO ${block.parameters.label || ''}\n`;
-    case 'script_call':
-      return `${indent}SUB_SCRIPT ${block.parameters.script || ''}\n`;
-    case 'return':
-      return `${indent}RETURN\n`;
-    case 'delay':
-      return `${indent}DELAY ${block.parameters.milliseconds || ''}\n`;
-    case 'show_path':
-      return `${indent}SHOWPATH ${block.parameters.path || ''}\n`;
-    case 'hide_path':
-      return `${indent}HIDEPATH ${block.parameters.path || ''}\n`;
-    case 'center_map_by_node':
-      return `${indent}CENTERMAPBYNODE ${block.parameters.node || ''}\n`;
-    case 'center_map_by_path':
-      return `${indent}CENTERMAPBYPATH ${block.parameters.path || ''}\n`;
-    case 'show_node':
-      return `${indent}SHOWNODE ${block.parameters.node || ''}\n`;
-    case 'hide_node':
-      return `${indent}HIDENODE ${block.parameters.node || ''}\n`;
-    case 'show_button':
-      return `${indent}SHOWBUTTON ${block.parameters.button || ''}\n`;
-    case 'hide_button':
-      return `${indent}HIDEBUTTON ${block.parameters.button || ''}\n`;
-    case 'move_player_to_node':
-      return `${indent}MOVEPLAYERTONODE ${block.parameters.node || ''}\n`;
-    case 'add_opponent':
-      return `${indent}ADDOPPONENT ${block.parameters.character || ''}\n`;
-    case 'menu_exit':
-      return `${indent}EXIT_MENU\n`;
-    case 'unknown_command':
-      return `${indent}${block.parameters.originalLine || block.parameters.commandType || 'UNKNOWN'}\n`;
+/**
+ * Costruisce oggetto blocco in base al tipo
+ */
+function buildBlockObject(blockName, blockDef, match, variant, phase, content, elseContent, finishContent) {
+  switch (blockName) {
+    case 'SCRIPT':
+      return {
+        type: 'SCRIPT',
+        name: match[1],
+        children: content
+      };
+      
+    case 'MISSION':
+      const missionObj = {
+        type: 'MISSION',
+        name: match[1],
+        children: content
+      };
+      if (finishContent.length > 0) {
+        missionObj.finishSection = finishContent;
+      }
+      return missionObj;
+      
+    case 'IF':
+      const ifObj = {
+        type: 'IF',
+        ifType: variant.type,
+        thenBranch: content
+      };
+      
+      // Parametri specifici per tipo IF
+      if (variant.type === 'IF_SEMAPHORE' || variant.type === 'IFNOT_SEMAPHORE') {
+        ifObj.condition = match[1];
+        ifObj.negated = variant.type === 'IFNOT_SEMAPHORE';
+      } else if (variant.type === 'IF_VARIABLE_EXACT' || variant.type === 'IF_VARIABLE_MIN' || variant.type === 'IF_VARIABLE_MAX') {
+        ifObj.variable = match[1];
+        ifObj.value = parseInt(match[2]);
+      } else if (variant.type === 'IF_CREDITS' || variant.type === 'IF_PROBABILITY') {
+        ifObj.value = parseInt(match[1]);
+      } else if (variant.type === 'IF_ORDER') {
+        ifObj.positions = match[1].split(' ').map(p => parseInt(p));
+      } else if (variant.systemVar) {
+        ifObj.systemVariable = variant.systemVar;
+      }
+      
+      if (elseContent.length > 0) {
+        ifObj.elseBranch = elseContent;
+      }
+      
+      return ifObj;
+      
+    case 'MENU':
+      return {
+        type: 'MENU',
+        options: content
+      };
+      
+    case 'OPT':
+      const optObj = {
+        type: 'OPT',
+        optType: variant.type,
+        children: content
+      };
+      
+      if (variant.type === 'OPT_SIMPLE') {
+        optObj.text = { EN: match[1] }; // Will be merged with other languages later
+      } else {
+        optObj.condition = match[1];
+        optObj.text = { EN: match[2] };
+      }
+      
+      return optObj;
+      
+    case 'BUILD':
+    case 'FLIGHT':
+      return {
+        type: blockName,
+        phase: phase.phase,
+        children: content
+      };
+      
     default:
-      return `${indent}# Unknown command: ${block.subtype}\n`;
+      return {
+        type: 'UNKNOWN_BLOCK',
+        name: blockName,
+        children: content
+      };
   }
+}
+
+/**
+ * Identifica tipo di COMANDO
+ */
+function identifyCommand(line) {
+  for (const [commandName, commandDef] of Object.entries(COMMAND_CATALOG)) {
+    const match = line.match(commandDef.pattern);
+    if (match) {
+      return { commandName, commandDef, match };
+    }
+  }
+  return null;
+}
+
+/**
+ * Parser comando atomico
+ */
+function parseCommand(line, commandMatch, language, lineIndex) {
+  const { commandName, commandDef, match } = commandMatch;
+  
+  try {
+    const commandObject = {
+      type: commandName,
+      parameters: {}
+    };
+    
+    // Mapping parametri
+    if (commandDef.params && match.length > 1) {
+      commandDef.params.forEach((paramDef, index) => {
+        const paramValue = match[index + 1];
+        const [paramName, paramType] = paramDef.split(':');
+        
+        if (paramType === 'multilingual') {
+          commandObject.parameters[paramName] = { [language]: paramValue };
+        } else if (paramType === 'number') {
+          commandObject.parameters[paramName] = parseInt(paramValue);
+        } else if (paramType === 'complex') {
+          commandObject.parameters[paramName] = paramValue;
+          if (commandDef.example) {
+            commandObject.example = commandDef.example;
+          }
+        } else {
+          commandObject.parameters[paramName] = paramValue;
+        }
+      });
+    }
+    
+    return {
+      nextIndex: lineIndex + 1,
+      object: commandObject,
+      error: null
+    };
+  } catch (error) {
+    return {
+      nextIndex: lineIndex + 1,
+      object: null,
+      error: `Command parse error at line ${lineIndex + 1}: ${error.message}`
+    };
+  }
+}
+
+/**
+ * Parser comando generico per comandi non riconosciuti
+ */
+function parseGenericCommand(line, lineIndex) {
+  const parts = line.split(' ');
+  const commandName = parts[0];
+  const parameters = parts.slice(1).join(' ');
+  
+  return {
+    nextIndex: lineIndex + 1,
+    object: {
+      type: 'UNKNOWN_COMMAND',
+      name: commandName,
+      parameters: { raw: parameters }
+    },
+    error: `Unknown command: ${commandName} at line ${lineIndex + 1}`
+  };
+}
+
+/**
+ * Serializer bidirezionale - BLOCKS to TEXT
+ */
+function convertBlocksToScript(blocks, targetLanguage = null) {
+  if (!Array.isArray(blocks)) {
+    throw new Error('Blocks must be an array');
+  }
+  
+  return blocks.map(block => serializeElement(block, targetLanguage)).join('\n');
+}
+
+/**
+ * Serializza elemento singolo
+ */
+function serializeElement(element, targetLanguage = null) {
+  if (!element || !element.type) {
+    return '';
+  }
+  
+  
+  switch (element.type) {
+    case 'SCRIPT':
+      const scriptLines = [`SCRIPT ${element.name}`];
+      if (element.children) {
+        element.children.forEach(child => {
+          const childLines = serializeElement(child, targetLanguage).split('\n');
+          childLines.forEach(line => {
+            if (line.trim()) scriptLines.push(`  ${line}`); // Aggiungi indentazione di 2 spazi
+          });
+        });
+      }
+      scriptLines.push('END_OF_SCRIPT');
+      return scriptLines.join('\n');
+      
+    case 'MISSION':
+      const missionLines = [`MISSION ${element.name}`];
+      if (element.children) {
+        element.children.forEach(child => {
+          const childLines = serializeElement(child, targetLanguage).split('\n');
+          childLines.forEach(line => {
+            if (line.trim()) missionLines.push(`  ${line}`); // Aggiungi indentazione di 2 spazi
+          });
+        });
+      }
+      if (element.finishSection) {
+        missionLines.push('FINISH_MISSION');
+        element.finishSection.forEach(child => {
+          const childLines = serializeElement(child, targetLanguage).split('\n');
+          childLines.forEach(line => {
+            if (line.trim()) missionLines.push(`  ${line}`); // Aggiungi indentazione di 2 spazi
+          });
+        });
+      }
+      missionLines.push('END_OF_MISSION');
+      return missionLines.join('\n');
+      
+    case 'IF':
+      return serializeIfBlock(element, targetLanguage);
+      
+    case 'MENU':
+      const menuLines = ['MENU'];
+      // Supporta sia 'options' (legacy) che 'children' (nuovo formato)
+      const menuContent = element.options || element.children || [];
+      if (menuContent.length > 0) {
+        menuContent.forEach(opt => {
+          const optLines = serializeElement(opt, targetLanguage).split('\n');
+          optLines.forEach(line => {
+            if (line.trim()) menuLines.push(`  ${line}`); // Aggiungi indentazione di 2 spazi
+          });
+        });
+      }
+      menuLines.push('END_OF_MENU');
+      return menuLines.join('\n');
+      
+    case 'OPT':
+      return serializeOptBlock(element, targetLanguage);
+      
+    case 'BUILD':
+    case 'FLIGHT':
+      const phaseCommand = getPhaseCommand(element.type, element.phase);
+      const phaseLines = [phaseCommand];
+      if (element.children) {
+        element.children.forEach(child => {
+          const childLines = serializeElement(child, targetLanguage).split('\n');
+          childLines.forEach(line => {
+            if (line.trim()) phaseLines.push(`  ${line}`); // Aggiungi indentazione di 2 spazi
+          });
+        });
+      }
+      return phaseLines.join('\n');
+      
+    default:
+      return serializeCommand(element, targetLanguage);
+  }
+}
+
+/**
+ * Serializza blocco IF
+ */
+function serializeIfBlock(ifElement, targetLanguage = 'EN') {
+  const lines = [];
+  
+  // Comando apertura IF
+  const ifCommand = buildIfCommand(ifElement);
+  lines.push(ifCommand);
+  
+  // Contenuto then - supporta sia thenBranch che children
+  const thenContent = ifElement.thenBranch || ifElement.children || [];
+  if (thenContent.length > 0) {
+    thenContent.forEach(child => {
+      const childLines = serializeElement(child, targetLanguage).split('\n');
+      childLines.forEach(line => {
+        if (line.trim()) lines.push(`  ${line}`); // Aggiungi indentazione di 2 spazi
+      });
+    });
+  }
+  
+  // Contenuto else
+  if (ifElement.elseBranch && ifElement.elseBranch.length > 0) {
+    lines.push('ELSE');
+    ifElement.elseBranch.forEach(child => {
+      const childLines = serializeElement(child, targetLanguage).split('\n');
+      childLines.forEach(line => {
+        if (line.trim()) lines.push(`  ${line}`); // Aggiungi indentazione di 2 spazi
+      });
+    });
+  }
+  
+  lines.push('END_OF_IF');
+  return lines.join('\n');
+}
+
+/**
+ * Costruisce comando IF in base al tipo
+ */
+function buildIfCommand(ifElement) {
+  switch (ifElement.ifType) {
+    case 'IF_SEMAPHORE':
+      return `IF ${ifElement.condition}`;
+    case 'IFNOT_SEMAPHORE':
+      return `IFNOT ${ifElement.condition}`;
+    case 'IF_VARIABLE_EXACT':
+      return `IF_IS ${ifElement.variable} ${ifElement.value}`;
+    case 'IF_VARIABLE_MIN':
+      return `IF_MIN ${ifElement.variable} ${ifElement.value}`;
+    case 'IF_VARIABLE_MAX':
+      return `IF_MAX ${ifElement.variable} ${ifElement.value}`;
+    case 'IF_CREDITS':
+      return `IF_HAS_CREDITS ${ifElement.value}`;
+    case 'IF_PROBABILITY':
+      return `IF_PROB ${ifElement.value}`;
+    case 'IF_ORDER':
+      return `IF_ORDER ${ifElement.positions.join(' ')}`;
+    case 'IF_SYSTEM':
+      return getSystemIfCommand(ifElement.systemVariable);
+    default:
+      return `IF ${ifElement.condition || 'UNKNOWN'}`;
+  }
+}
+
+/**
+ * Comandi IF di sistema
+ */
+function getSystemIfCommand(systemVar) {
+  switch (systemVar) {
+    case 'debug': return 'IF_DEBUG';
+    case 'from_campaign': return 'IF_FROM_CAMPAIGN';
+    case 'mission_won': return 'IF_MISSION_WON';
+    case 'tutorial_seen': return 'IF_TUTORIAL_SEEN';
+    default: return `IF_${systemVar.toUpperCase()}`;
+  }
+}
+
+/**
+ * Serializza blocco OPT
+ */
+function serializeOptBlock(optElement, targetLanguage = 'EN') {
+  const lines = [];
+  
+  // Estrai il testo dell'OPT - supporta diversi formati
+  let optText = '';
+  if (optElement.text) {
+    optText = getTextForLanguage(optElement.text, targetLanguage);
+  } else if (optElement.parameters && optElement.parameters.text) {
+    optText = getTextForLanguage(optElement.parameters.text, targetLanguage);
+  }
+  
+  // Comando apertura OPT
+  let optCommand;
+  switch (optElement.optType) {
+    case 'OPT_SIMPLE':
+      optCommand = `OPT "${optText}"`;
+      break;
+    case 'OPT_CONDITIONAL':
+      optCommand = `OPT_IF ${optElement.condition} "${optText}"`;
+      break;
+    case 'OPT_CONDITIONAL_NOT':
+      optCommand = `OPT_IFNOT ${optElement.condition} "${optText}"`;
+      break;
+    default:
+      optCommand = `OPT "${optText}"`;
+  }
+  
+  lines.push(optCommand);
+  
+  // Contenuto OPT
+  if (optElement.children) {
+    optElement.children.forEach(child => {
+      const childLines = serializeElement(child, targetLanguage).split('\n');
+      childLines.forEach(line => {
+        if (line.trim()) lines.push(`  ${line}`); // Aggiungi indentazione di 2 spazi
+      });
+    });
+  }
+  
+  lines.push('END_OF_OPT');
+  return lines.join('\n');
+}
+
+/**
+ * Ottiene comando fase per BUILD/FLIGHT
+ */
+function getPhaseCommand(blockType, phase) {
+  if (blockType === 'BUILD') {
+    switch (phase) {
+      case 'init': return 'INIT_BUILD';
+      case 'start': return 'START_BUILDING';
+      case 'end': return 'END_BUILDING';
+      default: return 'INIT_BUILD';
+    }
+  } else if (blockType === 'FLIGHT') {
+    switch (phase) {
+      case 'init': return 'INIT_FLIGHT';
+      case 'start': return 'START_FLIGHT';
+      case 'evaluate': return 'EVALUATE_FLIGHT';
+      case 'end': return 'END_FLIGHT';
+      default: return 'INIT_FLIGHT';
+    }
+  }
+  return 'UNKNOWN_PHASE';
+}
+
+// Mapping da tipo comando (maiuscolo) a sintassi corretta del gioco
+const COMMAND_SYNTAX_MAP = {
+  // Dialog commands
+  'SHOWDLGSCENE': 'ShowDlgScene',
+  'HIDEDLGSCENE': 'HideDlgScene',
+  'SHOWCHAR': 'ShowChar',
+  'HIDECHAR': 'HideChar',
+  'CHANGECHAR': 'ChangeChar',
+  'SAY': 'Say',
+  'SAYCHAR': 'SayChar',
+  'ASK': 'Ask',
+  
+  // Map/UI commands
+  'SHOWNODE': 'ShowNode',
+  'HIDENODE': 'HideNode',
+  'SHOWPATH': 'ShowPath',
+  'HIDEPATH': 'HidePath',
+  'SHOWBUTTON': 'ShowButton',
+  'HIDEBUTTON': 'HideButton',
+  'SETFOCUS': 'SetFocus',
+  'RESETFOCUS': 'ResetFocus',
+  'CENTERMAPBYNODE': 'CenterMapByNode',
+  'CENTERMAPBYPATH': 'CenterMapByPath',
+  'MOVEPLAYERTONODE': 'MovePlayerToNode',
+  'ADDNODE': 'AddNode',
+  
+  // Control flow
+  'DELAY': 'Delay',
+  'RETURN': 'RETURN',
+  'SUB_SCRIPT': 'SUB_SCRIPT',
+  'SET': 'SET',
+  'RESET': 'RESET',
+  'ADD': 'ADD',
+  'ANNOUNCE': 'Announce',
+  'ADDCREDITS': 'AddCredits',
+  
+  // System commands
+  'SETACHIEVEMENTPROGRESS': 'SetAchievementProgress',
+  'UNLOCKACHIEVEMENT': 'UnlockAchievement',
+  'UNLOCKSHIPPLAN': 'UnlockShipPlan'
+};
+
+/**
+ * Serializza comando atomico
+ */
+function serializeCommand(element, targetLanguage = 'EN') {
+  if (element.type === 'UNKNOWN_COMMAND') {
+    return `${element.name} ${element.parameters.raw || ''}`.trim();
+  }
+  
+  const commandDef = COMMAND_CATALOG[element.type];
+  if (!commandDef) {
+    return `${element.type} ${JSON.stringify(element.parameters)}`;
+  }
+  
+  // Usa la sintassi corretta del gioco invece del tipo maiuscolo
+  const commandSyntax = COMMAND_SYNTAX_MAP[element.type] || element.type;
+  const parts = [commandSyntax];
+  
+  if (commandDef.params && element.parameters) {
+    commandDef.params.forEach(paramDef => {
+      const [paramName, paramType] = paramDef.split(':');
+      const paramValue = element.parameters[paramName];
+      
+      if (paramType === 'multilingual') {
+        parts.push(`"${getTextForLanguage(paramValue, targetLanguage)}"`);
+      } else {
+        parts.push(paramValue);
+      }
+    });
+  }
+  
+  return parts.join(' ');
+}
+
+/**
+ * Ottiene testo per lingua specifica
+ */
+function getTextForLanguage(textObj, language) {
+  if (typeof textObj === 'string') return textObj;
+  if (typeof textObj === 'object' && textObj !== null) {
+    return textObj[language] || textObj['EN'] || Object.values(textObj)[0] || '';
+  }
+  return '';
 }
 
 module.exports = {
   parseScriptToBlocks,
   convertBlocksToScript,
-  parseConditionalWithElse,
-  parseNestedBlock,
-  parseOptionContent,
-  createConditionalBlock,
-  createMenuBlock,
-  createSubscriptBlock,
-  createLoopBlock,
-  createParallelBlock,
-  createOptionBlock,
-  createAtomicBlock,
-  generateBlockId
+  BLOCK_CATALOG,
+  COMMAND_CATALOG
 };

@@ -1,10 +1,10 @@
 // missionsRoutes.js - Routes per gestione missions
 const express = require('express');
 const { parseScriptContent } = require('../parsers/scriptParser');
-const { parseScriptToBlocks: parseScriptToBlocksComplete, convertBlocksToScript: convertBlocksToScriptComplete } = require('../parsers/blockParserComplete');
+const { parseScriptToBlocks, convertBlocksToScript } = require('../parsers/blockParser');
 const { getLogger } = require('../utils/logger');
-const { loadMultilingualContent } = require('../utils/fileUtils');
-const { GAME_ROOT, SUPPORTED_LANGUAGES } = require('../config/config');
+const config = require('../config/config');
+const { GAME_ROOT, SUPPORTED_LANGUAGES } = config;
 const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
@@ -24,7 +24,7 @@ router.get('/routes', async (req, res) => {
     const routesMap = {};
     
     for (const lang of languages) {
-      const missionsPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`, 'missions.yaml');
+      const missionsPath = config.PATH_TEMPLATES.missionsYaml(lang);
       
       if (await fs.pathExists(missionsPath)) {
         try {
@@ -419,7 +419,7 @@ router.post('/:missionName/save', async (req, res) => {
     
     try {
       // SERIALIZZAZIONE COMPLETA con parser bidirezionale mission-specific
-      const missionContent = convertBlocksToScriptComplete(blocks);
+      const missionContent = convertBlocksToScript(blocks);
       
       // Prepara il contenuto finale con header MISSION
       const fullMissionContent = `MISSION ${missionName}\n${missionContent}\nEND_OF_MISSION\n`;
@@ -655,7 +655,7 @@ async function getStellatedMissionsAndButtons() {
   
   try {
     for (const lang of languages) {
-      const missionsPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`, 'missions.yaml');
+      const missionsPath = config.PATH_TEMPLATES.missionsYaml(lang);
       
       if (await fs.pathExists(missionsPath)) {
         try {
@@ -726,8 +726,8 @@ async function validateSavedMission(missionName, language, originalBlocks) {
     }
     
     // 3. Verifica serializzazione→parsing→serializzazione idempotente per mission
-    const reserializedContent = convertBlocksToScriptComplete(savedMission.blocks);
-    const originalSerializedContent = convertBlocksToScriptComplete(originalBlocks);
+    const reserializedContent = convertBlocksToScript(savedMission.blocks);
+    const originalSerializedContent = convertBlocksToScript(originalBlocks);
     
     return {
       isValid: true,

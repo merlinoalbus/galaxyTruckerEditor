@@ -1,10 +1,10 @@
 // scriptsRoutes.js - Routes per gestione scripts
 const express = require('express');
 const { parseScriptContent } = require('../parsers/scriptParser');
-const { parseScriptToBlocks: parseScriptToBlocksComplete, convertBlocksToScript: convertBlocksToScriptComplete } = require('../parsers/blockParserComplete');
+const { parseScriptToBlocks, convertBlocksToScript } = require('../parsers/blockParser');
 const { getLogger } = require('../utils/logger');
-const { loadMultilingualContent } = require('../utils/fileUtils');
-const { GAME_ROOT, SUPPORTED_LANGUAGES } = require('../config/config');
+const config = require('../config/config');
+const { GAME_ROOT, SUPPORTED_LANGUAGES } = config;
 const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
@@ -736,7 +736,7 @@ async function parseScriptSingleLanguage(scriptName, language, format) {
     if (format === 'blocks') {
       // Parsing completo a blocchi
       try {
-        const parseResult = parseScriptToBlocksComplete(scriptLines, language);
+        const parseResult = parseScriptToBlocks(scriptLines, language);
         
         result.blocks = parseResult.blocks;
         result.metadata = {
@@ -1403,7 +1403,7 @@ async function getStellatedScriptsAndButtons() {
     // 1. Raccoglie bottoni dai nodi
     const nodesMap = {};
     for (const lang of languages) {
-      const nodesPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`, 'nodes.yaml');
+      const nodesPath = config.PATH_TEMPLATES.nodesYaml(lang);
       
       if (await fs.pathExists(nodesPath)) {
         try {
@@ -1465,7 +1465,7 @@ async function getStellatedScriptsAndButtons() {
     // 2. Raccoglie bottoni dagli archi
     const routesMap = {};
     for (const lang of languages) {
-      const missionsPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`, 'missions.yaml');
+      const missionsPath = config.PATH_TEMPLATES.missionsYaml(lang);
       
       if (await fs.pathExists(missionsPath)) {
         try {
@@ -1566,8 +1566,8 @@ async function validateSavedScript(scriptName, language, originalBlocks) {
     }
     
     // 3. Verifica serializzazione→parsing→serializzazione idempotente
-    const reserializedContent = convertBlocksToScriptComplete(savedScript.blocks);
-    const originalSerializedContent = convertBlocksToScriptComplete(originalBlocks);
+    const reserializedContent = convertBlocksToScript(savedScript.blocks);
+    const originalSerializedContent = convertBlocksToScript(originalBlocks);
     
     return {
       isValid: true,
@@ -1643,7 +1643,7 @@ async function saveScriptMultilingual(scriptName, blocks, languages) {
     for (const language of targetLanguages) {
       try {
         // Serializza script per la lingua specifica
-        const scriptContent = convertBlocksToScriptComplete(blocks, language);
+        const scriptContent = convertBlocksToScript(blocks, language);
         
         // Prepara contenuto con header SCRIPT
         const fullScriptContent = `SCRIPT ${scriptName}\n${scriptContent}\nEND_OF_SCRIPTS\n`;
@@ -1692,7 +1692,7 @@ async function saveScriptMultilingual(scriptName, blocks, languages) {
 // Funzione salvataggio script singola lingua (legacy)
 async function saveScriptSingleLanguage(scriptName, blocks, language) {
   try {
-    const scriptContent = convertBlocksToScriptComplete(blocks, language);
+    const scriptContent = convertBlocksToScript(blocks, language);
     const fullScriptContent = `SCRIPT ${scriptName}\n${scriptContent}\nEND_OF_SCRIPTS\n`;
     
     const scriptPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${language}`, `${scriptName}.txt`);
@@ -1832,7 +1832,7 @@ async function processFileForLanguage(filePath, fileScripts, language, results) 
       }
       
       // Usa la serializzazione multilingua per la lingua target (non estrarre prima)
-      const scriptContent = convertBlocksToScriptComplete(actualBlocks, language);
+      const scriptContent = convertBlocksToScript(actualBlocks, language);
       const contentLines = scriptContent.split('\n').filter(line => line.trim());
       
       // Costruisci il contenuto dello script con SCRIPT name ... END_OF_SCRIPT
@@ -1872,7 +1872,7 @@ async function processFileForLanguage(filePath, fileScripts, language, results) 
       const actualBlocks = script.blocks.length === 1 && script.blocks[0].type === 'SCRIPT' && script.blocks[0].children 
         ? script.blocks[0].children 
         : script.blocks;
-      const scriptContent = convertBlocksToScriptComplete(actualBlocks, language);
+      const scriptContent = convertBlocksToScript(actualBlocks, language);
       const contentLines = scriptContent.split('\n').filter(line => line.trim());
       
       const newScriptLines = [
@@ -1890,7 +1890,7 @@ async function processFileForLanguage(filePath, fileScripts, language, results) 
       const actualBlocks = script.blocks.length === 1 && script.blocks[0].type === 'SCRIPT' && script.blocks[0].children 
         ? script.blocks[0].children 
         : script.blocks;
-      const scriptContent = convertBlocksToScriptComplete(actualBlocks, language);
+      const scriptContent = convertBlocksToScript(actualBlocks, language);
       const contentLines = scriptContent.split('\n').filter(line => line.trim());
       
       scriptContents.push(`  SCRIPT ${script.name}`);

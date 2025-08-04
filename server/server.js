@@ -4,6 +4,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const chokidar = require('chokidar');
 const { getLogger } = require('./src/utils/logger');
+const config = require('./src/config/config');
 
 // Import routes
 const apiRoutes = require('./src/routes/apiRoutes');
@@ -12,7 +13,8 @@ const missionsRoutes = require('./src/routes/missionsRoutes');
 const gameRoutes = require('./src/routes/gameRoutes');
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = config.SERVER_PORT;
+const HOST = config.HOST_ADDRESS;
 const logger = getLogger();
 
 // Middleware di sicurezza
@@ -113,10 +115,11 @@ process.on('SIGINT', () => {
 });
 
 // Start server
-app.listen(PORT, () => {
-  logger.info(`🚀 Galaxy Trucker Editor Backend (Modular) running on port ${PORT}`);
+app.listen(PORT, HOST, () => {
+  logger.info(`🚀 Galaxy Trucker Editor Backend (Modular) running on ${HOST}:${PORT}`);
   logger.info(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
   logger.info(`📁 Working directory: ${process.cwd()}`);
+  logger.info(`🎮 Game directory: ${config.GAME_ROOT}`);
 });
 
 module.exports = app;

@@ -121,8 +121,8 @@ async function scanDirectoryForImages(dirPath, relativePath = '') {
   return images;
 }
 
-// Validazione percorso file generico
-function isValidFilePath(filePath) {
+// Validazione percorso file generico con opzioni
+function isValidFilePath(filePath, options = {}) {
   if (typeof filePath !== 'string') {
     return false;
   }
@@ -135,6 +135,11 @@ function isValidFilePath(filePath) {
     return false;
   }
   
+  // Controlla caratteri pericolosi
+  if (normalizedPath.includes('\0') || normalizedPath.includes('<') || normalizedPath.includes('>')) {
+    return false;
+  }
+  
   // Controlla che non punti a file di sistema
   const forbidden = ['/etc/', '/proc/', '/sys/', 'C:\\Windows\\', 'C:\\Program Files\\'];
   for (const forbiddenPath of forbidden) {
@@ -143,7 +148,22 @@ function isValidFilePath(filePath) {
     }
   }
   
+  // Validazione estensioni se specificate
+  if (options.allowedExtensions && Array.isArray(options.allowedExtensions)) {
+    const ext = path.extname(normalizedPath).toLowerCase();
+    if (!options.allowedExtensions.includes(ext)) {
+      return false;
+    }
+  }
+  
   return true;
+}
+
+// Validazione specifica per immagini
+function isValidImagePath(imagePath) {
+  return isValidFilePath(imagePath, { 
+    allowedExtensions: ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'] 
+  });
 }
 
 // Carica contenuto multilingua
@@ -171,5 +191,6 @@ module.exports = {
   loadImageBinary,
   scanDirectoryForImages,
   isValidFilePath,
+  isValidImagePath,
   loadMultilingualContent
 };
