@@ -8,13 +8,17 @@ class ScriptSelectorService {
 
     const lowerSearchTerm = searchTerm.toLowerCase();
     
-    return scripts.filter(script => 
-      script.name.toLowerCase().includes(lowerSearchTerm) ||
-      script.fileName.toLowerCase().includes(lowerSearchTerm) ||
-      script.commands.some(cmd => 
-        cmd.content.toLowerCase().includes(lowerSearchTerm)
-      )
-    );
+    return scripts.filter(script => {
+      const scriptName = script.nomescript || script.name || '';
+      const fileName = script.nomefile || script.fileName || '';
+      const commands = script.commands || [];
+      
+      return scriptName.toLowerCase().includes(lowerSearchTerm) ||
+        fileName.toLowerCase().includes(lowerSearchTerm) ||
+        commands.some(cmd => 
+          cmd.content.toLowerCase().includes(lowerSearchTerm)
+        );
+    });
   }
 
   sortScripts(scripts: CampaignScript[], startScripts: string[] = []): CampaignScript[] {
@@ -27,19 +31,27 @@ class ScriptSelectorService {
       if (!aIsStart && bIsStart) return 1;
       
       // Then sort by file name and script name
-      if (a.fileName !== b.fileName) {
-        return a.fileName.localeCompare(b.fileName);
+      const aFileName = a.nomefile || a.fileName || '';
+      const bFileName = b.nomefile || b.fileName || '';
+      const aName = a.nomescript || a.name || '';
+      const bName = b.nomescript || b.name || '';
+      
+      if (aFileName !== bFileName) {
+        return aFileName.localeCompare(bFileName);
       }
-      return a.name.localeCompare(b.name);
+      return aName.localeCompare(bName);
     });
   }
 
   isStartScript(script: CampaignScript, startScripts: string[] = []): boolean {
-    return startScripts.includes(script.name);
+    const scriptName = script.nomescript || script.name || '';
+    return startScripts.includes(scriptName);
   }
 
   getScriptPreview(script: CampaignScript): string {
-    const firstDialogue = script.commands.find(cmd => 
+    const commands = script.commands || [];
+    
+    const firstDialogue = commands.find(cmd => 
       cmd.type === 'dialogue' || cmd.type === 'question'
     );
     
@@ -48,7 +60,7 @@ class ScriptSelectorService {
       return match ? match[1].substring(0, 100) : '';
     }
 
-    const firstCommand = script.commands[0];
+    const firstCommand = commands[0];
     return firstCommand ? firstCommand.content.substring(0, 50) : '';
   }
 }

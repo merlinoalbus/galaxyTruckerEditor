@@ -52,21 +52,22 @@ export const campaignScriptParserService: CampaignScriptParserService = {
       const nodeScriptMap = new Map<string, string[]>();
       const flowStructure = new Map<string, ScriptBlock[]>();
 
-      // Process scripts from backend
-      Object.values(parsedData.scripts).forEach((scriptData: any) => {
+      // Process scripts from backend - API returns data array directly
+      const scriptsArray = parsedData.data || [];
+      scriptsArray.forEach((scriptData: any) => {
         const script: ParsedScript = {
-          name: scriptData.name,
-          fileName: scriptData.fileName,
+          name: scriptData.nomescript || scriptData.name,
+          fileName: scriptData.nomefile || scriptData.fileName,
           language: 'EN', // Primary language
           commands: scriptData.commands || [],
-          variables: scriptData.variables || [],
-          characters: scriptData.characters || [],
-          missions: scriptData.missions || [],
-          labels: scriptData.labels || [],
-          nodes: scriptData.nodes || [],
-          references: [],
-          subScripts: [],
-          relatedScripts: []
+          variables: scriptData.variabili_utilizzate || scriptData.variables || [],
+          characters: scriptData.personaggi_utilizzati || scriptData.characters || [],
+          missions: scriptData.missions_richiamate || scriptData.missions || [],
+          labels: scriptData.labels_definite || scriptData.labels || [],
+          nodes: scriptData.nodi_referenziati || scriptData.nodes || [],
+          references: scriptData.script_richiamati || [],
+          subScripts: scriptData.script_richiamati || [],
+          relatedScripts: scriptData.richiamato_da_script || []
         };
         
         scripts.push(script);

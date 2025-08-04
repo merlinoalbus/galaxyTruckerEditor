@@ -9,8 +9,8 @@ export interface MapConnectionProps {
   isHovered: boolean;
   relatedScripts: CampaignScript[];
   onClick: (connection: MapConnection) => void;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
+  onMouseEnter: (e: React.MouseEvent) => void;
+  onMouseLeave: (e: React.MouseEvent) => void;
 }
 
 export interface ConnectionVisualState {

@@ -291,22 +291,31 @@ router.get('/file/*', async (req, res) => {
       });
     }
     
-    // Leggi il file
-    const content = await fs.readFile(fullPath, 'utf8');
-    const stats = await fs.stat(fullPath);
+    // Verifica se è un'immagine
+    const isImage = /\.(jpg|jpeg|png|gif|bmp|svg)$/i.test(requestedPath);
     
-    logger.info(`Successfully read file: ${requestedPath} (${stats.size} bytes)`);
-    
-    res.json({
-      success: true,
-      data: {
-        path: requestedPath,
-        content: content,
-        size: stats.size,
-        modified: stats.mtime,
-        encoding: 'utf8'
-      }
-    });
+    if (isImage) {
+      // Per le immagini, invia il file direttamente
+      logger.info(`Serving image file: ${requestedPath}`);
+      return res.sendFile(fullPath);
+    } else {
+      // Per altri file, leggi come testo
+      const content = await fs.readFile(fullPath, 'utf8');
+      const stats = await fs.stat(fullPath);
+      
+      logger.info(`Successfully read file: ${requestedPath} (${stats.size} bytes)`);
+      
+      res.json({
+        success: true,
+        data: {
+          path: requestedPath,
+          content: content,
+          size: stats.size,
+          modified: stats.mtime,
+          encoding: 'utf8'
+        }
+      });
+    }
     
   } catch (error) {
     logger.error(`Error reading file: ${error.message}`);

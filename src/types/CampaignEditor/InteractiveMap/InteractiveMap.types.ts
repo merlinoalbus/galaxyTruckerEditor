@@ -2,10 +2,23 @@ export interface MapNode {
   name: string;
   coordinates: [number, number];
   image: string;
-  caption: string;
-  description: string;
-  shuttles?: Array<[string, number]>;
-  buttons?: Array<[string, string, string]>;
+  imagePath: string;
+  imageBinary: string;
+  localizedCaptions: { [language: string]: string };
+  localizedDescriptions: { [language: string]: string };
+  shuttles: Array<[string, number]>;
+  buttons: Array<{
+    id: string;
+    script: string;
+    localizedLabels: { [language: string]: string };
+  }>;
+  utilizzi_totali: number;
+  script_che_lo_usano: string[];
+  comandi_utilizzati: string[];
+  
+  // Backward compatibility fields
+  caption?: string;
+  description?: string;
 }
 
 export interface MapConnection {
@@ -28,37 +41,72 @@ export interface MapConnection {
 }
 
 export interface CampaignScript {
-  name: string;
-  fileName: string;
-  commands: ScriptCommand[];
-  relatedNodes: string[];
-  relatedConnections: string[];
-  blocks?: any[]; // Blocchi parsati dal backend per Visual Flow Editor
+  nomescript: string;
+  nomefile: string;
+  numero_blocchi: number;
+  numero_comandi: number;
+  stellato: boolean;
+  languages: string[];
+  bottoni_collegati: Array<{
+    buttonId: string;
+    sourceId: string;
+    tipo: string;
+  }>;
+  script_richiamati: string[];
+  missions_richiamate: string[];
+  richiamato_da_script: string[];
+  richiamato_da_missions: string[];
+  comandi_richiamo: string[];
+  utilizzi_totali: number;
+  variabili_utilizzate: string[];
+  personaggi_utilizzati: string[];
+  labels_definite: string[];
+  nodi_referenziati: string[];
+  
+  // Backward compatibility fields
+  name?: string;
+  fileName?: string;
+  commands?: ScriptCommand[];
+  relatedNodes?: string[];
+  relatedConnections?: string[];
+  blocks?: any[];
 }
 
 import { ScriptCommand } from '../CampaignEditor.types';
 
 export interface Mission {
+  name: string;
+  source: string;
+  destination: string;
+  missiontype: 'NORMAL' | 'UNIQUE';
+  license: 'STI' | 'STII' | 'STIII';
+  button?: {
+    id: string;
+    script: string;
+    mission: string;
+    localizedLabels: { [language: string]: string };
+  };
+  localizedCaptions?: { [language: string]: string };
+  localizedDescriptions?: { [language: string]: string };
+  utilizzi_totali?: number;
+  script_che_lo_usano?: string[];
+  comandi_utilizzati?: string[];
+  script_collegati_ricorsivamente?: string[];
+  
+  // Backward compatibility fields
   id?: string;
-  name?: string;
   description?: string;
   from?: string;
   to?: string;
-  source?: string; // Alias for from
-  destination?: string; // Alias for to
   cost?: number;
   flightClass?: 'I' | 'II' | 'III' | 'IV';
-  license?: 'STI' | 'STII' | 'STIII';
   scripts?: string[];
   uniqueRewards?: boolean;
-  button?: [string, string, string]; // Button data array
-  missiontype?: string;
   visibility?: {
     type: 'unlocked' | 'completed' | 'available' | 'always' | 'never';
     variable?: string;
     condition?: string;
   };
-  // Removed temporary any - now fully typed
 }
 
 export interface InteractiveMapProps {

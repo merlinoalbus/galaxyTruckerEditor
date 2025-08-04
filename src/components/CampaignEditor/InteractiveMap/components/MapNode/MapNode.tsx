@@ -2,6 +2,8 @@ import React from 'react';
 import { MapNodeProps } from '@/types/CampaignEditor/InteractiveMap/types/MapNode/MapNode.types';
 import { mapNodeStyles } from '@/styles/CampaignEditor/InteractiveMap/styles/MapNode/MapNode.styles';
 import { API_CONFIG, PATHS } from '@/config/constants';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { getLocalizedString } from '@/utils/localization';
 
 export const MapNode: React.FC<MapNodeProps> = ({
   node,
@@ -13,6 +15,7 @@ export const MapNode: React.FC<MapNodeProps> = ({
   onMouseEnter,
   onMouseLeave
 }) => {
+  const { currentLanguage } = useLanguage();
   const hasScripts = relatedScripts.length > 0;
   const hasButtons = node.buttons && node.buttons.length > 0;
   const radius = isSelected ? 45 : isHovered ? 40 : 35;
@@ -22,6 +25,7 @@ export const MapNode: React.FC<MapNodeProps> = ({
     event.stopPropagation();
     onClick(node);
   };
+
 
   return (
     <g
@@ -46,7 +50,7 @@ export const MapNode: React.FC<MapNodeProps> = ({
         />
       </clipPath>
       <image
-        href={`${API_CONFIG.ASSETS_BASE_URL}${PATHS.CAMPAIGN.BIG}/${node.image}`}
+        href={node.imageBinary ? `data:image/png;base64,${node.imageBinary}` : `${API_CONFIG.ASSETS_BASE_URL}${PATHS.CAMPAIGN.BIG}/${node.image}`}
         x={position.x - radius}
         y={position.y - radius}
         width={radius * 2}
@@ -63,7 +67,7 @@ export const MapNode: React.FC<MapNodeProps> = ({
         style={mapNodeStyles.nodeText(isHovered).style}
         dy="0.3em"
       >
-        {node.caption}
+        {getLocalizedString(node.localizedCaptions, currentLanguage, node.caption || node.name)}
       </text>
 
       {hasScripts && (

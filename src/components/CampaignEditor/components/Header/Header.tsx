@@ -3,6 +3,7 @@ import React from 'react';
 import { RefreshCw, Download, Upload } from 'lucide-react';
 
 import { useGameData } from '@/contexts/GameDataContext';
+import { LanguageSelector } from './components/LanguageSelector/LanguageSelector';
 
 export function Header() {
   const { loading, error, refreshAll } = useGameData();
@@ -23,6 +24,7 @@ export function Header() {
         </div>
         
         <div className="flex items-center space-x-3">
+          <LanguageSelector />
           <button
             onClick={refreshAll}
             disabled={loading}

@@ -21,7 +21,8 @@ const logger = getLogger();
 // Middleware di sicurezza
 app.use(helmet({
   contentSecurityPolicy: false,
-  crossOriginEmbedderPolicy: false
+  crossOriginEmbedderPolicy: false,
+  crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 
 // CORS per frontend
@@ -36,6 +37,18 @@ app.use(cors({
 // Parsing JSON
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// Serve static files from game directory
+const path = require('path');
+if (config.GAME_HOST) {
+  app.use('/static', express.static(config.GAME_HOST, {
+    setHeaders: (res, path) => {
+      // Allow CORS for static resources
+      res.header('Access-Control-Allow-Origin', '*');
+      res.header('Access-Control-Allow-Methods', 'GET');
+    }
+  }));
+}
 
 // Logging middleware
 app.use((req, res, next) => {
