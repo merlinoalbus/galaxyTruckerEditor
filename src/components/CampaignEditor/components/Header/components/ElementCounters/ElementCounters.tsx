@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Code, Map, Zap, Tag, Users, Database, Image, Trophy } from 'lucide-react';
 import { API_CONFIG, API_ENDPOINTS } from '@/config/constants';
+import { useTranslation } from '@/locales/translations';
 
 interface ElementCounts {
   scripts: number;
@@ -15,9 +16,11 @@ interface ElementCounts {
 
 interface ElementCountersProps {
   scriptsCount?: number;
+  onElementClick?: (elementType: string) => void;
 }
 
-export const ElementCounters: React.FC<ElementCountersProps> = ({ scriptsCount }) => {
+export const ElementCounters: React.FC<ElementCountersProps> = ({ scriptsCount, onElementClick }) => {
+  const { t } = useTranslation();
   const [counts, setCounts] = useState<ElementCounts>({
     scripts: scriptsCount || 0,
     missions: 0,
@@ -97,22 +100,25 @@ export const ElementCounters: React.FC<ElementCountersProps> = ({ scriptsCount }
   }, [scriptsCount]);
 
   const counters = [
-    { icon: Code, label: 'Scripts', count: counts.scripts, color: 'text-amber-400', bgColor: 'bg-amber-900/20' },
-    { icon: Map, label: 'Missioni', count: counts.missions, color: 'text-blue-400', bgColor: 'bg-blue-900/20' },
-    { icon: Zap, label: 'Semafori', count: counts.semaphores, color: 'text-yellow-400', bgColor: 'bg-yellow-900/20' },
-    { icon: Tag, label: 'Label', count: counts.labels, color: 'text-green-400', bgColor: 'bg-green-900/20' },
-    { icon: Users, label: 'Personaggi', count: counts.characters, color: 'text-purple-400', bgColor: 'bg-purple-900/20' },
-    { icon: Database, label: 'Variabili', count: counts.variables, color: 'text-cyan-400', bgColor: 'bg-cyan-900/20' },
-    { icon: Image, label: 'Immagini', count: counts.images, color: 'text-pink-400', bgColor: 'bg-pink-900/20' },
-    { icon: Trophy, label: 'Achievement', count: counts.achievements, color: 'text-orange-400', bgColor: 'bg-orange-900/20' }
+    { icon: Code, label: t('elements.scripts'), count: counts.scripts, color: 'text-amber-400', bgColor: 'bg-amber-900/20', elementType: null },
+    { icon: Map, label: t('elements.missions'), count: counts.missions, color: 'text-blue-400', bgColor: 'bg-blue-900/20', elementType: null },
+    { icon: Zap, label: t('elements.semaphores'), count: counts.semaphores, color: 'text-yellow-400', bgColor: 'bg-yellow-900/20', elementType: 'semafori' },
+    { icon: Tag, label: t('elements.labels'), count: counts.labels, color: 'text-green-400', bgColor: 'bg-green-900/20', elementType: 'labels' },
+    { icon: Users, label: t('elements.characters'), count: counts.characters, color: 'text-purple-400', bgColor: 'bg-purple-900/20', elementType: 'characters' },
+    { icon: Database, label: t('elements.variables'), count: counts.variables, color: 'text-cyan-400', bgColor: 'bg-cyan-900/20', elementType: 'variables' },
+    { icon: Image, label: t('elements.images'), count: counts.images, color: 'text-pink-400', bgColor: 'bg-pink-900/20', elementType: 'images' },
+    { icon: Trophy, label: t('elements.achievements'), count: counts.achievements, color: 'text-orange-400', bgColor: 'bg-orange-900/20', elementType: 'achievements' }
   ];
 
   return (
     <div className="grid grid-cols-4 gap-3 w-full">
-      {counters.map(({ icon: Icon, label, count, color, bgColor }) => (
+      {counters.map(({ icon: Icon, label, count, color, bgColor, elementType }) => (
         <div
           key={label}
-          className={`${bgColor} backdrop-blur-sm rounded-lg p-3 border border-gray-700/50 transition-all hover:border-gray-600`}
+          className={`${bgColor} backdrop-blur-sm rounded-lg p-3 border border-gray-700/50 transition-all hover:border-gray-600 ${
+            elementType && onElementClick ? 'cursor-pointer hover:scale-105' : ''
+          }`}
+          onClick={() => elementType && onElementClick && onElementClick(elementType)}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">

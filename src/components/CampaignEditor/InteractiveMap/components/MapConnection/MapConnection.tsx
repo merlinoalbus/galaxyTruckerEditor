@@ -18,6 +18,30 @@ export const MapConnection: React.FC<MapConnectionProps> = ({
   const hasScripts = relatedScripts.length > 0;
   const midX = (fromPosition.x + toPosition.x) / 2;
   const midY = (fromPosition.y + toPosition.y) / 2;
+  
+  // Handle shuttle connections differently
+  if (connection.isShuttle) {
+    const shuttleLineAttrs = {
+      stroke: '#6B7280', // Gray color
+      strokeWidth: 2,
+      strokeOpacity: 0.6,
+      strokeDasharray: '2,8' // Very sparse dashes
+    };
+    
+    return (
+      <g className={mapConnectionStyles.connectionGroup}>
+        <line
+          x1={fromPosition.x}
+          y1={fromPosition.y}
+          x2={toPosition.x}
+          y2={toPosition.y}
+          {...shuttleLineAttrs}
+          style={{ pointerEvents: 'none' }}
+        />
+      </g>
+    );
+  }
+  
   // Get license and mission type from first mission
   const firstMission = connection.missions?.[0];
   const license = firstMission?.license;
@@ -80,9 +104,6 @@ export const MapConnection: React.FC<MapConnectionProps> = ({
   };
 
 
-  // Get license configuration
-  const licenseConfig = connection.license ? 
-    MISSION_CONFIG.LICENSE_CLASSES[connection.license] : null;
 
   return (
     <g
@@ -113,21 +134,20 @@ export const MapConnection: React.FC<MapConnectionProps> = ({
         style={{ pointerEvents: 'none' }}
       />
       
-      {/* Ship icons positioned on line */}
-      {connection.flightClasses && connection.flightClasses.length > 0 && (
+      {/* Ship icon positioned on line - show only highest license */}
+      {connection.license && (
         <g>
-          {connection.flightClasses.map((flightClass, index) => {
-            const licenseConfig = MISSION_CONFIG.LICENSE_CLASSES[
-              connection.availableLicenses?.[index] || 'STI'
-            ];
-            const offsetX = (index - (connection.flightClasses!.length - 1) / 2) * 35;
+          {(() => {
+            const licenseConfig = MISSION_CONFIG.LICENSE_CLASSES[connection.license];
+            const flightClass = connection.license === 'STIII' ? 'III' : 
+                               connection.license === 'STII' ? 'II' : 'I';
             
             return (
-              <g key={`${flightClass}-${index}`}>
+              <g>
                 {/* Ship class image from API */}
                 <image
                   href={`${API_CONFIG.API_BASE_URL}/file/campaign/campaignMap/${licenseConfig.shipImage}.cacheship.png`}
-                  x={shipPos.x - 30 + offsetX}
+                  x={shipPos.x - 30}
                   y={shipPos.y - 20}
                   width="60"
                   height="40"
@@ -135,7 +155,7 @@ export const MapConnection: React.FC<MapConnectionProps> = ({
                 />
                 {/* Class indicator text overlay */}
                 <text
-                  x={shipPos.x + offsetX}
+                  x={shipPos.x}
                   y={shipPos.y + 6}
                   textAnchor="middle"
                   className="fill-white text-xs font-bold pointer-events-none"
@@ -148,35 +168,10 @@ export const MapConnection: React.FC<MapConnectionProps> = ({
                 </text>
               </g>
             );
-          })}
+          })()}
         </g>
       )}
 
-      {(hasScripts || (connection.startScripts && connection.startScripts.length > 0)) && (
-        <g>
-          <circle
-            cx={midX}
-            cy={midY + 15}
-            className={mapConnectionStyles.scriptIndicator.className}
-            r={mapConnectionStyles.scriptIndicator.r}
-            fill={mapConnectionStyles.scriptIndicator.fill}
-            stroke={mapConnectionStyles.scriptIndicator.stroke}
-            strokeWidth={mapConnectionStyles.scriptIndicator.strokeWidth}
-          >
-            <title>{relatedScripts.length + (connection.startScripts?.length || 0)} scripts available</title>
-          </circle>
-          {/* Show script count */}
-          <text
-            x={midX}
-            y={midY + 15}
-            textAnchor="middle"
-            className="fill-white text-xs font-bold pointer-events-none"
-            dy="0.3em"
-          >
-            {relatedScripts.length + (connection.startScripts?.length || 0)}
-          </text>
-        </g>
-      )}
     </g>
   );
 };

@@ -1,12 +1,14 @@
-import { CampaignScript } from '../../InteractiveMap.types';
+import { CampaignScript, Mission } from '../../InteractiveMap.types';
 
 export interface ScriptSelectorProps {
   isOpen: boolean;
   scripts: CampaignScript[];
+  missions?: Mission[];
   title: string;
   position?: { x: number; y: number };
   startScripts?: string[]; // ⭐ Scripts that are start scripts
   onScriptSelect: (script: CampaignScript) => void;
+  onMissionSelect?: (mission: Mission) => void;
   onClose: () => void;
 }
 

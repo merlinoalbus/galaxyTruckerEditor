@@ -118,7 +118,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
         
         return (
           <MapConnection
-            key={`connection-${connectionId}-${index}`}
+            key={`connection-${connection.isShuttle ? 'shuttle-' : ''}${connectionId}`}
             connection={connection}
             fromPosition={{
               x: fromNode.coordinates[0],

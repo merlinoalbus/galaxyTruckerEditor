@@ -4,7 +4,11 @@
       "Bash(npm run build:*)",
       "Bash(curl:*)",
       "Bash(mkdir:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm start)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }

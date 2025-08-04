@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-export type SupportedLanguage = 'EN' | 'CS' | 'DE' | 'ES' | 'FR' | 'PL' | 'RU';
+export type SupportedLanguage = 'EN' | 'CS' | 'DE' | 'ES' | 'FR' | 'IT' | 'PL' | 'RU';
 
 interface LanguageContextType {
   currentLanguage: SupportedLanguage;
@@ -31,6 +31,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     { code: 'DE' as SupportedLanguage, name: 'Deutsch' },
     { code: 'ES' as SupportedLanguage, name: 'Español' },
     { code: 'FR' as SupportedLanguage, name: 'Français' },
+    { code: 'IT' as SupportedLanguage, name: 'Italiano' },
     { code: 'PL' as SupportedLanguage, name: 'Polski' },
     { code: 'RU' as SupportedLanguage, name: 'Русский' }
   ];

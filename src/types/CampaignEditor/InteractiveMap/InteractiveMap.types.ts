@@ -28,6 +28,7 @@ export interface MapConnection {
   flightClass?: 'I' | 'II' | 'III' | 'IV';
   flightClasses?: ('I' | 'II' | 'III' | 'IV')[]; // All available classes
   license?: 'STI' | 'STII' | 'STIII';
+  isShuttle?: boolean; // Mark shuttle connections
   availableLicenses?: ('STI' | 'STII' | 'STIII')[]; // All available licenses
   startScripts?: string[]; // ⭐ Mission start scripts
   hasUniqueMissions?: boolean;
