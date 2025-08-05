@@ -81,6 +81,10 @@ export type TranslationKey =
   | 'mapLegend.uniqueMissions'
   | 'mapLegend.shuttles'
   
+  // Interactive Map
+  | 'interactiveMap.enterFullscreen'
+  | 'interactiveMap.exitFullscreen'
+  
   // Element Counters
   | 'elements.scripts'
   | 'elements.missions'
@@ -259,6 +263,10 @@ export const translations: Translations = {
     'mapLegend.uniqueMissions': 'Unique Missions',
     'mapLegend.shuttles': 'Shuttles',
     
+    // Interactive Map
+    'interactiveMap.enterFullscreen': 'Fullscreen',
+    'interactiveMap.exitFullscreen': 'Exit Fullscreen',
+    
     // Element Counters
     'elements.scripts': 'Scripts',
     'elements.missions': 'Missions',
@@ -430,6 +438,10 @@ export const translations: Translations = {
     'mapLegend.normalMissions': 'Missioni Normal',
     'mapLegend.uniqueMissions': 'Missioni Unique',
     'mapLegend.shuttles': 'Shuttles',
+    
+    // Interactive Map
+    'interactiveMap.enterFullscreen': 'Schermo Intero',
+    'interactiveMap.exitFullscreen': 'Esci da Schermo Intero',
     
     // Element Counters
     'elements.scripts': 'Scripts',
@@ -603,6 +615,10 @@ export const translations: Translations = {
     'mapLegend.uniqueMissions': 'Jedinečné mise',
     'mapLegend.shuttles': 'Kyvadlová doprava',
     
+    // Interactive Map
+    'interactiveMap.enterFullscreen': 'Celá obrazovka',
+    'interactiveMap.exitFullscreen': 'Opustit celou obrazovku',
+    
     // Element Counters
     'elements.scripts': 'Skripty',
     'elements.missions': 'Mise',
@@ -774,6 +790,10 @@ export const translations: Translations = {
     'mapLegend.normalMissions': 'Normale Missionen',
     'mapLegend.uniqueMissions': 'Einzigartige Missionen',
     'mapLegend.shuttles': 'Shuttles',
+    
+    // Interactive Map
+    'interactiveMap.enterFullscreen': 'Vollbild',
+    'interactiveMap.exitFullscreen': 'Vollbild verlassen',
     
     // Element Counters
     'elements.scripts': 'Skripte',
@@ -947,6 +967,10 @@ export const translations: Translations = {
     'mapLegend.uniqueMissions': 'Misiones únicas',
     'mapLegend.shuttles': 'Lanzaderas',
     
+    // Interactive Map
+    'interactiveMap.enterFullscreen': 'Pantalla completa',
+    'interactiveMap.exitFullscreen': 'Salir pantalla completa',
+    
     // Element Counters
     'elements.scripts': 'Scripts',
     'elements.missions': 'Misiones',
@@ -1118,6 +1142,10 @@ export const translations: Translations = {
     'mapLegend.normalMissions': 'Missions normales',
     'mapLegend.uniqueMissions': 'Missions uniques',
     'mapLegend.shuttles': 'Navettes',
+    
+    // Interactive Map
+    'interactiveMap.enterFullscreen': 'Plein écran',
+    'interactiveMap.exitFullscreen': 'Quitter plein écran',
     
     // Element Counters
     'elements.scripts': 'Scripts',
@@ -1291,6 +1319,10 @@ export const translations: Translations = {
     'mapLegend.uniqueMissions': 'Unikalne misje',
     'mapLegend.shuttles': 'Promy',
     
+    // Interactive Map
+    'interactiveMap.enterFullscreen': 'Pełny ekran',
+    'interactiveMap.exitFullscreen': 'Opuść pełny ekran',
+    
     // Element Counters
     'elements.scripts': 'Skrypty',
     'elements.missions': 'Misje',
@@ -1462,6 +1494,10 @@ export const translations: Translations = {
     'mapLegend.normalMissions': 'Обычные миссии',
     'mapLegend.uniqueMissions': 'Уникальные миссии',
     'mapLegend.shuttles': 'Челноки',
+    
+    // Interactive Map
+    'interactiveMap.enterFullscreen': 'Полный экран',
+    'interactiveMap.exitFullscreen': 'Выйти из полного экрана',
     
     // Element Counters
     'elements.scripts': 'Скрипты',
