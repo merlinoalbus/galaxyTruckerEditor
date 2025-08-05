@@ -87,25 +87,28 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
         </radialGradient>
       </defs>
 
-      {/* Background base */}
-      <rect
-        x={viewport.x}
-        y={viewport.y}
-        width={viewport.width / viewport.scale}
-        height={viewport.height / viewport.scale}
-        fill={mapCanvasStyles.background.fill}
-      />
+      {/* Fixed background group - doesn't move with viewport */}
+      <g transform={`translate(${viewport.x}, ${viewport.y}) scale(${1/viewport.scale})`}>
+        {/* Background base - covers viewport with extra margin */}
+        <rect
+          x={-viewport.width * 0.1}
+          y={-viewport.height * 0.1}
+          width={viewport.width * 1.2}
+          height={viewport.height * 1.2}
+          fill={mapCanvasStyles.background.fill}
+        />
 
-      {/* Background image from API */}
-      <image
-        href={`${API_CONFIG.API_BASE_URL}/game/map-background`}
-        x={viewport.x}
-        y={viewport.y}
-        width={viewport.width / viewport.scale}
-        height={viewport.height / viewport.scale}
-        preserveAspectRatio="xMinYMax slice"
-        opacity="0.6"
-      />
+        {/* Background image - fixed to viewport with extra margin */}
+        <image
+          href={`${API_CONFIG.API_BASE_URL}/game/map-background`}
+          x={-viewport.width * 0.1}
+          y={-viewport.height * 0.1}
+          width={viewport.width * 1.2}
+          height={viewport.height * 1.2}
+          preserveAspectRatio="xMidYMid slice"
+          opacity="0.6"
+        />
+      </g>
 
       {visibleConnections.map((connection, index) => {
         const fromNode = nodes.find(n => n.name === connection.from);
