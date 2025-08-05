@@ -56,7 +56,8 @@
       "Bash(git push:*)",
       "Bash(scripts/consolida-codice.sh:*)",
       "Bash(consolidaCodice)",
-      "Bash(scripts/consolida-codice.sh:*)"
+      "Bash(scripts/consolida-codice.sh:*)",
+      "Bash(restartBE)"
     ],
     "deny": []
   },
