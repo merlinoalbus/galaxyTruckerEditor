@@ -1358,7 +1358,7 @@ router.get('/map-background', async (req, res) => {
     }
     
     // Invia il file
-    res.sendFile(imagePath, (err) => {
+    res.sendFile(path.resolve(imagePath), (err) => {
       if (err) {
         logger.error('Errore invio background:', err);
         res.status(500).json({
