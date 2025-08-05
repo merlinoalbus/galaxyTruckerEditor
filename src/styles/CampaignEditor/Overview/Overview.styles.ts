@@ -2,7 +2,7 @@ export const overviewStyles = {
   container: 'p-6 h-full overflow-auto',
   
   header: {
-    title: 'text-xl font-bold text-white mb-6',
+    title: 'text-2xl font-bold text-white mb-6 galaxy-title',
     subtitle: 'text-gray-400 text-sm mb-4'
   },
 

@@ -81,7 +81,7 @@ export const VariablesSystem: React.FC<VariablesSystemProps> = ({ analysis }) =>
   return (
     <div className="h-full flex flex-col p-6">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white mb-2">{t('variablesSystem.title')}</h2>
+        <h2 className="text-2xl font-bold text-white mb-2 galaxy-title">{t('variablesSystem.title')}</h2>
         <p className="text-gray-400">
           {t('variablesSystem.description')}
         </p>

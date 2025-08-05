@@ -1,0 +1,7 @@
+idName: "at__cyan-easy"
+avatar: avatars/campaign/cyan.png
+color: "gbry"
+preferencesSettings: aiConfigs/settingBase.aipref
+speedSettings: aiConfigs/settingBaseEasy.aispeed
+difficulty: easy  #hard, medium, easy
+stupidity: 120

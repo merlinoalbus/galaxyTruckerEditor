@@ -1,0 +1,801 @@
+- type: abandonedstation
+  round: 1
+  condition: 4
+  cargo: g1b2
+  days: -1
+- type: abandonedstation
+  round: 1
+  condition: 5
+  cargo: y1g1
+  days: -1
+- type: abandonedstation
+  round: 1
+  condition: 5
+  cargo: y1b3
+  days: -1
+- type: abandonedstation
+  round: 1
+  condition: 5
+  cargo: r1b3
+  days: -1
+- type: abandonedstation
+  round: 1
+  condition: 5
+  cargo: g2b1
+  days: -2
+- type: abandonedstation
+  round: 1
+  condition: 6
+  cargo: y1g1b1
+  days: -2
+- type: abandonedstation
+  round: 1
+  condition: 6
+  cargo: y1g1b1
+  days: -2
+- type: abandonedstation
+  round: 1
+  condition: 6
+  cargo: g2b2
+  days: -2
+- type: abandonedstation
+  round: 1
+  condition: 6
+  cargo: g2b2
+  days: -2
+- type: abandonedstation
+  round: 1
+  condition: 6
+  cargo: r1g1b1
+  days: -2
+- type: abandonedstation
+  round: 1
+  condition: 6
+  cargo: g3
+  days: -2
+- type: abandonedstation
+  round: 1
+  condition: 7
+  cargo: r1y1b1
+  days: -2
+- type: abandonedstation
+  round: 1
+  condition: 7
+  cargo: y2b1
+  days: -3
+- type: planets
+  round: 1
+  planets:
+    - cargo: y1g1b1
+    - cargo: g1b3
+    - cargo: g1b2
+    - cargo: b2
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: y1g1b1
+    - cargo: g1b3
+    - cargo: g1b2
+    - cargo: b2
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: y1g1b1
+    - cargo: g1b3
+    - cargo: g1b2
+    - cargo: b2
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: y1g1b1
+    - cargo: g1b3
+    - cargo: g1b2
+    - cargo: b2
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: g2
+    - cargo: y1
+    - cargo: b3
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: g2
+    - cargo: y1
+    - cargo: b3
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: g2
+    - cargo: y1
+    - cargo: b3
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: g2
+    - cargo: y1
+    - cargo: b3
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: r1g1b3
+    - cargo: r1y1b1
+    - cargo: r1b3
+    - cargo: r1g1
+  days: -3
+- type: planets
+  round: 1
+  planets:
+    - cargo: y1g1b2
+    - cargo: y2
+  days: -3
+- type: planets
+  round: 1
+  planets:
+    - cargo: r2
+    - cargo: y2
+    - cargo: g2
+    - cargo: b2
+  days: -3
+- type: planets
+  round: 1
+  planets:
+    - cargo: y1g1b2
+    - cargo: y1g1b1
+    - cargo: y1b1
+  days: -3
+- type: planets
+  round: 1
+  planets:
+    - cargo: r1b2
+    - cargo: y1b2
+    - cargo: g1b2
+    - cargo: b3
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: r1b2
+    - cargo: y1b2
+    - cargo: g1b2
+    - cargo: b3
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: r1b2
+    - cargo: y1b2
+    - cargo: g1b2
+    - cargo: b3
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: r1b2
+    - cargo: y1b2
+    - cargo: g1b2
+    - cargo: b3
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: b5
+    - cargo: g2
+    - cargo: y1
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: b5
+    - cargo: g2
+    - cargo: y1
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: b5
+    - cargo: g2
+    - cargo: y1
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: b5
+    - cargo: g2
+    - cargo: y1
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: g4
+    - cargo: y2
+    - cargo: r1
+  days: -3
+- type: planets
+  round: 1
+  planets:
+    - cargo: g3
+    - cargo: g2b1
+    - cargo: g1b2
+    - cargo: b3
+  days: -3
+- type: planets
+  round: 1
+  planets:
+    - cargo: g3
+    - cargo: g2b1
+    - cargo: g1b2
+    - cargo: b3
+  days: -3
+- type: planets
+  round: 1
+  planets:
+    - cargo: g3
+    - cargo: g2b1
+    - cargo: g1b2
+    - cargo: b3
+  days: -3
+- type: planets
+  round: 1
+  planets:
+    - cargo: g3
+    - cargo: g2b1
+    - cargo: g1b2
+    - cargo: b3
+  days: -3
+- type: planets
+  round: 1
+  planets:
+    - cargo: r1y1
+    - cargo: r1g1b1
+    - cargo: r1b3
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: y2
+    - cargo: y1g1b1
+    - cargo: g2b2
+    - cargo: g1b4
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: y2
+    - cargo: y1g1b1
+    - cargo: g2b2
+    - cargo: g1b4
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: y2
+    - cargo: y1g1b1
+    - cargo: g2b2
+    - cargo: g1b4
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: y2
+    - cargo: y1g1b1
+    - cargo: g2b2
+    - cargo: g1b4
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: g1b3
+    - cargo: y1b1
+    - cargo: r1
+  days: -2
+- type: smugglers
+  round: 1
+  condition: 5
+  payout: -3
+  cargo: g2b2
+  days: -1
+- type: smugglers
+  round: 1
+  condition: 5
+  payout: -3
+  cargo: y1g2b1
+  days: -1
+- type: smugglers
+  round: 1
+  condition: 6
+  payout: -2
+  cargo: r1g1b2
+  days: -2
+- type: smugglers
+  round: 1
+  condition: 6
+  payout: -2
+  cargo: y1g1b2
+  days: -2
+- type: smugglers
+  round: 1
+  condition: 7
+  payout: -1
+  cargo: y1g2b2
+  days: -2
+- type: smugglers
+  round: 1
+  condition: 7
+  payout: -1
+  cargo: r1y1g1b1
+  days: -2
+- type: combatzone
+  round: 1
+  competitions:
+    - crew:
+        days: -4
+    - engines:
+        crew: -3
+    - cannons:
+        fire: dD
+- type: combatzone
+  round: 1
+  competitions:
+    - crew:
+        days: -4
+    - engines:
+        crew: -3
+    - cannons:
+        fire: dD
+- type: combatzone
+  round: 1
+  competitions:
+    - crew:
+        days: -4
+    - engines:
+        crew: -3
+    - cannons:
+        fire: dD
+- type: combatzone
+  round: 1
+  competitions:
+    - cannons:
+        days: -4
+    - engines:
+        cargo: -3
+    - crew:
+        fire: dD
+- type: combatzone
+  round: 1
+  competitions:
+    - crew:
+        cargo: -3
+    - cannons:
+        crew: -3
+    - engines:
+        fire: ddd
+- type: combatzone
+  round: 1
+  competitions:
+    - engines:
+        days: -4
+    - crew:
+        cargo: -3
+    - cannons:
+        crew: -3
+- type: combatzone
+  round: 1
+  competitions:
+    - engines:
+        days: -4
+    - cannons:
+        cargo: -3
+    - crew:
+        fire: lrd
+- type: abandonedstation
+  round: 2
+  condition: 6
+  cargo: g1b3
+  days: -2
+- type: abandonedstation
+  round: 2
+  condition: 7
+  cargo: y1g2
+  days: -3
+- type: abandonedstation
+  round: 2
+  condition: 7
+  cargo: y1g1b2
+  days: -3
+- type: abandonedstation
+  round: 2
+  condition: 7
+  cargo: y1g1b2
+  days: -3
+- type: abandonedstation
+  round: 2
+  condition: 8
+  cargo: g2b3
+  days: -3
+- type: abandonedstation
+  round: 2
+  condition: 8
+  cargo: g2b3
+  days: -3
+- type: abandonedstation
+  round: 2
+  condition: 8
+  cargo: r1g2b1
+  days: -3
+- type: abandonedstation
+  round: 2
+  condition: 9
+  cargo: r1g2b2
+  days: -3
+- type: planets
+  round: 2
+  planets:
+    - cargo: y1g1b2
+    - cargo: g2b2
+    - cargo: g2b1
+    - cargo: b3
+  days: -3
+- type: planets
+  round: 2
+  planets:
+    - cargo: y1g1b2
+    - cargo: g2b2
+    - cargo: g2b1
+    - cargo: b3
+  days: -3
+- type: planets
+  round: 2
+  planets:
+    - cargo: y1g1b2
+    - cargo: g2b2
+    - cargo: g2b1
+    - cargo: b3
+  days: -3
+- type: planets
+  round: 2
+  planets:
+    - cargo: r1g1b1
+    - cargo: y1g1b1
+    - cargo: g2
+    - cargo: b3
+  days: -2
+- type: planets
+  round: 2
+  planets:
+    - cargo: r1g1b1
+    - cargo: y1g1b1
+    - cargo: g2
+    - cargo: b3
+  days: -2
+- type: planets
+  round: 2
+  planets:
+    - cargo: r1g1b1
+    - cargo: y1g1b1
+    - cargo: g2
+    - cargo: b3
+  days: -2
+- type: planets
+  round: 2
+  planets:
+    - cargo: g4
+    - cargo: y2
+    - cargo: b3
+  days: -3
+- type: planets
+  round: 2
+  planets:
+    - cargo: g4
+    - cargo: y2
+    - cargo: b3
+  days: -3
+- type: planets
+  round: 2
+  planets:
+    - cargo: r1y2
+    - cargo: y1g2
+    - cargo: g1b2
+  days: -3
+- type: planets
+  round: 2
+  planets:
+    - cargo: y2b1
+    - cargo: g2b2
+    - cargo: b5
+  days: -2
+- type: planets
+  round: 2
+  planets:
+    - cargo: y2b1
+    - cargo: g2b2
+    - cargo: b5
+  days: -2
+- type: planets
+  round: 2
+  planets:
+    - cargo: r2y2
+    - cargo: y2g2
+    - cargo: g2b2
+    - cargo: b4
+  days: -4
+- type: planets
+  round: 2
+  planets:
+    - cargo: r1y2
+    - cargo: r1g2
+    - cargo: r1b2
+  days: -3
+- type: planets
+  round: 2
+  planets:
+    - cargo: r1y1g1
+    - cargo: r1y1b1
+    - cargo: r1g1b1
+    - cargo: y1g1b1
+  days: -3
+- type: planets
+  round: 2
+  planets:
+    - cargo: r2b3
+    - cargo: y2b3
+    - cargo: g2b3
+  days: -3
+- type: planets
+  round: 2
+  planets:
+    - cargo: g1b4
+    - cargo: y1b2
+    - cargo: y1
+  days: -1
+- type: smugglers
+  round: 2
+  condition: 6
+  payout: -6
+  cargo: y1b2
+  days: -2
+- type: smugglers
+  round: 2
+  condition: 7
+  payout: -5
+  cargo: y1g2
+  days: -2
+- type: smugglers
+  round: 2
+  condition: 7
+  payout: -5
+  cargo: y1g1b2
+  days: -2
+- type: smugglers
+  round: 2
+  condition: 8
+  payout: -4
+  cargo: r1y1g1b1
+  days: -2
+- type: smugglers
+  round: 2
+  condition: 8
+  payout: -4
+  cargo: y2g1b1
+  days: -2
+- type: smugglers
+  round: 2
+  condition: 9
+  payout: -3
+  cargo: r1g2b2
+  days: -2
+- type: smugglers
+  round: 2
+  condition: 9
+  payout: -3
+  cargo: r1y1g1b2
+  days: -3
+- type: smugglers
+  round: 2
+  condition: 10
+  payout: -2
+  cargo: y2g2b1
+  days: -3
+- type: combatzone
+  round: 2
+  competitions:
+    - cannons:
+        days: -5
+    - engines:
+        cargo: -4
+    - crew:
+        fire: rluD
+- type: combatzone
+  round: 2
+  competitions:
+    - cannons:
+        days: -5
+    - engines:
+        cargo: -4
+    - crew:
+        fire: rluD
+- type: combatzone
+  round: 2
+  competitions:
+    - crew:
+        cargo: -5
+    - cannons:
+        crew: -4
+    - engines:
+        fire: dDD
+- type: combatzone
+  round: 2
+  competitions:
+    - crew:
+        days: -5
+    - engines:
+        crew: -4
+    - cannons:
+        fire: rluD
+- type: abandonedstation
+  round: 3
+  condition: 8
+  cargo: r1y1g2
+  days: -3
+- type: abandonedstation
+  round: 3
+  condition: 9
+  cargo: y2g1b1
+  days: -3
+- type: abandonedstation
+  round: 3
+  condition: 9
+  cargo: r1y1g1b1
+  days: -3
+- type: abandonedstation
+  round: 3
+  condition: 9
+  cargo: r1y1g1b1
+  days: -3
+- type: abandonedstation
+  round: 3
+  condition: 10
+  cargo: y1g2b2
+  days: -4
+- type: abandonedstation
+  round: 3
+  condition: 10
+  cargo: y1g2b2
+  days: -4
+- type: abandonedstation
+  round: 3
+  condition: 10
+  cargo: r1g2b2
+  days: -4
+- type: abandonedstation
+  round: 3
+  condition: 11
+  cargo: y1g2b2
+  days: -4
+- type: planets
+  round: 3
+  planets:
+    - cargo: r1y1g1b1
+    - cargo: y1g1b2
+    - cargo: g2b1
+    - cargo: b4
+  days: -4
+- type: planets
+  round: 3
+  planets:
+    - cargo: r1g2b2
+    - cargo: y1g1b3
+    - cargo: g2b2
+    - cargo: g1b3
+  days: -4
+- type: planets
+  round: 3
+  planets:
+    - cargo: r1y1b1
+    - cargo: r1g1b2
+    - cargo: r1b4
+  days: -2
+- type: planets
+  round: 3
+  planets:
+    - cargo: r3
+    - cargo: y3
+    - cargo: g3
+    - cargo: b3
+  days: -3
+- type: planets
+  round: 3
+  planets:
+    - cargo: r1y2g2
+    - cargo: r1y2b2
+    - cargo: r1g2b2
+    - cargo: y1g2b2
+  days: -5
+- type: planets
+  round: 3
+  planets:
+    - cargo: y2g1b1
+    - cargo: y1g2b1
+    - cargo: y1g2b1
+    - cargo: g2b2
+  days: -4
+- type: smugglers
+  round: 3
+  condition: 8
+  payout: -6
+  cargo: y1g1b3
+  days: -3
+- type: smugglers
+  round: 3
+  condition: 9
+  payout: -5
+  cargo: r1y1g2b1
+  days: -3
+- type: smugglers
+  round: 3
+  condition: 10
+  payout: -4
+  cargo: r1y2g1b2
+  days: -3
+- type: smugglers
+  round: 3
+  condition: 10
+  payout: -4
+  cargo: y2g2b2
+  days: -3
+- type: smugglers
+  round: 3
+  condition: 11
+  payout: -3
+  cargo: r1y1g2b2
+  days: -4
+- type: smugglers
+  round: 3
+  condition: 11
+  payout: -3
+  cargo: r1y2g2b1
+  days: -4
+- type: combatzone
+  round: 3
+  competitions:
+    - crew:
+        cargo: -5
+    - cannons:
+        crew: -5
+    - engines:
+        fire: rluuDD
+- type: combatzone
+  round: 3
+  competitions:
+    - crew:
+        cargo: -5
+    - cannons:
+        crew: -5
+    - engines:
+        fire: rluuDD
+- type: combatzone
+  round: 3
+  competitions:
+    - cannons:
+        days: -7
+    - engines:
+        cargo: -6
+    - crew:
+        fire: rlDDD
+- type: combatzone
+  round: 3
+  competitions:
+    - crew:
+        days: -7
+    - engines:
+        crew: -6
+    - cannons:
+        fire: uuLRD

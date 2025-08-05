@@ -1,0 +1,9 @@
+idName: "at__richGirl__medium_basic"
+character: basic
+gender: female
+avatar: avatars/alien_technologies/rich.png
+color: "yrgb"
+preferencesSettings: aiConfigs/settingBase.aipref
+speedSettings: aiConfigs/settingBaseMedium.aispeed
+difficulty: medium  #hard, medium, easy
+stupidity: 80

@@ -29,7 +29,7 @@ export function Sidebar() {
             <Rocket className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h2 className="font-bold text-white">GT Editor</h2>
+            <h2 className="font-bold text-white galaxy-title">GT Editor</h2>
             <p className="text-xs text-gray-400">v1.0.0</p>
           </div>
         </div>

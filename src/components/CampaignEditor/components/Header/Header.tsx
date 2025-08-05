@@ -14,7 +14,7 @@ export function Header() {
     <header className="bg-gt-primary border-b border-slate-700 px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <h1 className="text-2xl font-bold font-game text-gt-accent">
+          <h1 className="font-bold font-game galaxy-title galaxy-title-main">
             {t('header.title')}
           </h1>
           <div className="flex items-center space-x-2">

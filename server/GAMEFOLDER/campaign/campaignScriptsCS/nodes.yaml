@@ -1,0 +1,109 @@
+- name: newbie
+  coordinates: [1250, 2550]
+  image: newbieport.png
+  caption: "Stanice Lama 1"
+  description: "Všichni truckeři začínají svou kariéru zde."
+  shuttles: [["outpost", 10], ["regula", 15], ["bar", 10], ["forge", 20], ["lab", 25], ["club",30],["workshop",20],["brownHome",20]]
+  buttons: [[btutor, newbieDlg, "Promluvit si s instruktorem"], [brace, raceDlg, "Zapsat se k závodu"], [bdebugstart, debugStart, "[Ladící možnosti, nepoužívat prosím ]"]]
+- name: outpost
+  coordinates: [770, 2200]
+  image: outpost.png
+  caption: "Hraniční stanice"
+  description: "Poslední výspa lidského osídlení. Ráj diplomatů a obchodníků."
+  shuttles: [["newbie", 10], ["regula", 10], ["bar", 15], ["forge", 15], ["lab", 20], ["club",25],["workshop",15],["brownHome",15]]
+  buttons: [[bambassador, embassyDlg, "Navštívit velvyslanectví"], [bvip, vipCheck, "Navštívit VIP salónek"], [bvip2, vipCheck, "Zkusit znovu VIP salónek"], [brichgirl2, richGirlDlg2, "Navštívit VIP truckerku."]]
+- name: bar
+  coordinates: [1830, 2030]
+  image: spacebar.png
+  caption: "Hvězdný bar"
+  description: "Ve své době nejslavnější bar v této části galaxie. Pořád docela ujde."
+  shuttles: [["newbie", 10], ["regula", 10], ["outpost", 15], ["forge", 15], ["lab", 20], ["club",25],["workshop",15],["brownHome",25]]
+  buttons: [[bbarprogress, barDebug, "[Progress with sailor quest]"], [bbartender, barDlg, "Promluvit si s barmanem"], [bguests, barGuestsDlg, "Promluvit si se štamgasty"]]
+- name: regula
+  coordinates: [1300, 1700]
+  image: regula.png
+  caption: "Regula"
+  description: "Centrum veškeré byrokracie."
+  shuttles: [["newbie", 15], ["bar", 10], ["outpost", 10], ["forge", 10], ["lab", 15], ["club",20], ["workshop", 10], ["brownHome", 20]]
+  buttons: [[bdebugcredits, debugCredits, "[Ladící možnosti]"], [bclerk, regulaDlg, "Navštívit úřad"], [bmech, mechDlg, "Rozhlédnout se po kosmodromu"]]
+- name: purpleHome
+  coordinates: [230, 2320]
+  image: purplehome.png
+  caption: "Th'kzw-r"
+  description: "Domovská planeta fialových mimozemšťanů. Jsou skvělí ve válčení, ale mizerní v učení cizích jazyků."
+  buttons: [[bpurple, purpleHomeDlg, "Promluvit si s místními"], [bmerchant, merchantDlg, "Promluvit si s obchodníkem"]]
+- name: brownHome
+  coordinates: [480, 1730]
+  image: brownhome.png
+  caption: "Hvězdné Ticho"
+  description: "Domovská planeta hnědých mimozemšťanů. Sami jí říkají ..., což znamená Věčné ticho nekonečného oceánu hvězd."
+  shuttles: [["newbie", 20], ["bar", 25], ["outpost", 15], ["regula", 15], ["forge", 20], ["lab", 20], ["club", 25], ["workshop", 20]]
+  buttons: [[bbrown, brownDlg, "Promluvit si s místními"], [bmerchhelp, merchHelpDlg, "Promluvit si s obchodníkem"], [bmerch2, merchDlg2, "Promluvit znovu s obchodníkem"]]
+- name: cyanHome
+  coordinates: [-170, 1760]
+  image: cyanhome.png
+  caption: "Elita"
+  description: "Domovská planeta azurových mimozemšťanů. Každý z nich je špičkovým odborníkem v některém oboru, nikdo si však moc neví rady s každodenním životem."
+  buttons: [[bcyan, cyanDlg, "Promluvit si s místními"], [bcyanmerch, merchCyanDlg, "Promluvit si s obchodníkem"], [bcyanshortcut, shortcutDlg, "Promluvit si s velvyslancem"]]
+- name: workshop
+  coordinates: [1800, 1530]
+  image: workshop.png
+  caption: "Kosmická továrna"
+  description: "Zcela nový průmyslový gigant, který byl nedávno uveden do provozu."
+  shuttles: [["newbie", 20], ["bar", 15], ["outpost", 15], ["regula", 10], ["forge", 15], ["lab", 20], ["club", 25], ["brownHome", 20]]
+  buttons: [[bworkshop, workDlg, "Promluvit si s mechaničkou"]]
+- name: forge
+  coordinates: [1310, 920]
+  caption: "Planetární huť"
+  image: forge.png
+  description: "Přirozený vnitřní žár této planety ji předurčuje jako klíčovou planetu galaktického metalurgického průmyslu."
+  shuttles: [["newbie", 20], ["bar", 15], ["outpost", 15], ["regula", 10], ["lab", 10], ["club",15], ["workshop", 15], ["brownHome", 20]]
+  buttons: [[btmp, tmpDlg, "Rozhlédnout se"], [bforeman, forgeDlg, "Promluvit si s předákem"]]
+- name: mine0
+  coordinates: [1980, 1000]
+  caption: "Důl AX-5-B32-3 delta"
+  image: mine0.png
+  description: "Plně automatické důlní zařízení na asteroidu AX-5-B32-3 delta. Těžba zde začala teprve nedávno."
+  buttons: [[bmine0, mine0Dlg, "Promluvit si s důlními roboty"]]
+- name: mine1
+  coordinates: [1930, 590]
+  caption: "Důl AX-5-B32-3 gama"
+  image: mine1.png
+  description: "Plně automatické důlní zařízení na asteroidu AX-5-B32-3 gama. Těžba zde probíhá už delší dobu."
+  buttons: [[bmine1, mine1Dlg, "Promluvit si s důlními roboty"]]
+- name: mine2
+  coordinates: [1650, 320]
+  caption: "Důl AX-5-B32-3 beta"
+  image: mine2.png
+  description: "Plně automatické důlní zařízení na asteroidu AX-5-B32-3 beta. Asteroid je již téměř vytěžen."
+  buttons: [[bmine2, mine2Dlg, "Promluvit si s důlními roboty"]]
+- name: mine3
+  coordinates: [1200, 250]
+  caption: "Důl AX-5-B32-3 alfa"
+  image: mine3.png
+  description: "Asteroid AX-5-B32-3 alfa. Kompletně vytěžen automatickým důlním zařízením."
+  buttons: [[bmine3, guruDlg, "Promluvit si s robotickým guru"]]
+- name: pirateTrap
+  coordinates: [1950, 2500]
+  caption: "Neznámé místo"
+  image: piratehaven.png
+- name: pirateHaven
+  coordinates: [1950, 2500]
+  caption: "Pirátská skrýš"
+  image: piratehaven.png
+  description: "Tajná pirátská základna."
+  buttons: [[bpirate1, pirateDlg1, "Promluvit si s vůdcem pirátů"], [bpirate2, pirateDlg2, "S pomocí posádky zajmout piráta"], [bpirate3, pirateDlg3, "Navštívit znovu pirátskou skrýš"]]
+- name: club
+  coordinates: [530, 275]
+  caption: "Zlatý truckerský klub"
+  image: club.png
+  description: "Sídlo nejprestižnějšího truckerského klubu."
+  shuttles: [["newbie", 30], ["bar", 25], ["outpost", 25], ["regula", 20], ["lab", 10], ["forge",15], ["workshop", 25], ["brownHome", 25]]
+  buttons: [[bclub, clubDlg, "Promluvit si s předsedou"]]
+- name: lab
+  coordinates: [500, 850]
+  caption: "Laboratoř Společnosti"
+  image: lab.png
+  description: "Vývojová laboratoř Společnosti, s.r.o."
+  shuttles: [["newbie", 25], ["bar", 20], ["outpost", 20], ["regula", 15], ["club", 10], ["forge",10], ["workshop", 20], ["brownHome", 20]]
+  buttons: [[blab, labDlg, "Promluvit si výzkumníkem"]]

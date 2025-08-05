@@ -53,7 +53,7 @@ export const CampaignEditor: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between flex-shrink-0">
         <div>
-          <h1 className="text-2xl font-bold text-white">Complete Campaign Editor</h1>
+          <h1 className="text-2xl font-bold text-white galaxy-title">Complete Campaign Editor</h1>
           <p className="text-gray-400">Interactive map-based script editing with complete flow visualization</p>
         </div>
         <button

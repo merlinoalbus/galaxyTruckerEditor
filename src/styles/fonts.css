@@ -1,0 +1,73 @@
+/* Font personalizzato per titoli Galaxy Trucker */
+
+/* Definizione font Amorpheus - dal gioco originale */
+@font-face {
+  font-family: 'Amorpheus';
+  src: url('../assets/fonts/amorpheus.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap; /* Migliora performance */
+}
+
+/* Font di fallback se serve uno più pesante */
+@font-face {
+  font-family: 'Amorpheus';
+  src: url('../assets/fonts/amorpheus.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Classi utility per titoli */
+.galaxy-title {
+  font-family: 'Amorpheus', 'Arial Black', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.galaxy-title-main {
+  font-size: 2.2rem;
+  background: linear-gradient(
+    to bottom,
+    #FFD700 0%,
+    #FFA500 50%,
+    #FF8C00 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+.galaxy-title-section {
+  font-size: 2rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.galaxy-title-subsection {
+  font-size: 1.5rem;
+}
+
+/* Effetti speciali opzionali */
+.galaxy-title-glow {
+  text-shadow: 
+    0 0 10px #00ffff,
+    0 0 20px #00ffff,
+    0 0 30px #00ffff,
+    0 0 40px #0088ff;
+}
+
+.galaxy-title-metallic {
+  background: linear-gradient(
+    to bottom,
+    #eee 0%,
+    #999 50%,
+    #777 51%,
+    #555 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

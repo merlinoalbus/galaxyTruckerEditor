@@ -1,0 +1,9 @@
+idName: "hard_rich_pap"
+type: turn
+character: rich
+avatar: avatars/ai/hard_rich.png
+color: "rygb"
+preferencesSettings: aiConfigs/settingRich.aipref
+qualitySettings: aiConfigs/settingPaPBase.aiqual
+difficulty: hard  # 1- hard, 3 - normal, 6 - easy
+stupidity: 20
