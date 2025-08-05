@@ -68,6 +68,7 @@ async function scanCampaignFiles(resultMap, type) {
         const relPath = relativePath ? path.join(relativePath, entry.name) : entry.name;
         
         if (entry.isFile() && entry.name.endsWith('.txt')) {
+          logger.debug(`Scanning file: ${fullPath} for ${type}`);
           await parseFileForElements(fullPath, relPath, resultMap, type);
         } else if (entry.isDirectory()) {
           await scanDirectory(fullPath, relPath);
@@ -87,6 +88,8 @@ async function parseFileForElements(filePath, fileName, resultMap, type) {
     const content = await fs.readFile(filePath, 'utf8');
     const lines = content.split('\n');
     let currentScript = null;
+    let scriptsFound = 0;
+    let missionsFound = 0;
     
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
@@ -94,33 +97,54 @@ async function parseFileForElements(filePath, fileName, resultMap, type) {
       // Traccia script corrente
       if (line.startsWith('SCRIPT ')) {
         currentScript = line.replace('SCRIPT ', '').trim();
+        scriptsFound++;
       } else if (line.startsWith('MISSION ')) {
         currentScript = line.replace('MISSION ', '').trim();
+        missionsFound++;
       } else if (line === 'END_OF_SCRIPT' || line === 'END_OF_MISSION') {
         currentScript = null;
       }
       
+      // Se non siamo in uno script/mission, salta
       if (!currentScript) continue;
+      
+      // Non considerare le seguenti righe come fine dello script/mission
+      // perché sono sotto-blocchi delle mission
+      const missionSubBlocks = [
+        'INIT_BUILD', 'START_BUILDING', 'END_BUILDING',
+        'INIT_FLIGHT', 'START_FLIGHT', 'EVALUATE_FLIGHT', 'END_FLIGHT',
+        'FINISH_MISSION'
+      ];
+      
+      if (missionSubBlocks.includes(line)) {
+        // Siamo ancora dentro la mission, continua a processare
+      }
       
       // Estrai elementi basati su tipo
       if (type === 'variables') {
-        extractVariables(line, currentScript, resultMap);
+        extractVariablesFromLine(line, currentScript, resultMap);
+        // Log per debug solo per variabili e comandi ADD
+        if (line.trim().toUpperCase().includes('ADD ')) {
+          logger.info(`Line with ADD found: "${line}" in script ${currentScript}`);
+        }
       } else if (type === 'semaphores') {
         extractSemaphores(line, currentScript, resultMap);
       } else if (type === 'labels') {
-        extractLabels(line, currentScript, resultMap, fileName);
+        extractLabelsFromLine(line, currentScript, resultMap, fileName);
         
         // Aggiorna numero di linea per label e GO
         const upperLine = line.toUpperCase().trim();
         if (upperLine.startsWith('LABEL ')) {
           const labelName = line.trim().split(' ')[1];
-          if (labelName && resultMap.has(labelName)) {
-            resultMap.get(labelName).posizione_definizione.linea = i + 1;
+          const labelKey = `${currentScript}::${labelName}`;
+          if (labelName && resultMap.has(labelKey)) {
+            resultMap.get(labelKey).posizione_definizione.linea = i + 1;
           }
         } else if (upperLine.startsWith('GO ')) {
           const labelName = line.trim().split(' ')[1];
-          if (labelName && resultMap.has(labelName)) {
-            const data = resultMap.get(labelName);
+          const labelKey = `${currentScript}::${labelName}`;
+          if (labelName && resultMap.has(labelKey)) {
+            const data = resultMap.get(labelKey);
             const lastRef = data.riferimenti[data.riferimenti.length - 1];
             if (lastRef && lastRef.linea === null) {
               lastRef.linea = i + 1;
@@ -129,21 +153,26 @@ async function parseFileForElements(filePath, fileName, resultMap, type) {
         }
       }
     }
+    
+    if (scriptsFound > 0 || missionsFound > 0) {
+      logger.info(`Parsed ${filePath}: found ${scriptsFound} scripts, ${missionsFound} missions`);
+    }
   } catch (error) {
     logger.warn(`Cannot parse file ${filePath}: ${error.message}`);
   }
 }
 
 // Estrai variabili numeriche
-function extractVariables(line, scriptName, variableMap) {
-  const upperLine = line.toUpperCase().trim();
+function extractVariablesFromLine(line, scriptName, variableMap) {
+  const trimmedLine = line.trim();
+  const upperLine = trimmedLine.toUpperCase();
   let variableName = null;
   let operation = null;
   let value = null;
   
   // SET_TO <variabile> <valore>
   if (upperLine.startsWith('SET_TO ')) {
-    const parts = line.trim().split(' ');
+    const parts = trimmedLine.split(/\s+/);
     if (parts.length >= 3) {
       variableName = parts[1];
       operation = 'SET_TO';
@@ -152,7 +181,8 @@ function extractVariables(line, scriptName, variableMap) {
   }
   // ADD <variabile> <valore>
   else if (upperLine.startsWith('ADD ')) {
-    const parts = line.trim().split(' ');
+    const parts = trimmedLine.split(/\s+/);
+    logger.info(`Parsing ADD command: parts = ${JSON.stringify(parts)}, trimmedLine = "${trimmedLine}"`);
     if (parts.length >= 3) {
       variableName = parts[1];
       operation = 'ADD';
@@ -161,7 +191,7 @@ function extractVariables(line, scriptName, variableMap) {
   }
   // IF_IS <variabile> <valore>
   else if (upperLine.startsWith('IF_IS ')) {
-    const parts = line.trim().split(' ');
+    const parts = trimmedLine.split(/\s+/);
     if (parts.length >= 3) {
       variableName = parts[1];
       operation = 'IF_IS';
@@ -170,7 +200,7 @@ function extractVariables(line, scriptName, variableMap) {
   }
   // IF_MIN <variabile> <valore>
   else if (upperLine.startsWith('IF_MIN ')) {
-    const parts = line.trim().split(' ');
+    const parts = trimmedLine.split(/\s+/);
     if (parts.length >= 3) {
       variableName = parts[1];
       operation = 'IF_MIN';
@@ -179,15 +209,17 @@ function extractVariables(line, scriptName, variableMap) {
   }
   // IF_MAX <variabile> <valore>
   else if (upperLine.startsWith('IF_MAX ')) {
-    const parts = line.trim().split(' ');
+    const parts = trimmedLine.split(/\s+/);
     if (parts.length >= 3) {
       variableName = parts[1];
       operation = 'IF_MAX';
       value = parseInt(parts[2]) || 0;
     }
   }
+  // RESET viene ignorato perché può essere usato sia per semafori che variabili
   
   if (variableName && operation) {
+    logger.info(`Found variable: ${variableName} with operation ${operation} in script ${scriptName}`);
     if (!variableMap.has(variableName)) {
       variableMap.set(variableName, {
         scripts: new Set(),
@@ -212,17 +244,29 @@ router.get('/semaphores', async (req, res) => {
   try {
     logger.info('API call: GET /api/scripts/semaphores - Scansione ricorsiva ./campaign/**/*.txt');
     
-    const semaphoreMap = new Map();
+    // Prima raccogli tutte le variabili
+    const variableMap = new Map();
+    await scanCampaignFiles(variableMap, 'variables');
+    const variableNames = new Set(variableMap.keys());
+    logger.info(`Found ${variableNames.size} variables to exclude from semaphores`);
     
-    // Scansiona ricorsivamente tutti i file .txt in ./campaign
+    // Poi raccogli i semafori
+    const semaphoreMap = new Map();
     await scanCampaignFiles(semaphoreMap, 'semaphores');
+    
+    // Rimuovi le variabili dai semafori
+    for (const varName of variableNames) {
+      if (semaphoreMap.has(varName)) {
+        logger.info(`Excluding '${varName}' from semaphores (it's a variable)`);
+        semaphoreMap.delete(varName);
+      }
+    }
     
     // Converti mappa in array
     const result = Array.from(semaphoreMap.entries()).map(([nomesemaforo, data]) => {
-      // Calcola stato finale probabile
+      // Calcola stato finale probabile (RESET non viene più tracciato)
       const setCount = data.operations.SET || 0;
-      const resetCount = data.operations.RESET || 0;
-      const stato_finale_probabile = setCount >= resetCount ? 'SET' : 'RESET';
+      const stato_finale_probabile = setCount > 0 ? 'SET' : 'UNKNOWN';
       
       return {
         nomesemaforo,
@@ -265,14 +309,15 @@ function extractSemaphores(line, scriptName, semaphoreMap) {
       operation = 'SET';
     }
   }
-  // RESET <semaforo>
-  else if (upperLine.startsWith('RESET ')) {
-    const parts = line.trim().split(' ');
-    if (parts.length >= 2) {
-      semaphoreName = parts[1];
-      operation = 'RESET';
-    }
-  }
+  // RESET viene ignorato perché può essere usato sia per semafori (false) che variabili (0)
+  // // RESET <semaforo>
+  // else if (upperLine.startsWith('RESET ')) {
+  //   const parts = line.trim().split(' ');
+  //   if (parts.length >= 2) {
+  //     semaphoreName = parts[1];
+  //     operation = 'RESET';
+  //   }
+  // }
   // IF <semaforo>
   else if (upperLine.startsWith('IF ')) {
     const parts = line.trim().split(' ');
@@ -333,13 +378,19 @@ router.get('/labels', async (req, res) => {
     await scanCampaignFiles(labelMap, 'labels');
     
     // Converti mappa in array
-    const result = Array.from(labelMap.entries()).map(([nomelabel, data]) => ({
-      nomelabel,
+    const result = Array.from(labelMap.entries()).map(([labelKey, data]) => ({
+      nomelabel: data.nomelabel,
       scriptancoraggio: data.scriptancoraggio,
       utilizzi_totali: data.riferimenti.length,
       posizione_definizione: data.posizione_definizione,
       riferimenti: data.riferimenti
-    })).sort((a, b) => a.nomelabel.localeCompare(b.nomelabel));
+    })).sort((a, b) => {
+      // Ordina prima per script, poi per label
+      if (a.scriptancoraggio !== b.scriptancoraggio) {
+        return a.scriptancoraggio.localeCompare(b.scriptancoraggio);
+      }
+      return a.nomelabel.localeCompare(b.nomelabel);
+    });
     
     logger.info(`Found ${result.length} unique labels from campaign files`);
     
@@ -359,7 +410,7 @@ router.get('/labels', async (req, res) => {
 });
 
 // Estrai label e riferimenti GO
-function extractLabels(line, scriptName, labelMap, fileName) {
+function extractLabelsFromLine(line, scriptName, labelMap, fileName) {
   const upperLine = line.toUpperCase().trim();
   
   // LABEL <nome>
@@ -367,9 +418,11 @@ function extractLabels(line, scriptName, labelMap, fileName) {
     const parts = line.trim().split(' ');
     if (parts.length >= 2) {
       const labelName = parts[1];
+      const labelKey = `${scriptName}::${labelName}`; // Chiave unica per script + label
       
-      if (!labelMap.has(labelName)) {
-        labelMap.set(labelName, {
+      if (!labelMap.has(labelKey)) {
+        labelMap.set(labelKey, {
+          nomelabel: labelName,
           scriptancoraggio: scriptName,
           posizione_definizione: {
             file: fileName,
@@ -385,10 +438,12 @@ function extractLabels(line, scriptName, labelMap, fileName) {
     const parts = line.trim().split(' ');
     if (parts.length >= 2) {
       const labelName = parts[1];
+      const labelKey = `${scriptName}::${labelName}`; // Chiave unica per script + label
       
       // Crea entry se non esiste (GO prima di LABEL)
-      if (!labelMap.has(labelName)) {
-        labelMap.set(labelName, {
+      if (!labelMap.has(labelKey)) {
+        labelMap.set(labelKey, {
+          nomelabel: labelName,
           scriptancoraggio: scriptName,
           posizione_definizione: {
             file: fileName,
@@ -399,7 +454,7 @@ function extractLabels(line, scriptName, labelMap, fileName) {
       }
       
       // Aggiungi riferimento
-      const data = labelMap.get(labelName);
+      const data = labelMap.get(labelKey);
       data.riferimenti.push({
         linea: null, // Sarà impostato dal chiamante
         comando: line.trim()
