@@ -13,11 +13,10 @@ import {
   Star
 } from 'lucide-react';
 
-import { CampaignAnalysis } from '@/types/CampaignEditor';
 import { useOverview } from '@/hooks/CampaignEditor/Overview/useOverview';
-import { overviewService } from '@/services/CampaignEditor/Overview/overviewService';
 import { overviewStyles } from '@/styles/CampaignEditor/Overview/Overview.styles';
 import { useTranslation } from '@/locales/translations';
+import type { CampaignAnalysis } from '@/types/CampaignEditor';
 
 interface OverviewProps {
   analysis?: CampaignAnalysis | null;

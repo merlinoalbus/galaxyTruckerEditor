@@ -1,10 +1,10 @@
 import React from 'react';
 import { Code2, Settings, Play } from 'lucide-react';
 
-import { VisualFlowEditorProps } from '@/types/CampaignEditor/VisualFlowEditor/VisualFlowEditor.types';
 import { useVisualFlowEditor } from '@/hooks/CampaignEditor/VisualFlowEditor/useVisualFlowEditor';
 import { visualFlowEditorStyles } from '@/styles/CampaignEditor/VisualFlowEditor/VisualFlowEditor.styles';
 import { useTranslation } from '@/locales/translations';
+import type { VisualFlowEditorProps } from '@/types/CampaignEditor/VisualFlowEditor/VisualFlowEditor.types';
 
 export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({ 
   analysis 
