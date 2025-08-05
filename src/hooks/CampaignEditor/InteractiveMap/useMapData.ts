@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { MapNode, MapConnection, CampaignScript, MapViewport } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { interactiveMapService } from '@/services/CampaignEditor/InteractiveMap/interactiveMapService';
 import { resolveNodeOverlaps } from '@/utils/CampaignEditor/InteractiveMap/nodeOverlapResolver';
+import { useConnectionBuilder } from './hooks/ConnectionBuilder/useConnectionBuilder';
 
 export interface UseMapDataReturn {
   nodes: MapNode[];
@@ -23,6 +24,7 @@ export const useMapData = (
   const [scripts, setScripts] = useState<CampaignScript[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { buildConnections } = useConnectionBuilder();
 
   const loadMapData = useCallback(async () => {
     try {
@@ -35,7 +37,7 @@ export const useMapData = (
         interactiveMapService.loadMissions()
       ]);
 
-      const loadedConnections = await interactiveMapService.buildConnections(loadedNodes, loadedMissions);
+      const loadedConnections = buildConnections(loadedNodes, loadedMissions);
       
       interactiveMapService.analyzeScriptConnections(loadedScripts, loadedNodes, loadedConnections);
 
@@ -65,7 +67,7 @@ export const useMapData = (
     } finally {
       setIsLoading(false);
     }
-  }, [setViewport]);
+  }, [setViewport, buildConnections]);
 
   return {
     nodes,

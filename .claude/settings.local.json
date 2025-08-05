@@ -30,8 +30,64 @@
       "Bash(true)",
       "Bash(rm:*)",
       "Bash(time:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\restart-for-bot.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\start-be.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\start-fe.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\stop-be.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\stop-fe.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\restart-be.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\restart-fe.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\start-all.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\stop-all.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\stop-all.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\start-all.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\wrapper-stop-all.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\wrapper-restart.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\async-restart.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\detached-restart.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\wmic-restart.bat\")",
+      "Bash(bash:*)"
     ],
     "deny": []
+  },
+  "commands": {
+    "startBE": {
+      "description": "Avvia il server Backend",
+      "command": "bash \"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\start-be.sh\""
+    },
+    "startFE": {
+      "description": "Avvia il server Frontend",
+      "command": "bash \"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\start-fe.sh\""
+    },
+    "stopBE": {
+      "description": "Ferma il server Backend",
+      "command": "bash \"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\stop-be.sh\""
+    },
+    "stopFE": {
+      "description": "Ferma il server Frontend",
+      "command": "bash \"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\stop-fe.sh\""
+    },
+    "restartBE": {
+      "description": "Riavvia il server Backend",
+      "command": "bash \"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\restart-be.sh\""
+    },
+    "restartFE": {
+      "description": "Riavvia il server Frontend",
+      "command": "bash \"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\restart-fe.sh\""
+    },
+    "start": {
+      "description": "Avvia sia Backend che Frontend",
+      "command": "bash \"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\start-all.sh\""
+    },
+    "stop": {
+      "description": "Ferma sia Backend che Frontend",
+      "command": "bash \"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\stop-all.sh\""
+    },
+    "restart": {
+      "description": "Riavvia sia Backend che Frontend",
+      "command": "bash \"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\restart-all.sh\""
+    }
   }
 }
