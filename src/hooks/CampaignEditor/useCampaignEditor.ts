@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { campaignScriptParserService } from '@/services/CampaignEditor/CampaignScriptParserService';
 import { CampaignAnalysis, CampaignScript } from '@/types/CampaignEditor';
 import { MapNode } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
@@ -11,6 +11,7 @@ export const useCampaignEditor = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const initialized = useRef(false);
   useEffect(() => {
     const loadCampaignData = async () => {
       try {
@@ -26,7 +27,10 @@ export const useCampaignEditor = () => {
       }
     };
 
-    loadCampaignData();
+    if (!initialized.current) {
+      initialized.current = true;
+      loadCampaignData();
+    }
   }, []);
 
   const handleNodeClick = (node: MapNode) => {
