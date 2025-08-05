@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CampaignAnalysis } from '@/types/CampaignEditor';
+import type { CampaignAnalysis } from '@/types/CampaignEditor';
 
 export const useVisualFlowEditor = (analysis: CampaignAnalysis | null) => {
   const [isInitialized, setIsInitialized] = useState(false);

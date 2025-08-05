@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { CampaignAnalysis } from '@/types/CampaignEditor';
+import type { CampaignAnalysis } from '@/types/CampaignEditor';
 
 const getScriptsPerLanguage = (analysis: CampaignAnalysis) => {
   const languages = new Map<string, number>();
