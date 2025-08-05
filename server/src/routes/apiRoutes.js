@@ -297,7 +297,7 @@ router.get('/file/*', async (req, res) => {
     if (isImage) {
       // Per le immagini, invia il file direttamente
       logger.info(`Serving image file: ${requestedPath}`);
-      return res.sendFile(fullPath);
+      return res.sendFile(path.resolve(fullPath));
     } else {
       // Per altri file, leggi come testo
       const content = await fs.readFile(fullPath, 'utf8');
