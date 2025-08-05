@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { variablesSystemApiService } from '@/services/CampaignEditor/VariablesSystem/variablesSystemApiService';
 import { 
   VariablesSystemState, 
@@ -23,9 +23,13 @@ export const useVariablesSystemData = () => {
     }
   });
 
+  const initialized = useRef(false);
   useEffect(() => {
-    loadAllData();
-  }, []);
+    if (!initialized.current) {
+      initialized.current = true;
+      loadAllData();
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadAllData = async () => {
     try {

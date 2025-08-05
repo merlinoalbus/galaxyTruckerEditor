@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useRef, ReactNode } from 'react';
 import { Mission, DeckScript, ValidationError } from '@/types/GameTypes';
 import { FileMetadata } from '@/services/CampaignEditor/GameDataService';
 import { useGameDataState } from './GameDataContext/useGameDataState';
@@ -86,9 +86,13 @@ export function GameDataProvider({ children }: GameDataProviderProps) {
   };
 
   // Initialize connection on mount
+  const initialized = useRef(false);
   useEffect(() => {
-    utilityOps.healthCheck();
-  }, []);
+    if (!initialized.current) {
+      initialized.current = true;
+      utilityOps.healthCheck();
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const value: GameDataContextType = {
     // State

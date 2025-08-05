@@ -48,7 +48,12 @@
       "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\async-restart.bat\")",
       "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\detached-restart.bat\")",
       "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\wmic-restart.bat\")",
-      "Bash(bash:*)"
+      "Bash(bash:*)",
+      "Bash(scripts/stop-fe.sh:*)",
+      "Bash(npx serve:*)",
+      "Bash(scripts/restart-be.sh:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": []
   },
