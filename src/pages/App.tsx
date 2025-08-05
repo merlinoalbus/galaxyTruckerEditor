@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { GameDataProvider, useGameData } from '@/contexts/GameDataContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
-import { MapFullscreenProvider, useMapFullscreen } from '@/contexts/MapFullscreenContext';
+import { FullscreenProvider, useFullscreen } from '@/contexts/FullscreenContext';
 import { Header } from '@/components/CampaignEditor/components/Header/Header';
 import { Sidebar } from '@/components/CampaignEditor/components/Sidebar';
 // import { Traduzioni } from '@/components/Editors/Traduzioni';
@@ -11,7 +11,8 @@ import '@/App.css';
 
 function AppContent() {
   const { connected, loading, error } = useGameData();
-  const { isMapFullscreen } = useMapFullscreen();
+  const { isMapFullscreen, isFlowFullscreen } = useFullscreen();
+  const isAnyFullscreen = isMapFullscreen || isFlowFullscreen;
 
   if (loading) {
     return (
@@ -64,7 +65,7 @@ function AppContent() {
         <Sidebar />
         <div className="flex-1 flex flex-col">
           <Header />
-          <main className={`flex-1 overflow-auto ${!isMapFullscreen ? 'p-6' : 'p-2'}`}>
+          <main className={`flex-1 overflow-auto ${!isAnyFullscreen ? 'p-6' : 'p-2'}`}>
             <Routes>
               <Route path="/" element={<CampaignEditor />} />
               <Route path="/localization" element={<div className="p-6 text-center text-gray-400">Traduzioni temporaneamente disabilitato</div>} />
@@ -80,9 +81,9 @@ export function App() {
   return (
     <LanguageProvider>
       <GameDataProvider>
-        <MapFullscreenProvider>
+        <FullscreenProvider>
           <AppContent />
-        </MapFullscreenProvider>
+        </FullscreenProvider>
       </GameDataProvider>
     </LanguageProvider>
   );
