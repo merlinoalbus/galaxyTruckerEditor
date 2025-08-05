@@ -98,7 +98,7 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
 
       {/* Background image from API */}
       <image
-        href={`${API_CONFIG.API_BASE_URL}/file/campaign/campaignMap/big/bg.jpg`}
+        href={`${API_CONFIG.API_BASE_URL}/game/map-background`}
         x={viewport.x}
         y={viewport.y}
         width={viewport.width / viewport.scale}

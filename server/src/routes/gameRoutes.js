@@ -1297,12 +1297,85 @@ function determineFileType(filePath) {
   return 'binary';
 }
 
-// Esporta router e funzioni per riuso
-module.exports = {
-  router,
-  collectNodeButtons,
-  collectRouteButtons
-};
+// API per sfondo randomico della mappa
+router.get('/map-background', async (req, res) => {
+  try {
+    logger.info('API call: GET /api/game/map-background - Sfondo randomico per mappa');
+    
+    // Definisci i backgrounds disponibili con i loro pesi
+    const backgrounds = [
+      { file: 'bg_static.jpg', weight: 20 },
+      { file: 'turn_background.jpg', weight: 20 }
+    ];
+    
+    // Prima controlla se esiste bg.jpg nella cartella campaign
+    const campaignBgPath = path.join(GAME_ROOT, 'campaign', 'campaignMap', 'big', 'bg.jpg');
+    if (await fs.pathExists(campaignBgPath)) {
+      backgrounds.unshift({ file: 'bg.jpg', weight: 30, path: campaignBgPath });
+    }
+    
+    // Calcola il peso totale
+    const totalWeight = backgrounds.reduce((sum, bg) => sum + bg.weight, 0);
+    
+    // Genera numero random
+    let random = Math.random() * totalWeight;
+    
+    // Seleziona background basato sul peso
+    let selectedBackground = null;
+    for (const bg of backgrounds) {
+      random -= bg.weight;
+      if (random <= 0) {
+        selectedBackground = bg;
+        break;
+      }
+    }
+    
+    // Se non selezionato (edge case), usa il primo
+    if (!selectedBackground) {
+      selectedBackground = backgrounds[0];
+    }
+    
+    // Costruisci il percorso completo
+    let imagePath;
+    if (selectedBackground.path) {
+      imagePath = selectedBackground.path;
+    } else {
+      imagePath = path.join(GAME_ROOT, 'sd', 'backgrounds', selectedBackground.file);
+    }
+    
+    // Verifica che il file esista
+    if (!await fs.pathExists(imagePath)) {
+      logger.warn(`Background non trovato: ${imagePath}`);
+      // Fallback a bs_static.jpg
+      imagePath = path.join(GAME_ROOT, 'sd', 'backgrounds', 'bg_static.jpg');
+      
+      if (!await fs.pathExists(imagePath)) {
+        return res.status(404).json({
+          success: false,
+          error: 'Nessuno sfondo disponibile'
+        });
+      }
+    }
+    
+    // Invia il file
+    res.sendFile(imagePath, (err) => {
+      if (err) {
+        logger.error('Errore invio background:', err);
+        res.status(500).json({
+          success: false,
+          error: 'Errore invio file'
+        });
+      }
+    });
+    
+  } catch (error) {
+    logger.error('Errore in map-background API:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
 
-// Mantieni compatibilità
+// Esporta router
 module.exports = router;
