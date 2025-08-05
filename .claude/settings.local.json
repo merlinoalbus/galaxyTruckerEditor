@@ -53,7 +53,10 @@
       "Bash(npx serve:*)",
       "Bash(scripts/restart-be.sh:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(scripts/consolida-codice.sh:*)",
+      "Bash(consolidaCodice)",
+      "Bash(scripts/consolida-codice.sh:*)"
     ],
     "deny": []
   },
@@ -93,6 +96,10 @@
     "restart": {
       "description": "Riavvia sia Backend che Frontend",
       "command": "bash \"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\restart-all.sh\""
+    },
+    "consolidaCodice": {
+      "description": "Consolida le modifiche con git add, commit e push automatico",
+      "command": "bash \"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\consolida-codice.sh\""
     }
   }
 }
