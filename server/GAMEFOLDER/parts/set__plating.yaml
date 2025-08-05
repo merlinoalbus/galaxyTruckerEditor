@@ -1,0 +1,12 @@
+- type: plating-L
+  connectors: [3, 0, 0, 2]
+- type: plating-L
+  connectors: [1, 0, 0, 3]
+- type: plating-L
+  connectors: [3, 0, 0, 1]
+- type: plating-L
+  connectors: [2, 0, 0, 3]
+- type: plating-U
+  connectors: [1, 0, 0, 0]
+- type: plating-U
+  connectors: [2, 0, 0, 0]

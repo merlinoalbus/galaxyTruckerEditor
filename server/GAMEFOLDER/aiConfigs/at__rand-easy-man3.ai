@@ -1,0 +1,7 @@
+idName: "at__rand-easy-man3"
+avatar: avatars/campaign/common/easy-man3.png
+color: "gbry"
+preferencesSettings: aiConfigs/settingBase.aipref
+speedSettings: aiConfigs/settingBaseEasy.aispeed
+difficulty: easy  #hard, medium, easy
+stupidity: 120

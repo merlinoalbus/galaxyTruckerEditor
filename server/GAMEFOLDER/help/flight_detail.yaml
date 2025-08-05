@@ -1,0 +1,76 @@
+- type: img
+  src: help/white_arrow.png
+  id: arrow_info
+  bounds: [442, 78, 49, 57]
+  
+- type: img
+  src: help/white_arrow.png
+  id: arrow_card
+  bounds: [218, 404, 49, 57]
+  
+- type: img
+  src: help/yellow_arrow_down.png
+  id: arrow_ship_info
+  bounds: [750, 1925, 32, 73]
+  autoScaleY: true
+  
+- type: img
+  id: zoom_out_arrow
+  bounds: [1335, 0, 62, 52]
+  src: help/yellow_arrow_up.png
+
+- type: txt
+  id: fd_what_is_happening
+  bounds: [360, 138, 694, 94]
+  vAlign: top
+  hAlign: left
+
+- type: txt
+  id: fd_avatars
+  bounds: [1070, 135, 444, 77]
+  vAlign: top
+  hAlign: right
+
+- type: txt
+  id: fd_adventure_deck
+  bounds: [0, 462, 576, 70]
+  vAlign: top
+  hAlign: center
+
+- type: txt
+  id: fd_adventure_deck_more_info
+  bounds: [0, 548, 776, 70]
+  vAlign: top
+  hAlign: center
+  color: yellow
+
+- type: txt
+  id: fd_zoom_out
+  bounds: [1122, 725, 423, 395]
+  vAlign: top
+  hAlign: center
+  color: yellow
+
+- type: txt
+  id: fd_ships_details
+  bounds: [0, 802, 1536, 85]
+  vAlign: top
+  hAlign: center
+  style: heading
+  autoScaleY: true
+
+- type: txt
+  id: fd_tap_avatar
+  bounds: [424, 893, 688, 200]
+  vAlign: top
+  hAlign: center
+  color: yellow
+  autoScaleY: true
+
+- type: txt
+  id: fd_info_panel
+  bounds: [139, 1902, 1258, 70]
+  vAlign: top
+  hAlign: center
+  color: yellow
+  autoScaleY: true

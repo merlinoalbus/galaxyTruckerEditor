@@ -16,7 +16,7 @@ function AppContent() {
       <div className="flex items-center justify-center min-h-screen bg-slate-900">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gt-accent mb-4"></div>
-          <h2 className="text-xl font-bold text-white mb-2">Connecting to Galaxy Trucker Editor Server...</h2>
+          <h2 className="text-xl font-bold text-white mb-2 galaxy-title">Connecting to Galaxy Trucker Editor Server...</h2>
           <p className="text-gray-400">Please wait while we establish connection</p>
         </div>
       </div>
@@ -32,7 +32,7 @@ function AppContent() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.314 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-white mb-4">Server Connection Failed</h2>
+          <h2 className="text-xl font-bold text-white mb-4 galaxy-title">Server Connection Failed</h2>
           <p className="text-gray-400 mb-4">
             {error || 'Could not connect to the Galaxy Trucker Editor server.'}
           </p>

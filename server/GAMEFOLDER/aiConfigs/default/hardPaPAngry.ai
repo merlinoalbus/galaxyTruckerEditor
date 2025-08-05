@@ -1,0 +1,9 @@
+idName: "hard_angry_pap"
+type: turn
+character: angry
+avatar: avatars/ai/hard_angry.png
+color: "rygb"
+preferencesSettings: aiConfigs/settingAngry.aipref
+qualitySettings: aiConfigs/settingPaPAngry.aiqual
+difficulty: hard  # 1- hard, 3 - normal, 6 - easy
+stupidity: 20

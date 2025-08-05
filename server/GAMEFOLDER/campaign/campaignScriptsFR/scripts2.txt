@@ -1,0 +1,1594 @@
+SCRIPTS
+
+SCRIPT vipCheck
+
+  ShowDlgScene
+  ShowChar securitybot left
+  SET VIPTried
+  IF VIPGranted
+    Say "STATUT VIP : VÉRIFICATION EN CO..."
+    Say "OH, C'EST ENCORE VOUS !"
+    IF richGirlPending
+      Say "ELLE VOUS ATTEND DANS LE HANGAR."
+      HideChar securitybot
+      HideDlgScene
+      RETURN
+    ELSE
+      Say "ACCÈS AUTORISÉ."
+    END_OF_IF
+    Delay 200
+    HideChar securitybot
+    HideDlgScene
+    Delay 1000
+    SUB_SCRIPT richGirlDlg
+    RETURN
+  END_OF_IF
+  Say "STATUT VIP : VÉRIFICATION EN COURS ..."
+  Delay 750
+  Say "STATUT NON CONFIRMÉ."
+  Say "ACCÈS REFUSÉ."
+  IF purpleAccepted
+    Delay 200
+    ChangeChar ambassador campaign/ambassador-peek.png
+    ShowChar ambassador right
+    Say "En fait, [g(ce gentleman|cette demoiselle)] est d'une importance capitale pour nous tous. Vous pouvez [g(le|la)] laisser entrer."
+    IFNOT purpleEscortFinished
+      Say "[g(Il|Elle)] ne devrait pas rester longtemps, dans la mesure où sa mission n'est pas terminée."
+    END_OF_IF
+    Delay 200
+    HideChar ambassador
+    Delay 200
+    SayChar securitybot "*SOUPIR*"
+    Say "ACCÈS AUTORISÉ."
+    SET VIPGranted
+    Delay 200
+    HideChar securitybot
+    Delay 1000
+    HideDlgScene
+    SUB_SCRIPT richGirlDlg
+    RETURN
+  ELSE
+    SET VIPfailed
+  END_OF_IF
+  HideChar securitybot
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT richGirlDlg
+
+  ShowDlgScene
+  ChangeChar richgirl campaign/rich-bored.png
+  ShowChar richgirl left
+  Delay 750
+  ChangeChar richgirl campaign/rich.png
+  Delay 300
+  IF richRefused
+    Say "Oh, bonjour ! C'est vous... euh..."
+    MENU
+      OPT "[NAME]."
+        Say "Je l'avais sur le bout de la langue."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    Ask "Alors, vous êtes [g(prêt|prête)] à m'accompagner jusque sur Administra ? Au-delà de la tempête de météorites ?"
+    GO richQuery
+  END_OF_IF
+  Ask "Bonjour la compagnie. Qui êtes-vous ?"
+  MENU
+    OPT_IFNOT richgirlintro "Juste [g(un|une)] pilote quelconque."
+      Delay 200
+      ChangeChar richgirl campaign/rich-bored.png
+      Delay 200
+      Ask "Ok. Salut, pilote quelconque."
+      SET richgirlintro
+    END_OF_OPT
+    OPT_IFNOT richgirlintro "Un diplomate VIP, [g(occupé|occupée)] par une mission de la plus haute importance"
+      Delay 200
+      ChangeChar richgirl campaign/rich-bored.png
+      Delay 200
+      Ask "Oh, je vois. Encore un pilote quelconque."
+      SET richgirlintro
+    END_OF_OPT
+    OPT "Je m'appelle [NAME]. Et vous ?"
+      ChangeChar richgirl campaign/rich-smile.png
+      Delay 300
+      Say "Comme c'est mignon. Mais c'est bon. Je sais que je suis la pilote la plus connue de toute la Galaxie."
+      Say "Même si c'est gentil de prétendre que vous ne me reconnaissez pas. Asseyez-vous. Servez-vous un verre."
+      Delay 200
+      ChangeChar richgirl campaign/rich-smile.png
+      Delay 400
+      ChangeChar richgirl campaign/rich-smile-cheer.png
+      Delay 400
+      ChangeChar richgirl campaign/rich-smile.png
+      GO richCont
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL richCont
+  Delay 1000
+  ChangeChar richgirl campaign/rich-bored.png
+  Delay 500
+  Say "Longue journée dans cette station spatiale, hein ?"
+  Say "Vous cherchez un truc à faire ?"
+  MENU
+    OPT "Comme quoi ?"
+      ChangeChar richgirl campaign/rich.png
+      Say "Quelque chose d'un brin plus fun que de rester en plan ici. Que diriez-vous d'une petite escapade ?"
+      Ask "J'ai entendu dire qu'ils fermaient la route vers Administra à cause d'une tempête de météorites. Ça vous tente ?"
+      GO richQuery
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL richQuery
+  MENU
+    OPT_IFNOT rgDangerous "Mais ce n'est pas dangereux ?"
+      Ask "Bien sûr. C'est ça qui est fun."
+      SET rgDangerous
+    END_OF_OPT
+    OPT_IFNOT rgForbidden "Mais... vous venez de dire que la route est fermée ?"
+      Ask "Ben oui, si on était autorisé à y aller, ce ne serait pas vraiment fun."
+      SET rgForbidden
+    END_OF_OPT
+    OPT "Ok. J'ai déjà traversé ce genre d'essaim de météorites."
+      GO richCont2
+    END_OF_OPT
+    OPT_IF rgForbidden "Je n'en... sais rien. Peut-être une autre fois."
+      GO richRefused
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL richCont2
+  Say "Vraiment ? Même de violentes tempêtes avec de larges météorites venant de droite et de gauche ?"
+  Ask "Vous aurez besoin de canons pointant sur les côtés, sinon, elles risquent de vous écraser comme une vulgaire canette de soda."
+  MENU
+    OPT "Aucun problème. Je suis [g(un|une)] pilote d'élite."
+      Say "Content de l'entendre."
+      GO richCont3
+    END_OF_OPT
+    OPT "Je pourrais gérer. Pouvez-vous en dire autant ?"
+      Say "Comptez sur moi, [g(champion|championne)]."
+      GO richCont3
+    END_OF_OPT
+    OPT "Oh. Hum. Peut-être une autre fois, alors."
+      GO richRefused
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL richCont3
+  Say "Mon vaisseau est un classe I modifié. Agile et profilé. Il est conçu pour ce type de vol."
+  ChangeChar richgirl campaign/rich-smile.png
+  Ask "Il ne va pas se faire marteler comme le vôtre."
+  MENU
+    OPT "Nous verrons."
+      Ask "Soyez-en [g(sûr|sûre)]. Pour pimenter un peu les choses, voilà ce que je vous propose : si vous perdez moins de composants que moi, je vous laisserais jeter un œil à mes plans."
+      MENU
+        OPT "Ça marche."
+          Say "Parfait. Je vous retrouve au hangar."
+          Delay 200
+          ChangeChar richgirl campaign/rich-smile.png
+          Delay 400
+          ChangeChar richgirl campaign/rich-smile-cheer.png
+          Delay 400
+          ChangeChar richgirl campaign/rich-smile.png
+          Delay 500
+          SET richGirlAccepted
+          SET richGirlPending
+          HidePath "R1-4a"
+          ShowPath "U1-4a"
+          GO richEnd
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL richRefused
+  ChangeChar richgirl campaign/rich-bored.png
+  SET richRefused
+  Say "Dommage. Je pensais vraiment que vous étiez [g(intéressé|intéressée)]."
+  Say "Bon, ben, je vais aller me prendre un autre verre."
+  Delay 300
+
+  LABEL richEnd
+  HideChar richgirl
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT richGirlDlg2
+
+  ShowDlgScene
+  ChangeChar richgirl campaign/rich-bored.png
+  ShowChar richgirl left
+  Delay 750
+  ChangeChar richgirl campaign/rich.png
+  Delay 300
+  IF richGirl2Accepted
+    IF designSport2Unlocked
+      Ask "Salut. Ça vous dit d'en refaire une ? Juste pour le fun ? Je ne vous laisserai pas gagner cette fois-ci."
+    ELSE
+      Say "Salut. Vous voulez retenter votre chance sur cette route inconnue ? C'est toujours un plaisir de faire une démonstration de mes talents de pilote."
+      Ask "Et n'oubliez pas : si vous perdez moins de composants que moi, vous pourrez faire une copie de mes plans de classe II."
+    END_OF_IF
+    MENU
+      OPT "Ça a l'air sympa."
+        ChangeChar richgirl campaign/rich-smile.png
+        Say "Ça roule."
+        Delay 300
+        ChangeChar richgirl campaign/rich-smile-cheer.png
+        Delay 600
+        ChangeChar richgirl campaign/rich-smile.png
+        Delay 300
+        ShowPath U2-21a
+        GO richGirl2End
+      END_OF_OPT
+      OPT "Pas aujourd'hui."
+        ChangeChar richgirl campaign/rich-bored.png
+        Say "Hum. A plus."
+        GO richGirl2End
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  IF richGirl2Refused
+    Ask "Salut. Alors, vous avez changé d'avis ? Vous la testez cette route inconnue ?"
+    GO richGirl2Querry
+  END_OF_IF
+  Say "Oh, salut ! C'est vous... euh..."
+  MENU
+    OPT "[NAME]."
+      Say "Je l'avais sur le bout de la langue."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Say "Vous vous souvenez quand on a traversé cet essaim de météorites ?"
+  Ask "Mais si, je vous avais laissé gagner et je vous avais donné les plans de mon vaisseau ?"
+  MENU
+    OPT "Oui."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Ouais, sauf la partie où vous me laissez gagner."
+      Delay 200
+      ChangeChar richgirl campaign/rich-smile.png
+      Delay 200
+      Say "Vous êtes drôle."
+      Delay 300
+      ChangeChar richgirl campaign/rich-smile-blink.png
+      Delay 300
+      ChangeChar richgirl campaign/rich-smile.png
+      Delay 300
+      ChangeChar richgirl campaign/rich-smile-blink.png
+      Delay 300
+      ChangeChar richgirl campaign/rich-smile.png
+      Delay 300
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Say "Si jamais vous voulez retenter cette route, dites-le-moi. Juste pour le fun."
+  Say "Bien que, je vous l'avoue, c'est plus excitant la première fois."
+  Ask "Mais peu importe, j'ai entendu parler d'une autre route. Une route si dangereuse qu'elle n'existe sur aucune carte."
+
+  LABEL richGirl2Querry
+  MENU
+    OPT_IFNOT richGirlHopeless "Vous savez que vous êtes irrécupérable, hein ?"
+      SET richGirlHopeless
+      Ask "Je suis irrécupérablement las, [g(chéri|chérie)]. Ce n'est pas facile d'être la meilleure quoi que vous fassiez."
+    END_OF_OPT
+    OPT "Cette route a l'air intéressante. Dites-m'en davantage."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Ne comptez pas sur moi."
+      SET richGirl2Refused
+      ChangeChar richgirl campaign/rich-bored.png
+      Say "Ringard. A plus."
+      GO richGirl2End
+    END_OF_OPT
+  END_OF_MENU
+  SET richGirl2Accepted
+  Say "Elle traverse un gigantesque nuage de météorites, arrivant de toutes parts."
+  Say "Je veux y tester mon nouveau vaisseau, un classe II modifié sport."
+  MENU
+    OPT "Est-ce que je pourrais utiliser vos plans si je vous bats ?"
+      Say "Eh. Vous n'aurez pas autant de chance que la dernière fois. Mais peu importe."
+      Say "Si vous perdez moins de composants que moi, je vous donnerais mes plans."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  ShowPath U2-21a
+  HideButton brichgirl2
+
+  LABEL richGirl2End
+  HideChar richGirl
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT merchantLaughA
+
+  ChangeChar merchant campaign/merch-laughA1.png
+  Delay 150
+  ChangeChar merchant campaign/merch-laughA2.png
+  Delay 200
+  ChangeChar merchant campaign/merch-laughA1.png
+  Delay 250
+  ChangeChar merchant campaign/merch-laughA2.png
+  Delay 300
+  ChangeChar merchant campaign/merch-sitting.png
+END_OF_SCRIPT
+
+SCRIPT merchantLaughB
+
+  ChangeChar merchant campaign/merch-laughB1.png
+  Delay 150
+  ChangeChar merchant campaign/merch-laughB2.png
+  Delay 200
+  ChangeChar merchant campaign/merch-laughB1.png
+  Delay 250
+  ChangeChar merchant campaign/merch-laughB2.png
+  Delay 300
+  ChangeChar merchant campaign/merch-laughB1.png
+  Delay 350
+  ChangeChar merchant campaign/merch-laughB2.png
+  Delay 400
+  ChangeChar merchant campaign/merch-laughB1.png
+  Delay 450
+  ChangeChar merchant campaign/merch-laughB2.png
+  Delay 500
+  ChangeChar merchant campaign/merch-sitting.png
+END_OF_SCRIPT
+
+SCRIPT merchantLaughX
+
+  ChangeChar merchant campaign/merch-laughB1.png
+  Delay 150
+  ChangeChar merchant campaign/merch-laughB2.png
+  Delay 200
+  ChangeChar merchant campaign/merch-laughA2.png
+  Delay 300
+  ChangeChar merchant campaign/merch-laughA1.png
+  Delay 700
+  ChangeChar merchant campaign/merch-disappointed.png
+  Delay 400
+END_OF_SCRIPT
+
+SCRIPT purpleHomeDlg
+
+  ShowDlgScene
+  IF_PROB 33
+    ShowChar purple left
+  ELSE
+    ShowChar purple right
+  END_OF_IF
+  IF_PROB 33
+    Say "Khrr's ghzzz. Sssrgh wq ghhh-h."
+    Ask "Zzrrgh qhhh-w-gz!?!"
+  ELSE
+    IF_PROB 50
+      Ask "Sggh'kh qt Th'kzw-r?"
+    ELSE
+      Ask "Sgh. Sgh wzwg'h. Sgh wzwg'h K'wwfrg!"
+    END_OF_IF
+  END_OF_IF
+  IF purpleLicenseApproval
+    OPT "Je voulais juste vous remercier pour votre attestation."
+      GO purpleHomeAnswer
+    END_OF_OPT
+  ELSE
+    IF class3Asked
+      IF warriorTestUnlocked
+        MENU
+          OPT "Ouais, ouais. Je vais le passer votre test, bientôt."
+            GO purpleHomeAnswer
+          END_OF_OPT
+        END_OF_MENU
+      ELSE
+        MENU
+          OPT "J'essaye d'obtenir un permis de classe III. Pourriez-vous me faire une attestation ?"
+            EXIT_MENU
+          END_OF_OPT
+        END_OF_MENU
+        Ask "Sgggk-h. Wghkkk'r kh gzzw. Khz wrrzk-hrrg krz'h?"
+        MENU
+          OPT "Oui. Je suis [g(un grand combattant|une grande combattante)]."
+            EXIT_MENU
+          END_OF_OPT
+          OPT "Ouais, bien sûr. Je peux dire que je suis [g(un grand combattant|une grande combattante)], si ça vous fait plaisir."
+            EXIT_MENU
+          END_OF_OPT
+          OPT "Hum... Je ne suis pas vraiment du style combattant."
+            Say "Kh krz'h wgz-h k."
+            GO purpleHomeEnd
+          END_OF_OPT
+        END_OF_MENU
+        Ask "Sgghr'g! Kzz ghrr zgg. Qwrg wrrzk-hrrg krz'h..."
+        MENU
+          OPT "Je vais fièrement prouver ma valeur."
+            EXIT_MENU
+          END_OF_OPT
+          OPT "Vous voulez que je vous le prouve ? Euh... très bien."
+            EXIT_MENU
+          END_OF_OPT
+          OPT "Hum... Vous savez quoi ? Laissez tomber."
+            GO purpleHomeEnd
+          END_OF_OPT
+        END_OF_MENU
+        Ask "Shkrrr zh-zh frrg'h'hr. Zrgw grrh gk'gkzzzr. Ghrr wrrzk-hrrg krz'h zh-zh hrrrg!"
+        MENU
+          OPT "Bien entendu. Je peux prendre cette route."
+            EXIT_MENU
+          END_OF_OPT
+        END_OF_MENU
+        Ask "Ghrr'wrrzk ssrr zh-zh, sgg gh krz'h zzwg-hrg!!!"
+        MENU
+          OPT "C'est compris. Celui qui gagne, c'est celui qui survit."
+            ResetFocus bpurple
+            Delay 500
+            ShowNode cyanHome
+            CenterMapByNode cyanHome
+            Delay 500
+            ShowPath U2-20a
+            Say "Zrgh hr'w ghrrz..."
+            SET warriorTestUnlocked
+            GO purpleHomeEnd
+          END_OF_OPT
+          OPT "Hum. Je n'aime pas la tournure de tout cela. Ne comptez pas sur moi."
+            GO purpleHomeEnd
+          END_OF_OPT
+        END_OF_MENU
+      END_OF_IF
+    END_OF_IF
+  END_OF_IF
+  MENU
+    OPT "Ouais. Bien sûr."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Je ne pense pas."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Je crains de ne pas avoir compris le dernier mot."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL purpleHomeAnswer
+  IF_PROB 33
+    Say "W'z'ghrw gz? Thgr..."
+  ELSE
+    IF_PROB 50
+      Say "Kkk'z hrgh wzr-g-g-gh."
+    ELSE
+      Say "Kh !"
+    END_OF_IF
+  END_OF_IF
+
+  LABEL purpleHomeEnd
+  Delay 300
+  HideChar purple
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT merchantDlg
+
+  ShowDlgScene
+  ShowChar merchant left
+  Delay 300
+  IF merchantMet
+    IF merchantAccepted
+      ChangeChar merchant campaign/merch-laughA1.png
+      IF merchantFailed
+        RESET merchantFailed
+        RESET merchantLeftAtPurple
+        Ask "Salut. Alors comme ça, on a eu un petit problème la dernière fois ? Vous voulez réessayer ?"
+      ELSE
+        IF merchantLeftAtPurple
+          RESET merchantLeftAtPurple
+          Ask "Vous revoilà ? Parfait ! Êtes-vous prêt à m'escorter jusqu'à la planète mère des extraterrestres bruns ?"
+        ELSE
+          Ask "Alors, prêt à partir ?"
+        END_OF_IF
+      END_OF_IF
+      MENU
+        OPT "C'est encore un peu tôt. Il faut qu'on retarde un peu notre départ."
+          Delay 200
+          ChangeChar merchant campaign/merch-disappointed.png
+          Delay 200
+          Say "Oh... ok. Je comprends."
+          GO merchEnd
+        END_OF_OPT
+        OPT "Oui. Allons-y."
+          ShowPath U1-9a
+          Say "Excellent !"
+          GO merchEnd
+        END_OF_OPT
+      END_OF_MENU
+    ELSE
+      IF merchantOffer
+        Ask "Alors, vous avez changé d'avis ? Je suis toujours à la recherche de quelqu'un pour m'escorter tout au long de cette route dangereuse jusqu'à la planète des extraterrestres bruns."
+        GO merchSecondQuery
+      ELSE
+        Ask "Alors, avez-vous un peu de temps pour écouter ma proposition ?"
+        GO merchFirstQuery
+      END_OF_IF
+    END_OF_IF
+  ELSE
+    Say "Hé, quelle coïncidence !"
+    Say "Je vous avoue que j'espérais bien trouver un autre humain sur cette planète."
+    Ask "Vous auriez un moment ?"
+    SET merchantMet
+  END_OF_IF
+
+  LABEL merchFirstQuery
+  MENU
+    OPT "Bien sûr. Que puis-je faire pour vous ?"
+      EXIT_MENU
+    END_OF_OPT
+    OPT "C'est ça. Un moment. Et vous allez me refiler une mission qui va me prendre une semaine."
+      SUB_SCRIPT merchantLaughB
+      Ask "Ah ah ! Vous m'avez démasqué. C'est exactement ce que j'avais en tête."
+      MENU
+        OPT "Allez-y, crachez le morceau."
+          GO merchCont
+        END_OF_OPT
+        OPT "Je ne suis pas intéressé."
+          ChangeChar merchant campaign/merch-disappointed.png
+          Say "Quel dommage. J'étais sûr qu'on pourrait faire des affaires tous les deux."
+          GO merchEnd
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+    OPT "Kzwrrr... Brbl, brbl... Chrch'chrch!"
+      Ask "Oh, vous savez parler cette langue ? Magnifique ! Moi, je n'ai jamais pris la peine de l'apprendre."
+      MENU
+        OPT "Je m'essayais juste à quelques mots. C'est amusant bien que je ne sois pas très sûr de ce que j'ai dit."
+          SUB_SCRIPT merchantLaughB
+          GO merchCont
+        END_OF_OPT
+        OPT "Bien sûr. Je maîtrise plusieurs langues. Was ist das Problem ?"
+          GO merchCont
+        END_OF_OPT
+        OPT "Ça veut dire : je n'ai pas le temps de parler aux étrangers qui me proposent de trop longues missions pour le moment."
+          ChangeChar merchant campaign/merch-disappointed.png
+          Say "Oh. D'accord. On en reparle plus tard alors."
+          GO merchEnd
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL merchCont
+  ChangeChar merchant campaign/merch.png
+  SET merchantOffer
+  Say "Alors, voici l'idée. J'ai une petite affaire de négoce plutôt lucrative entre les mauves et les bruns."
+  Say "Enfin, je veux dire entre les Tzkz... Thk'z... ces gars et les habitants de la planète connue sous le nom de Silence."
+  Say "Mais la route entre ces deux planètes est dangereuse et je ne suis pas un héros."
+  Ask "Accepteriez-vous d'être mon escorte armée jusqu'à la planète des extraterrestres bruns ?"
+
+  LABEL merchSecondQuery
+  MENU
+    OPT_IFNOT merchAlienQuestion "Pourquoi n'embauchez-vous pas quelqu'un des environs ? Ce sont de vaillants guerriers."
+      SET merchAlienQuestion
+      Say "Leur sifflement me rend nerveux."
+      Say "Je préfère voyager avec les extraterrestres bruns. Ils sont silencieux."
+    END_OF_OPT
+    OPT "Si c'est aussi dangereux que vous le dites, je ferais mieux de ne pas y aller."
+      Say "Je comprends. J'ai peur moi aussi de prendre cette route."
+      GO merchEnd
+    END_OF_OPT
+    OPT "Vous offrez quoi en échange ?"
+      Ask "Que pensez-vous de 25 pour cent des bénéfices ?"
+      MENU
+        OPT "Ça me paraît honnête."
+          Say "Excellent ! Vous allez vous faire plein de Crédits et ce sera pour vous l'occasion de rencontrer les extraterrestres bruns. Vous verrez, ils sont très gentils."
+          GO merchAccept
+        END_OF_OPT
+        OPT "Et pourquoi pas 50 pour cent ?"
+          Ask "Non, je ne peux pas aller au-delà de 25 pour cent. Mais vous rencontrerez les extraterrestres bruns."
+          MENU
+            OPT "Oh, d'accord."
+              Say "Excellent !"
+              GO merchAccept
+            END_OF_OPT
+            OPT "Je crains que vous ne payiez pas assez."
+              Delay 300
+              ChangeChar merchant campaign/merch-disappointed.png
+              Say "Oh. Ok alors. Je devrais peut-être trouver un autre transporteur... un jour."
+              GO merchEnd
+            END_OF_OPT
+          END_OF_MENU
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL merchAccept
+  Say "Ça pourrait être le début d'un joli partenariat !"
+  SUB_SCRIPT merchantLaughA
+  ShowNode brownHome
+  ShowPath U1-9a
+  ShowPath R1-9b
+  ResetFocus bmerchant
+  Say "On se retrouve sur le pont."
+  SET merchantAccepted
+  RESET merchantLeftAtPurple
+
+  LABEL merchEnd
+  Delay 200
+  HideChar merchant
+  Delay 300
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT mechDlg
+
+  ShowDlgScene
+  IFNOT outpostInitialized
+    HideButton bmech
+    ShowButton bambassador
+    SetFocus bambassador
+    Delay 300
+    CenterMapByNode outpost
+    Delay 500
+    Announce "Des rumeurs font état d'une crise diplomatique à l'Ambassade Orbitale."
+    Delay 300
+    CenterMapByNode regula
+    Delay 300
+    HideDlgScene
+    RETURN
+  END_OF_IF
+  ShowChar mech left
+  IF mechOffered
+    ChangeChar mech campaign/mech-explaining.png
+    Say "Salut. Vous êtes venu pour le boulot ?"
+    MENU
+      OPT "Ouaip."
+        GO mechAccept
+      END_OF_OPT
+      OPT "Non, j'étais juste là pour..."
+        ChangeChar mech campaign/mech-f.png
+        Say "Alors, ne me faites pas perdre mon temps. J'ai besoin de quelqu'un pour ce boulot."
+        GO mechEnd
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  Say "Salut, pilote."
+  ChangeChar mech campaign/mech-explaining.png
+  Ask "Je suis très pressé donc on va oublier les formalités... J'ai un boulot pour vous."
+  MENU
+    OPT "Mais c'est important les formalités."
+      ChangeChar mech campaign/mech-explaining-f.png
+      Say "Bien. Je me présente. Vous vous présentez. Je vous demande ce que vous faites. Vous me dites que vous êtes transporteur..."
+      Ask "Après une courte conversation, vous vous dites que je dois avoir une idée derrière la tête. Et c'est là que je vous parle de ce boulot. Ok ?"
+      MENU
+        OPT "Hum, ok."
+          GO mechCont
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+    OPT "Pas de problème. Allez-y."
+      Say "Ok, parfait."
+      GO mechCont
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL mechCont
+  SET mechOffered
+  ChangeChar mech campaign/mech.png
+  Say "Donc : Nous essayons de faire tourner une usine."
+  Say "Ils m'ont envoyé sur Administra pour trouver quelques ouvriers. Donc, j'en ai trouvé, plein."
+  ChangeChar mech campaign/mech-explaining.png
+  Ask "Mais je n'ai aucun vaisseau pour les ramener jusqu'à l'Usine."
+  MENU
+    OPT_IFNOT mechWhy "Et donc, qu'attendez-vous de moi ?"
+      ChangeChar mech campaign/mech-explaining-f.png
+      Ask "Mon dieu. Vous aimez vraiment discuter vous, non ? J'ai besoin que vous transportiez ces hommes pour moi. Vous pouvez faire cela ?"
+      SET mechWhy
+    END_OF_OPT
+    OPT_IFNOT mechHowMuch "On parle de combien d'ouvriers, là ?"
+      SET mechHowMuch
+      SET mechWhy
+      Ask "Beaucoup. Je vais devoir trouver d'autres transporteurs, c'est sûr. Mais au moins, est-ce que je peux compter sur vous ?"
+    END_OF_OPT
+    OPT_IF mechHowMuch "Bien sûr. Vous pouvez compter sur moi."
+      GO mechAccept
+    END_OF_OPT
+    OPT "Je ne pense pas pouvoir accepter ce boulot pour le moment."
+      ChangeChar mech campaign/mech-f.png
+      Say "Oh, vous souhaitez juste explorer toutes les ramifications de ce dialogue. Vous finirez par accepter ce travail."
+      GO mechEnd
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL mechAccept
+  SET mechAccepted
+  RESET mechLeftAtRegula
+  Delay 250
+  ChangeChar mech campaign/mech-thumbup.png
+  Delay 250
+  Say "Parfait."
+  Say "On se retrouve au hangar."
+  Delay 250
+  HideChar mech
+  Delay 250
+  AddNode workshop
+  Delay 250
+  ShowPath U1-7a
+  HideButton bmech
+  HideDlgScene
+  RETURN
+
+  LABEL mechEnd
+  HideChar mech
+  Delay 300
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT brownDlg
+
+  ShowDlgScene
+  ShowChar brown left
+  SET brownTried
+  Delay 500
+  Ask "..."
+  MENU
+    OPT "Bonjour."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Je viens en paix."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Pouvez-vous m'expliquer comment me rendre à l'aéroport / la gare / le tailleur / l'hôtel ?"
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF brownInfo "..."
+      GO brownSuccess
+    END_OF_OPT
+  END_OF_MENU
+  Delay 700
+  Ask "..."
+  MENU
+    OPT "Ouais, je comprends."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Je ne comprends pas."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Votre planète / village / station spatiale / jardin hydroponique est magnifique en été."
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF brownInfo "..."
+      GO brownSuccess
+    END_OF_OPT
+  END_OF_MENU
+  Delay 900
+  Ask "... ?"
+  MENU
+    OPT "Pourquoi ne dites-vous rien ?"
+      GO brownFail
+    END_OF_OPT
+    OPT "Je vous apporte quelques présents de la Terre."
+      Delay 300
+      Ask "... !"
+      EXIT_MENU
+    END_OF_OPT
+    OPT "C'est sûr que c'est calme et plutôt tranquille ici."
+      Ask "..."
+      Delay 900
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF brownInfo "..."
+      GO brownSuccess
+    END_OF_OPT
+  END_OF_MENU
+  MENU
+    OPT "Eh bien, je ne sais quoi dire d'autre."
+      Delay 500
+      Ask "..."
+    END_OF_OPT
+    OPT "Ok. Eh bien, ce fut un plaisir de vous parler. Je dois y aller."
+      GO brownEnd
+    END_OF_OPT
+    OPT "Tout cela me rend malade. Dites quelque chose !"
+      GO brownFail
+    END_OF_OPT
+    OPT_IF brownInfo "..."
+      GO brownSuccess
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL brownSuccess
+  Delay 1500
+  Say "... !"
+  Delay 400
+  ChangeChar brown campaign/brown-purr.png
+  Say "... ..."
+  Delay 200
+  Say "..."
+  ChangeChar brown campaign/brown.png
+  Delay 300
+  HideChar brown
+  SET brownUnlocked
+  Announce "Extraterrestres bruns déverrouillés !"
+  Delay 500
+  SetAchievementProgress camp_aliens 2
+  Delay 500
+  ShowChar merchant right
+  Delay 300
+  Say "Eh bien, je vois que vous vous entendez bien tous les deux !"
+  Say "Félicitations. C'est toujours bon de les avoir pour amis. Ils sont très forts avec les moteurs !"
+  Say "Embarquez-en un sur votre vaisseau. Vous serez surpris du gain de vitesse."
+  Say "Oh. On dirait qu'il est temps que je retourne en réunion."
+  Delay 200
+  HideChar merchant
+  HideButton bbrown
+  HideButton bmerchhelp
+  IF class3Asked
+    ShowButton bmerch2
+    SetFocus bmerch2
+    SET merch2immediatelly
+  END_OF_IF
+  HideChar brown
+  HideDlgScene
+  RETURN
+
+  LABEL brownFail
+  Delay 700
+  ChangeChar brown campaign/brown-frown.png
+  Say "... !"
+  Delay 500
+
+  LABEL brownEnd
+  HideChar brown
+  IF merchHelpAsked
+    Delay 750
+    ShowChar merchant right
+    Say "Désolé, j'arrive un peu tard. La réunion s'est prolongée."
+    Ask "Comment ça se passe ? Est-ce que vous et l'extraterrestre avez pu faire connaissance ?"
+    MENU
+      OPT "Tout se passe bien."
+        Ask "Vraiment ? Vous avez pourtant l'air d'avoir quelques soucis."
+      END_OF_OPT
+      OPT "En fait, c'est surtout la communication qui pose problème."
+        EXIT_MENU
+      END_OF_OPT
+      OPT "Vous plaisantez ? Il n'y a rien à faire pour discuter avec ces gars-là."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    Ask "Pouvez-vous me répéter ce qu'il vous a dit ?"
+    MENU
+      OPT "Oui. Je m'en souviens parfaitement. Il a dit : ..."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    Say "Oh, c'est intéressant."
+    Say "Eh bien, la réponse usuelle est quelque chose qui ressemble à : ..."
+    Say "Mais peu importe, il faut que je retourne en réunion. Il n'est pas toujours simple de négocier avec ces extraterrestres."
+    SET brownInfo
+    Delay 300
+    HideChar merchant
+  END_OF_IF
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT merchHelpDlg
+
+  ShowDlgScene
+  ShowChar merchant left
+  IF merchHelpAsked
+    ShowChar brown right
+    Delay 300
+    SayChar merchant "Chut ! Vous ne voyez pas que je suis en réunion ?"
+    Delay 900
+    SayChar brown "..."
+    Delay 800
+    HideChar merchant
+    HideChar brown
+    HideDlgScene
+    RETURN
+  END_OF_IF
+  IFNOT merchHelpIntro
+    Say "Oh, salut. J'espère que vous profitez bien de votre séjour."
+    Say "Désolé, je n'ai pas le temps de vous faire visiter les environs. J'ai une importante réunion qui est sur le point de commencer."
+    SET merchHelpIntro
+  ELSE
+    Say "C'est bientôt l'heure de ma réunion."
+  END_OF_IF
+  Ask "Avez-vous besoin de quelque chose ?"
+  MENU
+    OPT "Non. Je voulais juste dire bonjour."
+      Say "Oh. Ok. Bonjour."
+      GO merchHelpEnd
+    END_OF_OPT
+    OPT_IF brownTried "Je suis venu vous demander de l'aide. J'ai quelques soucis pour discuter avec ces gars-là."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Say "Bien sûr. Ça peut être parfois compliqué."
+  Ask "Je ne veux pas me vanter, mais il se trouve que je suis un spécialiste de cette culture."
+  MENU
+    OPT_IFNOT qTelepat "Est-ce qu'ils communiquent par télépathie ?"
+      Say "Quoi ? Bien sûr que non."
+      Say "Mais c'est une race très ancienne. Ils semblent penser que tout ce qu'il y a à dire a déjà été dit."
+      SET qTelepat
+    END_OF_OPT
+    OPT_IFNOT qBrownSkill "Y'a-t-il une raison pour laquelle je dois parler à ces gars-là ?"
+      Say "Oh oui. Ils sont très forts avec les moteurs."
+      Say "J'essaye toujours d'en avoir un à bord de mon vaisseau. Vous ne croirez jamais la vitesse qu'ils peuvent vous faire gagner."
+      Say "Et en plus, ils sont gentils et très calmes."
+      SET qBrownSkill
+    END_OF_OPT
+    OPT "C'est impossible de leur parler, vous savez ?"
+      Say "C'est bon. Ok. Dès que ma réunion est terminée, j'arrive et j'essaierai de traduire."
+      SET merchHelpAsked
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  MENU
+    OPT "Merci."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL merchHelpEnd
+  Delay 300
+  HideChar merchant
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT merchDlg2
+
+  ShowDlgScene
+  ChangeChar merchant campaign/merch-sitting.png
+  ShowChar merchant left
+  IF merch2Refused
+    Say "Ha, content de vous revoir."
+    ChangeChar merchant campaign/merch-inviting.png
+    Ask "Vous avez changé d'avis et êtes enfin décidé à m'escorter jusqu'à la planète extraterrestre ?"
+    SET merchFriendly
+    GO merchDlg2Querry
+  END_OF_IF
+  IF merch2immediatelly
+    Say "Je suis ravi que les autochtones aient décidé de vous aider dans vos activités."
+    Ask "Avez-vous encore besoin de mon aide ?"
+    MENU
+      OPT "Je cherche à obtenir une attestation des extraterrestres bruns pour mon permis de classe III."
+        GO merchDlg2cont
+      END_OF_OPT
+      OPT "Non, je voulais juste vous remercier à nouveau."
+        Say "Comme c'est gentil de votre part !"
+        SUB_SCRIPT merchantLaughA
+        Say "Mais ce n'est pas tout ça... les affaires m'appellent."
+        GO merchDlg2End
+      END_OF_OPT
+    END_OF_MENU
+  ELSE
+    Say "Hé, je me souviens de vous ! Vous m'avez escorté lors d'un voyage d'affaires il y a quelque temps."
+    SUB_SCRIPT merchantLaughA
+    Ask "Qu'est-ce qui vous amène par ici ?"
+    MENU
+      OPT "Je cherche à obtenir une attestation des extraterrestres bruns pour mon permis de classe III."
+        GO merchDlg2cont
+      END_OF_OPT
+      OPT "Je passais juste dire bonjour."
+        Say "Comme c'est gentil de votre part !"
+        SUB_SCRIPT merchantLaughA
+        Say "Mais ce n'est pas tout ça... les affaires m'appellent."
+        GO merchDlg2End
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+
+  LABEL merchDlg2cont
+  Say "Hum. Ces attestations ne sont pas simples à obtenir. Mais je pense pouvoir intercéder en votre faveur."
+  Say "Dites ! Je viens juste de réaliser que c'est une belle opportunité pour nous !"
+  Say "Vous avez besoin d'aide, et moi aussi."
+  SUB_SCRIPT merchantLaughA
+  Delay 200
+  ChangeChar merchant campaign/merch-inviting.png
+  Delay 200
+  Ask "Seriez-vous d'accord pour m'accompagner dans un autre voyage d'affaires ?"
+
+  LABEL merchDlg2Querry
+  MENU
+    OPT "Ok. Allons faire un peu de business."
+      Say "Splendide ! Nous formons vraiment une belle équipe, partenaire !"
+      SUB_SCRIPT merchantLaughB
+      Say "On part sur les mêmes termes que la dernière fois. Vous m'aidez à rester en vie et je vous donne 25 pour cent."
+      Say "Mais cette fois, nous partons vers une autre planète et volerons dans de plus gros vaisseaux."
+      Say "Je vous retrouve au hangar."
+      Delay 200
+      HideChar merchant
+      Delay 500
+      ShowNode cyanHome
+      CenterMapByNode cyanHome
+      Delay 500
+      ShowPath U2-19a
+      CenterMapByPath U2-19a
+      SET merchant2Unlocked
+      HideButton bmerch2
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+    OPT_IFNOT merchFriendly "Et si je me contente de refuser poliment et de vous demander de m'aider à obtenir l'attestation des extraterrestres bruns ?"
+      SUB_SCRIPT merchantLaughA
+      Ask "Alors, je me contenterai de vous redemander poliment de m'aider."
+      SET merchFriendly
+    END_OF_OPT
+    OPT "Laissez tomber. La première fois était suffisante."
+      Delay 200
+      ChangeChar merchant campaign/merch-disappointed.png
+      Delay 200
+      Say "Je comprends. Qui peut être intéressé par un permis de classe III de toute façon ?"
+      Say "Tenez-moi au courant si vous changez d'avis."
+      SET merch2Refused
+      GO merchDlg2End
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL merchDlg2End
+  HideChar merchant
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT cyanDlg
+
+  ShowDlgScene
+  ShowChar cyan left
+  Ask "Bien le bonjour [g(cher Monsieur|chère Madame)]. Bienvenue sur notre planète."
+  IF wasAtCyan
+    MENU
+      OPT "Merci. Je voulais juste redire bonjour."
+        Ask "Oh, comme c'est merveilleux ! Allez-y."
+        MENU
+          OPT "Euh... bonjour."
+            GO cyanEnd
+          END_OF_OPT
+        END_OF_MENU
+      END_OF_OPT
+      OPT_IF class3 "Merci. Eh, j'ai un permis de classe III maintenant. Pouvez-vous me donner les plans d'un vaisseau ?"
+        Say "Bien certainement."
+        GO cyanDesignUnlock
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  SET wasAtCyan
+  MENU
+    OPT "Vos habitants parlent français ? C'est formidable !"
+      Say "Oh non. Nous parlons notre propre langue, bien entendu."
+      Ask "Mais chacun ici est spécialiste d'un domaine. Et il se trouve que je suis expert en langues étrangères."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  MENU
+    OPT "Ah. Cool. Dites-moi quelque chose dans une autre langue."
+      Delay 300
+      Say "Kwwrh'ghrr kzz gwwr-h."
+      IF brownHomeInitialized
+        GO cyanLangMore1
+      ELSE
+        GO cyanLangMore2
+      END_OF_IF
+    END_OF_OPT
+    OPT "Ok. Peu importe."
+      Say "Il semblerait que vous ne soyez guère apte à apprécier la véritable excellence."
+      GO cyanCont
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL cyanLangMore1
+  MENU
+    OPT "C'est super ! Une autre."
+      Delay 400
+      Say "..."
+      GO cyanLangMore2
+    END_OF_OPT
+    OPT "Hum. C'est compliqué ces langues étrangères. Merci."
+      GO cyanLangEnd
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL cyanLangMore2
+  MENU
+    OPT "Quelle impressionnante prononciation. Connaissez-vous d'autres langues ?"
+      Delay 300
+      Say "TlhIngan maH!"
+      MENU
+        OPT "Waouh. Vous êtes véritablement un maître des langues. Merci pour cette démonstration."
+          GO cyanLangEnd
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+    OPT "Ok. Cool. Merci pour la démonstration."
+      GO cyanLangEnd
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL cyanLangEnd
+  Say "Vous êtes vraiment [g(le bienvenu|la bienvenue)]."
+
+  LABEL cyanCont
+  Say "Vous savez, notre espèce est particulièrement talentueuse."
+  Say "Chaque enfant choisit sa spécialité dès son plus jeune âge et s'entraîne jusqu'à atteindre la perfection."
+  MENU
+    OPT_IFNOT cyanProblem1 "Hum. Et pourtant, vos habitations sont un peu rudimentaires."
+      Say "Oui, c'est que personne n'a choisi de se spécialiser en construction."
+      Say "Mais vous devriez lire nos manuels sur la théorie de l'autocontradiction des hypergroupes !"
+      SET cyanProblem1
+    END_OF_OPT
+    OPT_IFNOT cyanProblem2 "Hum. Et pourtant, votre planète est couverte de déchets."
+      Say "Oui, en fait, personne n'a choisi de se spécialiser en collecte des déchets."
+      Say "Mais vous devriez voir nos sculptures en ultrafractales à dimension infinie."
+      SET cyanProblem2
+    END_OF_OPT
+    OPT "Ouais, mais... non rien."
+      Say "Ah, je sais ce que vous alliez dire. Mais vous ne devez pas vous sentir mal à l'aise. Vous savez, toutes les espèces ne sont pas capables de perfection."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  MENU
+    OPT_IFNOT cyanAskIntro "Bon, comme vous parlez ma langue, cela devrait nous aider à trouver une solution."
+      Say "Si vous le dites."
+      SET cyanAskIntro
+    END_OF_OPT
+    OPT_IFNOT cyanOffer1 "Est-ce que je peux recruter des extraterrestres cyan dans mon équipage maintenant ?"
+      Say "Non."
+      SET cyanOffer1
+      SET cyanAskIntro
+      ADD cyanOffers 1
+      IF_MIN cyanOffers 3
+        SET cyanSadEnd
+      END_OF_IF
+    END_OF_OPT
+    OPT_IFNOT cyanOffer2 "Pouvez-vous me délivrer une attestation pour un permis de classe III ?"
+      Say "Non."
+      SET cyanOffer2
+      SET cyanAskIntro
+      ADD cyanOffers 1
+      IF_MIN cyanOffers 3
+        SET cyanSadEnd
+      END_OF_IF
+    END_OF_OPT
+    OPT_IFNOT cyanOffer3 "Pouvez-vous me donner les plans d'un vaisseau super cool ?"
+      Say "Mais certainement."
+      SET cyanAskIntro
+      IFNOT class3
+        Say "Ah... attendez. Nos plans ne concernent que les vaisseaux de classe III. Et vous n'avez pas de permis pour cela."
+        Say "Donc... non."
+        SET cyanOffer3
+        ADD cyanOffers 1
+        IF_MIN cyanOffers 3
+          SET cyanSadEnd
+        END_OF_IF
+      ELSE
+        GO cyanDesignUnlock
+      END_OF_IF
+    END_OF_OPT
+    OPT_IF cyanSadEnd "Hum. Ce ne se présente pas si bien que ça finalement."
+      Say "Je sais. J'en suis profondément désolé. Mais nous venons d'une extension."
+      Say "Pour tout vous dire, nous ne devrions même pas apparaître dans la campagne du jeu de base."
+      Ask "Je dois y aller maintenant. Mais avant cela, laissez-moi vous donner une chance de dire combien mon espèce est admirable."
+      MENU
+        OPT "Je n'ai pas les mots pour vous dire ce que je pense de votre espèce."
+          EXIT_MENU
+        END_OF_OPT
+        OPT "Oh, ça va, vous êtes incroyables."
+          EXIT_MENU
+        END_OF_OPT
+        OPT "Il vaut peut-être mieux que je garde mes pensées pour moi."
+          EXIT_MENU
+        END_OF_OPT
+        OPT "J'en déduis qu'on en a fini, quoi que je puisse dire."
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Delay 300
+  HideButton bcyan
+
+  LABEL cyanEnd
+  Delay 500
+  HideChar cyanAlien
+  HideDlgScene
+  RETURN
+
+  LABEL cyanDesignUnlock
+  Say "Il se trouve que j'ai de magnifiques plans, juste là."
+  Say "Ils sont bien supérieurs à ceux des humains. Non seulement ils offrent de la place pour davantage de composants, mais ils sont également bien plus esthétiques."
+  Delay 300
+  UnlockShipPlan "III-amoeba"
+  Announce "Nouveau vaisseau de classe III déverrouillé."
+  Delay 500
+  Say "Je suis persuadé que vous allez l'adorer."
+  HideButton bcyan
+  HideChar cyanAlien
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT workDlg
+
+  ShowDlgScene
+  ShowChar mech left
+  IF designDouble1Unlocked
+    IF designDouble2Unlocked
+      IF designDouble3Unlocked
+        Say "Oh, salut ! J'espère que vous faites bon usage de mes plans."
+        ChangeChar mech campaign/mech-f.png
+        Say "Bon, je ferais mieux de retourner bosser. C'est toujours un plaisir de vous voir."
+        GO workEnd
+      ELSE
+        IF lab1Done
+          GO workThirdDesign
+        ELSE
+          Say "Désolée, je suis plutôt occupée en ce moment."
+          GO workEnd
+        END_OF_IF
+      END_OF_IF
+    ELSE
+      IF designDouble2Ready
+        GO workSecondDesign
+      ELSE
+        Say "Désolée, je suis plutôt occupée en ce moment."
+        GO workEnd
+      END_OF_IF
+    END_OF_IF
+  END_OF_IF
+  IF doubleDesignOffered
+    Say "Hi. Are you here to try out my new class I ship design?"
+    GO doubleDesignOffer
+  END_OF_IF
+  SET doubleDesignOffered
+  Say "Salut. Merci encore pour votre aide."
+  ChangeChar mech campaign/mech-explaining.png
+  Say "Hé, je travaille actuellement sur un nouveau vaisseau de classe I."
+  Say "Il dispose de 2 canons centraux au lieu d'un seul."
+  ChangeChar mech campaign/mech.png
+  Ask "Vous voulez l'essayer ?"
+
+  LABEL doubleDesignOffer
+  MENU
+    OPT "Oui, s'il vous plait."
+      Delay 300
+      ChangeChar mech campaign/mech-explaining.png
+      Delay 300
+      Say "Voici le plan."
+      Delay 300
+      UnlockShipPlan "I-double"
+      Announce "Nouveau vaisseau de classe I déverrouillé."
+      Delay 500
+      SetAchievementProgress camp_design_factory 1
+      Delay 300
+      ChangeChar mech campaign/mech.png
+      Say "Il faut que j'y retourne. A plus."
+      Delay 500
+      ChangeChar mech campaign/mech-f.png
+      ResetFocus bworkshop
+      SET designDouble1Unlocked
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Non merci."
+      Delay 300
+      ChangeChar mech campaign/mech-f.png
+      Delay 300
+      Say "Pas de problème. Si vous changez d'avis, passez me voir."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  ChangeChar mech campaign/mech.png
+  IFNOT workUniversalInfo
+    Delay 300
+    HideChar mech
+    Delay 500
+    ShowChar mech right
+    ChangeChar mech campaign/mech-explaining.png
+    Say "Oh, tant que j'y pense : lors de votre vol retour, vous pourrez tester la nouvelle technologie sur laquelle on travaille ici."
+    Ask "C'est du haut niveau. Aucun autre hangar n'y a accès pour le moment."
+    MENU
+      OPT "C'est quel type de technologie ?"
+        Say "Oh, vous verrez."
+        EXIT_MENU
+      END_OF_OPT
+      OPT "Ouais, on verra."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    SET workUniversalInfo
+  END_OF_IF
+
+  LABEL workEnd
+  Delay 500
+  HideChar mech
+  HideDlgScene
+  RETURN
+
+  LABEL workSecondDesign
+  IF designDouble2Refused
+    Say "Salut ! Vous avez changé d'avis ? Vous êtes d'accord pour livrer mes Crédits au Bar des Étoiles ?"
+    GO workSecondDesignQuerry
+  END_OF_IF
+  IF designDouble2Offered
+    Say "Salut ! Ça vous dit de jeter un œil à mes plans de classe II ? Et... puis-je vous demander une faveur ?"
+    MENU
+      OPT "Quelle sorte de faveur ?"
+        GO workSecondDesignQuest
+      END_OF_OPT
+      OPT "Ah... pas maintenant. On verra ça plus tard."
+        GO workEnd
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  Say "Salut ! Contente de vous revoir. Je voulais vous demander..."
+  Ask "Avez-vous déjà testé les plans ? Est-ce que tout fonctionne ?"
+  MENU
+    OPT "Ouais. Ils sont super."
+      Say "Super ! Ils sont bien appréciés des transporteurs."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Eh bien, pour tout vous dire, ils ne m'ont pas beaucoup servi."
+      Say "Oh, c'est dommage. Certains transporteurs semblent bien les apprécier."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Je ne suis pas sûr d'avoir fait le tour de toutes leurs possibilités."
+      Say "Ah ! Vous essayez d'être poli. Eh bien, je sais qu'il n'y a rien de révolutionnaire, mais certains transporteurs semblent bien les apprécier."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  SET designDouble2Offered
+  Ask "Ils m'ont même demandé de développer un vaisseau de classe II."
+  MENU
+    OPT "Pouvez-vous me montrer ces plans de classe II ?"
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Ouais, rien de plus passionnant ? Peu importe. On se voit plus tard."
+      GO workEnd
+    END_OF_OPT
+  END_OF_MENU
+  Say "Bien sûr. Je serais ravie que vous les testiez. Mais pouvez-vous me rendre une faveur ?"
+  MENU
+    OPT "Bien sûr. De quoi avez-vous besoin ?"
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Je me doutais que c'était un piège."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL workSecondDesignQuest
+  ChangeChar mech campaign/mech.png
+  Say "En fait, voyez-vous, moi et quelques amis avons donné une fête au Bar des Étoiles."
+  Say "Une sacrée fête même, mais... comment dire, nous avons dépensé un peu plus de Crédits que nous en avions vraiment."
+  Delay 300
+  ChangeChar mech campaign/mech-explaining.png
+  Delay 700
+  ChangeChar mech campaign/mech.png
+  Delay 300
+  Say "Le gentil et triste barman s'est montré très compréhensif. Je lui ai dit que je le rembourserais dès que possible."
+  ChangeChar mech campaign/mech-f.png
+  Ask "Mais maintenant que j'ai les Crédits, je ne peux pas quitter mon travail. Pourriez-vous les lui remettre pour moi ?"
+
+  LABEL workSecondDesignQuerry
+  MENU
+    OPT "Bien sûr. De combien parle-t-on ?"
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Eh, je n'ai pas vraiment envie de m'immiscer dans vos histoires de dettes pour l'instant."
+      SET designDouble2Refused
+      GO workEnd
+    END_OF_OPT
+  END_OF_MENU
+  Say "Environ 20 Crédits. Les voici :"
+  AddCredits 20
+  Announce "Vous avez reçu 20 Crédits."
+  ChangeChar mech campaign/mech.png
+  Ask "Merci beaucoup. Je me sentais vraiment mal d'avoir laissé une telle ardoise impayée."
+  MENU
+    OPT "Hum. Ça fait beaucoup de Crédits. Comment savez-vous que je ne vais pas les garder pour moi ?"
+      ChangeChar mech campaign/mech-explaining.png
+      Say "Vous ne le ferez pas. Je suis plutôt douée pour deviner la personnalité des gens."
+      Say "Voici les nouveaux plans :"
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IFNOT designDouble2Unlocked "Si j'ai bien compris, une fois que j'ai donné les Crédits au barman, vous me donnez les nouveaux plans ?"
+      ChangeChar mech campaign/mech-explaining.png
+      Say "Non. Vous pouvez prendre les plans dès maintenant. Les voici :"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  SET mechDebtPending
+  SET designDouble2Unlocked
+  UnlockShipPlan "II-double"
+  Delay 500
+  Announce "Nouveau vaisseau de classe II déverrouillé."
+  Delay 500
+  SetAchievementProgress camp_design_factory 2
+  Delay 300
+  IFNOT lab1Done
+    ResetFocus bworkshop
+  END_OF_IF
+  SetFocus bbartender
+  ChangeChar mech campaign/mech-thumbup.png
+  Say "Alors, merci beaucoup, et bonne chance."
+  GO workEnd
+
+  LABEL workThirdDesign
+  IF designDouble3Ready
+    Say "Salut !"
+    MENU
+      OPT "Salut ! Avez-vous eu le temps de dessiner les plans de ce vaisseau de classe III ?"
+        Say "Oh !"
+        Say "Désolée, nous avons été tellement occupés dernièrement que j'ai complètement oublié de m'y mettre."
+        Say "Hé, vous savez quoi ? Asseyez-vous une minute, je reviens."
+        HideChar mech
+        Delay 5000
+        ShowChar mech left
+        Delay 200
+        ChangeChar mech campaign/mech-explaining.png
+        Say "Et voilà. Essayez donc cela."
+        SET designDouble3Unlocked
+        UnlockShipPlan "III-double"
+        Delay 300
+        ChangeChar mech campaign/mech.png
+        Delay 300
+        Announce "Nouveau vaisseau de classe III déverrouillé."
+        Delay 500
+        ResetFocus bworkshop
+        SetAchievementProgress camp_design_factory 3
+        Delay 300
+        Say "J'espère qu'il fonctionne. J'ai juste jeté rapidement quelques idées sur le papier."
+        ChangeChar mech campaign/mech-explaining-f.png
+        Say "Les gens pensent généralement que concevoir des plans, c'est compliqué."
+        ChangeChar mech campaign/mech-explaining.png
+        Ask "Mais j'ai juste supprimé cette case et j'en ai ajouté quelques-uns ici ou là."
+        MENU
+          OPT "Cool. Merci."
+            ChangeChar mech campaign/mech.png
+            Say "Y'a pas de quoi. Bonne route !"
+            GO workEnd
+          END_OF_OPT
+          OPT "Vous êtes trop modeste. Vous êtes une grande designer."
+            Delay 300
+            ChangeChar mech campaign/mech.png
+            Delay 500
+            ChangeChar mech campaign/mech-blush.png
+            Delay 300
+            Say "Oh... hum... merci. Vous êtes [g(gentil|gentille)]. J'espère que ce vaisseau vous offrira quelques bons vols."
+            GO workEnd
+          END_OF_OPT
+        END_OF_MENU
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  IF designDouble3Asked
+    Say "Rebonjour."
+    ChangeChar mech campaign/mech-explaining-f.png
+    Say "Il faut vraiment que vous me fassiez penser à ces plans de classe III. Je n'ai pas encore eu le temps de les finaliser."
+    GO workEnd
+  END_OF_IF
+  Ask "Salut ! Comment ça se passe le transit pour le labo de Corp. Inc. ?"
+  MENU
+    OPT "Oh, pas mal, c'est un bon plan."
+      Say "Content de l'entendre."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Je déteste ça."
+      Say "Tu m'étonnes. Ça doit être un travail difficile."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Ask "Mais il faut que je retourne bosser. Contente de vous avoir vu."
+  MENU
+    OPT "Hé, avant que j'y aille : avez-vous déjà pensé à un vaisseau de classe III avec davantage de place pour les canons ?"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Say "Les plans standards des classes III disposent déjà de 3 emplacements à canon. N'oubliez pas les deux sur les ailes."
+  MENU
+    OPT "Mais vous pourriez quand même doubler l'emplacement frontal, non ?"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  ChangeChar mech campaign/mech-f.png
+  Say "Hum. Je vois ce que vous voulez dire. Ouais. Ça doit être possible."
+  ChangeChar mech campaign/mech-explaining.png
+  Say "Vous savez quoi : reparlez-en moi la prochaine fois que vous passerez ici. Je devrais être en mesure de vous dessiner un vaisseau comme ça."
+  SET designDouble3Asked
+  ResetFocus bworkshop
+  GO workEnd
+END_OF_SCRIPT
+
+SCRIPT shortcutDlg
+
+  ShowDlgScene
+  ShowChar ambassador left
+  Delay 500
+  ChangeChar ambassador campaign/ambassador-happy.png
+  Say "Bien le bonjour. Content de vous revoir, [g(Monsieur|Madame)]."
+  ChangeChar ambassador campaign/ambassador.png
+  Ask "Merci de votre aide avec le... petit problème... de la dernière fois. Et merci de votre discrétion."
+  MENU
+    OPT_IFNOT shortcutPleasure "Aucun problème. [g(Content|Contente)] d'avoir pu rendre service."
+      SET shortcutPleasure
+      Ask "Vous n'avez pas idée de combien il est difficile de trouver quelqu'un de compétent, responsable et discret dans les temps qui courent."
+    END_OF_OPT
+    OPT "Auriez-vous un autre... petit problème ?"
+      Ask "Oh, non. Mon travail ici est fini pour le moment. Je ne vais pas tarder à embarquer dans ma navette diplomatique pour rentrer à l'Ambassade Orbitale."
+      MENU
+        OPT "En fait, j'ai moi aussi terminé ma mission ici."
+          Say "Oh. Vous voulez que je vous dépose ? Je peux vous ramener jusqu'à l'Ambassade Orbitale si vous le souhaitez."
+          Ask "Je serais ravi de pouvoir vous renvoyer l'ascenseur."
+          MENU
+            OPT "C'est gentil. Ce serait sympa de monter à bord d'une navette diplomatique."
+              GO shortcutAccepted
+            END_OF_OPT
+            OPT "Non merci. Je dois ramener mon vaisseau."
+              Say "Je comprends. A bientôt donc."
+              GO shortcutEnd
+            END_OF_OPT
+          END_OF_MENU
+        END_OF_OPT
+        OPT "Ok. Au revoir. Rentrez bien."
+          Say "Vous aussi, [g(Monsieur|Madame)]"
+          ChangeChar ambassador campaign/ambassador-happy.png
+          Delay 700
+          ChangeChar ambassador campaign/ambassador.png
+          GO shortcutEnd
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL shortcutAccepted
+  Say "Excellent. Je vous retrouve au hangar."
+  Delay 300
+  HideChar ambassador
+  Delay 500
+  ShowChar ambassador right
+  Delay 500
+  ChangeChar ambassador campaign/ambassador-happy.png
+  Delay 100
+  Say "Et voici la navette."
+  ChangeChar ambassador campaign/ambassador.png
+  Ask "Je vous en prie, montez à bord et continuez le long du couloir sombre."
+  MENU
+    OPT "Hum, ok."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Delay 300
+  HideChar ambassador
+  Delay 800
+  Announce "La navette diplomatique s'est révélée fort agréable. Beaucoup de chaises très confortables et quasiment aucun tuyau apparent."
+  Announce "Ce fut un vol des plus plaisants. Dans votre prochaine vie, peut-être serez-vous diplomate."
+  Announce "Durant ce vol, vous n'avez eu qu'une grande décision stratégique à prendre :"
+  MENU
+    OPT "J'aimerais du poulet."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Je goûterais bien les pâtes."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Non, merci beaucoup. Je n'ai pas faim."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Delay 600
+  CenterMapByNode outpost
+  Delay 1000
+  MovePlayerToNode outpost
+  Delay 500
+  ChangeChar ambassador campaign/ambassador-peek.png
+  ShowChar ambassador right
+  Say "Allez, au boulot ! Ce fut un plaisir de voyager avec vous, [NAME]."
+  MENU
+    OPT "Et ce plaisir est partagé. Merci de m'avoir [g(déposé|déposée)]."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL shortcutEnd
+  HideButton bcyanshortcut
+  RESET shortcutEnabled
+  Delay 300
+  HideChar ambassador
+  Delay 300
+  HideDlgScene
+END_OF_SCRIPT
+
+END_OF_SCRIPTS
