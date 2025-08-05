@@ -152,32 +152,7 @@ export const useMapCanvas = (
     onViewportChange(newViewport);
   }, [viewport, onViewportChange]);
 
-  // Update viewport size on mount and resize
-  useEffect(() => {
-    const updateSize = () => {
-      if (canvasRef.current) {
-        const rect = canvasRef.current.getBoundingClientRect();
-        if (rect.width > 0 && rect.height > 0) {
-          onViewportChange({
-            ...viewport,
-            width: rect.width,
-            height: rect.height
-          });
-        }
-      }
-    };
-
-    // Initial size update
-    const timer = setTimeout(updateSize, 100);
-    
-    // Listen for resize
-    window.addEventListener('resize', updateSize);
-    
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('resize', updateSize);
-    };
-  }, []);
+  // Remove the viewport size update - it should be handled by InteractiveMap only
 
   // Use native event listener for wheel to prevent passive event listener warning
   useEffect(() => {

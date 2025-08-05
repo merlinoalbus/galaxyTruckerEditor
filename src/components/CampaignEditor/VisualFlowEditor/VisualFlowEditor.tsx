@@ -1,15 +1,17 @@
 import React from 'react';
-import { Code2, Settings, Play } from 'lucide-react';
+import { Code2, Settings, Play, Maximize2, Minimize2 } from 'lucide-react';
 
 import { useVisualFlowEditor } from '@/hooks/CampaignEditor/VisualFlowEditor/useVisualFlowEditor';
 import { visualFlowEditorStyles } from '@/styles/CampaignEditor/VisualFlowEditor/VisualFlowEditor.styles';
 import { useTranslation } from '@/locales/translations';
+import { useFullscreen } from '@/contexts/FullscreenContext';
 import type { VisualFlowEditorProps } from '@/types/CampaignEditor/VisualFlowEditor/VisualFlowEditor.types';
 
 export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({ 
   analysis 
 }) => {
   const { t } = useTranslation();
+  const { isFlowFullscreen, toggleFlowFullscreen } = useFullscreen();
   const { 
     isInitialized, 
     isLoading, 
@@ -26,7 +28,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
   }
 
   return (
-    <div className={visualFlowEditorStyles.container}>
+    <div className={`${visualFlowEditorStyles.container} ${isFlowFullscreen ? 'h-full overflow-y-auto' : ''}`}>
       {/* Header */}
       <div className={visualFlowEditorStyles.header.container}>
         <div className={visualFlowEditorStyles.header.titleSection}>
@@ -49,6 +51,17 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
           <button className={visualFlowEditorStyles.button.primary}>
             <Play className="w-4 h-4" />
             Anteprima
+          </button>
+          <button
+            onClick={toggleFlowFullscreen}
+            className="flex items-center justify-center w-10 h-10 bg-slate-700 hover:bg-gt-accent text-gray-300 hover:text-white rounded-lg transition-all duration-200 shadow-lg hover:shadow-gt-accent/30 ml-2"
+            title={isFlowFullscreen ? t('interactiveMap.exitFullscreen') : t('interactiveMap.enterFullscreen')}
+          >
+            {isFlowFullscreen ? (
+              <Minimize2 className="w-5 h-5" />
+            ) : (
+              <Maximize2 className="w-5 h-5" />
+            )}
           </button>
         </div>
       </div>

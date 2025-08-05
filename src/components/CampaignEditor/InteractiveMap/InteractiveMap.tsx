@@ -5,7 +5,7 @@ import { InteractiveMapProps, MapNode, MapConnection } from '@/types/CampaignEdi
 import { useInteractiveMap } from '@/hooks/CampaignEditor/InteractiveMap/useInteractiveMap';
 import { interactiveMapStyles } from '@/styles/CampaignEditor/InteractiveMap/InteractiveMap.styles';
 import { useTranslation } from '@/locales/translations';
-import { useMapFullscreen } from '@/contexts/MapFullscreenContext';
+import { useFullscreen } from '@/contexts/FullscreenContext';
 
 import { MapCanvas } from './components/MapCanvas/MapCanvas';
 import { MapControls } from './components/MapControls/MapControls';
@@ -21,7 +21,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
   onScriptSelect
 }) => {
   const { t } = useTranslation();
-  const { isMapFullscreen, toggleMapFullscreen } = useMapFullscreen();
+  const { isMapFullscreen, toggleMapFullscreen } = useFullscreen();
   const containerRef = useRef<HTMLDivElement>(null);
   const [renderKey, setRenderKey] = useState(0);
   const [hoveredNode, setHoveredNode] = useState<MapNode | null>(null);
@@ -86,6 +86,9 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
     const newWidth = containerRect.width;
     const newHeight = containerRect.height;
 
+    // Only update if dimensions actually changed
+    if (newWidth === viewport.width && newHeight === viewport.height) return;
+
     // Find newbie coordinates
     const newbieNode = nodes.find(node => node.name === 'newbie');
     const newbieX = newbieNode?.coordinates[0] || 1250; // fallback to default coordinates
@@ -99,7 +102,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
       height: newHeight,
       scale: viewport.scale
     });
-  }, [nodes, setViewport, viewport.scale]);
+  }, [nodes, setViewport, viewport.width, viewport.height, viewport.scale]);
 
   // Effect to recalculate viewport when fullscreen changes
   useEffect(() => {
@@ -112,11 +115,11 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
     return () => clearTimeout(timer);
   }, [isMapFullscreen, recalculateViewport]);
 
-  // Effect to handle window resize
-  useEffect(() => {
-    window.addEventListener('resize', recalculateViewport);
-    return () => window.removeEventListener('resize', recalculateViewport);
-  }, [recalculateViewport]);
+  // Temporarily disable window resize handler to avoid conflicts
+  // useEffect(() => {
+  //   window.addEventListener('resize', recalculateViewport);
+  //   return () => window.removeEventListener('resize', recalculateViewport);
+  // }, [recalculateViewport]);
 
   if (isLoading) {
     return (

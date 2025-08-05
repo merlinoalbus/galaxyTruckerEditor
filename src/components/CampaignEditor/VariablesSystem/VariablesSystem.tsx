@@ -146,7 +146,7 @@ export const VariablesSystem: React.FC<VariablesSystemProps> = ({ analysis }) =>
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-y-auto">
         <ListView
           type={activeTab}
           items={currentItems}

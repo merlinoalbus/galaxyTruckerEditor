@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Save } from 'lucide-react';
 
 import { useCampaignEditor } from '@/hooks/CampaignEditor';
-import { useMapFullscreen } from '@/contexts/MapFullscreenContext';
+import { useFullscreen } from '@/contexts/FullscreenContext';
 
 import { InteractiveMap } from './InteractiveMap/InteractiveMap';
 import { VisualFlowEditor } from './VisualFlowEditor/VisualFlowEditor';
@@ -14,7 +14,8 @@ import { useTranslation } from '@/locales/translations';
 
 export const CampaignEditor: React.FC = () => {
   const { t } = useTranslation();
-  const { isMapFullscreen, exitMapFullscreen } = useMapFullscreen();
+  const { isMapFullscreen, isFlowFullscreen, exitAllFullscreen } = useFullscreen();
+  const isAnyFullscreen = isMapFullscreen || isFlowFullscreen;
   
   const {
     activeTab,
@@ -29,12 +30,12 @@ export const CampaignEditor: React.FC = () => {
     handleScriptSelect
   } = useCampaignEditor();
 
-  // Exit fullscreen when changing tabs away from map
+  // Exit fullscreen when changing tabs
   useEffect(() => {
-    if (activeTab !== 'map' && isMapFullscreen) {
-      exitMapFullscreen();
+    if ((activeTab !== 'map' && isMapFullscreen) || (activeTab !== 'flow' && isFlowFullscreen)) {
+      exitAllFullscreen();
     }
-  }, [activeTab, isMapFullscreen, exitMapFullscreen]);
+  }, [activeTab, isMapFullscreen, isFlowFullscreen, exitAllFullscreen]);
 
   const tabs = [
     { id: 'map', label: t('tabs.interactiveMap') },
@@ -60,9 +61,9 @@ export const CampaignEditor: React.FC = () => {
   }
 
   return (
-    <div className={`h-full flex flex-col ${!isMapFullscreen ? 'gap-6' : ''}`}>
+    <div className={`h-full flex flex-col ${!isAnyFullscreen ? 'gap-6' : ''}`}>
       {/* Header - Hidden in fullscreen */}
-      {!isMapFullscreen && (
+      {!isAnyFullscreen && (
         <div className="flex items-center justify-between flex-shrink-0">
           <div>
             <h1 className="text-2xl font-bold text-white galaxy-title">{t('campaignEditor.title')}</h1>
@@ -79,7 +80,7 @@ export const CampaignEditor: React.FC = () => {
       )}
 
       {/* Stats - Hidden in fullscreen */}
-      {!isMapFullscreen && (
+      {!isAnyFullscreen && (
         <ElementCounters 
           scriptsCount={analysis?.scripts?.length} 
           onElementClick={(elementType) => {
@@ -93,7 +94,7 @@ export const CampaignEditor: React.FC = () => {
       )}
 
       {/* Tabs - Hidden in fullscreen */}
-      {!isMapFullscreen && (
+      {!isAnyFullscreen && (
         <div className="border-b border-gray-700 flex-shrink-0">
           <div className="flex space-x-8">
             {tabs.map((tab) => (
@@ -114,7 +115,7 @@ export const CampaignEditor: React.FC = () => {
       )}
 
       {/* Content */}
-      <div className={`bg-gt-primary rounded-lg flex-1 min-h-0 ${isMapFullscreen ? 'rounded-none' : ''}`}>
+      <div className={`bg-gt-primary rounded-lg flex-1 min-h-0 ${isAnyFullscreen ? 'rounded-none' : ''}`}>
         {activeTab === 'map' && (
           <InteractiveMap 
             onScriptSelect={handleScriptSelect}
