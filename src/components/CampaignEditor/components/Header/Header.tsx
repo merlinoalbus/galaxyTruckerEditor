@@ -5,16 +5,21 @@ import { RefreshCw, Download, Upload } from 'lucide-react';
 import { useGameData } from '@/contexts/GameDataContext';
 import { LanguageSelector } from './components/LanguageSelector/LanguageSelector';
 import { useTranslation } from '@/locales/translations';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export function Header() {
   const { loading, error, refreshAll } = useGameData();
   const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
 
   return (
     <header className="bg-gt-primary border-b border-slate-700 px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <h1 className="font-bold font-game galaxy-title galaxy-title-main">
+          <h1 
+            key={`title-${currentLanguage}`} 
+            className="font-bold font-game galaxy-title galaxy-title-main"
+          >
             {t('header.title')}
           </h1>
           <div className="flex items-center space-x-2">

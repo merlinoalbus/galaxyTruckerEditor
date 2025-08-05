@@ -196,8 +196,15 @@ server/
 - **Aggregazione:** Tutti gli script che la usano vengono consolidati
 - **Operazioni tracciate:** SET_TO, ADD, IF_IS, IF_MIN, IF_MAX
 - **Valori utilizzati:** Array ordinato di tutti i valori numerici trovati
+- **Esclusioni:** RESET viene ignorato (ambiguo tra semafori e variabili)
+- **Priorità:** Elementi usati sia come variabili che semafori vengono classificati solo come variabili
 
 **Fonte dati:** Tutti i file .txt nella cartella campaign e sottocartelle
+
+**Note tecniche:**
+- La funzione `extractVariablesFromLine()` gestisce il parsing delle righe
+- Chiave unica per variabile: nome della variabile
+- Conflitti con semafori risolti dando priorità alle variabili
 
 ---
 
@@ -219,7 +226,6 @@ server/
       "utilizzi_totali": 8,
       "operazioni": {
         "SET": 2,
-        "RESET": 1,
         "IF": 3,
         "IFNOT": 1,
         "OPT_IF": 1
@@ -233,11 +239,21 @@ server/
 
 **Caratteristiche:**
 - **Scansione ricorsiva:** Pattern `./campaign/**/*.txt`
-- **Operazioni tracciate:** SET, RESET, IF, IFNOT, OPT_IF, OPT_IFNOT  
-- **Stato finale probabile:** "SET" se più SET che RESET, "RESET" altrimenti
-- **Distinzione da variabili:** Esclude IF_IS, IF_MIN, IF_MAX (che sono per variabili numeriche)
+- **Operazioni tracciate:** SET, IF, IFNOT, OPT_IF, OPT_IFNOT
+- **Esclusioni automatiche:** 
+  - RESET viene ignorato (ambiguo tra semafori e variabili)
+  - Tutti gli elementi già classificati come variabili vengono esclusi
+  - IF_IS, IF_MIN, IF_MAX vengono ignorati (sono per variabili numeriche)
+- **Stato finale probabile:** "SET" se ci sono operazioni SET, "UNKNOWN" altrimenti
+- **Logica di priorità:** Prima si identificano tutte le variabili, poi si escludono dai semafori
 
 **Fonte dati:** Tutti i file .txt nella cartella campaign e sottocartelle
+
+**Note tecniche:**
+- La funzione `extractSemaphores()` gestisce il parsing delle righe
+- Processo in due fasi: raccolta variabili → esclusione dai semafori
+- IF senza underscore viene considerato per semafori (es. `IF tutorial_seen`)
+- IF con underscore viene ignorato (es. `IF_IS credits 100`)
 
 ---
 

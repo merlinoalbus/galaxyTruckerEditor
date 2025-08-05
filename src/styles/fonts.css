@@ -35,10 +35,27 @@
     #FF8C00 100%
   );
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
+  /* Rimuovo -webkit-text-fill-color per evitare problemi con localizzazione dinamica */
+  color: #FFD700; /* Fallback color per browser che non supportano background-clip */
   text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
   filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.8));
+}
+
+/* Per browser che supportano background-clip, applichiamo transparent solo se il testo è visibile */
+@supports (-webkit-background-clip: text) {
+  .galaxy-title-main {
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+/* Forza il re-render per localizzazione dinamica */
+.galaxy-title-main {
+  /* Anima la transizione quando il testo cambia */
+  transition: all 0.1s ease-in-out;
+  /* Forza repaint */
+  transform: translateZ(0);
+  will-change: contents;
 }
 
 .galaxy-title-section {

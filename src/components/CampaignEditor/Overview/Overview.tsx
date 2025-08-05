@@ -1,23 +1,37 @@
 import React from 'react';
-import { BarChart3, Users, MapPin, Settings } from 'lucide-react';
+import { 
+  FileText, 
+  Users, 
+  Settings, 
+  Tag, 
+  Target,
+  Code,
+  Globe,
+  Activity,
+  TrendingUp,
+  Zap,
+  Star
+} from 'lucide-react';
 
 import { CampaignAnalysis } from '@/types/CampaignEditor';
 import { useOverview } from '@/hooks/CampaignEditor/Overview/useOverview';
 import { overviewService } from '@/services/CampaignEditor/Overview/overviewService';
 import { overviewStyles } from '@/styles/CampaignEditor/Overview/Overview.styles';
+import { useTranslation } from '@/locales/translations';
 
 interface OverviewProps {
   analysis?: CampaignAnalysis | null;
 }
 
 export const Overview: React.FC<OverviewProps> = ({ analysis }) => {
+  const { t } = useTranslation();
   const { statistics, isLoading, hasData } = useOverview(analysis || null);
-  const formattedStats = overviewService.formatStatistics(analysis || null);
 
   if (isLoading) {
     return (
       <div className={overviewStyles.loadingState}>
-        Loading overview data...
+        <Activity className={overviewStyles.loadingSpinner} />
+        <div className={overviewStyles.loadingText}>{t('overview.loading')}</div>
       </div>
     );
   }
@@ -25,10 +39,10 @@ export const Overview: React.FC<OverviewProps> = ({ analysis }) => {
   if (!hasData) {
     return (
       <div className={overviewStyles.emptyState.container}>
-        <BarChart3 className={`w-16 h-16 ${overviewStyles.emptyState.icon}`} />
-        <h3 className={overviewStyles.emptyState.title}>No Campaign Data</h3>
+        <FileText className={overviewStyles.emptyState.icon} />
+        <h3 className={overviewStyles.emptyState.title}>{t('overview.noCampaignData')}</h3>
         <p className={overviewStyles.emptyState.subtitle}>
-          Load campaign scripts to see overview statistics
+          {t('overview.loadCampaignMessage')}
         </p>
       </div>
     );
@@ -36,59 +50,153 @@ export const Overview: React.FC<OverviewProps> = ({ analysis }) => {
 
   return (
     <div className={overviewStyles.container}>
-      <div className={overviewStyles.header.title}>Campaign Overview</div>
-      <p className={overviewStyles.header.subtitle}>
-        Comprehensive analysis of your campaign structure and content
-      </p>
+      {/* Hero Section */}
+      <div className={overviewStyles.hero.container}>
+        <div className={overviewStyles.hero.decoration}></div>
+        <h1 className={overviewStyles.hero.title}>{t('overview.title')}</h1>
+        <p className={overviewStyles.hero.subtitle}>
+          {t('overview.description')}
+        </p>
+      </div>
 
-      {/* Main Statistics */}
-      <div className={overviewStyles.statsGrid}>
-        <div className={overviewStyles.statCard.base}>
-          <div className={overviewStyles.statCard.title}>Scripts</div>
-          <div className={overviewStyles.statCard.value}>{statistics?.totalScripts || 0}</div>
-          <div className={overviewStyles.statCard.subtitle}>
-            {statistics?.complexityMetrics.total || 0} total commands
+      {/* Main Metrics */}
+      <div className={overviewStyles.metricsGrid}>
+        <div className={overviewStyles.metricCard.container}>
+          <div className={overviewStyles.metricCard.accent}></div>
+          <div className={overviewStyles.metricCard.iconContainer}>
+            <FileText className={overviewStyles.metricCard.icon} />
+          </div>
+          <div className={overviewStyles.metricCard.value}>
+            {statistics?.totalScripts || 0}
+          </div>
+          <div className={overviewStyles.metricCard.label}>
+            {t('overview.scripts')}
           </div>
         </div>
 
-        <div className={overviewStyles.statCard.base}>
-          <div className={overviewStyles.statCard.title}>Variables</div>
-          <div className={overviewStyles.statCard.value}>{statistics?.totalVariables || 0}</div>
-          <div className={overviewStyles.statCard.subtitle}>
-            {formattedStats?.variables.semafori || 0} semafori, {formattedStats?.variables.realVariables || 0} numeric
+        <div className={overviewStyles.metricCard.container}>
+          <div className={overviewStyles.metricCard.accent}></div>
+          <div className={overviewStyles.metricCard.iconContainer}>
+            <Settings className={overviewStyles.metricCard.icon} />
+          </div>
+          <div className={overviewStyles.metricCard.value}>
+            {statistics?.totalVariables || 0}
+          </div>
+          <div className={overviewStyles.metricCard.label}>
+            {t('overview.variables')}
           </div>
         </div>
 
-        <div className={overviewStyles.statCard.base}>
-          <div className={overviewStyles.statCard.title}>Characters</div>
-          <div className={overviewStyles.statCard.value}>{statistics?.totalCharacters || 0}</div>
-          <div className={overviewStyles.statCard.subtitle}>
-            {statistics?.totalMissions || 0} missions referenced
+        <div className={overviewStyles.metricCard.container}>
+          <div className={overviewStyles.metricCard.accent}></div>
+          <div className={overviewStyles.metricCard.iconContainer}>
+            <Users className={overviewStyles.metricCard.icon} />
+          </div>
+          <div className={overviewStyles.metricCard.value}>
+            {statistics?.totalCharacters || 0}
+          </div>
+          <div className={overviewStyles.metricCard.label}>
+            {t('overview.characters')}
+          </div>
+        </div>
+
+        <div className={overviewStyles.metricCard.container}>
+          <div className={overviewStyles.metricCard.accent}></div>
+          <div className={overviewStyles.metricCard.iconContainer}>
+            <Target className={overviewStyles.metricCard.icon} />
+          </div>
+          <div className={overviewStyles.metricCard.value}>
+            {statistics?.totalMissions || 0}
+          </div>
+          <div className={overviewStyles.metricCard.label}>
+            {t('overview.missions')}
+          </div>
+        </div>
+      </div>
+
+      {/* Additional Metrics Row */}
+      <div className={overviewStyles.metricsGrid}>
+        <div className={overviewStyles.metricCard.container}>
+          <div className={overviewStyles.metricCard.accent}></div>
+          <div className={overviewStyles.metricCard.iconContainer}>
+            <Zap className={overviewStyles.metricCard.icon} />
+          </div>
+          <div className={overviewStyles.metricCard.value}>
+            {statistics?.totalSemaphores || 0}
+          </div>
+          <div className={overviewStyles.metricCard.label}>
+            {t('overview.semaphores')}
+          </div>
+        </div>
+
+        <div className={overviewStyles.metricCard.container}>
+          <div className={overviewStyles.metricCard.accent}></div>
+          <div className={overviewStyles.metricCard.iconContainer}>
+            <Tag className={overviewStyles.metricCard.icon} />
+          </div>
+          <div className={overviewStyles.metricCard.value}>
+            {statistics?.totalLabels || 0}
+          </div>
+          <div className={overviewStyles.metricCard.label}>
+            {t('overview.labels')}
+          </div>
+        </div>
+
+        <div className={overviewStyles.metricCard.container}>
+          <div className={overviewStyles.metricCard.accent}></div>
+          <div className={overviewStyles.metricCard.iconContainer}>
+            <Star className={overviewStyles.metricCard.icon} />
+          </div>
+          <div className={overviewStyles.metricCard.value}>
+            {statistics?.starredScripts || 0}
+          </div>
+          <div className={overviewStyles.metricCard.label}>
+            Script Stellati
+          </div>
+        </div>
+
+        <div className={overviewStyles.metricCard.container}>
+          <div className={overviewStyles.metricCard.accent}></div>
+          <div className={overviewStyles.metricCard.iconContainer}>
+            <Code className={overviewStyles.metricCard.icon} />
+          </div>
+          <div className={overviewStyles.metricCard.value}>
+            {statistics?.complexityMetrics.total || 0}
+          </div>
+          <div className={overviewStyles.metricCard.label}>
+            {t('overview.totalCommands')}
           </div>
         </div>
       </div>
 
       {/* Language Distribution */}
-      {formattedStats?.scripts.byLanguage && formattedStats.scripts.byLanguage.length > 0 && (
+      {statistics?.scriptsPerLanguage && statistics.scriptsPerLanguage.length > 0 && (
         <div className={overviewStyles.section.container}>
-          <div className={overviewStyles.section.title}>
-            <Users className="w-5 h-5 inline mr-2" />
-            Language Distribution
+          <div className={overviewStyles.section.header}>
+            <Globe className={overviewStyles.section.icon} />
+            <h2 className={overviewStyles.section.title}>
+              {t('overview.languageDistribution')}
+            </h2>
           </div>
           <div className={overviewStyles.section.content}>
-            <div className={overviewStyles.list.container}>
-              {formattedStats.scripts.byLanguage.map(({ language, count, percentage }) => (
-                <div key={language} className={overviewStyles.list.item}>
-                  <span className={overviewStyles.list.label}>{language}</span>
-                  <div className="flex items-center space-x-3">
-                    <span className={overviewStyles.list.value}>{count} scripts</span>
-                    <div className={overviewStyles.progress.container} style={{ width: '60px' }}>
-                      <div 
-                        className={overviewStyles.progress.bar}
-                        style={{ width: `${percentage}%` }}
-                      />
+            <div className={overviewStyles.languageGrid}>
+              {statistics.scriptsPerLanguage.slice(0, 6).map(({ language, count, percentage }) => (
+                <div key={language} className={overviewStyles.languageItem.container}>
+                  <div className={overviewStyles.languageItem.left}>
+                    <div className={overviewStyles.languageItem.flag}>
+                      {language.slice(0, 2).toUpperCase()}
                     </div>
-                    <span className="text-xs text-gray-400 w-8">{percentage}%</span>
+                    <span className={overviewStyles.languageItem.language}>
+                      {language}
+                    </span>
+                  </div>
+                  <div className={overviewStyles.languageItem.right}>
+                    <span className={overviewStyles.languageItem.count}>
+                      {count} scripts
+                    </span>
+                    <span className={overviewStyles.languageItem.percentage}>
+                      {percentage}%
+                    </span>
                   </div>
                 </div>
               ))}
@@ -97,54 +205,48 @@ export const Overview: React.FC<OverviewProps> = ({ analysis }) => {
         </div>
       )}
 
-      {/* Complexity Metrics */}
+      {/* Complexity Analysis */}
       {statistics?.complexityMetrics && (
         <div className={overviewStyles.section.container}>
-          <div className={overviewStyles.section.title}>
-            <Settings className="w-5 h-5 inline mr-2" />
-            Complexity Analysis
+          <div className={overviewStyles.section.header}>
+            <TrendingUp className={overviewStyles.section.icon} />
+            <h2 className={overviewStyles.section.title}>
+              {t('overview.complexityAnalysis')}
+            </h2>
           </div>
           <div className={overviewStyles.section.content}>
-            <div className={overviewStyles.list.container}>
-              <div className={overviewStyles.list.item}>
-                <span className={overviewStyles.list.label}>Average Commands per Script</span>
-                <span className={overviewStyles.list.value}>{statistics.complexityMetrics.average}</span>
-              </div>
-              <div className={overviewStyles.list.item}>
-                <span className={overviewStyles.list.label}>Most Complex Script</span>
-                <span className={overviewStyles.list.value}>{statistics.complexityMetrics.max} commands</span>
-              </div>
-              <div className={overviewStyles.list.item}>
-                <span className={overviewStyles.list.label}>Script Connections</span>
-                <span className={overviewStyles.list.value}>
-                  {formattedStats?.connections.averageConnectionsPerScript || 0} avg per script
+            <div className={overviewStyles.complexityList.container}>
+              <div className={overviewStyles.complexityList.item}>
+                <span className={overviewStyles.complexityList.label}>
+                  {t('overview.averageCommandsPerScript')}
+                </span>
+                <span className={overviewStyles.complexityList.value}>
+                  {statistics.complexityMetrics.average}
                 </span>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Entity Summary */}
-      {formattedStats?.entities && (
-        <div className={overviewStyles.section.container}>
-          <div className={overviewStyles.section.title}>
-            <MapPin className="w-5 h-5 inline mr-2" />
-            Campaign Entities
-          </div>
-          <div className={overviewStyles.section.content}>
-            <div className={overviewStyles.list.container}>
-              <div className={overviewStyles.list.item}>
-                <span className={overviewStyles.list.label}>Characters</span>
-                <span className={overviewStyles.list.value}>{formattedStats.entities.characters}</span>
+              <div className={overviewStyles.complexityList.item}>
+                <span className={overviewStyles.complexityList.label}>
+                  {t('overview.mostComplexScript')}
+                </span>
+                <span className={overviewStyles.complexityList.highlight}>
+                  {statistics.complexityMetrics.mostComplex || 'N/A'}
+                </span>
               </div>
-              <div className={overviewStyles.list.item}>
-                <span className={overviewStyles.list.label}>Missions</span>
-                <span className={overviewStyles.list.value}>{formattedStats.entities.missions}</span>
+              <div className={overviewStyles.complexityList.item}>
+                <span className={overviewStyles.complexityList.label}>
+                  Massimo {t('overview.commands')} per Script
+                </span>
+                <span className={overviewStyles.complexityList.value}>
+                  {statistics.complexityMetrics.max}
+                </span>
               </div>
-              <div className={overviewStyles.list.item}>
-                <span className={overviewStyles.list.label}>Labels</span>
-                <span className={overviewStyles.list.value}>{formattedStats.entities.labels}</span>
+              <div className={overviewStyles.complexityList.item}>
+                <span className={overviewStyles.complexityList.label}>
+                  {t('overview.scriptConnections')}
+                </span>
+                <span className={overviewStyles.complexityList.value}>
+                  {statistics.scriptConnections || 0}
+                </span>
               </div>
             </div>
           </div>

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { InteractiveMapProps, MapNode, MapConnection } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { useInteractiveMap } from '@/hooks/CampaignEditor/InteractiveMap/useInteractiveMap';
 import { interactiveMapStyles } from '@/styles/CampaignEditor/InteractiveMap/InteractiveMap.styles';
+import { useTranslation } from '@/locales/translations';
 
 import { MapCanvas } from './components/MapCanvas/MapCanvas';
 import { MapControls } from './components/MapControls/MapControls';
@@ -17,6 +18,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
   onConnectionClick,
   onScriptSelect
 }) => {
+  const { t } = useTranslation();
   const [hoveredNode, setHoveredNode] = useState<MapNode | null>(null);
   const [hoveredConnection, setHoveredConnection] = useState<MapConnection | null>(null);
   const [hoveredNodePosition, setHoveredNodePosition] = useState<{ x: number; y: number } | null>(null);
@@ -96,7 +98,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
   return (
     <div className={interactiveMapStyles.container}>
       <div className={interactiveMapStyles.header}>
-        <h3 className={interactiveMapStyles.title}>Interactive Campaign Map</h3>
+        <h3 className={interactiveMapStyles.title}>{t('campaignEditor.interactiveMapTitle')}</h3>
       </div>
 
       <div className={interactiveMapStyles.viewport}>

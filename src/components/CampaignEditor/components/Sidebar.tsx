@@ -5,16 +5,16 @@ import {
   Languages, 
   Rocket
 } from 'lucide-react';
-
-const menuItems = [
-  { path: '/', icon: Map, label: 'Campagna', color: 'text-yellow-400' },
-  { path: '/localization', icon: Languages, label: 'Traduzioni', color: 'text-cyan-400' },
-];
-
-// Azioni Rapide rimosse come richiesto
+import { useTranslation } from '@/locales/translations';
 
 export function Sidebar() {
   const location = useLocation();
+  const { t } = useTranslation();
+
+  const menuItems = [
+    { path: '/', icon: Map, label: t('sidebar.campaign'), color: 'text-yellow-400' },
+    { path: '/localization', icon: Languages, label: t('sidebar.translations'), color: 'text-cyan-400' },
+  ];
 
   const isActive = (path: string) => {
     return location.pathname === path || (path !== '/' && location.pathname.startsWith(path));
@@ -39,7 +39,7 @@ export function Sidebar() {
       <nav className="flex-1 py-6">
         <div className="px-3">
           <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-            Navigazione
+            {t('sidebar.navigation')}
           </h3>
           <ul className="space-y-1">
             {menuItems.map((item) => {
@@ -69,8 +69,8 @@ export function Sidebar() {
       {/* Footer */}
       <div className="p-4 border-t border-slate-700">
         <div className="text-xs text-gray-400 text-center">
-          <p>Galaxy Trucker Editor</p>
-          <p>Basato su Marmalade SDK</p>
+          <p>{t('sidebar.footerTitle')}</p>
+          <p>{t('sidebar.footerSubtitle')}</p>
         </div>
       </div>
     </aside>

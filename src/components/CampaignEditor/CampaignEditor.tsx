@@ -5,6 +5,7 @@ import { Save } from 'lucide-react';
 import { useCampaignEditor } from '@/hooks/CampaignEditor';
 
 import { InteractiveMap } from './InteractiveMap/InteractiveMap';
+import { VisualFlowEditor } from './VisualFlowEditor/VisualFlowEditor';
 import { VariablesSystem } from './VariablesSystem/VariablesSystem';
 import { Overview } from './Overview/Overview';
 import { ElementCounters } from './components/Header/components/ElementCounters/ElementCounters';
@@ -28,6 +29,7 @@ export const CampaignEditor: React.FC = () => {
 
   const tabs = [
     { id: 'map', label: t('tabs.interactiveMap') },
+    { id: 'flow', label: t('tabs.visualFlowEditor') },
     { id: 'variables', label: t('tabs.variablesSystem') },
     { id: 'overview', label: t('tabs.overview') }
   ];
@@ -53,8 +55,8 @@ export const CampaignEditor: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between flex-shrink-0">
         <div>
-          <h1 className="text-2xl font-bold text-white galaxy-title">Complete Campaign Editor</h1>
-          <p className="text-gray-400">Interactive map-based script editing with complete flow visualization</p>
+          <h1 className="text-2xl font-bold text-white galaxy-title">{t('campaignEditor.title')}</h1>
+          <p className="text-gray-400">{t('campaignEditor.description')}</p>
         </div>
         <button
           onClick={handleSaveAll}
@@ -104,6 +106,17 @@ export const CampaignEditor: React.FC = () => {
           />
         )}
 
+        {activeTab === 'flow' && (
+          <VisualFlowEditor 
+            analysis={analysis}
+            selectedScript={selectedScript?.nomescript || null}
+            onScriptSelect={(scriptName: string) => {
+              // Qui dovremmo trovare lo script completo per nome
+              // Per ora passiamo solo il nome
+              handleScriptSelect(scriptName as any);
+            }}
+          />
+        )}
 
         {activeTab === 'variables' && (
           <VariablesSystem analysis={analysis} />

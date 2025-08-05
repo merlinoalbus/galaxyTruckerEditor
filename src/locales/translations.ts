@@ -26,8 +26,45 @@ export type TranslationKey =
   
   // Tabs
   | 'tabs.interactiveMap'
+  | 'tabs.visualFlowEditor'
   | 'tabs.variablesSystem'
   | 'tabs.overview'
+  
+  // Campaign Editor
+  | 'campaignEditor.title'
+  | 'campaignEditor.description'
+  | 'campaignEditor.interactiveMapTitle'
+  
+  // Sidebar
+  | 'sidebar.navigation'
+  | 'sidebar.campaign'
+  | 'sidebar.translations'
+  | 'sidebar.footerTitle'
+  | 'sidebar.footerSubtitle'
+  
+  // Overview
+  | 'overview.title'
+  | 'overview.description'
+  | 'overview.loading'
+  | 'overview.noCampaignData'
+  | 'overview.loadCampaignMessage'
+  | 'overview.scripts'
+  | 'overview.variables'
+  | 'overview.characters'
+  | 'overview.missions'
+  | 'overview.totalCommands'
+  | 'overview.semaphores'
+  | 'overview.numeric'
+  | 'overview.missionsReferenced'
+  | 'overview.languageDistribution'
+  | 'overview.complexityAnalysis'
+  | 'overview.averageCommandsPerScript'
+  | 'overview.mostComplexScript'
+  | 'overview.scriptConnections'
+  | 'overview.campaignEntities'
+  | 'overview.labels'
+  | 'overview.avgPerScript'
+  | 'overview.commands'
   
   // Map Controls
   | 'mapControls.title'
@@ -167,8 +204,45 @@ export const translations: Translations = {
     
     // Tabs
     'tabs.interactiveMap': 'Interactive Map',
+    'tabs.visualFlowEditor': 'Visual Flow Editor',
     'tabs.variablesSystem': 'Variables & System',
     'tabs.overview': 'Overview',
+    
+    // Campaign Editor
+    'campaignEditor.title': 'Complete Campaign Editor',
+    'campaignEditor.description': 'Interactive map-based script editing with complete flow visualization',
+    'campaignEditor.interactiveMapTitle': 'Interactive Campaign Map',
+    
+    // Sidebar
+    'sidebar.navigation': 'Navigation',
+    'sidebar.campaign': 'Campaign',
+    'sidebar.translations': 'Translations',
+    'sidebar.footerTitle': 'Galaxy Trucker Editor',
+    'sidebar.footerSubtitle': 'Based on Marmalade SDK',
+    
+    // Overview
+    'overview.title': 'Campaign Overview',
+    'overview.description': 'Comprehensive analysis of your campaign structure and content',
+    'overview.loading': 'Loading overview data...',
+    'overview.noCampaignData': 'No Campaign Data',
+    'overview.loadCampaignMessage': 'Load campaign scripts to see overview statistics',
+    'overview.scripts': 'Scripts',
+    'overview.variables': 'Variables',
+    'overview.characters': 'Characters',
+    'overview.missions': 'Missions',
+    'overview.totalCommands': 'total commands',
+    'overview.semaphores': 'semaphores',
+    'overview.numeric': 'numeric',
+    'overview.missionsReferenced': 'missions referenced',
+    'overview.languageDistribution': 'Language Distribution',
+    'overview.complexityAnalysis': 'Complexity Analysis',
+    'overview.averageCommandsPerScript': 'Average Commands per Script',
+    'overview.mostComplexScript': 'Most Complex Script',
+    'overview.scriptConnections': 'Script Connections',
+    'overview.campaignEntities': 'Campaign Entities',
+    'overview.labels': 'Labels',
+    'overview.avgPerScript': 'avg per script',
+    'overview.commands': 'commands',
     
     // Map Controls
     'mapControls.title': 'Controls',
@@ -302,8 +376,45 @@ export const translations: Translations = {
     
     // Tabs
     'tabs.interactiveMap': 'Mappa Interattiva',
+    'tabs.visualFlowEditor': 'Editor Flusso Visuale',
     'tabs.variablesSystem': 'Variabili e Sistema',
     'tabs.overview': 'Panoramica',
+    
+    // Campaign Editor
+    'campaignEditor.title': 'Editor Campagna Completo',
+    'campaignEditor.description': 'Editing degli script basato su mappa interattiva con visualizzazione completa del flusso',
+    'campaignEditor.interactiveMapTitle': 'Mappa Campagna Interattiva',
+    
+    // Sidebar
+    'sidebar.navigation': 'Navigazione',
+    'sidebar.campaign': 'Campagna',
+    'sidebar.translations': 'Traduzioni',
+    'sidebar.footerTitle': 'Galaxy Trucker Editor',
+    'sidebar.footerSubtitle': 'Basato su Marmalade SDK',
+    
+    // Overview
+    'overview.title': 'Panoramica Campagna',
+    'overview.description': 'Analisi completa della struttura e contenuto della tua campagna',
+    'overview.loading': 'Caricamento dati panoramica...',
+    'overview.noCampaignData': 'Nessun Dato Campagna',
+    'overview.loadCampaignMessage': 'Carica gli script della campagna per vedere le statistiche',
+    'overview.scripts': 'Script',
+    'overview.variables': 'Variabili',
+    'overview.characters': 'Personaggi',
+    'overview.missions': 'Missioni',
+    'overview.totalCommands': 'comandi totali',
+    'overview.semaphores': 'semafori',
+    'overview.numeric': 'numeriche',
+    'overview.missionsReferenced': 'missioni referenziate',
+    'overview.languageDistribution': 'Distribuzione Lingue',
+    'overview.complexityAnalysis': 'Analisi Complessità',
+    'overview.averageCommandsPerScript': 'Comandi Medi per Script',
+    'overview.mostComplexScript': 'Script più Complesso',
+    'overview.scriptConnections': 'Connessioni Script',
+    'overview.campaignEntities': 'Entità Campagna',
+    'overview.labels': 'Etichette',
+    'overview.avgPerScript': 'media per script',
+    'overview.commands': 'comandi',
     
     // Map Controls
     'mapControls.title': 'Controlli',
@@ -437,8 +548,45 @@ export const translations: Translations = {
     
     // Tabs
     'tabs.interactiveMap': 'Interaktivní mapa',
+    'tabs.visualFlowEditor': 'Vizuální editor toku',
     'tabs.variablesSystem': 'Proměnné a systém',
     'tabs.overview': 'Přehled',
+    
+    // Campaign Editor
+    'campaignEditor.title': 'Kompletní editor kampaně',
+    'campaignEditor.description': 'Interaktivní editování skriptů založené na mapě s kompletní vizualizací toku',
+    'campaignEditor.interactiveMapTitle': 'Interaktivní mapa kampaně',
+    
+    // Sidebar
+    'sidebar.navigation': 'Navigace',
+    'sidebar.campaign': 'Kampaň',
+    'sidebar.translations': 'Překlady',
+    'sidebar.footerTitle': 'Galaxy Trucker Editor',
+    'sidebar.footerSubtitle': 'Založeno na Marmalade SDK',
+    
+    // Overview
+    'overview.title': 'Přehled kampaně',
+    'overview.description': 'Komplexní analýza struktury a obsahu vaší kampaně',
+    'overview.loading': 'Načítání dat přehledu...',
+    'overview.noCampaignData': 'Žádná data kampaně',
+    'overview.loadCampaignMessage': 'Načtěte skripty kampaně pro zobrazení statistik přehledu',
+    'overview.scripts': 'Skripty',
+    'overview.variables': 'Proměnné',
+    'overview.characters': 'Postavy',
+    'overview.missions': 'Mise',
+    'overview.totalCommands': 'celkem příkazů',
+    'overview.semaphores': 'semafory',
+    'overview.numeric': 'numerické',
+    'overview.missionsReferenced': 'referencované mise',
+    'overview.languageDistribution': 'Distribuce jazyků',
+    'overview.complexityAnalysis': 'Analýza složitosti',
+    'overview.averageCommandsPerScript': 'Průměrné příkazy na skript',
+    'overview.mostComplexScript': 'Nejsložitější skript',
+    'overview.scriptConnections': 'Spojení skriptů',
+    'overview.campaignEntities': 'Entity kampaně',
+    'overview.labels': 'Štítky',
+    'overview.avgPerScript': 'průměr na skript',
+    'overview.commands': 'příkazy',
     
     // Map Controls
     'mapControls.title': 'Ovládání',
@@ -572,8 +720,45 @@ export const translations: Translations = {
     
     // Tabs
     'tabs.interactiveMap': 'Interaktive Karte',
+    'tabs.visualFlowEditor': 'Visueller Flow-Editor',
     'tabs.variablesSystem': 'Variablen & System',
     'tabs.overview': 'Übersicht',
+    
+    // Campaign Editor
+    'campaignEditor.title': 'Vollständiger Kampagnen-Editor',
+    'campaignEditor.description': 'Interaktive kartenbasierte Skriptbearbeitung mit vollständiger Flow-Visualisierung',
+    'campaignEditor.interactiveMapTitle': 'Interaktive Kampagnenkarte',
+    
+    // Sidebar
+    'sidebar.navigation': 'Navigation',
+    'sidebar.campaign': 'Kampagne',
+    'sidebar.translations': 'Übersetzungen',
+    'sidebar.footerTitle': 'Galaxy Trucker Editor',
+    'sidebar.footerSubtitle': 'Basierend auf Marmalade SDK',
+    
+    // Overview
+    'overview.title': 'Kampagnenübersicht',
+    'overview.description': 'Umfassende Analyse Ihrer Kampagnenstruktur und -inhalte',
+    'overview.loading': 'Übersichtsdaten werden geladen...',
+    'overview.noCampaignData': 'Keine Kampagnendaten',
+    'overview.loadCampaignMessage': 'Laden Sie Kampagnenskripte, um Übersichtsstatistiken zu sehen',
+    'overview.scripts': 'Skripte',
+    'overview.variables': 'Variablen',
+    'overview.characters': 'Charaktere',
+    'overview.missions': 'Missionen',
+    'overview.totalCommands': 'Befehle insgesamt',
+    'overview.semaphores': 'Semaphore',
+    'overview.numeric': 'numerisch',
+    'overview.missionsReferenced': 'referenzierte Missionen',
+    'overview.languageDistribution': 'Sprachverteilung',
+    'overview.complexityAnalysis': 'Komplexitätsanalyse',
+    'overview.averageCommandsPerScript': 'Durchschnittliche Befehle pro Skript',
+    'overview.mostComplexScript': 'Komplexestes Skript',
+    'overview.scriptConnections': 'Skriptverbindungen',
+    'overview.campaignEntities': 'Kampagnenentitäten',
+    'overview.labels': 'Etiketten',
+    'overview.avgPerScript': 'Durchschnitt pro Skript',
+    'overview.commands': 'Befehle',
     
     // Map Controls
     'mapControls.title': 'Steuerung',
@@ -707,8 +892,45 @@ export const translations: Translations = {
     
     // Tabs
     'tabs.interactiveMap': 'Mapa interactivo',
+    'tabs.visualFlowEditor': 'Editor de Flujo Visual',
     'tabs.variablesSystem': 'Variables y sistema',
     'tabs.overview': 'Vista general',
+    
+    // Campaign Editor
+    'campaignEditor.title': 'Editor de Campaña Completo',
+    'campaignEditor.description': 'Edición de scripts basada en mapa interactivo con visualización completa del flujo',
+    'campaignEditor.interactiveMapTitle': 'Mapa de Campaña Interactivo',
+    
+    // Sidebar
+    'sidebar.navigation': 'Navegación',
+    'sidebar.campaign': 'Campaña',
+    'sidebar.translations': 'Traducciones',
+    'sidebar.footerTitle': 'Galaxy Trucker Editor',
+    'sidebar.footerSubtitle': 'Basado en Marmalade SDK',
+    
+    // Overview
+    'overview.title': 'Vista general de la campaña',
+    'overview.description': 'Análisis integral de la estructura y contenido de tu campaña',
+    'overview.loading': 'Cargando datos de vista general...',
+    'overview.noCampaignData': 'Sin datos de campaña',
+    'overview.loadCampaignMessage': 'Carga los scripts de campaña para ver las estadísticas de vista general',
+    'overview.scripts': 'Scripts',
+    'overview.variables': 'Variables',
+    'overview.characters': 'Personajes',
+    'overview.missions': 'Misiones',
+    'overview.totalCommands': 'comandos totales',
+    'overview.semaphores': 'semáforos',
+    'overview.numeric': 'numérico',
+    'overview.missionsReferenced': 'misiones referenciadas',
+    'overview.languageDistribution': 'Distribución de idiomas',
+    'overview.complexityAnalysis': 'Análisis de complejidad',
+    'overview.averageCommandsPerScript': 'Comandos promedio por script',
+    'overview.mostComplexScript': 'Script más complejo',
+    'overview.scriptConnections': 'Conexiones de scripts',
+    'overview.campaignEntities': 'Entidades de campaña',
+    'overview.labels': 'Etiquetas',
+    'overview.avgPerScript': 'promedio por script',
+    'overview.commands': 'comandos',
     
     // Map Controls
     'mapControls.title': 'Controles',
@@ -842,8 +1064,45 @@ export const translations: Translations = {
     
     // Tabs
     'tabs.interactiveMap': 'Carte interactive',
+    'tabs.visualFlowEditor': 'Éditeur de Flux Visuel',
     'tabs.variablesSystem': 'Variables et système',
     'tabs.overview': 'Vue d\'ensemble',
+    
+    // Campaign Editor
+    'campaignEditor.title': 'Éditeur de Campagne Complet',
+    'campaignEditor.description': 'Édition de scripts basée sur une carte interactive avec visualisation complète du flux',
+    'campaignEditor.interactiveMapTitle': 'Carte de Campagne Interactive',
+    
+    // Sidebar
+    'sidebar.navigation': 'Navigation',
+    'sidebar.campaign': 'Campagne',
+    'sidebar.translations': 'Traductions',
+    'sidebar.footerTitle': 'Galaxy Trucker Editor',
+    'sidebar.footerSubtitle': 'Basé sur Marmalade SDK',
+    
+    // Overview
+    'overview.title': 'Vue d\'ensemble de la campagne',
+    'overview.description': 'Analyse complète de la structure et du contenu de votre campagne',
+    'overview.loading': 'Chargement des données de vue d\'ensemble...',
+    'overview.noCampaignData': 'Aucune donnée de campagne',
+    'overview.loadCampaignMessage': 'Chargez les scripts de campagne pour voir les statistiques de vue d\'ensemble',
+    'overview.scripts': 'Scripts',
+    'overview.variables': 'Variables',
+    'overview.characters': 'Personnages',
+    'overview.missions': 'Missions',
+    'overview.totalCommands': 'commandes totales',
+    'overview.semaphores': 'sémaphores',
+    'overview.numeric': 'numérique',
+    'overview.missionsReferenced': 'missions référencées',
+    'overview.languageDistribution': 'Distribution des langues',
+    'overview.complexityAnalysis': 'Analyse de complexité',
+    'overview.averageCommandsPerScript': 'Commandes moyennes par script',
+    'overview.mostComplexScript': 'Script le plus complexe',
+    'overview.scriptConnections': 'Connexions de scripts',
+    'overview.campaignEntities': 'Entités de campagne',
+    'overview.labels': 'Étiquettes',
+    'overview.avgPerScript': 'moyenne par script',
+    'overview.commands': 'commandes',
     
     // Map Controls
     'mapControls.title': 'Contrôles',
@@ -977,8 +1236,45 @@ export const translations: Translations = {
     
     // Tabs
     'tabs.interactiveMap': 'Interaktywna mapa',
+    'tabs.visualFlowEditor': 'Wizualny Edytor Przepływu',
     'tabs.variablesSystem': 'Zmienne i system',
     'tabs.overview': 'Przegląd',
+    
+    // Campaign Editor
+    'campaignEditor.title': 'Kompletny Edytor Kampanii',
+    'campaignEditor.description': 'Interaktywne edytowanie skryptów oparte na mapie z pełną wizualizacją przepływu',
+    'campaignEditor.interactiveMapTitle': 'Interaktywna Mapa Kampanii',
+    
+    // Sidebar
+    'sidebar.navigation': 'Nawigacja',
+    'sidebar.campaign': 'Kampania',
+    'sidebar.translations': 'Tłumaczenia',
+    'sidebar.footerTitle': 'Galaxy Trucker Editor',
+    'sidebar.footerSubtitle': 'Oparty na Marmalade SDK',
+    
+    // Overview
+    'overview.title': 'Przegląd kampanii',
+    'overview.description': 'Kompleksowa analiza struktury i zawartości twojej kampanii',
+    'overview.loading': 'Ładowanie danych przeglądu...',
+    'overview.noCampaignData': 'Brak danych kampanii',
+    'overview.loadCampaignMessage': 'Załaduj skrypty kampanii, aby zobaczyć statystyki przeglądu',
+    'overview.scripts': 'Skrypty',
+    'overview.variables': 'Zmienne',
+    'overview.characters': 'Postacie',
+    'overview.missions': 'Misje',
+    'overview.totalCommands': 'łącznie poleceń',
+    'overview.semaphores': 'semafory',
+    'overview.numeric': 'numeryczne',
+    'overview.missionsReferenced': 'misje odniesione',
+    'overview.languageDistribution': 'Rozkład języków',
+    'overview.complexityAnalysis': 'Analiza złożoności',
+    'overview.averageCommandsPerScript': 'Średnie polecenia na skrypt',
+    'overview.mostComplexScript': 'Najbardziej złożony skrypt',
+    'overview.scriptConnections': 'Połączenia skryptów',
+    'overview.campaignEntities': 'Jednostki kampanii',
+    'overview.labels': 'Etykiety',
+    'overview.avgPerScript': 'średnio na skrypt',
+    'overview.commands': 'polecenia',
     
     // Map Controls
     'mapControls.title': 'Sterowanie',
@@ -1112,8 +1408,45 @@ export const translations: Translations = {
     
     // Tabs
     'tabs.interactiveMap': 'Интерактивная карта',
+    'tabs.visualFlowEditor': 'Визуальный Редактор Потока',
     'tabs.variablesSystem': 'Переменные и система',
     'tabs.overview': 'Обзор',
+    
+    // Campaign Editor
+    'campaignEditor.title': 'Полный Редактор Кампании',
+    'campaignEditor.description': 'Интерактивное редактирование скриптов на основе карты с полной визуализацией потока',
+    'campaignEditor.interactiveMapTitle': 'Интерактивная Карта Кампании',
+    
+    // Sidebar
+    'sidebar.navigation': 'Навигация',
+    'sidebar.campaign': 'Кампания',
+    'sidebar.translations': 'Переводы',
+    'sidebar.footerTitle': 'Galaxy Trucker Editor',
+    'sidebar.footerSubtitle': 'Основан на Marmalade SDK',
+    
+    // Overview
+    'overview.title': 'Обзор кампании',
+    'overview.description': 'Всесторонний анализ структуры и содержания вашей кампании',
+    'overview.loading': 'Загрузка данных обзора...',
+    'overview.noCampaignData': 'Нет данных кампании',
+    'overview.loadCampaignMessage': 'Загрузите скрипты кампании для просмотра статистики обзора',
+    'overview.scripts': 'Скрипты',
+    'overview.variables': 'Переменные',
+    'overview.characters': 'Персонажи',
+    'overview.missions': 'Миссии',
+    'overview.totalCommands': 'всего команд',
+    'overview.semaphores': 'семафоры',
+    'overview.numeric': 'числовые',
+    'overview.missionsReferenced': 'ссылочные миссии',
+    'overview.languageDistribution': 'Распределение языков',
+    'overview.complexityAnalysis': 'Анализ сложности',
+    'overview.averageCommandsPerScript': 'Средние команды на скрипт',
+    'overview.mostComplexScript': 'Самый сложный скрипт',
+    'overview.scriptConnections': 'Соединения скриптов',
+    'overview.campaignEntities': 'Сущности кампании',
+    'overview.labels': 'Метки',
+    'overview.avgPerScript': 'среднее на скрипт',
+    'overview.commands': 'команды',
     
     // Map Controls
     'mapControls.title': 'Управление',
