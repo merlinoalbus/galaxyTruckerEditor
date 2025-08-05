@@ -1,14 +1,36 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
-      "Bash(npm run build:*)",
-      "Bash(curl:*)",
-      "Bash(mkdir:*)",
-      "Bash(mv:*)",
-      "Bash(npm run typecheck:*)",
-      "Bash(npx tsc:*)",
+      "Bash(wc:*)",
+      "Bash(cp:*)",
       "Bash(npm start)",
-      "Bash(git add:*)"
+      "Bash(set PORT=3001)",
+      "Bash(npm run build:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd /c:*)",
+      "Bash(powershell:*)",
+      "Bash(npm install)",
+      "Bash(start cmd /k \"npm start\")",
+      "Bash(curl:*)",
+      "Bash(mv:*)",
+      "Bash(sed:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(node server.js)",
+      "Bash(ls:*)",
+      "Bash(touch:*)",
+      "Bash(timeout:*)",
+      "Bash(restart-server.bat)",
+      "Bash(npx tsc:*)",
+      "Bash(tail:*)",
+      "Bash(mkdir:*)",
+      "Bash(git add:*)",
+      "Bash(npm run lint)",
+      "Bash(true)",
+      "Bash(rm:*)",
+      "Bash(time:*)",
+      "Bash(node:*)"
     ],
     "deny": []
   }
