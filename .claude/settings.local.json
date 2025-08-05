@@ -57,7 +57,9 @@
       "Bash(scripts/consolida-codice.sh:*)",
       "Bash(consolidaCodice)",
       "Bash(scripts/consolida-codice.sh:*)",
-      "Bash(restartBE)"
+      "Bash(restartBE)",
+      "Bash(restartFE)",
+      "Bash(scripts/restart-fe.sh:*)"
     ],
     "deny": []
   },

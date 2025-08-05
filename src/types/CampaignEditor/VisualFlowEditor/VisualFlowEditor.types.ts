@@ -3,10 +3,14 @@
 // import { FlowValidation } from './types/FlowValidation/FlowValidation.types';
 // import { FlowConnection } from './types/FlowConnection/FlowConnection.types';
 
+import { CampaignAnalysis } from '@/types/CampaignEditor';
+
 export interface VisualFlowEditorProps {
-  selectedScript: any;
-  selectedNode: any;
-  onScriptChange?: (script: any) => void;
+  analysis?: CampaignAnalysis | null;
+  selectedScript?: string | null;
+  selectedNode?: any;
+  onScriptChange?: (scriptName: string, content: string) => void;
+  onScriptSelect?: (scriptName: string) => void;
 }
 
 export interface VisualFlowEditorState {
