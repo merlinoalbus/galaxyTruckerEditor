@@ -174,7 +174,43 @@ export type TranslationKey =
   
   // ImageView
   | 'imageView.modified'
-  | 'imageView.depth';
+  | 'imageView.depth'
+  
+  // DetailView
+  | 'detailView.selectElement'
+  | 'detailView.initialValue'
+  | 'detailView.totalUsage'
+  | 'detailView.commandsUsed'
+  | 'detailView.scriptsUsing'
+  | 'detailView.goToScript'
+  | 'detailView.numericVariable'
+  | 'detailView.semaphore'
+  | 'detailView.label'
+  | 'detailView.character'
+  | 'detailView.image'
+  | 'detailView.achievement'
+  | 'detailView.labelDefinition'
+  | 'detailView.labelReferences'
+  | 'detailView.goToDefinition'
+  | 'detailView.goToLine'
+  | 'charactersView.charactersList'
+  | 'charactersView.visible'
+  | 'charactersView.hidden'
+  | 'charactersView.visibleInGame'
+  | 'charactersView.hiddenInGame'
+  | 'charactersView.basicInfo'
+  | 'charactersView.internalName'
+  | 'charactersView.visibility'
+  | 'charactersView.scriptCount'
+  | 'charactersView.imageGallery'
+  | 'charactersView.scriptsUsing'
+  | 'charactersView.goToScript'
+  | 'charactersView.selectCharacter'
+  | 'charactersView.imagePreview'
+  | 'charactersView.noImageSelected'
+  | 'charactersView.totalUsage'
+  | 'charactersView.usedInScripts'
+  | 'charactersView.commands';
 
 type Translations = {
   [key in SupportedLanguage]: {
@@ -356,7 +392,43 @@ export const translations: Translations = {
     
     // ImageView
     'imageView.modified': 'Modified',
-    'imageView.depth': 'Depth'
+    'imageView.depth': 'Depth',
+    
+    // DetailView
+    'detailView.selectElement': 'Select an element to view details',
+    'detailView.initialValue': 'Initial value',
+    'detailView.totalUsage': 'Total usage',
+    'detailView.commandsUsed': 'Commands used',
+    'detailView.scriptsUsing': 'Scripts using it',
+    'detailView.goToScript': 'Go to script',
+    'detailView.numericVariable': 'Numeric Variable',
+    'detailView.semaphore': 'Semaphore',
+    'detailView.label': 'Label',
+    'detailView.character': 'Character',
+    'detailView.image': 'Image',
+    'detailView.achievement': 'Achievement',
+    'detailView.labelDefinition': 'Label Definition',
+    'detailView.labelReferences': 'References',
+    'detailView.goToDefinition': 'Go to definition',
+    'detailView.goToLine': 'Go',
+    'charactersView.charactersList': 'Characters',
+    'charactersView.visible': 'Visible',
+    'charactersView.hidden': 'Hidden',
+    'charactersView.visibleInGame': 'Visible in game',
+    'charactersView.hiddenInGame': 'Hidden in game',
+    'charactersView.basicInfo': 'Basic Information',
+    'charactersView.internalName': 'Internal name',
+    'charactersView.visibility': 'Visibility',
+    'charactersView.scriptCount': 'Script count',
+    'charactersView.imageGallery': 'Image Gallery',
+    'charactersView.scriptsUsing': 'Scripts using',
+    'charactersView.goToScript': 'Go to script',
+    'charactersView.selectCharacter': 'Select a character',
+    'charactersView.imagePreview': 'Image Preview',
+    'charactersView.noImageSelected': 'No image selected',
+    'charactersView.totalUsage': 'Total usage',
+    'charactersView.usedInScripts': 'Used in scripts',
+    'charactersView.commands': 'Commands'
   },
   
   IT: {
@@ -532,7 +604,43 @@ export const translations: Translations = {
     
     // ImageView
     'imageView.modified': 'Modificato',
-    'imageView.depth': 'Profondità'
+    'imageView.depth': 'Profondità',
+    
+    // DetailView
+    'detailView.selectElement': 'Seleziona un elemento per visualizzarne i dettagli',
+    'detailView.initialValue': 'Valore iniziale',
+    'detailView.totalUsage': 'Utilizzi totali',
+    'detailView.commandsUsed': 'Comandi utilizzati',
+    'detailView.scriptsUsing': 'Script che lo utilizzano',
+    'detailView.goToScript': 'Vai allo script',
+    'detailView.numericVariable': 'Variabile Numerica',
+    'detailView.semaphore': 'Semaforo',
+    'detailView.label': 'Etichetta',
+    'detailView.character': 'Personaggio',
+    'detailView.image': 'Immagine',
+    'detailView.achievement': 'Obiettivo',
+    'detailView.labelDefinition': 'Definizione Label',
+    'detailView.labelReferences': 'Riferimenti',
+    'detailView.goToDefinition': 'Vai alla definizione',
+    'detailView.goToLine': 'Vai',
+    'charactersView.charactersList': 'Personaggi',
+    'charactersView.visible': 'Visibile',
+    'charactersView.hidden': 'Nascosto',
+    'charactersView.visibleInGame': 'Visibile nel gioco',
+    'charactersView.hiddenInGame': 'Nascosto nel gioco',
+    'charactersView.basicInfo': 'Informazioni Base',
+    'charactersView.internalName': 'Nome interno',
+    'charactersView.visibility': 'Visibilità',
+    'charactersView.scriptCount': 'Numero script',
+    'charactersView.imageGallery': 'Galleria Immagini',
+    'charactersView.scriptsUsing': 'Script che lo usano',
+    'charactersView.goToScript': 'Vai allo script',
+    'charactersView.selectCharacter': 'Seleziona un personaggio',
+    'charactersView.imagePreview': 'Anteprima Immagine',
+    'charactersView.noImageSelected': 'Nessuna immagine selezionata',
+    'charactersView.totalUsage': 'Utilizzo totale',
+    'charactersView.usedInScripts': 'Usato negli script',
+    'charactersView.commands': 'Comandi'
   },
   
   CS: {
@@ -708,7 +816,43 @@ export const translations: Translations = {
     
     // ImageView
     'imageView.modified': 'Upraveno',
-    'imageView.depth': 'Hloubka'
+    'imageView.depth': 'Hloubka',
+    
+    // DetailView
+    'detailView.selectElement': 'Vyberte prvek pro zobrazení podrobností',
+    'detailView.initialValue': 'Počáteční hodnota',
+    'detailView.totalUsage': 'Celkové použití',
+    'detailView.commandsUsed': 'Použité příkazy',
+    'detailView.scriptsUsing': 'Skripty používající',
+    'detailView.goToScript': 'Přejít na skript',
+    'detailView.numericVariable': 'Číselná proměnná',
+    'detailView.semaphore': 'Semafor',
+    'detailView.label': 'Štítek',
+    'detailView.character': 'Postava',
+    'detailView.image': 'Obrázek',
+    'detailView.achievement': 'Úspěch',
+    'detailView.labelDefinition': 'Definice štítku',
+    'detailView.labelReferences': 'Reference',
+    'detailView.goToDefinition': 'Přejít na definici',
+    'detailView.goToLine': 'Přejít',
+    'charactersView.charactersList': 'Postavy',
+    'charactersView.visible': 'Viditelné',
+    'charactersView.hidden': 'Skryté',
+    'charactersView.visibleInGame': 'Viditelné ve hře',
+    'charactersView.hiddenInGame': 'Skryté ve hře',
+    'charactersView.basicInfo': 'Základní informace',
+    'charactersView.internalName': 'Interní název',
+    'charactersView.visibility': 'Viditelnost',
+    'charactersView.scriptCount': 'Počet skriptů',
+    'charactersView.imageGallery': 'Galerie obrázků',
+    'charactersView.scriptsUsing': 'Používající skripty',
+    'charactersView.goToScript': 'Přejít na skript',
+    'charactersView.selectCharacter': 'Vyberte postavu',
+    'charactersView.imagePreview': 'Náhled obrázku',
+    'charactersView.noImageSelected': 'Žádný obrázek není vybrán',
+    'charactersView.totalUsage': 'Celkové použití',
+    'charactersView.usedInScripts': 'Použito ve skriptech',
+    'charactersView.commands': 'Příkazy'
   },
   
   DE: {
@@ -884,7 +1028,43 @@ export const translations: Translations = {
     
     // ImageView
     'imageView.modified': 'Geändert',
-    'imageView.depth': 'Tiefe'
+    'imageView.depth': 'Tiefe',
+    
+    // DetailView
+    'detailView.selectElement': 'Element auswählen, um Details anzuzeigen',
+    'detailView.initialValue': 'Anfangswert',
+    'detailView.totalUsage': 'Gesamtnutzung',
+    'detailView.commandsUsed': 'Verwendete Befehle',
+    'detailView.scriptsUsing': 'Skripte, die es verwenden',
+    'detailView.goToScript': 'Zum Skript gehen',
+    'detailView.numericVariable': 'Numerische Variable',
+    'detailView.semaphore': 'Semaphor',
+    'detailView.label': 'Etikett',
+    'detailView.character': 'Charakter',
+    'detailView.image': 'Bild',
+    'detailView.achievement': 'Erfolg',
+    'detailView.labelDefinition': 'Label-Definition',
+    'detailView.labelReferences': 'Verweise',
+    'detailView.goToDefinition': 'Zur Definition gehen',
+    'detailView.goToLine': 'Gehen',
+    'charactersView.charactersList': 'Charaktere',
+    'charactersView.visible': 'Sichtbar',
+    'charactersView.hidden': 'Versteckt',
+    'charactersView.visibleInGame': 'Im Spiel sichtbar',
+    'charactersView.hiddenInGame': 'Im Spiel versteckt',
+    'charactersView.basicInfo': 'Grundinformationen',
+    'charactersView.internalName': 'Interner Name',
+    'charactersView.visibility': 'Sichtbarkeit',
+    'charactersView.scriptCount': 'Skriptanzahl',
+    'charactersView.imageGallery': 'Bildergalerie',
+    'charactersView.scriptsUsing': 'Verwendende Skripte',
+    'charactersView.goToScript': 'Zum Skript gehen',
+    'charactersView.selectCharacter': 'Wählen Sie einen Charakter',
+    'charactersView.imagePreview': 'Bildvorschau',
+    'charactersView.noImageSelected': 'Kein Bild ausgewählt',
+    'charactersView.totalUsage': 'Gesamtnutzung',
+    'charactersView.usedInScripts': 'In Skripten verwendet',
+    'charactersView.commands': 'Befehle'
   },
   
   ES: {
@@ -1060,7 +1240,43 @@ export const translations: Translations = {
     
     // ImageView
     'imageView.modified': 'Modificado',
-    'imageView.depth': 'Profundidad'
+    'imageView.depth': 'Profundidad',
+    
+    // DetailView
+    'detailView.selectElement': 'Selecciona un elemento para ver los detalles',
+    'detailView.initialValue': 'Valor inicial',
+    'detailView.totalUsage': 'Uso total',
+    'detailView.commandsUsed': 'Comandos utilizados',
+    'detailView.scriptsUsing': 'Scripts que lo usan',
+    'detailView.goToScript': 'Ir al script',
+    'detailView.numericVariable': 'Variable Numérica',
+    'detailView.semaphore': 'Semáforo',
+    'detailView.label': 'Etiqueta',
+    'detailView.character': 'Personaje',
+    'detailView.image': 'Imagen',
+    'detailView.achievement': 'Logro',
+    'detailView.labelDefinition': 'Definición de etiqueta',
+    'detailView.labelReferences': 'Referencias',
+    'detailView.goToDefinition': 'Ir a la definición',
+    'detailView.goToLine': 'Ir',
+    'charactersView.charactersList': 'Personajes',
+    'charactersView.visible': 'Visible',
+    'charactersView.hidden': 'Oculto',
+    'charactersView.visibleInGame': 'Visible en el juego',
+    'charactersView.hiddenInGame': 'Oculto en el juego',
+    'charactersView.basicInfo': 'Información Básica',
+    'charactersView.internalName': 'Nombre interno',
+    'charactersView.visibility': 'Visibilidad',
+    'charactersView.scriptCount': 'Número de scripts',
+    'charactersView.imageGallery': 'Galería de Imágenes',
+    'charactersView.scriptsUsing': 'Scripts que lo usan',
+    'charactersView.goToScript': 'Ir al script',
+    'charactersView.selectCharacter': 'Selecciona un personaje',
+    'charactersView.imagePreview': 'Vista Previa de Imagen',
+    'charactersView.noImageSelected': 'Ninguna imagen seleccionada',
+    'charactersView.totalUsage': 'Uso total',
+    'charactersView.usedInScripts': 'Usado en scripts',
+    'charactersView.commands': 'Comandos'
   },
   
   FR: {
@@ -1236,7 +1452,43 @@ export const translations: Translations = {
     
     // ImageView
     'imageView.modified': 'Modifié',
-    'imageView.depth': 'Profondeur'
+    'imageView.depth': 'Profondeur',
+    
+    // DetailView
+    'detailView.selectElement': 'Sélectionnez un élément pour voir les détails',
+    'detailView.initialValue': 'Valeur initiale',
+    'detailView.totalUsage': 'Utilisation totale',
+    'detailView.commandsUsed': 'Commandes utilisées',
+    'detailView.scriptsUsing': 'Scripts qui l\'utilisent',
+    'detailView.goToScript': 'Aller au script',
+    'detailView.numericVariable': 'Variable Numérique',
+    'detailView.semaphore': 'Sémaphore',
+    'detailView.label': 'Étiquette',
+    'detailView.character': 'Personnage',
+    'detailView.image': 'Image',
+    'detailView.achievement': 'Succès',
+    'detailView.labelDefinition': 'Définition de l\'étiquette',
+    'detailView.labelReferences': 'Références',
+    'detailView.goToDefinition': 'Aller à la définition',
+    'detailView.goToLine': 'Aller',
+    'charactersView.charactersList': 'Personnages',
+    'charactersView.visible': 'Visible',
+    'charactersView.hidden': 'Caché',
+    'charactersView.visibleInGame': 'Visible dans le jeu',
+    'charactersView.hiddenInGame': 'Caché dans le jeu',
+    'charactersView.basicInfo': 'Informations de Base',
+    'charactersView.internalName': 'Nom interne',
+    'charactersView.visibility': 'Visibilité',
+    'charactersView.scriptCount': 'Nombre de scripts',
+    'charactersView.imageGallery': 'Galerie d\'Images',
+    'charactersView.scriptsUsing': 'Scripts utilisant',
+    'charactersView.goToScript': 'Aller au script',
+    'charactersView.selectCharacter': 'Sélectionnez un personnage',
+    'charactersView.imagePreview': 'Aperçu de l\'Image',
+    'charactersView.noImageSelected': 'Aucune image sélectionnée',
+    'charactersView.totalUsage': 'Utilisation totale',
+    'charactersView.usedInScripts': 'Utilisé dans les scripts',
+    'charactersView.commands': 'Commandes'
   },
   
   PL: {
@@ -1412,7 +1664,43 @@ export const translations: Translations = {
     
     // ImageView
     'imageView.modified': 'Zmodyfikowany',
-    'imageView.depth': 'Głębokość'
+    'imageView.depth': 'Głębokość',
+    
+    // DetailView
+    'detailView.selectElement': 'Wybierz element, aby wyświetlić szczegóły',
+    'detailView.initialValue': 'Wartość początkowa',
+    'detailView.totalUsage': 'Całkowite użycie',
+    'detailView.commandsUsed': 'Użyte polecenia',
+    'detailView.scriptsUsing': 'Skrypty używające',
+    'detailView.goToScript': 'Idź do skryptu',
+    'detailView.numericVariable': 'Zmienna Numeryczna',
+    'detailView.semaphore': 'Semafor',
+    'detailView.label': 'Etykieta',
+    'detailView.character': 'Postać',
+    'detailView.image': 'Obraz',
+    'detailView.achievement': 'Osiągnięcie',
+    'detailView.labelDefinition': 'Definicja etykiety',
+    'detailView.labelReferences': 'Odniesienia',
+    'detailView.goToDefinition': 'Przejdź do definicji',
+    'detailView.goToLine': 'Idź',
+    'charactersView.charactersList': 'Postacie',
+    'charactersView.visible': 'Widoczny',
+    'charactersView.hidden': 'Ukryty',
+    'charactersView.visibleInGame': 'Widoczny w grze',
+    'charactersView.hiddenInGame': 'Ukryty w grze',
+    'charactersView.basicInfo': 'Podstawowe Informacje',
+    'charactersView.internalName': 'Nazwa wewnętrzna',
+    'charactersView.visibility': 'Widoczność',
+    'charactersView.scriptCount': 'Liczba skryptów',
+    'charactersView.imageGallery': 'Galeria Obrazów',
+    'charactersView.scriptsUsing': 'Używające skrypty',
+    'charactersView.goToScript': 'Idź do skryptu',
+    'charactersView.selectCharacter': 'Wybierz postać',
+    'charactersView.imagePreview': 'Podgląd Obrazu',
+    'charactersView.noImageSelected': 'Nie wybrano obrazu',
+    'charactersView.totalUsage': 'Całkowite użycie',
+    'charactersView.usedInScripts': 'Użyte w skryptach',
+    'charactersView.commands': 'Polecenia'
   },
   
   RU: {
@@ -1588,7 +1876,43 @@ export const translations: Translations = {
     
     // ImageView
     'imageView.modified': 'Изменено',
-    'imageView.depth': 'Глубина'
+    'imageView.depth': 'Глубина',
+    
+    // DetailView
+    'detailView.selectElement': 'Выберите элемент для просмотра деталей',
+    'detailView.initialValue': 'Начальное значение',
+    'detailView.totalUsage': 'Общее использование',
+    'detailView.commandsUsed': 'Используемые команды',
+    'detailView.scriptsUsing': 'Скрипты, использующие',
+    'detailView.goToScript': 'Перейти к скрипту',
+    'detailView.numericVariable': 'Числовая переменная',
+    'detailView.semaphore': 'Семафор',
+    'detailView.label': 'Метка',
+    'detailView.character': 'Персонаж',
+    'detailView.image': 'Изображение',
+    'detailView.achievement': 'Достижение',
+    'detailView.labelDefinition': 'Определение метки',
+    'detailView.labelReferences': 'Ссылки',
+    'detailView.goToDefinition': 'Перейти к определению',
+    'detailView.goToLine': 'Перейти',
+    'charactersView.charactersList': 'Персонажи',
+    'charactersView.visible': 'Видимый',
+    'charactersView.hidden': 'Скрытый',
+    'charactersView.visibleInGame': 'Видимый в игре',
+    'charactersView.hiddenInGame': 'Скрытый в игре',
+    'charactersView.basicInfo': 'Основная информация',
+    'charactersView.internalName': 'Внутреннее имя',
+    'charactersView.visibility': 'Видимость',
+    'charactersView.scriptCount': 'Количество скриптов',
+    'charactersView.imageGallery': 'Галерея изображений',
+    'charactersView.scriptsUsing': 'Использующие скрипты',
+    'charactersView.goToScript': 'Перейти к скрипту',
+    'charactersView.selectCharacter': 'Выберите персонажа',
+    'charactersView.imagePreview': 'Предварительный просмотр',
+    'charactersView.noImageSelected': 'Изображение не выбрано',
+    'charactersView.totalUsage': 'Общее использование',
+    'charactersView.usedInScripts': 'Используется в скриптах',
+    'charactersView.commands': 'Команды'
   }
 };
 

@@ -88,6 +88,7 @@ async function parseFileForElements(filePath, fileName, resultMap, type) {
     const content = await fs.readFile(filePath, 'utf8');
     const lines = content.split('\n');
     let currentScript = null;
+    let scriptStartLine = 0; // Linea di inizio dello script corrente
     let scriptsFound = 0;
     let missionsFound = 0;
     
@@ -97,12 +98,15 @@ async function parseFileForElements(filePath, fileName, resultMap, type) {
       // Traccia script corrente
       if (line.startsWith('SCRIPT ')) {
         currentScript = line.replace('SCRIPT ', '').trim();
+        scriptStartLine = i; // Memorizza la linea di inizio dello script
         scriptsFound++;
       } else if (line.startsWith('MISSION ')) {
         currentScript = line.replace('MISSION ', '').trim();
+        scriptStartLine = i; // Memorizza la linea di inizio della mission
         missionsFound++;
       } else if (line === 'END_OF_SCRIPT' || line === 'END_OF_MISSION') {
         currentScript = null;
+        scriptStartLine = 0;
       }
       
       // Se non siamo in uno script/mission, salta
@@ -132,13 +136,14 @@ async function parseFileForElements(filePath, fileName, resultMap, type) {
       } else if (type === 'labels') {
         extractLabelsFromLine(line, currentScript, resultMap, fileName);
         
-        // Aggiorna numero di linea per label e GO
+        // Aggiorna numero di linea per label e GO (relativo all'inizio dello script)
         const upperLine = line.toUpperCase().trim();
         if (upperLine.startsWith('LABEL ')) {
           const labelName = line.trim().split(' ')[1];
           const labelKey = `${currentScript}::${labelName}`;
           if (labelName && resultMap.has(labelKey)) {
-            resultMap.get(labelKey).posizione_definizione.linea = i + 1;
+            // Linea relativa all'inizio dello script (1-based)
+            resultMap.get(labelKey).posizione_definizione.linea = i - scriptStartLine + 1;
           }
         } else if (upperLine.startsWith('GO ')) {
           const labelName = line.trim().split(' ')[1];
@@ -147,7 +152,8 @@ async function parseFileForElements(filePath, fileName, resultMap, type) {
             const data = resultMap.get(labelKey);
             const lastRef = data.riferimenti[data.riferimenti.length - 1];
             if (lastRef && lastRef.linea === null) {
-              lastRef.linea = i + 1;
+              // Linea relativa all'inizio dello script (1-based)
+              lastRef.linea = i - scriptStartLine + 1;
             }
           }
         }

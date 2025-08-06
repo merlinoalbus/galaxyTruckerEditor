@@ -2,7 +2,7 @@
 const path = require('path');
 
 // Carica configurazione da variabili ambiente o usa default
-const GAME_HOST = process.env.GAME_HOST || path.join(process.cwd(), 'gamefolder');
+const GAME_HOST = process.env.GAME_HOST || path.join(process.cwd(), 'GAMEFOLDER');
 const SERVER_PORT = process.env.SERVER_PORT || 3001;
 const HOST_ADDRESS = process.env.HOST_ADDRESS || 'localhost';
 

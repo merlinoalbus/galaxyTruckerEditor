@@ -48,11 +48,34 @@ router.get('/characters', async (req, res) => {
     const characterUsage = new Map();
     await scanCampaignFilesForCharacters(characterUsage);
     
+    // Usa un Set per tracciare i nomi già processati ed evitare duplicati
+    const processedNames = new Set();
+    
+    // Lista di nomi da escludere (non sono veri personaggi)
+    const excludedNames = ['fireworks', 'party', 'party_right', 'crowd'];
+    
     // Processa ogni personaggio dal YAML
     for (const characterDef of charactersData) {
       if (!characterDef.name) continue;
       
-      const nomepersonaggio = characterDef.name;
+      // Trim più aggressivo per gestire spazi multipli
+      const nomepersonaggio = characterDef.name.toString().trim().replace(/^\s+|\s+$/g, '');
+      
+      // Salta se è un nome escluso
+      if (excludedNames.includes(nomepersonaggio.toLowerCase())) {
+        logger.info(`Skipping excluded character: ${nomepersonaggio}`);
+        continue;
+      }
+      
+      // Salta se già processato (evita duplicati) - case insensitive
+      const normalizedName = nomepersonaggio.toLowerCase();
+      if (processedNames.has(normalizedName)) {
+        logger.warn(`Skipping duplicate character: ${nomepersonaggio} (already have: ${normalizedName})`);
+        continue;
+      }
+      
+      processedNames.add(normalizedName);
+      
       const usage = characterUsage.get(nomepersonaggio) || {
         utilizzi_totali: 0,
         script_che_lo_usano: [],
@@ -60,11 +83,11 @@ router.get('/characters', async (req, res) => {
         immagine_corrente: null
       };
       
-      // Carica immagine base
-      const immaginebase = await loadCharacterBaseImage(characterDef.image);
+      // Carica immagine base (passa anche il nome del personaggio per cercare per nome se il path non esiste)
+      const immaginebase = await loadCharacterBaseImage(characterDef.image, nomepersonaggio);
       
-      // Trova tutte le immagini possibili
-      const listaimmagini = await findAllCharacterImages(nomepersonaggio);
+      // Trova tutte le immagini possibili (passa anche il campo image per cercare prima quello)
+      const listaimmagini = await findAllCharacterImages(nomepersonaggio, characterDef.image);
       
       // Determina immagine corrente (da CHANGECHAR o default base)
       const immagine_corrente = usage.immagine_corrente || characterDef.image;
@@ -237,8 +260,47 @@ async function parseFileForCharacters(filePath, fileName, characterUsage) {
   }
 }
 
+// Funzione helper per cercare ricorsivamente un file
+async function findImageRecursive(dir, targetName, maxDepth = 5, currentDepth = 0) {
+  if (currentDepth > maxDepth) return null;
+  
+  try {
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      
+      if (entry.isDirectory()) {
+        // Salta alcune cartelle che non dovrebbero contenere immagini personaggi
+        if (['node_modules', '.git', 'logs', 'data'].includes(entry.name)) continue;
+        
+        // Ricerca ricorsiva
+        const found = await findImageRecursive(fullPath, targetName, maxDepth, currentDepth + 1);
+        if (found) return found;
+      } else if (entry.isFile()) {
+        // Controlla se è un'immagine
+        const ext = path.extname(entry.name).toLowerCase();
+        if (['.png', '.jpg', '.jpeg', '.gif'].includes(ext)) {
+          const baseName = path.basename(entry.name, ext);
+          
+          // Controlla match esatto o varianti comuni
+          if (baseName.toLowerCase() === targetName.toLowerCase() ||
+              baseName.toLowerCase() === `character_${targetName.toLowerCase()}` ||
+              baseName.toLowerCase() === `avatar_${targetName.toLowerCase()}`) {
+            return fullPath;
+          }
+        }
+      }
+    }
+  } catch (error) {
+    // Ignora errori di accesso
+  }
+  
+  return null;
+}
+
 // Carica immagine base del personaggio con binary
-async function loadCharacterBaseImage(imagePath) {
+async function loadCharacterBaseImage(imagePath, characterName = null) {
   try {
     const fullPath = path.join(GAME_ROOT, imagePath);
     
@@ -253,49 +315,252 @@ async function loadCharacterBaseImage(imagePath) {
         binary: buffer.toString('base64')
       };
     } else {
-      // Fallback se immagine non trovata
-      return {
-        nomefile: 'missing',
-        percorso: imagePath,
-        binary: null
-      };
+      // Se il path specificato non esiste e abbiamo un nome personaggio,
+      // cerca un'immagine che corrisponda al nome
+      if (characterName) {
+        // Prima cerca nelle cartelle comuni
+        const searchPaths = [
+          path.join(GAME_ROOT, 'campaign'),
+          path.join(GAME_ROOT, 'avatars'),
+          path.join(GAME_ROOT, 'avatars', 'ai'),
+          path.join(GAME_ROOT, 'avatars', 'common'),
+          path.join(GAME_ROOT, 'expansions')
+        ];
+        
+        for (const searchPath of searchPaths) {
+          if (await fs.pathExists(searchPath)) {
+            const files = await fs.readdir(searchPath);
+            
+            // Cerca file che corrisponda esattamente al nome del personaggio
+            for (const file of files) {
+              const baseName = path.basename(file, path.extname(file));
+              if (baseName.toLowerCase() === characterName.toLowerCase()) {
+                const matchPath = path.join(searchPath, file);
+                if (await fs.pathExists(matchPath)) {
+                  const buffer = await fs.readFile(matchPath);
+                  const relativePath = path.relative(GAME_ROOT, matchPath).replace(/\\/g, '/');
+                  logger.info(`Found character image by name for ${characterName}: ${relativePath}`);
+                  
+                  return {
+                    nomefile: baseName,
+                    percorso: relativePath,
+                    binary: buffer.toString('base64')
+                  };
+                }
+              }
+            }
+          }
+        }
+        
+        // Se non trovato nelle cartelle comuni, cerca ricorsivamente in tutto GAMEFOLDER
+        logger.info(`Searching recursively for ${characterName} image...`);
+        const foundPath = await findImageRecursive(GAME_ROOT, characterName);
+        
+        if (foundPath) {
+          const buffer = await fs.readFile(foundPath);
+          const relativePath = path.relative(GAME_ROOT, foundPath).replace(/\\/g, '/');
+          const ext = path.extname(foundPath);
+          const nomefile = path.basename(foundPath, ext);
+          
+          logger.info(`Found character image recursively for ${characterName}: ${relativePath}`);
+          
+          return {
+            nomefile: nomefile,
+            percorso: relativePath,
+            binary: buffer.toString('base64')
+          };
+        }
+      }
+      
+      // Fallback all'avatar no_avatar
+      const fallbackPath = path.join(GAME_ROOT, 'avatars', 'common', 'avatar_no_avatar.png');
+      
+      if (await fs.pathExists(fallbackPath)) {
+        const fallbackBuffer = await fs.readFile(fallbackPath);
+        logger.info(`Using fallback avatar for ${imagePath}`);
+        return {
+          nomefile: 'no_avatar',
+          percorso: 'avatars/common/avatar_no_avatar.png',
+          binary: fallbackBuffer.toString('base64')
+        };
+      } else {
+        // Se neanche il fallback esiste, ritorna con binary null
+        logger.warn(`Neither original image ${imagePath} nor fallback avatar exists`);
+        return {
+          nomefile: 'missing',
+          percorso: 'avatars/common/avatar_no_avatar.png',
+          binary: null
+        };
+      }
     }
   } catch (error) {
     logger.warn(`Cannot load character base image ${imagePath}: ${error.message}`);
+    
+    // Prova a caricare il fallback anche in caso di errore
+    try {
+      const fallbackPath = path.join(GAME_ROOT, 'avatars', 'common', 'avatar_no_avatar.png');
+      if (await fs.pathExists(fallbackPath)) {
+        const fallbackBuffer = await fs.readFile(fallbackPath);
+        return {
+          nomefile: 'no_avatar',
+          percorso: 'avatars/common/avatar_no_avatar.png',
+          binary: fallbackBuffer.toString('base64')
+        };
+      }
+    } catch (fallbackError) {
+      logger.warn(`Cannot load fallback avatar: ${fallbackError.message}`);
+    }
+    
     return {
       nomefile: 'error',
-      percorso: imagePath,
+      percorso: 'avatars/common/avatar_no_avatar.png',
       binary: null
     };
   }
 }
 
-// Trova tutte le immagini possibili per un personaggio
-async function findAllCharacterImages(nomepersonaggio) {
-  const images = [];
-  const campaignPath = path.join(GAME_ROOT, 'campaign');
+// Funzione helper per cercare ricorsivamente tutte le immagini di un personaggio
+async function findAllImagesRecursive(dir, targetName, foundPaths = new Set(), maxDepth = 5, currentDepth = 0) {
+  if (currentDepth > maxDepth) return [];
+  
+  const results = [];
   
   try {
-    if (await fs.pathExists(campaignPath)) {
-      const files = await fs.readdir(campaignPath);
-      const imageExtensions = ['.png', '.jpg', '.jpeg'];
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
       
-      for (const file of files) {
-        const ext = path.extname(file).toLowerCase();
-        if (imageExtensions.includes(ext)) {
-          const baseName = path.basename(file, ext);
+      if (entry.isDirectory()) {
+        // Salta alcune cartelle che non dovrebbero contenere immagini personaggi
+        if (['node_modules', '.git', 'logs', 'data', 'scripts'].includes(entry.name)) continue;
+        
+        // Ricerca ricorsiva
+        const subResults = await findAllImagesRecursive(fullPath, targetName, foundPaths, maxDepth, currentDepth + 1);
+        results.push(...subResults);
+      } else if (entry.isFile()) {
+        // Controlla se è un'immagine
+        const ext = path.extname(entry.name).toLowerCase();
+        if (['.png', '.jpg', '.jpeg', '.gif'].includes(ext)) {
+          const baseName = path.basename(entry.name, ext).toLowerCase();
+          const targetLower = targetName.toLowerCase();
           
-          // Controlla se è un'immagine del personaggio (baseName inizia con nomepersonaggio)
-          if (baseName === nomepersonaggio || baseName.startsWith(nomepersonaggio + '-')) {
-            const fullPath = path.join(campaignPath, file);
-            const buffer = await fs.readFile(fullPath);
-            const percorso = `campaign/${file}`;
+          // Controlla vari pattern di match
+          if (baseName === targetLower || 
+              baseName.startsWith(targetLower + '-') ||
+              baseName.startsWith(targetLower + '_') ||
+              baseName.startsWith(targetLower + ' ') ||
+              baseName === `character_${targetLower}` ||
+              baseName === `avatar_${targetLower}` ||
+              (baseName.startsWith(targetLower) && baseName.length <= targetLower.length + 2)) {
             
-            images.push({
-              nomefile: baseName,
-              percorso: percorso,
-              binary: buffer.toString('base64')
-            });
+            // Evita duplicati
+            if (!foundPaths.has(fullPath)) {
+              foundPaths.add(fullPath);
+              results.push(fullPath);
+            }
+          }
+        }
+      }
+    }
+  } catch (error) {
+    // Ignora errori di accesso
+  }
+  
+  return results;
+}
+
+// Trova tutte le immagini possibili per un personaggio
+async function findAllCharacterImages(nomepersonaggio, imagePath = null) {
+  const images = [];
+  const foundPaths = new Set(); // Per evitare duplicati
+  
+  // Cerca in più cartelle dove potrebbero essere le immagini dei personaggi
+  const searchPaths = [
+    path.join(GAME_ROOT, 'campaign'),
+    path.join(GAME_ROOT, 'campaign', 'campaignMap', 'big'),
+    path.join(GAME_ROOT, 'avatars'),
+    path.join(GAME_ROOT, 'avatars', 'ai'),
+    path.join(GAME_ROOT, 'avatars', 'common'),
+    path.join(GAME_ROOT, 'expansions', '01_alien_technologies', 'images')
+  ];
+  
+  let foundAnyImage = false;
+  
+  // PRIMA: Se c'è un imagePath specificato, cerca esattamente quello
+  if (imagePath) {
+    const fullImagePath = path.join(GAME_ROOT, imagePath);
+    if (await fs.pathExists(fullImagePath)) {
+      try {
+        const buffer = await fs.readFile(fullImagePath);
+        const ext = path.extname(imagePath);
+        const nomefile = path.basename(imagePath, ext);
+        
+        images.push({
+          nomefile: nomefile,
+          percorso: imagePath,
+          binary: buffer.toString('base64')
+        });
+        foundPaths.add(fullImagePath);
+        foundAnyImage = true;
+        logger.info(`Found specified image for ${nomepersonaggio}: ${imagePath}`);
+      } catch (error) {
+        logger.warn(`Cannot read specified image ${imagePath}: ${error.message}`);
+      }
+    }
+  }
+  
+  // SECONDO: Cerca immagini che corrispondono al nome del personaggio nelle cartelle comuni
+  try {
+    for (const searchPath of searchPaths) {
+      if (await fs.pathExists(searchPath)) {
+        const files = await fs.readdir(searchPath);
+        const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif'];
+        
+        for (const file of files) {
+          const ext = path.extname(file).toLowerCase();
+          if (imageExtensions.includes(ext)) {
+            const baseName = path.basename(file, ext).toLowerCase();
+            const characterNameLower = nomepersonaggio.toLowerCase();
+            
+            // Controlla se è un'immagine del personaggio con match più flessibile
+            if (baseName === characterNameLower || 
+                baseName.startsWith(characterNameLower + '-') ||
+                baseName.startsWith(characterNameLower + '_') ||
+                baseName.startsWith(characterNameLower + ' ') ||
+                (baseName.startsWith(characterNameLower) && baseName.length <= characterNameLower.length + 2)) {
+              const fullPath = path.join(searchPath, file);
+              
+              // Evita duplicati usando il Set
+              if (foundPaths.has(fullPath)) continue;
+              
+              try {
+                const stats = await fs.stat(fullPath);
+                // Salta file troppo grandi (>5MB)
+                if (stats.size > 5 * 1024 * 1024) {
+                  logger.warn(`Skipping large image file: ${file} (${stats.size} bytes)`);
+                  continue;
+                }
+                
+                const buffer = await fs.readFile(fullPath);
+                
+                // Determina il percorso relativo corretto
+                const relativePath = path.relative(GAME_ROOT, fullPath).replace(/\\/g, '/');
+                
+                // Nome display più pulito
+                const displayName = path.basename(file, ext);
+                
+                images.push({
+                  nomefile: displayName,
+                  percorso: relativePath,
+                  binary: buffer.toString('base64')
+                });
+                foundPaths.add(fullPath);
+                foundAnyImage = true;
+              } catch (fileError) {
+                logger.warn(`Cannot read image file ${file}: ${fileError.message}`);
+              }
+            }
           }
         }
       }
@@ -304,8 +569,70 @@ async function findAllCharacterImages(nomepersonaggio) {
     logger.warn(`Cannot scan for character images for ${nomepersonaggio}: ${error.message}`);
   }
   
-  // Ordina per nome file
-  images.sort((a, b) => a.nomefile.localeCompare(b.nomefile));
+  // TERZO: Se ancora non abbiamo trovato abbastanza immagini, cerca ricorsivamente
+  if (images.length < 10) { // Limita per evitare troppe immagini
+    logger.info(`Searching recursively for more images of ${nomepersonaggio}...`);
+    const recursiveResults = await findAllImagesRecursive(GAME_ROOT, nomepersonaggio, foundPaths);
+    
+    for (const fullPath of recursiveResults) {
+      // Salta se già aggiunto
+      if (foundPaths.has(fullPath)) continue;
+      
+      try {
+        const stats = await fs.stat(fullPath);
+        // Salta file troppo grandi (>5MB)
+        if (stats.size > 5 * 1024 * 1024) {
+          logger.warn(`Skipping large image file: ${fullPath} (${stats.size} bytes)`);
+          continue;
+        }
+        
+        const buffer = await fs.readFile(fullPath);
+        const relativePath = path.relative(GAME_ROOT, fullPath).replace(/\\/g, '/');
+        const ext = path.extname(fullPath);
+        const nomefile = path.basename(fullPath, ext);
+        
+        images.push({
+          nomefile: nomefile,
+          percorso: relativePath,
+          binary: buffer.toString('base64')
+        });
+        foundPaths.add(fullPath);
+        foundAnyImage = true;
+        
+        // Limita il numero totale di immagini
+        if (images.length >= 20) break;
+      } catch (error) {
+        logger.warn(`Cannot read recursive image ${fullPath}: ${error.message}`);
+      }
+    }
+  }
+  
+  // Se non è stata trovata nessuna immagine, aggiungi la fallback
+  if (!foundAnyImage) {
+    const fallbackPath = path.join(GAME_ROOT, 'avatars', 'common', 'avatar_no_avatar.png');
+    
+    try {
+      if (await fs.pathExists(fallbackPath)) {
+        const fallbackBuffer = await fs.readFile(fallbackPath);
+        logger.info(`Adding fallback avatar to image list for ${nomepersonaggio}`);
+        images.push({
+          nomefile: 'no_avatar',
+          percorso: 'avatars/common/avatar_no_avatar.png',
+          binary: fallbackBuffer.toString('base64')
+        });
+      }
+    } catch (fallbackError) {
+      logger.warn(`Cannot load fallback avatar for image list: ${fallbackError.message}`);
+    }
+  }
+  
+  // Ordina per nome file, mettendo prima l'immagine base (se c'è)
+  images.sort((a, b) => {
+    // Se uno dei due è esattamente il nome del personaggio, viene prima
+    if (a.nomefile.toLowerCase() === nomepersonaggio.toLowerCase()) return -1;
+    if (b.nomefile.toLowerCase() === nomepersonaggio.toLowerCase()) return 1;
+    return a.nomefile.localeCompare(b.nomefile);
+  });
   
   return images;
 }
