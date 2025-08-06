@@ -37,6 +37,32 @@ export const CampaignEditor: React.FC = () => {
     }
   }, [activeTab, isMapFullscreen, isFlowFullscreen, exitAllFullscreen]);
 
+  // Handle navigation from Variables & System to Visual Flow Editor
+  useEffect(() => {
+    const handleNavigateToVisualFlow = (event: CustomEvent) => {
+      const { scriptName, elementName, elementType } = event.detail;
+      
+      // Switch to Visual Flow Editor tab
+      setActiveTab('flow');
+      
+      // After switching tab, dispatch event to Visual Flow Editor to navigate to specific script
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('loadScriptWithElement', {
+          detail: {
+            scriptName,
+            elementName,
+            elementType
+          }
+        }));
+      }, 100);
+    };
+
+    window.addEventListener('navigateToVisualFlow', handleNavigateToVisualFlow as EventListener);
+    return () => {
+      window.removeEventListener('navigateToVisualFlow', handleNavigateToVisualFlow as EventListener);
+    };
+  }, [setActiveTab]);
+
   const tabs = [
     { id: 'map', label: t('tabs.interactiveMap') },
     { id: 'flow', label: t('tabs.visualFlowEditor') },

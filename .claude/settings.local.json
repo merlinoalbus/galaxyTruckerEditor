@@ -59,7 +59,15 @@
       "Bash(scripts/consolida-codice.sh:*)",
       "Bash(restartBE)",
       "Bash(restartFE)",
-      "Bash(scripts/restart-fe.sh:*)"
+      "Bash(scripts/restart-fe.sh:*)",
+      "Bash(scripts/start-all.sh:*)",
+      "Bash(npm run restart-be:*)",
+      "Bash(npm run:*)",
+      "Bash(./restart-be.sh:*)",
+      "Bash(test:*)",
+      "Bash(for:*)",
+      "Bash(do echo -n \"$file: \")",
+      "Bash(done)"
     ],
     "deny": []
   },

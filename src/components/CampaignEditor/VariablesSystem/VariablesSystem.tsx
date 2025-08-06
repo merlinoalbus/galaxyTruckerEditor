@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Database, Search, SortAsc, Hash, ToggleLeft, Tag, Users, Image, Trophy } from 'lucide-react';
 import { useVariablesSystemData } from '@/hooks/CampaignEditor/VariablesSystem/useVariablesSystemData';
 import { ElementType } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
-import { ListView } from './components/ListView/ListView';
+import { CompactListView } from './components/CompactListView/CompactListView';
+import { DetailView } from './components/DetailView/DetailView';
+import { CharactersView } from './components/CharactersView/CharactersView';
 import { useTranslation } from '@/locales/translations';
 
 interface VariablesSystemProps {
@@ -28,6 +30,9 @@ export const VariablesSystem: React.FC<VariablesSystemProps> = ({ analysis }) =>
     refreshData
   } = useVariablesSystemData();
 
+  // State for character view
+  const [selectedImage, setSelectedImage] = React.useState<string | null>(null);
+
   // Listen for tab change events from ElementCounters
   React.useEffect(() => {
     const handleSetTab = (event: CustomEvent) => {
@@ -42,6 +47,19 @@ export const VariablesSystem: React.FC<VariablesSystemProps> = ({ analysis }) =>
       window.removeEventListener('setVariablesTab', handleSetTab as EventListener);
     };
   }, [setActiveTab]);
+
+  // Handle navigation to Visual Flow Editor
+  const handleNavigateToScript = useCallback((scriptName: string, elementName: string) => {
+    // Dispatch event to navigate to Visual Flow Editor with specific script and element
+    const event = new CustomEvent('navigateToVisualFlow', {
+      detail: {
+        scriptName,
+        elementName,
+        elementType: activeTab
+      }
+    });
+    window.dispatchEvent(event);
+  }, [activeTab]);
 
   const tabs: { id: ElementType; label: string; icon: React.FC<any>; color: string }[] = [
     { id: 'variables', label: t('elements.variables'), icon: Hash, color: 'text-cyan-400' },
@@ -80,7 +98,7 @@ export const VariablesSystem: React.FC<VariablesSystemProps> = ({ analysis }) =>
 
   return (
     <div className="h-full flex flex-col p-6">
-      <div className="mb-6">
+      <div className="mb-2">
         <h2 className="text-2xl font-bold text-white mb-2 galaxy-title">{t('variablesSystem.title')}</h2>
         <p className="text-gray-400">
           {t('variablesSystem.description')}
@@ -88,7 +106,7 @@ export const VariablesSystem: React.FC<VariablesSystemProps> = ({ analysis }) =>
       </div>
 
       {/* Tabs */}
-      <div className="flex space-x-1 mb-6 border-b border-gray-700">
+      <div className="flex space-x-1 mb-2 border-b border-gray-700">
         {tabs.map(tab => {
           const Icon = tab.icon;
           const count = tabCounts[tab.id];
@@ -120,7 +138,7 @@ export const VariablesSystem: React.FC<VariablesSystemProps> = ({ analysis }) =>
       </div>
 
       {/* Controls */}
-      <div className="flex gap-4 mb-6">
+      <div className="flex gap-4 mb-2">
         <div className="flex items-center gap-2 flex-1">
           <Search className="w-5 h-5 text-gray-400" />
           <input
@@ -145,15 +163,35 @@ export const VariablesSystem: React.FC<VariablesSystemProps> = ({ analysis }) =>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto">
-        <ListView
-          type={activeTab}
-          items={currentItems}
-          selectedItem={selectedItem}
-          onSelectItem={setSelectedItem}
+      {/* Content - Layout condizionale per characters */}
+      {activeTab === 'characters' ? (
+        <CharactersView
+          characters={currentItems}
+          onNavigateToScript={handleNavigateToScript}
         />
-      </div>
+      ) : (
+        /* Two Panel Layout per altri elementi */
+        <div className="flex-1 flex gap-4 overflow-hidden">
+          {/* Left Panel - Compact List */}
+          <div className="w-1/3 min-w-[300px] bg-gray-900/30 rounded-lg border border-gray-800 overflow-hidden flex flex-col">
+            <CompactListView
+              type={activeTab}
+              items={currentItems}
+              selectedItem={selectedItem}
+              onSelectItem={setSelectedItem}
+            />
+          </div>
+          
+          {/* Right Panel - Details */}
+          <div className="flex-1 min-w-[400px]">
+            <DetailView
+              type={activeTab}
+              item={selectedItem}
+              onNavigateToScript={handleNavigateToScript}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
