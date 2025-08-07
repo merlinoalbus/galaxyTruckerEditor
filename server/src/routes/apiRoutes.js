@@ -14,6 +14,7 @@ const { GAME_ROOT } = config;
 const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
+const sharp = require('sharp');
 
 const router = express.Router();
 const logger = getLogger();
@@ -34,6 +35,10 @@ router.get('/health', (req, res) => {
 router.get('/images', async (req, res) => {
   try {
     logger.info('API call: GET /api/images - Ricerca ricorsiva immagini con classificazione intelligente');
+    
+    // Parametri query opzionali
+    const includeThumbnail = req.query.thumbnail === 'true';
+    const thumbnailSize = parseInt(req.query.thumbnailSize) || 100;
     
     const images = [];
     const imageRegex = /\.(jpe?g|png)$/i; // Case-insensitive
@@ -79,21 +84,58 @@ router.get('/images', async (req, res) => {
     
     // Classificazione intelligente basata su percorso
     function classifyImage(percorso) {
-      const pathLower = percorso.toLowerCase();
-      let tipo = 'system';
+      // Normalizza il percorso per usare sempre forward slash
+      const pathNormalized = percorso.replace(/\\/g, '/');
+      const pathLower = pathNormalized.toLowerCase();
+      const fileName = path.basename(percorso, path.extname(percorso)).toLowerCase();
+      let tipo = 'misc';
       let sottotipo = 'generic';
       
-      // Classificazione tipo principale
+      // Classificazione tipo principale più dettagliata
       if (pathLower.includes('campaign/')) tipo = 'campaign';
+      else if (pathLower.includes('achievements/')) tipo = 'achievements';
+      else if (pathLower.includes('avatars/')) tipo = 'avatars';
+      else if (pathLower.includes('multiplayermenu/')) tipo = 'multiplayer';
+      else if (pathLower.includes('common/')) tipo = 'common';
+      else if (pathLower.includes('particles/')) tipo = 'particles';
+      else if (pathLower.includes('advcards/')) tipo = 'cards';
+      else if (pathLower.includes('videos/')) tipo = 'videos';
+      else if (pathLower.includes('manual/')) tipo = 'manual';
+      else if (pathLower.includes('flightscene/')) tipo = 'flight';
       else if (pathLower.includes('icons/') || pathLower.includes('ui/')) tipo = 'interface';
       else if (pathLower.includes('parts/') || pathLower.includes('components/')) tipo = 'parts';
-      else if (pathLower.includes('achievements/')) tipo = 'achievements';
+      else if (pathLower.includes('sd/')) tipo = 'sd';
+      
+      // Classificazione più specifica per filename patterns
+      else if (fileName.includes('button') || fileName.includes('btn')) tipo = 'buttons';
+      else if (fileName.includes('background') || fileName.includes('bg')) tipo = 'backgrounds';
+      else if (fileName.includes('icon') || fileName.includes('ico')) tipo = 'icons';
+      else if (fileName.includes('avatar')) tipo = 'avatars';
+      else if (fileName.includes('ship')) tipo = 'ships';
+      else if (fileName.includes('alien')) tipo = 'aliens';
+      else if (fileName.includes('human')) tipo = 'humans';
+      else if (fileName.includes('cargo')) tipo = 'cargo';
+      else if (fileName.includes('battery')) tipo = 'batteries';
+      else if (fileName.includes('engine')) tipo = 'engines';
+      else if (fileName.includes('gun') || fileName.includes('cannon')) tipo = 'weapons';
+      else if (fileName.includes('shield')) tipo = 'shields';
+      else if (fileName.includes('window') || fileName.includes('dialog')) tipo = 'windows';
+      else if (fileName.includes('arrow')) tipo = 'arrows';
+      else if (fileName.includes('frame')) tipo = 'frames';
+      else if (fileName.includes('glow')) tipo = 'effects';
+      else if (fileName.includes('bubble')) tipo = 'bubbles';
+      else if (fileName.includes('meteor')) tipo = 'meteors';
+      else if (fileName.includes('planet')) tipo = 'planets';
+      else if (fileName.includes('star')) tipo = 'stars';
+      else if (fileName.includes('flag') || /^[a-z]{2}$/i.test(fileName)) tipo = 'flags';
       
       // Classificazione sottotipo
       if (pathLower.includes('/big/') || pathLower.includes('/small/')) sottotipo = 'character';
-      else if (pathLower.includes('/images/') || pathLower.includes('/img/')) sottotipo = 'generic';
+      else if (pathLower.includes('/images/') || pathLower.includes('/img/')) sottotipo = 'image';
       else if (pathLower.includes('_big') || pathLower.includes('_small')) sottotipo = 'variant';
-      else if (/\d+$/.test(path.basename(percorso, path.extname(percorso)))) sottotipo = 'sequence';
+      else if (/\d+$/.test(fileName)) sottotipo = 'sequence';
+      else if (pathLower.includes('/backgrounds/')) sottotipo = 'background';
+      else if (pathLower.includes('/eyecandy/')) sottotipo = 'decoration';
       
       return { tipo, sottotipo };
     }
@@ -125,11 +167,39 @@ router.get('/images', async (req, res) => {
     }
     
     // Converti map in array e ordina
-    const result = Array.from(uniqueMap.values()).sort((a, b) => {
+    let result = Array.from(uniqueMap.values()).sort((a, b) => {
       if (a.tipo !== b.tipo) return a.tipo.localeCompare(b.tipo);
       if (a.sottotipo !== b.sottotipo) return a.sottotipo.localeCompare(b.sottotipo);
       return a.nomefile.localeCompare(b.nomefile);
     });
+    
+    // Genera thumbnail se richiesto
+    if (includeThumbnail) {
+      logger.info(`Generating thumbnails for ${result.length} images (size: ${thumbnailSize}px)`);
+      
+      for (let i = 0; i < result.length; i++) {
+        try {
+          const fullPath = path.join(GAME_ROOT, result[i].percorso);
+          
+          // Genera thumbnail con Sharp
+          const thumbnailBuffer = await sharp(fullPath)
+            .resize(thumbnailSize, thumbnailSize, {
+              fit: 'inside',
+              withoutEnlargement: true
+            })
+            .jpeg({ quality: 80 })
+            .toBuffer();
+          
+          // Aggiungi thumbnail base64 all'oggetto
+          result[i].thumbnail = `data:image/jpeg;base64,${thumbnailBuffer.toString('base64')}`;
+          
+        } catch (error) {
+          // Se fallisce il thumbnail, aggiungi null
+          logger.warn(`Failed to generate thumbnail for ${result[i].percorso}: ${error.message}`);
+          result[i].thumbnail = null;
+        }
+      }
+    }
     
     logger.info(`Found ${images.length} total images, ${result.length} unique after deduplication`);
     
@@ -140,7 +210,8 @@ router.get('/images', async (req, res) => {
       stats: {
         totali_trovate: images.length,
         dopo_deduplicazione: result.length,
-        duplicate_rimosse: images.length - result.length
+        duplicate_rimosse: images.length - result.length,
+        thumbnail_inclusi: includeThumbnail
       }
     });
   } catch (error) {

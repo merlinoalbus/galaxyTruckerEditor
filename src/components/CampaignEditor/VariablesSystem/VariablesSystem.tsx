@@ -5,6 +5,7 @@ import { ElementType } from '@/types/CampaignEditor/VariablesSystem/VariablesSys
 import { CompactListView } from './components/CompactListView/CompactListView';
 import { DetailView } from './components/DetailView/DetailView';
 import { CharactersView } from './components/CharactersView/CharactersView';
+import { ImagesView } from './components/ImagesView/ImagesView';
 import { useTranslation } from '@/locales/translations';
 
 interface VariablesSystemProps {
@@ -30,8 +31,6 @@ export const VariablesSystem: React.FC<VariablesSystemProps> = ({ analysis }) =>
     refreshData
   } = useVariablesSystemData();
 
-  // State for character view
-  const [selectedImage, setSelectedImage] = React.useState<string | null>(null);
 
   // Listen for tab change events from ElementCounters
   React.useEffect(() => {
@@ -137,36 +136,42 @@ export const VariablesSystem: React.FC<VariablesSystemProps> = ({ analysis }) =>
         })}
       </div>
 
-      {/* Controls */}
-      <div className="flex gap-4 mb-2">
-        <div className="flex items-center gap-2 flex-1">
-          <Search className="w-5 h-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder={`${t('variablesSystem.searchPlaceholder')} ${tabs.find(t => t.id === activeTab)?.label.toLowerCase()}...`}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-          />
-        </div>
+      {/* Controls - Hide for Images tab */}
+      {activeTab !== 'images' && (
+        <div className="flex gap-4 mb-2">
+          <div className="flex items-center gap-2 flex-1">
+            <Search className="w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder={`${t('variablesSystem.searchPlaceholder')} ${tabs.find(t => t.id === activeTab)?.label.toLowerCase()}...`}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="flex-1 bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+            />
+          </div>
 
-        <div className="flex items-center gap-2">
-          <SortAsc className="w-5 h-5 text-gray-400" />
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500"
-          >
-            <option value="name">{t('variablesSystem.sortBy')} {t('variablesSystem.name')}</option>
-            <option value="usage">{t('variablesSystem.sortBy')} {t('variablesSystem.usage')}</option>
-          </select>
+          <div className="flex items-center gap-2">
+            <SortAsc className="w-5 h-5 text-gray-400" />
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500"
+            >
+              <option value="name">{t('variablesSystem.sortBy')} {t('variablesSystem.name')}</option>
+              <option value="usage">{t('variablesSystem.sortBy')} {t('variablesSystem.usage')}</option>
+            </select>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Content - Layout condizionale per characters */}
+      {/* Content - Layout condizionale per characters e images */}
       {activeTab === 'characters' ? (
         <CharactersView
           characters={currentItems}
+          onNavigateToScript={handleNavigateToScript}
+        />
+      ) : activeTab === 'images' ? (
+        <ImagesView
           onNavigateToScript={handleNavigateToScript}
         />
       ) : (
