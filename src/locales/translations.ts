@@ -166,6 +166,18 @@ export type TranslationKey =
   | 'achievementView.objectives'
   | 'achievementView.hidden'
   | 'achievementView.repeatable'
+  | 'achievementView.points'
+  | 'achievementView.uses'
+  | 'achievementView.before'
+  | 'achievementView.after'
+  | 'achievementView.preDescription'
+  | 'achievementView.postDescription'
+  | 'achievementView.noDescription'
+  | 'achievementView.usageStatistics'
+  | 'achievementView.totalUses'
+  | 'achievementView.scriptsCount'
+  | 'achievementView.usedInScripts'
+  | 'achievementView.selectAchievement'
   
   // SemaforoView
   | 'semaforoView.semaphore'
@@ -175,6 +187,15 @@ export type TranslationKey =
   // ImageView
   | 'imageView.modified'
   | 'imageView.depth'
+  | 'imageView.size'
+  | 'imageView.selectImage'
+  | 'imageView.imageDetails'
+  | 'imageView.searchPlaceholder'
+  | 'imageView.clickToDownload'
+  | 'imageView.loadingImages'
+  | 'imageView.loading'
+  | 'imageView.allCategories'
+  | 'imageView.imagesFound'
   
   // DetailView
   | 'detailView.selectElement'
@@ -384,6 +405,18 @@ export const translations: Translations = {
     'achievementView.objectives': 'objectives',
     'achievementView.hidden': 'Hidden',
     'achievementView.repeatable': 'Repeatable',
+    'achievementView.points': 'points',
+    'achievementView.uses': 'uses',
+    'achievementView.before': 'Before',
+    'achievementView.after': 'After',
+    'achievementView.preDescription': 'Pre Description',
+    'achievementView.postDescription': 'Post Description',
+    'achievementView.noDescription': 'No description available',
+    'achievementView.usageStatistics': 'Usage Statistics',
+    'achievementView.totalUses': 'Total Uses',
+    'achievementView.scriptsCount': 'Scripts Count',
+    'achievementView.usedInScripts': 'Used in Scripts',
+    'achievementView.selectAchievement': 'Select an achievement to view details',
     
     // SemaforoView
     'semaforoView.semaphore': 'Semaphore',
@@ -393,6 +426,15 @@ export const translations: Translations = {
     // ImageView
     'imageView.modified': 'Modified',
     'imageView.depth': 'Depth',
+    'imageView.size': 'Size',
+    'imageView.selectImage': 'Select an image to preview',
+    'imageView.imageDetails': 'Image Details',
+    'imageView.searchPlaceholder': 'Search images...',
+    'imageView.clickToDownload': 'Click to download',
+    'imageView.loadingImages': 'Loading images...',
+    'imageView.loading': 'Loading...',
+    'imageView.allCategories': 'All Categories',
+    'imageView.imagesFound': 'images found',
     
     // DetailView
     'detailView.selectElement': 'Select an element to view details',
@@ -596,6 +638,18 @@ export const translations: Translations = {
     'achievementView.objectives': 'obiettivi',
     'achievementView.hidden': 'Nascosto',
     'achievementView.repeatable': 'Ripetibile',
+    'achievementView.points': 'punti',
+    'achievementView.uses': 'utilizzi',
+    'achievementView.before': 'Prima',
+    'achievementView.after': 'Dopo',
+    'achievementView.preDescription': 'Descrizione Pre',
+    'achievementView.postDescription': 'Descrizione Post',
+    'achievementView.noDescription': 'Nessuna descrizione disponibile',
+    'achievementView.usageStatistics': 'Statistiche di Utilizzo',
+    'achievementView.totalUses': 'Utilizzi Totali',
+    'achievementView.scriptsCount': 'Numero Script',
+    'achievementView.usedInScripts': 'Usato negli Script',
+    'achievementView.selectAchievement': 'Seleziona un achievement per visualizzare i dettagli',
     
     // SemaforoView
     'semaforoView.semaphore': 'Semaforo',
@@ -605,6 +659,15 @@ export const translations: Translations = {
     // ImageView
     'imageView.modified': 'Modificato',
     'imageView.depth': 'Profondità',
+    'imageView.size': 'Dimensione',
+    'imageView.selectImage': 'Seleziona un\'immagine per la preview',
+    'imageView.imageDetails': 'Dettagli Immagine',
+    'imageView.searchPlaceholder': 'Cerca immagini...',
+    'imageView.clickToDownload': 'Clicca per scaricare',
+    'imageView.loadingImages': 'Caricamento immagini...',
+    'imageView.loading': 'Caricamento...',
+    'imageView.allCategories': 'Tutte le categorie',
+    'imageView.imagesFound': 'immagini trovate',
     
     // DetailView
     'detailView.selectElement': 'Seleziona un elemento per visualizzarne i dettagli',
@@ -808,6 +871,18 @@ export const translations: Translations = {
     'achievementView.objectives': 'cíle',
     'achievementView.hidden': 'Skryté',
     'achievementView.repeatable': 'Opakovatelné',
+    'achievementView.points': 'body',
+    'achievementView.uses': 'použití',
+    'achievementView.before': 'Před',
+    'achievementView.after': 'Po',
+    'achievementView.preDescription': 'Předchozí popis',
+    'achievementView.postDescription': 'Následující popis',
+    'achievementView.noDescription': 'Žádný popis',
+    'achievementView.usageStatistics': 'Statistiky použití',
+    'achievementView.totalUses': 'Celkem použití',
+    'achievementView.scriptsCount': 'Počet skriptů',
+    'achievementView.usedInScripts': 'Použito ve skriptech',
+    'achievementView.selectAchievement': 'Vyberte úspěch pro zobrazení detailů',
     
     // SemaforoView
     'semaforoView.semaphore': 'Semafor',
@@ -817,6 +892,15 @@ export const translations: Translations = {
     // ImageView
     'imageView.modified': 'Upraveno',
     'imageView.depth': 'Hloubka',
+    'imageView.size': 'Velikost',
+    'imageView.selectImage': 'Vyberte obrázek pro náhled',
+    'imageView.imageDetails': 'Detaily obrázku',
+    'imageView.searchPlaceholder': 'Hledat obrázky...',
+    'imageView.clickToDownload': 'Klikněte pro stažení',
+    'imageView.loadingImages': 'Načítání obrázků...',
+    'imageView.loading': 'Načítání...',
+    'imageView.allCategories': 'Všechny kategorie',
+    'imageView.imagesFound': 'nalezené obrázky',
     
     // DetailView
     'detailView.selectElement': 'Vyberte prvek pro zobrazení podrobností',
@@ -1020,6 +1104,18 @@ export const translations: Translations = {
     'achievementView.objectives': 'Ziele',
     'achievementView.hidden': 'Versteckt',
     'achievementView.repeatable': 'Wiederholbar',
+    'achievementView.points': 'Punkte',
+    'achievementView.uses': 'Verwendungen',
+    'achievementView.before': 'Vorher',
+    'achievementView.after': 'Nachher',
+    'achievementView.preDescription': 'Vorherige Beschreibung',
+    'achievementView.postDescription': 'Nachfolgende Beschreibung',
+    'achievementView.noDescription': 'Keine Beschreibung verfügbar',
+    'achievementView.usageStatistics': 'Nutzungsstatistik',
+    'achievementView.totalUses': 'Gesamtnutzung',
+    'achievementView.scriptsCount': 'Anzahl Skripte',
+    'achievementView.usedInScripts': 'In Skripten verwendet',
+    'achievementView.selectAchievement': 'Wählen Sie eine Errungenschaft zur Detailansicht',
     
     // SemaforoView
     'semaforoView.semaphore': 'Semaphor',
@@ -1029,6 +1125,15 @@ export const translations: Translations = {
     // ImageView
     'imageView.modified': 'Geändert',
     'imageView.depth': 'Tiefe',
+    'imageView.size': 'Größe',
+    'imageView.selectImage': 'Wählen Sie ein Bild für die Vorschau',
+    'imageView.imageDetails': 'Bilddetails',
+    'imageView.searchPlaceholder': 'Bilder suchen...',
+    'imageView.clickToDownload': 'Zum Herunterladen klicken',
+    'imageView.loadingImages': 'Bilder werden geladen...',
+    'imageView.loading': 'Laden...',
+    'imageView.allCategories': 'Alle Kategorien',
+    'imageView.imagesFound': 'Bilder gefunden',
     
     // DetailView
     'detailView.selectElement': 'Element auswählen, um Details anzuzeigen',
@@ -1232,6 +1337,18 @@ export const translations: Translations = {
     'achievementView.objectives': 'objetivos',
     'achievementView.hidden': 'Oculto',
     'achievementView.repeatable': 'Repetible',
+    'achievementView.points': 'puntos',
+    'achievementView.uses': 'usos',
+    'achievementView.before': 'Antes',
+    'achievementView.after': 'Después',
+    'achievementView.preDescription': 'Descripción previa',
+    'achievementView.postDescription': 'Descripción posterior',
+    'achievementView.noDescription': 'Sin descripción disponible',
+    'achievementView.usageStatistics': 'Estadísticas de uso',
+    'achievementView.totalUses': 'Usos totales',
+    'achievementView.scriptsCount': 'Cantidad de scripts',
+    'achievementView.usedInScripts': 'Usado en scripts',
+    'achievementView.selectAchievement': 'Selecciona un logro para ver detalles',
     
     // SemaforoView
     'semaforoView.semaphore': 'Semáforo',
@@ -1241,6 +1358,15 @@ export const translations: Translations = {
     // ImageView
     'imageView.modified': 'Modificado',
     'imageView.depth': 'Profundidad',
+    'imageView.size': 'Tamaño',
+    'imageView.selectImage': 'Selecciona una imagen para vista previa',
+    'imageView.imageDetails': 'Detalles de imagen',
+    'imageView.searchPlaceholder': 'Buscar imágenes...',
+    'imageView.clickToDownload': 'Clic para descargar',
+    'imageView.loadingImages': 'Cargando imágenes...',
+    'imageView.loading': 'Cargando...',
+    'imageView.allCategories': 'Todas las categorías',
+    'imageView.imagesFound': 'imágenes encontradas',
     
     // DetailView
     'detailView.selectElement': 'Selecciona un elemento para ver los detalles',
@@ -1444,6 +1570,18 @@ export const translations: Translations = {
     'achievementView.objectives': 'objectifs',
     'achievementView.hidden': 'Caché',
     'achievementView.repeatable': 'Répétable',
+    'achievementView.points': 'points',
+    'achievementView.uses': 'utilisations',
+    'achievementView.before': 'Avant',
+    'achievementView.after': 'Après',
+    'achievementView.preDescription': 'Description précédente',
+    'achievementView.postDescription': 'Description suivante',
+    'achievementView.noDescription': 'Aucune description disponible',
+    'achievementView.usageStatistics': 'Statistiques d\'utilisation',
+    'achievementView.totalUses': 'Utilisations totales',
+    'achievementView.scriptsCount': 'Nombre de scripts',
+    'achievementView.usedInScripts': 'Utilisé dans les scripts',
+    'achievementView.selectAchievement': 'Sélectionnez un succès pour voir les détails',
     
     // SemaforoView
     'semaforoView.semaphore': 'Sémaphore',
@@ -1453,6 +1591,15 @@ export const translations: Translations = {
     // ImageView
     'imageView.modified': 'Modifié',
     'imageView.depth': 'Profondeur',
+    'imageView.size': 'Taille',
+    'imageView.selectImage': 'Sélectionnez une image pour l\'aperçu',
+    'imageView.imageDetails': 'Détails de l\'image',
+    'imageView.searchPlaceholder': 'Rechercher des images...',
+    'imageView.clickToDownload': 'Cliquez pour télécharger',
+    'imageView.loadingImages': 'Chargement des images...',
+    'imageView.loading': 'Chargement...',
+    'imageView.allCategories': 'Toutes les catégories',
+    'imageView.imagesFound': 'images trouvées',
     
     // DetailView
     'detailView.selectElement': 'Sélectionnez un élément pour voir les détails',
@@ -1656,6 +1803,18 @@ export const translations: Translations = {
     'achievementView.objectives': 'cele',
     'achievementView.hidden': 'Ukryte',
     'achievementView.repeatable': 'Powtarzalne',
+    'achievementView.points': 'punktów',
+    'achievementView.uses': 'użyć',
+    'achievementView.before': 'Przed',
+    'achievementView.after': 'Po',
+    'achievementView.preDescription': 'Poprzedni opis',
+    'achievementView.postDescription': 'Następny opis',
+    'achievementView.noDescription': 'Brak dostępnego opisu',
+    'achievementView.usageStatistics': 'Statystyki użycia',
+    'achievementView.totalUses': 'Całkowite użycie',
+    'achievementView.scriptsCount': 'Liczba skryptów',
+    'achievementView.usedInScripts': 'Używane w skryptach',
+    'achievementView.selectAchievement': 'Wybierz osiągnięcie, aby zobaczyć szczegóły',
     
     // SemaforoView
     'semaforoView.semaphore': 'Semafor',
@@ -1665,6 +1824,15 @@ export const translations: Translations = {
     // ImageView
     'imageView.modified': 'Zmodyfikowany',
     'imageView.depth': 'Głębokość',
+    'imageView.size': 'Rozmiar',
+    'imageView.selectImage': 'Wybierz obraz do podglądu',
+    'imageView.imageDetails': 'Szczegóły obrazu',
+    'imageView.searchPlaceholder': 'Szukaj obrazów...',
+    'imageView.clickToDownload': 'Kliknij aby pobrać',
+    'imageView.loadingImages': 'Ładowanie obrazów...',
+    'imageView.loading': 'Ładowanie...',
+    'imageView.allCategories': 'Wszystkie kategorie',
+    'imageView.imagesFound': 'znalezione obrazy',
     
     // DetailView
     'detailView.selectElement': 'Wybierz element, aby wyświetlić szczegóły',
@@ -1868,6 +2036,18 @@ export const translations: Translations = {
     'achievementView.objectives': 'цели',
     'achievementView.hidden': 'Скрыто',
     'achievementView.repeatable': 'Повторяемое',
+    'achievementView.points': 'очков',
+    'achievementView.uses': 'использований',
+    'achievementView.before': 'До',
+    'achievementView.after': 'После',
+    'achievementView.preDescription': 'Предыдущее описание',
+    'achievementView.postDescription': 'Последующее описание',
+    'achievementView.noDescription': 'Описание отсутствует',
+    'achievementView.usageStatistics': 'Статистика использования',
+    'achievementView.totalUses': 'Всего использований',
+    'achievementView.scriptsCount': 'Количество скриптов',
+    'achievementView.usedInScripts': 'Используется в скриптах',
+    'achievementView.selectAchievement': 'Выберите достижение для просмотра деталей',
     
     // SemaforoView
     'semaforoView.semaphore': 'Семафор',
@@ -1877,6 +2057,15 @@ export const translations: Translations = {
     // ImageView
     'imageView.modified': 'Изменено',
     'imageView.depth': 'Глубина',
+    'imageView.size': 'Размер',
+    'imageView.selectImage': 'Выберите изображение для предпросмотра',
+    'imageView.imageDetails': 'Детали изображения',
+    'imageView.searchPlaceholder': 'Поиск изображений...',
+    'imageView.clickToDownload': 'Нажмите для загрузки',
+    'imageView.loadingImages': 'Загрузка изображений...',
+    'imageView.loading': 'Загрузка...',
+    'imageView.allCategories': 'Все категории',
+    'imageView.imagesFound': 'изображений найдено',
     
     // DetailView
     'detailView.selectElement': 'Выберите элемент для просмотра деталей',

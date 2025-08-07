@@ -6,6 +6,7 @@ import { CompactListView } from './components/CompactListView/CompactListView';
 import { DetailView } from './components/DetailView/DetailView';
 import { CharactersView } from './components/CharactersView/CharactersView';
 import { ImagesView } from './components/ImagesView/ImagesView';
+import { AchievementsView } from './components/AchievementsView/AchievementsView';
 import { useTranslation } from '@/locales/translations';
 
 interface VariablesSystemProps {
@@ -136,8 +137,8 @@ export const VariablesSystem: React.FC<VariablesSystemProps> = ({ analysis }) =>
         })}
       </div>
 
-      {/* Controls - Hide for Images tab */}
-      {activeTab !== 'images' && (
+      {/* Controls - Hide for Images and Achievements tabs */}
+      {activeTab !== 'images' && activeTab !== 'achievements' && (
         <div className="flex gap-4 mb-2">
           <div className="flex items-center gap-2 flex-1">
             <Search className="w-5 h-5 text-gray-400" />
@@ -164,7 +165,7 @@ export const VariablesSystem: React.FC<VariablesSystemProps> = ({ analysis }) =>
         </div>
       )}
 
-      {/* Content - Layout condizionale per characters e images */}
+      {/* Content - Layout condizionale per characters, images e achievements */}
       {activeTab === 'characters' ? (
         <CharactersView
           characters={currentItems}
@@ -172,6 +173,11 @@ export const VariablesSystem: React.FC<VariablesSystemProps> = ({ analysis }) =>
         />
       ) : activeTab === 'images' ? (
         <ImagesView
+          onNavigateToScript={handleNavigateToScript}
+        />
+      ) : activeTab === 'achievements' ? (
+        <AchievementsView
+          achievements={currentItems}
           onNavigateToScript={handleNavigateToScript}
         />
       ) : (
