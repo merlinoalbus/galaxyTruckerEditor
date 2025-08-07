@@ -1,13 +1,23 @@
 import React from 'react';
 import { Hash, ToggleLeft, Tag, Users, Image, Trophy, FileText, Activity } from 'lucide-react';
-import { ElementType } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
+import { 
+  ElementType,
+  Variable,
+  Semaforo,
+  Label,
+  Character,
+  GameImage,
+  Achievement
+} from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
 import { useTranslation } from '@/locales/translations';
+
+type ElementItem = Variable | Semaforo | Label | Character | GameImage | Achievement;
 
 interface CompactListViewProps {
   type: ElementType;
-  items: any[];
-  selectedItem: any | null;
-  onSelectItem: (item: any) => void;
+  items: ElementItem[];
+  selectedItem: ElementItem | null;
+  onSelectItem: (item: ElementItem) => void;
 }
 
 export const CompactListView: React.FC<CompactListViewProps> = ({ 
@@ -37,36 +47,39 @@ export const CompactListView: React.FC<CompactListViewProps> = ({
     }
   };
 
-  const getItemName = (item: any) => {
+  const getItemName = (item: ElementItem) => {
     switch (type) {
       case 'variables':
-        return item.nomevariabile || item.name;
+        return (item as Variable).nomevariabile;
       case 'semafori':
-        return item.nomesemaforo || item.name;
+        return (item as Semaforo).nomesemaforo;
       case 'labels':
-        return item.nomelabel || item.label;
+        return (item as Label).nomelabel;
       case 'characters':
-        return item.nomepersonaggio || item.character;
+        return (item as Character).nomepersonaggio;
       case 'images':
-        return item.nomefile || item.image;
+        return (item as GameImage).nomefile;
       case 'achievements':
-        return item.achievement;
+        return (item as Achievement).name;
       default:
         return '';
     }
   };
 
-  const getItemUsage = (item: any) => {
+  const getItemUsage = (item: ElementItem) => {
     switch (type) {
       case 'variables':
+        return (item as Variable).utilizzi_totali || 0;
       case 'semafori':
-        return item.utilizzi_totali || 0;
+        return (item as Semaforo).utilizzi_totali || 0;
       case 'labels':
-        return item.utilizzi || 0;
+        return (item as Label).utilizzi_totali || 0;
       case 'characters':
+        return (item as Character).utilizzi_totali || 0;
       case 'images':
+        return 0; // GameImage non ha campo utilizzi
       case 'achievements':
-        return item.scripts?.length || 0;
+        return (item as Achievement).utilizzi_totali || 0;
       default:
         return 0;
     }
@@ -119,16 +132,31 @@ export const CompactListView: React.FC<CompactListViewProps> = ({
                   <span className="text-xs text-gray-500">{usage}</span>
                 </div>
               )}
-              {((item.listascriptchelausano && item.listascriptchelausano.length > 0) || 
-                (item.listascriptchelousano && item.listascriptchelousano.length > 0) ||
-                (item.scripts && item.scripts.length > 0)) && (
-                <div className="flex items-center gap-1">
-                  <FileText className="w-3 h-3 text-gray-500" />
-                  <span className="text-xs text-gray-500">
-                    {item.listascriptchelausano?.length || item.listascriptchelousano?.length || item.scripts?.length || 0}
-                  </span>
-                </div>
-              )}
+              {(() => {
+                const hasScripts = 
+                  (type === 'variables' && (item as Variable).listascriptchelausano?.length) ||
+                  (type === 'semafori' && (item as Semaforo).listascriptchelousano?.length) ||
+                  (type === 'labels' && (item as Label).riferimenti?.length) ||
+                  (type === 'characters' && (item as Character).script_che_lo_usano?.length) ||
+                  (type === 'achievements' && (item as Achievement).script_che_lo_utilizzano?.length);
+                
+                if (!hasScripts) return null;
+                
+                const scriptCount = 
+                  (type === 'variables' ? (item as Variable).listascriptchelausano?.length :
+                   type === 'semafori' ? (item as Semaforo).listascriptchelousano?.length :
+                   type === 'labels' ? (item as Label).riferimenti?.length :
+                   type === 'characters' ? (item as Character).script_che_lo_usano?.length :
+                   type === 'achievements' ? (item as Achievement).script_che_lo_utilizzano?.length :
+                   0) || 0;
+                
+                return (
+                  <div className="flex items-center gap-1">
+                    <FileText className="w-3 h-3 text-gray-500" />
+                    <span className="text-xs text-gray-500">{scriptCount}</span>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         );

@@ -1,110 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Trophy, Star, EyeOff, Hash, Image as ImageIcon } from 'lucide-react';
-import { Achievement } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
-import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/locales/translations';
-
-interface AchievementsViewProps {
-  achievements: Achievement[];
-  onNavigateToScript?: (scriptName: string, achievementName: string) => void;
-}
+import { useAchievementsView } from '@/hooks/CampaignEditor/VariablesSystem/hooks/AchievementsView/useAchievementsView';
+import { AchievementsViewProps } from '@/types/CampaignEditor/VariablesSystem/types/AchievementsView/AchievementsView.types';
 
 export const AchievementsView: React.FC<AchievementsViewProps> = ({ 
   achievements, 
   onNavigateToScript 
 }) => {
-  const [selectedAchievement, setSelectedAchievement] = useState<Achievement | null>(null);
-  const [imageCache, setImageCache] = useState<Record<string, string>>({});
-  const { currentLanguage } = useLanguage();
   const { t } = useTranslation();
-  
-  // Funzione helper per ottenere il valore localizzato
-  const getLocalizedValue = (achievement: Achievement, field: 'name' | 'preDesc' | 'postDesc') => {
-    if (field === 'name') {
-      return achievement.localizedNames?.[currentLanguage] || 
-             achievement.localizedNames?.EN || 
-             achievement.name;
-    }
-    if (field === 'preDesc') {
-      return achievement.localizedPreDescriptions?.[currentLanguage] || 
-             achievement.localizedPreDescriptions?.EN || 
-             achievement.preDesc;
-    }
-    if (field === 'postDesc') {
-      return achievement.localizedPostDescriptions?.[currentLanguage] || 
-             achievement.localizedPostDescriptions?.EN || 
-             achievement.postDesc;
-    }
-    return '';
-  };
-
-  // Carica immagini per achievements visibili
-  useEffect(() => {
-    const loadImages = async () => {
-      const imagePaths: string[] = [];
-      
-      achievements.forEach(ach => {
-        if (ach.preImage?.path && ach.preImage.exists) {
-          imagePaths.push(ach.preImage.path);
-        }
-        if (ach.postImage?.path && ach.postImage.exists) {
-          imagePaths.push(ach.postImage.path);
-        }
-      });
-
-      if (imagePaths.length === 0) return;
-
-      try {
-        const response = await fetch('http://localhost:3001/api/images/binary', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ percorsi: imagePaths })
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          const newCache: Record<string, string> = {};
-          
-          if (result.success && result.data) {
-            result.data.forEach((item: any) => {
-              if (item.binary && item.successo) {
-                newCache[item.percorso] = `data:image/png;base64,${item.binary}`;
-              }
-            });
-          }
-          
-          setImageCache(prev => ({ ...prev, ...newCache }));
-        }
-      } catch (error) {
-        console.error('Error loading achievement images:', error);
-      }
-    };
-
-    if (achievements.length > 0) {
-      loadImages();
-    }
-  }, [achievements]);
-
-  // Raggruppa per categoria
-  const groupedAchievements = achievements.reduce((acc, ach) => {
-    const category = ach.category || 'general';
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(ach);
-    return acc;
-  }, {} as Record<string, Achievement[]>);
-
-  const getCategoryColor = (category: string) => {
-    const colors: Record<string, string> = {
-      'general': 'border-gray-600',
-      'campaign': 'border-blue-600',
-      'special': 'border-purple-600',
-      'hidden': 'border-red-600',
-      'multiplayer': 'border-green-600'
-    };
-    return colors[category.toLowerCase()] || 'border-gray-600';
-  };
+  const {
+    selectedAchievement,
+    setSelectedAchievement,
+    imageCache,
+    groupedAchievements,
+    getCategoryColor,
+    getLocalizedValue
+  } = useAchievementsView(achievements);
 
   return (
     <div className="flex gap-4" style={{ maxHeight: '420px' }}>
