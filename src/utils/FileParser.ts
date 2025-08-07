@@ -13,7 +13,7 @@ export class FileParser {
         missionID: data.missionID || 0,
         description: data.description,
         gameType: data.gameType,
-        flightsAvailableToChange: data.fligthsAvailabelToChange || data.flightsAvailableToChange || ['STI', 'STII', 'STIII'],
+        flightsAvailableToChange: data.flightsAvailableToChange || ['STI', 'STII', 'STIII'],
         flightsPicked: data.flightsPicked || ['STI'],
         playersCount: Array.isArray(data.playersCount) && data.playersCount.length >= 2 ? [data.playersCount[0], data.playersCount[1]] : [2, 4],
         shipPlans: data.shipPlans || ['I', 'II', 'III'],
@@ -61,7 +61,7 @@ export class FileParser {
     }
 
     // Flights
-    yamlString += `fligthsAvailabelToChange: [${mission.flightsAvailableToChange.join(', ')}]    # Which flights can be turned on/off in a lobby by player\n`;
+    yamlString += `flightsAvailableToChange: [${mission.flightsAvailableToChange.join(', ')}]    # Which flights can be turned on/off in a lobby by player\n`;
     yamlString += `flightsPicked: [${mission.flightsPicked.join(', ')}]\n\n`;
     
     // Players count
