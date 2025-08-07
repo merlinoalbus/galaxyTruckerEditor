@@ -1,78 +1,89 @@
-import { useMemo } from 'react';
+// Overview Hook - Business logic principale
+
+import { useMemo, useState, useCallback } from 'react';
 import type { CampaignAnalysis } from '@/types/CampaignEditor';
-
-const getScriptsPerLanguage = (analysis: CampaignAnalysis) => {
-  const languages = new Map<string, number>();
-  analysis.scripts?.forEach(script => {
-    const lang = script.language || 'Unknown';
-    const count = languages.get(lang) || 0;
-    languages.set(lang, count + 1);
-  });
-  return Array.from(languages.entries())
-    .map(([language, count]) => ({
-      language,
-      count,
-      percentage: Math.round((count / (analysis.scripts?.length || 1)) * 100)
-    }))
-    .sort((a, b) => b.count - a.count);
-};
-
-const getComplexityMetrics = (analysis: CampaignAnalysis) => {
-  if (!analysis.scripts) return { average: 0, max: 0, total: 0, mostComplex: null };
-  
-  const scriptComplexity = analysis.scripts.map(script => ({
-    name: script.name,
-    commands: script.commands?.length || 0
-  }));
-  
-  const commandCounts = scriptComplexity.map(s => s.commands);
-  const total = commandCounts.reduce((sum, count) => sum + count, 0);
-  const max = Math.max(...commandCounts, 0);
-  const average = commandCounts.length > 0 ? Math.round(total / commandCounts.length) : 0;
-  const mostComplex = scriptComplexity.find(s => s.commands === max);
-
-  return { average, max, total, mostComplex: mostComplex?.name || null };
-};
-
-const getContentMetrics = (analysis: CampaignAnalysis) => {
-  const totalScripts = analysis.scripts?.length || 0;
-  const totalMissions = analysis.missions?.size || 0;
-  const totalCharacters = analysis.characters?.size || 0;
-  const totalVariables = analysis.realVariables?.size || 0;
-  const totalSemaphores = analysis.semafori?.size || 0;
-  const totalLabels = analysis.labels?.size || 0;
-  
-  // Script stellati (starred scripts)
-  const starredScripts = analysis.scripts?.filter(script => 
-    script.name.includes('star') || script.name.includes('Star')
-  ).length || 0;
-  
-  return {
-    totalScripts,
-    totalMissions,
-    totalCharacters,
-    totalVariables,
-    totalSemaphores,
-    totalLabels,
-    starredScripts,
-    scriptConnections: analysis.scriptConnections?.size || 0
-  };
-};
+import type { OverviewStatistics } from '@/types/CampaignEditor/Overview/Overview.types';
+import { overviewService } from '@/services/CampaignEditor/Overview/overviewService';
 
 export const useOverview = (analysis: CampaignAnalysis | null) => {
-  const statistics = useMemo(() => {
+  const [activeTab, setActiveTab] = useState<string>('coverage');
+  const [selectedMetric, setSelectedMetric] = useState<string | null>(null);
+  
+  const statistics = useMemo<OverviewStatistics | null>(() => {
     if (!analysis) return null;
-
-    return {
-      ...getContentMetrics(analysis),
-      scriptsPerLanguage: getScriptsPerLanguage(analysis),
-      complexityMetrics: getComplexityMetrics(analysis)
-    };
+    
+    try {
+      return overviewService.generateStatistics(analysis);
+    } catch (error) {
+      console.error('Error generating overview statistics:', error);
+      return null;
+    }
   }, [analysis]);
-
+  
+  const isLoading = !analysis;
+  const hasData = !!statistics;
+  
+  const exportData = useCallback(() => {
+    if (!statistics) return;
+    
+    const blob = new Blob(
+      [JSON.stringify(statistics, null, 2)],
+      { type: 'application/json' }
+    );
+    
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'campaign-overview.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [statistics]);
+  
+  const getMetricValue = useCallback((metric: string) => {
+    if (!statistics) return null;
+    
+    switch (metric) {
+      case 'coverage':
+        return statistics.overallCoverage;
+      case 'quality':
+        return statistics.qualityScore;
+      case 'modularity':
+        return statistics.maintenanceMetrics.modularityIndex;
+      case 'coupling':
+        return statistics.maintenanceMetrics.couplingScore;
+      case 'cohesion':
+        return statistics.maintenanceMetrics.cohesionScore;
+      case 'debt':
+        return statistics.maintenanceMetrics.technicalDebtScore;
+      default:
+        return null;
+    }
+  }, [statistics]);
+  
+  const getMetricColor = useCallback((value: number, type: string) => {
+    if (type === 'debt') {
+      // Per il debito tecnico, valori bassi sono buoni
+      if (value < 30) return 'text-green-600';
+      if (value < 60) return 'text-yellow-600';
+      return 'text-red-600';
+    }
+    
+    // Per altre metriche, valori alti sono buoni
+    if (value > 70) return 'text-green-600';
+    if (value > 40) return 'text-yellow-600';
+    return 'text-red-600';
+  }, []);
+  
   return {
     statistics,
-    isLoading: !analysis,
-    hasData: !!analysis && analysis.scripts && analysis.scripts.length > 0
+    isLoading,
+    hasData,
+    activeTab,
+    setActiveTab,
+    selectedMetric,
+    setSelectedMetric,
+    exportData,
+    getMetricValue,
+    getMetricColor
   };
 };
