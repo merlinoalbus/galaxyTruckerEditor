@@ -55,10 +55,14 @@ export const campaignScriptParserService: CampaignScriptParserService = {
       // Process scripts from backend - API returns data array directly
       const scriptsArray = parsedData.data || [];
       scriptsArray.forEach((scriptData: any) => {
+        const scriptName = scriptData.nomescript || scriptData.name || '';
+        const fileName = scriptData.nomefile || scriptData.fileName || '';
+        
         const script: ParsedScript = {
-          name: scriptData.nomescript || scriptData.name,
-          fileName: scriptData.nomefile || scriptData.fileName,
-          language: 'EN', // Primary language
+          name: scriptName,
+          fileName: fileName,
+          language: 'EN', // Mantengo EN come default per compatibilità
+          languages: scriptData.languages || [], // Array delle lingue supportate
           commands: scriptData.commands || [],
           variables: scriptData.variabili_utilizzate || scriptData.variables || [],
           characters: scriptData.personaggi_utilizzati || scriptData.characters || [],
@@ -67,7 +71,14 @@ export const campaignScriptParserService: CampaignScriptParserService = {
           nodes: scriptData.nodi_referenziati || scriptData.nodes || [],
           references: scriptData.script_richiamati || [],
           subScripts: scriptData.script_richiamati || [],
-          relatedScripts: scriptData.richiamato_da_script || []
+          relatedScripts: scriptData.richiamato_da_script || [],
+          // Aggiungo i dati numerici del backend per l'analisi complessità
+          backendData: {
+            numero_comandi: scriptData.numero_comandi || 0,
+            numero_blocchi: scriptData.numero_blocchi || 0,
+            utilizzi_totali: scriptData.utilizzi_totali || 0,
+            stellato: scriptData.stellato || false
+          }
         };
         
         scripts.push(script);

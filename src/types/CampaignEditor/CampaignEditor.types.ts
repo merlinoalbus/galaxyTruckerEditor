@@ -43,6 +43,7 @@ export interface ParsedScript {
   name: string;
   fileName: string;
   language: string;
+  languages: string[]; // Array delle lingue supportate dallo script
   commands: ScriptCommand[];
   labels: string[];
   references: string[];
@@ -52,6 +53,12 @@ export interface ParsedScript {
   characters: string[];
   nodes: string[];
   relatedScripts: string[];
+  backendData?: {
+    numero_comandi: number;
+    numero_blocchi: number;
+    utilizzi_totali: number;
+    stellato: boolean;
+  };
 }
 
 export interface ScriptBlock {

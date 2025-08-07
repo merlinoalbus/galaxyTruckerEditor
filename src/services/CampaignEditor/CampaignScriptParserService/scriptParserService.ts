@@ -21,6 +21,7 @@ export const scriptParserService = {
             name: currentScript.name || '',
             fileName,
             language: lang,
+            languages: [], // Campo richiesto
             commands: currentCommands,
             variables: currentScript.variables || [],
             characters: currentScript.characters || [],
@@ -50,6 +51,7 @@ export const scriptParserService = {
             name: currentScript.name || '',
             fileName,
             language: lang,
+            languages: [], // Campo richiesto
             commands: currentCommands,
             variables: currentScript.variables || [],
             characters: currentScript.characters || [],
