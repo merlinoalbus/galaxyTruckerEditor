@@ -1,0 +1,224 @@
+- name: basic1
+  shipBuildRules: [basic]
+  color: [230, 40, 40, 255]
+  slots: &CABIN_SLOTS
+    - type: human
+      attachto: slot
+      position: [0.38, 0.5]
+      size: [0.3, 0.35]
+    - type: human
+      attachto: slot
+      position: [0.62, 0.5]
+      size: [0.3, 0.35]
+    - type: alien
+      attachto: slot
+      position: [0.5, 0.5]
+      size: [0.45, 0.45]
+- name: basic2
+  shipBuildRules: [basic]
+  color: [0, 150, 200, 255]
+  slots: *CABIN_SLOTS
+- name: basic3
+  shipBuildRules: [basic]
+  color: [80, 180, 50, 255]
+  slots: *CABIN_SLOTS
+- name: basic4
+  shipBuildRules: [basic]
+  color: [250, 240, 40, 255]
+  slots: *CABIN_SLOTS
+- name: engine
+  shipBuildRules: [std, connector, engine]
+  color: [160, 100, 40, 255]
+  active: engine_active.png
+- name: gun
+  shipBuildRules: [std, connector, gunfront]
+  color: [200, 50, 150, 255]
+- name: engineDouble
+  shipBuildRules: [std, connector, engine]
+  color: [160, 100, 40, 255]
+  active: engineDouble_active.png
+- name: gunDouble
+  shipBuildRules: [std, connector, gunfront]
+  color: [200, 50, 150, 255]
+  active: gunDouble_active.png
+- name: nothing
+  connectorsOver: 1
+  color: [160, 160, 160, 255]
+- name: basic5
+  shipBuildRules: [basic]
+  color: [250, 150, 30, 255]
+  slots: *CABIN_SLOTS
+- name: gunBidirect
+  shipBuildRules: [std, connector, gunfront, gunright]
+  color: [200, 50, 150, 255]
+  active: gunBidirect_active.png
+- name: gun+engine
+  shipBuildRules: [std, connector, gunfront, engine]
+  color: [200, 50, 150, 255]
+  active: gun+engine_active.png
+- name: alienEngine
+  color: [160, 100, 40, 255]
+- name: alienGun
+  color: [200, 50, 150, 255]
+- name: alienSpec
+  color: [100, 200, 255, 255]
+- name: alienSpecGun
+  color: [100, 200, 255, 255]
+- name: alienSpecEngine
+  color: [100, 200, 255, 255]
+- name: battery2
+  flightImg: battery2_empty.png
+  color: [90, 180, 50, 255]
+  slots:
+    - type: battery
+      position: [0.41015625, 0.5]
+      size: [0.171875, 0.5078125]
+    - type: battery
+      position: [0.578125, 0.5]
+      size: [0.171875, 0.5078125]
+- name: battery3
+  flightImg: battery3_empty.png
+  color: [90, 180, 50, 255]
+  slots:
+    - type: battery
+      position: [0.34375, 0.5]
+      size: [0.171875, 0.5078125]
+    - type: battery
+      position: [0.5, 0.5]
+      size: [0.171875, 0.5078125]
+    - type: battery
+      position: [0.65625, 0.5]
+      size: [0.171875, 0.5078125]
+- name: boosterEngine
+  color: [160, 100, 40, 255]
+- name: boosterGun
+  color: [200, 50, 150, 255]
+- name: boosterShield
+  color: [220, 220, 0, 255]
+- name: shield
+  color: [220, 220, 0, 255]
+  active: shield_active.png
+- name: cabin
+  color: [255, 255, 255, 255]
+  slots: *CABIN_SLOTS
+- name: cabinVIP
+  color: [255, 255, 255, 255]
+  slots:
+    - type: human
+      attachto: slot
+      position: [0.5, 0.5]
+      size: [0.3, 0.35]
+- name: cargo2
+  color: [200, 240, 240, 255]
+  slots:
+    - type: cargo
+      position: [0.5, 0.31]
+      size: [0.35, 0.35]
+    - type: cargo
+      position: [0.5, 0.69]
+      size: [0.35, 0.35]
+- name: cargo2+battery2
+  flightImg: cargo2+battery2_empty.png
+  color: [200, 240, 240, 255]
+  slots:
+    - type: cargo
+      position: [0.5, 0.31]
+      size: [0.35, 0.35]
+    - type: cargo
+      position: [0.5, 0.69]
+      size: [0.35, 0.35]
+    - type: battery
+      position: [0.25, 0.5]
+      size: [0.171875, 0.5078125]
+    - type: battery
+      position: [0.75, 0.5]
+      size: [0.171875, 0.5078125]
+- name: cargo3
+  color: [200, 240, 240, 255]
+  slots:
+    - type: cargo
+      position: [0.31, 0.5]
+      size: [0.35, 0.35]
+    - type: cargo
+      position: [0.69, 0.31]
+      size: [0.35, 0.35]
+    - type: cargo
+      position: [0.69, 0.69]
+      size: [0.35, 0.35]
+- name: cargoSpec1
+  color: [240, 200, 230, 255]
+  slots:
+    - type: cargospec
+      position: [0.5, 0.5]
+      size: [0.35, 0.35]
+- name: cargoSpec1+battery2
+  flightImg: cargoSpec1+battery2_empty.png
+  color: [240, 200, 230, 255]
+  slots:
+    - type: cargospec
+      position: [0.5, 0.5]
+      size: [0.35, 0.35]
+    - type: battery
+      position: [0.25, 0.5]
+      size: [0.171875, 0.5078125]
+    - type: battery
+      position: [0.75, 0.5]
+      size: [0.171875, 0.5078125]
+- name: cargoSpec1+cargo2
+  color: [240, 200, 230, 255]
+  slots:
+    - type: cargospec
+      position: [0.69, 0.5]
+      size: [0.35, 0.35]
+    - type: cargo
+      position: [0.31, 0.31]
+      size: [0.35, 0.35]
+    - type: cargo
+      position: [0.31, 0.69]
+      size: [0.35, 0.35]
+- name: cargoSpec2
+  color: [240, 200, 230, 255]
+  slots:
+    - type: cargospec
+      position: [0.5, 0.31]
+      size: [0.35, 0.35]
+    - type: cargospec
+      position: [0.5, 0.69]
+      size: [0.35, 0.35]
+- name: furnace
+  color: [250, 150, 0, 255]
+- name: plating-L
+  color: [60, 90, 100, 255]
+- name: plating-U
+  color: [60, 90, 100, 255]
+- name: stasis
+  color: [255, 255, 255, 255]
+- name: booze
+  color: [0, 224, 255, 255]
+- name: booze-broken
+  color: [0, 112, 127, 255]
+- name: ingot
+  color: [100, 100, 120, 255]
+- name: radioactive
+  shipBuildRules: [std, connector, radioactive]
+  color: [177, 255, 43, 255]
+- name: explosive
+  color: [255, 0, 0, 255]
+- name: solar
+  color: [77, 255, 43, 255]
+  slots:
+    - type: battery
+      position: [0.5, 0.5]
+      size: [0.9, 0.9]
+- name: artifactX
+  shipBuildRules: [std, connector, artifact]
+  color: [14, 14, 14, 255]
+- name: artifactI
+  shipBuildRules: [std, connector, artifact]
+  color: [14, 14, 14, 255]
+- name: catapult
+  color: [156, 29, 114, 255]
+  flightImg: catapult_empty.png
+#active: [catapult_active1.png, catapult_active2.png, catapult_active3.png, catapult_active4.png, catapult_active5.png]
+- name: boardgame
+  color: [237, 229, 8, 255]

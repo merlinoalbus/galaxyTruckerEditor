@@ -1,0 +1,16 @@
+- type: shield
+  connectors: [1, 2, 1, 2]
+- type: shield
+  connectors: [2, 1, 2, 1]
+- type: shield
+  connectors: [3, 0, 0, 1]
+- type: shield
+  connectors: [2, 0, 0, 3]
+- type: shield
+  connectors: [1, 1, 0, 1]
+- type: shield
+  connectors: [2, 0, 2, 2]
+- type: shield
+  connectors: [3, 0, 2, 2]
+- type: shield
+  connectors: [1, 0, 1, 3]

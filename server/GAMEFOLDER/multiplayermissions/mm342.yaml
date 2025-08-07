@@ -1,0 +1,67 @@
+name: "multiplayer_mission342"                    # id of mission name string - localized 
+missionID: 342                                    # serial number of the mission
+
+alienTechnology: true
+
+
+
+# Nuclear Experts
+
+# ships: 
+# rules: Reward of 7 $ for each packet of radioactive isotopes delivered. Penalty of 3 $ for each packet lost along the way. Reward of 1 $ for each crew member safely delivered. 
+# rewards: Penalty 2 $ for each one lost along the way. (Giving up does not cause you to lose your remaining passengers.)
+# cards: Epidemics, Sabotage, Slavers, and Combat Zones are more likely. No Abandoned Ships.
+
+
+
+
+
+    #gameType:                                  # Values: realtime/turnbased; If mentioned this value can not be changed in a lobby by player.
+
+fligthsAvailabelToChange: [STI, STII, STIII]    # Which flights can be turned on/off in a lobby by player. Other flights are locked.
+flightsPicked: [STI]
+
+playersCount: [2, 4]                            # [min, max]. Default is [2, 4]. Min can not be less then 2.
+
+# ==== SHIPS ====                               # Names of all available ship plans. If not mentioned default plans will be used. Should by only one ship plan for one flight.
+#shipPlans: [I-random, II-random, III-random]
+
+
+# ==== TILES ===                                # Config file with list of all parts. Use 'pileConfig' or 'pileListConfig'.
+pileConfigSTI:   at__mm_radioactive.yaml
+pileConfigSTII:  at__mm_radioactive.yaml
+pileConfigSTIII: at__mm_radioactive.yaml
+
+
+# ==== CARDS ===
+atDeckScript:        at__mm_Nuclear_Experts_Mission_Deck
+atRoughDeckScript:   at__mm_Nuclear_Experts_Mission_Deck                 # Used as digital and rough. (user can choose from 2 decks by default: digital and rough)
+
+    #customDeckScript: at__mm_Billiard_Race_Deck                         # Special custom deck, that doesn't fit to any deck category. If custom, digital and rough are set, user can choose from 3 decks.
+
+
+
+
+# ==== RULES ====                               # You can mention only those values you want edit. But you have to repeat (copy&paste) the rules for each flight.
+evaluation:                     
+  STI:    
+    radioactiveCargoValues: [[0,0], [1,7], [2,14], [3,21], [4,28], [5,35], [6,42], [7,49], [8,56], [9,63], [10,70], [11,77], [12,84], [13,91], [14,98], [15,105], [16,112]]
+    deliveredCrewMember: 1
+    lostCrewMember: -2
+
+  STII:
+    radioactiveCargoValues: [[0,0], [1,7], [2,14], [3,21], [4,28], [5,35], [6,42], [7,49], [8,56], [9,63], [10,70], [11,77], [12,84], [13,91], [14,98], [15,105], [16,112]]
+    deliveredCrewMember: 1
+    lostCrewMember: -2	
+
+  STIII:
+    radioactiveCargoValues: [[0,0], [1,7], [2,14], [3,21], [4,28], [5,35], [6,42], [7,49], [8,56], [9,63], [10,70], [11,77], [12,84], [13,91], [14,98], [15,105], [16,112]]
+    deliveredCrewMember: 1
+    lostCrewMember: -2
+
+
+# ==== Infoboards ====
+InfoBoards:
+  - default: [true, "", [parts/radioactive.png]]
+  - boardname: "tutorial/infoRadioactiveCargo.png"
+

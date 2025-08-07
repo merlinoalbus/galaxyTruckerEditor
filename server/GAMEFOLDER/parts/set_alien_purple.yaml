@@ -1,0 +1,12 @@
+- type: alienGun
+  connectors: [3, 0, 1, 0]
+- type: alienGun
+  connectors: [2, 1, 2, 0]
+- type: alienGun
+  connectors: [3, 2, 0, 0]
+- type: alienGun
+  connectors: [3, 0, 0, 2]
+- type: alienGun
+  connectors: [3, 0, 0, 0]
+- type: alienGun
+  connectors: [2, 2, 2, 0]

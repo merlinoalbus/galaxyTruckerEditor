@@ -1,0 +1,868 @@
+SCRIPTS
+
+SCRIPT tutorialPurple
+
+  ShowDlgScene
+  ShowHelpImage 40 50 70 campaign/tutorial-purple.png
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT ms_purpleAlien
+
+  ACT_MISSION purpleAlienEscort
+  IF_MISSION_WON
+    SET purpleEscortFinished
+    SET purpleUnlocked
+    SetFocus bambassador
+    HidePath U1-5purple
+    ShowDlgScene
+    ShowChar purpleDipl left
+    Ask "Fz'z'w kh gwrzzt. Kwfff-ght! K'hrg gzt-gzt k?"
+    MENU
+      OPT "Samozřejmě."
+        Say "K'hrg!"
+        GO whatever
+      END_OF_OPT
+      OPT "Nikoliv."
+        Say "Gzt-gzt, k'hrg."
+        GO whatever
+      END_OF_OPT
+      OPT "Na tom nesejde."
+        Say "Dhw'g'k kkw..."
+        GO whatever
+      END_OF_OPT
+    END_OF_MENU
+  ELSE
+    ShowDlgScene
+    ShowChar ambassador right
+    Say "Nevím, co se stalo, ale pan Mr. K'wwfrg se vrátil. Naštvaný a hladový. A s pohmožděným chapadlem."
+    Say "Příště se prosím pokuste zajistit, aby se dostal v pořádku na Th'kzw-r. Nechceme přece diplomatickou krizi, že?"
+    HideDlgScene
+    RETURN
+  END_OF_IF
+
+  LABEL whatever
+  Delay 500
+  HideChar purpleDipl
+  SET finished
+  Announce "Fialoví mimozemšťané odemčeni!"
+  Delay 500
+  SetAchievementProgress camp_aliens 1
+  Delay 500
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT ms_first_mission
+
+  IFNOT firstMissionTaken
+    SET firstMissionTaken
+    ShowDlgScene
+    ShowChar tutor right
+    Say "Tak hodně štěstí!"
+    HideChar tutor
+    HideDlgScene
+  END_OF_IF
+  ACT_MISSION firstMission
+END_OF_SCRIPT
+
+SCRIPT ms_rough_mission
+
+  SET firstMissionTaken
+  ShowDlgScene
+  ShowChar roughtrucker right
+  IF wasChanceForBet
+    Say "Vítej zpět, [g(kámo|holka)]."
+    IF wasBet
+      Ask "Chceš se zase vsadit? Tři vesmírný babky pro toho, kdo doletí první?"
+      GO bet_question
+    ELSE
+      Ask "Tak co, nezměnil[g(|a)] jsi názor? Tři vesmírný babky pro toho, kdo doletí první?"
+      GO bet_question
+    END_OF_IF
+  END_OF_IF
+  Ask "Nazdar, [g(kámo|ženská)]. Chceš se ke mě připojit na týhle bohama zatracený štrece?"
+  MENU
+    OPT_IFNOT roughintroduced "Nazdar. Co tu děláš?"
+      SET roughintroduced
+      Say "Jezdím tuhle štreku. Když jsem začínal, můj instruktor mi řekl, že na to nemám."
+      Say "A vidíš? Jsem tady a kličkuju mezi těma pitomejma meteorama znovu a znovu, už 10 let."
+      Ask "Tak kdo měl pravdu, co?"
+    END_OF_OPT
+    OPT "Dobrá, letíme."
+      GO r2a_mission
+    END_OF_OPT
+    OPT "Asi se radši podívám po jednodušší misi."
+      HideChar roughtrucker
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL r2a_mission
+  Say "Výborně, [g(kámo|holka)]. Víš, tyhle meteory začnou jednoho nudit, po pár letech."
+  Ask "Když už mluvíme o nudě, co takhle sázka? Kdo doletí první, dostane od toho druhýho 3 kosmický babky."
+  SET wasChanceForBet
+
+  LABEL bet_question
+  RESET triedRaise
+  MENU
+    OPT "Dobrá, proč ne."
+      Say "Bezva. Tak jdem na to."
+      SET wasBet
+      GO after_bet
+    END_OF_OPT
+    OPT_IFNOT triedRaise "Proč tak málo? Zvedněme to na 30!"
+      SET triedRaise
+      Say "Hele, tušíš ty vůbec, jak dlouho trvá vydělat 30 babek?"
+      Ask "Zůstaňme na třech, [g(kámo|holka)]."
+    END_OF_OPT
+    OPT_IFNOT triedRaise "Nikdy se nesázím."
+      RESET wasBet
+      Say "Tak to je škoda, no. Neva. Jdeme na to."
+      GO after_bet
+    END_OF_OPT
+    OPT_IF triedRaise "Pche, tak v tom případě na to zapomeň."
+      RESET wasBet
+      RESET triedRaise
+      Say "Dobrá, v tom případě teda bez sázky."
+      Say "(Uff... [g(Ten|Ta)] má asi peněz, že neví co s nima...)"
+      GO after_bet
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL after_bet
+  HideChar roughtrucker
+  HideDlgScene
+  ACT_MISSION roughMission
+END_OF_SCRIPT
+
+SCRIPT ms_booze_1
+
+  ACT_MISSION booze1
+  IF_MISSION_WON
+    SET boozeQuestTried
+    HidePath "R1-3a1"
+    ShowPath "R1-3a"
+  END_OF_IF
+END_OF_SCRIPT
+
+SCRIPT ms_booze_2
+
+  ACT_MISSION booze2
+  IF_MISSION_WON
+    SET boozeQuestTried
+    HidePath "R1-3a2"
+    ShowPath "R1-3a"
+  END_OF_IF
+END_OF_SCRIPT
+
+SCRIPT ms_road_closed
+
+  ShowDlgScene
+  Delay 300
+  ShowChar securitybot2 left
+  Say "BEZPECNOSTNI PROTOKOL 3-421."
+  Say "TATO CESTA JE ZAVRENA."
+  Delay 1500
+  Say "BEZ PRYC!"
+  Delay 300
+  HideChar securitybot2
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT ms_meteors_side
+
+  ShowDlgScene
+  Delay 300
+  ShowChar securitybot2 left
+  Say "BEZPECNOSTNI PROTOKOL 3-421."
+  Say "TATO CESTA JE ZAVRENA."
+  MENU
+    OPT "Ach, v tom případě se omlouvám."
+      Delay 300
+      HideChar securitybot2
+      Delay 300
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+    OPT "Já vím. A je mi to fuk."
+      Delay 300
+      Say "*ACHJO*"
+      Say "APLIKUJI PROTOKOL PRO ZVLASTNI PRIPADY 3-421-F."
+      Say "NEMUZETE LETET SAM[g(|A)]. MUSIM VAS DOPROVAZET."
+      Say "PROSIM PODIVEJTE SE NA PREDPOVED LETOVYCH KARET BEHEM STAVENI."
+      Say "KDYZ SE NECHATE ROZMLATIT, BUDU MIT PROBLEM."
+      Delay 300
+      HideChar securitybot2
+      Delay 300
+      HideDlgScene
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  ACT_MISSION meteorsSideWithBot
+END_OF_SCRIPT
+
+SCRIPT ms_rich_girl
+
+  ShowDlgScene
+  Delay 300
+  IFNOT wentToClosed
+    ShowChar securitybot2 left
+    Delay 300
+    Say "BEZPECNOSTNI PROTOKOL 3-421."
+    Delay 300
+    Say "TATO CESTA JE ZAVRENA."
+    Delay 500
+    ShowChar richgirl right
+    Say "To je v pořádku, [g(ten|ta)] je tu se mnou."
+    Delay 300
+    SayChar securitybot2 "*PIP* *PIP* BEZPECNOSTNI PROTOKOL ANULOVAN."
+    Delay 500
+    Say "NA VASE VLASTNI RIZIKO, SLECNO."
+    Say "HLASENY METEORY PRICHAZEJICI ZE STRANY."
+    SayChar richgirl "Já vím, neměj starost."
+    AskChar securitybot2 "STAROSTI JSOU MA POVINNOST, SLECNO."
+    MENU
+      OPT "Neslyšel jsi slečnu? Nemáš si dělat starosti."
+        EXIT_MENU
+      END_OF_OPT
+      OPT "Počkej chvíli. Ty meteory jsou hlášeny zleva, nebo zprava?"
+        SayChar securitybot2 "ZISKAVAM DATA..."
+        Delay 1500
+        Say "..."
+        Delay 1500
+        Say "..."
+        Delay 1500
+        Say "CHYBA 404. ZKONTROLUJTE SVE PRIPOJENI A ZKUSTE POZDEJI."
+        Delay 250
+        SayChar richgirl "Neva. Můžeme se podívat na předpověď letových karet během stavění."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    HideChar securitybot2
+    SayChar richgirl "Tak jdeme na to!"
+    Say "Pokud doletíš a pokud bude tvá loď v lepším stavu než moje, můžeš začít používat můj design lodě."
+    HideButton bvip2
+    HideButton bvip
+    SET wentToClosed
+  ELSE
+    ShowChar richgirl right
+    Say "Ach, tebe znám... Ty jsi [g(ten|ta)]... No... mám to na jazyku..."
+    MENU
+      OPT "[NAME]."
+        Say "Jo, tak nějak to bylo..."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    Say "Ráda tě zase vidím. Posledně to byla zábava."
+    Say "Pojdmě dát další kolo."
+    Delay 300
+    ShowChar securitybot2 left
+    Delay 300
+    Say "BEZPECNOSTNI PROTOKOL 3-421."
+    Say "TATO TRASA JE... AHA, TO JSTE ZASE VY [g(DVA|DVE)]."
+    Say "DOUFAM, ZE VITE, CO DELATE."
+    Delay 300
+    SayChar richgirl "Neboj. Koukneme na letovou předpověď, ze které strany to na nás bude tentokrát lítat."
+    Delay 300
+    HideChar securitybot2
+    Delay 200
+    SayChar richgirl "Vzhůru na cestu!"
+    IFNOT designSport1Unlocked
+      Say "Pokud tentokrát ztratíš míň dílků, design mé lodi je tvůj."
+    ELSE
+      Say "Uvidíme, kdo ztratí méně dílků tentokrát."
+    END_OF_IF
+  END_OF_IF
+  HidePath "R1-4b1"
+  ShowPath "R1-4b2"
+  HideChar richgirl
+  HideDlgScene
+  ACT_MISSION meteorsSide
+END_OF_SCRIPT
+
+SCRIPT ms_rich_girl2
+
+  ShowDlgScene
+  Delay 300
+  ShowChar richgirl right
+  Say "Takže jdeme na to. To je tak vzrušující!"
+  Say "Pojďme rychle, než si někdo všimne, co máme v plánu."
+  HideChar richgirl
+  HideDlgScene
+  ACT_MISSION meteorsSide2
+  ShowButton brichgirl2
+  IF_MISSION_WON
+    ShowPath U2-21b
+    ShowDlgScene
+    ShowChar richgirl right
+    Say "Ach, málem jsem zapomněla. Smažme tu trasu z našich map. Nikdo by to neměl vědět."
+    Delay 500
+    HidePath U2-21a
+    HidePath U2-21b
+    Delay 500
+    IFNOT firstClassJoke
+      Say "Každopádně to bylo prima."
+      Say "Zpátky poletím raketoplánem. Chceš letět se mnou?"
+      Delay 800
+      ChangeChar richgirl campaign/rich-smile.png
+      Delay 700
+      Say "Hehe, jen si dělám srandu. Je to samozřejmě soukromý let první třídou."
+      Delay 200
+      ChangeChar richgirl campaign/rich-smile-blink.png
+      Delay 400
+      ChangeChar richgirl campaign/rich-smile.png
+      Delay 200
+      Say "Tak zase někdy."
+      SET firstClassJoke
+    ELSE
+      Say "Každopádně to bylo prima. Tak zase někdy."
+    END_OF_IF
+    HideChar richgirl
+    HideDlgScene
+  ELSE
+    HidePath U2-21a
+  END_OF_IF
+END_OF_SCRIPT
+
+SCRIPT ms_leavingPurple
+
+  IF merchantAccepted
+    SET merchantLeftAtPurple
+  END_OF_IF
+  ACT_MISSION adv1mediumRand
+END_OF_SCRIPT
+
+SCRIPT ms_merchant
+
+  ShowDlgScene
+  Delay 200
+  ShowChar merchant left
+  Delay 400
+  ChangeChar merchant campaign/merch-laughA1.png
+  Say "Zdravím vás! Jsem vskutku rád, že jste mou nabídku přijal[g(|a)]."
+  ChangeChar merchant campaign/merch.png
+  Say "Takže úkoly jsou jasné. Já se postarám o byznys, a vy se mě snažte udržet v bezpečí."
+  Ask "Musím ale na své lodi dopravit zboží v hodnotě aspoň 10 kreditů. Jinak se nevyplatí ani platit dovozní poplatky."
+  MENU
+    OPT_IFNOT merchEnoughGoods "A když nebudete mít dost zboží?"
+      SET merchEnoughGoods
+      Say "V tom případě se vrátíme."
+    END_OF_OPT
+    OPT_IFNOT merchGiveUp "A když to jeden z nás nezvládne a bude muset odstoupit?"
+      SET merchGiveUp
+      Say "V tom případě se vracíme oba. Jdeme do toho jako tým. Jako hvězdný tým."
+      SUB_SCRIPT merchantLaughA
+    END_OF_OPT
+    OPT "A když to zvládneme?"
+      Say "Pak vyděláme spoustu peněz a budeme bohatí."
+      Say "Ne že já bych už bohatý nebyl. Ale nikdy neškodí mít víc, že?"
+      SUB_SCRIPT merchantLaughB
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Say "Dost zábavy, jdeme dělat byznys."
+  Delay 300
+  HideChar merchant
+  HideDlgScene
+  ACT_MISSION merchantProtection
+END_OF_SCRIPT
+
+SCRIPT ms_merchant2
+
+  ShowDlgScene
+  Delay 200
+  ChangeChar merchant campaign/merch-sitting.png
+  ShowChar merchant left
+  Delay 400
+  ChangeChar merchant campaign/merch-laughA1.png
+  Say "Zdravím vás! Bude mi potěšením letět opět s vámi."
+  ChangeChar merchant campaign/merch-sitting.png
+  Say "Tentokrát ale musím na své lodi doručit zboží v hodnotě aspoň 18 kreditů."
+  ChangeChar merchant campaign/merch-inviting.png
+  Ask "Připraven[g(|a)] vyrazit?"
+  MENU
+    OPT "Um, dejte mi ještě minutku, jo?"
+      Say "Jasně. Kolik potřebujete."
+      Delay 300
+      HideChar merchant
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+    OPT "Jasně, jdeme na to!"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Delay 300
+  HideChar merchant
+  HideDlgScene
+  ACT_MISSION merchantProtection2
+END_OF_SCRIPT
+
+SCRIPT ms_merchant3
+
+  ShowDlgScene
+  Delay 200
+  ChangeChar merchant campaign/merch-sitting.png
+  ShowChar merchant left
+  Delay 400
+  IFNOT merchant3Failed
+    Say "Takže, jdeme na to. Tentokrát nepotřebujeme žádné zboží."
+    Say "Stačí, když zachráníme holé životy. Samozřejmě, vydělat cestou něco navíc by bylo milé."
+  ELSE
+    Say "Takže, tentokrát bychom to měli opravdu zvládnout. Tohle území pro mě není bezpečné."
+  END_OF_IF
+  SUB_SCRIPT merchantLaughX
+  Delay 500
+  Say "Upřímně, není mi úplně do smíchu. Raději poleťme."
+  HideChar merchant
+  HideDlgScene
+  ACT_MISSION merchantProtection3
+END_OF_SCRIPT
+
+SCRIPT ms_people_delivery
+
+  ShowDlgScene
+  Delay 200
+  ShowChar mech left
+  Delay 300
+  IF peopleDeliveryFailed
+    Say "Ach, to jsi ty? Upřímně, chtěla jsem pro další cestu sehnat jiného truckera, ale nikoho nakonec nemám."
+    Say "Musím ti dát další šanci."
+    Say "A tentokrát to prosím nepokaž. Uvidíme se na stanici."
+    HideChar mech
+    HideDlgScene
+    RESET peopleDeliveryFailed
+    ACT_MISSION peopleDelivery
+    RETURN
+  END_OF_IF
+  IFNOT mechLeftAtRegula
+    ChangeChar mech campaign/mech-thumbup.png
+    Say "Ráda tě vidím."
+  ELSE
+    ChangeChar mech campaign/mech-f.png
+    Say "Ty sis teda dal[g(|a)] na čas. Ale jsem ráda, že jsi konečně tu."
+    RESET mechLeftAtRegula
+  END_OF_IF
+  ChangeChar mech campaign/mech-explaining.png
+  Say "Hele, uděláme to jednoduše. Nabereš tolik lidí, kolik chceš."
+  Say "Můžeš je považovat normálně za posádku. Většina z nich už dělala v životě leccos."
+  Say "Za každého ti zaplatím 1 kredit."
+  Ask "Ale ručíš mi za ně. Všichni musí dorazit v pořádku. Jestli se byť jedinému něco stane, nedostaneš zaplaceno."
+  MENU
+    OPT "Dobrá."
+      ChangeChar mech campaign/mech-thumbup.png
+      Say "Díky, máš to u mě. Opravdu mi na nich záleží."
+      GO peopleDeliveryCont
+    END_OF_OPT
+    OPT "Tak to ne, zaplatíš v každém případě."
+      Say "Hele, mě na těch lidech fakt záleží. Nerada je posílám na nebezpečnou cestu, ale nemáme jinou možnost."
+      Ask "Nezlob se, ale nesvěřím je někomu, kdo už předem počítá se ztrátami, chápeš?"
+      MENU
+        OPT "Tak tedy dobře."
+          ChangeChar mech campaign/mech-thumbup.png
+          Say "Díky. Máš to u mě."
+          GO peopleDeliveryCont
+        END_OF_OPT
+        OPT "Aha, už rozumím. Víš co, dovezu ti je tam zadarmo."
+          ChangeChar mech campaign/mech-explaining.png
+          Say "Díky, jsi fakt hodn[g(ý|á)]. Ale když je dovezeš, ráda ti zaplatím, dostala jsem na tenhle projekt slušný rozpočet."
+          GO peopleDeliveryCont
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL peopleDeliveryCont
+  ChangeChar mech campaign/mech.png
+  Say "Já musím běžet, moje skupina za chvíli taky vyráží. Uvidíme se na stanici."
+  HideChar mech
+  HideDlgScene
+  ACT_MISSION peopleDelivery
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT ms_pirateEscort
+
+  IFNOT pirateEscortTried
+    ShowDlgScene
+    ShowChar prisoner1 left
+    Say "Díky, že jsi toho piráta porazil[g(|a)]. Byla jsem na téhle stanici uvězněná dva měsíce."
+    Delay 500
+    ShowChar prisoner2 right
+    SayChar prisoner2 "To já jsem tu už skoro tři roky. Už jsem ztrácel naději."
+    SayChar prisoner1 "A přitom to vypadalo tak lákavě. Pohádkový poklad. Žádní nepřátelé."
+    SayChar prisoner2 "Mně to povídej. Nevzal jsem si tehdy před lety jediné dělo."
+    AskChar prisoner1 "To já si vzala. Dvě. Pro jistotu. Přišla jsem o ně. Stejně jako o všechno ostatní."
+    MENU
+      OPT "Dost řečí a na cestu. Musím doručit toho lumpa do rukou spravedlnosti."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    SayChar prisoner1 "Jasně. Ale stejně moc děkujeme."
+    Delay 500
+    HideChar prisoner2
+    Delay 300
+    HideChar prisoner1
+    HideDlgScene
+  END_OF_IF
+  ACT_MISSION pirateEscort
+END_OF_SCRIPT
+
+SCRIPT ms_finalRoute
+
+  SaveState
+  ShowDlgScene
+  Delay 300
+  ShowChar chairman left
+  ShowChar crowd righttop
+  SayChar chairman "Tak jsme tady... na startu Velkého závodu."
+  Delay 300
+  ShowChar crowd righttop
+  Delay 500
+  Announce "*Dav tleská*"
+  Delay 300
+  SayChar chairman "Čtyři závodníci se již připravují k závodu... A tisíce fanoušků truckingu očekávají signál ke startu."
+  IF_MIN loadInstances 2
+    MENU
+      OPT "Mám pocit, jako bych už tohle slyšel[g(|a)]... Asi na chvíli zavřu oči..."
+        ChangeChar chairman campaign/chair-sorry.png
+        Say "Pro ty, co nás sledují poprvé... bla bla... bla bla bla..."
+        HideChar chairman
+        HideChar crowd
+        Delay 2000
+        ChangeChar chairman campaign/chair-no.png
+        ShowChar crowd righttop
+        ShowChar chairman left
+        Say "... ještě jednou, prosím, mohl by [g(jej|ji)] někdo probudit? Děkuji!"
+        Delay 400
+        ChangeChar chairman campaign/chair-smile.png
+        Delay 400
+        Say "Takže čtvrt[g(ý|á)] závodn[g(ík|ice)] konečně také vstoupil[g(|a)] do skladiště, což je dobře, protože velký závod..."
+        GO raceStart
+      END_OF_OPT
+      OPT "Tohle bude zajímavé. Budu pozorně poslouchat."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  ChangeChar chairman campaign/chair-sorry.png
+  Say "Pro ty, co nás sledují poprvé, si zopakujme pravidla."
+  Say "Tři lety, se všemi třídami lodí. Nezáleží na tom, kolik letů který závodník dokončí."
+  ChangeChar chairman campaign/chair.png
+  Say "Vítězem se stane ten, kdo bude mít po třetím letu nejvíc kreditů."
+  ChangeChar chairman campaign/chair-smile.png
+  Say "Protože o tom truckeřina je, že?"
+  ChangeChar chairman campaign/chair-no-smile.png
+  Say "A nyní mi dovolte představit závodníky."
+  Delay 1000
+  ChangeChar chairman campaign/chair-smile.png
+  Say "Prvního závodníka nejspíš znáte."
+  Delay 400
+  ShowChar tutor right
+  Delay 600
+  SayChar chairman "Mnoho z vás bylo uvedeno do truckerského světa právě jím. Prosím potlesk pro..."
+  Delay 300
+  Announce "* Hlasitý aplaus přehlušil komentátorova slova *"
+  Delay 500
+  HideChar tutor
+  SayChar chairman "Pokračujme. Věřím, že tu není nikdo, kdo by neznal jméno naší druhé závodnice."
+  Delay 400
+  ShowChar richgirl right
+  Delay 300
+  Announce "* Dav tleská *"
+  Delay 600
+  ChangeChar richgirl campaign/rich-smile.png
+  Delay 700
+  ChangeChar richgirl campaign/rich-smile-cheer.png
+  Delay 600
+  ChangeChar richgirl campaign/rich-smile.png
+  Delay 800
+  Announce "* Dav stále tleská *"
+  Delay 500
+  ChangeChar richgirl campaign/rich-smile-blink.png
+  Delay 350
+  ChangeChar richgirl campaign/rich-smile.png
+  Delay 350
+  ChangeChar richgirl campaign/rich-smile-blink.png
+  Delay 350
+  ChangeChar richgirl campaign/rich-smile.png
+  Delay 600
+  Announce "* Dav ne a ne přestat tleskat *"
+  Delay 1000
+  SayChar chairman "Stačí, stačí... Musíme představit zbylé závodníky..."
+  Delay 800
+  HideChar richgirl
+  SayChar chairman "Třetí závodník přichází z okrajových částí galaxie."
+  Delay 300
+  ShowChar halfbreed right
+  Delay 300
+  SayChar chairman "Původem napůl z Th'kzw-r, napůl z Hvězdného ticha, kombinuje nejlepší vlastnosti obou ras."
+  Delay 300
+  Announce "* Dav zcela ztichl *"
+  Delay 200
+  SayChar chairman "A já už slyším, jak dav skanduje přezdívku, pod kterou je známý:                                   ..."
+  Delay 500
+  HideChar halfbreed
+  SayChar chairman "A nakonec ještě poslední, zcela nová tvář v našem závodě."
+  Say "Můžete [g(jej|ji)] vidět v levém horním rohu – je to [NAME]!"
+  Delay 300
+  Announce "* Ozývá se nesmělý potlesk *"
+  Delay 1200
+  SayChar chairman "A nyní již můžete vidět, jak naši závodníci vstupují do prvního skladiště, protože Velký závod..."
+
+  LABEL raceStart
+  ChangeChar chairman campaign/chair-welcome.png
+  Say "... PRÁVĚ ZAČÍNÁ!"
+  HideChar chairman
+  HideChar crowd
+  HideDlgScene
+  ACT_MISSION finalRoute
+  IFNOT finalRaceFinished
+    RETURN
+  END_OF_IF
+  HidePath U123
+  ShowDlgScene
+  ShowChar chairman left
+  Say "A tady už jdou. Naši hrdinové."
+  Say "Jsou všichni skvělí, ale vítěz může být jen jeden."
+  ChangeChar chairman campaign/chair-welcome.png
+  Say "A tento krásný pohár tentokrát vyhrává..."
+  IF_ORDER 0 1
+    Say "...[NAME]!"
+    MENU
+      OPT "Velice děkuji."
+        ChangeChar chairman campaign/chair-no-smile.png
+        Say "Rozhodně zasloužené vítězství. Gratuluji."
+        Delay 300
+        UnlockAchievement camp_victory
+        Delay 300
+        GO campVictory
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  IF_ORDER 1 1
+    ShowChar tutor right
+    SayChar chairman "... tento statečný muž!"
+    Say "Gratuluji. Nyní každý vidí, že naši nováčci jsou v nejlepších rukou, když je trénujete právě vy!"
+    HideChar tutor
+  END_OF_IF
+  IF_ORDER 2 1
+    ShowChar richgirl right
+    SayChar chairman "... tato úžasná dívka!"
+    Say "Gratuluji. Ať každý vidí, že truckeřina není jen pro zarostlé drsné chlapy!"
+    HideChar richgirl
+  END_OF_IF
+  IF_ORDER 3 1
+    ShowChar halfbreed right
+    SayChar chairman "... tento výjimečný mimozemšťan!"
+    Say "Gratuluji. Ať spolupráce a mír mezi rasami v galaxii prosperuje!"
+    HideChar halfbreed
+  END_OF_IF
+  HideChar chairman
+
+  LABEL timeLoop
+  Delay 1500
+  ShowChar designer left
+  ChangeChar designer campaign/designer-hi.png
+  Ask "Zdravím vás. Vypadáte smutně..."
+  MENU
+    OPT "Ále, to je dobrý."
+      ChangeChar designer campaign/designer.png
+      Say "Rozumím tomu. Taková dlouhá kampaň, a nakonec jste nevyhrál[g(|a)]."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "A divíte se? Taková dlouhá kampaň, a nevyhrál[g(|a)] jsem."
+      ChangeChar designer campaign/designer.png
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Say "Ale nevěšte hlavu."
+  Say "Můžete přece restartovat kampaň a zkusit to celé znovu!"
+  MENU
+    OPT "To myslíte vážně?!?"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Say "No, pravda, možná trochu zdlouhavý způsob. Obzvláště když se může stát, že opět nevyhrajete."
+  ChangeChar designer campaign/designer-point.png
+  Say "Ale možná mám lepší řešení!"
+  IF loadInstances
+    SET dejavu
+  END_OF_IF
+  MENU
+    OPT "Pokračujte..."
+      ChangeChar designer campaign/designer.png
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF dejavu "Mám takový zvláštní pocit, že tohle už se stalo."
+      Say "To nic není. Déja vu... Nejspíš si tu někdo zahrával s časem."
+      ChangeChar designer campaign/designer.png
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Zapomeňte na to. Mně už nic nepomůže."
+      ChangeChar designer campaign/designer.png
+      Say "Možná ne, ale stejně si to poslechněte."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  ChangeChar designer campaign/designer-expl.png
+  Say "Vzpomínáte si, jak jsem vám říkal, že v naší laboratoři pracujeme s časoprostorovými technologiemi?"
+  ChangeChar designer campaign/designer.png
+  Ask "No, ty by nám teď mohly pomoci. Co tak vrátit čas do okamžiku před závodem?"
+  RESET loadButterfly
+  RESET loadDangers
+  MENU
+    OPT_IFNOT loadDangers "Není to nebezpečné?"
+      SET loadDangers
+      Say "V podstatě ne..."
+      ChangeChar designer campaign/designer-down.png
+      Say "No, je pravda, ta technologie ještě není moc ozkoušená. Mohlo by se stát, že celá realita přestane existovat."
+      ChangeChar designer campaign/designer.png
+      Ask "Ale pokud jde o můj názor, stojí za to to risknout."
+    END_OF_OPT
+    OPT_IFNOT loadButterfly "Ale nestanou se věci přesně stejně, jako se staly předtím?"
+      SET loadButterfly
+      Say "Na tohle už máme vyvinutou moderní technologii."
+      Delay 300
+      ChangeChar designer campaign/designer-butterfly.png
+      Delay 300
+      Say "Prostě jen přidáme tohoto motýlka do stroje času. A musíme zajistit, že mávne křidélky."
+      Delay 300
+      ChangeChar designer campaign/designer.png
+      Delay 300
+      Ask "Tak co, zkusíme to?"
+    END_OF_OPT
+    OPT "Dobrá, zkusme to."
+      GO loadTime
+    END_OF_OPT
+    OPT "Víte co? Zapomeňte na to."
+      Say "Dobrá..."
+      Delay 400
+      ChangeChar designer campaign/designer-down.png
+      Delay 300
+      Say "(Zdá se, že jsem [g(ho|ji)] nepřesvědčil.)"
+      Say "(Kde jsem udělal chybu? Možná tón mého hlasu...)"
+      Say "(Měl bych to zkusit znovu. Od toho ten stroj času máme, ne?)"
+      Delay 300
+      ChangeChar designer campaign/designer.png
+      Delay 400
+      ChangeChar designer campaign/designer-butterfly.png
+      Delay 300
+      Say "Můžete mě na chvíli omluvit?"
+      Delay 300
+      HideChar designer
+      SET dejavu
+      GO timeLoop
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL campVictory
+  HideChar chairman
+  Delay 800
+  ShowChar merchant right
+  Say "Věřili byste, že [g(tento|tato)] úžasn[g(ý|á)] trucker[g(|ka)] začínal[g(|a)] jako moje osobní ochranka?"
+  SUB_SCRIPT merchantLaughA
+  Delay 800
+  ShowChar mech left
+  Delay 500
+  Say "Vážně, byl[g(|a)] jsi úžasn[g(ý|á)]. Gratuluji."
+  Delay 300
+  ChangeChar mech campaign/mech-blush.png
+  Delay 800
+  HideChar merchant
+  Delay 300
+  ShowChar designer right
+  Delay 500
+  Say "Ano, opravdu úžasný výkon. Skoro se nechce věřit, že to byl váš první velký závod!"
+  Delay 300
+  ChangeChar designer campaign/designer-hi.png
+  Delay 500
+  ChangeChar designer campaign/designer.png
+  Delay 300
+  HideChar designer
+  Delay 200
+  HideChar mech
+  Delay 200
+  ShowChar guru left
+  Delay 500
+  Say "Zdolal[g(|a)] jsi nejvyšší stupeň na své cestě k dokonalosti, slávě a bohatství."
+  Delay 300
+  Say "Leč měj na paměti: úspěch není jako ústa soucitné žáby, otvírající se lačně ve čtvrtečním odpoledni směrem k obratníku."
+  Delay 500
+  HideChar guru
+  Delay 300
+  ShowChar foreman right
+  Delay 600
+  ChangeChar foreman campaign/foreman-hello.png
+  Say "No páni. [g(Můj trucker|Moje truckerka)]! To bylo něco!"
+  Delay 300
+  ChangeChar foreman campaign/foreman-smile.png
+  Delay 200
+  Say "Doufám, že sis při tom závodění pěkně odpočal[g(|a)]. Už se mi zase hromadí zásilky."
+  HideChar mech
+  Delay 300
+  ShowChar richgirl left
+  Delay 700
+  ChangeChar richgirl campaign/rich-bored.png
+  Delay 300
+  Say "To myslíš vážně, chlape? Těžká a špinavá práce není pro vítěze, jako jsem já... Nebo on[g(|a)]."
+  Delay 300
+  ChangeChar richgirl campaign/rich-smile.png
+  Delay 700
+  ChangeChar richgirl campaign/rich-smile-cheer.png
+  Delay 400
+  ChangeChar richgirl campaign/rich-smile.png
+  Delay 300
+  HideChar foreman
+  Delay 300
+  ShowChar tutor right
+  Say "Hej, dejte [g(mu|jí)] pokoj, dámo."
+  Delay 300
+  HideChar richgirl
+  Delay 300
+  Ask "Skvělý výkon. Myslím, opravdu skvělý. Asi ti vážně přestanu říkat [g(nováček|začátečnice)]."
+  MENU
+    OPT_IFNOT finalTutorOk "Mě to vlastně nevadí. Docela jste mi na začátku pomohl."
+      SET finalTutorOk
+      Say "Jasně že pomohl. Je to moje práce, [g(nováčku|začátečnice)]."
+    END_OF_OPT
+    OPT "Tak, a co teď dál?"
+      Say "Co chceš, [g(nováčku|začátečnice)], co jen chceš."
+      Say "Dosáhl[g(|a)] jsi nejvyššího cíle, co se dá v této kampani dosáhnout."
+      Say "Můžeš jít a zkoušet znovu mise, které se ti nepovedly, nebo úkoly, které jsi minul[g(|a)]."
+      Say "Ale až odemkneš všechny kampaňové achievementy, opravdu jsi udělal[g(|a)] vše, co tento příběh nabízí."
+      Say "Poté můžeš vyzvat roboty v samostatné hře. Můžeš si tam nastavit hru podobnou Velkému závodu."
+      Say "A hlavně, můžeš hrát proti ostatním truckerům online. Ať už tahové stavění nebo v reálném čase, ať už krátké, nebo epické trasy."
+      Say "Prostě si dělej, co tě bude bavit. Tvůj výcvik je už opravdu u konce..."
+      Delay 300
+      Say "Hodně štěstí, [g(můj|moje)]..."
+      Delay 300
+      ChangeChar tutor campaign/tutor-smile.png
+      Delay 300
+      Say "... trucker[g(e|ko)]!"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Delay 500
+  HideChar tutor
+  HideDlgScene
+  RETURN
+
+  LABEL loadTime
+  Say "Výborně. Máte odvahu."
+  Delay 500
+  ChangeChar designer campaign/designer-butterfly.png
+  Delay 300
+  Say "Počkejte chvíli..."
+  Say "Pozor..."
+  CenterMapByNode newbie
+  Delay 300
+  HideChar designer
+  HideDlgScene
+  Delay 1500
+  LoadState
+END_OF_SCRIPT
+
+END_OF_SCRIPTS

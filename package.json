@@ -4,26 +4,28 @@
   "description": "Visual editor for Galaxy Trucker missions and configurations",
   "private": true,
   "dependencies": {
+    "@monaco-editor/react": "^4.6.0",
+    "@types/uuid": "^10.0.0",
+    "autoprefixer": "^10.4.13",
+    "js-yaml": "^4.1.0",
+    "lucide-react": "^0.312.0",
+    "monaco-editor": "^0.45.0",
+    "postcss": "^8.4.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
-    "js-yaml": "^4.1.0",
-    "react-router-dom": "^6.8.0",
-    "lucide-react": "^0.312.0",
     "react-hook-form": "^7.43.0",
+    "react-modal": "^3.16.1",
+    "react-router-dom": "^6.8.0",
+    "react-scripts": "5.0.1",
     "react-select": "^5.7.0",
     "react-tabs": "^6.0.0",
-    "react-modal": "^3.16.1",
-    "monaco-editor": "^0.45.0",
-    "@monaco-editor/react": "^4.6.0",
     "tailwindcss": "^3.3.0",
-    "autoprefixer": "^10.4.13",
-    "postcss": "^8.4.21"
+    "uuid": "^11.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
     "eject": "react-scripts eject",
     "docker:build": "docker build -t galaxy-trucker-editor .",
     "docker:run": "docker run -p 3000:3000 -v \"$(pwd)/../:/app/game-data\" galaxy-trucker-editor"
@@ -47,6 +49,7 @@
     ]
   },
   "devDependencies": {
+    "@craco/craco": "^7.1.0",
     "@types/js-yaml": "^4.0.5",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",

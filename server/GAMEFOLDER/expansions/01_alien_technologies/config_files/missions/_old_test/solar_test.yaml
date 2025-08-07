@@ -1,0 +1,29 @@
+name: "SingleMissionTest1"                         # id of mission name string - localized 
+
+gameType: realtime                         #values: realtime/turnbased; If mentioned this value can not be changed in GUI setting (lobby) by player.
+
+deckScript: sm_Pirates_Deck                          #adventure cards deck building script
+
+shipPlans: [I-double, II-double, III-double]                         # names of all available ship plans. If not mentioned default plans will be used. Should by only one ship plan for one flight.
+
+cannotInterconnectRadioactiveCargo: true
+
+
+opponents:
+  - "medium_basic"
+  - "medium_basic"
+  - "medium_basic"
+
+rounds:
+  - roundType: STI                         # STI/STII/STIII
+    pileConfig: solar_test.yaml
+  - roundType: STII                         # STI/STII/STIII
+    pileConfig: solar_test.yaml
+  - roundType: STIII                         # STI/STII/STIII
+    pileConfig: solar_test.yaml
+
+# ==== RULES ====                               # You can mention only those values you want edit. But you have to repeat (copy&paste) the rules for each flight.
+evaluation:                     
+  STI:
+  STII:
+  STIII:

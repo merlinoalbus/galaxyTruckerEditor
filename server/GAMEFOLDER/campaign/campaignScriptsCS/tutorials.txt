@@ -1,0 +1,521 @@
+SCRIPTS
+
+SCRIPT campaignIntro
+
+  ShowDlgScene
+  Delay 1000
+  ShowChar tutor left
+  Delay 1000
+  RESET tutorialSeen
+  IF_TUTORIAL_SEEN
+    SET tutorialSeen
+  END_OF_IF
+  IFNOT tutorialSeen
+    Say "A hele, další [g(začátečník|začátečnice)]. Vítám tě, budu tvůj letový instruktor.                                 ([v(ťap|klik)]ni kamkoliv)"
+    Ask "Takže... Kolik toho víš o truckerech a o létání skrz galaxii?                                         (vyber odpověď)"
+  ELSE
+    Say "A hele, další [g(začátečník|začátečnice)]. Vítám tě, budu tvůj letový instruktor."
+    Ask "Takže... Kolik toho víš o truckerech a o létání skrz galaxii?"
+  END_OF_IF
+  MENU
+    OPT "Vlastně vůbec nic"
+      Say "Neboj."
+      Say "Společnost s.r.o. mě najala, abych tě vyškolil na prvotřídního truckera."
+      Ask "Máme také pěknou výukovou misi."
+      SET playerIsBeginner
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Znám to z deskové verze, ale tuhle digitální zatím neznám."
+      Say "Ach, pak to bude jednoduché. Pravidla jsou v podstatě stejná."
+      Ask "A také máme pěknou výukovou misi."
+      SET playerIsAdvanced
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Prostě mě nechej hrát, všechno vím."
+      Say "Aha... Další takov[g(ej|á)]."
+      IF_TUTORIAL_SEEN
+        Say "(Jen proto, že už viděl[g(|a)] výukovou misi, si myslí, že všechno zná.)"
+      END_OF_IF
+      SET playerIsCocky
+      SET tutorialRefused
+      Say "Tak zatím. Uvidíme se na stanici Lama."
+      GO campaignIntroEnd
+    END_OF_OPT
+  END_OF_MENU
+  MENU
+    OPT "Bezva. Těším se na výukovou misi."
+      Say "Prima."
+      SET tutorialAsked
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF tutorialSeen "Už jsem výukovou misi zkoušel[g(|a)]. Ale co, kouknu na ni znovu."
+      Say "Dobrá volba."
+      SET tutorialAsked
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF tutorialSeen "Díky, ale už jsem výukovou misi proš[g(el|la)]."
+      Say "Aha, dobrá."
+      Say "(Jsem si říkal, že tě odněkud znám.)"
+      Say "V tom případě pojďme rovnou na stanici Lama."
+      SET tutorialSkipped
+      GO campaignIntroEnd
+    END_OF_OPT
+    OPT_IFNOT tutorialSeen "Nesnáším výukové mise. Prostě mě nech hrát."
+      Say "A jsi si tím jist[g(ý|á)]?"
+      Say "Je to nejlepší cesta, jak se naučit hru."
+      Say "A navíc bychom se spolu proletěli na stanici Lama."
+      Ask "Byla by to sranda."
+      MENU
+        OPT "No tak dobře, pojďme na to."
+          Say "Dobrá volba."
+          SET tutorialAsked
+          EXIT_MENU
+        END_OF_OPT
+        OPT "Fakt ne, díky."
+          SET tutorialRefused
+          Say "No jak myslíš."
+          Say "Uvidíme se na stanici Lama."
+          GO campaignIntroEnd
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL campaignIntroEnd
+  Delay 300
+  HideChar tutor
+  Delay 300
+  HideDlgScene
+  SUB_SCRIPT newbie_init
+  IF tutorialAsked
+    ACT_MISSION Tutorial
+    SetCredits 0
+  ELSE
+    CenterMapByNode newbie
+  END_OF_IF
+END_OF_SCRIPT
+
+SCRIPT tutorialIntro
+
+  ShowDlgScene
+  Delay 500
+  ShowChar tutor right
+  Delay 500
+  IF_FROM_CAMPAIGN
+    Say "Vítej ve skladišti Společnosti s.r.o."
+    Say "Tady se staví lodě."
+  ELSE
+    Say "Vítám tě. Budu tvůj letový instruktor.              ([v(ťap|klik)]ni kamkoliv)"
+    Ask "Jsi připraven[g(|a)] naučit se vše, co má správný trucker znát?"
+    MENU
+      OPT "Rozkaz, pane!"
+        Say "Tomu říkám nadšení!"
+        EXIT_MENU
+      END_OF_OPT
+      OPT "Pro mě za mě..."
+        Say "No tak, projev trochu nadšení. Budeš stavět skutečnou kosmickou loď!"
+        EXIT_MENU
+      END_OF_OPT
+      OPT "Já... Já tady nechci být... Mohl[g(|a)] bych odejít?"
+        Say "Ach jo."
+        Delay 300
+        Delay 300
+        Say "Hej, chlapi, máme tady [g(dalšího|další takovou)]. Vyhoďte [g(ho|ji)]."
+        HideChar tutor
+        HideDlgScene
+        QuitCampaign
+        RETURN
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  Delay 300
+  ChangeChar tutor campaign/tutor-out.png
+  Delay 400
+  Say "Hej, staříku! Přihrej nám sem nějakou infografiku."
+  Delay 300
+  ChangeChar tutor campaign/tutor.png
+  Delay 300
+  HideChar tutor
+  HideDlgScene
+  AddInfoWindow "tutorial/infoGameGoal.png"
+  AddInfoWindow "tutorial/infoGameGoal2.png"
+  AddInfoWindow "tutorial/infoGameGoal3.png"
+  AddInfoWindow "tutorial/infoGameGoal4.png"
+  ShowInfoWindow "tutorial/infoGameGoal.png"
+  ShowDlgScene
+  ChangeChar tutor campaign/tutor.png
+  ShowChar tutor right
+  Say "Jednoduché, ne?"
+  Say "Budu na tebe dávat pozor, kdybys potřeboval[g(|a)] pomoc."
+  Delay 300
+  HideChar tutor
+  Delay 300
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialEngineWrong
+
+  ShowDlgScene
+  ShowChar tutor right
+  Delay 100
+  Say "Počkej, zadrž! Pokud bys teď odhalil[g(|a)] nový dílek, motor by se na tu pozici přivařil."
+  Say "A kdyby se tam přivařil, celá prává část lodi by už byla nedostupná."
+  Delay 300
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialEngineClever
+
+  ShowDlgScene
+  Delay 500
+  ShowChar tutor right
+  Delay 300
+  Say "Ach, to bylo chytré!"
+  Say "Kdyby ten motor zůstal tam, co byl, půlka lodi by tím byla nedostupná."
+  Delay 300
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialAIBuilding
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor right
+  Delay 200
+  Say "Ha, to je dobré místo pro nákladové prostory. Jde ti to fakt dobře."
+  Say "Ale ve skutečné hře musíš soupeřit o nejlepší dílky s ostatními. Přidám se teď k tobě."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialFlightIntro
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  IF_FROM_CAMPAIGN
+    Say "Tak jsme postavili své lodě. Pojďme si dát závod na stanici Lama."
+  ELSE
+    Say "Tak jsme postavili své lodě. Pojďme si dát závod do cílové stanice."
+  END_OF_IF
+  Say "Dostanem nějakou odměnu za to, že tam ty trubky doručíme, ale to není hlavní zdroj truckerských příjmů."
+  Say "Truckeři doufají, že nějaké slušné peníze vydělají cestou."
+  HideChar tutor
+  HideDlgScene
+  AddInfoWindow "tutorial/infoFlight.png"
+  ShowInfoWindow "tutorial/infoFlight.png"
+  ShowDlgScene
+  ShowChar tutor left
+  Say "Všimni si, že máš na letové dráze trochu náskok. To proto, že jsi stavění dokončil[g(|a)] první."
+  Delay 400
+  SetFlightStatusBar "Pozorně poslouchej instruktora."
+  Delay 200
+  Say "A teď dobře poslouchej, tohle je důležité – během letu se vždy dívej na horní řádek [v(displeje|obrazovky)]."
+  Ask "Neustále ti říká, co se od tebe čeká (nejen během výukové mise, i později během hry)."
+  SetFlightStatusBar "[v(Ťap|Klik)]ni na tlačítko s odpovědí."
+  MENU
+    OPT "Dobrá, rozumím."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialFlightViews
+
+  AddInfoWindow "tutorial/infoFlightViews.png"
+  ShowInfoWindow "tutorial/infoFlightViews.png"
+END_OF_SCRIPT
+
+SCRIPT tutorialFlightAdvCards
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "Dobrodružství, se kterými se potkáme na letových kartách, jsou různých typů. Některá dobrá, některá drsná."
+  Say "Toto je zrovna dobré – na těchto planetách můžeme naložit nějaké hodnotné zboží."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialPlanetsHasRed
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "Podívej, nad mou hlavou najdeš ceník zboží."
+  Say "Jak vidíš, nejcennější zboží je na první planetě."
+  Say "Naštěstí jsi postavil[g(|a)] i nějaké speciální (červené) nákladové prostory, jinak bys nemohl[g(|a)] červené zboží naložit."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialPlanetsHasNoRed
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "Podívej, nad mou hlavou najdeš ceník zboží."
+  Say "Jak vidíš, nejcennější zboží je na první planetě."
+  Say "Bohužel nemáš na lodi žádné speciální (červené) nákladové prostory, takže bys dokázal[g(|a)] naložit jen tu žlutou kostičku. Pro tebe bude lepší druhá planeta."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialPlanetLanding
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "Číslo vpravo dole na letových kartách říká, kolik letových dní ztratíš, když využiješ příležitosti."
+  Say "Já jsem nepřistál, takže ses na letové dráze posunul[g(|a)] za mě. Ale zato máš cenný náklad."
+  Say "Hráči, kteří jsou na letové dráze vepředu, dostanou dřív šanci využít příležitostí, ale také musí první čelit nepřátelům."
+  Say "Ale teď pojďme umístit náklad na tvou loď."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialCardInfo
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "Další důležitá věc, co bys měl[g(|a)] vědět:"
+  Say "Kdykoliv se můžeš podívat na podrobný popis karty dobrodružství. Stačí na ni [v(ťap|klik)]nout!"
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialAbandonedStation
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "Vidíš? Některé karty může využít jen jeden hráč. Já letěl vepředu, takže opuštěnou stanici jsem vyraboval já."
+  Say "Ale ztratil jsem přitom dva letové dny, takže jsi zase vepředu."
+  Ask "Víš, jak funguje karta Opuštěná stanice?"
+  MENU
+    OPT "Ano, vím."
+      Say "Výborně. Ale i kdybys to nevěděl[g(|a)], mohl[g(|a)] by ses podívat na podrobné informace karty pouhým [v(ťap|klik)]nutím na ni."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Ne, ale mohl[g(|a)] bych vyvolat podrobnosti [v(ťap|klik)]nutím na kartu."
+      Say "Výborně. Jsem rád, že posloucháš, co říkám!"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialMeteoricInfo
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "A sakryš, meteorický roj. Jedno z nejobávanějších dobrodružství."
+  Say "Než budeme pokračovat, přečti si prosím informace o kartě."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialMeteor1
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "Kostky osudu rozhodly, že VELKÝ meteor trefí naše lodě ve sloupci 7. Já jsem v pohodě, mám tam dělo."
+  Say "Ale ty tam máš dvojité dělo, takže bys měl[g(|a)] spotřebovat baterku, abys je nabil[g(|a)]. Jinak by ti je meteor zničil."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialMeteor2
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "MALÉ meteory jsou skoro neškodné, pokud netrefí otevřenou přípojku."
+  Say "Dívej se, jak se neškodně odrazí od našich lodí."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialMeteor3
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "Ach, tentorkát míří malý meteor přímo na mou otevřenou přípojku v řádku 5. To by bylo zlé."
+  Say "Naštěstí mám štít – to je ten zelený dílek, který jsem ti zapomněl vysvětlit. Ten mě před malými meteory ochrání."
+  Say "Sleduj, jak ho použiju."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialShieldsInfo
+
+  AddInfoWindow "tutorial/infoShield.png"
+  AddInfoWindow "tutorial/infoShield2.png"
+  ShowInfoWindow "tutorial/infoShield.png"
+END_OF_SCRIPT
+
+SCRIPT tutorialMeteor4
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "Ech, zatraceně. Další velkej meteor. Ve sloupci 8 nemám žádné dělo."
+  Say "Štít mi proti velkému meteoru nepomůže. Je na čase rozloučit se s tím nákladovým prostorem."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialMeteorFinal
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "Tak co, rozumíš meteorům?"
+  RESET playerPaysAttention
+  MENU
+    OPT "Naprosto."
+      Say "Výborně."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Ne úplně, ale můžu si přečíst znovu podrobnosti karty."
+      Say "Výborně."
+      SET playerPaysAttention
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Mohl bys mi to ještě shrnout?"
+      Say "Samozřejmě. MALÉ meteory se buď odrazí, nebo je můžeš krýt štítem. Jediná ochrana proti VELKÝM meteorům je však mít v daném sloupci dělo."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Delay 500
+  Say "Myslím, že už víš dost, abys zbytek karet zvládl[g(|a)] bez mé pomoci."
+  IFNOT playerPaysAttention
+    Say "Nezapomeň si přečíst podrobnosti o kartách, které neznáš."
+  END_OF_IF
+  Say "Uvidíme se v cíli."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialResults
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "Tak, tohle jsou finální výsledky. Místo toho, abych ti je vysvětloval, naučím tě další užitečnou funkci."
+  Say "Vidíš ten otazníček vpravo nahoře? Podobný najdeš na většině obrazovek. Zobrazuje nápovědu k dané obrazovce."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialFinishZero
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "No, žádný prachy jsi nevydělal[g(|a)]."
+  Say "Ale to neva, zatím se učíš. Příště to určitě bude lepší."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialFinishPlayerWon
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "Nechal jsem tě tentokrát vyhrát, abych tě povzbudil."
+  Say "Ale o to teď nejde. Co je důležité, že jsi vydělal[g(|a)] nějaké peníze. A to je to, proč do toho jdeš, ne?"
+  IF_FROM_CAMPAIGN
+    Say "Ty peníze si teď samozřejmě vezmu já. Jako platbu za výcvik. Ale ty si určitě brzy vyděláš jiné."
+    SetCredits 0
+  END_OF_IF
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialFinishPlayerLost
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "Vydělal jsem víc peněz, takže jsem vyhrál... Ale o to teď nejde."
+  Say "Co je důležité, že jsi ty vydělal[g(|a)] nějaké peníze. A to je to, proč do toho jdeš, ne?"
+  IF_FROM_CAMPAIGN
+    Say "Ty peníze si teď samozřejmě vezmu já. Jako platbu za výcvik. Ale ty si určitě brzy vyděláš jiné."
+  END_OF_IF
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialFinal
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  IF_FROM_CAMPAIGN
+    Say "Tak. Tvůj trénink je u konce. Je tu pár dalších věcí, ale ty se naučíš během kampaně."
+    Say "Hodně štěstí v galaxii!"
+    HideChar tutor
+    HideDlgScene
+  ELSE
+    Say "Tak. Tvůj trénink je téměř u konce."
+    Say "No, ještě tu pár dalších věcí... Ale ty jsou pěkně vysvětleny během kampaně."
+    MENU
+      OPT "Fajn, zahraju si kampaň."
+        Say "Bezva. Hodně štěstí v galaxii."
+        HideChar tutor
+        HideDlgScene
+        EXIT_MENU
+      END_OF_OPT
+      OPT "Řekni mi prosím o nich teď."
+        Say "Dobrá."
+        ChangeChar tutor campaign/tutor-out.png
+        Say "Hej, staříku, nahrň to sem všechno."
+        HideChar tutor
+        HideDlgScene
+        SET tutorialAdditionalConcepts
+        AddInfoWindow "tutorial/infoLookingAtCards.png"
+        AddInfoWindow "tutorial/infoAsideSlots.png"
+        AddInfoWindow "tutorial/infoPurpleLifeSupport.png"
+        AddInfoWindow "tutorial/infoPurpleAliens.png"
+        AddInfoWindow "tutorial/infoBrownLifeSupport.png"
+        AddInfoWindow "tutorial/infoBrownAliens.png"
+        AddInfoWindow "tutorial/infoShipInfo.png"
+        AddInfoWindow "tutorial/infoGivingUpFlight.png"
+        AddInfoWindow "tutorial/infoGivingUpFlight2.png"
+        ShowInfoWindow "tutorial/infoLookingAtCards.png"
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+END_OF_SCRIPT
+
+END_OF_SCRIPTS

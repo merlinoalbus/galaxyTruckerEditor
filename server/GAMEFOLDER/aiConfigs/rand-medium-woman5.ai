@@ -1,0 +1,7 @@
+idName: "rand-medium-woman5"
+gender: female
+avatar: avatars/campaign/common/medium-woman5.png
+color: "gyrb"
+preferencesSettings: aiConfigs/settingBase.aipref
+speedSettings: aiConfigs/settingBaseMedium.aispeed
+stupidity: 60

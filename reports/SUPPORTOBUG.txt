@@ -1,0 +1,427 @@
+COMMAND ANALYSIS REPORT
+Generated: 2025-08-03T06:30:24.377Z
+=================================
+SUMMARY:
+- Total Commands: 72580
+- Unique Command Types: 109
+- Parser Implementation Status: 25 IMPLEMENTED / 84 MISSING
+- Languages Analyzed: 7
+
+GUIDA AL FUNZIONAMENTO DEGLI SCRIPTS E DELLE MISSIONS PER IDENTIFICARE LE REGOLE DEL PARSING:
+LA STRUTTURA DEGLI SCRIPT è UNA STRUTTURA SEQUENZIALE A BLOCCHI.
+CI SONO DUE TIPI DI ELEMENTI: COMANDI E BLOCCHI.
+OGNI RIGA DI TESTO è UN COMANDO O UN ELEMENTO CHE INSIEME AD ALTRI ELEMENTI DEFINISCE UN BLOCCO. 
+La sintassi in ogni riga è [Comando / ELEMENTO] <parametri 1 .. n dell'elemento/comando>
+UN BLOCCO PER DEFINIZIONE è UN COMANDO SPECIALE CHE AL SUO INTERNO PUò CONTENERE ALTRI COMANDI O ALTRI BLOCCHI SECONDO UNA STRUTTURA E DELLE REGOLE PRECISE.
+
+ANALISI DELLE TIPOLOGIE DI BLOCCHI DENTRO GLI SCRIPTS:
+UNO SCRIPT DI PER SE IDENTIFICA UN BLOCCO COMPOSTO DA DUE ELEMENTI [SCRIPT <nomescript>] E [END_OF_SCRIPTS] TUTTO QUELLO CHE SI TROVA DENTRO QUESTI DUE ELEMENTI DI FATTO è CONTENUTO NEL BLOCCO DELLO SCRIPT DENOMINATO <nomescript>
+
+ECCO GLI ALTRI ELEMENTI (definiti in maiuscolo) CHE COSTITUISCONO DEI BLOCCHI:
+1) tutti i tipi di IF (Standard e Predefiniti): [IF], [IF_DEBUG], [IF_FROM_CAMPAIGN], [IF_HAS_CREDITS], [IF_IS], [IF_MAX], [IF_MIN], [IF_MISSION_WON], [IF_ORDER], [IF_PROB], [IF_TUTORIAL_SEEN], [IFMISSIONRESULTIS], [IFMISSIONRESULTMIN], [IFNOT]) 
+   sono tutti elementi di apertura di un blocco IF. Il blocco IF termina con l'elemento [END_OF_IF] Tutti i comandi o gli elementi dentro questi due elementi fanno parte del blocco IF.
+   Ognuno degli elementi indicati ha delle caratteristiche specifiche, perchè personalizzazioni dell'IF Standard.
+   Qualsiasi blocco IF (di qualsiasi tipo) identifica un blocco di COMANDI/BLOCCHI che sono presi in considerazione solo se la condizione dell'IF è soddisfatta.
+   Ciascun blocco IF può quindi essere semplice [IF*]...[END_OF_IF] o gestire una ramificazione VERO/FALSO sulla base della condizione e quindi diventare [IF*] ... [ELSE] ... [END_OF_IF]
+2) i MENU sono che identificano un possibile ventaglio di opzioni. Un blocco menu è formato da [MENU] ... [END_OF_MENU]
+   Dentro un menu possono esserci solo BLOCCHI di tipo OPT. Un blocco MENU è valido solo se preceduto da un COMANDO [ASK] all'interno del flow (non necessariamente deve essere l'elemento precedente).
+   es. posso avere un blocco IF con ramo ELSE. Ciascuno dei due rami può terminare con il comando [ASK] e dopo il blocco IF posso inserire un blocco [MENU] che è valido solo se entrambi i rami dell'IF hanno ASK per ultimo. MENU come blocco può essere contenuto in tutti gli altri blocchi.
+3) tutti i tipi di OPT Standard o OPT con verifica su Semaforo [OPT_IF] e [OPT_IFNOT] sono delimitati nel loro blocco da [END_OF_OPT]. Possono essere usati solo dentro un blocco menu.
+   All'interno possono contenere qualsiasi comando o blocco secondo le regole generiche.
+
+Altri ELEMENTI SPECIALI sono gli ELEMENTI che definiscono i blocchi MISSIONS.
+OGNI MISSION come uno script segue la sintassi degli elementi [MISSION <nomemission>] <configurazione e comandi gestione mission> [FINISH_MISSION]<configurazione e comandi pre conclusione della mission> [END_OF_MISSION]
+Quali sono gli altri blocchi delle mission? Ci sono due fasi: la fase di build delle Astronavi e la fase di Flight. Gli elementi identificano i vari momenti di entrambi come segue:
+[INIT_BUILD] <comandi di preparazione alla fase build> [START_BUILDING] <comandi durante la build> [END_BUILDING]
+[INIT_FLIGHT] <comandi di preparazione alla fase di flight> [START_FLIGHT] <comandi durante il volo> [EVALUATE_FLIGHT] <comandi della fase di calcolo dei risultati> [END_FLIGHT]
+
+i blocchi per loro natura saranno degli oggetti complessi che andranno gestiti in quanto container di altri oggetti. quindi vanno trattati con elementi tutti specifici e tutti distinti.
+Quindi nell'APP andremo a definire:
+Un oggetto/container di tipo SCRIPT
+Un oggetto/container di tipo MISSION
+Un oggetto/container di tipo IF o IF/ELSE (che dovranno gestire poi i vari sottotipi di IF secondo i casi specifici )
+Un oggetto/container MENU
+Un oggetto/container OPT (che dovrà gestire i suoi sottotipi di OPT: Semplice, Semaforico (OPT_IF e OPT_IFNOT))
+Un oggetto/container BUILD (che dovrà strutturarsi per gestire i vari elementi che scansionano le varie fasi dell'evento)
+Un oggetto/container FLIGHT (che dovrà strutturarsi per gestire i vari elementi che scansionano le varie fasi dell'evento)
+
+Tutti gli altri che vedremo saranno COMANDI (singoli oggetti semplici che avranno un insieme di attributi più o meno configurabili/personalizzabili ed una struttura diversa per supportare i vari elementi ma tendenzialmente oggetti singoli)
+
+Quindi a seguire spostando il livello verso il concetto di APP parlerò DEI primi riferendomi ad un Container e del comando semplice come ad Oggetto.
+
+Ogni oggetto può essere un oggetto senza parametri, con 1 parametro, 2 o n parametri. Non importa non dobbiamo gestire il gioco solo l'editor del gioco quindi ai nostri fini a prescindere da quello che fa nel gioco il singolo comando quello che ci interessa e capire che tipo di parametri il comando si aspetta e in che ordine e come semplificare l'editing del comando all'utente. 
+In generale i parametri dei comandi possono essere di questo tipo:
+
+testuali/localizzati => contengono stringhe di testo che poi cambiano in base alla lingua.
+valori numerici base => valori numerici
+variabili => riferimenti al <nome_variabile> (in questo caso all'utente deve essere data la possibilità di scegliere in un menu tra tutte le variabili o crearne di nuove)
+semafori => riferimenti ad un <nome_semaforo>(in questo caso all'utente deve essere data la possibilità di scegliere in un menu tra tutti i semafori o crearne di nuovi)
+NB. La differenza tra variabile e semaforo è che la prima contiene un valore numerico la seconda è solo un valore TRUE o FALSE
+label => Punti di ancoraggio negli script o nelle missioni che possono essere usati come ancore per gestire un salto di flusso logico. (il comando GO <LABEL> comporta che l'elemento successivo a livello di flow non sarà il comando successivo al GO ma il comando successivo alla LABEL)
+character => riferimenti ad un personaggio. Del personaggio al fine dell'editing ci interessa sapere lo stato (visibile/nascosto), la sua immagine base, la sua immagine corrente, la lista delle possibili immagini associabili a quel personaggio e la posizione in cui è stato visualizzato.
+posizione => come ho detto la posizione di un elemento (left, center, right)  
+nodo => riferimenti ad un Nodo (Luogo) della Mappa (menu con la possibilità di scegliere il nodo)
+arco => riferimenti ad un Arco (Rotta) della Mappa (menu con la possibilità di scegliere la rotta)
+bottone => riferimento ad un pulsante della mappa (in genere associato ad un Nodo) (menu con la possibilità di scegliere il bottone)
+immagini => riferimenti ad un path di BE con l'immagine (in questo caso al FE deve essere passato il binary dell'immagine direttamente con l'elemento path e nomefile)(menu con la possibilità di scegliere tra tutte le immagini disponibili dentro SD)
+
+La lista di variabili, semafori, label, personaggi, nodi,archi, bottoni, immagini possibili devono essere ottenibili da BE tramite apposite API calcolate o dal parsing degli script/missioni o entrambe o dal check su fs degli elementi disponibili, o dal check sui file YAML missions.yaml e nodes.yaml che forniscono appunto questo tipo di informazioni 
+e devono essere manutenibili espandibili tramite funsioni di add/remove.
+Mi aspetto che il BE esponga i relativi servizi di anagrafica ADD/REMOVE.
+Mi aspetto che il BE gestisca il parse di singoli SCRIPT e di singole MISSION fornendo al FE un oggetto script o mission strutturato e già parsato in modo da rispettare i concetti di blocco/comando esposti.
+
+Il FE dovrà invece gestire il rendering di tutti i comandi/blocchi in modo opportuno.
+ecco la lista di COMANDI /ELEMENTI per FREQUENCY di utilizzo negli attuali script/mission:
+
+END_OF_IF            |  4732 (6.52%) | elemento di chiusura di un blocco IF (nella gestione a blocchi che mi aspetto dovrebbe essere nascosto e gestito come traduzione del blocco) 
+END_OF_OPT           |  4410 (6.08%) | elemento di chiusura di un blocco OPT (nella gestione a blocchi che mi aspetto dovrebbe essere nascosto e gestito come traduzione del blocco)
+DELAY                |  5152 (7.10%) | comando singolo attiva delay prende un parametro in ms. Già implementato tra i block
+GO                   |  2170 (2.99%) | questo elemento spedisce il flusso direttamente alla LABEL indicata come parametro. (Da capire come gestire nel nostro visual Editor)
+SUB_SCRIPT           |  1967 (2.71%) | questo elemento richiama un altro script all'interno dello script corrente e prende come parametro nomescript. 
+IF                   |  1792 (2.47%) | elemento di apertura di un blocco IF
+ELSE                 |  1680 (2.31%) | elemento di separazione tra blocco 1 e blocco 2 dentro un IF
+EXIT_MENU            |  1610 (2.22%) | comando che non prende parametri ed è utilizzabile solo dentro un menu. comporta l'interruzione e l'uscita dall'intero MENU.
+SAY                  |  8876 (12.23%)
+OPT                  |  3171 (4.37%)   | elemento base tra gli OPT a cui segue un testo (localizzato). Come tutti gli OPT possono trovarsi solo dentro un MENU. contiene all'interno un insieme di elementi fino al successivo suo [END_OF_OPT].
+CHANGECHAR           |  3094 (4.26%)   
+SET                  |  3024 (4.17%)  
+MENU                 |  1904 (2.62%) 
+END_OF_MENU          |  1904 (2.62%) 
+ASK                  |  1897 (2.61%) 
+HIDECHAR             |  1582 (2.18%) 
+SHOWCHAR             |  1435 (1.98%) 
+RESET                |  1015 (1.40%) 
+OPT_IF               |   609 (0.84%)   | parte della famiglia di blocchi OPT prende due parametri un semaforo e una frase localizzata. Abilita l'opzione se la variabile semaforo è accesa
+LABEL                |   924 (1.27%) 
+HIDEDLGSCENE         |  1106 (1.52%)  | comando inizialmente inserito e gestito come elemento di blocco, in realtà è un comando che chiude una finestra di dialogo. Durante il flow bisogna quindi verificare lo stato della finestra di dialogo. Deve essere aperta per poter MOSTRARE, CAMBIARE, NASCONDERE un personaggio ed usare i comandi di dialogo SAY ed ASK) Dopo questo comando tutti questi elementi non dovranno essere usabili fino a quando una finestra di dialogo non verrà riaperta.
+ADDOPPONENT          |   910 (1.25%)  | comando che permette di aggiungere un avversario alla prossima missione. Prende come parametro un Personaggio. 
+SHOWPATH             |   882 (1.22%)  | comando che visualizza una rotta. prende come parametro il nome della rotta da mostrare sulla mappa.
+SHOWDLGSCENE         |   805 (1.11%)  | comando inizialmente inserito e gestito come elemento di blocco, in realtà è un comando che apre una finestra di dialogo. Durante il flow bisogna quindi verificare lo stato della finestra di dialogo. Deve essere aperta per poter MOSTRARE, CAMBIARE, NASCONDERE un personaggio ed usare i comandi di dialogo SAY ed ASK) Dopo questo comando tutti questi elementi non dovranno essere usabili fino a quando una finestra di dialogo non verrà riaperta.
+OPT_IFNOT            |   630 (0.87%)  | parte della famiglia di blocchi OPT prende due parametri un semaforo e una frase localizzata. Abilita l'opzione se la variabile semaforo è spenta
+IF_PROB              |   623 (0.86%)  | blocco IF predefinito che prende solo 1 parametro intero che rappresenta una percentuale.
+IFNOT                |   602 (0.83%)  | blocco IF predefinito per la verifica dei semafori. Prende solo 1 parametro con il semaforo.
+RETURN               |   588 (0.81%)  | comando che identifica la chiusura/interruzione dello script corrente per tornare allo script invocante (queste indicazioni servono per il calcolo dello stato del flow in ogni punto dell'editor)
+ANNOUNCE             |   497 (0.68%)  | comando di dialogo anche se non legato alla finestra di dialogo e quindi utilizzabile sempre, prende come parametro 1 stringa localizzata e la visualizza sulla barra di stato.
+IF_IS                |   497 (0.68%)  | blocco IF standard base prende un parametro che rappresenta la variabile ed un secondo parametro che rappresenta il valore esatto che deve avere quella variabile.
+SAYCHAR              |   448 (0.62%)  | comando che unisce il comando SAY e il SHOWCHAR prende i due parametri di comandi singoli ovvero personaggio e frase localizzata.
+SHOWNODE             |   406 (0.56%) 
+SETDECKPREPARATIONSCRIPT |   399 (0.55%)
+INIT_BUILD           |   399 (0.55%)
+SETSHIPTYPE          |   399 (0.55%)
+START_BUILDING       |   399 (0.55%)
+END_BUILDING         |   399 (0.55%)
+INIT_FLIGHT          |   399 (0.55%)
+START_FLIGHT         |   399 (0.55%)
+EVALUATE_FLIGHT      |   399 (0.55%)
+END_FLIGHT           |   399 (0.55%)
+ADDPARTTOSHIP        |   392 (0.54%)
+MISSION              |   385 (0.53%)
+FINISH_MISSION       |   385 (0.53%)
+END_OF_MISSION       |   385 (0.53%)
+SET_TO               |   371 (0.51%) 
+SHOWBUTTON           |   336 (0.46%)
+IF_ORDER             |   336 (0.46%) | sempre famiglia IF Predefiniti, verifica la posizione e l'ordine di arrivo alla fine di un volo. A seguire tutte le posizioni valide separate da spazio. il 1 posto = 0, il 2 posto=1, il 3 posto=2, il 4 posto= 3 
+SETFOCUS             |   294 (0.41%)
+ADDPARTTOASIDESLOT   |   294 (0.41%)
+ADD                  |   266 (0.37%)
+HIDEPATH             |   259 (0.36%)
+ADDINFOWINDOW        |   245 (0.34%)
+ADDMISSIONCREDITS    |   238 (0.33%)
+IFMISSIONRESULTMIN   |   231 (0.32%)
+HIDEBUTTON           |   224 (0.31%)
+SETSECRETADVPILE     |   217 (0.30%)
+IFMISSIONRESULTIS    |   189 (0.26%)
+ACT_MISSION          |   189 (0.26%)
+SETADVPILE           |   182 (0.25%)
+CENTERMAPBYNODE      |   175 (0.24%)
+RESETFOCUS           |   161 (0.22%)
+SETSPECCONDITION     |   154 (0.21%)
+IF_MIN               |   140 (0.19%)
+IF_MISSION_WON       |   140 (0.19%)
+ADDCREDITS           |   133 (0.18%)
+SHOWINFOWINDOW       |   133 (0.18%)
+MOVEPLAYERTONODE     |   119 (0.16%)
+SETACHIEVEMENTPROGRESS |   119 (0.16%) 
+MODIFYOPPONENTSBUILDSPEED |    77 (0.11%)
+SETACHIEVEMENTATTEMPT |    56 (0.08%) 
+ADDMISSIONCREDITSBYRESULT |    28 (0.04%) 
+SUBOPPONENTCREDITSBYRESULT |    21 (0.03%) 
+SETFLIGHTDECKPREPARATIONSCRIPT |     7 (0.01%)
+SETNODEKNOWN         |   112 (0.15%) 
+BUILDINGHELPSCRIPT   |   105 (0.14%) 
+UNLOCKACHIEVEMENT    |    91 (0.13%) 
+END_OF_SCRIPTS       |    84 (0.12%) 
+UNLOCKSHIPPLAN       |    84 (0.12%) 
+ASKCHAR              |    70 (0.10%) 
+IF_HAS_CREDITS       |    70 (0.10%) 
+CENTERMAPBYPATH      |    63 (0.09%) 
+SETTURNBASED         |    49 (0.07%) 
+ADDSHIPPARTS         |    42 (0.06%) 
+IF_MAX               |    35 (0.05%) 
+UNLOCKSHUTTLES       |    35 (0.05%) 
+SETMISSIONASFAILED   |    35 (0.05%) 
+ALLSHIPSGIVEUP       |    35 (0.05%) 
+HIDEALLPATHS         |    35 (0.05%) 
+IF_FROM_CAMPAIGN     |    35 (0.05%) 
+IF_TUTORIAL_SEEN     |    28 (0.04%) 
+IF_DEBUG             |    14 (0.02%) 
+SETFOCUSIFCREDITS    |    14 (0.02%) 
+FLIGHTHELPSCRIPT     |    14 (0.02%) 
+ADDOPPONENTSCREDITS  |    14 (0.02%) 
+SETCREDITS           |    14 (0.02%) 
+SETFLIGHTSTATUSBAR   |    14 (0.02%) 
+HIDENODE             |     7 (0.01%) 
+ALIENHELPSCRIPT      |     7 (0.01%) 
+GIVEUPFLIGHT         |     7 (0.01%) 
+SETMISSIONASCOMPLETED|     7 (0.01%) 
+SHOWHELPIMAGE        |     7 (0.01%)
+SAVESTATE            |     7 (0.01%)
+LOADSTATE            |     7 (0.01%)
+ADDNODE              |     7 (0.01%)
+FOCUSCHAR            |     7 (0.01%)
+QUITCAMPAIGN         |     7 (0.01%)
+(CLIQUEZ             |     2 (0.00%) | questo non è un comando
+(CHOISISSEZ          |     2 (0.00%) | questo non è un comando
+ 
+ ANALISI COMPLETA DEI COMANDI E ELEMENTI
+
+Basandomi sul file SUPPORTOBUG.txt, ecco la classificazione completa:
+
+  1. ELEMENTI DI BLOCCO (Container)
+
+  BLOCCHI SCRIPT/MISSION: Questi elementi diventano 2 oggetti container distinti SCRIPT e MISSION
+
+  - SCRIPT <nomescript> - Apre un blocco script
+  - END_OF_SCRIPTS - Chiude tutti gli script nel file
+  - MISSION <nomemission> - Apre un blocco mission
+  - END_OF_MISSION - Chiude il blocco mission
+  - FINISH_MISSION - Marca l'inizio della sezione conclusiva della mission
+
+  BLOCCHI IF (Condizionali):
+
+  - IF <semaforo> - IF standard su semaforo
+  - IF_DEBUG - IF attivo solo in modalità debug **QUESTO IF PREDEFINITo è ANCORATO NATIVAMENTE A VARIABILI DI SISTEMA questa controlla la variabile debug**
+  - IF_FROM_CAMPAIGN - IF attivo se siamo in campagna ** QUESTO IF PREDEFINITO è ANCORATO NATIVAMENTE ALLA VARIABILE from_campaign e controlla il valore di questa variabile**
+  - IF_HAS_CREDITS <amount> - IF attivo se ha almeno X crediti
+  - IF_IS <variabile> <valore> - IF su variabile numerica esatta
+  - IF_MAX <variabile> <valore> - IF su variabile <= valore
+  - IF_MIN <variabile> <valore> - IF su variabile >= valore
+  - IF_MISSION_WON - IF attivo se mission vinta **QUESTO IF PREDEFINITO è ANCORATO NATIVAMENTE ALLA VARIABILE di sistema**
+  - IF_ORDER <posizioni...> - IF su posizione arrivo (0=primo) ** Puo avere da 1 a 4 valori indicando tutte le posizioni valide es. 0 2 indicano 1 o 3 posto**
+  - IF_PROB <percentuale> - IF probabilistico
+  - IF_TUTORIAL_SEEN - IF se tutorial già visto **QUESTO IF PREDEFINITO è ANCORATO NATIVAMENTE ALLA VARIABILE di sistema**
+  - IFMISSIONRESULTIS <risultato> - IF su risultato mission specifico (risultato valore intero)
+  - IFMISSIONRESULTMIN <risultato> - IF su risultato mission minimo (risultato valore intero)
+  - IFNOT <semaforo> - IF negato su semaforo
+  - ELSE - Ramo alternativo di IF
+  - END_OF_IF - Chiude blocco IF
+
+  BLOCCHI MENU : Questi elementi diventano 2 oggetti container distinti MENU e OPT
+
+  - MENU - Apre blocco menu
+  - END_OF_MENU - Chiude blocco menu
+  - OPT "<testo>" - Opzione semplice
+  - OPT_IF <semaforo> "<testo>" - Opzione se semaforo ON
+  - OPT_IFNOT <semaforo> "<testo>" - Opzione se semaforo OFF
+  - END_OF_OPT - Chiude blocco opzione (implicito)
+
+  BLOCCHI MISSION (Fasi): Questi elementi diventano 2 container distinti BUILD e FLIGHT
+
+  - INIT_BUILD - Inizializza fase build
+  - START_BUILDING - Avvia fase build
+  - END_BUILDING - Termina fase build
+  - INIT_FLIGHT - Inizializza fase flight
+  - START_FLIGHT - Avvia fase flight
+  - EVALUATE_FLIGHT - Valuta risultati flight
+  - END_FLIGHT - Termina fase flight
+
+  2. COMANDI ATOMICI
+
+  DIALOGO:
+
+  - SAY "<testo>" - Mostra testo **(multilingua)**
+  - ASK "<testo>" - Mostra domanda (richiede MENU dopo) **(multilingua)**
+  - SAYCHAR <personaggio> "<testo>" - Say con personaggio **(multilingua)**
+  - ASKCHAR <personaggio> "<testo>" - Ask con personaggio **(multilingua)**
+  - ANNOUNCE "<testo>" - Messaggio su barra stato **(multilingua)**
+  - SETFLIGHTSTATUSBAR "<testo>" - Testo barra status **(multilingua)**
+
+  GESTIONE PERSONAGGI:
+
+  - SHOWCHAR <personaggio> <posizione> - Mostra personaggio
+  - HIDECHAR <personaggio> - Nasconde personaggio
+  - CHANGECHAR <personaggio> <immagine> - Cambia immagine
+  - FOCUSCHAR <personaggio> - Focus su personaggio
+
+  GESTIONE FINESTRA DIALOGO:
+
+  - SHOWDLGSCENE - Apre finestra dialogo ( elementi di dialogo usabili solo se nel flow è stato aperto prima una finestra di dialogo)
+  - HIDEDLGSCENE - Chiude finestra dialogo
+
+  VARIABILI E SEMAFORI:
+
+  - SET <semaforo> - Attiva semaforo (TRUE)
+  - RESET <semaforo> - Disattiva semaforo (FALSE)
+  - SET_TO <variabile> <valore> - Imposta variabile numerica
+  - ADD <variabile> <valore> - Aggiunge a variabile il valore
+
+  CONTROLLO FLUSSO:
+
+  - LABEL <nome> - Definisce etichetta
+  - GO <label> - Salta a etichetta
+  - SUB_SCRIPT <nomescript> - Esegue subscript
+  - RETURN - Ritorna da script **NO SIGNIFICA RITORNA ALLO SCRIPT CHIAMANTE... IL FLOW DICIAMO**
+  - EXIT_MENU - Esce da menu **(definisce come comando successivo del flow il primo comando/blocco dopo il prossimo [END_OF_MENU])**
+  - DELAY <millisecondi> - Pausa
+
+  MAPPA E NAVIGAZIONE:
+
+  - SHOWPATH <rotta> - Mostra rotta
+  - HIDEPATH <rotta> - Nasconde rotta
+  - HIDEALLPATHS <nodo1> <nodo2> - Nasconde rotte tra nodi
+  - SHOWNODE <nodo> - Mostra nodo
+  - HIDENODE <nodo> - Nasconde nodo
+  - SHOWBUTTON <bottone> - Mostra bottone
+  - HIDEBUTTON <bottone> - Nasconde bottone
+  - CENTERMAPBYNODE <nodo> - Centra mappa su nodo
+  - CENTERMAPBYPATH <rotta> - Centra mappa su rotta
+  - MOVEPLAYERTONODE <nodo> - Sposta giocatore
+
+  GESTIONE MISSION:
+
+  - ADDOPPONENT <personaggio> - Aggiunge avversario **ad array interno con indice da 0 a 3 **
+  - ADDOPPONENTSCREDITS <index> <crediti> - Modifica crediti avversario **valore da 0 a 3 che indica il personaggio**
+  - MODIFYOPPONENTSBUILDSPEED <percentuale> - Modifica velocità build
+  - SETSHIPTYPE <tipo> - Imposta tipo nave (STI/STII/STIII)
+  - SETDECKPREPARATIONSCRIPT <script> - Script preparazione deck
+  - SETFLIGHTDECKPREPARATIONSCRIPT <script> - Script deck flight
+  ** I COMANDI SEGUENTI GESTIAMOLI COME SEGUE: <TIPO COMANDO> <STRINGA PARAMS> riportando un esempio di valorizzazione di quel comando e lasciamo editabile come stringa**
+  - SETADVPILE <pile> <number> - Imposta pile avventura
+  - SETSECRETADVPILE <pile> <number> - Pile avventura segreta
+  - ADDPARTTOSHIP <params...> - Aggiunge parte a nave
+  - ADDPARTTOASIDESLOT <params...> - Aggiunge parte aside
+  - SETSPECCONDITION <condizione> - Condizione speciale mission
+  - ADDSHIPPARTS <file> - Aggiunge parti nave da file
+  
+  ** RIPRENDIAMO LA GESTIONE ORDINARIA DEI COMANDI **
+  - ACT_MISSION <mission> - Attiva mission
+  - SETTURNBASED - Imposta modalità turni
+
+  CREDITI E REWARDS:
+
+  - ADDCREDITS <amount> - Aggiunge crediti **valore numerico**
+  - SETCREDITS <amount> - Imposta crediti **valore numerico**
+  - ADDMISSIONCREDITS <amount> - Crediti reward mission **valore numerico**
+  - ADDMISSIONCREDITSBYRESULT - Crediti basati su risultato **nessun parametro**
+  - SUBOPPONENTCREDITSBYRESULT - Sottrae crediti avversario **nessun parametro**
+
+  ALTRI COMANDI:
+
+  - SETFOCUS <bottone> - Focus su bottone
+  - RESETFOCUS <bottone> - Rimuove focus
+  - SETFOCUSIFCREDITS <bottone> <crediti> - Focus condizionale **valido solo se si hanno abbastanza crediti** 
+  - SETNODEKNOWN <nodo> - Marca nodo come conosciuto
+  - ADDINFOWINDOW <immagine> - Aggiunge info window
+  - SHOWINFOWINDOW <immagine> - Mostra info window
+  - SETACHIEVEMENTPROGRESS <achievement> <value> - Progress achievement
+  - SETACHIEVEMENTATTEMPT <achievement> <value> - Attempt achievement
+  - UNLOCKACHIEVEMENT <achievement> - Sblocca achievement
+**hai individuato un altro elemento che deve essere gestito in anagrafica con API... che restituiscono i dati di tutti gli achievement la lista completa degli achievement è dentro ./achievement/archi.yaml**
+** le immagini degli achievement sono dentro ./achievement/images**
+
+  - UNLOCKSHIPPLAN <plan> - Sblocca piano nave
+  - UNLOCKSHUTTLES - Sblocca shuttle
+  - BUILDINGHELPSCRIPT <delay> <script> - Script help build
+  - FLIGHTHELPSCRIPT <script> - Script help flight
+  - ALIENHELPSCRIPT <script> - Script help alieni
+  - SETMISSIONASFAILED - Marca mission fallita (riferimento a semaforo di sistema)
+  - SETMISSIONASCOMPLETED - Marca mission completata (riferimento a semaforo di sistema)
+  - ALLSHIPSGIVEUP - Tutte navi si arrendono
+  - GIVEUPFLIGHT - Arrendi flight (riferimento a semaforo di sistema)
+  - SHOWHELPIMAGE <x> <y> <scale> <image> - Mostra help image **parametri complessi da gestire come stringa**
+  - SAVESTATE - Salva stato
+  - LOADSTATE - Carica stato
+  - ADDNODE <nodo> - Aggiunge nodo dinamicamente
+  - QUITCAMPAIGN - Esce da campagna
+
+  DOMANDE DA CHIARIRE:
+
+  1. Parsing delle mission: Le mission hanno una struttura più complessa con le fasi BUILD e FLIGHT. Come vuoi che vengano rappresentate nell'oggetto mission? Come sottoblocchi separati o come sequenza      
+  lineare? **Mi aspetto un oggetto ad hoc la definizione di un componente che permetta di gestire al suo interno gli altri componenti chiave**
+  2. Comandi non documentati: Nel server ci sono alcuni comandi parsati che non sono in SUPPORTOBUG.txt (es. RUNSCRIPT, CENTER_MAP, SHOW_NODE). Li includiamo o seguiamo solo la specifica? **ELENCAMI TUTTI I COMANDI MANCANTI E ALLA LUCE DI QUANTO INDICATO PROBABILMENTE POTRAI TU STESSO IDENTIFICARE GRUPPO DI APPARTENENZA E TIPO DI PARAMETRI/GESTIOEN**
+  3. Parametri dei comandi: Alcuni comandi hanno parametri complessi (es. ADDPARTTOSHIP ha 5 parametri numerici). Devo creare strutture specifiche per ogni tipo di parametro? **HO GIA' RISPOSTO SOPRA DIRETTAMENTE SUL BLOCCO DI COMANDI, GESTIAMO COMANDO, PARAMETRO STRINGA CON ESEMPIO DI VALORIZZAZIONE**
+  4. Gestione multilingua: Per i comandi con testo localizzabile (SAY, ASK, etc.), come vuoi che venga gestita la struttura? Array di lingue o oggetto con chiavi lingua? **MI ASPETTO CHE IL TESTO SIA GIà NELL'OGGETTO CON TUTTI I VALORI LINGUA**
+  5. Validazione: Vuoi che il parser verifichi la correttezza dei parametri (es. posizioni valide: left/center/right) o accetti qualsiasi valore? **il parser deve leggere e scrivere gli script. la validazione è fatta a FE.
+
+## COMANDI MANCANTI NEL PARSER ATTUALE (da implementare):
+
+### BLOCCHI CONDIZIONALI MANCANTI:
+- IF_ORDER <posizioni...> - Array di posizioni valide (es. "0 2" = 1° o 3° posto)
+- IFMISSIONRESULTIS <risultato> - IF su risultato mission specifico
+- IFMISSIONRESULTMIN <risultato> - IF su risultato mission minimo
+
+### COMANDI MANCANTI (parametri semplici):
+- FOCUSCHAR <personaggio>
+- ADD <variabile> <valore>
+- HIDEALLPATHS <nodo1> <nodo2>
+- HIDENODE <nodo>
+- SHOWBUTTON <bottone>
+- HIDEBUTTON <bottone>
+- CENTERMAPBYNODE <nodo>
+- CENTERMAPBYPATH <rotta>
+- MOVEPLAYERTONODE <nodo>
+- ADDOPPONENTSCREDITS <index> <crediti>
+- MODIFYOPPONENTSBUILDSPEED <percentuale>
+- SETSHIPTYPE <tipo>
+- SETDECKPREPARATIONSCRIPT <script>
+- SETFLIGHTDECKPREPARATIONSCRIPT <script>
+- ACT_MISSION <mission>
+- SETTURNBASED
+- ADDCREDITS <amount>
+- SETCREDITS <amount>
+- ADDMISSIONCREDITS <amount>
+- ADDMISSIONCREDITSBYRESULT
+- SUBOPPONENTCREDITSBYRESULT
+- SETFOCUS <bottone>
+- RESETFOCUS <bottone>
+- SETFOCUSIFCREDITS <bottone> <crediti>
+- SETNODEKNOWN <nodo>
+- ADDINFOWINDOW <immagine>
+- SHOWINFOWINDOW <immagine>
+- SETACHIEVEMENTPROGRESS <achievement> <value>
+- SETACHIEVEMENTATTEMPT <achievement> <value>
+- UNLOCKACHIEVEMENT <achievement>
+- UNLOCKSHIPPLAN <plan>
+- UNLOCKSHUTTLES
+- BUILDINGHELPSCRIPT <delay> <script>
+- FLIGHTHELPSCRIPT <script>
+- ALIENHELPSCRIPT <script>
+- SETMISSIONASFAILED
+- SETMISSIONASCOMPLETED
+- ALLSHIPSGIVEUP
+- GIVEUPFLIGHT
+- SAVESTATE
+- LOADSTATE
+- ADDNODE <nodo>
+- QUITCAMPAIGN
+
+### COMANDI PARAMETRI COMPLESSI (stringa con esempio):
+- SETADVPILE <pile> <number> - es. "1 3"
+- SETSECRETADVPILE <pile> <number> - es. "2 1"
+- ADDPARTTOSHIP <params...> - es. "1 7 alienEngine 3333 0"
+- ADDPARTTOASIDESLOT <params...> - es. "alienGun 2 1 2 0"
+- SETSPECCONDITION <condizione> - es. "bet"
+- ADDSHIPPARTS <file> - es. "parts/allParts.yaml"
+- SHOWHELPIMAGE <x> <y> <scale> <image> - es. "40 50 70 campaign/tutorial-purple.png"
+
+### COMANDI DA RIMUOVERE (nel parser ma non nella specifica):
+- RUNSCRIPT (sostituito da SUB_SCRIPT)
+- WAIT (non nella specifica)
+- CENTER_MAP (sostituito da CENTERMAPBYNODE)
+- SHOW_NODE (sostituito da SHOWNODE)
+
+## API AGGIUNTIVE IDENTIFICATE:
+
+### API ACHIEVEMENTS:
+- API 16: Lista achievement (da ./achievement/archi.yaml)
+- API 17: Immagini achievement (da ./achievement/images)

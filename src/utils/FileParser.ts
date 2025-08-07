@@ -1,29 +1,29 @@
 import * as yaml from 'js-yaml';
-import { Mission, DeckScript, DeckCommand, ShipPart, AdventureCard, ValidationError } from '../types/GameTypes';
+import { Mission, DeckScript, DeckCommand, ShipPart, AdventureCard, ValidationError, FlightEvaluation, InfoBoard } from '../types/GameTypes';
 
 export class FileParser {
   
   // Parser per file di missione YAML
   static parseMissionYAML(content: string): Mission {
     try {
-      const data = yaml.load(content) as any;
+      const data = yaml.load(content) as Record<string, unknown>;
       
       const mission: Mission = {
-        name: data.name || '',
-        missionID: data.missionID || 0,
-        description: data.description,
-        gameType: data.gameType,
-        flightsAvailableToChange: data.fligthsAvailabelToChange || data.flightsAvailableToChange || ['STI', 'STII', 'STIII'],
-        flightsPicked: data.flightsPicked || ['STI'],
-        playersCount: Array.isArray(data.playersCount) && data.playersCount.length >= 2 ? [data.playersCount[0], data.playersCount[1]] : [2, 4],
-        shipPlans: data.shipPlans || ['I', 'II', 'III'],
-        pileConfigSTI: data.pileConfigSTI,
-        pileConfigSTII: data.pileConfigSTII,
-        pileConfigSTIII: data.pileConfigSTIII,
-        universalDeckScript: data.universalDeckScript,
-        customDeckScript: data.customDeckScript,
-        evaluation: data.evaluation,
-        infoBoards: data.InfoBoards,
+        name: (data.name as string) || '',
+        missionID: (data.missionID as number) || 0,
+        description: data.description as string,
+        gameType: data.gameType as 'realtime' | 'turnbased' | undefined,
+        flightsAvailableToChange: (data.fligthsAvailabelToChange as ('STI' | 'STII' | 'STIII')[]) || (data.flightsAvailableToChange as ('STI' | 'STII' | 'STIII')[]) || ['STI', 'STII', 'STIII'],
+        flightsPicked: (data.flightsPicked as ('STI' | 'STII' | 'STIII')[]) || ['STI'],
+        playersCount: Array.isArray(data.playersCount) && data.playersCount.length >= 2 ? [data.playersCount[0] as number, data.playersCount[1] as number] : [2, 4],
+        shipPlans: (data.shipPlans as string[]) || ['I', 'II', 'III'],
+        pileConfigSTI: data.pileConfigSTI as string,
+        pileConfigSTII: data.pileConfigSTII as string,
+        pileConfigSTIII: data.pileConfigSTIII as string,
+        universalDeckScript: data.universalDeckScript as string,
+        customDeckScript: data.customDeckScript as string,
+        evaluation: data.evaluation as FlightEvaluation,
+        infoBoards: data.InfoBoards as InfoBoard[],
         comments: this.extractComments(content)
       };
       
@@ -35,7 +35,7 @@ export class FileParser {
 
   // Serializza una missione in YAML
   static serializeMissionYAML(mission: Mission): string {
-    const yamlData: any = {
+    const yamlData: Partial<Mission> = {
       name: mission.name,
       missionID: mission.missionID
     };
@@ -168,7 +168,7 @@ export class FileParser {
   // Estrai commenti dal file YAML
   static extractComments(content: string): { ships?: string; rules?: string; tiles?: string; cards?: string } {
     const lines = content.split('\n');
-    const comments: any = {};
+    const comments: { ships?: string; rules?: string; tiles?: string; cards?: string } = {};
     
     for (const line of lines) {
       const trimmed = line.trim();

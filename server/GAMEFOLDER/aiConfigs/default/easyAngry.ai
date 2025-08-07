@@ -1,0 +1,10 @@
+idName: "easy_angry"
+character: angry
+avatar: avatars/ai/easy_angry.png
+color: "gbyr"
+preferencesSettings: aiConfigs/settingAngry.aipref
+speed: 0.9
+quality: 1.2
+speedSettings: aiConfigs/settingBaseEasy.aispeed
+difficulty: easy  #hard, medium, easy
+stupidity: 120

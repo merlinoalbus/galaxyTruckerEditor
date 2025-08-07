@@ -1,0 +1,7 @@
+idName: "tutorRace"
+shipTypes: ["I-double", "II-double", "III-double"]
+avatar: avatars/campaign/tutor.png
+color: "bgyr"
+preferencesSettings: aiConfigs/settingSafe.aipref
+speedSettings: aiConfigs/settingBase.aispeed
+stupidity: 10

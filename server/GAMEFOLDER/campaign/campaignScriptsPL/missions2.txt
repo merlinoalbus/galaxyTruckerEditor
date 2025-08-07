@@ -1,0 +1,1049 @@
+SCRIPTS
+
+MISSION universalConnectors
+  SUB_SCRIPT add2RandomOpponentsMedium
+  SetDeckPreparationScript "digitalDeck"
+  INIT_BUILD
+  SetShipType STII
+  SUB_SCRIPT universalParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+MISSION noEnemies2
+  SUB_SCRIPT addRandomOpponentsMedium
+  SetDeckPreparationScript "nonCombatDeck"
+  INIT_BUILD
+  SetShipType STII
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+MISSION pirateAmbush
+  SUB_SCRIPT add2RandomOpponentsMedium
+  SetDeckPreparationScript "pirateAmbush1"
+  SetFlightDeckPreparationScript "pirateAmbush2"
+  INIT_BUILD
+  SetSecretAdvPile 1 0
+  SetSecretAdvPile 2 0
+  SetShipType STII
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+SCRIPT pirateEscape
+
+  IF pirateEscaped
+    RETURN
+  END_OF_IF
+  SET pirateEscapedAtLeastOnce
+  SET pirateEscaped
+  ShowDlgScene
+  Announce "Właśnie zajrzał[g(eś|aś)] do celi króla piratów: jest pusta!"
+  IfMissionResultIs 1
+    Announce "Musiał wymknąć się ze statku, kiedy był[g(eś|aś)] zajęt[g(y|a)] wyładowaniem towarów."
+  END_OF_IF
+  IfMissionResultIs 2
+    Announce "Najwyraźniej ukrył się wśród załogi, która opuściła twój statek."
+  END_OF_IF
+  IfMissionResultIs 3
+    Announce "Najwyraźniej wymknął się z członkami załogi, którzy udali się złupić opuszczoną stację kosmiczną... i nigdy nie wrócił!"
+  END_OF_IF
+  IfMissionResultIs 4
+    Announce "Musiał się wymknąć, kiedy zabierał[g(eś|aś)] towary przemytnikom."
+  END_OF_IF
+  IfMissionResultIs 5
+    Announce "Musiał być pomiędzy członkami załogi, których porwali złoczyńcy."
+  END_OF_IF
+  IfMissionResultIs 6
+    Announce "Musiał ukryć się w jednej ze skrzyń, które zabrali złoczyńcy."
+  END_OF_IF
+  IfMissionResultIs 8
+    Announce "W jakiś sposób ukrył się wśród baterii, które zabrali złoczyńcy."
+  END_OF_IF
+  IfMissionResultIs 7
+    Announce "Prawdopodobnie wymknął się z załogantami, którzy wyszli oczyścić brudne połączenia, a potem... No właśnie, gdzie udał się potem?"
+    Announce "(Następnym razem musimy się upewnić, że statek nie ma odsłoniętych połączeń.)"
+  END_OF_IF
+  HidePath U2-17x
+  IFNOT ropeCut
+    HideButton bpirate3
+  END_OF_IF
+  ShowButton bpirate2
+  SetFocus bpirate2
+  MENU
+    OPT "Jeszcze mu pokażemy! Wracamy do pirackiej kryjówki."
+      GiveUpFlight
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Ech, nie zależy mi. Wracamy na Regulę bez niego."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  HideDlgScene
+END_OF_SCRIPT
+
+MISSION pirateEscort
+  IFNOT pirateEscortTried
+    AddOpponent prisoner1
+    AddOpponent prisoner2
+    SET pirateEscortTried
+  ELSE
+    SUB_SCRIPT add2RandomOpponentsMedium
+  END_OF_IF
+  SetDeckPreparationScript "digitalDeck"
+  SetSpecCondition "pirateEscort"
+  INIT_BUILD
+  SetShipType STII
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  IF_MISSION_WON
+    ShowDlgScene
+    ShowChar policeBot left
+    Say "Tutaj robot Galaktycznego Biura Śledczego."
+    Ask "Według naszej bazy danych pojmał[g(eś|aś)] groźnego przestępcę."
+    IF pirateEscaped
+      MENU
+        OPT "To jakieś nieporozumienie. Nie widzieliśmy żadnych groźnych przestępców."
+          Say "Nieporozumienie jest niedopuszczalne. Kłamstwo jest niedopuszczalne."
+          Say "Galaktyczne Biuro Śledcze nakłada na ciebie grzywnę za krzywoprzysięstwo w wysokości 5 kredytów."
+          Say "Nie musisz kontaktować się ze swoim bankiem. Mamy dostęp do twojego konta."
+          AddMissionCredits -5
+          Announce "Z twojego konta usunięto 5 kredytów."
+          EXIT_MENU
+        END_OF_OPT
+        OPT "Tak, pokonaliśmy go. Ale potem jakoś tak... jakoś tak nas wymanewrował."
+          Say "Przetwarzam dane."
+          Say "Baza danych uaktualniona. Status przestępcy zmieniony na: na wolności."
+          Say "Podanie o wypłatę nagrody anulowane."
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+      Delay 500
+      HideChar policeBot
+      HideDlgScene
+    ELSE
+      MENU
+        OPT "Tak. Oto on. Tylko miejcie na niego oko, żeby nie uciekł."
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+      Say "Ucieczka jest niedopuszczalna."
+      ShowChar pirate right
+      SayChar pirate "Nie lekceważcie mojego sprytu. Prędzej czy później zatrzymacie się na jakiejś planecie..."
+      SayChar policeBot "Milczeć. Inaczej zostanę upoważniony do użycia siły perswazyjnej."
+      SayChar pirate "Uhm..."
+      Delay 300
+      HideChar pirate
+      Delay 300
+      SayChar policeBot "Galaktyczne Biuro Śledcze przejmuje pieczę nad więźniem."
+      Ask "Nagroda w wysokości 30 kredytów została przelana na twoje konto."
+      MENU
+        OPT "Ach, dziękuję."
+          EXIT_MENU
+        END_OF_OPT
+        OPT "Ale nie podał[g(em|am)] ci jeszcze mojego numeru konta."
+          Say "Ha. Ha. Ha."
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+      AddMissionCredits 30
+      Announce "Na twoje konto przelano nagrodę w wysokości 30 kredytów."
+      HidePath U2-17x
+      SET pirateEscorted
+      Delay 300
+      HideChar policeBot
+      Delay 300
+      HideDlgScene
+      UnlockAchievement camp_pirate
+    END_OF_IF
+  END_OF_IF
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+SCRIPT explosivesIntro
+
+  ShowDlgScene
+  ShowChar foreman left
+  IF explosivesFailed
+    Say "Słyszałem, że ostatni lot dostawczy z materiałami wybuchowymi zakończył się fiaskiem."
+    Say "Nic nie szkodzi. Możesz spróbować jeszcze raz. I tak nie mam wystarczająco dużo ludzi do tej roboty."
+    RESET explosivesFailed
+  ELSE
+    Delay 500
+    ChangeChar foreman campaign/foreman-hello.png
+    Say "Proszę bardzo: górnicze materiały wybuchowe pierwszej klasy."
+    ChangeChar foreman campaign/foreman-smile.png
+    IF_MIN explosives 3
+      Say "Musiałem przyspawać do twojego statku trochę materiałów wybuchowych. Mam nadzieję, że nie masz nic przeciwko."
+    END_OF_IF
+    HideDlgScene
+    AddInfoWindow "tutorial/infoExplosiveCargo.png"
+    ShowInfoWindow "tutorial/infoExplosiveCargo.png"
+    ShowDlgScene
+    ShowChar foreman left
+    Say "Zapłacą ci roboty z asteroidów."
+    Say "Bombowej zabawy! (Ha, ha!)"
+  END_OF_IF
+  HideChar foreman
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT ms_no_explosives0
+
+  SET_TO explosives 0
+  SET_TO destination 0
+  ACT_MISSION explosivesDelivery
+END_OF_SCRIPT
+
+SCRIPT ms_no_explosives1
+
+  SET_TO explosives 0
+  SET_TO destination 1
+  ACT_MISSION explosivesDelivery
+END_OF_SCRIPT
+
+SCRIPT ms_no_explosives2
+
+  SET_TO explosives 0
+  SET_TO destination 2
+  ACT_MISSION explosivesDelivery
+END_OF_SCRIPT
+
+SCRIPT ms_explosives0
+
+  SET_TO explosives 2
+  SET_TO destination 0
+  ACT_MISSION explosivesDelivery
+END_OF_SCRIPT
+
+SCRIPT ms_explosives1
+
+  SET_TO explosives 4
+  SET_TO destination 1
+  ACT_MISSION explosivesDelivery
+END_OF_SCRIPT
+
+SCRIPT ms_explosives2
+
+  SET_TO explosives 6
+  SET_TO destination 2
+  ACT_MISSION explosivesDelivery
+END_OF_SCRIPT
+
+MISSION explosivesDelivery
+  SUB_SCRIPT add3RandomOpponentsMedium
+  SetDeckPreparationScript "explosiveDeck"
+  INIT_BUILD
+  SetSpecCondition "explosives"
+  IF_MIN explosives 2
+    BuildingHelpScript 1000 explosivesIntro
+  END_OF_IF
+  SetShipType STII
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  IF_IS explosives 2
+    AddPartToAsideSlot explosive 1 0 1 0
+    AddPartToAsideSlot explosive 2 0 2 0
+    AddPartToShip 1 17 explosive 2121 0
+    AddPartToShip 2 23 explosive 2222 0
+    AddPartToShip 3 25 explosive 1111 0
+  END_OF_IF
+  IF_IS explosives 4
+    AddPartToAsideSlot explosive 2 3 2 0
+    AddPartToAsideSlot explosive 1 3 1 0
+    AddPartToShip 0 23 explosive 1212 0
+    AddPartToShip 0 25 explosive 2121 0
+    AddPartToShip 1 17 explosive 2323 0
+    AddPartToShip 1 23 explosive 3131 0
+    AddPartToShip 2 17 explosive 1313 0
+    AddPartToShip 2 25 explosive 2323 0
+    AddPartToShip 3 23 explosive 1323 0
+    AddPartToShip 3 25 explosive 2313 0
+  END_OF_IF
+  IF_IS explosives 6
+    AddPartToAsideSlot explosive 1 2 3 0
+    AddPartToAsideSlot explosive 3 1 2 0
+    AddPartToShip 0 23 explosive 1011 0
+    AddPartToShip 0 25 explosive 2220 0
+    AddPartToShip 0 30 explosive 1101 0
+    AddPartToShip 0 18 explosive 0222 0
+    AddPartToShip 1 17 explosive 2222 0
+    AddPartToShip 1 23 explosive 1111 0
+    AddPartToShip 1 16 explosive 3333 0
+    AddPartToShip 2 17 explosive 1111 0
+    AddPartToShip 2 25 explosive 2222 0
+    AddPartToShip 2 18 explosive 3333 0
+    AddPartToShip 3 17 explosive 3333 0
+    AddPartToShip 3 23 explosive 2222 0
+    AddPartToShip 3 25 explosive 1111 0
+  END_OF_IF
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  IF_MISSION_WON
+    ShowDlgScene
+    IF_IS destination 0
+      ShowChar tradeBot0 left
+      Say "Tu robot wydobywczy AX Delta."
+    END_OF_IF
+    IF_IS destination 1
+      ShowChar tradeBot1 left
+      Say "Tu robot wydobywczy AX Gamma."
+    END_OF_IF
+    IF_IS destination 2
+      ShowChar tradeBot2 left
+      Say "Tu robot wydobywczy AX Beta."
+    END_OF_IF
+    Say "Rozpoczęto skanowanie nadlatującego statku."
+    IfMissionResultMin 1
+      IfMissionResultIs 1
+        Say "Potwierdzono dostawę 1 jednostki materiałów wybuchowych."
+        Say "Przelewam 4 kredyty."
+        AddMissionCredits 4
+      END_OF_IF
+      IfMissionResultIs 2
+        Say "Potwierdzono dostawę 2 jednostek materiałów wybuchowych."
+        Say "Przelewam 8 kredytów."
+        AddMissionCredits 8
+        IF_IS explosives 2
+          SET achExplosives2
+          SUB_SCRIPT explosivesAchievementCheck
+        END_OF_IF
+      END_OF_IF
+      IfMissionResultIs 3
+        Say "Potwierdzono dostawę 3 jednostek materiałów wybuchowych."
+        Say "Przelewam 12 kredytów."
+        AddMissionCredits 12
+      END_OF_IF
+      IfMissionResultIs 4
+        Say "Potwierdzono dostawę 4 jednostek materiałów wybuchowych."
+        Say "Przelewam 16 kredytów."
+        AddMissionCredits 16
+        IF_IS explosives 4
+          SET achExplosives4
+          SUB_SCRIPT explosivesAchievementCheck
+        END_OF_IF
+      END_OF_IF
+      IfMissionResultIs 5
+        Say "Potwierdzono dostawę 5 jednostek materiałów wybuchowych."
+        Say "Przelewam 20 kredytów."
+        AddMissionCredits 20
+      END_OF_IF
+      IfMissionResultIs 6
+        Say "Potwierdzono dostawę 6 jednostek materiałów wybuchowych."
+        Say "Przelewam 24 kredyty."
+        AddMissionCredits 24
+        IF_IS explosives 6
+          SET achExplosives6
+          SUB_SCRIPT explosivesAchievementCheck
+        END_OF_IF
+      END_OF_IF
+      RESET explosivesPending
+      IF_IS destination 0
+        HidePath U2-14a
+      END_OF_IF
+      IF_IS destination 1
+        HidePath U2-15a
+      END_OF_IF
+      IF_IS destination 2
+        HidePath U2-16a
+      END_OF_IF
+      Delay 500
+      Say "Transakcja zakończona."
+    ELSE
+      IF_MIN explosives 1
+        SET explosivesFailed
+      END_OF_IF
+      Say "Nie wykryto żadnej użytecznej dostawy."
+      Say "Odmowa wydania pozwolenia na dokowanie."
+      SetMissionAsFailed
+    END_OF_IF
+    IF_IS destination 0
+      Say "Robot wydobywczy AX Delta rozłącza się."
+      HideChar tradeBot0
+    END_OF_IF
+    IF_IS destination 1
+      Say "Robot wydobywczy AX Gamma rozłącza się."
+      HideChar tradeBot1
+    END_OF_IF
+    IF_IS destination 2
+      Say "Robot wydobywczy AX Beta rozłącza się."
+      HideChar tradeBot2
+    END_OF_IF
+    HideDlgScene
+  ELSE
+    SET explosivesFailed
+  END_OF_IF
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+SCRIPT explosivesAchievementCheck
+
+  SET_TO achExplTotal 0
+  IF achExplosives2
+    ADD achExplTotal 1
+  END_OF_IF
+  IF achExplosives4
+    ADD achExplTotal 1
+  END_OF_IF
+  IF achExplosives6
+    ADD achExplTotal 1
+  END_OF_IF
+  IF_IS achExplTotal 1
+    SetAchievementProgress camp_explosives 1
+  END_OF_IF
+  IF_IS achExplTotal 2
+    SetAchievementProgress camp_explosives 2
+  END_OF_IF
+  IF_IS achExplTotal 3
+    SetAchievementProgress camp_explosives 3
+  END_OF_IF
+END_OF_SCRIPT
+
+SCRIPT radioactiveAchievementCheck
+
+  SET_TO achRadioTotal 0
+  IF achRadioactive1
+    ADD achRadioTotal 1
+  END_OF_IF
+  IF achRadioactive2
+    ADD achRadioTotal 1
+  END_OF_IF
+  IF achRadioactive3
+    ADD achRadioTotal 1
+  END_OF_IF
+  IF_IS achRadioTotal 1
+    SetAchievementProgress camp_radioactive 1
+  END_OF_IF
+  IF_IS achRadioTotal 2
+    SetAchievementProgress camp_radioactive 2
+  END_OF_IF
+  IF_IS achRadioTotal 3
+    SetAchievementProgress camp_radioactive 3
+  END_OF_IF
+END_OF_SCRIPT
+
+SCRIPT radioactiveTutorial
+
+  AddInfoWindow "tutorial/infoRadioactiveCargo.png"
+  ShowInfoWindow "tutorial/infoRadioactiveCargo.png"
+END_OF_SCRIPT
+
+SCRIPT radioactivePayment
+
+  ShowDlgScene
+  IF_IS radioactive 1
+    ShowChar tradeBot0 left
+    Say "Przygotowano 1 jednostkę radioaktywnych izotopów."
+    Say "Wymagany depozyt: 3 kredyty."
+    IF_HAS_CREDITS 3
+      AddCredits -3
+      Announce "Zapłacił[g(eś|aś)] 3 kredyty."
+      SET paid
+    ELSE
+      GO radioactiveNoCredits
+    END_OF_IF
+    Delay 300
+    HideChar tradeBot0
+  END_OF_IF
+  IF_IS radioactive 2
+    ShowChar tradeBot1 left
+    Say "Przygotowano 2 jednostki radioaktywnych izotopów."
+    Say "Wymagany depozyt: 6 kredytów."
+    IF_HAS_CREDITS 6
+      AddCredits -6
+      Announce "Zapłacił[g(eś|aś)] 6 kredytów."
+      SET paid
+    ELSE
+      GO radioactiveNoCredits
+    END_OF_IF
+    Delay 300
+    HideChar tradeBot1
+  END_OF_IF
+  IF_IS radioactive 3
+    ShowChar tradeBot2 left
+    Say "Przygotowano 3 jednostki radioaktywnych izotopów."
+    Say "1 jednostkę bezpośrednio dołączono do statku."
+    Say "Wymagany depozyt: 9 kredytów."
+    IF_HAS_CREDITS 9
+      AddCredits -9
+      Announce "Zapłacił[g(eś|aś)] 9 kredytów."
+      SET paid
+    ELSE
+      GO radioactiveNoCredits
+    END_OF_IF
+    Delay 300
+    HideChar tradeBot2
+  END_OF_IF
+  HideDlgScene
+  RETURN
+
+  LABEL radioactiveNoCredits
+  Delay 1200
+  Say "Przelew kredytów nieudany."
+  Say "Powód: niedostateczne środki na koncie."
+  Say "Zlecenie anulowane."
+  IF_IS radioactive 1
+    RESET mine0pending
+    HidePath U2-14b
+    ShowPath R2-14b
+    HideChar tradeBot0
+  END_OF_IF
+  IF_IS radioactive 2
+    RESET mine1pending
+    HidePath U2-15b
+    ShowPath R2-15b
+    HideChar tradeBot1
+  END_OF_IF
+  IF_IS radioactive 3
+    RESET mine2pending
+    HidePath U2-16b
+    ShowPath R2-16b
+    HideChar tradeBot2
+  END_OF_IF
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT ms_no_radioactive
+
+  SET_TO radioactive 0
+  ACT_MISSION radioactiveDelivery
+END_OF_SCRIPT
+
+SCRIPT ms_radioactive1
+
+  SET_TO radioactive 1
+  RESET paid
+  SUB_SCRIPT radioactivePayment
+  IF paid
+    ACT_MISSION radioactiveDelivery
+  END_OF_IF
+END_OF_SCRIPT
+
+SCRIPT ms_radioactive2
+
+  SET_TO radioactive 2
+  RESET paid
+  SUB_SCRIPT radioactivePayment
+  IF paid
+    ACT_MISSION radioactiveDelivery
+  END_OF_IF
+END_OF_SCRIPT
+
+SCRIPT ms_radioactive3
+
+  SET_TO radioactive 3
+  RESET paid
+  SUB_SCRIPT radioactivePayment
+  IF paid
+    ACT_MISSION radioactiveDelivery
+  END_OF_IF
+END_OF_SCRIPT
+
+MISSION radioactiveDelivery
+  SUB_SCRIPT add2RandomOpponentsMedium
+  SetDeckPreparationScript "radioactiveDeck"
+  INIT_BUILD
+  SetSpecCondition "radioactive"
+  IF_MIN radioactive 1
+    BuildingHelpScript 1000 radioactiveTutorial
+  END_OF_IF
+  SetShipType STII
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  IF_IS radioactive 1
+    AddPartToAsideSlot radioactive 1 2 1 2
+    RESET mine0pending
+    HidePath U2-14b
+    ShowPath R2-14b
+  END_OF_IF
+  IF_IS radioactive 2
+    AddPartToAsideSlot radioactive 2 2 2 2
+    AddPartToAsideSlot radioactive 1 1 1 1
+    RESET mine1pending
+    HidePath U2-15b
+    ShowPath R2-15b
+  END_OF_IF
+  IF_IS radioactive 3
+    AddPartToAsideSlot radioactive 2 2 2 2
+    AddPartToAsideSlot radioactive 1 1 1 1
+    AddPartToShip 0 17 radioactive 3031 0
+    RESET mine2pending
+    HidePath U2-16b
+    ShowPath R2-16b
+  END_OF_IF
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  IF_MISSION_WON
+    ShowDlgScene
+    ShowChar foreman left
+    Say "Niech mnie meteory biją! To mój pilot! Co mi przywiozł[g(eś|aś)]?"
+    IfMissionResultIs 0
+      Say "Nic? No trudno. Może następnym razem?"
+    END_OF_IF
+    IfMissionResultIs 1
+      Say "Ach, widzę. Pojemnik radioaktywnych izotopów. Gorący towar, co?"
+      Delay 300
+      ChangeChar foreman campaign/foreman-list.png
+      Delay 500
+      Say "Zobaczmy... tu masz swój depozyt... a tu 9 dodatkowych kredytów za dobrze wykonaną robotę."
+      AddMissionCredits 12
+      Announce "Otrzymał[g(eś|aś)] 12 kredytów."
+      IF_IS radioactive 1
+        SET achRadioactive1
+        SUB_SCRIPT radioactiveAchievementCheck
+      END_OF_IF
+    END_OF_IF
+    IfMissionResultIs 2
+      Say "Ach, widzę. Dwa pojemniki radioaktywnych izotopów. Szykuje się niezła impreza."
+      Delay 300
+      ChangeChar foreman campaign/foreman-list.png
+      Delay 500
+      Say "Zobaczmy... tu masz swój depozyt... a tu 18 dodatkowych kredytów za dobrze wykonaną robotę."
+      AddMissionCredits 24
+      Announce "Otrzymał[g(eś|aś)] 24 kredyty."
+      IF_IS radioactive 2
+        SET achRadioactive2
+        SUB_SCRIPT radioactiveAchievementCheck
+      END_OF_IF
+    END_OF_IF
+    IfMissionResultIs 3
+      Say "Trzy pojemniki radioaktywnych izotopów? Ale z ciebie ogarnięty pilot!"
+      Delay 300
+      ChangeChar foreman campaign/foreman-list.png
+      Delay 500
+      Say "Depozyt w wysokości 9 kredytów... i 27 za wykonaną dostawę... Dobra, niech będzie 40. Świetna robota."
+      AddMissionCredits 40
+      Announce "Otrzymał[g(eś|aś)] 40 kredytów."
+      IF_IS radioactive 3
+        SET achRadioactive3
+        SUB_SCRIPT radioactiveAchievementCheck
+      END_OF_IF
+    END_OF_IF
+    HideChar foreman
+    HideDlgScene
+  END_OF_IF
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+SCRIPT experimentTutorial
+
+  IF labHasIngots
+    AddInfoWindow "tutorial/infoHeavyCargo.png"
+  END_OF_IF
+  IF labHasExpl
+    AddInfoWindow "tutorial/infoExplosiveCargo.png"
+  END_OF_IF
+  IF labHasRadio
+    AddInfoWindow "tutorial/infoRadioactiveCargo.png"
+  END_OF_IF
+  IF labHasBooze
+    AddInfoWindow "tutorial/infoFragileCargo.png"
+  END_OF_IF
+  IF labHasIngots
+    ShowInfoWindow "tutorial/infoHeavyCargo.png"
+    RETURN
+  END_OF_IF
+  IF labHasExpl
+    ShowInfoWindow "tutorial/infoExplosiveCargo.png"
+    RETURN
+  END_OF_IF
+  IF labHasRadio
+    ShowInfoWindow "tutorial/infoRadioactiveCargo.png"
+    RETURN
+  END_OF_IF
+  IF labHasBooze
+    ShowInfoWindow "tutorial/infoFragileCargo.png"
+    RETURN
+  END_OF_IF
+END_OF_SCRIPT
+
+MISSION experiment
+  SUB_SCRIPT addRandomOpponentsMedium
+  SetDeckPreparationScript "digitalDeck"
+  INIT_BUILD
+  SetSpecCondition "specTiles"
+  BuildingHelpScript 1000 experimentTutorial
+  SetAdvPile 1 1
+  SetAdvPile 2 1
+  SetAdvPile 3 3
+  SetSecretAdvPile 1 1
+  SetSecretAdvPile 2 1
+  SetSecretAdvPile 3 3
+  SetShipType STIII
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  RESET labHasRadio
+  RESET labHasExpl
+  RESET labHasIngots
+  RESET labHasBooze
+  RESET labBoozeAccepted
+  IF labRadio3
+    AddPartToAsideSlot radioactive 1 2 3 2
+    AddPartToAsideSlot radioactive 2 1 0 0
+    AddPartToShip 0 22 radioactive 1233 0
+    RESET labRadio3
+    SET labHasRadio
+  END_OF_IF
+  IF labExpl6
+    AddPartToAsideSlot explosive 1 3 0 0
+    AddPartToAsideSlot explosive 2 0 3 0
+    AddPartToShip 0 30 explosive 0131 0
+    AddPartToShip 0 32 explosive 3232 0
+    AddPartToShip 0 23 explosive 3132 0
+    AddPartToShip 0 39 explosive 3131 0
+    RESET labExpl6
+    SET labHasExpl
+  END_OF_IF
+  IF labIngots2_4
+    AddPartToAsideSlot ingot4 1 0 0 0
+    AddPartToAsideSlot ingot4 2 1 2 0
+    RESET labIngots2_4
+    SET labHasIngots
+  END_OF_IF
+  IF labRadio2Ingots3_2
+    AddPartToAsideSlot ingot2 1 0 2 0
+    AddPartToAsideSlot radioactive 2 2 2 0
+    AddPartToShip 0 32 radioactive 3111 0
+    AddPartToShip 0 30 ingot2 0131 0
+    AddPartToShip 0 40 ingot2 3330 0
+    RESET labRadio2Ingots3_2
+    SET labHasRadio
+    SET labHasIngots
+  END_OF_IF
+  IF labExpl4Ingots2_3
+    AddPartToAsideSlot ingot3 1 2 0 0
+    AddPartToAsideSlot explosive 1 1 1 1
+    AddPartToShip 0 30 explosive 0130 0
+    AddPartToShip 0 32 ingot3 3121 0
+    AddPartToShip 0 41 explosive 2103 0
+    AddPartToShip 0 23 explosive 2131 0
+    RESET labExpl4Ingots2_3
+    SET labHasIngots
+    SET labHasExpl
+  END_OF_IF
+  IF labExpl4Radio2
+    AddPartToAsideSlot radioactive 2 2 2 2
+    AddPartToAsideSlot explosive 3 0 3 0
+    AddPartToShip 0 22 explosive 1333 0
+    AddPartToShip 0 23 radioactive 3131 0
+    AddPartToShip 0 40 explosive 3320 0
+    AddPartToShip 0 39 explosive 2333 0
+    RESET labExpl4Radio2
+    SET labHasRadio
+    SET labHasExpl
+  END_OF_IF
+  IF labExpl3Radio2Ingots1_5
+    AddPartToAsideSlot radioactive 2 2 2 0
+    AddPartToAsideSlot ingot5 1 3 2 0
+    AddPartToShip 0 22 radioactive 2123 0
+    AddPartToShip 0 21 explosive 0123 0
+    AddPartToShip 0 23 explosive 2031 0
+    AddPartToShip 0 40 explosive 1230 0
+    RESET labExpl3Radio2Ingots1_5
+    SET labHasRadio
+    SET labHasExpl
+    SET labHasIngots
+  END_OF_IF
+  IF labExpl3Radio2Ingots1_5booze2
+    AddPartToAsideSlot radioactive 1 1 1 0
+    AddPartToAsideSlot booze 2 3 2 0
+    AddPartToShip 0 30 radioactive 0131 0
+    AddPartToShip 0 21 explosive 2321 0
+    AddPartToShip 0 22 explosive 2123 0
+    AddPartToShip 0 39 explosive 3121 0
+    AddPartToShip 0 32 ingot5 3323 0
+    AddPartToShip 0 33 booze 2320 0
+    RESET labExpl3Radio2Ingots1_5booze2
+    SET labHasRadio
+    SET labHasExpl
+    SET labHasIngots
+    SET labHasBooze
+    SET labBoozeAccepted
+  END_OF_IF
+  ShowPath R3-26a
+  IF_IS labQuestLevel 1
+    SET lab1Failed
+  END_OF_IF
+  IF_IS labQuestLevel 2
+    SET lab2Failed
+  END_OF_IF
+  IF_IS labQuestLevel 3
+    SET lab3Failed
+  END_OF_IF
+  IFNOT recommendationDesigner
+    SetFocus blab
+  END_OF_IF
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  IF_MISSION_WON
+    ShowDlgScene
+    ShowChar mech left
+    IFNOT labDeliveredOnce
+      Say "Cześć. Co za miła niespodzianka!"
+      Say "Powiedzieli mi, że następną dostawę materiałów do naszego eksperymentu przywiezie nam jakiś pilot ciężarówki, ale nikt nie wspominał, że to będziesz ty!"
+      SET labDeliveredOnce
+    ELSE
+      Say "Cześć! Dobrze znów cię widzieć. Powiedzieli mi, że dostarczysz jakieś materiały do naszego eksperymentu."
+    END_OF_IF
+    RESET allOk
+    IF_IS labTotal 2
+      IfMissionResultMin 2
+        SET allOk
+      END_OF_IF
+    END_OF_IF
+    IF_IS labTotal 3
+      IfMissionResultMin 3
+        SET allOk
+      END_OF_IF
+    END_OF_IF
+    IF_IS labTotal 5
+      IfMissionResultMin 5
+        SET allOk
+      END_OF_IF
+    END_OF_IF
+    IF_IS labTotal 6
+      IfMissionResultIs 6
+        SET allOk
+      END_OF_IF
+      IfMissionResultIs 16
+        SET allOk
+      END_OF_IF
+      IfMissionResultIs 26
+        SET allOk
+      END_OF_IF
+    END_OF_IF
+    RESET labBooze0
+    RESET labBooze1
+    RESET labBooze2
+    IfMissionResultMin 20
+      SET labBooze2
+    ELSE
+      IfMissionResultMin 10
+        SET labBooze1
+      ELSE
+        SET labBooze0
+      END_OF_IF
+    END_OF_IF
+    Delay 1000
+    IFNOT allOk
+      ChangeChar mech campaign/mech-f.png
+      Delay 300
+      IfMissionResultIs 0
+        Say "Och, widzę, że tym razem nic dla mnie nie masz. Miał[g(eś|aś)] jakieś kłopoty po drodze, co?"
+        Say "No nic, może następnym razem."
+      ELSE
+        Say "Hm. Widzę, że nie masz pełnej dostawy."
+        Say "Szkoda. Zgodnie z zasadami laboratorium Wyzysku i Spółki nie mogę ci nic zapłacić."
+        Delay 300
+        Delay 200
+        Say "Wiem, że to głupie. Chciałabym ci zapłacić, ale potem by mi tego nie zwrócili."
+        ChangeChar mech campaign/mech.png
+        IF labBoozeAccepted
+          MENU
+            OPT_IF labBooze2 "Rozumiem. Ale mam przynajmniej te dwie skrzynie z napojami. To prezent od laboratorium."
+              ChangeChar mech campaign/mech-thumbup.png
+              Say "Ekstra! Podziękuj im ode mnie."
+              EXIT_MENU
+            END_OF_OPT
+            OPT_IF labBooze1 "Rozumiem. Straciłem nawet jedną ze skrzyń z napojami wysłanymi ci w prezencie."
+              ChangeChar mech campaign/mech-explaining.png
+              Say "Och, nic nie szkodzi. Jedna skrzynia mi w zupełności wystarczy. Podziękuj im ode mnie!"
+              EXIT_MENU
+            END_OF_OPT
+            OPT_IF labBooze0 "Rozumiem. Co gorsza straciłem też wysłany ci prezent."
+              ChangeChar mech campaign/mech-explaining.png
+              Say "Cóż, tak czasem bywam. Podziękuj im ode mnie. Miło, że o mnie pomyśleli."
+              EXIT_MENU
+            END_OF_OPT
+          END_OF_MENU
+        END_OF_IF
+        IF_IS labQuestLevel 1
+          RESET lab1Failed
+          SET lab1Success
+          SET lab1Done
+          SetFocus bworkshop
+        END_OF_IF
+        IF_IS labQuestLevel 2
+          RESET lab2Failed
+          SET lab2Success
+          SET lab2Done
+        END_OF_IF
+        IF_IS labQuestLevel 3
+          RESET lab3Failed
+          SET lab3Success
+          SET lab3Done
+        END_OF_IF
+      END_OF_IF
+    ELSE
+      Delay 300
+      Say "Widzę, że wszystko jest w porządku."
+      Delay 200
+      ChangeChar mech campaign/mech-thumbup.png
+      Delay 500
+      ChangeChar mech campaign/mech.png
+      Delay 300
+      Say "Dobra robota. Oto twoja zapłata."
+      Delay 300
+      AddMissionCredits 25
+      Announce "Otrzymał[g(eś|aś)] 25 kredytów."
+      Delay 300
+      IF labBoozeAccepted
+        MENU
+          OPT_IF labBooze2 "Dzięki. Aha, laboratorium wysłało ci też te dwie skrzynie z napojami."
+            Say "Jak miło z ich strony! A tobie udało się dostarczyć je tutaj w jednym kawałku."
+            ChangeChar mech campaign/mech-thumbup.png
+            Delay 300
+            UnlockAchievement camp_four_cargo
+            SET labAchievement
+            Delay 600
+            ChangeChar mech campaign/mech.png
+            Delay 300
+            Say "Dzięki!"
+            EXIT_MENU
+          END_OF_OPT
+          OPT_IF labBooze1 "Dzięki. Aha, laboratorium wysłało ci też dwie skrzynie z napojami... ale straciłem jedną po drodze."
+            ChangeChar mech campaign/mech-explaining.png
+            Say "Nic nie szkodzi. I tak jestem pod wrażeniem, że udało ci się dostarczyć tę jedną. Podziękuj im ode mnie."
+            EXIT_MENU
+          END_OF_OPT
+          OPT_IF labBooze0 "Dzięki. Niestety straciłem obie skrzynie napojów, które laboratorium wysłało ci w prezencie."
+            ChangeChar mech campaign/mech-explaining.png
+            Say "No cóż, zdarza się. To miło, że o mnie pomyśleli. Nie zapomnij im podziękować!"
+            ChangeChar mech campaign/mech-explaining.png
+            Say "Dzięki, że próbował[g(eś|aś)] je dostarczyć."
+            EXIT_MENU
+          END_OF_OPT
+        END_OF_MENU
+      END_OF_IF
+      IF_IS labQuestLevel 1
+        RESET lab1Failed
+        SET lab1FullSuccess
+        SET lab1Done
+        SetFocus bworkshop
+      END_OF_IF
+      IF_IS labQuestLevel 2
+        RESET lab2Failed
+        SET lab2FullSuccess
+        SET lab2Done
+      END_OF_IF
+      IF_IS labQuestLevel 3
+        RESET lab3Failed
+        SET lab3FullSuccess
+        SET lab3Done
+      END_OF_IF
+    END_OF_IF
+    HideChar mech
+    HideDlgScene
+  END_OF_IF
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+MISSION finalRoute
+  AddOpponent tutorRace
+  AddOpponent richGirlRace
+  AddOpponent halfbreed
+  RESET frRound
+  SetDeckPreparationScript "digitalDeck"
+  SetSpecCondition "FinalRace"
+  INIT_BUILD
+  RESET flightDebug
+  IF flightDebug
+    SetAdvPile 1 0
+    SetSecretAdvPile 1 2
+  END_OF_IF
+  IF_IS loadInstances 0
+    ModifyOpponentsBuildSpeed 95
+  END_OF_IF
+  IF_IS loadInstances 1
+    ModifyOpponentsBuildSpeed 90
+  END_OF_IF
+  IF_IS loadInstances 2
+    ModifyOpponentsBuildSpeed 85
+  END_OF_IF
+  IF_IS loadInstances 3
+    ModifyOpponentsBuildSpeed 80
+  END_OF_IF
+  IF_MIN loadInstances 4
+    ModifyOpponentsBuildSpeed 75
+  END_OF_IF
+  IF_MIN loadInstances 5
+    ModifyOpponentsBuildSpeed 70
+  END_OF_IF
+  IF_MIN loadInstances 6
+    ModifyOpponentsBuildSpeed 65
+  END_OF_IF
+  SetShipType STI
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  END_FLIGHT
+  INIT_BUILD
+  IF flightDebug
+    SetAdvPile 1 0
+    SetAdvPile 2 0
+    SetSecretAdvPile 1 2
+    SetSecretAdvPile 2 0
+  END_OF_IF
+  SetShipType STII
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  END_FLIGHT
+  INIT_BUILD
+  IF flightDebug
+    SetAdvPile 1 0
+    SetAdvPile 2 0
+    SetAdvPile 3 0
+    SetSecretAdvPile 1 2
+    SetSecretAdvPile 2 0
+    SetSecretAdvPile 3 0
+  END_OF_IF
+  SetShipType STIII
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  END_FLIGHT
+  SetMissionAsCompleted
+  FINISH_MISSION
+END_OF_MISSION
+
+END_OF_SCRIPTS

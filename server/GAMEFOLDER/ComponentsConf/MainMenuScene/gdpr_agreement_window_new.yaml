@@ -1,0 +1,114 @@
+- class_name: 'CGEArea'
+  name: 'background'
+  size: [parent, parent]
+  9patch: 'Profile/window_layout.png'
+  children:
+
+    - class_name: CGELayoutVBox
+      size: [parent, parent]
+      margin: [120, 100, 100, 100]
+      children:
+        
+        - class_name: 'CGEUITextArea'
+          name: title
+          ltext: gdpr_win_title
+          text: 'Terms of Service<br /> & <br />Privacy Policy agreement'
+          size: [500, 200]
+          font_size: 62
+          set_height_from_text: 0
+          hsize_policy: expanding
+          is_by_center: true
+          text_color: ffdc00
+      #bg_color: [0, 0, 255, 100]
+
+        - class_name: 'CGEArea'
+          name: agreementArea
+          visible: true
+          #size: ['title.w', 'background.h - title.h - 380']
+          hsize_policy: expanding
+          vsize_policy: expanding
+          lpadding_bottom: 80
+          #bg_color: [100, 100, 100, 100]
+          children:
+
+            - class_name: CGELayoutVBox
+              size: [parent, parent]
+              children:
+
+              - class_name: 'CGEUITextArea'
+                name: mainText
+                text: 'Hi, Player. As you might already know, with the advent of GDPR we need to ask for your agreement with the Terms of Service & Privacy Policy. <br /><br />Your CGE account needs to remember your login credentials and the progress of your online games (and if you use account syncing, also your Single-player progress). The data we collect are used for no other purpose than to provide a comfortable multiplayer experience where you can play Through the Ages and your other CGE games with friends or strangers on different platforms.<br /><br />You can read about it in more detail here:'
+                ltext: gdpr_win_text
+                multiline: true
+                text_halign: left
+                text_valign: middle
+                text_color: 00bedc
+                font_size: 42
+                font_lines_offset: 10
+                size: [parent, 240]
+                is_by_center: false
+                set_height_from_text: 0
+                #bg_color: [100, 100, 100, 100]
+
+              - class_name: 'CGEUITextButton'
+                name: ppLink
+                text: 'Terms of service & Privacy policy'
+                ltext: gdpr_link
+                multiline: true
+                text_halign: center
+                text_valign: middle
+                font_size: 42
+                font_lines_offset: 15
+                text_color: 00f1ff
+                size: [parent, 30]
+                set_height_from_text: 30
+                is_by_center: false
+
+              - class_name: CGEUICheckBox
+                name: agreement_ChB
+                size: [parent, 80]
+               # position: [0, ppLink.y + ppLink.h + 20]
+                text: 'I have read and agree to the Terms of Service & Privacy Policy'
+                ltext: gdpr_win_checkbox
+                multiline : true
+                icons: ['common/checkbox.png', 'common/checkbox_checked.png']
+                font_size: 42
+                text_color:  00bedc
+                text_halign: left
+                padding: [48, 0, 0, 0]
+          #padding: [20, 20, 20, 48]
+          #text_color: ecddc0
+          #bg_color: [150, 150, 100, 100]
+
+              - class_name: 'CGEUITextArea'
+                name: text_notif
+                text: "This decision is reversible. You can always withdraw from the agreement by contacting our support using the Extras menu."
+                ltext: gdpr_win_note
+                multiline: true
+                text_halign: left
+                text_valign: middle
+                text_color:  00bedc
+                font_size: 36
+                font_lines_offset: 15
+                size: [parent, 120]
+                lhalign: center
+                is_by_center: false
+                #bg_color: [100, 150, 100, 100]
+
+              - class_name: CGELayoutHBox
+                size: [parent, 200]
+                hsize_policy: expanding
+                children:      
+
+                  - preset: 'ComponentsConf/presets/common_button.yaml' #close button
+                    name: okBtn
+                    #is_by_center: true
+                    ltext: 'gdpr_ok_btn'
+                    text: 'Continue'
+                    size: [480, 120]
+                  - preset: 'ComponentsConf/presets/common_button.yaml' #close button
+                    name: disagreeBtn
+                   # is_by_center: true
+                    ltext: 'gdpr_disagree_btn'
+                    text: "I don't agree"
+                    size: [480, 120]
