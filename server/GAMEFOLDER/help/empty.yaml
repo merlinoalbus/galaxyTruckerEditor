@@ -1,0 +1,4 @@
+- type: img
+  id: other
+  src: help/other.png
+  bounds: [448, 824, 640, 400]

@@ -1,5 +1,8 @@
 /* Galaxy Trucker Editor Custom Styles */
 
+/* Import font personalizzati */
+@import './styles/fonts.css';
+
 .app-container {
   height: 100vh;
   display: flex;

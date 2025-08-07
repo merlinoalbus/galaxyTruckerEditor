@@ -1,0 +1,55 @@
+﻿name: "multiplayer_mission4"                    # id of mission name string - localized 
+missionID: 4                                    # serial number of the mission
+
+
+# Focus Mission
+
+# ships: 
+# rules: Bonuses for best-looking ship and finishing first are doubled/tripled if scored 2x/3x in row.
+# tiles: 
+# cards: 
+
+
+
+#gameType:                                      # Values: realtime/turnbased; If mentioned this value can not be changed in a lobby by player.
+
+fligthsAvailabelToChange: []                    # Which flights can be turned on/off in a lobby by player. Other flights are locked.
+flightsPicked: [STI, STII, STIII]
+
+playersCount: [2, 4]                            # [min, max]. Default is [2, 4]. Min can not be less then 2.
+
+
+# ==== SHIPS ====                               # Names of all available ship plans. If not mentioned default plans will be used. Should by only one ship plan for one flight.
+shipPlans: [I, II, III]
+
+
+# ==== TILES ===                                # Config file with list of all parts. Use 'pileConfig' or 'pileListConfig'.
+pileConfigSTI:   default.yaml
+pileConfigSTII:  default.yaml
+pileConfigSTIII: default.yaml
+
+
+# ==== CARDS ===
+universalDeckScript: mm_Default_Deck            # Used as digital and rough. (user can choose from 2 decks by default: digital and rough)
+    #customDeckScript:                          # Special custom deck, that doesn't fit to any deck category. If custom, digital and rough are set, user can choose from 3 decks.
+
+
+
+# ==== RULES ====                               # You can mention only those values you want edit. But you have to repeat (copy&paste) the rules for each flight.
+evaluation:                     
+  STI:
+        positionFocusCoef: [2, 3, 4]            # ak si bol prvy 1/2/3-krat za sebou, odmena sa ti nasobi prvou/druhou/tretou hodnotou
+        bestLookingFocusCoef: [2, 3, 4]         # ak si ziskal najkrajsiu lod 1/2/3-krat za sebou, odmena sa ti nasobi prvou/druhou/tretou hodnotou
+  STII:
+        positionFocusCoef: [2, 3, 4]            # ak si bol prvy 1/2/3-krat za sebou, odmena sa ti nasobi prvou/druhou/tretou hodnotou
+        bestLookingFocusCoef: [2, 3, 4]         # ak si ziskal najkrajsiu lod 1/2/3-krat za sebou, odmena sa ti nasobi prvou/druhou/tretou hodnotou
+  STIII:
+        positionFocusCoef: [2, 3, 4]            # ak si bol prvy 1/2/3-krat za sebou, odmena sa ti nasobi prvou/druhou/tretou hodnotou
+        bestLookingFocusCoef: [2, 3, 4]         # ak si ziskal najkrajsiu lod 1/2/3-krat za sebou, odmena sa ti nasobi prvou/druhou/tretou hodnotou
+
+
+
+# ==== Infoboards ====
+InfoBoards:
+  - default: [true]
+

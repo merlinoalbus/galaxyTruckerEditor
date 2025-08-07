@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(wc:*)",
+      "Bash(cp:*)",
+      "Bash(npm start)",
+      "Bash(set PORT=3001)",
+      "Bash(npm run build:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd /c:*)",
+      "Bash(powershell:*)",
+      "Bash(npm install)",
+      "Bash(start cmd /k \"npm start\")",
+      "Bash(curl:*)",
+      "Bash(mv:*)",
+      "Bash(sed:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(node server.js)",
+      "Bash(ls:*)",
+      "Bash(touch:*)",
+      "Bash(timeout:*)",
+      "Bash(restart-server.bat)",
+      "Bash(npx tsc:*)",
+      "Bash(tail:*)",
+      "Bash(mkdir:*)",
+      "Bash(git add:*)",
+      "Bash(npm run lint)",
+      "Bash(true)",
+      "Bash(rm:*)",
+      "Bash(time:*)",
+      "Bash(node:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\restart-for-bot.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\start-be.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\start-fe.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\stop-be.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\stop-fe.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\restart-be.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\restart-fe.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\start-all.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\stop-all.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\stop-all.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\start-all.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\wrapper-stop-all.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\wrapper-restart.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\async-restart.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\detached-restart.bat\")",
+      "Bash(\"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\wmic-restart.bat\")",
+      "Bash(bash:*)",
+      "Bash(scripts/stop-fe.sh:*)",
+      "Bash(npx serve:*)",
+      "Bash(scripts/restart-be.sh:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(scripts/consolida-codice.sh:*)",
+      "Bash(consolidaCodice)",
+      "Bash(scripts/consolida-codice.sh:*)",
+      "Bash(restartBE)",
+      "Bash(restartFE)",
+      "Bash(scripts/restart-fe.sh:*)",
+      "Bash(scripts/start-all.sh:*)",
+      "Bash(npm run restart-be:*)",
+      "Bash(npm run:*)",
+      "Bash(./restart-be.sh:*)",
+      "Bash(test:*)",
+      "Bash(for:*)",
+      "Bash(do echo -n \"$file: \")",
+      "Bash(done)",
+      "Bash(cat:*)"
+    ],
+    "deny": []
+  },
+  "commands": {
+    "startBE": {
+      "description": "Avvia il server Backend",
+      "command": "bash \"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\start-be.sh\""
+    },
+    "startFE": {
+      "description": "Avvia il server Frontend",
+      "command": "bash \"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\start-fe.sh\""
+    },
+    "stopBE": {
+      "description": "Ferma il server Backend",
+      "command": "bash \"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\stop-be.sh\""
+    },
+    "stopFE": {
+      "description": "Ferma il server Frontend",
+      "command": "bash \"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\stop-fe.sh\""
+    },
+    "restartBE": {
+      "description": "Riavvia il server Backend",
+      "command": "bash \"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\restart-be.sh\""
+    },
+    "restartFE": {
+      "description": "Riavvia il server Frontend",
+      "command": "bash \"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\restart-fe.sh\""
+    },
+    "start": {
+      "description": "Avvia sia Backend che Frontend",
+      "command": "bash \"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\start-all.sh\""
+    },
+    "stop": {
+      "description": "Ferma sia Backend che Frontend",
+      "command": "bash \"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\stop-all.sh\""
+    },
+    "restart": {
+      "description": "Riavvia sia Backend che Frontend",
+      "command": "bash \"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\restart-all.sh\""
+    },
+    "consolidaCodice": {
+      "description": "Consolida le modifiche con git add, commit e push automatico",
+      "command": "bash \"C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\scripts\\consolida-codice.sh\""
+    }
+  }
+}

@@ -1,0 +1,4 @@
+- type: cargoSpec1+cargo2
+  connectors: [2, 0, 0, 0]
+- type: cargoSpec1+cargo2
+  connectors: [1, 0, 0, 0]

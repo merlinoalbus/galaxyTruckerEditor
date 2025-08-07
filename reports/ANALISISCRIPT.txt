@@ -1,0 +1,267 @@
+ANALISI STEP-BY-STEP DELLA LOGICA DI PARSING SCRIPT
+================================================================
+
+SCRIPT ANALIZZATO: vipCheck
+OBIETTIVO: Documentare il processo mentale e tecnico di analisi di uno script
+
+1. LETTURA INIZIALE E IDENTIFICAZIONE STRUTTURA
+-----------------------------------------------
+STEP 1.1: Identifico delimitatori principali
+- SCRIPT vipCheck → Inizio script con nome "vipCheck"
+- END_OF_SCRIPT → Fine script
+
+STEP 1.2: Scansione rapida per identificare elementi chiave
+- Rilevo presenza di IF/ELSE/END_OF_IF → Strutture condizionali
+- Rilevo comandi Say/SayChar → Dialoghi
+- Rilevo SET/IFNOT → Gestione stato/semafori
+- Rilevo SUB_SCRIPT → Chiamate ad altri script
+- Rilevo RETURN → Uscite anticipate
+
+STEP 1.3: Identifico livelli di annidamento
+- IF principale (VIPGranted)
+  - IF nested (richGirlPending) 
+- IF successivo (purpleAccepted)
+  - IFNOT nested (purpleEscortFinished)
+
+2. ANALISI SEQUENZIALE COMANDO PER COMANDO
+------------------------------------------
+STEP 2.1: Setup iniziale (righe 1-4)
+```
+SCRIPT vipCheck        → Definizione nome script
+ShowDlgScene          → Comando UI: mostra finestra dialogo
+ShowChar securitybot left → Comando UI: mostra personaggio a sinistra
+SET VIPTried          → Comando STATO: imposta semaforo
+```
+
+PARSING LOGIC: Questi sono comandi di inizializzazione che:
+- Preparano l'ambiente visivo
+- Impostano lo stato iniziale
+- Registrano che questo script è stato eseguito
+
+STEP 2.2: Prima struttura condizionale (riga 5)
+```
+IF VIPGranted         → Controllo condizione: se VIP già concesso
+```
+
+PARSING LOGIC: Branch principale che divide lo script in due percorsi:
+- Percorso A: VIP già concesso (gestione accesso diretto)
+- Percorso B: VIP non concesso (processo di richiesta accesso)
+
+STEP 2.3: Sub-branch dentro IF VIPGranted (righe 6-12)
+```
+IF richGirlPending    → Nested condition: caso speciale Rich Girl
+  Say "TE ESPERAN EN EL ALMACÉN." → Dialogo specifico
+  HideChar securitybot → Pulizia UI
+  HideDlgScene        → Pulizia UI
+  RETURN              → Uscita immediata script
+```
+
+PARSING LOGIC: Gestione caso edge:
+- Se c'è una questione Rich Girl pendente, priorità assoluta
+- Skip di tutto il resto del dialogo
+- Uscita immediata senza chiamare sub-script
+
+STEP 2.4: ELSE del sub-branch (righe 13-15)
+```
+ELSE
+  Say "ACCESO CONCEDIDO." → Dialogo accesso normale
+END_OF_IF
+```
+
+PARSING LOGIC: Caso normale VIP già concesso
+- Semplice conferma accesso
+- Prosegue con sequenza standard
+
+STEP 2.5: Sequenza post-VIP (righe 16-21)
+```
+Delay 200             → Pausa animazione
+HideChar securitybot  → Pulizia UI
+HideDlgScene         → Pulizia UI  
+Delay 1000           → Pausa transizione
+SUB_SCRIPT richGirlDlg → Chiamata script successivo
+RETURN               → Uscita script
+```
+
+PARSING LOGIC: Sequenza standard per VIP concesso:
+- Animazioni fluide con timing
+- Pulizia ambiente
+- Transizione al dialogo principale
+- Uscita controllata
+
+STEP 2.6: Fine primo IF e inizio secondo percorso (righe 22-26)
+```
+END_OF_IF            → Fine branch VIP concesso
+Say "SOLICITANDO ACCESO AL SALÓN PRIVADO." → Dialogo richiesta
+Delay 750            → Pausa drammatica
+Say "IDENTIDAD DESCONOCIDA." → Dialogo rifiuto
+Say "ACCESO DENEGADO." → Dialogo rifiuto definitivo
+```
+
+PARSING LOGIC: Sequenza rifiuto iniziale:
+- Simulazione controllo sistema
+- Build-up tensione con delay
+- Rifiuto categorico per creare conflitto
+
+STEP 2.7: Secondo IF principale (riga 27)
+```
+IF purpleAccepted     → Controllo: missione purple completata?
+```
+
+PARSING LOGIC: Branch di recupero:
+- Condizione che può salvare la situazione
+- Dipende da quest completata in precedenza
+- Meccanismo di unlock progressivo
+
+STEP 2.8: Intervento Ambassador (righe 28-31)
+```
+Delay 200            → Pausa preparazione
+ChangeChar ambassador campaign/ambassador-peek.png → Cambio immagine
+ShowChar ambassador right → Mostra personaggio a destra
+Say "[g(Este caballero|Esta dama)] trabaja para nosotros..." → Dialogo con gender
+```
+
+PARSING LOGIC: Sequenza di intervento:
+- Timing drammatico
+- Cambio visivo (peek variant = sbirciare)
+- Posizionamento spaziale (destra vs sinistra)
+- Gender-aware text con tag [g(maschio|femmina)]
+
+STEP 2.9: Sub-condizione Ambassador (righe 32-35)
+```
+IFNOT purpleEscortFinished → Se escort NON finita
+  Say "No se quedará mucho tiempo..." → Dialogo aggiuntivo
+END_OF_IF
+```
+
+PARSING LOGIC: Dettaglio narrativo condizionale:
+- Informazione contestuale extra
+- Dipende da sotto-stato della quest purple
+- Arricchisce la narrativa senza impattare logica
+
+STEP 2.10: Risoluzione positiva (righe 36-45)
+```
+Delay 200            → Pausa
+HideChar ambassador  → Rimuovi ambassador
+Delay 200            → Pausa
+SayChar securitybot "AY..." → Dialogo specifico personaggio
+Say "ACCESO CONCEDIDO." → Accettazione
+SET VIPGranted       → IMPOSTA STATO: sblocca VIP per future
+Delay 200            → Pausa
+HideChar securitybot → Pulizia
+Delay 1000           → Transizione
+HideDlgScene        → Pulizia
+SUB_SCRIPT richGirlDlg → Chiamata script successivo
+RETURN              → Uscita
+```
+
+PARSING LOGIC: Sequenza unlock completa:
+- Coreografia complessa con timing
+- SecurityBot reagisce all'autorità Ambassador
+- CRUCIALE: SET VIPGranted cambia stato permanente gioco
+- Stessa sequenza finale del branch VIP già concesso
+
+STEP 2.11: Branch fallimento (righe 46-48)
+```
+ELSE
+  SET VIPfailed      → IMPOSTA STATO: marca fallimento
+END_OF_IF
+```
+
+PARSING LOGIC: Gestione fallimento:
+- Imposta flag negativo permanente
+- Possibile impatto su altri script/dialogi
+- NO sub-script chiamato = conversazione finisce
+
+STEP 2.12: Cleanup finale (righe 49-51)
+```
+HideChar securitybot → Pulizia UI
+HideDlgScene        → Pulizia UI
+END_OF_SCRIPT       → Fine script
+```
+
+3. IDENTIFICAZIONE ELEMENTI SEMANTICI
+-------------------------------------
+STEP 3.1: Variabili di stato identificate
+- VIPTried (tentativo registrato)
+- VIPGranted (accesso concesso) 
+- VIPfailed (accesso fallito)
+- richGirlPending (quest Rich Girl attiva)
+- purpleAccepted (quest Purple completata)
+- purpleEscortFinished (sotto-quest Purple escort completata)
+
+STEP 3.2: Personaggi utilizzati
+- securitybot (personaggio principale, gatekeeper)
+- ambassador (personaggio autorità, interviene)
+
+STEP 3.3: Asset referenziati
+- campaign/ambassador-peek.png (immagine specifica)
+
+STEP 3.4: Script collegati
+- richGirlDlg (dialogo principale post-accesso)
+
+STEP 3.5: Comandi speciali identificati
+- [g(maschio|femmina)] → Gender-aware text
+- SayChar personaggio "testo" → Dialogo specifico personaggio
+- ChangeChar con path → Cambio immagine dinamico
+
+4. ANALISI LOGICA DI FLUSSO
+---------------------------
+STEP 4.1: Possibili percorsi identificati
+PATH A: VIP già concesso + Rich Girl pending → Magazzino diretto
+PATH B: VIP già concesso + normale → Rich Girl Dialog
+PATH C: No VIP + Purple completed → Unlock VIP + Rich Girl Dialog  
+PATH D: No VIP + No Purple → Fallimento totale
+
+STEP 4.2: Stati modificati dallo script
+INPUT STATES: VIPGranted, richGirlPending, purpleAccepted, purpleEscortFinished
+OUTPUT STATES: VIPTried (sempre), VIPGranted (condizionale), VIPfailed (condizionale)
+
+STEP 4.3: Dipendenze esterne
+REQUIRES: Stati di quest Purple system
+CALLS: richGirlDlg script
+VISUAL: ambassador character assets
+
+5. PROBLEMATICHE DI PARSING IDENTIFICATE
+----------------------------------------
+STEP 5.1: Annidamento complesso
+- IF dentro IF con diversi livelli
+- Tracking delle chiusure END_OF_IF
+- Gestione corretta scope delle condizioni
+
+STEP 5.2: Controlli semantici necessari
+- Verifica esistenza personaggi referenziati
+- Verifica esistenza asset immagini
+- Verifica esistenza script richiamati
+- Validazione stati/variabili utilizzate
+
+STEP 5.3: Elementi di localizzazione
+- Gender-aware text richiede parsing speciale
+- Dialoghi in spagnolo (multilingua)
+- Asset path potrebbero variare per lingua
+
+6. STRATEGIA DI CONVERSIONE IN BLOCCHI
+--------------------------------------
+STEP 6.1: Blocchi sequenziali identificati  
+- SETUP: ShowDlgScene + ShowChar + SET
+- CONDITION_IF: VIPGranted check
+- CONDITION_IF_NESTED: richGirlPending check
+- DIALOGUE_SEQUENCE: Say commands in sequenza
+- UI_CLEANUP: Hide commands
+- SCRIPT_CALL: SUB_SCRIPT richGirlDlg
+- SCRIPT_EXIT: RETURN
+
+STEP 6.2: Blocchi condizionali complessi
+- Main IF con due branch principali
+- Nested IF con gestione edge case
+- ELSE branch con stato setting
+
+STEP 6.3: Timing e animazioni
+- Delay commands per ritmo narrativo
+- Sequenze coordinate Hide/Show
+- ChangeChar per variazioni visive
+
+==================================================================
+CONCLUSIONE: Script complesso con logica state-machine, controllo
+accessi, gestione quest dependencies, timing narrativo sofisticato
+e cleanup rigoroso delle risorse UI. Richiede parser robusto per
+gestire annidamenti, stati e asset references.

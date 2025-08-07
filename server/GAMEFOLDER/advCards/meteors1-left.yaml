@@ -1,0 +1,12 @@
+- type: meteoric
+  round: 1
+  meteors: LlL
+- type: meteoric
+  round: 1
+  meteors: UuLl
+- type: meteoric
+  round: 1
+  meteors: dlLl
+- type: meteoric
+  round: 1
+  meteors: rUL

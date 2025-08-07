@@ -1,0 +1,18 @@
+                                                  # expansion adventure config
+name:         catapult_title
+
+planetImg:    piratehaven.png
+
+avatarImg:    campaign/pirate.png
+avatarColor:  avatarBgColor
+
+
+missions:
+- catapult1.yaml                                  # 1 star mission
+- catapult2.yaml                                  # 2 star mission
+- catapult3.yaml                                  # 3 star mission
+
+
+dialogScript:   catapult_Dlg
+endDialogsWin: [catapult1_Success, catapult2_Success, catapult3_Success]
+endDialogLoose: catapult_Failure

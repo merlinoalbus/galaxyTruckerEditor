@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-900 text-white font-sans;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gt-accent hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-200;
+  }
+  
+  .btn-secondary {
+    @apply bg-gt-secondary hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition-colors duration-200;
+  }
+  
+  .btn-danger {
+    @apply bg-gt-danger hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors duration-200;
+  }
+  
+  .input-field {
+    @apply bg-gt-secondary border border-slate-600 text-white px-3 py-2 rounded-lg focus:outline-none focus:border-gt-accent;
+  }
+  
+  .card {
+    @apply bg-gt-primary border border-slate-700 rounded-lg p-4 shadow-lg;
+  }
+  
+  .section-header {
+    @apply text-xl font-bold text-gt-accent mb-4 flex items-center gap-2;
+  }
+  
+  .metacode {
+    @apply bg-yellow-900 text-yellow-200 px-2 py-1 rounded text-sm font-mono;
+  }
+  
+  .validation-error {
+    @apply text-gt-danger text-sm mt-1;
+  }
+  
+  .validation-success {
+    @apply text-gt-success text-sm mt-1;
+  }
+}
