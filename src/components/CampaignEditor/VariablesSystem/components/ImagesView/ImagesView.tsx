@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Image as ImageIcon, Search, Download, Calendar, HardDrive, ChevronDown, ChevronRight } from 'lucide-react';
 import { useImagesView } from '@/hooks/CampaignEditor/VariablesSystem/hooks/ImagesView/useImagesView';
 import { ImageData } from '@/types/CampaignEditor/VariablesSystem/types/ImagesView/ImagesView.types';
+import { useTranslation } from '@/locales/translations';
 
 interface ImagesViewProps {
   onNavigateToScript?: (scriptName: string, imageName: string) => void;
@@ -19,6 +20,7 @@ export const ImagesView: React.FC<ImagesViewProps> = () => {
     loadImageDetail
   } = useImagesView();
 
+  const { t } = useTranslation();
   const [selectedImage, setSelectedImage] = useState<ImageData | null>(null);
   const [imageDetail, setImageDetail] = useState<string | null>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
@@ -93,7 +95,7 @@ export const ImagesView: React.FC<ImagesViewProps> = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="text-white">Loading images...</div>
+        <div className="text-white">{t('imageView.loadingImages')}</div>
       </div>
     );
   }
@@ -117,7 +119,7 @@ export const ImagesView: React.FC<ImagesViewProps> = () => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search images..."
+                placeholder={t('imageView.searchPlaceholder')}
                 value={localSearchTerm}
                 onChange={(e) => setLocalSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm placeholder-gray-400 focus:outline-none focus:border-blue-500"
@@ -128,7 +130,7 @@ export const ImagesView: React.FC<ImagesViewProps> = () => {
               onChange={(e) => setSelectedCategory(e.target.value === 'all' ? null : e.target.value)}
               className="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500"
             >
-              <option value="all">All Categories</option>
+              <option value="all">{t('imageView.allCategories')}</option>
               {categories.map(cat => (
                 <option key={cat.id} value={cat.id}>
                   {cat.label} ({cat.count})
@@ -137,7 +139,7 @@ export const ImagesView: React.FC<ImagesViewProps> = () => {
             </select>
           </div>
           <div className="text-xs text-gray-400 mt-2">
-            {filteredImages.length} images found
+            {filteredImages.length} {t('imageView.imagesFound')}
           </div>
         </div>
 
@@ -226,11 +228,11 @@ export const ImagesView: React.FC<ImagesViewProps> = () => {
               <div 
                 className="relative bg-gray-800 rounded-lg overflow-hidden mb-3 flex-shrink-0 cursor-pointer"
                 onClick={downloadImage}
-                title="Click to download"
+                title={t('imageView.clickToDownload')}
               >
                 {loadingDetail ? (
                   <div className="aspect-square flex items-center justify-center">
-                    <div className="text-gray-400 text-sm">Loading...</div>
+                    <div className="text-gray-400 text-sm">{t('imageView.loading')}</div>
                   </div>
                 ) : imageDetail ? (
                   <img
@@ -254,7 +256,7 @@ export const ImagesView: React.FC<ImagesViewProps> = () => {
               <div className="space-y-1 text-xs" style={{ lineHeight: '1.1' }}>
                 <div className="flex items-center gap-2">
                   <HardDrive className="w-3 h-3 text-gray-400" />
-                  <span className="text-gray-400">Size:</span>
+                  <span className="text-gray-400">{t('imageView.size')}:</span>
                   <span className="text-white">
                     {(selectedImage.dimensione / 1024).toFixed(2)} KB
                   </span>
@@ -262,7 +264,7 @@ export const ImagesView: React.FC<ImagesViewProps> = () => {
                 
                 <div className="flex items-center gap-2">
                   <Calendar className="w-3 h-3 text-gray-400" />
-                  <span className="text-gray-400">Modified:</span>
+                  <span className="text-gray-400">{t('imageView.modified')}:</span>
                   <span className="text-white">
                     {new Date(selectedImage.modificato).toLocaleDateString()}
                   </span>
@@ -274,7 +276,7 @@ export const ImagesView: React.FC<ImagesViewProps> = () => {
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
               <ImageIcon className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-              <p className="text-gray-400 text-sm">Select an image to preview</p>
+              <p className="text-gray-400 text-sm">{t('imageView.selectImage')}</p>
             </div>
           </div>
         )}
