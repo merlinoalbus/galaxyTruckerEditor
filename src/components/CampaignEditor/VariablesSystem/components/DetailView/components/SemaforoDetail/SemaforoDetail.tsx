@@ -50,7 +50,7 @@ export const SemaforoDetail: React.FC<SemaforoDetailProps> = ({
       </div>
 
       {/* Compact Content */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-3">
+      <div className="flex-1 min-h-0 overflow-y-auto p-3 space-y-3">
 
         {/* Compact Operations */}
         {item.operazioni && Object.keys(item.operazioni).length > 0 && (
@@ -94,7 +94,7 @@ export const SemaforoDetail: React.FC<SemaforoDetailProps> = ({
                 {scripts.length}
               </span>
             </h4>
-            <div className="space-y-1 min-h-[6.0rem] max-h-[6.0rem] overflow-y-auto">
+            <div className="space-y-1 min-h-[4rem] max-h-[4rem] overflow-y-auto">
               {scripts.map((script, idx) => (
                 <div 
                   key={idx}
