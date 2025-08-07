@@ -54,7 +54,7 @@ L'applicazione sarà disponibile su `http://localhost:3000`
 ## Struttura del Progetto
 
 ```
-supportappgtedit/
+galaxyTruckerEditor/
 ├── public/                 # File statici
 ├── src/
 │   ├── components/         # Componenti React
