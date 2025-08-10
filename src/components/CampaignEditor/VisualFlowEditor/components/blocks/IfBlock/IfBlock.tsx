@@ -24,7 +24,7 @@ const IF_TYPES = [
 interface IfBlockProps {
   block: any;
   onUpdate: (updates: any) => void;
-  onRemove: () => void;
+  onRemove?: () => void;
   onDragStart: (e: React.DragEvent) => void;
   onDragOver: (e: React.DragEvent) => void;
   onDropThen: (e: React.DragEvent) => void;
@@ -37,6 +37,7 @@ interface IfBlockProps {
   onZoomOut?: () => void;
   isZoomed?: boolean;
   sessionData?: any;
+  isInvalid?: boolean;
 }
 
 export const IfBlock: React.FC<IfBlockProps> = ({
@@ -54,7 +55,8 @@ export const IfBlock: React.FC<IfBlockProps> = ({
   onZoomIn,
   onZoomOut,
   isZoomed = false,
-  sessionData
+  sessionData,
+  isInvalid = false
 }) => {
   // Stato locale per controllare la visualizzazione del contenitore ELSE
   // Inizializzato in base alla presenza di blocchi in elseBlocks
@@ -108,16 +110,22 @@ export const IfBlock: React.FC<IfBlockProps> = ({
   return (
     <div
       ref={containerRef}
-      className="relative bg-gradient-to-br from-gray-800/95 to-gray-900/95 rounded-xl border border-gray-600/80 p-4 mb-2 shadow-xl hover:shadow-2xl transition-shadow duration-200"
+      className={`relative bg-gradient-to-br from-gray-800/95 to-gray-900/95 rounded-xl border ${
+        isInvalid 
+          ? 'border-red-500 border-2 shadow-red-500/50' 
+          : 'border-gray-600/80'
+      } p-4 mb-2 shadow-xl hover:shadow-2xl transition-shadow duration-200`}
     >
-      {/* Delete button - in alto a destra con stesso stile zoom */}
-      <button
-        onClick={onRemove}
-        className="absolute top-2 right-2 p-1 bg-slate-700/80 hover:bg-red-600 border border-slate-600/50 rounded-md z-10 transition-all duration-200 backdrop-blur-sm"
-        title="Elimina blocco"
-      >
-        <Trash2 className="w-3 h-3 text-gray-400 hover:text-white" />
-      </button>
+      {/* Delete button - in alto a destra con stesso stile zoom - solo se onRemove è definito */}
+      {onRemove && (
+        <button
+          onClick={onRemove}
+          className="absolute top-2 right-2 p-1 bg-slate-700/80 hover:bg-red-600 border border-slate-600/50 rounded-md z-10 transition-all duration-200 backdrop-blur-sm"
+          title="Elimina blocco"
+        >
+          <Trash2 className="w-3 h-3 text-gray-400 hover:text-white" />
+        </button>
+      )}
       
       {/* Collapse/Expand button - vicino al delete */}
       <button
@@ -182,8 +190,8 @@ export const IfBlock: React.FC<IfBlockProps> = ({
               value={block.ifType || 'IF'}
               onChange={(e) => onUpdate({ 
                 ifType: e.target.value,
-                variabile: undefined,
-                valore: undefined
+                variabile: '',
+                valore: ''
               })}
               onClick={(e) => e.stopPropagation()}
             >

@@ -66,6 +66,13 @@ export interface SayBlock extends CommandBlock {
   };
 }
 
+export interface AskBlock extends CommandBlock {
+  type: 'ASK';
+  parameters: {
+    text: Record<string, string>; // Multilingua
+  };
+}
+
 export interface DelayBlock extends CommandBlock {
   type: 'DELAY';
   parameters: {
@@ -130,6 +137,14 @@ export const AVAILABLE_TOOLS: ToolItem[] = [
     name: 'Dialogo SAY',
     blockType: 'SAY', 
     icon: '💬',
+    isContainer: false,
+    category: 'dialog'
+  },
+  {
+    id: 'ask-tool',
+    name: 'Domanda ASK',
+    blockType: 'ASK',
+    icon: '❓',
     isContainer: false,
     category: 'dialog'
   },

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Code2, List, Plus, FileText, Save, Maximize2, Minimize2 } from 'lucide-react';
+import { Code2, List, Plus, FileText, Save, Maximize2, Minimize2, AlertCircle } from 'lucide-react';
 import { visualFlowEditorStyles } from '@/styles/CampaignEditor/VisualFlowEditor/VisualFlowEditor.styles';
 import { NavigationBreadcrumb } from '../NavigationBreadcrumb';
 import { NavigationPathItem } from '@/hooks/CampaignEditor/VisualFlowEditor/useZoomNavigation';
@@ -17,6 +17,7 @@ interface ToolbarProps {
   onZoomOut: (targetLevel?: number) => void;
   /** Path di navigazione utilizzato dal componente NavigationBreadcrumb */
   navigationPath: NavigationPathItem[];
+  validationErrors?: number;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
@@ -30,7 +31,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   currentScript,
   isZoomed = false,
   onZoomOut,
-  navigationPath = []
+  navigationPath = [],
+  validationErrors = 0
 }) => {
   return (
     <div className="space-y-2">
@@ -55,6 +57,14 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         </div>
       
         <div className={visualFlowEditorStyles.header.actions}>
+          {/* Indicatore errori di validazione */}
+          {validationErrors > 0 && (
+            <div className="flex items-center gap-2 px-3 py-2 bg-red-900/50 border border-red-600 text-red-400 rounded-lg">
+              <AlertCircle className="w-4 h-4" />
+              <span className="text-sm font-medium">{validationErrors} errori</span>
+            </div>
+          )}
+          
           <button
           onClick={() => setShowScriptsList(!showScriptsList)}
           className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
@@ -84,8 +94,13 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         
         {currentScript && (
           <button
-            className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
-            title="Salva Script"
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+              validationErrors > 0 
+                ? 'bg-gray-700 text-gray-500 cursor-not-allowed opacity-50' 
+                : 'bg-purple-600 hover:bg-purple-700 text-white'
+            }`}
+            title={validationErrors > 0 ? `Correggi ${validationErrors} errori prima di salvare` : 'Salva Script'}
+            disabled={validationErrors > 0}
           >
             <Save className="w-4 h-4" />
             Salva
