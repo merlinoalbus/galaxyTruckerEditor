@@ -68,7 +68,11 @@
       "Bash(for:*)",
       "Bash(do echo -n \"$file: \")",
       "Bash(done)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(npm install:*)",
+      "Bash(dir:*)",
+      "Bash(git log:*)",
+      "Bash(npx eslint:*)"
     ],
     "deny": []
   },

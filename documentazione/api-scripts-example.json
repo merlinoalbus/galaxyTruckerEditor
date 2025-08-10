@@ -1,0 +1,180 @@
+{
+  "api_endpoint": "http://localhost:3001/api/scripts/newbieDlg?multilingua=true&format=blocks",
+  "example_usage": "http://localhost:3001/api/scripts/{scriptId}?multilingua=true&format=blocks",
+  "example_response": {
+    "success": true,
+    "data": {
+      "name": "newbieDlg",
+      "fileName": "scripts1.txt",
+      "language": "EN",
+      "originalCode": "SCRIPT newbieDlg\n\n  IF class3\n    SUB_SCRIPT tutorClass3Dlg\n    RETURN\n  END_OF_IF\n  IF tutor_moremissions\n    Delay 200\n    ShowDlgScene\n    ChangeChar tutor campaign/tutor-hidden.png\n    ShowChar tutor left\n    Delay 1500\n    ChangeChar tutor campaign/tutor-pizza.png\n    Delay 500\n    SayChar tutor \"Can't you see I'm busy? Get lost!\"\n    Delay 500\n    ChangeChar tutor campaign/tutor-hidden.png\n    Delay 500\n    HideChar tutor\n    Delay 500\n    HideDlgScene\n    RETURN\n  END_OF_IF\n  Delay 200\n  ShowDlgScene\n  ShowChar tutor left\n  Delay 200\n  IF tutor_somemissions\n    Say \"Hello, again. Hope you are happy with your boring regular route.\"\n    MENU\n      OPT \"Yes, I just wanted to say hello.\"\n        HideDlgScene\n        RETURN\n      END_OF_OPT\n      OPT \"Could you recommend a different route?\"\n        GO more_missions\n      END_OF_OPT\n    END_OF_MENU\n  END_OF_IF\n  IF tutorialRefused\n    IF playerIsCocky\n      Ask \"Ha, [g(Mr.|Miss)] I-Know-Everything! Changed your mind?\"\n    ELSE\n      Ask \"Ha, [g(Mr.|Miss)] I-Hate-Tutorials! Changed your mind?\"\n    END_OF_IF\n    MENU\n      OPT \"Nah, just show me how to get outta here.\"\n        Say \"Okay. You can take a regular route from here to the Space Bar and back.\"\n        Delay 500\n        ShowNode \"bar\"\n        CenterMapByNode bar\n        Delay 750\n        ShowPath \"R1-1a\"\n        ShowPath \"R1-1b\"\n        Delay 500\n        CenterMapByPath R1-1a\n        Delay 1000\n        SET tutor_somemissions\n        Ask \"It's a safe and boring route. You can spend the rest of your miserable life going back and forth.\"\n        MENU\n          OPT \"Sounds good.\"\n            GO basic_route_agreed\n          END_OF_OPT\n          OPT \"Hey, give me a real mission!\"\n            GO more_missions\n          END_OF_OPT\n        END_OF_MENU\n      END_OF_OPT\n    END_OF_MENU\n  ELSE\n    Ask \"Ha! It's the newbie! Your training is over. What else do you need?\"\n    MENU\n      OPT \"You didn't tell me what to do next.\"\n        Say \"Oh, right. You should take a regular route from here to the Space Bar.\"\n        Delay 250\n        ShowNode \"bar\"\n        CenterMapByNode bar\n        Delay 750\n        ShowPath \"R1-1a\"\n        ShowPath \"R1-1b\"\n        Delay 500\n        CenterMapByPath R1-1a\n        Delay 1000\n        SET tutor_somemissions\n        Ask \"It's a safe and boring route. You can spend the rest of your miserable life going back and forth.\"\n        MENU\n          OPT \"Sounds good. Thanks.\"\n            Say \"Great. Now just [v(tap|click)] on that pulsing rocket, and you can go.\"\n            GO basic_route_agreed\n          END_OF_OPT\n          OPT \"Any other options?\"\n            GO more_missions\n          END_OF_OPT\n        END_OF_MENU\n      END_OF_OPT\n    END_OF_MENU\n  END_OF_IF\n\n  LABEL basic_route_agreed\n  HideDlgScene\n  RETURN\n\n  LABEL more_missions\n  Ask \"I think that's about all you can handle.\"\n  MENU\n    OPT \"Okay, you are probably right. I'll take the regular route.\"\n      GO newbie_end\n    END_OF_OPT\n    OPT \"No, I can handle a lot more than that.\"\n      Say \"A cocky one, you are. You asked for it.\"\n      Say \"There is another route, to a distant outpost.\"\n      Delay 1000\n      ChangeChar tutor campaign/tutor-scary.png\n      Delay 500\n      AskChar tutor \"Full of dangers and horrible things, it is.\"\n      MENU\n        OPT \"Tell me more about these dangers.\"\n          Say \"Just terrible and unspeakable things.\"\n          Say \"No more questions will I answer now, young padawan.\"\n          Ask \"Too much have I said already ...\"\n          MENU\n            OPT \"Hey, come on.\"\n              Delay 250\n              ChangeChar tutor campaign/tutor.png\n              Delay 250\n              Say \"Well, there are some nasty meteors . Happy?\"\n              Say \"And now, get lost. They're going to deliver me a pizza soon.\"\n              GO more_missions1\n            END_OF_OPT\n          END_OF_MENU\n        END_OF_OPT\n      END_OF_MENU\n    END_OF_OPT\n  END_OF_MENU\n\n  LABEL more_missions1\n  HideChar tutor\n  ResetFocus btutor\n  Delay 250\n  ShowNode outpost\n  CenterMapByNode outpost\n  Delay 500\n  ShowPath \"R1-2a\"\n  ShowPath \"R1-2b\"\n  CenterMapByPath \"R1-2a\"\n  Delay 500\n  SET tutor_moremissions\n\n  LABEL newbie_end\n  HideDlgScene\n  RETURN\nEND_OF_SCRIPT",
+      "lineCount": 152,
+      "blocks": [
+        {
+          "type": "SCRIPT",
+          "line": 1,
+          "children": [
+            {
+              "type": "IF",
+              "line": 1,
+              "children": [],
+              "ifType": "IF_SEMAPHORE",
+              "thenBranch": [
+                {
+                  "type": "SUB_SCRIPT",
+                  "parameters": {
+                    "script": "tutorClass3Dlg"
+                  }
+                },
+                {
+                  "type": "RETURN",
+                  "parameters": {}
+                }
+              ],
+              "elseBranch": [],
+              "condition": "class3",
+              "negated": false
+            },
+            {
+              "type": "IF",
+              "line": 1,
+              "children": [],
+              "ifType": "IF_SEMAPHORE",
+              "thenBranch": [
+                {
+                  "type": "DELAY",
+                  "parameters": {
+                    "milliseconds": 200
+                  }
+                },
+                {
+                  "type": "SHOWDLGSCENE",
+                  "parameters": {}
+                },
+                {
+                  "type": "CHANGECHAR",
+                  "parameters": {
+                    "character": "tutor",
+                    "image": "campaign/tutor-hidden.png"
+                  }
+                },
+                {
+                  "type": "SHOWCHAR",
+                  "parameters": {
+                    "character": "tutor",
+                    "position": "left"
+                  }
+                },
+                {
+                  "type": "DELAY",
+                  "parameters": {
+                    "milliseconds": 1500
+                  }
+                },
+                {
+                  "type": "CHANGECHAR",
+                  "parameters": {
+                    "character": "tutor",
+                    "image": "campaign/tutor-pizza.png"
+                  }
+                },
+                {
+                  "type": "DELAY",
+                  "parameters": {
+                    "milliseconds": 500
+                  }
+                },
+                {
+                  "type": "SAYCHAR",
+                  "parameters": {
+                    "character": "tutor",
+                    "text": {
+                      "EN": "Can't you see I'm busy? Get lost!",
+                      "CS": "Nevidíš, že mám práci? Vypadni...",
+                      "DE": "Siehst du nicht, dass ich beschäftigt bin? Hau ab!",
+                      "ES": "¿No ves que estoy ocupado? ¡Fuera de aquí!",
+                      "FR": "Vous ne voyez pas que je suis occupé ? Filez d'ici !",
+                      "PL": "Nie widzisz, że jestem zajęty? Spadaj!",
+                      "RU": "Ты что, не видишь, что я занят? Исчезни!"
+                    }
+                  }
+                },
+                {
+                  "type": "DELAY",
+                  "parameters": {
+                    "milliseconds": 500
+                  }
+                },
+                {
+                  "type": "CHANGECHAR",
+                  "parameters": {
+                    "character": "tutor",
+                    "image": "campaign/tutor-hidden.png"
+                  }
+                },
+                {
+                  "type": "DELAY",
+                  "parameters": {
+                    "milliseconds": 500
+                  }
+                },
+                {
+                  "type": "HIDECHAR",
+                  "parameters": {
+                    "character": "tutor"
+                  }
+                },
+                {
+                  "type": "DELAY",
+                  "parameters": {
+                    "milliseconds": 500
+                  }
+                },
+                {
+                  "type": "HIDEDLGSCENE",
+                  "parameters": {}
+                },
+                {
+                  "type": "RETURN",
+                  "parameters": {}
+                }
+              ],
+              "elseBranch": [],
+              "condition": "tutor_moremissions",
+              "negated": false
+            }
+          ],
+          "name": "newbieDlg"
+        }
+      ],
+      "metadata": {
+        "blockCount": 1,
+        "errorCount": 0,
+        "commandCount": 56,
+        "variableCount": 0,
+        "characterCount": 1,
+        "labelCount": 4
+      },
+      "availableLanguages": [
+        "EN",
+        "CS",
+        "DE",
+        "ES",
+        "FR",
+        "PL",
+        "RU"
+      ],
+      "multilingualMerged": true
+    }
+  },
+  "notes": {
+    "description": "Questo file contiene l'esempio di riferimento per l'API degli script. La struttura è gerarchica con blocchi che possono contenere children annidati ricorsivamente.",
+    "key_features": {
+      "hierarchical_structure": "I blocchi IF, MENU, OPT possono contenere altri blocchi",
+      "multilingual_support": "Testi disponibili in multiple lingue",
+      "parameters": "Ogni blocco ha parametri specifici per il suo tipo",
+      "metadata": "Informazioni statistiche sullo script (conteggi, errori, etc.)"
+    },
+    "api_usage": "Sostituire 'newbieDlg' con l'ID dello script desiderato"
+  }
+}
