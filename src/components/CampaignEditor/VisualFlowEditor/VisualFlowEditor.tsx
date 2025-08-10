@@ -123,8 +123,11 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
     setNewScriptDialog,
     handleNewScript,
     confirmNewScript,
+    confirmNewMission,
     loadScript,
-    saveScript
+    loadMission,
+    saveScript,
+    saveMission
   } = useScriptManagement({
     setCurrentScriptBlocks,
     setShowScriptsList,
@@ -203,7 +206,15 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
         onZoomOut={handleZoomOut}
         navigationPath={navigationPath}
         validationErrors={validationErrors.errors}
-        onSaveScript={saveScript}
+        onSaveScript={() => {
+          // Determina se salvare come Script o Mission basandosi sul tipo del blocco principale
+          const mainBlock = rootBlocks.length > 0 ? rootBlocks[0] : currentScriptBlocks[0];
+          if (mainBlock && mainBlock.type === 'MISSION') {
+            return saveMission();
+          } else {
+            return saveScript();
+          }
+        }}
       />
 
       <ScriptsList
@@ -298,6 +309,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
         newScriptDialog={newScriptDialog}
         setNewScriptDialog={setNewScriptDialog}
         confirmNewScript={confirmNewScript}
+        confirmNewMission={confirmNewMission}
       />
     </div>
   );

@@ -186,6 +186,18 @@ export const useBlockManipulation = () => {
         return updated;
       }
       
+      // Ricorsione per blocchi MISSION
+      if (block.type === 'MISSION') {
+        const updated = { ...block };
+        if (block.blocksMission) {
+          updated.blocksMission = updateBlockRecursive(block.blocksMission, blockId, updates);
+        }
+        if (block.blocksFinish) {
+          updated.blocksFinish = updateBlockRecursive(block.blocksFinish, blockId, updates);
+        }
+        return updated;
+      }
+      
       return block;
     });
   }, []);
@@ -217,6 +229,17 @@ export const useBlockManipulation = () => {
         }
         acc.push(updated);
       }
+      // Per blocchi MISSION
+      else if (block.type === 'MISSION') {
+        const updated = { ...block };
+        if (block.blocksMission) {
+          updated.blocksMission = removeBlockRecursive(block.blocksMission, blockId);
+        }
+        if (block.blocksFinish) {
+          updated.blocksFinish = removeBlockRecursive(block.blocksFinish, blockId);
+        }
+        acc.push(updated);
+      }
       else {
         acc.push(block);
       }
@@ -242,6 +265,16 @@ export const useBlockManipulation = () => {
           }
           if (block.elseBlocks) {
             const found = findContainer(block.elseBlocks, id);
+            if (found) return found;
+          }
+        }
+        if (block.type === 'MISSION') {
+          if (block.blocksMission) {
+            const found = findContainer(block.blocksMission, id);
+            if (found) return found;
+          }
+          if (block.blocksFinish) {
+            const found = findContainer(block.blocksFinish, id);
             if (found) return found;
           }
         }
@@ -283,6 +316,20 @@ export const useBlockManipulation = () => {
             ...block,
             children: newChildren
           };
+        } else if (containerType === 'blocksMission') {
+          const newBlocks = [...(block.blocksMission || [])];
+          newBlocks.splice(index, 0, newBlock);
+          return {
+            ...block,
+            blocksMission: newBlocks
+          };
+        } else if (containerType === 'blocksFinish') {
+          const newBlocks = [...(block.blocksFinish || [])];
+          newBlocks.splice(index, 0, newBlock);
+          return {
+            ...block,
+            blocksFinish: newBlocks
+          };
         }
       }
       
@@ -297,6 +344,14 @@ export const useBlockManipulation = () => {
         }
         if (block.elseBlocks) {
           updated.elseBlocks = addBlockAtIndex(block.elseBlocks, containerId, containerType, newBlock, index);
+        }
+      }
+      if (block.type === 'MISSION') {
+        if (block.blocksMission) {
+          updated.blocksMission = addBlockAtIndex(block.blocksMission, containerId, containerType, newBlock, index);
+        }
+        if (block.blocksFinish) {
+          updated.blocksFinish = addBlockAtIndex(block.blocksFinish, containerId, containerType, newBlock, index);
         }
       }
       
@@ -321,6 +376,16 @@ export const useBlockManipulation = () => {
           }
           if (block.elseBlocks) {
             const found = findContainer(block.elseBlocks, id);
+            if (found) return found;
+          }
+        }
+        if (block.type === 'MISSION') {
+          if (block.blocksMission) {
+            const found = findContainer(block.blocksMission, id);
+            if (found) return found;
+          }
+          if (block.blocksFinish) {
+            const found = findContainer(block.blocksFinish, id);
             if (found) return found;
           }
         }
@@ -354,6 +419,16 @@ export const useBlockManipulation = () => {
             ...block,
             children: [...(block.children || []), newBlock]
           };
+        } else if (containerType === 'blocksMission') {
+          return {
+            ...block,
+            blocksMission: [...(block.blocksMission || []), newBlock]
+          };
+        } else if (containerType === 'blocksFinish') {
+          return {
+            ...block,
+            blocksFinish: [...(block.blocksFinish || []), newBlock]
+          };
         }
       }
       
@@ -368,6 +443,14 @@ export const useBlockManipulation = () => {
         }
         if (block.elseBlocks) {
           updated.elseBlocks = addBlockToContainer(block.elseBlocks, containerId, containerType, newBlock);
+        }
+      }
+      if (block.type === 'MISSION') {
+        if (block.blocksMission) {
+          updated.blocksMission = addBlockToContainer(block.blocksMission, containerId, containerType, newBlock);
+        }
+        if (block.blocksFinish) {
+          updated.blocksFinish = addBlockToContainer(block.blocksFinish, containerId, containerType, newBlock);
         }
       }
       
@@ -392,6 +475,16 @@ export const useBlockManipulation = () => {
           }
           if (block.elseBlocks) {
             const found = findContainer(block.elseBlocks, id);
+            if (found) return found;
+          }
+        }
+        if (block.type === 'MISSION') {
+          if (block.blocksMission) {
+            const found = findContainer(block.blocksMission, id);
+            if (found) return found;
+          }
+          if (block.blocksFinish) {
+            const found = findContainer(block.blocksFinish, id);
             if (found) return found;
           }
         }

@@ -5,7 +5,12 @@ export const convertBlocksToJson = (blocks: any[]): any[] => {
       id: block.id
     };
     
-    if (block.type === 'IF') {
+    if (block.type === 'MISSION') {
+      jsonBlock.missionName = block.missionName || '';
+      jsonBlock.fileName = block.fileName || '';
+      jsonBlock.blocksMission = convertBlocksToJson(block.blocksMission || []);
+      jsonBlock.blocksFinish = convertBlocksToJson(block.blocksFinish || []);
+    } else if (block.type === 'IF') {
       jsonBlock.ifType = block.ifType || 'IF';
       // SEMPRE includi variabile e valore, anche se vuoti
       jsonBlock.variabile = block.variabile || '';
@@ -54,5 +59,17 @@ export const generateScriptJson = (scriptBlocks: any[]) => {
     name: scriptBlock.scriptName,
     fileName: scriptBlock.fileName,
     blocks: convertBlocksToJson(scriptBlock.children || [])
+  };
+};
+
+export const generateMissionJson = (missionBlocks: any[]) => {
+  const missionBlock = missionBlocks.find(b => b.type === 'MISSION');
+  if (!missionBlock) return null;
+  
+  return {
+    name: missionBlock.missionName,
+    fileName: missionBlock.fileName,
+    blocksMission: convertBlocksToJson(missionBlock.blocksMission || []),
+    blocksFinish: convertBlocksToJson(missionBlock.blocksFinish || [])
   };
 };
