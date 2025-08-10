@@ -71,6 +71,15 @@ export interface OptionBlock extends ContainerBlock {
   children: Block[]; // Blocchi contenuti nell'opzione
 }
 
+// Blocco MISSION (container con due aree come IF)
+export interface MissionBlock extends ContainerBlock {
+  type: 'MISSION';
+  missionName: string;
+  fileName: string;
+  blocksMission: Block[];  // Blocchi principali della missione
+  blocksFinish: Block[];   // Blocchi di fine missione
+}
+
 // Blocchi comando specifici
 export interface SayBlock extends CommandBlock {
   type: 'SAY';

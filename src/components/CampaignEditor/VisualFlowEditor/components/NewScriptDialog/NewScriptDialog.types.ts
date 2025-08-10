@@ -10,4 +10,5 @@ export interface NewScriptDialogProps {
   newScriptDialog: NewScriptDialog;
   setNewScriptDialog: React.Dispatch<React.SetStateAction<NewScriptDialog>>;
   confirmNewScript: () => void;
+  confirmNewMission?: () => void;
 }

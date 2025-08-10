@@ -4,6 +4,7 @@ import { IfBlock } from '../blocks/IfBlock/IfBlock';
 import { CommandBlock } from '../blocks/CommandBlock/CommandBlock';
 import { ContainerBlock } from '../blocks/ContainerBlock/ContainerBlock';
 import { OptBlock } from '../blocks/OptBlock/OptBlock';
+import { MissionBlock } from '../blocks/MissionBlock/MissionBlock';
 
 interface BlockRendererProps {
   block: any;
@@ -139,6 +140,28 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
         onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
         isZoomed={isZoomed}
         sessionData={sessionData}
+        isInvalid={isInvalid}
+      />
+    );
+  }
+
+  // Render MISSION block
+  if (block.type === 'MISSION') {
+    return (
+      <MissionBlock
+        block={block}
+        onUpdate={updateBlock}
+        onRemove={isRootInZoom ? undefined : removeBlock}
+        onDragStart={(e) => onDragStart(e, block)}
+        onDragOver={onDragOver}
+        onDrop={(e) => onDrop(e, block.id, 'blocksMission')}
+        onDropAtIndexMission={(e, index) => onDropAtIndex(e, block.id, 'blocksMission', index)}
+        onDropAtIndexFinish={(e, index) => onDropAtIndex(e, block.id, 'blocksFinish', index)}
+        renderChildren={renderChildren}
+        isDragActive={isDragActive}
+        onZoomIn={onZoomIn ? (() => onZoomIn(block.id)) : undefined}
+        onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
+        isZoomed={isZoomed}
         isInvalid={isInvalid}
       />
     );

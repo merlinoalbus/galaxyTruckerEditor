@@ -64,6 +64,18 @@ export const useZoomNavigation = ({
         const result = findBlockInTree(block.elseBlocks, blockId, [...path, block]);
         if (result) return result;
       }
+      
+      // Cerca nei blocksMission
+      if (block.blocksMission) {
+        const result = findBlockInTree(block.blocksMission, blockId, [...path, block]);
+        if (result) return result;
+      }
+      
+      // Cerca nei blocksFinish
+      if (block.blocksFinish) {
+        const result = findBlockInTree(block.blocksFinish, blockId, [...path, block]);
+        if (result) return result;
+      }
     }
     return null;
   }, []);
@@ -71,6 +83,7 @@ export const useZoomNavigation = ({
   const getBlockDisplayName = (block: any): string => {
     switch (block.type) {
       case 'SCRIPT': return block.scriptName || 'Script';
+      case 'MISSION': return block.missionName || 'Mission';
       case 'IF': return `IF ${block.ifType || ''}`.trim();
       case 'MENU': return 'MENU';
       case 'OPT': return `OPT ${block.optionText || ''}`.trim();
@@ -103,7 +116,8 @@ export const useZoomNavigation = ({
                        result.block.type === 'IF' || 
                        result.block.type === 'MENU' || 
                        result.block.type === 'OPT' ||
-                       result.block.type === 'SCRIPT';
+                       result.block.type === 'SCRIPT' ||
+                       result.block.type === 'MISSION';
     
     if (!isContainer) {
       return;

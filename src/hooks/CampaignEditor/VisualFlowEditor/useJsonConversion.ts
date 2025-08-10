@@ -26,11 +26,21 @@ export const useJsonConversion = ({
     
     if (blocksToUse.length > 0) {
       const scriptBlock = blocksToUse.find(b => b.type === 'SCRIPT');
+      const missionBlock = blocksToUse.find(b => b.type === 'MISSION');
+      
       if (scriptBlock) {
         const json: any = {
           name: scriptBlock.scriptName,
           fileName: scriptBlock.fileName,
           blocks: convertBlocksToJson(scriptBlock.children || [])
+        };
+        setScriptJson(json);
+      } else if (missionBlock) {
+        const json: any = {
+          name: missionBlock.missionName,
+          fileName: missionBlock.fileName,
+          blocksMission: convertBlocksToJson(missionBlock.blocksMission || []),
+          blocksFinish: convertBlocksToJson(missionBlock.blocksFinish || [])
         };
         setScriptJson(json);
       }
