@@ -1,7 +1,7 @@
 // Struttura JSON che rappresenta lo script per l'API di salvataggio
 export interface ScriptJson {
-  scriptName: string;  // Nome identificativo dello script (es. "tutorialDlg", "newbieDlg")
-  filePath: string;     // Nome del file che contiene lo script (es. "scripts1.txt")
+  name: string;         // Nome identificativo dello script (es. "tutorialDlg", "newbieDlg")
+  fileName: string;     // Nome del file che contiene lo script (es. "scripts1.txt")
   blocks: JsonBlock[];  // Array dei blocchi che compongono lo script
 }
 
@@ -83,10 +83,10 @@ export interface LabelJsonBlock extends JsonBlock {
 }
 
 // Utility per creare JSON iniziale per nuovo script
-export const createInitialScriptJson = (scriptName: string, filePath: string): ScriptJson => ({
-  scriptName,  // Nome identificativo dello script
-  filePath,    // Nome del file .txt che conterrà lo script
-  blocks: []   // Inizialmente vuoto
+export const createInitialScriptJson = (scriptName: string, fileName: string): ScriptJson => ({
+  name: scriptName,  // Nome identificativo dello script
+  fileName,          // Nome del file .txt che conterrà lo script
+  blocks: []         // Inizialmente vuoto
 });
 
 // Utility per convertire Block dell'editor in JsonBlock

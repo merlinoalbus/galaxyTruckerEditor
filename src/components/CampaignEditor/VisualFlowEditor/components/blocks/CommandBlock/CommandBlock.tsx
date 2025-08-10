@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Trash2, GripVertical, ChevronDown, ChevronUp, MessageSquare, Clock, ArrowRight, Tag, HelpCircle } from 'lucide-react';
 import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
+import { MultilingualTextEditor } from '../../MultilingualTextEditor';
 
 interface CommandBlockProps {
   block: any;
@@ -56,29 +57,29 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
     switch (block.type) {
       case 'SAY':
         return (
-          <textarea
-            className="w-full p-2 bg-slate-800 text-white rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none"
-            placeholder="Testo dialogo..."
-            value={block.parameters?.text || ''}
-            onChange={(e) => onUpdate({ 
-              parameters: { ...block.parameters, text: e.target.value } 
+          <MultilingualTextEditor
+            value={typeof block.parameters?.text === 'string' 
+              ? { EN: block.parameters.text } 
+              : (block.parameters?.text || {})}
+            onChange={(text) => onUpdate({ 
+              parameters: { ...block.parameters, text } 
             })}
-            onClick={(e) => e.stopPropagation()}
-            rows={3}
+            placeholder="Testo dialogo"
+            label="Dialogo"
           />
         );
       
       case 'ASK':
         return (
-          <textarea
-            className="w-full p-2 bg-slate-800 text-white rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none"
-            placeholder="Testo domanda..."
-            value={block.parameters?.text || ''}
-            onChange={(e) => onUpdate({ 
-              parameters: { ...block.parameters, text: e.target.value } 
+          <MultilingualTextEditor
+            value={typeof block.parameters?.text === 'string' 
+              ? { EN: block.parameters.text } 
+              : (block.parameters?.text || {})}
+            onChange={(text) => onUpdate({ 
+              parameters: { ...block.parameters, text } 
             })}
-            onClick={(e) => e.stopPropagation()}
-            rows={3}
+            placeholder="Testo domanda"
+            label="Domanda"
           />
         );
       
@@ -206,7 +207,9 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         {/* Mostra preview del contenuto se collapsed */}
         {isCollapsed && block.parameters?.text && (
           <span className="text-xs text-gray-400 truncate flex-1 ml-2">
-            {block.parameters.text.substring(0, 30)}...
+            {typeof block.parameters.text === 'string' 
+              ? block.parameters.text.substring(0, 30)
+              : (block.parameters.text.EN || '').substring(0, 30)}...
           </span>
         )}
       </div>

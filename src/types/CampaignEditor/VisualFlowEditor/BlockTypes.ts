@@ -52,10 +52,23 @@ export interface MenuBlock extends ContainerBlock {
   options: OptionBlock[];
 }
 
+// Tipi di OPT disponibili
+export type OptType = 'OPT_SIMPLE' | 'OPT_CONDITIONAL' | 'OPT_CONDITIONAL_NOT';
+
 export interface OptionBlock extends ContainerBlock {
   type: 'OPT';
-  text: Record<string, string>; // Multilingua
-  commands: Block[];
+  optType: OptType;
+  condition: string | null; // Semaforo per OPT_CONDITIONAL e OPT_CONDITIONAL_NOT
+  text: {
+    EN: string;
+    CS: string | null;
+    DE: string | null;
+    ES: string | null;
+    FR: string | null;
+    PL: string | null;
+    RU: string | null;
+  };
+  children: Block[]; // Blocchi contenuti nell'opzione
 }
 
 // Blocchi comando specifici

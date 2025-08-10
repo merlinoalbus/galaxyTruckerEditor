@@ -150,6 +150,11 @@ export const useBlockManipulation = () => {
     if (targetContainer.type === 'MENU' && blockType !== 'OPT') {
       return false;
     }
+    
+    // OPT può essere inserito solo in MENU
+    if (blockType === 'OPT' && targetContainer.type !== 'MENU') {
+      return false;
+    }
 
     return true;
   }, [canInsertMenuAfterBlock, findBlockBeforeContainer]);

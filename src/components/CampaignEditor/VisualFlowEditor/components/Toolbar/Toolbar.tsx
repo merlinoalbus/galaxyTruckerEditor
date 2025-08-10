@@ -18,6 +18,7 @@ interface ToolbarProps {
   /** Path di navigazione utilizzato dal componente NavigationBreadcrumb */
   navigationPath: NavigationPathItem[];
   validationErrors?: number;
+  onSaveScript?: () => Promise<{ success: boolean; error?: string }>;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
@@ -32,8 +33,24 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   isZoomed = false,
   onZoomOut,
   navigationPath = [],
-  validationErrors = 0
+  validationErrors = 0,
+  onSaveScript
 }) => {
+  const [isSaving, setIsSaving] = React.useState(false);
+  
+  const handleSave = async () => {
+    if (!onSaveScript || validationErrors > 0) return;
+    
+    setIsSaving(true);
+    try {
+      const result = await onSaveScript();
+      if (!result.success) {
+        console.error('Errore nel salvataggio:', result.error);
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
   return (
     <div className="space-y-2">
       {/* Breadcrumb di navigazione */}
@@ -94,16 +111,17 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         
         {currentScript && (
           <button
+            onClick={handleSave}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-              validationErrors > 0 
+              validationErrors > 0 || isSaving
                 ? 'bg-gray-700 text-gray-500 cursor-not-allowed opacity-50' 
                 : 'bg-purple-600 hover:bg-purple-700 text-white'
             }`}
             title={validationErrors > 0 ? `Correggi ${validationErrors} errori prima di salvare` : 'Salva Script'}
-            disabled={validationErrors > 0}
+            disabled={validationErrors > 0 || isSaving}
           >
             <Save className="w-4 h-4" />
-            Salva
+            {isSaving ? 'Salvataggio...' : 'Salva'}
           </button>
         )}
         

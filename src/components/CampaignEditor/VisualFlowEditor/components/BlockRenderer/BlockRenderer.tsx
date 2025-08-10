@@ -3,6 +3,7 @@ import { ScriptBlock } from '../blocks/ScriptBlock/ScriptBlock';
 import { IfBlock } from '../blocks/IfBlock/IfBlock';
 import { CommandBlock } from '../blocks/CommandBlock/CommandBlock';
 import { ContainerBlock } from '../blocks/ContainerBlock/ContainerBlock';
+import { OptBlock } from '../blocks/OptBlock/OptBlock';
 
 interface BlockRendererProps {
   block: any;
@@ -121,7 +122,29 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
     );
   }
 
-  // Render container blocks (MENU, OPT)
+  // Render OPT block
+  if (block.type === 'OPT') {
+    return (
+      <OptBlock
+        block={block}
+        onUpdate={updateBlock}
+        onRemove={isRootInZoom ? undefined : removeBlock}
+        onDragStart={(e) => onDragStart(e, block)}
+        onDragOver={onDragOver}
+        onDrop={(e) => onDrop(e, block.id, 'children')}
+        onDropAtIndex={(e, index) => onDropAtIndex(e, block.id, 'children', index)}
+        renderChildren={renderChildren}
+        isDragActive={isDragActive}
+        onZoomIn={onZoomIn ? (() => onZoomIn(block.id)) : undefined}
+        onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
+        isZoomed={isZoomed}
+        sessionData={sessionData}
+        isInvalid={isInvalid}
+      />
+    );
+  }
+
+  // Render other container blocks (MENU)
   if (block.isContainer) {
     return (
       <ContainerBlock

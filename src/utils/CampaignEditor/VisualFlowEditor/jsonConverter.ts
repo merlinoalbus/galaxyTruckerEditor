@@ -18,6 +18,20 @@ export const convertBlocksToJson = (blocks: any[]): any[] => {
       if (block.elseBlocks) {
         jsonBlock.elseBlocks = convertBlocksToJson(block.elseBlocks);
       }
+    } else if (block.type === 'OPT') {
+      // Gestione specifica per blocchi OPT
+      jsonBlock.optType = block.optType || 'OPT_SIMPLE';
+      jsonBlock.condition = block.condition || null;
+      jsonBlock.text = block.text || {
+        EN: '',
+        CS: null,
+        DE: null,
+        ES: null,
+        FR: null,
+        PL: null,
+        RU: null
+      };
+      jsonBlock.children = convertBlocksToJson(block.children || []);
     } else if (block.type === 'SCRIPT' && block.children) {
       jsonBlock.scriptName = block.scriptName || '';
       jsonBlock.fileName = block.fileName || '';
@@ -37,8 +51,8 @@ export const generateScriptJson = (scriptBlocks: any[]) => {
   if (!scriptBlock) return null;
   
   return {
-    scriptName: scriptBlock.scriptName,
-    filePath: scriptBlock.fileName,
+    name: scriptBlock.scriptName,
+    fileName: scriptBlock.fileName,
     blocks: convertBlocksToJson(scriptBlock.children || [])
   };
 };
