@@ -1,0 +1,1 @@
+export { ZoomControls, InlineZoomControls } from './ZoomControls';

@@ -7,6 +7,7 @@ import { CampaignAnalysis } from '@/types/CampaignEditor';
 
 export interface VisualFlowEditorProps {
   analysis?: CampaignAnalysis | null;
+  scriptId?: string | null;
   selectedScript?: string | null;
   selectedNode?: any;
   onScriptChange?: (scriptName: string, content: string) => void;
