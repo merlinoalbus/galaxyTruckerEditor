@@ -5,7 +5,7 @@ import { ZoomControls } from '../../ZoomControls';
 
 interface ContainerBlockProps {
   block: any;
-  onRemove: () => void;
+  onRemove?: () => void;
   onDragStart: (e: React.DragEvent) => void;
   onDragOver: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent) => void;
@@ -15,6 +15,7 @@ interface ContainerBlockProps {
   onZoomIn?: () => void;
   onZoomOut?: () => void;
   isZoomed?: boolean;
+  isInvalid?: boolean;
 }
 
 export const ContainerBlock: React.FC<ContainerBlockProps> = ({
@@ -28,7 +29,8 @@ export const ContainerBlock: React.FC<ContainerBlockProps> = ({
   isDragActive = false,
   onZoomIn,
   onZoomOut,
-  isZoomed = false
+  isZoomed = false,
+  isInvalid = false
 }) => {
   // Stato per collapse/expand - container blocks default expanded
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -89,16 +91,22 @@ export const ContainerBlock: React.FC<ContainerBlockProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`relative ${getBlockStyle()} rounded border p-4 mb-3`}
+      className={`relative ${getBlockStyle()} rounded border ${
+        isInvalid 
+          ? 'border-red-500 border-2 shadow-red-500/50 shadow-lg' 
+          : ''
+      } p-4 mb-3`}
     >
-      {/* Delete button - stesso stile zoom */}
-      <button
-        onClick={onRemove}
-        className="absolute top-2 right-2 p-1 bg-slate-700/80 hover:bg-red-600 border border-slate-600/50 rounded-md z-10 transition-all duration-200 backdrop-blur-sm"
-        title="Elimina blocco"
-      >
-        <Trash2 className="w-3 h-3 text-gray-400 hover:text-white" />
-      </button>
+      {/* Delete button - stesso stile zoom - solo se onRemove è definito */}
+      {onRemove && (
+        <button
+          onClick={onRemove}
+          className="absolute top-2 right-2 p-1 bg-slate-700/80 hover:bg-red-600 border border-slate-600/50 rounded-md z-10 transition-all duration-200 backdrop-blur-sm"
+          title="Elimina blocco"
+        >
+          <Trash2 className="w-3 h-3 text-gray-400 hover:text-white" />
+        </button>
+      )}
       
       {/* Collapse/Expand button - vicino al delete */}
       <button

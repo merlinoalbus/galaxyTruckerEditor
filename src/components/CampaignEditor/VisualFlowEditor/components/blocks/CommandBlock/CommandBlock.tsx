@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Trash2, GripVertical, ChevronDown, ChevronUp, MessageSquare, Clock, ArrowRight, Tag } from 'lucide-react';
+import { Trash2, GripVertical, ChevronDown, ChevronUp, MessageSquare, Clock, ArrowRight, Tag, HelpCircle } from 'lucide-react';
 import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
 
 interface CommandBlockProps {
   block: any;
   onUpdate: (updates: any) => void;
-  onRemove: () => void;
+  onRemove?: () => void;
   onDragStart: (e: React.DragEvent) => void;
   sessionData?: any;
+  isInvalid?: boolean;
 }
 
 export const CommandBlock: React.FC<CommandBlockProps> = ({
@@ -15,7 +16,8 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   onUpdate,
   onRemove,
   onDragStart,
-  sessionData
+  sessionData,
+  isInvalid = false
 }) => {
   // Stato per collapse/expand - command blocks default collapsed
   const [isCollapsed, setIsCollapsed] = useState(true);
@@ -57,6 +59,20 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
           <textarea
             className="w-full p-2 bg-slate-800 text-white rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none"
             placeholder="Testo dialogo..."
+            value={block.parameters?.text || ''}
+            onChange={(e) => onUpdate({ 
+              parameters: { ...block.parameters, text: e.target.value } 
+            })}
+            onClick={(e) => e.stopPropagation()}
+            rows={3}
+          />
+        );
+      
+      case 'ASK':
+        return (
+          <textarea
+            className="w-full p-2 bg-slate-800 text-white rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none"
+            placeholder="Testo domanda..."
             value={block.parameters?.text || ''}
             onChange={(e) => onUpdate({ 
               parameters: { ...block.parameters, text: e.target.value } 
@@ -123,6 +139,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   const getBlockColor = () => {
     switch (block.type) {
       case 'SAY': return 'bg-blue-950/90 border-blue-800/80';
+      case 'ASK': return 'bg-indigo-950/90 border-indigo-800/80';
       case 'DELAY': return 'bg-amber-950/90 border-amber-800/80';
       case 'GO': return 'bg-purple-950/90 border-purple-800/80';
       case 'LABEL': return 'bg-emerald-950/90 border-emerald-800/80';
@@ -133,6 +150,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   const getBlockIcon = () => {
     switch (block.type) {
       case 'SAY': return <MessageSquare className="w-4 h-4" />;
+      case 'ASK': return <HelpCircle className="w-4 h-4" />;
       case 'DELAY': return <Clock className="w-4 h-4" />;
       case 'GO': return <ArrowRight className="w-4 h-4" />;
       case 'LABEL': return <Tag className="w-4 h-4" />;
@@ -143,16 +161,22 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`relative ${getBlockColor()} rounded border p-3 mb-2 transition-all hover:shadow-lg`}
+      className={`relative ${getBlockColor()} rounded border ${
+        isInvalid 
+          ? 'border-red-500 border-2 shadow-red-500/50 shadow-lg' 
+          : ''
+      } p-3 mb-2 transition-all hover:shadow-lg`}
     >
-      {/* Delete button - stesso stile zoom */}
-      <button
-        onClick={onRemove}
-        className="absolute top-2 right-2 p-1 bg-slate-700/80 hover:bg-red-600 border border-slate-600/50 rounded-md z-10 transition-all duration-200 backdrop-blur-sm"
-        title="Elimina blocco"
-      >
-        <Trash2 className="w-3 h-3 text-gray-400 hover:text-white" />
-      </button>
+      {/* Delete button - stesso stile zoom - solo se onRemove è definito */}
+      {onRemove && (
+        <button
+          onClick={onRemove}
+          className="absolute top-2 right-2 p-1 bg-slate-700/80 hover:bg-red-600 border border-slate-600/50 rounded-md z-10 transition-all duration-200 backdrop-blur-sm"
+          title="Elimina blocco"
+        >
+          <Trash2 className="w-3 h-3 text-gray-400 hover:text-white" />
+        </button>
+      )}
       
       {/* Collapse/Expand button - vicino al delete */}
       <button

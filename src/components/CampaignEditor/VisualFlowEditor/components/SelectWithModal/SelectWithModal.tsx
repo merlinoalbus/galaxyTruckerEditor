@@ -114,7 +114,7 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
       {/* Modale */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
-          <div className="bg-slate-800 border border-slate-600 rounded-lg w-[500px] max-h-[600px] flex flex-col shadow-2xl">
+          <div className="bg-slate-800 border border-slate-600 rounded-lg w-[500px] max-h-[300px] flex flex-col shadow-2xl">
             {/* Header */}
             <div className="p-4 border-b border-slate-700 flex items-center justify-between">
               <h3 className="text-lg font-semibold text-white flex items-center gap-2">
@@ -149,8 +149,8 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
               </div>
             </div>
 
-            {/* Lista elementi */}
-            <div className="flex-1 overflow-y-auto p-4">
+            {/* Lista elementi con scroll ottimizzato */}
+            <div className="flex-1 overflow-y-auto p-4 min-h-0" style={{ scrollBehavior: 'smooth' }}>
               {filteredItems.length > 0 ? (
                 <div className="space-y-1">
                   {filteredItems.map((item) => (

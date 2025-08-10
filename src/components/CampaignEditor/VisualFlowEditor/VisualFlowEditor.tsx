@@ -47,6 +47,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
   
   // Editor state
   const [currentScriptBlocks, setCurrentScriptBlocks] = useState<any[]>([]);
+  const [validationErrors, setValidationErrors] = useState<{ errors: number; invalidBlocks: string[] }>({ errors: 0, invalidBlocks: [] });
 
   // Usa hook per dati di sessione (variabili, semafori, labels, scripts, missions)
   const sessionData = useSessionData();
@@ -56,13 +57,16 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
     updateBlockRecursive,
     removeBlockRecursive,
     addBlockAtIndex,
-    addBlockToContainer
+    addBlockToContainer,
+    canDropBlock,
+    validateAllBlocks
   } = useBlockManipulation();
   
   // Usa hook per zoom navigation
   const {
     navigationPath,
     currentFocusedBlockId,
+    rootBlocks,
     handleZoomIn,
     handleZoomOut,
     updateRootBlocksIfNeeded,
@@ -85,6 +89,8 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
     addBlockToContainer,
     addBlockAtIndex,
     removeBlockRecursive,
+    canDropBlock,
+    currentScriptBlocks,
     updateBlocks: (updater) => {
       setCurrentScriptBlocks(prev => {
         try {
@@ -124,7 +130,20 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
   });
 
   // Usa hook per conversione JSON
-  const { scriptJson } = useJsonConversion({ currentScriptBlocks });
+  const { scriptJson } = useJsonConversion({ 
+    currentScriptBlocks,
+    rootBlocks,
+    isZoomed 
+  });
+
+  // Funzione helper per verificare se un drop è valido (per AnchorPoint)
+  const createDropValidator = (containerId: string, containerType: string, index?: number) => {
+    return (e: React.DragEvent) => {
+      const blockType = draggedTool?.blockType || draggedBlock?.type;
+      if (!blockType) return true;
+      return canDropBlock(blockType, containerId, containerType, currentScriptBlocks, index);
+    };
+  };
 
   // Carica lista script disponibili al mount
   useEffect(() => {
@@ -145,6 +164,16 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
       loadScript(scriptId);
     }
   }, [scriptId, loadScript]);
+
+  // Valida sempre l'albero completo dei blocchi, non solo quello visualizzato
+  useEffect(() => {
+    // Usa sempre rootBlocks per la validazione globale
+    const blocksToValidate = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
+    if (blocksToValidate.length > 0) {
+      const validation = validateAllBlocks(blocksToValidate);
+      setValidationErrors(validation);
+    }
+  }, [currentScriptBlocks, rootBlocks, validateAllBlocks]);
 
   if (isLoading) {
     return (
@@ -169,6 +198,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
         isZoomed={isZoomed}
         onZoomOut={handleZoomOut}
         navigationPath={navigationPath}
+        validationErrors={validationErrors.errors}
       />
 
       <ScriptsList
@@ -208,8 +238,26 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
                 <BlockRenderer
                   key={block.id}
                   block={block}
-                  onUpdateBlock={(id, updates) => setCurrentScriptBlocks(prev => updateBlockRecursive(prev, id, updates))}
-                  onRemoveBlock={(id) => setCurrentScriptBlocks(prev => removeBlockRecursive(prev, id))}
+                  onUpdateBlock={(id, updates) => {
+                    setCurrentScriptBlocks(prev => {
+                      const updated = updateBlockRecursive(prev, id, updates);
+                      // Sincronizza con rootBlocks se siamo in zoom
+                      if (isZoomed && updated.length > 0) {
+                        updateRootBlocksIfNeeded(updated);
+                      }
+                      return updated;
+                    });
+                  }}
+                  onRemoveBlock={(id) => {
+                    setCurrentScriptBlocks(prev => {
+                      const updated = removeBlockRecursive(prev, id);
+                      // Sincronizza con rootBlocks se siamo in zoom
+                      if (isZoomed && updated.length > 0) {
+                        updateRootBlocksIfNeeded(updated);
+                      }
+                      return updated;
+                    });
+                  }}
                   onDragStart={handleDragStart}
                   onDragOver={handleDragOver}
                   onDrop={handleDrop}
@@ -220,6 +268,8 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
                   isZoomed={isZoomed}
                   currentFocusedBlockId={currentFocusedBlockId}
                   sessionData={sessionData}
+                  createDropValidator={createDropValidator}
+                  invalidBlocks={validationErrors.invalidBlocks}
                 />
               ))}
             </div>

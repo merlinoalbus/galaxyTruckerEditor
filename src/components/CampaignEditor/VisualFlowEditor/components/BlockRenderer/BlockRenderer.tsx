@@ -19,6 +19,8 @@ interface BlockRendererProps {
   isZoomed?: boolean;
   currentFocusedBlockId?: string | null;
   sessionData?: any;
+  createDropValidator?: (containerId: string, containerType: string, index?: number) => (e: React.DragEvent) => boolean;
+  invalidBlocks?: string[];
 }
 
 export const BlockRenderer: React.FC<BlockRendererProps> = ({
@@ -35,7 +37,9 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
   onZoomOut,
   isZoomed = false,
   currentFocusedBlockId,
-  sessionData
+  sessionData,
+  createDropValidator,
+  invalidBlocks = []
 }) => {
   const updateBlock = useCallback((updates: any) => {
     onUpdateBlock(block.id, updates);
@@ -44,6 +48,12 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
   const removeBlock = useCallback(() => {
     onRemoveBlock(block.id);
   }, [block.id, onRemoveBlock]);
+
+  // Determina se questo blocco è invalido
+  const isInvalid = invalidBlocks.includes(block.id);
+  
+  // Determina se questo blocco è il root in zoom (non può essere eliminato)
+  const isRootInZoom = isZoomed && depth === 0;
 
   const renderChildren = useCallback((blocks: any[]) => {
     return blocks.map((child: any) => (
@@ -63,9 +73,11 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
         isZoomed={isZoomed}
         currentFocusedBlockId={currentFocusedBlockId}
         sessionData={sessionData}
+        createDropValidator={createDropValidator}
+        invalidBlocks={invalidBlocks}
       />
     ));
-  }, [depth, onUpdateBlock, onRemoveBlock, onDragStart, onDragOver, onDrop, onDropAtIndex, isDragActive, onZoomIn, onZoomOut, isZoomed, currentFocusedBlockId, sessionData]);
+  }, [depth, onUpdateBlock, onRemoveBlock, onDragStart, onDragOver, onDrop, onDropAtIndex, isDragActive, onZoomIn, onZoomOut, isZoomed, currentFocusedBlockId, sessionData, createDropValidator, invalidBlocks]);
 
   // Render SCRIPT block
   if (block.type === 'SCRIPT') {
@@ -91,7 +103,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
       <IfBlock
         block={block}
         onUpdate={updateBlock}
-        onRemove={removeBlock}
+        onRemove={isRootInZoom ? undefined : removeBlock}
         onDragStart={(e) => onDragStart(e, block)}
         onDragOver={onDragOver}
         onDropThen={(e) => onDrop(e, block.id, 'thenBlocks')}
@@ -104,6 +116,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
         onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
         isZoomed={isZoomed}
         sessionData={sessionData}
+        isInvalid={isInvalid}
       />
     );
   }
@@ -113,7 +126,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
     return (
       <ContainerBlock
         block={block}
-        onRemove={removeBlock}
+        onRemove={isRootInZoom ? undefined : removeBlock}
         onDragStart={(e) => onDragStart(e, block)}
         onDragOver={onDragOver}
         onDrop={(e) => onDrop(e, block.id, 'children')}
@@ -123,18 +136,20 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
         onZoomIn={onZoomIn ? (() => onZoomIn(block.id)) : undefined}
         onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
         isZoomed={isZoomed}
+        isInvalid={isInvalid}
       />
     );
   }
 
-  // Render command blocks (SAY, DELAY, GO, LABEL)
+  // Render command blocks (SAY, DELAY, GO, LABEL, ASK)
   return (
     <CommandBlock
       block={block}
       onUpdate={updateBlock}
-      onRemove={removeBlock}
+      onRemove={isRootInZoom ? undefined : removeBlock}
       onDragStart={(e) => onDragStart(e, block)}
       sessionData={sessionData}
+      isInvalid={isInvalid}
     />
   );
 };

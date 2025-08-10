@@ -141,16 +141,28 @@ export const useZoomNavigation = ({
     } else if (targetIndex < navigationPath.length) {
       // Naviga al livello specificato nel path
       const newPath = navigationPath.slice(0, targetIndex + 1);
-      const targetBlock = newPath[newPath.length - 1].block;
+      const targetBlockId = newPath[newPath.length - 1].id;
       
-      
-      setNavigationPath(newPath);
-      setCurrentFocusedBlock(targetBlock);
-      
-      // Mostra il blocco target
-      setCurrentScriptBlocks([targetBlock]);
+      // Recupera il blocco aggiornato dai rootBlocks
+      const result = findBlockInTree(rootBlocks, targetBlockId);
+      if (result && result.block) {
+        const targetBlock = result.block;
+        
+        setNavigationPath(newPath.map((item, index) => {
+          // Aggiorna i blocchi nel path con le versioni aggiornate
+          if (index === newPath.length - 1) {
+            return { ...item, block: targetBlock };
+          }
+          const blockResult = findBlockInTree(rootBlocks, item.id);
+          return blockResult ? { ...item, block: blockResult.block } : item;
+        }));
+        setCurrentFocusedBlock(targetBlock);
+        
+        // Mostra il blocco target aggiornato
+        setCurrentScriptBlocks([targetBlock]);
+      }
     }
-  }, [navigationPath, rootBlocks, setCurrentScriptBlocks]);
+  }, [navigationPath, rootBlocks, setCurrentScriptBlocks, findBlockInTree]);
 
   // Funzione per aggiornare i rootBlocks quando siamo in navigazione
   const updateRootBlocksIfNeeded = useCallback((updatedBlocks: any[]) => {
@@ -162,11 +174,24 @@ export const useZoomNavigation = ({
         if (!prevRoot || prevRoot.length === 0) {
           return prevRoot;
         }
+        // Aggiorna il blocco nell'albero con la versione modificata
         const updated = updateBlockInNavigationTree(prevRoot, currentBlockId, updatedBlocks[0]);
         return updated;
       });
+      
+      // Aggiorna anche il currentFocusedBlock per mantenere la sincronizzazione
+      if (currentFocusedBlock && currentFocusedBlock.id === currentBlockId) {
+        setCurrentFocusedBlock(updatedBlocks[0]);
+      }
+      
+      // Aggiorna il navigationPath con il blocco aggiornato
+      setNavigationPath(prev => prev.map(item => 
+        item.id === currentBlockId 
+          ? { ...item, block: updatedBlocks[0] }
+          : item
+      ));
     }
-  }, [navigationPath, updateBlockInNavigationTree]); // Rimossa dipendenza da rootBlocks
+  }, [navigationPath, currentFocusedBlock, updateBlockInNavigationTree]); // Rimossa dipendenza da rootBlocks
 
   return {
     navigationPath,

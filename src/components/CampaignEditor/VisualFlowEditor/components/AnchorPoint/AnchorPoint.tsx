@@ -1,43 +1,57 @@
 import React, { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Ban } from 'lucide-react';
 
 interface AnchorPointProps {
   onDragOver: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent) => void;
   label?: string;
+  isDropAllowed?: (e: React.DragEvent) => boolean;
 }
 
 export const AnchorPoint: React.FC<AnchorPointProps> = ({ 
   onDragOver, 
   onDrop, 
-  label = ''
+  label = '',
+  isDropAllowed
 }) => {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [isDropValid, setIsDropValid] = useState(true);
   
   const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault(); // DEVE essere chiamato per permettere il drop
-    e.stopPropagation(); // Ferma la propagazione
-    try {
-      e.dataTransfer.effectAllowed = 'move'; // Permetti move
-      e.dataTransfer.dropEffect = 'move'; // Indica che il drop è permesso
-    } catch (err) {
-      // In alcuni browser non possiamo settare effectAllowed durante dragOver
-      // Silently ignore
+    // Verifica se il drop è permesso
+    const dropAllowed = isDropAllowed ? isDropAllowed(e) : true;
+    setIsDropValid(dropAllowed);
+    
+    // SEMPRE previeni default per permettere il drop (se valido)
+    e.preventDefault();
+    
+    // Imposta l'effetto cursore in base alla validità
+    e.dataTransfer.dropEffect = dropAllowed ? 'copy' : 'none';
+    
+    // Chiama l'handler del padre solo se il drop è valido
+    if (dropAllowed && onDragOver) {
+      onDragOver(e);
     }
+    
+    // Setta il nostro stato locale per il visual feedback
     setIsDraggingOver(true);
-    // NON chiamiamo più onDragOver del padre perché potrebbe sovrascrivere dropEffect
   };
   
   const handleDragLeave = (e: React.DragEvent) => {
     setIsDraggingOver(false);
+    setIsDropValid(true); // Reset quando il drag esce
   };
   
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDraggingOver(false);
-    if (onDrop) {
+    setIsDropValid(true); // Reset dopo il drop
+    
+    // Blocca il drop se non è permesso
+    const dropAllowed = isDropAllowed ? isDropAllowed(e) : true;
+    if (dropAllowed && onDrop) {
       onDrop(e);
     }
   };
@@ -56,7 +70,9 @@ export const AnchorPoint: React.FC<AnchorPointProps> = ({
         relative my-1 flex items-center justify-center
         transition-all rounded
         ${isDraggingOver 
-          ? 'h-6 border-2 border-dashed border-blue-500 bg-blue-500/10' 
+          ? isDropValid
+            ? 'h-6 border-2 border-dashed border-blue-500 bg-blue-500/10' 
+            : 'h-6 border-2 border-dashed border-red-500 bg-red-500/10'
           : isHovered
             ? 'h-4 border border-dashed border-gray-600 bg-transparent'
             : 'h-px bg-transparent'
@@ -68,10 +84,19 @@ export const AnchorPoint: React.FC<AnchorPointProps> = ({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {isDraggingOver && label && (
-        <div className="flex items-center gap-1 text-xs text-gray-500">
-          <Plus className="w-3 h-3" />
-          <span>{label}</span>
+      {isDraggingOver && (
+        <div className={`flex items-center gap-1 text-xs ${isDropValid ? 'text-gray-500' : 'text-red-500'}`}>
+          {isDropValid ? (
+            <>
+              <Plus className="w-3 h-3" />
+              <span>{label}</span>
+            </>
+          ) : (
+            <>
+              <Ban className="w-4 h-4" />
+              <span>Drop non permesso</span>
+            </>
+          )}
         </div>
       )}
     </div>

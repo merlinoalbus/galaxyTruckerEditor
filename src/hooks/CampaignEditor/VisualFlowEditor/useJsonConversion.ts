@@ -4,19 +4,28 @@ import { convertBlocksToJson } from '@/utils/CampaignEditor/VisualFlowEditor/jso
 
 interface UseJsonConversionProps {
   currentScriptBlocks: any[];
+  rootBlocks?: any[];
+  isZoomed?: boolean;
 }
 
 /**
  * Hook per gestire la conversione dei blocchi in formato JSON
  * Aggiorna automaticamente il JSON quando i blocchi cambiano
  */
-export const useJsonConversion = ({ currentScriptBlocks }: UseJsonConversionProps) => {
+export const useJsonConversion = ({ 
+  currentScriptBlocks, 
+  rootBlocks = [], 
+  isZoomed = false 
+}: UseJsonConversionProps) => {
   const [scriptJson, setScriptJson] = useState<ScriptJson | null>(null);
 
   // Aggiorna JSON quando i blocchi cambiano e logga ogni modifica
   useEffect(() => {
-    if (currentScriptBlocks.length > 0) {
-      const scriptBlock = currentScriptBlocks.find(b => b.type === 'SCRIPT');
+    // Usa rootBlocks quando siamo in zoom, altrimenti usa currentScriptBlocks
+    const blocksToUse = isZoomed && rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
+    
+    if (blocksToUse.length > 0) {
+      const scriptBlock = blocksToUse.find(b => b.type === 'SCRIPT');
       if (scriptBlock) {
         const json: any = {
           scriptName: scriptBlock.scriptName,
@@ -26,7 +35,7 @@ export const useJsonConversion = ({ currentScriptBlocks }: UseJsonConversionProp
         setScriptJson(json);
       }
     }
-  }, [currentScriptBlocks]);
+  }, [currentScriptBlocks, rootBlocks, isZoomed]);
 
   /**
    * Esporta il JSON corrente come stringa formattata
