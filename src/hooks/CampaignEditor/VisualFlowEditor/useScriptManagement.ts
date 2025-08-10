@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { ScriptData } from '@/components/CampaignEditor/VisualFlowEditor/components/ScriptsList';
 import { addUniqueIds, generateBlockId } from '@/utils/CampaignEditor/VisualFlowEditor/blockIdManager';
 import { cleanupScriptBlocks } from '@/utils/CampaignEditor/VisualFlowEditor/blockCleaner';
+import { generateScriptJson } from '@/utils/CampaignEditor/VisualFlowEditor/jsonConverter';
 
 export interface NewScriptDialogType {
   isOpen: boolean;
@@ -12,11 +13,17 @@ export interface NewScriptDialogType {
 interface UseScriptManagementProps {
   setCurrentScriptBlocks: (blocks: any[]) => void;
   setShowScriptsList: (show: boolean) => void;
+  currentScriptBlocks?: any[];
+  rootBlocks?: any[];
+  isZoomed?: boolean;
 }
 
 export const useScriptManagement = ({ 
   setCurrentScriptBlocks,
-  setShowScriptsList 
+  setShowScriptsList,
+  currentScriptBlocks = [],
+  rootBlocks = [],
+  isZoomed = false
 }: UseScriptManagementProps) => {
   const [currentScript, setCurrentScript] = useState<ScriptData | null>(null);
   const [isLoadingScript, setIsLoadingScript] = useState(false);
@@ -89,6 +96,33 @@ export const useScriptManagement = ({
         // Aggiungi ID univoci a tutti i blocchi
         cleanedBlocks = addUniqueIds(cleanedBlocks);
         
+        // Aggiungi proprietà isContainer per tutti i blocchi container
+        const addContainerFlags = (blocks: any[]): any[] => {
+          return blocks.map(block => {
+            const newBlock = { ...block };
+            
+            // Un blocco è container se ha children, thenBlocks o elseBlocks
+            if (block.children || block.thenBlocks || block.elseBlocks) {
+              newBlock.isContainer = true;
+            }
+            
+            // Ricorsivamente processa i children
+            if (newBlock.children) {
+              newBlock.children = addContainerFlags(newBlock.children);
+            }
+            if (newBlock.thenBlocks) {
+              newBlock.thenBlocks = addContainerFlags(newBlock.thenBlocks);
+            }
+            if (newBlock.elseBlocks) {
+              newBlock.elseBlocks = addContainerFlags(newBlock.elseBlocks);
+            }
+            
+            return newBlock;
+          });
+        };
+        
+        cleanedBlocks = addContainerFlags(cleanedBlocks);
+        
         // Verifica se dopo la pulizia abbiamo già un blocco SCRIPT principale
         let finalScriptBlock;
         
@@ -125,6 +159,49 @@ export const useScriptManagement = ({
     }
   }, [setCurrentScriptBlocks, setShowScriptsList]);
 
+  // Salva script via API
+  const saveScript = useCallback(async () => {
+    // Usa sempre rootBlocks se disponibile (contiene l'albero completo), altrimenti currentScriptBlocks
+    const blocksToSave = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
+    
+    if (!blocksToSave || blocksToSave.length === 0) {
+      console.error('Nessun blocco da salvare');
+      return { success: false, error: 'Nessun blocco da salvare' };
+    }
+
+    const scriptJson = generateScriptJson(blocksToSave);
+    if (!scriptJson) {
+      console.error('Impossibile generare JSON dello script');
+      return { success: false, error: 'Impossibile generare JSON' };
+    }
+
+    // L'API si aspetta un array di script
+    const payload = [scriptJson];
+
+    try {
+      const response = await fetch('http://localhost:3001/api/scripts/saveScript', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        console.log('✅ Script salvato con successo');
+        return { success: true };
+      } else {
+        console.error('❌ Errore nel salvataggio:', result.error);
+        return { success: false, error: result.error };
+      }
+    } catch (error) {
+      console.error('❌ Errore nella chiamata API:', error);
+      return { success: false, error: error instanceof Error ? error.message : String(error) };
+    }
+  }, [currentScriptBlocks, rootBlocks]);
+
   return {
     currentScript,
     isLoadingScript,
@@ -132,6 +209,7 @@ export const useScriptManagement = ({
     setNewScriptDialog,
     handleNewScript,
     confirmNewScript,
-    loadScript
+    loadScript,
+    saveScript
   };
 };

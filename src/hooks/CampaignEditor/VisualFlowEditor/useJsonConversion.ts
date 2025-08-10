@@ -28,8 +28,8 @@ export const useJsonConversion = ({
       const scriptBlock = blocksToUse.find(b => b.type === 'SCRIPT');
       if (scriptBlock) {
         const json: any = {
-          scriptName: scriptBlock.scriptName,
-          filePath: scriptBlock.fileName, // ScriptJson usa filePath non fileName
+          name: scriptBlock.scriptName,
+          fileName: scriptBlock.fileName,
           blocks: convertBlocksToJson(scriptBlock.children || [])
         };
         setScriptJson(json);
@@ -58,7 +58,7 @@ export const useJsonConversion = ({
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = filename || `${scriptJson.scriptName || 'script'}.json`;
+    a.download = filename || `${scriptJson.name || 'script'}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -71,7 +71,7 @@ export const useJsonConversion = ({
    */
   const isValidJson = (): boolean => {
     return scriptJson !== null && 
-           scriptJson.scriptName !== undefined &&
+           scriptJson.name !== undefined &&
            scriptJson.blocks !== undefined;
   };
 

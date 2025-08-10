@@ -123,10 +123,14 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
     setNewScriptDialog,
     handleNewScript,
     confirmNewScript,
-    loadScript
+    loadScript,
+    saveScript
   } = useScriptManagement({
     setCurrentScriptBlocks,
-    setShowScriptsList
+    setShowScriptsList,
+    currentScriptBlocks,
+    rootBlocks,
+    isZoomed
   });
 
   // Usa hook per conversione JSON
@@ -199,6 +203,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
         onZoomOut={handleZoomOut}
         navigationPath={navigationPath}
         validationErrors={validationErrors.errors}
+        onSaveScript={saveScript}
       />
 
       <ScriptsList

@@ -87,6 +87,21 @@ export const useDragAndDrop = ({
     // Configurazione per container generici
     if (tool.isContainer && tool.blockType !== 'IF') {
       newBlock.children = [];
+      
+      // Configurazione specifica per OPT
+      if (tool.blockType === 'OPT') {
+        newBlock.optType = 'OPT_SIMPLE';
+        newBlock.condition = null;
+        newBlock.text = {
+          EN: '',
+          CS: null,
+          DE: null,
+          ES: null,
+          FR: null,
+          PL: null,
+          RU: null
+        };
+      }
     }
     
     // Configurazione per blocchi comando
@@ -95,7 +110,12 @@ export const useDragAndDrop = ({
       
       // Inizializza parametri specifici per ASK
       if (tool.blockType === 'ASK') {
-        newBlock.parameters.text = '';
+        newBlock.parameters.text = { EN: '' };
+      }
+      
+      // Inizializza parametri specifici per SAY
+      if (tool.blockType === 'SAY') {
+        newBlock.parameters.text = { EN: '' };
       }
     }
     
