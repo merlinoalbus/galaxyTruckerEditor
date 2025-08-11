@@ -1,6 +1,6 @@
 import React from 'react';
 import { Trophy, Star, EyeOff, Hash, Image as ImageIcon } from 'lucide-react';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 import { useAchievementsView } from '@/hooks/CampaignEditor/VariablesSystem/hooks/AchievementsView/useAchievementsView';
 import { AchievementsViewProps } from '@/types/CampaignEditor/VariablesSystem/types/AchievementsView/AchievementsView.types';
 

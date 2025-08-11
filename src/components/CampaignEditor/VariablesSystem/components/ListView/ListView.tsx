@@ -6,7 +6,7 @@ import { LabelView } from '../LabelView/LabelView';
 import { CharacterView } from '../CharacterView/CharacterView';
 import { ImageView } from '../ImageView/ImageView';
 import { AchievementView } from '../AchievementView/AchievementView';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 
 interface ListViewProps {
   type: ElementType;

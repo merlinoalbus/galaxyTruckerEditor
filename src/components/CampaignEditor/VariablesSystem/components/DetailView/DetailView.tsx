@@ -9,7 +9,7 @@ import {
   GameImage, 
   Achievement 
 } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 import { VariableDetail } from './components/VariableDetail/VariableDetail';
 import { SemaforoDetail } from './components/SemaforoDetail/SemaforoDetail';
 import { LabelDetail } from './components/LabelDetail/LabelDetail';

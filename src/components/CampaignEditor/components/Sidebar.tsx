@@ -5,7 +5,7 @@ import {
   Languages, 
   Rocket
 } from 'lucide-react';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 
 export function Sidebar() {
   const location = useLocation();

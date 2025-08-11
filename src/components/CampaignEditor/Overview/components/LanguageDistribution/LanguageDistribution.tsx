@@ -1,7 +1,7 @@
 import React from 'react';
 import { Globe } from 'lucide-react';
 import { overviewStyles } from '@/styles/CampaignEditor/Overview/Overview.styles';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 
 interface LanguageDistributionProps {
   scriptsPerLanguage: Array<{
