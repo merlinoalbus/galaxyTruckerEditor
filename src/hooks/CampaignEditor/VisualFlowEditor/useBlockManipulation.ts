@@ -143,6 +143,42 @@ export const useBlockManipulation = () => {
 
   // Funzione per validare l'inserimento di un blocco
   const validateBlockInsertion = useCallback((blockType: string, targetContainer: any, targetContainerType: string, index?: number, allBlocks?: any[]): boolean => {
+    // NUOVA VALIDAZIONE: ASK non può seguire un altro ASK
+    if (blockType === 'ASK') {
+      let prevBlock = null;
+      let blocks: any[] = [];
+      
+      // Determina il blocco precedente
+      if (targetContainerType === 'thenBlocks' || targetContainerType === 'elseBlocks' || 
+          targetContainerType === 'children' || targetContainerType === 'blocksMission' || 
+          targetContainerType === 'blocksFinish' || targetContainerType === 'blockInit' ||
+          targetContainerType === 'blockStart' || targetContainerType === 'blockEvaluate') {
+        
+        blocks = targetContainer[targetContainerType] || [];
+        
+        if (index !== undefined && index > 0) {
+          prevBlock = blocks[index - 1];
+        } else if (index === undefined && blocks.length > 0) {
+          prevBlock = blocks[blocks.length - 1];
+        }
+      }
+      
+      // Se il blocco precedente è ASK, non permettere
+      if (prevBlock && prevBlock.type === 'ASK') {
+        return false;
+      }
+    }
+    
+    // NUOVA VALIDAZIONE: BUILD non può contenere BUILD o FLIGHT
+    if ((blockType === 'BUILD' || blockType === 'FLIGHT') && targetContainer.type === 'BUILD') {
+      return false;
+    }
+    
+    // NUOVA VALIDAZIONE: FLIGHT non può contenere BUILD o FLIGHT
+    if ((blockType === 'BUILD' || blockType === 'FLIGHT') && targetContainer.type === 'FLIGHT') {
+      return false;
+    }
+    
     // Validazione specifica per MENU
     if (blockType === 'MENU') {
       let prevBlock = null;
@@ -815,12 +851,62 @@ export const useBlockManipulation = () => {
   }, [validateBlockInsertion]);
 
   // Funzione per validare tutti i blocchi esistenti e contare gli errori
-  const validateAllBlocks = useCallback((blocks: any[]): { errors: number; invalidBlocks: string[] } => {
+  const validateAllBlocks = useCallback((blocks: any[]): { errors: number; invalidBlocks: string[]; details: any[] } => {
     let errors = 0;
     const invalidBlocks: string[] = [];
+    const errorDetails: any[] = [];
     
-    const validateRecursive = (blocks: any[], parentBlock?: any, allRootBlocks?: any[]): void => {
+    const validateRecursive = (blocks: any[], parentBlock?: any, allRootBlocks?: any[], path: string[] = []): void => {
       blocks.forEach((block, index) => {
+        // NUOVA VALIDAZIONE: ASK non può seguire un altro ASK
+        if (block.type === 'ASK' && index > 0 && blocks[index - 1].type === 'ASK') {
+          errors++;
+          invalidBlocks.push(block.id);
+          const prevAsk = blocks[index - 1];
+          errorDetails.push({
+            blockId: block.id,
+            blockType: block.type,
+            errorType: 'CONSECUTIVE_ASK',
+            message: `Due blocchi ASK consecutivi non sono permessi. Il primo ASK (${prevAsk.parameters?.text?.EN || 'senza testo'}) è seguito direttamente da questo ASK. Inserisci un blocco SAY, MENU o altro comando tra i due ASK per separarli.`,
+            path: [...path],
+            relatedBlockId: prevAsk.id
+          });
+        }
+        
+        // NUOVA VALIDAZIONE: BUILD/FLIGHT dentro BUILD
+        if ((block.type === 'BUILD' || block.type === 'FLIGHT') && parentBlock && parentBlock.type === 'BUILD') {
+          errors++;
+          invalidBlocks.push(block.id);
+          const containerArea = path[path.length - 1]?.includes('Init') ? 'Fase Iniziale' : 'Inizio Build';
+          errorDetails.push({
+            blockId: block.id,
+            blockType: block.type,
+            errorType: block.type === 'BUILD' ? 'BUILD_CONTAINS_BUILD' : 'BUILD_CONTAINS_FLIGHT',
+            message: `Il blocco ${block.type} si trova dentro l'area "${containerArea}" di un blocco BUILD. I blocchi BUILD e FLIGHT non possono essere annidati. Sposta questo blocco fuori dal BUILD o usa altri tipi di blocchi.`,
+            path: [...path],
+            relatedBlockId: parentBlock.id
+          });
+        }
+        
+        // NUOVA VALIDAZIONE: BUILD/FLIGHT dentro FLIGHT
+        if ((block.type === 'BUILD' || block.type === 'FLIGHT') && parentBlock && parentBlock.type === 'FLIGHT') {
+          errors++;
+          invalidBlocks.push(block.id);
+          let containerArea = 'FLIGHT';
+          if (path[path.length - 1]?.includes('Init')) containerArea = 'Fase Iniziale';
+          else if (path[path.length - 1]?.includes('Start')) containerArea = 'Inizio Volo';
+          else if (path[path.length - 1]?.includes('Evaluate')) containerArea = 'Valutazione';
+          
+          errorDetails.push({
+            blockId: block.id,
+            blockType: block.type,
+            errorType: block.type === 'BUILD' ? 'FLIGHT_CONTAINS_BUILD' : 'FLIGHT_CONTAINS_FLIGHT',
+            message: `Il blocco ${block.type} si trova dentro l'area "${containerArea}" di un blocco FLIGHT. I blocchi BUILD e FLIGHT non possono essere annidati tra loro. Sposta questo blocco fuori dal FLIGHT.`,
+            path: [...path],
+            relatedBlockId: parentBlock.id
+          });
+        }
+        
         // Valida blocchi MENU
         if (block.type === 'MENU') {
           let prevBlock = null;
@@ -839,6 +925,41 @@ export const useBlockManipulation = () => {
           if (!prevBlock || !canInsertMenuAfterBlock(prevBlock)) {
             errors++;
             invalidBlocks.push(block.id);
+            
+            // Genera messaggio specifico in base al blocco precedente
+            let specificMessage = 'Il blocco MENU deve essere preceduto da un blocco ASK.';
+            if (prevBlock) {
+              if (prevBlock.type === 'IF') {
+                // Analizza i rami dell'IF per capire cosa manca
+                const thenEndsWithAsk = prevBlock.thenBlocks && prevBlock.thenBlocks.length > 0 && 
+                                       blockEndsWithAsk(prevBlock.thenBlocks[prevBlock.thenBlocks.length - 1]);
+                const elseEndsWithAsk = !prevBlock.elseBlocks || prevBlock.elseBlocks.length === 0 || 
+                                       blockEndsWithAsk(prevBlock.elseBlocks[prevBlock.elseBlocks.length - 1]);
+                
+                if (!thenEndsWithAsk && !elseEndsWithAsk) {
+                  specificMessage = `Il MENU segue un blocco IF dove né il ramo THEN né il ramo ELSE terminano con ASK. Entrambi i rami devono terminare con ASK.`;
+                } else if (!thenEndsWithAsk) {
+                  specificMessage = `Il MENU segue un blocco IF dove il ramo THEN non termina con ASK. Aggiungi un ASK alla fine del ramo THEN.`;
+                } else if (!elseEndsWithAsk) {
+                  specificMessage = `Il MENU segue un blocco IF dove il ramo ELSE non termina con ASK. Aggiungi un ASK alla fine del ramo ELSE.`;
+                }
+              } else if (prevBlock.type === 'MENU') {
+                specificMessage = `Il MENU segue un altro MENU. I blocchi MENU non terminano con ASK, quindi devi inserire un ASK tra i due MENU.`;
+              } else {
+                specificMessage = `Il MENU segue un blocco ${prevBlock.type} che non termina con ASK. Inserisci un ASK prima del MENU.`;
+              }
+            } else if (index === 0) {
+              specificMessage = 'Il MENU è il primo blocco dello script. Deve essere preceduto da almeno un blocco ASK.';
+            }
+            
+            errorDetails.push({
+              blockId: block.id,
+              blockType: block.type,
+              errorType: 'MENU_WITHOUT_ASK',
+              message: specificMessage,
+              path: [...path],
+              relatedBlockId: prevBlock?.id // ID del blocco che causa il problema
+            });
           }
         }
         
@@ -846,6 +967,13 @@ export const useBlockManipulation = () => {
         if (block.type === 'OPT' && (!parentBlock || parentBlock.type !== 'MENU')) {
           errors++;
           invalidBlocks.push(block.id);
+          errorDetails.push({
+            blockId: block.id,
+            blockType: block.type,
+            errorType: 'OPT_OUTSIDE_MENU',
+            message: 'Il blocco OPT può essere inserito solo all\'interno di un blocco MENU.',
+            path: [...path]
+          });
         }
         
         // Valida contenuto dei MENU (solo OPT permessi)
@@ -854,6 +982,13 @@ export const useBlockManipulation = () => {
             if (child.type !== 'OPT') {
               errors++;
               invalidBlocks.push(child.id);
+              errorDetails.push({
+                blockId: child.id,
+                blockType: child.type,
+                errorType: 'NON_OPT_IN_MENU',
+                message: `Il blocco ${child.type} non può essere inserito in un MENU. Solo blocchi OPT sono permessi.`,
+                path: [...path, 'MENU']
+              });
             }
           });
         }
@@ -861,7 +996,8 @@ export const useBlockManipulation = () => {
         // Ricorsione per container
         if (block.children) {
           // Per i container normali, passa il blocco corrente come parent e mantieni allRootBlocks
-          validateRecursive(block.children, block, allRootBlocks || blocks);
+          const newPath = [...path, `${block.type}${block.id ? '#' + block.id.slice(0, 8) : ''}`];
+          validateRecursive(block.children, block, allRootBlocks || blocks, newPath);
         }
         
         // Ricorsione per IF
@@ -928,8 +1064,119 @@ export const useBlockManipulation = () => {
       validateRecursive(blocks, null, blocks);
     }
     
-    return { errors, invalidBlocks };
+    return { errors, invalidBlocks, details: errorDetails };
   }, [canInsertMenuAfterBlock, findBlockBeforeContainer]);
+
+  // Funzione per ottenere un messaggio di errore specifico per drop non validi
+  const getDropErrorMessage = useCallback((blockType: string, containerId: string, containerType: string, blocks: any[], index?: number): string | null => {
+    // Trova il container target
+    const findContainer = (blocks: any[], id: string): any => {
+      for (const block of blocks) {
+        if (block.id === id) return block;
+        if (block.children) {
+          const found = findContainer(block.children, id);
+          if (found) return found;
+        }
+        if (block.type === 'IF') {
+          if (block.thenBlocks) {
+            const found = findContainer(block.thenBlocks, id);
+            if (found) return found;
+          }
+          if (block.elseBlocks) {
+            const found = findContainer(block.elseBlocks, id);
+            if (found) return found;
+          }
+        }
+        if (block.type === 'MISSION') {
+          if (block.blocksMission) {
+            const found = findContainer(block.blocksMission, id);
+            if (found) return found;
+          }
+          if (block.blocksFinish) {
+            const found = findContainer(block.blocksFinish, id);
+            if (found) return found;
+          }
+        }
+        if (block.type === 'BUILD') {
+          if (block.blockInit) {
+            const found = findContainer(block.blockInit, id);
+            if (found) return found;
+          }
+          if (block.blockStart) {
+            const found = findContainer(block.blockStart, id);
+            if (found) return found;
+          }
+        }
+        if (block.type === 'FLIGHT') {
+          if (block.blockInit) {
+            const found = findContainer(block.blockInit, id);
+            if (found) return found;
+          }
+          if (block.blockStart) {
+            const found = findContainer(block.blockStart, id);
+            if (found) return found;
+          }
+          if (block.blockEvaluate) {
+            const found = findContainer(block.blockEvaluate, id);
+            if (found) return found;
+          }
+        }
+      }
+      return null;
+    };
+
+    const targetContainer = findContainer(blocks, containerId);
+    if (!targetContainer) return null;
+
+    // Controlla ASK consecutivi
+    if (blockType === 'ASK') {
+      let prevBlock = null;
+      let containerBlocks: any[] = [];
+      
+      if (targetContainer[containerType]) {
+        containerBlocks = targetContainer[containerType];
+        if (index !== undefined && index > 0) {
+          prevBlock = containerBlocks[index - 1];
+        } else if (index === undefined && containerBlocks.length > 0) {
+          prevBlock = containerBlocks[containerBlocks.length - 1];
+        }
+      }
+      
+      if (prevBlock && prevBlock.type === 'ASK') {
+        return '🚫 Due blocchi ASK consecutivi non sono permessi. Inserisci un altro tipo di blocco tra i due ASK.';
+      }
+    }
+    
+    // Controlla BUILD/FLIGHT dentro BUILD
+    if ((blockType === 'BUILD' || blockType === 'FLIGHT') && targetContainer.type === 'BUILD') {
+      return `🚫 Il blocco ${blockType} non può essere inserito dentro un blocco BUILD. I blocchi BUILD e FLIGHT non possono essere annidati.`;
+    }
+    
+    // Controlla BUILD/FLIGHT dentro FLIGHT
+    if ((blockType === 'BUILD' || blockType === 'FLIGHT') && targetContainer.type === 'FLIGHT') {
+      return `🚫 Il blocco ${blockType} non può essere inserito dentro un blocco FLIGHT. I blocchi BUILD e FLIGHT non possono essere annidati.`;
+    }
+    
+    // Controlla MENU senza ASK precedente
+    if (blockType === 'MENU') {
+      // Per MENU, usa la logica esistente di validateBlockInsertion
+      if (!validateBlockInsertion(blockType, targetContainer, containerType, index, blocks)) {
+        return '🚫 Il blocco MENU deve essere preceduto da un blocco ASK per funzionare correttamente.';
+      }
+    }
+    
+    // Controlla OPT fuori da MENU
+    if (blockType === 'OPT' && targetContainer.type !== 'MENU') {
+      return '🚫 Il blocco OPT può essere inserito solo all\'interno di un blocco MENU.';
+    }
+    
+    // Controlla blocchi non-OPT dentro MENU
+    if (targetContainer.type === 'MENU' && blockType !== 'OPT') {
+      return `🚫 Solo blocchi OPT possono essere inseriti in un MENU. Il blocco ${blockType} non è permesso.`;
+    }
+    
+    return null;
+  }, [validateBlockInsertion]);
 
   return {
     updateBlockRecursive,
@@ -937,6 +1184,7 @@ export const useBlockManipulation = () => {
     addBlockAtIndex,
     addBlockToContainer,
     canDropBlock,
-    validateAllBlocks
+    validateAllBlocks,
+    getDropErrorMessage
   };
 };

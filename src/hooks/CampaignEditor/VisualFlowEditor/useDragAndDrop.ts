@@ -7,8 +7,10 @@ interface UseDragAndDropProps {
   addBlockAtIndex: (blocks: any[], containerId: string, containerType: string, newBlock: any, index: number) => any[];
   removeBlockRecursive: (blocks: any[], blockId: string) => any[];
   canDropBlock: (blockType: string, containerId: string, containerType: string, blocks: any[], index?: number) => boolean;
+  getDropErrorMessage?: (blockType: string, containerId: string, containerType: string, blocks: any[], index?: number) => string | null;
   currentScriptBlocks: any[];
   updateBlocks: (updater: (prev: any[]) => any[]) => void;
+  onDropError?: (message: string) => void;
 }
 
 export const useDragAndDrop = ({ 
@@ -16,8 +18,10 @@ export const useDragAndDrop = ({
   addBlockAtIndex, 
   removeBlockRecursive,
   canDropBlock,
+  getDropErrorMessage,
   currentScriptBlocks,
-  updateBlocks
+  updateBlocks,
+  onDropError
 }: UseDragAndDropProps) => {
   const [draggedTool, setDraggedTool] = useState<ToolItem | Tool | null>(null);
   const [draggedBlock, setDraggedBlock] = useState<any>(null);
@@ -90,8 +94,26 @@ export const useDragAndDrop = ({
       // ELSE non incluso di default
     }
     
-    // Configurazione per container generici
-    if (isContainer && blockType !== 'IF') {
+    // Configurazione specifica per BUILD
+    if (blockType === 'BUILD') {
+      newBlock.blockInit = [];
+      newBlock.blockStart = [];
+      newBlock.numBlockInit = 0;
+      newBlock.numBlockStart = 0;
+    }
+    
+    // Configurazione specifica per FLIGHT
+    if (blockType === 'FLIGHT') {
+      newBlock.blockInit = [];
+      newBlock.blockStart = [];
+      newBlock.blockEvaluate = [];
+      newBlock.numBlockInit = 0;
+      newBlock.numBlockStart = 0;
+      newBlock.numBlockEvaluate = 0;
+    }
+    
+    // Configurazione per container generici (non BUILD/FLIGHT)
+    if (isContainer && blockType !== 'IF' && blockType !== 'BUILD' && blockType !== 'FLIGHT') {
       newBlock.children = [];
       
       // Configurazione specifica per OPT
@@ -142,8 +164,18 @@ export const useDragAndDrop = ({
     
     // Verifica se il drop è valido prima di eseguirlo
     if (blockType && !canDropBlock(blockType, containerId, containerType, currentScriptBlocks)) {
+      // Genera messaggio di errore specifico
+      if (onDropError && getDropErrorMessage) {
+        const errorMsg = getDropErrorMessage(blockType, containerId, containerType, currentScriptBlocks);
+        if (errorMsg) {
+          onDropError(errorMsg);
+        }
+      } else if (onDropError) {
+        // Messaggio generico se non c'è getDropErrorMessage
+        onDropError(`Il blocco ${blockType} non può essere inserito in questa posizione.`);
+      }
       resetDragState();
-      return; // Blocca il drop silenziosamente
+      return;
     }
     
     if (draggedTool) {
@@ -179,8 +211,18 @@ export const useDragAndDrop = ({
     
     // Verifica se il drop è valido prima di eseguirlo
     if (blockType && !canDropBlock(blockType, containerId, containerType, currentScriptBlocks, index)) {
+      // Genera messaggio di errore specifico
+      if (onDropError && getDropErrorMessage) {
+        const errorMsg = getDropErrorMessage(blockType, containerId, containerType, currentScriptBlocks, index);
+        if (errorMsg) {
+          onDropError(errorMsg);
+        }
+      } else if (onDropError) {
+        // Messaggio generico se non c'è getDropErrorMessage
+        onDropError(`Il blocco ${blockType} non può essere inserito in questa posizione.`);
+      }
       resetDragState();
-      return; // Blocca il drop silenziosamente
+      return;
     }
     
     // Se è un tool, crea nuovo blocco con ID univoco

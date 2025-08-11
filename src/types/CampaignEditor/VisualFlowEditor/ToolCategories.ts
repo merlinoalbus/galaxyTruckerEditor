@@ -32,7 +32,7 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
       { id: 'go', name: 'GO', icon: '➡️', blockType: 'GO', description: 'Salta a label', implemented: false },
       { id: 'sub_script', name: 'SUB_SCRIPT', icon: '📄', blockType: 'SUB_SCRIPT', description: 'Richiama altro script', implemented: false },
       { id: 'exit_menu', name: 'EXIT_MENU', icon: '🚪', blockType: 'EXIT_MENU', description: 'Esci da menu', implemented: false },
-      { id: 'say', name: 'SAY', icon: '💬', blockType: 'SAY', description: 'Mostra testo di dialogo', implemented: false },
+      { id: 'say', name: 'SAY', icon: '💬', blockType: 'SAY', description: 'Mostra testo di dialogo', implemented: false, inProgress: true },
       { id: 'changechar', name: 'CHANGECHAR', icon: '🎭', blockType: 'CHANGECHAR', description: 'Cambia immagine personaggio', implemented: false },
       { id: 'set', name: 'SET', icon: '✅', blockType: 'SET', description: 'Attiva semaforo', implemented: false },
       { id: 'ask', name: 'ASK', icon: '❓', blockType: 'ASK', description: 'Domanda con menu', implemented: false },

@@ -23,6 +23,20 @@ export const convertBlocksToJson = (blocks: any[]): any[] => {
       if (block.elseBlocks) {
         jsonBlock.elseBlocks = convertBlocksToJson(block.elseBlocks);
       }
+    } else if (block.type === 'BUILD') {
+      // Gestione specifica per blocco BUILD - NON usa children
+      jsonBlock.blockInit = convertBlocksToJson(block.blockInit || []);
+      jsonBlock.blockStart = convertBlocksToJson(block.blockStart || []);
+      jsonBlock.numBlockInit = block.numBlockInit || 0;
+      jsonBlock.numBlockStart = block.numBlockStart || 0;
+    } else if (block.type === 'FLIGHT') {
+      // Gestione specifica per blocco FLIGHT - NON usa children
+      jsonBlock.blockInit = convertBlocksToJson(block.blockInit || []);
+      jsonBlock.blockStart = convertBlocksToJson(block.blockStart || []);
+      jsonBlock.blockEvaluate = convertBlocksToJson(block.blockEvaluate || []);
+      jsonBlock.numBlockInit = block.numBlockInit || 0;
+      jsonBlock.numBlockStart = block.numBlockStart || 0;
+      jsonBlock.numBlockEvaluate = block.numBlockEvaluate || 0;
     } else if (block.type === 'OPT') {
       // Gestione specifica per blocchi OPT
       jsonBlock.optType = block.optType || 'OPT_SIMPLE';

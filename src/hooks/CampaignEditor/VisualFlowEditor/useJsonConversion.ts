@@ -43,6 +43,36 @@ export const useJsonConversion = ({
           blocksFinish: convertBlocksToJson(missionBlock.blocksFinish || [])
         };
         setScriptJson(json);
+      } else {
+        // Gestione per blocchi BUILD e FLIGHT standalone
+        const buildBlock = blocksToUse.find(b => b.type === 'BUILD');
+        const flightBlock = blocksToUse.find(b => b.type === 'FLIGHT');
+        
+        if (buildBlock) {
+          const json: any = {
+            type: 'BUILD',
+            name: buildBlock.name || 'Build Script',
+            fileName: buildBlock.fileName || 'build.txt',
+            blockInit: convertBlocksToJson(buildBlock.blockInit || []),
+            blockStart: convertBlocksToJson(buildBlock.blockStart || []),
+            numBlockInit: buildBlock.numBlockInit || 0,
+            numBlockStart: buildBlock.numBlockStart || 0
+          };
+          setScriptJson(json);
+        } else if (flightBlock) {
+          const json: any = {
+            type: 'FLIGHT',
+            name: flightBlock.name || 'Flight Script',
+            fileName: flightBlock.fileName || 'flight.txt',
+            blockInit: convertBlocksToJson(flightBlock.blockInit || []),
+            blockStart: convertBlocksToJson(flightBlock.blockStart || []),
+            blockEvaluate: convertBlocksToJson(flightBlock.blockEvaluate || []),
+            numBlockInit: flightBlock.numBlockInit || 0,
+            numBlockStart: flightBlock.numBlockStart || 0,
+            numBlockEvaluate: flightBlock.numBlockEvaluate || 0
+          };
+          setScriptJson(json);
+        }
       }
     }
   }, [currentScriptBlocks, rootBlocks, isZoomed]);
@@ -80,9 +110,23 @@ export const useJsonConversion = ({
    * @returns true se il JSON è valido
    */
   const isValidJson = (): boolean => {
-    return scriptJson !== null && 
-           scriptJson.name !== undefined &&
-           scriptJson.blocks !== undefined;
+    if (scriptJson === null || (scriptJson as any).name === undefined) return false;
+    
+    const json = scriptJson as any;
+    
+    // Validazione per SCRIPT normale
+    if (json.blocks !== undefined) return true;
+    
+    // Validazione per MISSION
+    if (json.blocksMission !== undefined && json.blocksFinish !== undefined) return true;
+    
+    // Validazione per BUILD
+    if (json.type === 'BUILD' && json.blockInit !== undefined && json.blockStart !== undefined) return true;
+    
+    // Validazione per FLIGHT
+    if (json.type === 'FLIGHT' && json.blockInit !== undefined && json.blockStart !== undefined && json.blockEvaluate !== undefined) return true;
+    
+    return false;
   };
 
   /**
@@ -90,7 +134,9 @@ export const useJsonConversion = ({
    * @returns Il numero di blocchi
    */
   const getBlockCount = (): number => {
-    if (!scriptJson || !scriptJson.blocks) return 0;
+    if (!scriptJson) return 0;
+    
+    const json = scriptJson as any;
     
     const countRecursive = (blocks: any[]): number => {
       let count = blocks.length;
@@ -98,11 +144,31 @@ export const useJsonConversion = ({
         if (block.children) count += countRecursive(block.children);
         if (block.thenBlocks) count += countRecursive(block.thenBlocks);
         if (block.elseBlocks) count += countRecursive(block.elseBlocks);
+        if (block.blockInit) count += countRecursive(block.blockInit);
+        if (block.blockStart) count += countRecursive(block.blockStart);
+        if (block.blockEvaluate) count += countRecursive(block.blockEvaluate);
+        if (block.blocksMission) count += countRecursive(block.blocksMission);
+        if (block.blocksFinish) count += countRecursive(block.blocksFinish);
       }
       return count;
     };
     
-    return countRecursive(scriptJson.blocks);
+    // Gestione per diversi tipi di JSON
+    if (json.blocks) {
+      // SCRIPT normale
+      return countRecursive(json.blocks);
+    } else if (json.blocksMission && json.blocksFinish) {
+      // MISSION
+      return countRecursive(json.blocksMission) + countRecursive(json.blocksFinish);
+    } else if (json.type === 'BUILD' && json.blockInit && json.blockStart) {
+      // BUILD
+      return countRecursive(json.blockInit) + countRecursive(json.blockStart);
+    } else if (json.type === 'FLIGHT' && json.blockInit && json.blockStart && json.blockEvaluate) {
+      // FLIGHT
+      return countRecursive(json.blockInit) + countRecursive(json.blockStart) + countRecursive(json.blockEvaluate);
+    }
+    
+    return 0;
   };
 
   return {
