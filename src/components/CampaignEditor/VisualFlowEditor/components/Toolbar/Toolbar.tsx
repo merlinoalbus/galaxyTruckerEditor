@@ -1,5 +1,5 @@
 import React from 'react';
-import { Code2, List, Plus, FileText, Save, Maximize2, Minimize2, AlertCircle } from 'lucide-react';
+import { Code2, List, Plus, FileText, Save, Maximize2, Minimize2, AlertCircle, Target } from 'lucide-react';
 import { visualFlowEditorStyles } from '@/styles/CampaignEditor/VisualFlowEditor/VisualFlowEditor.styles';
 import { NavigationBreadcrumb } from '../NavigationBreadcrumb';
 import { NavigationPathItem } from '@/hooks/CampaignEditor/VisualFlowEditor/useZoomNavigation';
@@ -9,6 +9,8 @@ interface ToolbarProps {
   toggleFlowFullscreen: () => void;
   showScriptsList: boolean;
   setShowScriptsList: (show: boolean) => void;
+  showMissionsList?: boolean;
+  setShowMissionsList?: (show: boolean) => void;
   showJsonView: boolean;
   setShowJsonView: (show: boolean) => void;
   handleNewScript: () => void;
@@ -19,6 +21,8 @@ interface ToolbarProps {
   navigationPath: NavigationPathItem[];
   validationErrors?: number;
   onSaveScript?: () => Promise<{ success: boolean; error?: string }>;
+  scriptsButtonRef?: React.RefObject<HTMLButtonElement>;
+  missionsButtonRef?: React.RefObject<HTMLButtonElement>;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
@@ -26,6 +30,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   toggleFlowFullscreen,
   showScriptsList,
   setShowScriptsList,
+  showMissionsList = false,
+  setShowMissionsList,
   showJsonView,
   setShowJsonView,
   handleNewScript,
@@ -34,9 +40,16 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onZoomOut,
   navigationPath = [],
   validationErrors = 0,
-  onSaveScript
+  onSaveScript,
+  scriptsButtonRef: externalScriptsButtonRef,
+  missionsButtonRef: externalMissionsButtonRef
 }) => {
   const [isSaving, setIsSaving] = React.useState(false);
+  const internalScriptsButtonRef = React.useRef<HTMLButtonElement>(null);
+  const internalMissionsButtonRef = React.useRef<HTMLButtonElement>(null);
+  
+  const scriptsButtonRef = externalScriptsButtonRef || internalScriptsButtonRef;
+  const missionsButtonRef = externalMissionsButtonRef || internalMissionsButtonRef;
   
   const handleSave = async () => {
     if (!onSaveScript || validationErrors > 0) return;
@@ -83,6 +96,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           )}
           
           <button
+          ref={scriptsButtonRef}
           onClick={() => setShowScriptsList(!showScriptsList)}
           className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
           title="Gestione Script"
@@ -90,6 +104,18 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           <List className="w-4 h-4" />
           Scripts
         </button>
+        
+        {setShowMissionsList && (
+          <button
+            ref={missionsButtonRef}
+            onClick={() => setShowMissionsList(!showMissionsList)}
+            className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
+            title="Gestione Missions"
+          >
+            <Target className="w-4 h-4" />
+            Missions
+          </button>
+        )}
         
         <button
           onClick={handleNewScript}

@@ -11,6 +11,7 @@ import { AVAILABLE_TOOLS } from '@/types/CampaignEditor/VisualFlowEditor/BlockTy
 import { BlockRenderer } from './components/BlockRenderer/BlockRenderer';
 import { Toolbar } from './components/Toolbar/Toolbar';
 import { ScriptsList, type ScriptItem } from './components/ScriptsList';
+import { MissionsList } from './components/MissionsList';
 import { JsonView } from '@/components/shared/JsonView';
 import { NewScriptDialog } from './components/NewScriptDialog';
 // Import hooks custom modulari
@@ -43,11 +44,16 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
   // Script management state
   const [availableScripts, setAvailableScripts] = useState<ScriptItem[]>([]);
   const [showScriptsList, setShowScriptsList] = useState(false);
+  const [showMissionsList, setShowMissionsList] = useState(false);
   const [showJsonView, setShowJsonView] = useState(false);
   
   // Editor state
   const [currentScriptBlocks, setCurrentScriptBlocks] = useState<any[]>([]);
   const [validationErrors, setValidationErrors] = useState<{ errors: number; invalidBlocks: string[] }>({ errors: 0, invalidBlocks: [] });
+  
+  // Button refs per posizionamento contestuale
+  const scriptsButtonRef = React.useRef<HTMLButtonElement>(null);
+  const missionsButtonRef = React.useRef<HTMLButtonElement>(null);
 
   // Usa hook per dati di sessione (variabili, semafori, labels, scripts, missions)
   const sessionData = useSessionData();
@@ -198,6 +204,8 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
         toggleFlowFullscreen={toggleFlowFullscreen}
         showScriptsList={showScriptsList}
         setShowScriptsList={setShowScriptsList}
+        showMissionsList={showMissionsList}
+        setShowMissionsList={setShowMissionsList}
         showJsonView={showJsonView}
         setShowJsonView={setShowJsonView}
         handleNewScript={handleNewScript}
@@ -206,6 +214,8 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
         onZoomOut={handleZoomOut}
         navigationPath={navigationPath}
         validationErrors={validationErrors.errors}
+        scriptsButtonRef={scriptsButtonRef}
+        missionsButtonRef={missionsButtonRef}
         onSaveScript={() => {
           // Determina se salvare come Script o Mission basandosi sul tipo del blocco principale
           const mainBlock = rootBlocks.length > 0 ? rootBlocks[0] : currentScriptBlocks[0];
@@ -222,6 +232,14 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
         setShowScriptsList={setShowScriptsList}
         availableScripts={availableScripts}
         loadScript={loadScript}
+        buttonRef={scriptsButtonRef}
+      />
+      
+      <MissionsList
+        showMissionsList={showMissionsList}
+        setShowMissionsList={setShowMissionsList}
+        loadMission={loadMission}
+        buttonRef={missionsButtonRef}
       />
 
       {/* Main Content */}
