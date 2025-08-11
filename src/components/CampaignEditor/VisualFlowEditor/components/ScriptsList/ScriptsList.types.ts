@@ -25,4 +25,5 @@ export interface ScriptsListProps {
   setShowScriptsList: (show: boolean) => void;
   availableScripts: ScriptItem[];
   loadScript: (scriptId: string) => void;
+  buttonRef?: React.RefObject<HTMLButtonElement>;
 }

@@ -94,6 +94,46 @@ export const useBlockManipulation = () => {
             if (found) return found;
           }
         }
+        
+        // Cerca nei container MISSION
+        if (block.type === 'MISSION') {
+          if (block.blocksMission) {
+            const found = searchInBlocks(block.blocksMission);
+            if (found) return found;
+          }
+          if (block.blocksFinish) {
+            const found = searchInBlocks(block.blocksFinish);
+            if (found) return found;
+          }
+        }
+        
+        // Cerca nei container BUILD
+        if (block.type === 'BUILD') {
+          if (block.blockInit) {
+            const found = searchInBlocks(block.blockInit);
+            if (found) return found;
+          }
+          if (block.blockStart) {
+            const found = searchInBlocks(block.blockStart);
+            if (found) return found;
+          }
+        }
+        
+        // Cerca nei container FLIGHT
+        if (block.type === 'FLIGHT') {
+          if (block.blockInit) {
+            const found = searchInBlocks(block.blockInit);
+            if (found) return found;
+          }
+          if (block.blockStart) {
+            const found = searchInBlocks(block.blockStart);
+            if (found) return found;
+          }
+          if (block.blockEvaluate) {
+            const found = searchInBlocks(block.blockEvaluate);
+            if (found) return found;
+          }
+        }
       }
       return null;
     };
@@ -108,26 +148,24 @@ export const useBlockManipulation = () => {
       let prevBlock = null;
       let blocks: any[] = [];
       
-      if (targetContainerType === 'thenBlocks' || targetContainerType === 'elseBlocks') {
+      // Gestione uniforme per tutti i tipi di container
+      if (targetContainerType === 'thenBlocks' || targetContainerType === 'elseBlocks' || 
+          targetContainerType === 'children' || targetContainerType === 'blocksMission' || 
+          targetContainerType === 'blocksFinish' || targetContainerType === 'blockInit' ||
+          targetContainerType === 'blockStart' || targetContainerType === 'blockEvaluate') {
+        
         blocks = targetContainer[targetContainerType] || [];
         
         if (index !== undefined && index > 0) {
           // C'è un blocco prima nell'array
           prevBlock = blocks[index - 1];
         } else if (index === 0 || (index === undefined && blocks.length === 0)) {
-          // È il primo blocco del ramo IF - controlla il blocco prima dell'IF
-          if (targetContainer.type === 'IF' && allBlocks) {
+          // È il primo blocco del container - controlla il blocco prima del container
+          if (allBlocks) {
             prevBlock = findBlockBeforeContainer(allBlocks, targetContainer.id);
           }
         } else if (index === undefined && blocks.length > 0) {
           // Aggiunto alla fine
-          prevBlock = blocks[blocks.length - 1];
-        }
-      } else if (targetContainerType === 'children') {
-        blocks = targetContainer.children || [];
-        if (index !== undefined && index > 0) {
-          prevBlock = blocks[index - 1];
-        } else if (index === undefined && blocks.length > 0) {
           prevBlock = blocks[blocks.length - 1];
         }
       }
@@ -166,39 +204,98 @@ export const useBlockManipulation = () => {
         return { ...block, ...updates };
       }
       
+      let updated = { ...block };
+      let hasChanges = false;
+      
       // Ricorsione per container normali
       if (block.children) {
-        return {
-          ...block,
-          children: updateBlockRecursive(block.children, blockId, updates)
-        };
+        const newChildren = updateBlockRecursive(block.children, blockId, updates);
+        if (newChildren !== block.children) {
+          updated.children = newChildren;
+          hasChanges = true;
+        }
       }
       
       // Ricorsione per blocchi IF
       if (block.type === 'IF') {
-        const updated = { ...block };
         if (block.thenBlocks) {
-          updated.thenBlocks = updateBlockRecursive(block.thenBlocks, blockId, updates);
+          const newThenBlocks = updateBlockRecursive(block.thenBlocks, blockId, updates);
+          if (newThenBlocks !== block.thenBlocks) {
+            updated.thenBlocks = newThenBlocks;
+            hasChanges = true;
+          }
         }
         if (block.elseBlocks) {
-          updated.elseBlocks = updateBlockRecursive(block.elseBlocks, blockId, updates);
+          const newElseBlocks = updateBlockRecursive(block.elseBlocks, blockId, updates);
+          if (newElseBlocks !== block.elseBlocks) {
+            updated.elseBlocks = newElseBlocks;
+            hasChanges = true;
+          }
         }
-        return updated;
       }
       
       // Ricorsione per blocchi MISSION
       if (block.type === 'MISSION') {
-        const updated = { ...block };
         if (block.blocksMission) {
-          updated.blocksMission = updateBlockRecursive(block.blocksMission, blockId, updates);
+          const newBlocksMission = updateBlockRecursive(block.blocksMission, blockId, updates);
+          if (newBlocksMission !== block.blocksMission) {
+            updated.blocksMission = newBlocksMission;
+            hasChanges = true;
+          }
         }
         if (block.blocksFinish) {
-          updated.blocksFinish = updateBlockRecursive(block.blocksFinish, blockId, updates);
+          const newBlocksFinish = updateBlockRecursive(block.blocksFinish, blockId, updates);
+          if (newBlocksFinish !== block.blocksFinish) {
+            updated.blocksFinish = newBlocksFinish;
+            hasChanges = true;
+          }
         }
-        return updated;
       }
       
-      return block;
+      // Ricorsione per blocchi BUILD
+      if (block.type === 'BUILD') {
+        if (block.blockInit) {
+          const newBlockInit = updateBlockRecursive(block.blockInit, blockId, updates);
+          if (newBlockInit !== block.blockInit) {
+            updated.blockInit = newBlockInit;
+            hasChanges = true;
+          }
+        }
+        if (block.blockStart) {
+          const newBlockStart = updateBlockRecursive(block.blockStart, blockId, updates);
+          if (newBlockStart !== block.blockStart) {
+            updated.blockStart = newBlockStart;
+            hasChanges = true;
+          }
+        }
+      }
+      
+      // Ricorsione per blocchi FLIGHT
+      if (block.type === 'FLIGHT') {
+        if (block.blockInit) {
+          const newBlockInit = updateBlockRecursive(block.blockInit, blockId, updates);
+          if (newBlockInit !== block.blockInit) {
+            updated.blockInit = newBlockInit;
+            hasChanges = true;
+          }
+        }
+        if (block.blockStart) {
+          const newBlockStart = updateBlockRecursive(block.blockStart, blockId, updates);
+          if (newBlockStart !== block.blockStart) {
+            updated.blockStart = newBlockStart;
+            hasChanges = true;
+          }
+        }
+        if (block.blockEvaluate) {
+          const newBlockEvaluate = updateBlockRecursive(block.blockEvaluate, blockId, updates);
+          if (newBlockEvaluate !== block.blockEvaluate) {
+            updated.blockEvaluate = newBlockEvaluate;
+            hasChanges = true;
+          }
+        }
+      }
+      
+      return hasChanges ? updated : block;
     });
   }, []);
 
@@ -209,41 +306,105 @@ export const useBlockManipulation = () => {
         return acc; // Skip this block
       }
       
-      // Per container normali
+      let updated = { ...block };
+      let hasChanges = false;
+      
+      // Ricorsione per container normali
       if (block.children) {
-        acc.push({
-          ...block,
-          children: removeBlockRecursive(block.children, blockId)
-        });
-      }
-      // Per blocchi IF
-      else if (block.type === 'IF') {
-        const updated = { ...block };
-        if (block.thenBlocks) {
-          updated.thenBlocks = removeBlockRecursive(block.thenBlocks, blockId);
-          updated.numThen = updated.thenBlocks.length;
+        const newChildren = removeBlockRecursive(block.children, blockId);
+        if (newChildren !== block.children) {
+          updated.children = newChildren;
+          hasChanges = true;
         }
-        if (block.elseBlocks) {
-          updated.elseBlocks = removeBlockRecursive(block.elseBlocks, blockId);
-          updated.numElse = updated.elseBlocks.length;
-        }
-        acc.push(updated);
-      }
-      // Per blocchi MISSION
-      else if (block.type === 'MISSION') {
-        const updated = { ...block };
-        if (block.blocksMission) {
-          updated.blocksMission = removeBlockRecursive(block.blocksMission, blockId);
-        }
-        if (block.blocksFinish) {
-          updated.blocksFinish = removeBlockRecursive(block.blocksFinish, blockId);
-        }
-        acc.push(updated);
-      }
-      else {
-        acc.push(block);
       }
       
+      // Ricorsione per blocchi IF
+      if (block.type === 'IF') {
+        if (block.thenBlocks) {
+          const newThenBlocks = removeBlockRecursive(block.thenBlocks, blockId);
+          if (newThenBlocks !== block.thenBlocks) {
+            updated.thenBlocks = newThenBlocks;
+            updated.numThen = newThenBlocks.length;
+            hasChanges = true;
+          }
+        }
+        if (block.elseBlocks) {
+          const newElseBlocks = removeBlockRecursive(block.elseBlocks, blockId);
+          if (newElseBlocks !== block.elseBlocks) {
+            updated.elseBlocks = newElseBlocks;
+            updated.numElse = newElseBlocks.length;
+            hasChanges = true;
+          }
+        }
+      }
+      
+      // Ricorsione per blocchi MISSION
+      if (block.type === 'MISSION') {
+        if (block.blocksMission) {
+          const newBlocksMission = removeBlockRecursive(block.blocksMission, blockId);
+          if (newBlocksMission !== block.blocksMission) {
+            updated.blocksMission = newBlocksMission;
+            hasChanges = true;
+          }
+        }
+        if (block.blocksFinish) {
+          const newBlocksFinish = removeBlockRecursive(block.blocksFinish, blockId);
+          if (newBlocksFinish !== block.blocksFinish) {
+            updated.blocksFinish = newBlocksFinish;
+            hasChanges = true;
+          }
+        }
+      }
+      
+      // Ricorsione per blocchi BUILD
+      if (block.type === 'BUILD') {
+        if (block.blockInit) {
+          const newBlockInit = removeBlockRecursive(block.blockInit, blockId);
+          if (newBlockInit !== block.blockInit) {
+            updated.blockInit = newBlockInit;
+            updated.numBlockInit = newBlockInit.length;
+            hasChanges = true;
+          }
+        }
+        if (block.blockStart) {
+          const newBlockStart = removeBlockRecursive(block.blockStart, blockId);
+          if (newBlockStart !== block.blockStart) {
+            updated.blockStart = newBlockStart;
+            updated.numBlockStart = newBlockStart.length;
+            hasChanges = true;
+          }
+        }
+      }
+      
+      // Ricorsione per blocchi FLIGHT
+      if (block.type === 'FLIGHT') {
+        if (block.blockInit) {
+          const newBlockInit = removeBlockRecursive(block.blockInit, blockId);
+          if (newBlockInit !== block.blockInit) {
+            updated.blockInit = newBlockInit;
+            updated.numBlockInit = newBlockInit.length;
+            hasChanges = true;
+          }
+        }
+        if (block.blockStart) {
+          const newBlockStart = removeBlockRecursive(block.blockStart, blockId);
+          if (newBlockStart !== block.blockStart) {
+            updated.blockStart = newBlockStart;
+            updated.numBlockStart = newBlockStart.length;
+            hasChanges = true;
+          }
+        }
+        if (block.blockEvaluate) {
+          const newBlockEvaluate = removeBlockRecursive(block.blockEvaluate, blockId);
+          if (newBlockEvaluate !== block.blockEvaluate) {
+            updated.blockEvaluate = newBlockEvaluate;
+            updated.numBlockEvaluate = newBlockEvaluate.length;
+            hasChanges = true;
+          }
+        }
+      }
+      
+      acc.push(hasChanges ? updated : block);
       return acc;
     }, []);
   }, []);
@@ -275,6 +436,30 @@ export const useBlockManipulation = () => {
           }
           if (block.blocksFinish) {
             const found = findContainer(block.blocksFinish, id);
+            if (found) return found;
+          }
+        }
+        if (block.type === 'BUILD') {
+          if (block.blockInit) {
+            const found = findContainer(block.blockInit, id);
+            if (found) return found;
+          }
+          if (block.blockStart) {
+            const found = findContainer(block.blockStart, id);
+            if (found) return found;
+          }
+        }
+        if (block.type === 'FLIGHT') {
+          if (block.blockInit) {
+            const found = findContainer(block.blockInit, id);
+            if (found) return found;
+          }
+          if (block.blockStart) {
+            const found = findContainer(block.blockStart, id);
+            if (found) return found;
+          }
+          if (block.blockEvaluate) {
+            const found = findContainer(block.blockEvaluate, id);
             if (found) return found;
           }
         }
@@ -330,6 +515,30 @@ export const useBlockManipulation = () => {
             ...block,
             blocksFinish: newBlocks
           };
+        } else if (containerType === 'blockInit') {
+          const newBlocks = [...(block.blockInit || [])];
+          newBlocks.splice(index, 0, newBlock);
+          return {
+            ...block,
+            blockInit: newBlocks,
+            numBlockInit: newBlocks.length
+          };
+        } else if (containerType === 'blockStart') {
+          const newBlocks = [...(block.blockStart || [])];
+          newBlocks.splice(index, 0, newBlock);
+          return {
+            ...block,
+            blockStart: newBlocks,
+            numBlockStart: newBlocks.length
+          };
+        } else if (containerType === 'blockEvaluate') {
+          const newBlocks = [...(block.blockEvaluate || [])];
+          newBlocks.splice(index, 0, newBlock);
+          return {
+            ...block,
+            blockEvaluate: newBlocks,
+            numBlockEvaluate: newBlocks.length
+          };
         }
       }
       
@@ -352,6 +561,25 @@ export const useBlockManipulation = () => {
         }
         if (block.blocksFinish) {
           updated.blocksFinish = addBlockAtIndex(block.blocksFinish, containerId, containerType, newBlock, index);
+        }
+      }
+      if (block.type === 'BUILD') {
+        if (block.blockInit) {
+          updated.blockInit = addBlockAtIndex(block.blockInit, containerId, containerType, newBlock, index);
+        }
+        if (block.blockStart) {
+          updated.blockStart = addBlockAtIndex(block.blockStart, containerId, containerType, newBlock, index);
+        }
+      }
+      if (block.type === 'FLIGHT') {
+        if (block.blockInit) {
+          updated.blockInit = addBlockAtIndex(block.blockInit, containerId, containerType, newBlock, index);
+        }
+        if (block.blockStart) {
+          updated.blockStart = addBlockAtIndex(block.blockStart, containerId, containerType, newBlock, index);
+        }
+        if (block.blockEvaluate) {
+          updated.blockEvaluate = addBlockAtIndex(block.blockEvaluate, containerId, containerType, newBlock, index);
         }
       }
       
@@ -386,6 +614,30 @@ export const useBlockManipulation = () => {
           }
           if (block.blocksFinish) {
             const found = findContainer(block.blocksFinish, id);
+            if (found) return found;
+          }
+        }
+        if (block.type === 'BUILD') {
+          if (block.blockInit) {
+            const found = findContainer(block.blockInit, id);
+            if (found) return found;
+          }
+          if (block.blockStart) {
+            const found = findContainer(block.blockStart, id);
+            if (found) return found;
+          }
+        }
+        if (block.type === 'FLIGHT') {
+          if (block.blockInit) {
+            const found = findContainer(block.blockInit, id);
+            if (found) return found;
+          }
+          if (block.blockStart) {
+            const found = findContainer(block.blockStart, id);
+            if (found) return found;
+          }
+          if (block.blockEvaluate) {
+            const found = findContainer(block.blockEvaluate, id);
             if (found) return found;
           }
         }
@@ -429,6 +681,27 @@ export const useBlockManipulation = () => {
             ...block,
             blocksFinish: [...(block.blocksFinish || []), newBlock]
           };
+        } else if (containerType === 'blockInit') {
+          const newBlocks = [...(block.blockInit || []), newBlock];
+          return {
+            ...block,
+            blockInit: newBlocks,
+            numBlockInit: newBlocks.length
+          };
+        } else if (containerType === 'blockStart') {
+          const newBlocks = [...(block.blockStart || []), newBlock];
+          return {
+            ...block,
+            blockStart: newBlocks,
+            numBlockStart: newBlocks.length
+          };
+        } else if (containerType === 'blockEvaluate') {
+          const newBlocks = [...(block.blockEvaluate || []), newBlock];
+          return {
+            ...block,
+            blockEvaluate: newBlocks,
+            numBlockEvaluate: newBlocks.length
+          };
         }
       }
       
@@ -451,6 +724,25 @@ export const useBlockManipulation = () => {
         }
         if (block.blocksFinish) {
           updated.blocksFinish = addBlockToContainer(block.blocksFinish, containerId, containerType, newBlock);
+        }
+      }
+      if (block.type === 'BUILD') {
+        if (block.blockInit) {
+          updated.blockInit = addBlockToContainer(block.blockInit, containerId, containerType, newBlock);
+        }
+        if (block.blockStart) {
+          updated.blockStart = addBlockToContainer(block.blockStart, containerId, containerType, newBlock);
+        }
+      }
+      if (block.type === 'FLIGHT') {
+        if (block.blockInit) {
+          updated.blockInit = addBlockToContainer(block.blockInit, containerId, containerType, newBlock);
+        }
+        if (block.blockStart) {
+          updated.blockStart = addBlockToContainer(block.blockStart, containerId, containerType, newBlock);
+        }
+        if (block.blockEvaluate) {
+          updated.blockEvaluate = addBlockToContainer(block.blockEvaluate, containerId, containerType, newBlock);
         }
       }
       
@@ -485,6 +777,30 @@ export const useBlockManipulation = () => {
           }
           if (block.blocksFinish) {
             const found = findContainer(block.blocksFinish, id);
+            if (found) return found;
+          }
+        }
+        if (block.type === 'BUILD') {
+          if (block.blockInit) {
+            const found = findContainer(block.blockInit, id);
+            if (found) return found;
+          }
+          if (block.blockStart) {
+            const found = findContainer(block.blockStart, id);
+            if (found) return found;
+          }
+        }
+        if (block.type === 'FLIGHT') {
+          if (block.blockInit) {
+            const found = findContainer(block.blockInit, id);
+            if (found) return found;
+          }
+          if (block.blockStart) {
+            const found = findContainer(block.blockStart, id);
+            if (found) return found;
+          }
+          if (block.blockEvaluate) {
+            const found = findContainer(block.blockEvaluate, id);
             if (found) return found;
           }
         }
@@ -558,13 +874,58 @@ export const useBlockManipulation = () => {
             validateRecursive(block.elseBlocks, block, allRootBlocks || blocks);
           }
         }
+        
+        // Ricorsione per MISSION
+        if (block.type === 'MISSION') {
+          if (block.blocksMission) {
+            validateRecursive(block.blocksMission, block, allRootBlocks || blocks);
+          }
+          if (block.blocksFinish) {
+            validateRecursive(block.blocksFinish, block, allRootBlocks || blocks);
+          }
+        }
+        
+        // Ricorsione per BUILD
+        if (block.type === 'BUILD') {
+          if (block.blockInit) {
+            validateRecursive(block.blockInit, block, allRootBlocks || blocks);
+          }
+          if (block.blockStart) {
+            validateRecursive(block.blockStart, block, allRootBlocks || blocks);
+          }
+        }
+        
+        // Ricorsione per FLIGHT
+        if (block.type === 'FLIGHT') {
+          if (block.blockInit) {
+            validateRecursive(block.blockInit, block, allRootBlocks || blocks);
+          }
+          if (block.blockStart) {
+            validateRecursive(block.blockStart, block, allRootBlocks || blocks);
+          }
+          if (block.blockEvaluate) {
+            validateRecursive(block.blockEvaluate, block, allRootBlocks || blocks);
+          }
+        }
       });
     };
     
-    // Inizia la validazione dal blocco SCRIPT principale
+    // Inizia la validazione dal blocco principale (SCRIPT o MISSION)
     const scriptBlock = blocks.find(b => b.type === 'SCRIPT');
+    const missionBlock = blocks.find(b => b.type === 'MISSION');
+    
     if (scriptBlock && scriptBlock.children) {
       validateRecursive(scriptBlock.children, scriptBlock, blocks);
+    } else if (missionBlock) {
+      if (missionBlock.blocksMission) {
+        validateRecursive(missionBlock.blocksMission, missionBlock, blocks);
+      }
+      if (missionBlock.blocksFinish) {
+        validateRecursive(missionBlock.blocksFinish, missionBlock, blocks);
+      }
+    } else {
+      // Se non c'è un blocco principale, valida tutti i blocchi come root
+      validateRecursive(blocks, null, blocks);
     }
     
     return { errors, invalidBlocks };
