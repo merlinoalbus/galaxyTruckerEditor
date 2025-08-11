@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { ToolItem } from '@/types/CampaignEditor/VisualFlowEditor/BlockTypes';
+import { Tool } from '@/types/CampaignEditor/VisualFlowEditor/ToolCategories';
 
 interface UseDragAndDropProps {
   addBlockToContainer: (blocks: any[], containerId: string, containerType: string, newBlock: any) => any[];
@@ -18,7 +19,7 @@ export const useDragAndDrop = ({
   currentScriptBlocks,
   updateBlocks
 }: UseDragAndDropProps) => {
-  const [draggedTool, setDraggedTool] = useState<ToolItem | null>(null);
+  const [draggedTool, setDraggedTool] = useState<ToolItem | Tool | null>(null);
   const [draggedBlock, setDraggedBlock] = useState<any>(null);
   const [dropTarget, setDropTarget] = useState<{ containerId: string; containerType: string } | null>(null);
 
@@ -28,8 +29,8 @@ export const useDragAndDrop = ({
     e.dataTransfer.effectAllowed = 'move';
   }, []);
 
-  // Handler per drag start di un tool dalla palette
-  const handleToolDragStart = useCallback((e: React.DragEvent, tool: ToolItem) => {
+  // Handler per drag start di un tool dalla palette (supporta sia ToolItem che Tool)
+  const handleToolDragStart = useCallback((e: React.DragEvent, tool: ToolItem | Tool) => {
     setDraggedTool(tool);
     e.dataTransfer.effectAllowed = 'copy';
   }, []);
@@ -66,17 +67,22 @@ export const useDragAndDrop = ({
     setDropTarget(null);
   }, []);
 
-  // Funzione per creare un nuovo blocco da un tool
-  const createNewBlock = useCallback((tool: ToolItem) => {
+  // Funzione per creare un nuovo blocco da un tool (supporta sia ToolItem che Tool)
+  const createNewBlock = useCallback((tool: ToolItem | Tool) => {
+    // Determina il tipo di blocco e se è un container
+    const blockType = tool.blockType;
+    const isContainer = 'isContainer' in tool ? tool.isContainer : 
+                       ['IF', 'MENU', 'OPT', 'SCRIPT', 'MISSION', 'BUILD', 'FLIGHT'].includes(blockType);
+    
     const newBlock: any = {
-      id: `${tool.blockType}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      type: tool.blockType,
+      id: `${blockType}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      type: blockType,
       position: { x: 0, y: 0 },
-      isContainer: tool.isContainer
+      isContainer: isContainer
     };
     
     // Configurazione specifica per blocchi IF
-    if (tool.blockType === 'IF') {
+    if (blockType === 'IF') {
       newBlock.ifType = 'IF';
       newBlock.thenBlocks = [];
       newBlock.numThen = 0;
@@ -85,11 +91,11 @@ export const useDragAndDrop = ({
     }
     
     // Configurazione per container generici
-    if (tool.isContainer && tool.blockType !== 'IF') {
+    if (isContainer && blockType !== 'IF') {
       newBlock.children = [];
       
       // Configurazione specifica per OPT
-      if (tool.blockType === 'OPT') {
+      if (blockType === 'OPT') {
         newBlock.optType = 'OPT_SIMPLE';
         newBlock.condition = null;
         newBlock.text = {
@@ -105,16 +111,16 @@ export const useDragAndDrop = ({
     }
     
     // Configurazione per blocchi comando
-    if (!tool.isContainer) {
+    if (!isContainer) {
       newBlock.parameters = {};
       
       // Inizializza parametri specifici per ASK
-      if (tool.blockType === 'ASK') {
+      if (blockType === 'ASK') {
         newBlock.parameters.text = { EN: '' };
       }
       
       // Inizializza parametri specifici per SAY
-      if (tool.blockType === 'SAY') {
+      if (blockType === 'SAY') {
         newBlock.parameters.text = { EN: '' };
       }
     }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Trash2, GripVertical, ChevronDown, ChevronUp, Menu, Circle } from 'lucide-react';
+import { Trash2, GripVertical, ChevronDown, ChevronUp } from 'lucide-react';
 import { AnchorPoint } from '../../AnchorPoint/AnchorPoint';
 import { ZoomControls } from '../../ZoomControls';
 
@@ -82,9 +82,9 @@ export const ContainerBlock: React.FC<ContainerBlockProps> = ({
 
   const getBlockIcon = () => {
     switch (block.type) {
-      case 'MENU': return <Menu className="w-4 h-4" />;
-      case 'OPT': return <Circle className="w-4 h-4" />;
-      default: return <Menu className="w-4 h-4" />;
+      case 'MENU': return <span className="text-base">☰</span>;
+      case 'OPT': return <span className="text-base">⭕</span>;
+      default: return <span className="text-base">📦</span>;
     }
   };
 

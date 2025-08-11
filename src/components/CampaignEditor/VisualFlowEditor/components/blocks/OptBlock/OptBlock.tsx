@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Trash2, GripVertical, ChevronDown, ChevronUp, Circle, Flag, FlagOff } from 'lucide-react';
+import { Trash2, GripVertical, ChevronDown, ChevronUp } from 'lucide-react';
 import { AnchorPoint } from '../../AnchorPoint/AnchorPoint';
 import { ZoomControls } from '../../ZoomControls';
 import { MultilingualTextEditor } from '../../MultilingualTextEditor';
@@ -7,9 +7,9 @@ import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
 import { OptType } from '@/types/CampaignEditor/VisualFlowEditor/BlockTypes';
 
 const OPT_TYPES = [
-  { value: 'OPT_SIMPLE', label: 'Semplice', icon: Circle },
-  { value: 'OPT_CONDITIONAL', label: 'Condizionale (IF)', icon: Flag },
-  { value: 'OPT_CONDITIONAL_NOT', label: 'Condizionale (IF NOT)', icon: FlagOff }
+  { value: 'OPT_SIMPLE', label: 'Semplice', icon: '⭕' },
+  { value: 'OPT_CONDITIONAL', label: 'Condizionale (IF)', icon: '🚩' },
+  { value: 'OPT_CONDITIONAL_NOT', label: 'Condizionale (IF NOT)', icon: '🏳️' }
 ];
 
 interface OptBlockProps {
@@ -89,7 +89,7 @@ export const OptBlock: React.FC<OptBlockProps> = ({
   // Ottieni l'icona per il tipo corrente
   const getCurrentIcon = () => {
     const currentType = OPT_TYPES.find(t => t.value === block.optType);
-    return currentType ? <currentType.icon className="w-4 h-4" /> : <Circle className="w-4 h-4" />;
+    return currentType ? <span className="text-base">{currentType.icon}</span> : <span className="text-base">⭕</span>;
   };
 
   // Gestisce il cambio di tipo OPT

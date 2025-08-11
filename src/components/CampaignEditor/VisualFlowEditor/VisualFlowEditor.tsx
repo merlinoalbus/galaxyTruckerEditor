@@ -5,7 +5,6 @@ import { useVisualFlowEditor } from '@/hooks/CampaignEditor/VisualFlowEditor/use
 import { visualFlowEditorStyles } from '@/styles/CampaignEditor/VisualFlowEditor/VisualFlowEditor.styles';
 import { useFullscreen } from '@/contexts/FullscreenContext';
 import type { VisualFlowEditorProps } from '@/types/CampaignEditor/VisualFlowEditor/VisualFlowEditor.types';
-import { AVAILABLE_TOOLS } from '@/types/CampaignEditor/VisualFlowEditor/BlockTypes';
 
 // Import componenti modulari
 import { BlockRenderer } from './components/BlockRenderer/BlockRenderer';
@@ -14,6 +13,7 @@ import { ScriptsList, type ScriptItem } from './components/ScriptsList';
 import { MissionsList } from './components/MissionsList';
 import { JsonView } from '@/components/shared/JsonView';
 import { NewScriptDialog } from './components/NewScriptDialog';
+import { ToolsPanel } from './components/ToolsPanel';
 // Import hooks custom modulari
 import { useBlockManipulation } from '@/hooks/CampaignEditor/VisualFlowEditor/useBlockManipulation';
 import { useDragAndDrop } from '@/hooks/CampaignEditor/VisualFlowEditor/useDragAndDrop';
@@ -244,25 +244,8 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
 
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar con tools */}
-        <div className="w-64 bg-slate-800 p-4 overflow-y-auto">
-          <h4 className="text-white font-bold mb-4">Strumenti</h4>
-          <div className="space-y-2">
-            {AVAILABLE_TOOLS.map(tool => (
-              <div
-                key={tool.id}
-                draggable
-                onDragStart={(e) => handleToolDragStart(e, tool)}
-                className="bg-slate-700 hover:bg-slate-600 rounded p-3 cursor-move transition-colors"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">{tool.icon}</span>
-                  <span className="text-white text-sm">{tool.name}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* Nuovo pannello strumenti con categorie */}
+        <ToolsPanel onToolDragStart={handleToolDragStart} />
 
         {/* Canvas area */}
         <div className="flex-1 bg-slate-900 p-8 overflow-auto">

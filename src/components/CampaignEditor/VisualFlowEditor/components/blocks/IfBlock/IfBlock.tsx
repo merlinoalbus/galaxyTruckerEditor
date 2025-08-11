@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Trash2, GripVertical, ChevronDown, ChevronUp, GitBranch } from 'lucide-react';
+import { Trash2, GripVertical, ChevronDown, ChevronUp } from 'lucide-react';
 import { IfBlockParameters } from './IfBlockParameters';
 import { AnchorPoint } from '../../AnchorPoint/AnchorPoint';
 import { ZoomControls } from '../../ZoomControls';
@@ -172,8 +172,8 @@ export const IfBlock: React.FC<IfBlockProps> = ({
       {/* Configurazione IF in una riga unica */}
       <div className={`flex items-center gap-3 ${!isCollapsed ? 'mb-3 pb-3 border-b border-slate-700/50' : ''} pl-8 pr-8 ${isManuallyExpanded ? 'overflow-x-auto' : ''}`}>
         {/* Icona IF */}
-        <div className="bg-blue-900/80 p-1.5 rounded-lg">
-          <GitBranch className="w-4 h-4 text-blue-400" />
+        <div className="bg-blue-900/80 p-1.5 rounded-lg text-blue-400">
+          <span className="text-base">🔀</span>
         </div>
         
         {/* Label identificativa */}
