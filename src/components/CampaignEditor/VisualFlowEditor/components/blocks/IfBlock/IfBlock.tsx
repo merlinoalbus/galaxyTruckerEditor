@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Trash2, GripVertical, ChevronDown, ChevronUp } from 'lucide-react';
 import { IfBlockParameters } from './IfBlockParameters';
 import { AnchorPoint } from '../../AnchorPoint/AnchorPoint';
-import { ZoomControls } from '../../ZoomControls';
+import { ContainerBlock } from '../ContainerBlock/ContainerBlock';
 
 const IF_TYPES = [
   { value: 'IF', label: 'IF' },
@@ -107,83 +106,89 @@ export const IfBlock: React.FC<IfBlockProps> = ({
     setShowElse(block.elseBlocks && block.elseBlocks.length > 0);
   }, [block.elseBlocks]);
   
-  return (
-    <div
-      ref={containerRef}
-      className={`relative bg-gradient-to-br from-gray-800/95 to-gray-900/95 rounded-xl border ${
-        isInvalid 
-          ? 'border-red-500 border-2 shadow-red-500/50' 
-          : 'border-gray-600/80'
-      } p-4 mb-2 shadow-xl hover:shadow-2xl transition-shadow duration-200`}
-    >
-      {/* Delete button - in alto a destra con stesso stile zoom - solo se onRemove è definito */}
-      {onRemove && (
-        <button
-          onClick={onRemove}
-          className="absolute top-2 right-2 p-1 bg-slate-700/80 hover:bg-red-600 border border-slate-600/50 rounded-md z-10 transition-all duration-200 backdrop-blur-sm"
-          title="Elimina blocco"
-        >
-          <Trash2 className="w-3 h-3 text-gray-400 hover:text-white" />
-        </button>
-      )}
-      
-      {/* Collapse/Expand button - vicino al delete */}
-      <button
-        onClick={() => {
-          const newCollapsedState = !isCollapsed;
-          setIsCollapsed(newCollapsedState);
-          // Se l'utente espande manualmente, setta la flag
-          if (!newCollapsedState) {
-            setIsManuallyExpanded(true);
-          } else {
-            // Se collassa, resetta la flag
-            setIsManuallyExpanded(false);
-          }
-        }}
-        className="absolute top-8 right-2 p-1 bg-slate-700/80 hover:bg-slate-600 border border-slate-600/50 rounded-md z-10 transition-all duration-200 backdrop-blur-sm"
-        title={isCollapsed ? "Espandi blocco" : "Comprimi blocco"}
-      >
-        {isCollapsed 
-          ? <ChevronDown className="w-3 h-3 text-gray-400" />
-          : <ChevronUp className="w-3 h-3 text-gray-400" />
-        }
-      </button>
-      
-      {/* Controlli Zoom - in alto a sinistra con stile sottile - SEMPRE VISIBILI */}
-      {(onZoomIn || onZoomOut) && (
-        <ZoomControls
-          onZoomIn={onZoomIn}
-          onZoomOut={onZoomOut}
-          size="small"
-          position="top-left"
-          className="opacity-80 hover:opacity-100"
-        />
-      )}
-      
-      {/* Drag handle - SOLO questo è draggable */}
-      <div 
-        className="absolute -left-2 top-1/2 -translate-y-1/2 p-1 bg-gray-600 rounded cursor-move"
-        draggable
-        onDragStart={onDragStart}
-      >
-        <GripVertical className="w-3 h-3 text-white" />
-      </div>
-      
-      {/* Configurazione IF in una riga unica */}
-      <div className={`flex items-center gap-3 ${!isCollapsed ? 'mb-3 pb-3 border-b border-slate-700/50' : ''} pl-8 pr-8 ${isManuallyExpanded ? 'overflow-x-auto' : ''}`}>
-        {/* Icona IF */}
-        <div className="bg-blue-900/80 p-1.5 rounded-lg text-blue-400">
-          <span className="text-base">🔀</span>
+  const handleToggleCollapse = () => {
+    const newCollapsedState = !isCollapsed;
+    setIsCollapsed(newCollapsedState);
+    // Se l'utente espande manualmente, setta la flag
+    if (!newCollapsedState) {
+      setIsManuallyExpanded(true);
+    } else {
+      // Se collassa, resetta la flag
+      setIsManuallyExpanded(false);
+    }
+  };
+
+  // Genera i parametri compatti per la visualizzazione collapsed
+  const getCompactParams = () => {
+    const parts = [];
+    parts.push(<span key="type" className="text-blue-400">{block.ifType || 'IF'}</span>);
+    if (block.variabile) parts.push(<span key="var">{block.variabile}</span>);
+    if (block.valore) parts.push(<span key="val">= {block.valore}</span>);
+    if (showElse) parts.push(<span key="else" className="text-slate-400">+ ELSE</span>);
+    
+    const thenCount = block.thenBlocks?.length || 0;
+    const elseCount = block.elseBlocks?.length || 0;
+    
+    // Usa il formato corretto per il conteggio
+    let elementCountText;
+    let elementCountTooltip;
+    
+    if (showElse) {
+      // Se ci sono elementi, mostra T:x E:y, altrimenti mostra "0 elementi"
+      if (thenCount > 0 || elseCount > 0) {
+        elementCountText = `T:${thenCount} E:${elseCount}`;
+        elementCountTooltip = `Then: ${thenCount} elementi, Else: ${elseCount} elementi`;
+      } else {
+        elementCountText = '0 elementi';
+        elementCountTooltip = 'Nessun elemento in Then o Else';
+      }
+    } else {
+      elementCountText = `${thenCount} elementi`;
+      elementCountTooltip = `Then: ${thenCount} elementi`;
+    }
+    
+    return {
+      params: parts.length > 0 ? (
+        <div className="flex items-center gap-2 truncate">
+          {parts}
         </div>
-        
-        {/* Label identificativa */}
-        <span className="text-sm font-semibold text-white">
-          IF
+      ) : null,
+      elementCount: (
+        <span 
+          className="text-gray-500 whitespace-nowrap cursor-help" 
+          title={elementCountTooltip}
+        >
+          {elementCountText}
         </span>
+      )
+    };
+  };
+
+  return (
+    <div ref={containerRef}>
+      <ContainerBlock
+        blockType="IF"
+        blockIcon={<span>🔀</span>}
+        compactParams={getCompactParams()}
+        onRemove={onRemove}
+        onDragStart={onDragStart}
+        isCollapsed={isCollapsed}
+        onToggleCollapse={handleToggleCollapse}
+        onZoomIn={onZoomIn}
+        onZoomOut={onZoomOut}
+        className={`bg-gradient-to-br from-gray-800/95 to-gray-900/95 rounded-xl border ${
+          isInvalid 
+            ? 'border-red-500 border-2 shadow-red-500/50' 
+            : 'border-gray-600/80'
+        } p-4 mb-2 shadow-xl hover:shadow-2xl transition-shadow duration-200`}
+        isInvalid={isInvalid}
+        blockColor="bg-blue-900/80"
+        iconBgColor="bg-blue-900/80"
+      >
         
-        {/* Parametri - visibili solo se expanded */}
+        {/* Parametri editabili - visibili solo se non collapsed */}
         {!isCollapsed && (
-          <>
+          <div className="flex items-center gap-3 mb-3 pl-8 pr-8">
             {/* Tipo IF */}
             <select
               className="bg-slate-800/50 text-gray-200 px-2 py-1 rounded text-xs border border-slate-700 focus:border-blue-600 focus:outline-none"
@@ -224,9 +229,8 @@ export const IfBlock: React.FC<IfBlockProps> = ({
               />
               <span>ELSE</span>
             </label>
-          </>
+          </div>
         )}
-      </div>
         
         {/* Container THEN/ELSE - visibile solo se non collapsed */}
         {!isCollapsed && (
@@ -292,6 +296,7 @@ export const IfBlock: React.FC<IfBlockProps> = ({
           )}
           </div>
         )}
+      </ContainerBlock>
     </div>
   );
 };

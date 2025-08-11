@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Trash2, GripVertical, ChevronDown, ChevronUp, MessageSquare, Clock, ArrowRight, Tag, HelpCircle } from 'lucide-react';
+import { MessageSquare, Clock, ArrowRight, Tag, HelpCircle } from 'lucide-react';
+import { BaseBlock } from '../BaseBlock/BaseBlock';
 import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
 import { MultilingualTextEditor } from '../../MultilingualTextEditor';
+import { getBlockClassName } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
 
 interface CommandBlockProps {
   block: any;
@@ -137,16 +139,6 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
     }
   };
 
-  const getBlockColor = () => {
-    switch (block.type) {
-      case 'SAY': return 'bg-blue-950/90 border-blue-800/80';
-      case 'ASK': return 'bg-indigo-950/90 border-indigo-800/80';
-      case 'DELAY': return 'bg-amber-950/90 border-amber-800/80';
-      case 'GO': return 'bg-purple-950/90 border-purple-800/80';
-      case 'LABEL': return 'bg-emerald-950/90 border-emerald-800/80';
-      default: return 'bg-slate-800/90 border-slate-700/80';
-    }
-  };
 
   const getBlockIcon = () => {
     switch (block.type) {
@@ -159,63 +151,68 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
     }
   };
 
-  return (
-    <div
-      ref={containerRef}
-      className={`relative ${getBlockColor()} rounded border ${
-        isInvalid 
-          ? 'border-red-500 border-2 shadow-red-500/50 shadow-lg' 
-          : ''
-      } p-3 mb-2 transition-all hover:shadow-lg`}
-    >
-      {/* Delete button - stesso stile zoom - solo se onRemove è definito */}
-      {onRemove && (
-        <button
-          onClick={onRemove}
-          className="absolute top-2 right-2 p-1 bg-slate-700/80 hover:bg-red-600 border border-slate-600/50 rounded-md z-10 transition-all duration-200 backdrop-blur-sm"
-          title="Elimina blocco"
-        >
-          <Trash2 className="w-3 h-3 text-gray-400 hover:text-white" />
-        </button>
-      )}
-      
-      {/* Collapse/Expand button - vicino al delete */}
-      <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute top-8 right-2 p-1 bg-slate-700/80 hover:bg-slate-600 border border-slate-600/50 rounded-md z-10 transition-all duration-200 backdrop-blur-sm"
-        title={isCollapsed ? "Espandi blocco" : "Comprimi blocco"}
-      >
-        {isCollapsed 
-          ? <ChevronDown className="w-3 h-3 text-gray-400" />
-          : <ChevronUp className="w-3 h-3 text-gray-400" />
+  // Genera i parametri compatti per la visualizzazione collapsed
+  const getCompactParams = () => {
+    switch (block.type) {
+      case 'SAY':
+        if (block.parameters?.text) {
+          const text = typeof block.parameters.text === 'string' 
+            ? block.parameters.text 
+            : (block.parameters.text.EN || '');
+          return (
+            <span className="truncate max-w-[300px]" title={text}>
+              "{text}"
+            </span>
+          );
         }
-      </button>
-      
-      {/* Drag handle - SOLO questo è draggable */}
-      <div 
-        className="absolute -left-3 top-1/2 -translate-y-1/2 p-1 bg-gray-600 hover:bg-gray-500 rounded cursor-move transition-colors"
-        draggable
+        break;
+      case 'DELAY':
+        if (block.parameters?.duration) {
+          return <span>{block.parameters.duration}ms</span>;
+        }
+        break;
+      case 'GO':
+        if (block.parameters?.label) {
+          return <span>→ {block.parameters.label}</span>;
+        }
+        break;
+      case 'LABEL':
+        if (block.parameters?.name) {
+          return <span>[{block.parameters.name}]</span>;
+        }
+        break;
+      case 'ASK':
+        if (block.parameters?.text) {
+          const text = typeof block.parameters.text === 'string'
+            ? block.parameters.text
+            : (block.parameters.text.EN || '');
+          return (
+            <span className="truncate max-w-[300px]" title={text}>
+              "{text}"
+            </span>
+          );
+        }
+        break;
+    }
+    return null;
+  };
+
+  return (
+    <div ref={containerRef}>
+      <BaseBlock
+        blockType={block.type}
+        blockIcon={getBlockIcon()}
+        compactParams={getCompactParams()}
+        onRemove={onRemove}
         onDragStart={onDragStart}
+        isCollapsed={isCollapsed}
+        onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
+        className={`${getBlockClassName(block.type, isInvalid)} p-3 mb-2 transition-all hover:shadow-lg`}
+        isInvalid={isInvalid}
       >
-        <GripVertical className="w-3 h-3 text-white" />
-      </div>
-      
-      {/* Block header */}
-      <div className="flex items-center gap-2 mb-2 pr-16">
-        <div className="text-gray-400">{getBlockIcon()}</div>
-        <span className="text-xs font-bold text-white uppercase tracking-wide">{block.type}</span>
-        {/* Mostra preview del contenuto se collapsed */}
-        {isCollapsed && block.parameters?.text && (
-          <span className="text-xs text-gray-400 truncate flex-1 ml-2">
-            {typeof block.parameters.text === 'string' 
-              ? block.parameters.text.substring(0, 30)
-              : (block.parameters.text.EN || '').substring(0, 30)}...
-          </span>
-        )}
-      </div>
-      
-      {/* Block parameters - visibili solo se expanded */}
-      {!isCollapsed && renderParameters()}
+        {/* Block parameters - visibili solo se expanded */}
+        {renderParameters()}
+      </BaseBlock>
     </div>
   );
 };

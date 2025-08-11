@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Target, Flag, ChevronDown, ChevronUp, Trash2, GripVertical, Edit2 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Target, Flag, ChevronDown, ChevronUp } from 'lucide-react';
 import { AnchorPoint } from '../../AnchorPoint/AnchorPoint';
-import { ZoomControls } from '../../ZoomControls';
+import { InlineZoomControls } from '../../ZoomControls';
 
 interface MissionBlockProps {
   block: any;
@@ -37,44 +37,53 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
   isInvalid = false
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isEditingName, setIsEditingName] = useState(false);
-  const [tempName, setTempName] = useState(block.missionName || '');
-
-  const handleNameSave = () => {
-    if (tempName.trim()) {
-      onUpdate({ missionName: tempName.trim() });
+  const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Auto-collapse se lo spazio è insufficiente
+  useEffect(() => {
+    const checkSpace = () => {
+      if (isManuallyExpanded) return;
+      
+      if (containerRef.current && !isCollapsed) {
+        const container = containerRef.current;
+        const width = container.offsetWidth;
+        const minRequiredWidth = 650;
+        
+        if (width < minRequiredWidth) {
+          setIsCollapsed(true);
+        }
+      }
+    };
+    
+    checkSpace();
+    const resizeObserver = new ResizeObserver(checkSpace);
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
     }
-    setIsEditingName(false);
-  };
-
-  const handleNameCancel = () => {
-    setTempName(block.missionName || '');
-    setIsEditingName(false);
-  };
+    
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [isCollapsed, isManuallyExpanded]);
 
   return (
-    <div
-      className={`relative bg-purple-950/90 rounded-lg border-2 ${
-        isInvalid 
-          ? 'border-red-500 shadow-red-500/50 shadow-lg' 
-          : 'border-purple-700'
-      } p-4 mb-3`}
-    >
-      {/* Delete button - solo se onRemove è definito */}
-      {onRemove && (
-        <button
-          onClick={onRemove}
-          className="absolute top-2 right-2 p-1 bg-slate-700/80 hover:bg-red-600 border border-slate-600/50 rounded-md z-10 transition-all duration-200"
-          title="Elimina missione"
-        >
-          <Trash2 className="w-3 h-3 text-gray-400 hover:text-white" />
-        </button>
-      )}
+    <div ref={containerRef} className="bg-gradient-to-br from-purple-900/90 to-purple-950/90 rounded-lg p-6 relative border border-purple-700/50 backdrop-blur-sm shadow-xl w-full" style={{ minWidth: '90%' }}>
+      {/* Zoom controls in alto a sinistra - NO per MissionBlock come da specifica */}
+      {/* MissionBlock è come ScriptBlock, non ha zoom controls perché è il contenitore radice */}
       
-      {/* Collapse/Expand button */}
+      {/* Collapse/Expand button - stesso stile di ScriptBlock */}
       <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute top-8 right-2 p-1 bg-slate-700/80 hover:bg-slate-600 border border-slate-600/50 rounded-md z-10 transition-all duration-200"
+        onClick={() => {
+          const newCollapsedState = !isCollapsed;
+          setIsCollapsed(newCollapsedState);
+          if (!newCollapsedState) {
+            setIsManuallyExpanded(true);
+          } else {
+            setIsManuallyExpanded(false);
+          }
+        }}
+        className="absolute top-8 right-3 p-1 bg-slate-700/80 hover:bg-slate-600 border border-slate-600/50 rounded-md z-10 transition-all duration-200 backdrop-blur-sm"
         title={isCollapsed ? "Espandi missione" : "Comprimi missione"}
       >
         {isCollapsed 
@@ -83,96 +92,43 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
         }
       </button>
       
-      {/* Controlli Zoom */}
-      {(onZoomIn || onZoomOut) && (
-        <ZoomControls
-          onZoomIn={onZoomIn}
-          onZoomOut={onZoomOut}
-          size="small"
-          position="top-left"
-          className="opacity-80 hover:opacity-100"
+      {/* Header del blocco MISSION - stesso pattern di ScriptBlock */}
+      <div className={`flex items-center gap-3 ${!isCollapsed ? 'mb-4 pb-4 border-b border-purple-600' : ''} pr-10`}>
+        <div className="bg-purple-800/50 p-2 rounded-lg">
+          <Target className="w-4 h-4 text-purple-400" />
+        </div>
+        <label className="text-xs text-gray-400">Nome Missione:</label>
+        <input
+          type="text"
+          className="bg-purple-900/50 text-white px-2 py-1 rounded text-sm w-48 border border-purple-600 focus:border-purple-500 focus:outline-none"
+          value={block.missionName || ''}
+          onChange={(e) => {
+            const newName = e.target.value;
+            onUpdate({ missionName: newName });
+          }}
+          placeholder="Nome missione..."
         />
-      )}
-      
-      {/* Drag handle */}
-      <div 
-        className="absolute -left-3 top-1/2 -translate-y-1/2 p-1 bg-purple-700 hover:bg-purple-600 rounded cursor-move"
-        draggable
-        onDragStart={onDragStart}
-      >
-        <GripVertical className="w-3 h-3 text-white" />
-      </div>
-      
-      {/* Header con nome missione */}
-      <div className="mb-4 pb-2 border-b border-purple-700/50 pl-8">
-        <div className="flex items-center gap-2">
-          <Target className="w-5 h-5 text-purple-400" />
-          <span className="text-xs font-bold text-purple-300 uppercase">MISSION</span>
-          
-          {/* Nome missione editabile */}
-          <div className="flex-1 flex items-center gap-2">
-            {isEditingName ? (
-              <>
-                <input
-                  type="text"
-                  value={tempName}
-                  onChange={(e) => setTempName(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleNameSave();
-                    if (e.key === 'Escape') handleNameCancel();
-                  }}
-                  className="flex-1 bg-slate-800 text-white px-2 py-1 rounded text-sm border border-purple-600 focus:border-purple-400 focus:outline-none"
-                  autoFocus
-                />
-                <button
-                  onClick={handleNameSave}
-                  className="text-green-400 hover:text-green-300 text-xs"
-                >
-                  ✓
-                </button>
-                <button
-                  onClick={handleNameCancel}
-                  className="text-red-400 hover:text-red-300 text-xs"
-                >
-                  ✗
-                </button>
-              </>
-            ) : (
-              <>
-                <span className="text-white font-medium">
-                  {block.missionName || 'Nuova Missione'}
-                </span>
-                <button
-                  onClick={() => setIsEditingName(true)}
-                  className="text-purple-400 hover:text-purple-300"
-                  title="Modifica nome"
-                >
-                  <Edit2 className="w-3 h-3" />
-                </button>
-              </>
-            )}
-          </div>
-          
-          <span className="text-xs text-gray-400">
-            {block.fileName}
-          </span>
+        
+        <div className="ml-auto flex items-center gap-4 text-xs text-gray-500">
+          <span>File: {block.fileName}</span>
+          <span>Blocchi: {(block.blocksMission?.length || 0) + (block.blocksFinish?.length || 0)}</span>
         </div>
       </div>
       
       {/* Contenuto - visibile solo se non collassato */}
       {!isCollapsed && (
-        <div className="space-y-4 pl-8">
+        <div className="space-y-4">
           {/* Area Mission principale */}
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Target className="w-4 h-4 text-purple-400" />
-              <span className="text-sm font-medium text-purple-300">Missione</span>
+              <span className="text-sm font-medium text-purple-300">Blocchi Missione</span>
               <span className="text-xs text-gray-400">
                 ({block.blocksMission?.length || 0} elementi)
               </span>
             </div>
             
-            <div className="bg-slate-800/30 rounded-lg border border-purple-700/30 p-3 min-h-[100px]">
+            <div className="bg-purple-950/30 rounded-lg border border-purple-700/30 p-3 min-h-[100px]">
               {/* Initial anchor point */}
               <AnchorPoint
                 onDragOver={onDragOver}
@@ -183,7 +139,7 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
               {/* Render mission blocks */}
               {block.blocksMission && block.blocksMission.length > 0 ? (
                 block.blocksMission.map((child: any, index: number) => (
-                  <React.Fragment key={child.id}>
+                  <React.Fragment key={child.id || index}>
                     {renderChildren([child])}
                     <AnchorPoint
                       onDragOver={onDragOver}
@@ -193,9 +149,8 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
                   </React.Fragment>
                 ))
               ) : (
-                <div className="text-center text-gray-500 py-4">
-                  <p className="text-xs">Container vuoto</p>
-                  <p className="text-xs text-gray-600 mt-1">Trascina qui i blocchi della missione</p>
+                <div className="text-center text-purple-500 text-lg py-2">
+                  +
                 </div>
               )}
             </div>
@@ -211,7 +166,7 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
               </span>
             </div>
             
-            <div className="bg-slate-800/30 rounded-lg border border-green-700/30 p-3 min-h-[100px]">
+            <div className="bg-green-950/30 rounded-lg border border-green-700/30 p-3 min-h-[100px]">
               {/* Initial anchor point */}
               <AnchorPoint
                 onDragOver={onDragOver}
@@ -222,7 +177,7 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
               {/* Render finish blocks */}
               {block.blocksFinish && block.blocksFinish.length > 0 ? (
                 block.blocksFinish.map((child: any, index: number) => (
-                  <React.Fragment key={child.id}>
+                  <React.Fragment key={child.id || index}>
                     {renderChildren([child])}
                     <AnchorPoint
                       onDragOver={onDragOver}
@@ -232,9 +187,8 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
                   </React.Fragment>
                 ))
               ) : (
-                <div className="text-center text-gray-500 py-4">
-                  <p className="text-xs">Container vuoto</p>
-                  <p className="text-xs text-gray-600 mt-1">Trascina qui i blocchi di fine missione</p>
+                <div className="text-center text-green-500 text-lg py-2">
+                  +
                 </div>
               )}
             </div>

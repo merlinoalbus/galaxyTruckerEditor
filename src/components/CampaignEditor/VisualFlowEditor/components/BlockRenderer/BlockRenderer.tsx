@@ -2,9 +2,11 @@ import React, { useCallback } from 'react';
 import { ScriptBlock } from '../blocks/ScriptBlock/ScriptBlock';
 import { IfBlock } from '../blocks/IfBlock/IfBlock';
 import { CommandBlock } from '../blocks/CommandBlock/CommandBlock';
-import { ContainerBlock } from '../blocks/ContainerBlock/ContainerBlock';
+import { MenuBlock } from '../blocks/MenuBlock/MenuBlock';
 import { OptBlock } from '../blocks/OptBlock/OptBlock';
 import { MissionBlock } from '../blocks/MissionBlock/MissionBlock';
+import { BuildBlock } from '../blocks/BuildBlock/BuildBlock';
+import { FlightBlock } from '../blocks/FlightBlock/FlightBlock';
 
 interface BlockRendererProps {
   block: any;
@@ -84,118 +86,182 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
   // Render SCRIPT block
   if (block.type === 'SCRIPT') {
     return (
-      <ScriptBlock
-        block={block}
-        onUpdateName={(name) => updateBlock({ scriptName: name })}
-        onDragOver={onDragOver}
-        onDrop={(e) => onDrop(e, block.id, 'children')}
-        onDropAtIndex={(e, index) => onDropAtIndex(e, block.id, 'children', index)}
-        isDragActive={isDragActive}
-        onZoomIn={onZoomIn ? (() => onZoomIn(block.id)) : undefined}
-        onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
-      >
-        {renderChildren(block.children || [])}
-      </ScriptBlock>
+      <div data-block-id={block.id}>
+        <ScriptBlock
+          block={block}
+          onUpdateName={(name) => updateBlock({ scriptName: name })}
+          onDragOver={onDragOver}
+          onDrop={(e) => onDrop(e, block.id, 'children')}
+          onDropAtIndex={(e, index) => onDropAtIndex(e, block.id, 'children', index)}
+          isDragActive={isDragActive}
+          onZoomIn={onZoomIn ? (() => onZoomIn(block.id)) : undefined}
+          onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
+        >
+          {renderChildren(block.children || [])}
+        </ScriptBlock>
+      </div>
     );
   }
 
   // Render IF block
   if (block.type === 'IF') {
     return (
-      <IfBlock
-        block={block}
-        onUpdate={updateBlock}
-        onRemove={isRootInZoom ? undefined : removeBlock}
-        onDragStart={(e) => onDragStart(e, block)}
-        onDragOver={onDragOver}
-        onDropThen={(e) => onDrop(e, block.id, 'thenBlocks')}
-        onDropElse={(e) => onDrop(e, block.id, 'elseBlocks')}
-        onDropThenAtIndex={(e, index) => onDropAtIndex(e, block.id, 'thenBlocks', index)}
-        onDropElseAtIndex={(e, index) => onDropAtIndex(e, block.id, 'elseBlocks', index)}
-        renderChildren={renderChildren}
-        isDragActive={isDragActive}
-        onZoomIn={onZoomIn ? (() => onZoomIn(block.id)) : undefined}
-        onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
-        isZoomed={isZoomed}
-        sessionData={sessionData}
-        isInvalid={isInvalid}
-      />
+      <div data-block-id={block.id}>
+        <IfBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          onDragOver={onDragOver}
+          onDropThen={(e) => onDrop(e, block.id, 'thenBlocks')}
+          onDropElse={(e) => onDrop(e, block.id, 'elseBlocks')}
+          onDropThenAtIndex={(e, index) => onDropAtIndex(e, block.id, 'thenBlocks', index)}
+          onDropElseAtIndex={(e, index) => onDropAtIndex(e, block.id, 'elseBlocks', index)}
+          renderChildren={renderChildren}
+          isDragActive={isDragActive}
+          onZoomIn={onZoomIn ? (() => onZoomIn(block.id)) : undefined}
+          onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
+          isZoomed={isZoomed}
+          sessionData={sessionData}
+          isInvalid={isInvalid}
+        />
+      </div>
     );
   }
 
   // Render OPT block
   if (block.type === 'OPT') {
     return (
-      <OptBlock
-        block={block}
-        onUpdate={updateBlock}
-        onRemove={isRootInZoom ? undefined : removeBlock}
-        onDragStart={(e) => onDragStart(e, block)}
-        onDragOver={onDragOver}
-        onDrop={(e) => onDrop(e, block.id, 'children')}
-        onDropAtIndex={(e, index) => onDropAtIndex(e, block.id, 'children', index)}
-        renderChildren={renderChildren}
-        isDragActive={isDragActive}
-        onZoomIn={onZoomIn ? (() => onZoomIn(block.id)) : undefined}
-        onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
-        isZoomed={isZoomed}
-        sessionData={sessionData}
-        isInvalid={isInvalid}
-      />
+      <div data-block-id={block.id}>
+        <OptBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          onDragOver={onDragOver}
+          onDrop={(e) => onDrop(e, block.id, 'children')}
+          onDropAtIndex={(e, index) => onDropAtIndex(e, block.id, 'children', index)}
+          renderChildren={renderChildren}
+          isDragActive={isDragActive}
+          onZoomIn={onZoomIn ? (() => onZoomIn(block.id)) : undefined}
+          onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
+          isZoomed={isZoomed}
+          sessionData={sessionData}
+          isInvalid={isInvalid}
+        />
+      </div>
     );
   }
 
   // Render MISSION block
   if (block.type === 'MISSION') {
     return (
-      <MissionBlock
-        block={block}
-        onUpdate={updateBlock}
-        onRemove={isRootInZoom ? undefined : removeBlock}
-        onDragStart={(e) => onDragStart(e, block)}
-        onDragOver={onDragOver}
-        onDrop={(e) => onDrop(e, block.id, 'blocksMission')}
-        onDropAtIndexMission={(e, index) => onDropAtIndex(e, block.id, 'blocksMission', index)}
-        onDropAtIndexFinish={(e, index) => onDropAtIndex(e, block.id, 'blocksFinish', index)}
-        renderChildren={renderChildren}
-        isDragActive={isDragActive}
-        onZoomIn={onZoomIn ? (() => onZoomIn(block.id)) : undefined}
-        onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
-        isZoomed={isZoomed}
-        isInvalid={isInvalid}
-      />
+      <div data-block-id={block.id}>
+        <MissionBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          onDragOver={onDragOver}
+          onDrop={(e) => onDrop(e, block.id, 'blocksMission')}
+          onDropAtIndexMission={(e, index) => onDropAtIndex(e, block.id, 'blocksMission', index)}
+          onDropAtIndexFinish={(e, index) => onDropAtIndex(e, block.id, 'blocksFinish', index)}
+          renderChildren={renderChildren}
+          isDragActive={isDragActive}
+          onZoomIn={onZoomIn ? (() => onZoomIn(block.id)) : undefined}
+          onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
+          isZoomed={isZoomed}
+          isInvalid={isInvalid}
+        />
+      </div>
     );
   }
 
-  // Render other container blocks (MENU)
-  if (block.isContainer) {
+  // Render BUILD block
+  if (block.type === 'BUILD') {
     return (
-      <ContainerBlock
-        block={block}
-        onRemove={isRootInZoom ? undefined : removeBlock}
-        onDragStart={(e) => onDragStart(e, block)}
-        onDragOver={onDragOver}
-        onDrop={(e) => onDrop(e, block.id, 'children')}
-        onDropAtIndex={(e, index) => onDropAtIndex(e, block.id, 'children', index)}
-        renderChildren={renderChildren}
-        isDragActive={isDragActive}
-        onZoomIn={onZoomIn ? (() => onZoomIn(block.id)) : undefined}
-        onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
-        isZoomed={isZoomed}
-        isInvalid={isInvalid}
-      />
+      <div data-block-id={block.id}>
+        <BuildBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          onDragOver={onDragOver}
+          onDropInit={(e) => onDrop(e, block.id, 'blockInit')}
+          onDropStart={(e) => onDrop(e, block.id, 'blockStart')}
+          onDropInitAtIndex={(e, index) => onDropAtIndex(e, block.id, 'blockInit', index)}
+          onDropStartAtIndex={(e, index) => onDropAtIndex(e, block.id, 'blockStart', index)}
+          renderChildren={renderChildren}
+          isDragActive={isDragActive}
+          onZoomIn={onZoomIn ? (() => onZoomIn(block.id)) : undefined}
+          onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
+          isZoomed={isZoomed}
+          isInvalid={isInvalid}
+        />
+      </div>
+    );
+  }
+
+  // Render FLIGHT block
+  if (block.type === 'FLIGHT') {
+    return (
+      <div data-block-id={block.id}>
+        <FlightBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          onDragOver={onDragOver}
+          onDropInit={(e) => onDrop(e, block.id, 'blockInit')}
+          onDropStart={(e) => onDrop(e, block.id, 'blockStart')}
+          onDropEvaluate={(e) => onDrop(e, block.id, 'blockEvaluate')}
+          onDropInitAtIndex={(e, index) => onDropAtIndex(e, block.id, 'blockInit', index)}
+          onDropStartAtIndex={(e, index) => onDropAtIndex(e, block.id, 'blockStart', index)}
+          onDropEvaluateAtIndex={(e, index) => onDropAtIndex(e, block.id, 'blockEvaluate', index)}
+          renderChildren={renderChildren}
+          isDragActive={isDragActive}
+          onZoomIn={onZoomIn ? (() => onZoomIn(block.id)) : undefined}
+          onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
+          isZoomed={isZoomed}
+          isInvalid={isInvalid}
+        />
+      </div>
+    );
+  }
+
+  // Render MENU blocks
+  if (block.type === 'MENU') {
+    return (
+      <div data-block-id={block.id}>
+        <MenuBlock
+          block={block}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          onDragOver={onDragOver}
+          onDrop={(e) => onDrop(e, block.id, 'children')}
+          onDropAtIndex={(e, index) => onDropAtIndex(e, block.id, 'children', index)}
+          renderChildren={renderChildren}
+          isDragActive={isDragActive}
+          onZoomIn={onZoomIn ? (() => onZoomIn(block.id)) : undefined}
+          onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
+          isZoomed={isZoomed}
+          isInvalid={isInvalid}
+        />
+      </div>
     );
   }
 
   // Render command blocks (SAY, DELAY, GO, LABEL, ASK)
   return (
-    <CommandBlock
-      block={block}
-      onUpdate={updateBlock}
-      onRemove={isRootInZoom ? undefined : removeBlock}
-      onDragStart={(e) => onDragStart(e, block)}
-      sessionData={sessionData}
-      isInvalid={isInvalid}
-    />
+    <div data-block-id={block.id}>
+      <CommandBlock
+        block={block}
+        onUpdate={updateBlock}
+        onRemove={isRootInZoom ? undefined : removeBlock}
+        onDragStart={(e) => onDragStart(e, block)}
+        sessionData={sessionData}
+        isInvalid={isInvalid}
+      />
+    </div>
   );
 };

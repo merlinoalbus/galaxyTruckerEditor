@@ -20,6 +20,7 @@ interface ToolbarProps {
   /** Path di navigazione utilizzato dal componente NavigationBreadcrumb */
   navigationPath: NavigationPathItem[];
   validationErrors?: number;
+  onValidationErrorsClick?: () => void;
   onSaveScript?: () => Promise<{ success: boolean; error?: string }>;
   scriptsButtonRef?: React.RefObject<HTMLButtonElement>;
   missionsButtonRef?: React.RefObject<HTMLButtonElement>;
@@ -40,6 +41,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onZoomOut,
   navigationPath = [],
   validationErrors = 0,
+  onValidationErrorsClick,
   onSaveScript,
   scriptsButtonRef: externalScriptsButtonRef,
   missionsButtonRef: externalMissionsButtonRef
@@ -89,10 +91,14 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         <div className={visualFlowEditorStyles.header.actions}>
           {/* Indicatore errori di validazione */}
           {validationErrors > 0 && (
-            <div className="flex items-center gap-2 px-3 py-2 bg-red-900/50 border border-red-600 text-red-400 rounded-lg">
+            <button
+              onClick={onValidationErrorsClick}
+              className="flex items-center gap-2 px-3 py-2 bg-red-900/50 border border-red-600 text-red-400 rounded-lg hover:bg-red-900/70 transition-colors cursor-pointer"
+              title="Clicca per vedere i dettagli degli errori"
+            >
               <AlertCircle className="w-4 h-4" />
-              <span className="text-sm font-medium">{validationErrors} errori</span>
-            </div>
+              <span className="text-sm font-medium">{validationErrors} {validationErrors === 1 ? 'errore' : 'errori'}</span>
+            </button>
           )}
           
           <button

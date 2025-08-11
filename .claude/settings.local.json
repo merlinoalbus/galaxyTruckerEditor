@@ -74,7 +74,8 @@
       "Bash(git log:*)",
       "Bash(npx eslint:*)",
       "Bash(npm test)",
-      "Bash(del test_final_ifmissionresult.js test_final_maiuscolo.js)"
+      "Bash(del test_final_ifmissionresult.js test_final_maiuscolo.js)",
+      "Bash(comm:*)"
     ],
     "deny": []
   },

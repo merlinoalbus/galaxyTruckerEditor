@@ -14,6 +14,8 @@ import { MissionsList } from './components/MissionsList';
 import { JsonView } from '@/components/shared/JsonView';
 import { NewScriptDialog } from './components/NewScriptDialog';
 import { ToolsPanel } from './components/ToolsPanel';
+import { ErrorModal } from './components/ErrorModal/ErrorModal';
+import { ValidationErrorsModal } from './components/ValidationErrorsModal/ValidationErrorsModal';
 // Import hooks custom modulari
 import { useBlockManipulation } from '@/hooks/CampaignEditor/VisualFlowEditor/useBlockManipulation';
 import { useDragAndDrop } from '@/hooks/CampaignEditor/VisualFlowEditor/useDragAndDrop';
@@ -49,7 +51,9 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
   
   // Editor state
   const [currentScriptBlocks, setCurrentScriptBlocks] = useState<any[]>([]);
-  const [validationErrors, setValidationErrors] = useState<{ errors: number; invalidBlocks: string[] }>({ errors: 0, invalidBlocks: [] });
+  const [validationErrors, setValidationErrors] = useState<{ errors: number; invalidBlocks: string[]; details?: any[] }>({ errors: 0, invalidBlocks: [] });
+  const [dropError, setDropError] = useState<string | null>(null);
+  const [showValidationDetails, setShowValidationDetails] = useState(false);
   
   // Button refs per posizionamento contestuale
   const scriptsButtonRef = React.useRef<HTMLButtonElement>(null);
@@ -65,7 +69,8 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
     addBlockAtIndex,
     addBlockToContainer,
     canDropBlock,
-    validateAllBlocks
+    validateAllBlocks,
+    getDropErrorMessage
   } = useBlockManipulation();
   
   // Usa hook per zoom navigation
@@ -96,7 +101,9 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
     addBlockAtIndex,
     removeBlockRecursive,
     canDropBlock,
+    getDropErrorMessage,
     currentScriptBlocks,
+    onDropError: (message) => setDropError(message),
     updateBlocks: (updater) => {
       setCurrentScriptBlocks(prev => {
         try {
@@ -114,6 +121,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
           
           // Aggiorna i rootBlocks se siamo in navigazione
           updateRootBlocksIfNeeded(updated);
+          
           return updated;
         } catch (error) {
           return prev; // Mantieni lo stato precedente in caso di errore
@@ -178,9 +186,8 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
     }
   }, [scriptId, loadScript]);
 
-  // Valida sempre l'albero completo dei blocchi, non solo quello visualizzato
+  // Valida i blocchi ogni volta che cambiano (qualsiasi modifica)
   useEffect(() => {
-    // Usa sempre rootBlocks per la validazione globale
     const blocksToValidate = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
     if (blocksToValidate.length > 0) {
       const validation = validateAllBlocks(blocksToValidate);
@@ -214,6 +221,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
         onZoomOut={handleZoomOut}
         navigationPath={navigationPath}
         validationErrors={validationErrors.errors}
+        onValidationErrorsClick={() => setShowValidationDetails(true)}
         scriptsButtonRef={scriptsButtonRef}
         missionsButtonRef={missionsButtonRef}
         onSaveScript={() => {
@@ -312,6 +320,81 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
         confirmNewScript={confirmNewScript}
         confirmNewMission={confirmNewMission}
       />
+      
+      {/* Modal per errori di drop */}
+      {dropError && (
+        <ErrorModal
+          message={dropError}
+          duration={5000}
+          onClose={() => setDropError(null)}
+        />
+      )}
+      
+      {/* Modal dettagli errori di validazione */}
+      {showValidationDetails && validationErrors.details && (
+        <ValidationErrorsModal
+          errors={validationErrors.details}
+          onClose={() => setShowValidationDetails(false)}
+          onNavigateToBlock={(blockId) => {
+            // Cerca il blocco nell'albero e naviga ad esso
+            const findAndNavigate = (blocks: any[], targetId: string, path: any[] = []): boolean => {
+              for (const block of blocks) {
+                if (block.id === targetId) {
+                  // Se il blocco è in un container zoomato, prima esci dallo zoom
+                  if (isZoomed && path.length > 0) {
+                    // Naviga al container che contiene il blocco
+                    handleZoomIn(path[path.length - 1].id);
+                  }
+                  // Scrolla al blocco dopo un breve delay per permettere il rendering
+                  setTimeout(() => {
+                    const element = document.querySelector(`[data-block-id="${targetId}"]`);
+                    if (element) {
+                      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      // Aggiungi un'animazione di highlight
+                      element.classList.add('ring-4', 'ring-red-500', 'ring-opacity-75');
+                      setTimeout(() => {
+                        element.classList.remove('ring-4', 'ring-red-500', 'ring-opacity-75');
+                      }, 2000);
+                    }
+                  }, 100);
+                  return true;
+                }
+                
+                // Cerca nei children
+                if (block.children) {
+                  if (findAndNavigate(block.children, targetId, [...path, block])) return true;
+                }
+                // Cerca nei blocchi IF
+                if (block.type === 'IF') {
+                  if (block.thenBlocks && findAndNavigate(block.thenBlocks, targetId, [...path, block])) return true;
+                  if (block.elseBlocks && findAndNavigate(block.elseBlocks, targetId, [...path, block])) return true;
+                }
+                // Cerca nei blocchi MISSION
+                if (block.type === 'MISSION') {
+                  if (block.blocksMission && findAndNavigate(block.blocksMission, targetId, [...path, block])) return true;
+                  if (block.blocksFinish && findAndNavigate(block.blocksFinish, targetId, [...path, block])) return true;
+                }
+                // Cerca nei blocchi BUILD
+                if (block.type === 'BUILD') {
+                  if (block.blockInit && findAndNavigate(block.blockInit, targetId, [...path, block])) return true;
+                  if (block.blockStart && findAndNavigate(block.blockStart, targetId, [...path, block])) return true;
+                }
+                // Cerca nei blocchi FLIGHT
+                if (block.type === 'FLIGHT') {
+                  if (block.blockInit && findAndNavigate(block.blockInit, targetId, [...path, block])) return true;
+                  if (block.blockStart && findAndNavigate(block.blockStart, targetId, [...path, block])) return true;
+                  if (block.blockEvaluate && findAndNavigate(block.blockEvaluate, targetId, [...path, block])) return true;
+                }
+              }
+              return false;
+            };
+            
+            const blocksToSearch = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
+            findAndNavigate(blocksToSearch, blockId);
+            setShowValidationDetails(false);
+          }}
+        />
+      )}
     </div>
   );
 };
