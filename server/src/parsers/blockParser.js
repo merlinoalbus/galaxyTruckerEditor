@@ -36,8 +36,10 @@ const BLOCK_CATALOG = {
       { pattern: /^IF_ORDER\s+(.+)$/, type: 'IF_ORDER' },
       { pattern: /^IF_PROB\s+(\d+)$/, type: 'IF_PROBABILITY' },
       { pattern: /^IF_TUTORIAL_SEEN$/, type: 'IF_SYSTEM', systemVar: 'tutorial_seen' },
-      { pattern: /^IFMISSIONRESULTIS\s+(\d+)$/, type: 'IF_MISSION_RESULT_EXACT' },
-      { pattern: /^IFMISSIONRESULTMIN\s+(\d+)$/, type: 'IF_MISSION_RESULT_MIN' }
+      { pattern: /^IfMissionResultIs\s+(-?\d+)$/, type: 'IF_MISSION_RESULT_EXACT' },
+      { pattern: /^IFMISSIONRESULTIS\s+(-?\d+)$/, type: 'IF_MISSION_RESULT_EXACT' },
+      { pattern: /^IfMissionResultMin\s+(-?\d+)$/, type: 'IF_MISSION_RESULT_MIN' },
+      { pattern: /^IFMISSIONRESULTMIN\s+(-?\d+)$/, type: 'IF_MISSION_RESULT_MIN' }
     ],
     closePattern: /^END_OF_IF$/,
     hasElse: /^ELSE$/,
@@ -68,28 +70,28 @@ const BLOCK_CATALOG = {
   },
   
   'BUILD': {
-    type: 'MISSION_PHASE_BLOCK',
-    phases: [
-      { pattern: /^INIT_BUILD$/, phase: 'init' },
-      { pattern: /^START_BUILDING$/, phase: 'start' },
-      { pattern: /^END_BUILDING$/, phase: 'end' }
-    ],
+    type: 'MISSION_BUILD_BLOCK',
+    openPattern: /^INIT_BUILD$/,
+    closePattern: /^END_BUILDING$/,
+    phaseMarkers: {
+      start: /^START_BUILDING$/
+    },
     parentMustBe: 'MISSION',
     canContain: ['ALL'],
-    structure: { phase: 'string', children: 'array' }
+    structure: { blockInit: 'array', blockStart: 'array' }
   },
   
   'FLIGHT': {
-    type: 'MISSION_PHASE_BLOCK', 
-    phases: [
-      { pattern: /^INIT_FLIGHT$/, phase: 'init' },
-      { pattern: /^START_FLIGHT$/, phase: 'start' },
-      { pattern: /^EVALUATE_FLIGHT$/, phase: 'evaluate' },
-      { pattern: /^END_FLIGHT$/, phase: 'end' }
-    ],
+    type: 'MISSION_FLIGHT_BLOCK', 
+    openPattern: /^INIT_FLIGHT$/,
+    closePattern: /^END_FLIGHT$/,
+    phaseMarkers: {
+      start: /^START_FLIGHT$/,
+      evaluate: /^EVALUATE_FLIGHT$/
+    },
     parentMustBe: 'MISSION',
     canContain: ['ALL'],
-    structure: { phase: 'string', children: 'array' }
+    structure: { blockInit: 'array', blockStart: 'array', blockEvaluate: 'array' }
   }
 };
 
@@ -107,7 +109,7 @@ const COMMAND_CATALOG = {
   'SHOWCHAR': { params: ['character', 'position:enum'], pattern: /^ShowChar\s+(\w+)\s+(left|center|right)$/ },
   'HIDECHAR': { params: ['character'], pattern: /^HideChar\s+(\w+)$/ },
   'CHANGECHAR': { params: ['character', 'image'], pattern: /^ChangeChar\s+(\w+)\s+(.+)$/ },
-  'FOCUSCHAR': { params: ['character'], pattern: /^FocusChar\s+(\w+)$/ },
+  'FOCUSCHAR': { params: ['character'], pattern: /^FocusChar\s+(\w+)$/i },
   
   // FINESTRA DIALOGO
   'SHOWDLGSCENE': { params: [], pattern: /^ShowDlgScene$/ },
@@ -116,86 +118,86 @@ const COMMAND_CATALOG = {
   // VARIABILI/SEMAFORI
   'SET': { params: ['semaphore'], pattern: /^SET\s+(\w+)$/ },
   'RESET': { params: ['semaphore'], pattern: /^RESET\s+(\w+)$/ },
-  'SET_TO': { params: ['variable', 'value:number'], pattern: /^SET_TO\s+(\w+)\s+(\d+)$/ },
-  'ADD': { params: ['variable', 'value:number'], pattern: /^ADD\s+(\w+)\s+(\d+)$/ },
+  'SET_TO': { params: ['variable', 'value:number'], pattern: /^SET_TO\s+(\w+)\s+(\d+)$/i },
+  'ADD': { params: ['variable', 'value:number'], pattern: /^ADD\s+(\w+)\s+(\d+)$/i },
   
   // CONTROLLO FLUSSO
   'LABEL': { params: ['name'], pattern: /^LABEL\s+(\w+)$/i },
   'GO': { params: ['label'], pattern: /^GO\s+(\w+)$/i },
-  'SUB_SCRIPT': { params: ['script'], pattern: /^SUB_SCRIPT\s+(\w+)$/i },
+  'SUB_SCRIPT': { params: ['script:string'], pattern: /^SUB_SCRIPT\s+(\w+)$/i },
   'RETURN': { params: [], pattern: /^RETURN$/i },
   'EXIT_MENU': { params: [], pattern: /^EXIT_MENU$/i },
   'DELAY': { params: ['milliseconds:number'], pattern: /^DELAY\s+(\d+)$/i },
   
   // MAPPA/NAVIGAZIONE
-  'SHOWPATH': { params: ['route'], pattern: /^SHOWPATH\s+(.+)$/i },
-  'HIDEPATH': { params: ['route'], pattern: /^HIDEPATH\s+(.+)$/i },
+  'SHOWPATH': { params: ['route'], pattern: /^ShowPath\s+(.+)$/ },
+  'HIDEPATH': { params: ['route'], pattern: /^HidePath\s+(.+)$/i },
   'HIDEALLPATHS': { params: ['node1', 'node2'], pattern: /^HIDEALLPATHS\s+(\w+)\s+(\w+)$/i },
-  'SHOWNODE': { params: ['node'], pattern: /^SHOWNODE\s+(.+)$/i },
+  'SHOWNODE': { params: ['node'], pattern: /^ShowNode\s+(.+)$/i },
   'HIDENODE': { params: ['node'], pattern: /^HIDENODE\s+(.+)$/i },
-  'SHOWBUTTON': { params: ['button'], pattern: /^SHOWBUTTON\s+(\w+)$/i },
-  'HIDEBUTTON': { params: ['button'], pattern: /^HIDEBUTTON\s+(\w+)$/i },
-  'CENTERMAPBYNODE': { params: ['node'], pattern: /^CENTERMAPBYNODE\s+(\w+)$/i },
-  'CENTERMAPBYPATH': { params: ['route'], pattern: /^CENTERMAPBYPATH\s+(.+)$/i },
+  'SHOWBUTTON': { params: ['button'], pattern: /^ShowButton\s+(\w+)$/i },
+  'HIDEBUTTON': { params: ['button'], pattern: /^HideButton\s+(\w+)$/i },
+  'CENTERMAPBYNODE': { params: ['node'], pattern: /^CenterMapByNode\s+(\w+)$/i },
+  'CENTERMAPBYPATH': { params: ['route'], pattern: /^CenterMapByPath\s+(.+)$/i },
   'MOVEPLAYERTONODE': { params: ['node'], pattern: /^MOVEPLAYERTONODE\s+(\w+)$/i },
   
   // MISSION MANAGEMENT  
-  'ADDOPPONENT': { params: ['character'], pattern: /^ADDOPPONENT\s+(\w+)$/ },
+  'ADDOPPONENT': { params: ['character'], pattern: /^AddOpponent\s+"?(\w+)"?$/ },
   'ACT_MISSION': { params: ['mission'], pattern: /^ACT_MISSION\s+(\w+)$/ },
-  'ADDOPPONENTSCREDITS': { params: ['index:number', 'credits:number'], pattern: /^ADDOPPONENTSCREDITS\s+(\d+)\s+(\d+)$/ },
-  'MODIFYOPPONENTSBUILDSPEED': { params: ['percentage:number'], pattern: /^MODIFYOPPONENTSBUILDSPEED\s+(\d+)$/ },
-  'SETSHIPTYPE': { params: ['type'], pattern: /^SETSHIPTYPE\s+(\w+)$/ },
-  'SETDECKPREPARATIONSCRIPT': { params: ['script'], pattern: /^SETDECKPREPARATIONSCRIPT\s+(\w+)$/ },
-  'SETFLIGHTDECKPREPARATIONSCRIPT': { params: ['script'], pattern: /^SETFLIGHTDECKPREPARATIONSCRIPT\s+(\w+)$/ },
-  'SETTURNBASED': { params: [], pattern: /^SETTURNBASED$/ },
+  'ADDOPPONENTSCREDITS': { params: ['index:number', 'credits:number'], pattern: /^AddOpponentsCredits\s+(\d+)\s+(-?\d+)$/ },
+  'MODIFYOPPONENTSBUILDSPEED': { params: ['percentage:number'], pattern: /^ModifyOpponentsBuildSpeed\s+(\d+)$/i },
+  'SETSHIPTYPE': { params: ['type'], pattern: /^SetShipType\s+(\w+)$/ },
+  'SETDECKPREPARATIONSCRIPT': { params: ['script:string'], pattern: /^SetDeckPreparationScript\s+"?(\w+)"?$/ },
+  'SETFLIGHTDECKPREPARATIONSCRIPT': { params: ['script:string'], pattern: /^SetFlightDeckPreparationScript\s+"?(\w+)"?$/i },
+  'SETTURNBASED': { params: [], pattern: /^SetTurnBased$/ },
   
   // CREDITI
-  'ADDCREDITS': { params: ['amount:number'], pattern: /^ADDCREDITS\s+(\d+)$/ },
-  'SETCREDITS': { params: ['amount:number'], pattern: /^SETCREDITS\s+(\d+)$/ },
-  'ADDMISSIONCREDITS': { params: ['amount:number'], pattern: /^ADDMISSIONCREDITS\s+(\d+)$/ },
-  'ADDMISSIONCREDITSBYRESULT': { params: [], pattern: /^ADDMISSIONCREDITSBYRESULT$/ },
-  'SUBOPPONENTCREDITSBYRESULT': { params: [], pattern: /^SUBOPPONENTCREDITSBYRESULT$/ },
+  'ADDCREDITS': { params: ['amount:number'], pattern: /^AddCredits\s+(-?\d+)$/i },
+  'SETCREDITS': { params: ['amount:number'], pattern: /^SetCredits\s+(-?\d+)$/ },
+  'ADDMISSIONCREDITS': { params: ['amount:number'], pattern: /^AddMissionCredits\s+(-?\d+)$/ },
+  'ADDMISSIONCREDITSBYRESULT': { params: [], pattern: /^AddMissionCreditsByResult$/i },
+  'SUBOPPONENTCREDITSBYRESULT': { params: [], pattern: /^SubOpponentCreditsByResult$/i },
   
   // FOCUS E UI
-  'SETFOCUS': { params: ['button'], pattern: /^SETFOCUS\s+(\w+)$/i },
-  'RESETFOCUS': { params: ['button'], pattern: /^RESETFOCUS\s+(\w+)$/i },
+  'SETFOCUS': { params: ['button'], pattern: /^SetFocus\s+(\w+)$/i },
+  'RESETFOCUS': { params: ['button'], pattern: /^ResetFocus\s+(\w+)$/i },
   'SETFOCUSIFCREDITS': { params: ['button', 'credits:number'], pattern: /^SETFOCUSIFCREDITS\s+(\w+)\s+(\d+)$/i },
-  'SETNODEKNOWN': { params: ['node'], pattern: /^SETNODEKNOWN\s+(\w+)$/ },
-  'ADDINFOWINDOW': { params: ['image'], pattern: /^ADDINFOWINDOW\s+(.+)$/ },
-  'SHOWINFOWINDOW': { params: ['image'], pattern: /^SHOWINFOWINDOW\s+(.+)$/ },
+  'SETNODEKNOWN': { params: ['node'], pattern: /^SETNODEKNOWN\s+(\w+)$/i },
+  'ADDINFOWINDOW': { params: ['image'], pattern: /^AddInfoWindow\s+"(.+)"$/i },
+  'SHOWINFOWINDOW': { params: ['image'], pattern: /^SHOWINFOWINDOW\s+(.+)$/i },
   
   // ACHIEVEMENTS
   'SETACHIEVEMENTPROGRESS': { params: ['achievement', 'value:number'], pattern: /^SetAchievementProgress\s+([\w_]+)\s+(\d+)$/i },
   'SETACHIEVEMENTATTEMPT': { params: ['achievement', 'value:number'], pattern: /^SetAchievementAttempt\s+([\w_]+)\s+(\d+)$/i },
   'UNLOCKACHIEVEMENT': { params: ['achievement'], pattern: /^UnlockAchievement\s+([\w_]+)$/i },
-  'UNLOCKSHIPPLAN': { params: ['plan'], pattern: /^UNLOCKSHIPPLAN\s+(\w+)$/ },
-  'UNLOCKSHUTTLES': { params: [], pattern: /^UNLOCKSHUTTLES$/ },
+  'UNLOCKSHIPPLAN': { params: ['plan'], pattern: /^UnlockShipPlan\s+(\w+)$/i },
+  'UNLOCKSHUTTLES': { params: [], pattern: /^UnlockShuttles$/i },
   
   // HELP SCRIPTS
-  'BUILDINGHELPSCRIPT': { params: ['delay:number', 'script'], pattern: /^BUILDINGHELPSCRIPT\s+(\d+)\s+(\w+)$/ },
-  'FLIGHTHELPSCRIPT': { params: ['script'], pattern: /^FLIGHTHELPSCRIPT\s+(\w+)$/ },
-  'ALIENHELPSCRIPT': { params: ['script'], pattern: /^ALIENHELPSCRIPT\s+(\w+)$/ },
+  'BUILDINGHELPSCRIPT': { params: [], pattern: /^BuildingHelpScript$/i },
+  'FLIGHTHELPSCRIPT': { params: ['script:string'], pattern: /^FlightHelpScript\s+"?(\w+)"?$/ },
+  'ALIENHELPSCRIPT': { params: ['script:string'], pattern: /^AlienHelpScript\s+"?(\w+)"?$/ },
   
   // MISSION STATUS
-  'SETMISSIONASFAILED': { params: [], pattern: /^SETMISSIONASFAILED$/ },
-  'SETMISSIONASCOMPLETED': { params: [], pattern: /^SETMISSIONASCOMPLETED$/ },
-  'ALLSHIPSGIVEUP': { params: [], pattern: /^ALLSHIPSGIVEUP$/ },
-  'GIVEUPFLIGHT': { params: [], pattern: /^GIVEUPFLIGHT$/ },
+  'SETMISSIONASFAILED': { params: [], pattern: /^SetMissionAsFailed$/ },
+  'SETMISSIONASCOMPLETED': { params: [], pattern: /^SetMissionAsCompleted$/ },
+  'ALLSHIPSGIVEUP': { params: [], pattern: /^AllShipsGiveUp$/ },
+  'GIVEUPFLIGHT': { params: [], pattern: /^GiveUpFlight$/ },
+  'SETSPECCONDITION': { params: ['condition'], pattern: /^SetSpecCondition\s+"?(\w+)"?$/ },
   
   // STATO
-  'SAVESTATE': { params: [], pattern: /^SAVESTATE$/ },
-  'LOADSTATE': { params: [], pattern: /^LOADSTATE$/ },
-  'ADDNODE': { params: ['node'], pattern: /^ADDNODE\s+(\w+)$/ },
-  'QUITCAMPAIGN': { params: [], pattern: /^QUITCAMPAIGN$/ },
+  'SAVESTATE': { params: [], pattern: /^SAVESTATE$/i },
+  'LOADSTATE': { params: [], pattern: /^LOADSTATE$/i },
+  'ADDNODE': { params: ['node'], pattern: /^ADDNODE\s+(\w+)$/i },
+  'QUITCAMPAIGN': { params: [], pattern: /^QUITCAMPAIGN$/i },
   
   // PARAMETRI COMPLESSI (gestiti come stringa unica)
-  'ADDPARTTOSHIP': { params: ['params:complex'], pattern: /^ADDPARTTOSHIP\s+(.+)$/, example: '1 7 alienEngine 3333 0' },
-  'ADDPARTTOASIDESLOT': { params: ['params:complex'], pattern: /^ADDPARTTOASIDESLOT\s+(.+)$/, example: 'alienGun 2 1 2 0' },
-  'SETADVPILE': { params: ['params:complex'], pattern: /^SETADVPILE\s+(.+)$/, example: '1 3' },
-  'SETSECRETADVPILE': { params: ['params:complex'], pattern: /^SETSECRETADVPILE\s+(.+)$/, example: '2 1' },
-  'SETSPECCONDITION': { params: ['params:complex'], pattern: /^SETSPECCONDITION\s+(.+)$/, example: 'bet' },
-  'ADDSHIPPARTS': { params: ['params:complex'], pattern: /^ADDSHIPPARTS\s+(.+)$/, example: 'parts/allParts.yaml' },
-  'SHOWHELPIMAGE': { params: ['params:complex'], pattern: /^SHOWHELPIMAGE\s+(.+)$/, example: '40 50 70 campaign/tutorial-purple.png' }
+  'ADDPARTTOSHIP': { params: ['params:complex'], pattern: /^AddPartToShip\s+(.+)$/i, example: '1 7 alienEngine 3333 0' },
+  'ADDPARTTOASIDESLOT': { params: ['params:complex'], pattern: /^AddPartToAsideSlot\s+(.+)$/i, example: 'alienGun 2 1 2 0' },
+  'SETADVPILE': { params: ['params:complex'], pattern: /^SetAdvPile\s+(.+)$/i, example: '1 3' },
+  'SETSECRETADVPILE': { params: ['params:complex'], pattern: /^SetSecretAdvPile\s+(.+)$/i, example: '2 1' },
+  'ADDSHIPPARTS': { params: ['params:complex'], pattern: /^AddShipParts\s+(.+)$/i, example: 'parts/allParts.yaml' },
+  'SHOWHELPIMAGE': { params: ['params:complex'], pattern: /^SHOWHELPIMAGE\s+(.+)$/i, example: '40 50 70 campaign/tutorial-purple.png' }
 };
 
 /**
@@ -215,6 +217,8 @@ function parseScriptToBlocks(lines, language = 'EN', recursionDepth = 0) {
   let parserCount = 0; // Contatore livelli blocco per parser delegato
   let blockFamily = null; // Famiglia del blocco in raccolta (IF, MENU, etc.)
   let isInElseBranch = false; // Indica se stiamo raccogliendo nel ramo else
+  let currentPhase = 'init'; // Per BUILD e FLIGHT: fase corrente (init, start, evaluate)
+  let isInFinishSection = false; // Per MISSION: indica se siamo dopo FINISH_MISSION
   
   while (currentIndex < lines.length) {
     const line = lines[currentIndex]?.trim();
@@ -234,6 +238,10 @@ function parseScriptToBlocks(lines, language = 'EN', recursionDepth = 0) {
         if (!currentBlock && parserCount === 0) {
           // NON HO OGGETTO IN LAVORAZIONE - INIZIO A LAVORARLO IO
           currentBlock = createBlockObject(blockMatch, currentIndex + 1);
+          // Reset fase per BUILD e FLIGHT
+          if (blockMatch.blockName === 'BUILD' || blockMatch.blockName === 'FLIGHT') {
+            currentPhase = 'init';
+          }
           currentIndex++;
           continue;
           
@@ -271,6 +279,45 @@ function parseScriptToBlocks(lines, language = 'EN', recursionDepth = 0) {
         continue;
       }
       
+      // Controlla se è FINISH_MISSION (per blocchi MISSION)
+      if (line.match(/^FINISH_MISSION$/)) {
+        if (parserCount > 0) {
+          // STO RACCOGLIENDO - AGGIUNGO ALL'ARRAY TEMPORANEO
+          parserData.push(line);
+        } else if (currentBlock && currentBlock.type === 'MISSION') {
+          // FINISH_MISSION del mio blocco MISSION
+          isInFinishSection = true;
+          if (!currentBlock.finishSection) {
+            currentBlock.finishSection = [];
+          }
+        }
+        currentIndex++;
+        continue;
+      }
+      
+      // Controlla marcatori di fase per BUILD
+      if (currentBlock && currentBlock.type === 'BUILD' && parserCount === 0) {
+        if (line.match(/^START_BUILDING$/)) {
+          currentPhase = 'start';
+          currentIndex++;
+          continue;
+        }
+      }
+      
+      // Controlla marcatori di fase per FLIGHT
+      if (currentBlock && currentBlock.type === 'FLIGHT' && parserCount === 0) {
+        if (line.match(/^START_FLIGHT$/)) {
+          currentPhase = 'start';
+          currentIndex++;
+          continue;
+        }
+        if (line.match(/^EVALUATE_FLIGHT$/)) {
+          currentPhase = 'evaluate';
+          currentIndex++;
+          continue;
+        }
+      }
+      
       // Controlla se è la chiusura del MIO blocco corrente
       if (currentBlock && parserCount === 0) {
         const myCloseMatch = identifyCloseElement(line, currentBlock.type);
@@ -303,7 +350,42 @@ function parseScriptToBlocks(lines, language = 'EN', recursionDepth = 0) {
                 currentBlock.thenBlocks.push(...parserResult.blocks);
                 currentBlock.numThen = currentBlock.thenBlocks.length;
               }
-            } else {
+            } 
+            // Gestione BUILD: aggiungi alla fase corrente
+            else if (currentBlock && currentBlock.type === 'BUILD') {
+              if (currentPhase === 'start') {
+                currentBlock.blockStart.push(...parserResult.blocks);
+                currentBlock.numBlockStart = currentBlock.blockStart.length;
+              } else {
+                currentBlock.blockInit.push(...parserResult.blocks);
+                currentBlock.numBlockInit = currentBlock.blockInit.length;
+              }
+            }
+            // Gestione FLIGHT: aggiungi alla fase corrente
+            else if (currentBlock && currentBlock.type === 'FLIGHT') {
+              if (currentPhase === 'evaluate') {
+                currentBlock.blockEvaluate.push(...parserResult.blocks);
+                currentBlock.numBlockEvaluate = currentBlock.blockEvaluate.length;
+              } else if (currentPhase === 'start') {
+                currentBlock.blockStart.push(...parserResult.blocks);
+                currentBlock.numBlockStart = currentBlock.blockStart.length;
+              } else {
+                currentBlock.blockInit.push(...parserResult.blocks);
+                currentBlock.numBlockInit = currentBlock.blockInit.length;
+              }
+            }
+            // Gestione MISSION: aggiungi a children o finishSection
+            else if (currentBlock && currentBlock.type === 'MISSION') {
+              if (isInFinishSection) {
+                if (!currentBlock.finishSection) {
+                  currentBlock.finishSection = [];
+                }
+                currentBlock.finishSection.push(...parserResult.blocks);
+              } else {
+                currentBlock.children.push(...parserResult.blocks);
+              }
+            } 
+            else {
               currentBlock.children.push(...parserResult.blocks);
             }
           }
@@ -336,7 +418,42 @@ function parseScriptToBlocks(lines, language = 'EN', recursionDepth = 0) {
               currentBlock.thenBlocks.push(commandObj);
               currentBlock.numThen = currentBlock.thenBlocks.length;
             }
-          } else {
+          } 
+          // Gestione BUILD: aggiungi alla fase corrente
+          else if (currentBlock.type === 'BUILD') {
+            if (currentPhase === 'start') {
+              currentBlock.blockStart.push(commandObj);
+              currentBlock.numBlockStart = currentBlock.blockStart.length;
+            } else {
+              currentBlock.blockInit.push(commandObj);
+              currentBlock.numBlockInit = currentBlock.blockInit.length;
+            }
+          }
+          // Gestione FLIGHT: aggiungi alla fase corrente
+          else if (currentBlock.type === 'FLIGHT') {
+            if (currentPhase === 'evaluate') {
+              currentBlock.blockEvaluate.push(commandObj);
+              currentBlock.numBlockEvaluate = currentBlock.blockEvaluate.length;
+            } else if (currentPhase === 'start') {
+              currentBlock.blockStart.push(commandObj);
+              currentBlock.numBlockStart = currentBlock.blockStart.length;
+            } else {
+              currentBlock.blockInit.push(commandObj);
+              currentBlock.numBlockInit = currentBlock.blockInit.length;
+            }
+          }
+          // Gestione MISSION: aggiungi a children o finishSection
+          else if (currentBlock.type === 'MISSION') {
+            if (isInFinishSection) {
+              if (!currentBlock.finishSection) {
+                currentBlock.finishSection = [];
+              }
+              currentBlock.finishSection.push(commandObj);
+            } else {
+              currentBlock.children.push(commandObj);
+            }
+          }
+          else {
             currentBlock.children.push(commandObj);
           }
         }
@@ -379,7 +496,9 @@ function identifyCloseElement(line, blockFamily) {
     'MISSION': /^END_OF_MISSION$/,
     'IF': /^END_OF_IF$/,
     'MENU': /^END_OF_MENU$/,
-    'OPT': /^END_OF_OPT$/
+    'OPT': /^END_OF_OPT$/,
+    'BUILD': /^END_BUILDING$/,
+    'FLIGHT': /^END_FLIGHT$/
   };
   
   const pattern = closePatterns[blockFamily];
@@ -430,20 +549,25 @@ function createBlockObject(blockMatch, lineNumber) {
         baseBlock.ifType = 'IFNOT';
         baseBlock.variabile = match[1];
         baseBlock.valore = null;
-      } else if (variant?.type === 'IF_DEBUG') {
-        baseBlock.ifType = 'IF_DEBUG';
-        baseBlock.variabile = null;
-        baseBlock.valore = null;
-      } else if (variant?.type === 'IF_MISSION_WON') {
-        baseBlock.ifType = 'IF_MISSION_WON';
-        baseBlock.variabile = null;
-        baseBlock.valore = null;
-      } else if (variant?.type === 'IF_FROM_CAMPAIGN') {
-        baseBlock.ifType = 'IF_FROM_CAMPAIGN';
-        baseBlock.variabile = null;
-        baseBlock.valore = null;
-      } else if (variant?.type === 'IF_TUTORIAL_SEEN') {
-        baseBlock.ifType = 'IF_TUTORIAL_SEEN';
+      } else if (variant?.type === 'IF_SYSTEM') {
+        // Gestione IF di sistema basati su systemVar
+        switch (variant.systemVar) {
+          case 'debug':
+            baseBlock.ifType = 'IF_DEBUG';
+            break;
+          case 'mission_won':
+            baseBlock.ifType = 'IF_MISSION_WON';
+            break;
+          case 'from_campaign':
+            baseBlock.ifType = 'IF_FROM_CAMPAIGN';
+            break;
+          case 'tutorial_seen':
+            baseBlock.ifType = 'IF_TUTORIAL_SEEN';
+            break;
+          default:
+            baseBlock.ifType = 'IF_SYSTEM';
+            break;
+        }
         baseBlock.variabile = null;
         baseBlock.valore = null;
       } else if (variant?.type === 'IF_VARIABLE_EXACT') {
@@ -499,6 +623,26 @@ function createBlockObject(blockMatch, lineNumber) {
         baseBlock.text = match[2];
         baseBlock.optType = 'OPT_CONDITIONAL_NOT';
       }
+      break;
+      
+    case 'BUILD':
+      baseBlock.type = 'BUILD';
+      baseBlock.blockInit = [];
+      baseBlock.blockStart = [];
+      baseBlock.numBlockInit = 0;
+      baseBlock.numBlockStart = 0;
+      delete baseBlock.children; // BUILD non usa children
+      break;
+      
+    case 'FLIGHT':
+      baseBlock.type = 'FLIGHT';
+      baseBlock.blockInit = [];
+      baseBlock.blockStart = [];
+      baseBlock.blockEvaluate = [];
+      baseBlock.numBlockInit = 0;
+      baseBlock.numBlockStart = 0;
+      baseBlock.numBlockEvaluate = 0;
+      delete baseBlock.children; // FLIGHT non usa children
       break;
   }
   
@@ -597,15 +741,6 @@ function identifyBlock(line) {
       }
     }
     
-    // Controllo fasi (per BUILD/FLIGHT)
-    if (blockDef.phases) {
-      for (const phase of blockDef.phases) {
-        const match = line.match(phase.pattern);
-        if (match) {
-          return { blockName, blockDef, match, phase, type: 'phase' };
-        }
-      }
-    }
   }
   
   return null;
@@ -624,6 +759,12 @@ function parseBlock(lines, startIndex, blockMatch, language, recursionDepth = 0)
   let blockLevel = 1;
   let inElse = false;
   let inFinish = false;
+  
+  // Per BUILD e FLIGHT: gestione fasi
+  let blockInit = [];
+  let blockStart = [];
+  let blockEvaluate = [];
+  let currentPhase = 'init'; // Per BUILD e FLIGHT iniziamo da init
   
   const startLine = lines[startIndex]?.trim() || '';
   logger.info(`${depthId}: [${startIndex + 1}] 🔵 PARSING BLOCK: ${blockName} at line ${startIndex + 1}, blockLevel=${blockLevel} ---> [NEXT: ${startIndex + 2}]`);
@@ -655,6 +796,22 @@ function parseBlock(lines, startIndex, blockMatch, language, recursionDepth = 0)
       continue;  
     }
     
+    // Per BUILD e FLIGHT: controllo marcatori di fase
+    if ((blockName === 'BUILD' || blockName === 'FLIGHT') && blockDef.phaseMarkers) {
+      if (blockDef.phaseMarkers.start && currentLine.match(blockDef.phaseMarkers.start)) {
+        logger.info(`${depthId}: [${currentIndex + 1}] 🟡 Phase START found for ${blockName}`);
+        currentPhase = 'start';
+        currentIndex++;
+        continue;
+      }
+      if (blockDef.phaseMarkers.evaluate && currentLine.match(blockDef.phaseMarkers.evaluate)) {
+        logger.info(`${depthId}: [${currentIndex + 1}] 🟡 Phase EVALUATE found for ${blockName}`);
+        currentPhase = 'evaluate';
+        currentIndex++;
+        continue;
+      }
+    }
+    
     // Controllo chiusura blocco
     if (currentLine.match(closePattern)) {
       blockLevel--;
@@ -683,14 +840,27 @@ function parseBlock(lines, startIndex, blockMatch, language, recursionDepth = 0)
     try {
       const element = parseNextElement(lines, currentIndex, language, recursionDepth + 1);
       if (element.object) {
-        const target = inFinish ? 'finish' : inElse ? 'else' : 'main';
-        logger.info(`${depthId}: [${currentIndex + 1}] 📝 Adding element ${element.object.type} to ${target} branch of ${blockName} ---> [NEXT: ${element.nextIndex + 1}]`);
-        if (inFinish) {
-          finishContent.push(element.object);
-        } else if (inElse) {
-          elseContent.push(element.object);
+        // Per BUILD e FLIGHT, aggiungi alla fase corrente
+        if (blockName === 'BUILD' || blockName === 'FLIGHT') {
+          const phaseName = currentPhase;
+          logger.info(`${depthId}: [${currentIndex + 1}] 📝 Adding element ${element.object.type} to ${phaseName} phase of ${blockName}`);
+          if (currentPhase === 'init') {
+            blockInit.push(element.object);
+          } else if (currentPhase === 'start') {
+            blockStart.push(element.object);
+          } else if (currentPhase === 'evaluate') {
+            blockEvaluate.push(element.object);
+          }
         } else {
-          blockContent.push(element.object);
+          const target = inFinish ? 'finish' : inElse ? 'else' : 'main';
+          logger.info(`${depthId}: [${currentIndex + 1}] 📝 Adding element ${element.object.type} to ${target} branch of ${blockName} ---> [NEXT: ${element.nextIndex + 1}]`);
+          if (inFinish) {
+            finishContent.push(element.object);
+          } else if (inElse) {
+            elseContent.push(element.object);
+          } else {
+            blockContent.push(element.object);
+          }
         }
       }
       currentIndex = element.nextIndex;
@@ -704,7 +874,11 @@ function parseBlock(lines, startIndex, blockMatch, language, recursionDepth = 0)
   }
   
   // Costruzione oggetto blocco
-  const blockObject = buildBlockObject(blockName, blockDef, match, variant, phase, blockContent, elseContent, finishContent);
+  const blockObject = buildBlockObject(blockName, blockDef, match, variant, phase, blockContent, elseContent, finishContent, {
+    blockInit,
+    blockStart,
+    blockEvaluate
+  });
   
   if (blockLevel > 0) {
     logger.error(`${depthId}: [${startIndex + 1}] ❌ UNCLOSED BLOCK ${blockName} from line ${startIndex + 1}, blockLevel=${blockLevel}`);
@@ -724,7 +898,7 @@ function parseBlock(lines, startIndex, blockMatch, language, recursionDepth = 0)
 /**
  * Costruisce oggetto blocco in base al tipo
  */
-function buildBlockObject(blockName, blockDef, match, variant, phase, content, elseContent, finishContent) {
+function buildBlockObject(blockName, blockDef, match, variant, phase, content, elseContent, finishContent, phaseContent = {}) {
   switch (blockName) {
     case 'SCRIPT':
       return {
@@ -795,11 +969,23 @@ function buildBlockObject(blockName, blockDef, match, variant, phase, content, e
       return optObj;
       
     case 'BUILD':
+      return {
+        type: 'BUILD',
+        blockInit: phaseContent.blockInit || [],
+        blockStart: phaseContent.blockStart || [],
+        numBlockInit: (phaseContent.blockInit || []).length,
+        numBlockStart: (phaseContent.blockStart || []).length
+      };
+      
     case 'FLIGHT':
       return {
-        type: blockName,
-        phase: phase.phase,
-        children: content
+        type: 'FLIGHT',
+        blockInit: phaseContent.blockInit || [],
+        blockStart: phaseContent.blockStart || [],
+        blockEvaluate: phaseContent.blockEvaluate || [],
+        numBlockInit: (phaseContent.blockInit || []).length,
+        numBlockStart: (phaseContent.blockStart || []).length,
+        numBlockEvaluate: (phaseContent.blockEvaluate || []).length
       };
       
     default:
@@ -995,18 +1181,47 @@ function serializeElement(element, targetLanguage = null) {
       return serializeOptBlock(element, targetLanguage);
       
     case 'BUILD':
-    case 'FLIGHT':
-      const phaseCommand = getPhaseCommand(element.type, element.phase);
-      const phaseLines = [phaseCommand];
-      if (element.children) {
-        element.children.forEach(child => {
-          const childLines = serializeElement(child, targetLanguage).split('\n');
-          childLines.forEach(line => {
-            if (line.trim()) phaseLines.push(`  ${line}`); // Aggiungi indentazione di 2 spazi
-          });
+      const buildLines = ['INIT_BUILD'];
+      if (element.blockInit) {
+        element.blockInit.forEach(child => {
+          const serialized = serializeElement(child, targetLanguage);
+          if (serialized) buildLines.push(serialized);
         });
       }
-      return phaseLines.join('\n');
+      buildLines.push('START_BUILDING');
+      if (element.blockStart) {
+        element.blockStart.forEach(child => {
+          const serialized = serializeElement(child, targetLanguage);
+          if (serialized) buildLines.push(serialized);
+        });
+      }
+      buildLines.push('END_BUILDING');
+      return buildLines.join('\n');
+      
+    case 'FLIGHT':
+      const flightLines = ['INIT_FLIGHT'];
+      if (element.blockInit) {
+        element.blockInit.forEach(child => {
+          const serialized = serializeElement(child, targetLanguage);
+          if (serialized) flightLines.push(serialized);
+        });
+      }
+      flightLines.push('START_FLIGHT');
+      if (element.blockStart) {
+        element.blockStart.forEach(child => {
+          const serialized = serializeElement(child, targetLanguage);
+          if (serialized) flightLines.push(serialized);
+        });
+      }
+      flightLines.push('EVALUATE_FLIGHT');
+      if (element.blockEvaluate) {
+        element.blockEvaluate.forEach(child => {
+          const serialized = serializeElement(child, targetLanguage);
+          if (serialized) flightLines.push(serialized);
+        });
+      }
+      flightLines.push('END_FLIGHT');
+      return flightLines.join('\n');
       
     default:
       return serializeCommand(element, targetLanguage);
@@ -1077,9 +1292,9 @@ function buildIfCommand(ifElement) {
     case 'IF_PROB':
       return `IF_PROB ${ifElement.valore}`;
     case 'IFMISSIONRESULTIS':
-      return `IFMISSIONRESULTIS ${ifElement.valore}`;
+      return `IfMissionResultIs ${ifElement.valore}`;
     case 'IFMISSIONRESULTMIN':
-      return `IFMISSIONRESULTMIN ${ifElement.valore}`;
+      return `IfMissionResultMin ${ifElement.valore}`;
     case 'IF_ORDER':
       // IF_ORDER ha un array di posizioni
       if (Array.isArray(ifElement.valore)) {
@@ -1150,28 +1365,6 @@ function serializeOptBlock(optElement, targetLanguage = 'EN') {
   return lines.join('\n');
 }
 
-/**
- * Ottiene comando fase per BUILD/FLIGHT
- */
-function getPhaseCommand(blockType, phase) {
-  if (blockType === 'BUILD') {
-    switch (phase) {
-      case 'init': return 'INIT_BUILD';
-      case 'start': return 'START_BUILDING';
-      case 'end': return 'END_BUILDING';
-      default: return 'INIT_BUILD';
-    }
-  } else if (blockType === 'FLIGHT') {
-    switch (phase) {
-      case 'init': return 'INIT_FLIGHT';
-      case 'start': return 'START_FLIGHT';
-      case 'evaluate': return 'EVALUATE_FLIGHT';
-      case 'end': return 'END_FLIGHT';
-      default: return 'INIT_FLIGHT';
-    }
-  }
-  return 'UNKNOWN_PHASE';
-}
 
 // Mapping da tipo comando (maiuscolo) a sintassi corretta del gioco
 const COMMAND_SYNTAX_MAP = {
@@ -1198,11 +1391,15 @@ const COMMAND_SYNTAX_MAP = {
   'CENTERMAPBYPATH': 'CenterMapByPath',
   'MOVEPLAYERTONODE': 'MovePlayerToNode',
   'ADDNODE': 'AddNode',
+  'FOCUSCHAR': 'FocusChar',
   
   // Control flow
   'DELAY': 'Delay',
+  'GO': 'GO',
+  'LABEL': 'LABEL',
   'RETURN': 'RETURN',
   'SUB_SCRIPT': 'SUB_SCRIPT',
+  'EXIT_MENU': 'EXIT_MENU',
   'SET': 'SET',
   'RESET': 'RESET',
   'ADD': 'ADD',
@@ -1212,7 +1409,51 @@ const COMMAND_SYNTAX_MAP = {
   // System commands
   'SETACHIEVEMENTPROGRESS': 'SetAchievementProgress',
   'UNLOCKACHIEVEMENT': 'UnlockAchievement',
-  'UNLOCKSHIPPLAN': 'UnlockShipPlan'
+  'UNLOCKSHIPPLAN': 'UnlockShipPlan',
+  
+  // Mission commands
+  'ADDOPPONENT': 'AddOpponent',
+  'SETDECKPREPARATIONSCRIPT': 'SetDeckPreparationScript',
+  'SETSPECCONDITION': 'SetSpecCondition',
+  'BUILDINGHELPSCRIPT': 'BuildingHelpScript',
+  'MODIFYOPPONENTSBUILDSPEED': 'ModifyOpponentsBuildSpeed',
+  'SETSHIPTYPE': 'SetShipType',
+  'FLIGHTHELPSCRIPT': 'FlightHelpScript',
+  'ADDMISSIONCREDITS': 'AddMissionCredits',
+  'ADDOPPONENTSCREDITS': 'AddOpponentsCredits',
+  'IFMISSIONRESULTIS': 'IfMissionResultIs',
+  'IFMISSIONRESULTMIN': 'IfMissionResultMin',
+  // Aggiunti i mapping mancanti
+  'ASKCHAR': 'AskChar',
+  'SETFLIGHTSTATUSBAR': 'SetFlightStatusBar',
+  'SET_TO': 'SET_TO',
+  'HIDEALLPATHS': 'HideAllPaths',
+  'ACT_MISSION': 'ACT_MISSION',
+  'SETFLIGHTDECKPREPARATIONSCRIPT': 'SetFlightDeckPreparationScript',
+  'SETTURNBASED': 'SetTurnBased',
+  'SETCREDITS': 'SetCredits',
+  'ADDMISSIONCREDITSBYRESULT': 'AddMissionCreditsByResult',
+  'SUBOPPONENTCREDITSBYRESULT': 'SubOpponentCreditsByResult',
+  'SETFOCUSIFCREDITS': 'SetFocusIfCredits',
+  'SETNODEKNOWN': 'SetNodeKnown',
+  'ADDINFOWINDOW': 'AddInfoWindow',
+  'SHOWINFOWINDOW': 'ShowInfoWindow',
+  'SETACHIEVEMENTATTEMPT': 'SetAchievementAttempt',
+  'UNLOCKSHUTTLES': 'UnlockShuttles',
+  'ALIENHELPSCRIPT': 'AlienHelpScript',
+  'SETMISSIONASFAILED': 'SetMissionAsFailed',
+  'SETMISSIONASCOMPLETED': 'SetMissionAsCompleted',
+  'ALLSHIPSGIVEUP': 'AllShipsGiveUp',
+  'GIVEUPFLIGHT': 'GiveUpFlight',
+  'SAVESTATE': 'SaveState',
+  'LOADSTATE': 'LoadState',
+  'QUITCAMPAIGN': 'QuitCampaign',
+  'ADDPARTTOSHIP': 'AddPartToShip',
+  'ADDPARTTOASIDESLOT': 'AddPartToAsideSlot',
+  'SETADVPILE': 'SetAdvPile',
+  'SETSECRETADVPILE': 'SetSecretAdvPile',
+  'ADDSHIPPARTS': 'AddShipParts',
+  'SHOWHELPIMAGE': 'ShowHelpImage'
 };
 
 /**
@@ -1220,7 +1461,8 @@ const COMMAND_SYNTAX_MAP = {
  */
 function serializeCommand(element, targetLanguage = 'EN') {
   if (element.type === 'UNKNOWN_COMMAND') {
-    return `${element.name} ${element.parameters.raw || ''}`.trim();
+    // Per UNKNOWN_COMMAND usa content o originalLine
+    return element.content || element.originalLine || '';
   }
   
   const commandDef = COMMAND_CATALOG[element.type];
@@ -1246,8 +1488,35 @@ function serializeCommand(element, targetLanguage = 'EN') {
       if (paramValue !== undefined) {
         if (paramType === 'multilingual') {
           parts.push(`"${getTextForLanguage(paramValue, targetLanguage)}"`);
+        } else if (typeof paramValue === 'object' && paramValue !== null && !Array.isArray(paramValue)) {
+          // Se è un oggetto, potrebbe essere multilingua anche se non marcato
+          // Controlla se ha chiavi che sembrano codici lingua
+          const hasLangKeys = Object.keys(paramValue).some(key => 
+            ['EN', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU'].includes(key)
+          );
+          if (hasLangKeys) {
+            // È multilingua, usa getTextForLanguage
+            const text = getTextForLanguage(paramValue, targetLanguage);
+            // Aggiungi virgolette se il parametro sembra essere testo
+            if (paramName === 'text' || paramName === 'message' || paramName === 'script') {
+              parts.push(`"${text}"`);
+            } else {
+              parts.push(text);
+            }
+          } else {
+            parts.push(JSON.stringify(paramValue));
+          }
         } else {
-          parts.push(paramValue);
+          // Per parametri stringa che necessitano virgolette
+          // NON aggiungere virgolette per: achievement, shiptype, condition, pile, progress, node, image
+          const noQuoteParams = ['achievement', 'shiptype', 'pile', 'progress', 'node', 'image'];
+          const needQuoteParams = ['path', 'file']; // Parametri che necessitano sempre virgolette
+          
+          if ((paramType === 'string' && !noQuoteParams.includes(paramName)) || needQuoteParams.includes(paramName)) {
+            parts.push(`"${paramValue}"`);
+          } else {
+            parts.push(paramValue);
+          }
         }
       }
     });
