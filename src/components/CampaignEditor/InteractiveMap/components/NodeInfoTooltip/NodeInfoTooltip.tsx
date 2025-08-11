@@ -3,7 +3,7 @@ import { MapNode } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.ty
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getLocalizedString } from '@/utils/localization';
 import { API_CONFIG, PATHS } from '@/config/constants';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 
 interface NodeInfoTooltipProps {
   node: MapNode;

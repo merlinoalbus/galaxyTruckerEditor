@@ -2,7 +2,7 @@ import React from 'react';
 import { FileCode, Star } from 'lucide-react';
 import { CampaignScript } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { scriptSelectorStyles } from '@/styles/CampaignEditor/InteractiveMap/styles/ScriptSelector/ScriptSelector.styles';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 import { ScriptItem } from '../ScriptItem/ScriptItem';
 
 interface ScriptListProps {

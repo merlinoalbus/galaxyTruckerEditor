@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tag, FileText, ExternalLink, Code } from 'lucide-react';
 import { Label } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 
 interface LabelDetailProps {
   item: Label;

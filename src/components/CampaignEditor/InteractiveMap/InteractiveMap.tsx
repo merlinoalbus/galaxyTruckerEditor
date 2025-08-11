@@ -4,7 +4,7 @@ import { Maximize2, Minimize2 } from 'lucide-react';
 import { InteractiveMapProps, MapNode, MapConnection } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { useInteractiveMap } from '@/hooks/CampaignEditor/InteractiveMap/useInteractiveMap';
 import { interactiveMapStyles } from '@/styles/CampaignEditor/InteractiveMap/InteractiveMap.styles';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 import { useFullscreen } from '@/contexts/FullscreenContext';
 
 import { MapCanvas } from './components/MapCanvas/MapCanvas';

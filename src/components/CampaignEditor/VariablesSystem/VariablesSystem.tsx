@@ -7,7 +7,7 @@ import { DetailView } from './components/DetailView/DetailView';
 import { CharactersView } from './components/CharactersView/CharactersView';
 import { ImagesView } from './components/ImagesView/ImagesView';
 import { AchievementsView } from './components/AchievementsView/AchievementsView';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 
 interface VariablesSystemProps {
   analysis?: any;

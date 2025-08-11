@@ -1,7 +1,7 @@
 import React from 'react';
 import { ToggleLeft, FileText, ExternalLink, Code } from 'lucide-react';
 import { Semaforo } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 
 interface SemaforoDetailProps {
   item: Semaforo;

@@ -9,7 +9,7 @@ import {
   GameImage,
   Achievement
 } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 
 type ElementItem = Variable | Semaforo | Label | Character | GameImage | Achievement;
 
