@@ -18,4 +18,62 @@ SCRIPTS
     END_OF_MENU
   END_OF_SCRIPT
 
+MISSION pippoMission
+  AddOpponent roughTrucker
+  SetDeckPreparationScript meteor1Deck
+  SetSpecCondition bet
+  INIT_BUILD
+    BuildingHelpScript 500 tutorialAdditionalConcepts
+    RESET shouldShowFlightTutorial
+    ModifyOpponentsBuildSpeed 75
+    SetShipType STI
+    SUB_SCRIPT stdParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+    FlightHelpScript tutorialAdditionalFlightConcepts
+  EVALUATE_FLIGHT
+    ShowDlgScene
+    ShowChar roughtrucker left
+    Delay 500
+    IF wasBet
+      IFMISSIONRESULTIS 1
+        Say "Ach jo."
+        Say "Tenhle hazard mě jednou zničí."
+        AddMissionCredits 3
+        AddOpponentsCredits 1 -3
+        Announce "Druhý trucker ti zaplatil 3 kredity."
+        UnlockAchievement camp_bet
+      ELSE
+        IFMISSIONRESULTIS 0
+          Say "Vyhrál jsem. Je na čase zaplatit, [g(kámo|děvče)]."
+          AddMissionCredits -3
+          AddOpponentsCredits 1 3
+          Announce "Zaplatil[g(|a)] jsi druhému truckerovi 3 kredity."
+        ELSE
+          Say "Tak jo, oba jsme to zvorali."
+          Say "To nejspíš znamená, že nikdo nevyhrál."
+          Say "Tak příště, jestli se odvážíš."
+        END_OF_IF
+      END_OF_IF
+    ELSE
+      IFMISSIONRESULTIS 1
+        Say "Uf, to jsem rád, že jsme se nevsadili."
+      ELSE
+        IFMISSIONRESULTIS 0
+          Say "Ha, doletěl jsem první. Škoda, že jsme se nevsadili."
+        ELSE
+          Say "Tak jo, oba jsme to zvorali."
+        END_OF_IF
+      END_OF_IF
+    END_OF_IF
+    Delay 300
+    HideChar roughtrucker
+    Delay 200
+    HideDlgScene
+  END_FLIGHT
+FINISH_MISSION
+END_OF_MISSION
+
 END_OF_SCRIPTS

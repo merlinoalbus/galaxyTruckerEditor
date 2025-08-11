@@ -72,7 +72,9 @@
       "Bash(npm install:*)",
       "Bash(dir:*)",
       "Bash(git log:*)",
-      "Bash(npx eslint:*)"
+      "Bash(npx eslint:*)",
+      "Bash(npm test)",
+      "Bash(del test_final_ifmissionresult.js test_final_maiuscolo.js)"
     ],
     "deny": []
   },
