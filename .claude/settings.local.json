@@ -85,7 +85,11 @@
       "Bash(fi)",
       "Bash(head:*)",
       "Bash(od:*)",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(do echo \"=== $lang/common.ts ===\")",
+      "Bash(do echo \"=== $lang/views.ts ===\")",
+      "Bash(do echo \"=== $lang ===\")",
+      "Bash(do echo -n \"$lang: \")"
     ],
     "deny": []
   },

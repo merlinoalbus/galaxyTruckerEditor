@@ -21,6 +21,11 @@ import { RefactoringRecommendationsCard } from './components/RefactoringRecommen
 
 import type { CampaignAnalysis } from '@/types/CampaignEditor';
 
+// Helper per interpolazione parametri
+const interpolate = (template: string, params: Record<string, any>) => {
+  return template.replace(/{(\w+)}/g, (_, key) => params[key] || '');
+};
+
 interface OverviewProps {
   analysis?: CampaignAnalysis | null;
 }
@@ -60,9 +65,9 @@ export const Overview: React.FC<OverviewProps> = ({ analysis }) => {
       {/* Header con export */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Analisi Avanzata Campagna</h1>
+          <h1 className="text-2xl font-bold">{t('overview.title')}</h1>
           <p className="text-gray-400 text-sm mt-1">
-            Metriche dettagliate e suggerimenti per migliorare la qualità del codice
+            {t('overview.description')}
           </p>
         </div>
         <button
@@ -70,7 +75,7 @@ export const Overview: React.FC<OverviewProps> = ({ analysis }) => {
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
         >
           <Download className="w-4 h-4" />
-          Esporta Report
+          {t('overview.exportReport')}
         </button>
       </div>
 
@@ -79,11 +84,13 @@ export const Overview: React.FC<OverviewProps> = ({ analysis }) => {
         <div className="bg-red-900/20 border border-red-700 rounded-lg p-4 mb-6">
           <div className="flex items-center gap-2 mb-2">
             <AlertTriangle className="w-5 h-5 text-red-400" />
-            <h3 className="font-semibold text-red-400">Avvisi Importanti</h3>
+            <h3 className="font-semibold text-red-400">{t('overview.importantWarnings')}</h3>
           </div>
           <div className="space-y-1">
             {statistics.warnings.map((warning, idx) => (
-              <div key={idx} className="text-sm text-red-300">• {warning}</div>
+              <div key={idx} className="text-sm text-red-300">
+                • {interpolate(t(warning.key as any), warning.params)}
+              </div>
             ))}
           </div>
         </div>
@@ -129,10 +136,10 @@ export const Overview: React.FC<OverviewProps> = ({ analysis }) => {
       {/* Ottimizzazioni suggerite */}
       {statistics.optimizations.length > 0 && (
         <div className="mt-6 bg-blue-900/20 border border-blue-700 rounded-lg p-4">
-          <h3 className="font-semibold text-blue-400 mb-2">Ottimizzazioni Suggerite</h3>
+          <h3 className="font-semibold text-blue-400 mb-2">{t('overview.suggestedOptimizations')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {statistics.optimizations.map((opt, idx) => (
-              <div key={idx} className="text-sm text-blue-300">• {opt}</div>
+              <div key={idx} className="text-sm text-blue-300">• {t(opt as any)}</div>
             ))}
           </div>
         </div>

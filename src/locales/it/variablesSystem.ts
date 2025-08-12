@@ -3,7 +3,7 @@
  */
 
 export const variablesSystemTranslations = {
-  'variablesSystem.title': 'Variables & System',
+  'variablesSystem.title': 'Variabili e Sistema',
   'variablesSystem.description': 'Gestisci e analizza tutti gli elementi della campagna',
   'variablesSystem.searchPlaceholder': 'Cerca',
   'variablesSystem.loadingData': 'Caricamento dati in corso...',

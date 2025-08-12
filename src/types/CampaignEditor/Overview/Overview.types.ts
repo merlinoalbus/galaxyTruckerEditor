@@ -43,8 +43,12 @@ export interface QualityIssue {
   elementName?: string;
   scriptName?: string;
   lineNumber?: number;
-  description: string;
-  suggestion?: string;
+  description?: string; // Legacy - da rimuovere
+  descriptionKey?: string; // Chiave di traduzione
+  descriptionParams?: Record<string, any>; // Parametri per interpolazione
+  suggestion?: string; // Legacy - da rimuovere
+  suggestionKey?: string; // Chiave di traduzione
+  suggestionParams?: Record<string, any>; // Parametri per interpolazione
 }
 
 export interface MaintenanceMetrics {
@@ -108,10 +112,14 @@ export interface RefactoringRecommendation {
   id: string;
   scriptName: string;
   type: 'split' | 'merge' | 'extract' | 'simplify' | 'remove';
-  reason: string;
+  reason?: string; // Legacy - da rimuovere
+  reasonKey?: string; // Chiave di traduzione
+  reasonParams?: Record<string, any>; // Parametri per interpolazione
   complexity: number;
   estimatedEffort: 'low' | 'medium' | 'high';
-  suggestedActions: string[];
+  suggestedActions?: string[]; // Legacy - da rimuovere
+  suggestedActionsKey?: string; // Chiave di traduzione
+  suggestedActionsParams?: Record<string, any>; // Parametri per interpolazione
   priority: 'low' | 'medium' | 'high';
   potentialImpact: {
     maintainability: number;
@@ -164,7 +172,7 @@ export interface OverviewStatistics {
   
   // Suggerimenti e Warning
   refactoringRecommendations: RefactoringRecommendation[];
-  warnings: string[];
+  warnings: Array<{key: string, params: Record<string, any>}>;
   optimizations: string[];
   
   // Statistiche di Base
