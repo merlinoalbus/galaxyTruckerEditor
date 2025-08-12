@@ -3,6 +3,7 @@ import { Code2, List, Plus, FileText, Save, Maximize2, Minimize2, AlertCircle, T
 import { visualFlowEditorStyles } from '@/styles/CampaignEditor/VisualFlowEditor/VisualFlowEditor.styles';
 import { NavigationBreadcrumb } from '../NavigationBreadcrumb';
 import { NavigationPathItem } from '@/hooks/CampaignEditor/VisualFlowEditor/useZoomNavigation';
+import { useTranslation } from '@/locales';
 
 interface ToolbarProps {
   isFlowFullscreen: boolean;
@@ -46,6 +47,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   scriptsButtonRef: externalScriptsButtonRef,
   missionsButtonRef: externalMissionsButtonRef
 }) => {
+  const { t } = useTranslation();
   const [isSaving, setIsSaving] = React.useState(false);
   const internalScriptsButtonRef = React.useRef<HTMLButtonElement>(null);
   const internalMissionsButtonRef = React.useRef<HTMLButtonElement>(null);
@@ -60,7 +62,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     try {
       const result = await onSaveScript();
       if (!result.success) {
-        console.error('Errore nel salvataggio:', result.error);
+        console.error(t('visualFlowEditor.toolbar.saveError'), result.error);
       }
     } finally {
       setIsSaving(false);
@@ -80,10 +82,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           <Code2 className={visualFlowEditorStyles.header.icon} />
           <div>
             <h3 className={visualFlowEditorStyles.header.title}>
-              Visual Flow Editor
+              {t('visualFlowEditor.title')}
             </h3>
             <p className={visualFlowEditorStyles.header.subtitle}>
-              Editor visuale completo con tutti i 14 tipi di IF
+              {t('visualFlowEditor.subtitle')}
             </p>
           </div>
         </div>
@@ -94,10 +96,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             <button
               onClick={onValidationErrorsClick}
               className="flex items-center gap-2 px-3 py-2 bg-red-900/50 border border-red-600 text-red-400 rounded-lg hover:bg-red-900/70 transition-colors cursor-pointer"
-              title="Clicca per vedere i dettagli degli errori"
+              title={t('visualFlowEditor.toolbar.clickToSeeErrors')}
             >
               <AlertCircle className="w-4 h-4" />
-              <span className="text-sm font-medium">{validationErrors} {validationErrors === 1 ? 'errore' : 'errori'}</span>
+              <span className="text-sm font-medium">{validationErrors} {validationErrors === 1 ? t('visualFlowEditor.toolbar.error') : t('visualFlowEditor.toolbar.errors')}</span>
             </button>
           )}
           
@@ -105,10 +107,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           ref={scriptsButtonRef}
           onClick={() => setShowScriptsList(!showScriptsList)}
           className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
-          title="Gestione Script"
+          title={t('visualFlowEditor.toolbar.scriptManagement')}
         >
           <List className="w-4 h-4" />
-          Scripts
+          {t('visualFlowEditor.toolbar.scripts')}
         </button>
         
         {setShowMissionsList && (
@@ -116,29 +118,29 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             ref={missionsButtonRef}
             onClick={() => setShowMissionsList(!showMissionsList)}
             className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
-            title="Gestione Missions"
+            title={t('visualFlowEditor.toolbar.missionManagement')}
           >
             <Target className="w-4 h-4" />
-            Missions
+            {t('visualFlowEditor.toolbar.missions')}
           </button>
         )}
         
         <button
           onClick={handleNewScript}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-          title="Nuovo Script"
+          title={t('visualFlowEditor.toolbar.newScript')}
         >
           <Plus className="w-4 h-4" />
-          Nuovo
+          {t('visualFlowEditor.toolbar.new')}
         </button>
         
         <button
           onClick={() => setShowJsonView(!showJsonView)}
           className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
-          title="Visualizza JSON"
+          title={t('visualFlowEditor.toolbar.viewJson')}
         >
           <FileText className="w-4 h-4" />
-          JSON
+          {t('visualFlowEditor.toolbar.json')}
         </button>
         
         {currentScript && (
@@ -149,11 +151,11 @@ export const Toolbar: React.FC<ToolbarProps> = ({
                 ? 'bg-gray-700 text-gray-500 cursor-not-allowed opacity-50' 
                 : 'bg-purple-600 hover:bg-purple-700 text-white'
             }`}
-            title={validationErrors > 0 ? `Correggi ${validationErrors} errori prima di salvare` : 'Salva Script'}
+            title={validationErrors > 0 ? t('visualFlowEditor.toolbar.fixErrorsBeforeSaving').replace('{count}', validationErrors.toString()) : t('visualFlowEditor.toolbar.saveScript')}
             disabled={validationErrors > 0 || isSaving}
           >
             <Save className="w-4 h-4" />
-            {isSaving ? 'Salvataggio...' : 'Salva'}
+            {isSaving ? t('visualFlowEditor.toolbar.saving') : t('visualFlowEditor.toolbar.save')}
           </button>
         )}
         

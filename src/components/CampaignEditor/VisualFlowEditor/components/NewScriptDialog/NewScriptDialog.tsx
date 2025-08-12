@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FileText, Target } from 'lucide-react';
 import type { NewScriptDialogProps } from './NewScriptDialog.types';
+import { useTranslation } from '@/locales';
 
 export const NewScriptDialog: React.FC<NewScriptDialogProps> = ({
   newScriptDialog,
@@ -8,6 +9,7 @@ export const NewScriptDialog: React.FC<NewScriptDialogProps> = ({
   confirmNewScript,
   confirmNewMission
 }) => {
+  const { t } = useTranslation();
   const [elementType, setElementType] = useState<'script' | 'mission'>('script');
   
   if (!newScriptDialog.isOpen) return null;
@@ -23,13 +25,13 @@ export const NewScriptDialog: React.FC<NewScriptDialogProps> = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-slate-800 border border-slate-600 rounded-lg p-6 w-96">
-        <h3 className="text-lg font-medium text-white mb-4">Nuovo Elemento</h3>
+        <h3 className="text-lg font-medium text-white mb-4">{t('visualFlowEditor.newScriptDialog.title')}</h3>
         
         <div className="space-y-4">
           {/* Selezione tipo */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Tipo di elemento
+              {t('visualFlowEditor.newScriptDialog.elementType')}
             </label>
             <div className="grid grid-cols-2 gap-2">
               <button
@@ -41,7 +43,7 @@ export const NewScriptDialog: React.FC<NewScriptDialogProps> = ({
                 onClick={() => setElementType('script')}
               >
                 <FileText className="w-4 h-4" />
-                <span>Script</span>
+                <span>{t('visualFlowEditor.newScriptDialog.script')}</span>
               </button>
               <button
                 className={`flex items-center justify-center gap-2 p-3 rounded-lg border transition-all ${
@@ -52,7 +54,7 @@ export const NewScriptDialog: React.FC<NewScriptDialogProps> = ({
                 onClick={() => setElementType('mission')}
               >
                 <Target className="w-4 h-4" />
-                <span>Mission</span>
+                <span>{t('visualFlowEditor.newScriptDialog.mission')}</span>
               </button>
             </div>
           </div>
@@ -60,12 +62,12 @@ export const NewScriptDialog: React.FC<NewScriptDialogProps> = ({
           {/* Input nome file */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Nome file
+              {t('visualFlowEditor.newScriptDialog.fileName')}
             </label>
             <input
               type="text"
               className="w-full bg-slate-700 border border-slate-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder={elementType === 'script' ? 'es. myScript.txt' : 'es. myMission.txt'}
+              placeholder={elementType === 'script' ? t('visualFlowEditor.newScriptDialog.scriptPlaceholder') : t('visualFlowEditor.newScriptDialog.missionPlaceholder')}
               value={newScriptDialog.fileName}
               onChange={(e) => setNewScriptDialog(prev => ({ ...prev, fileName: e.target.value, error: undefined }))}
               onKeyPress={(e) => e.key === 'Enter' && handleConfirm()}
@@ -82,7 +84,7 @@ export const NewScriptDialog: React.FC<NewScriptDialogProps> = ({
             className="flex-1 bg-slate-600 hover:bg-slate-500 text-white py-2 px-4 rounded-lg transition-colors"
             onClick={() => setNewScriptDialog({ isOpen: false, fileName: '' })}
           >
-            Annulla
+            {t('visualFlowEditor.newScriptDialog.cancel')}
           </button>
           <button
             className={`flex-1 text-white py-2 px-4 rounded-lg transition-colors ${
@@ -92,7 +94,7 @@ export const NewScriptDialog: React.FC<NewScriptDialogProps> = ({
             }`}
             onClick={handleConfirm}
           >
-            Crea {elementType === 'script' ? 'Script' : 'Mission'}
+            {elementType === 'script' ? t('visualFlowEditor.newScriptDialog.createScript') : t('visualFlowEditor.newScriptDialog.createMission')}
           </button>
         </div>
       </div>

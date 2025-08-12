@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Target, Flag, ChevronDown, ChevronUp } from 'lucide-react';
 import { AnchorPoint } from '../../AnchorPoint/AnchorPoint';
 import { InlineZoomControls } from '../../ZoomControls';
+import { useTranslation } from '@/locales';
 
 interface MissionBlockProps {
   block: any;
@@ -36,6 +37,7 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
   isZoomed = false,
   isInvalid = false
 }) => {
+  const { t } = useTranslation();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -84,7 +86,7 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
           }
         }}
         className="absolute top-8 right-3 p-1 bg-slate-700/80 hover:bg-slate-600 border border-slate-600/50 rounded-md z-10 transition-all duration-200 backdrop-blur-sm"
-        title={isCollapsed ? "Espandi missione" : "Comprimi missione"}
+        title={isCollapsed ? t('visualFlowEditor.mission.expand') : t('visualFlowEditor.mission.collapse')}
       >
         {isCollapsed 
           ? <ChevronDown className="w-3 h-3 text-gray-400" />
@@ -97,7 +99,7 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
         <div className="bg-purple-800/50 p-2 rounded-lg">
           <Target className="w-4 h-4 text-purple-400" />
         </div>
-        <label className="text-xs text-gray-400">Nome Missione:</label>
+        <label className="text-xs text-gray-400">{t('visualFlowEditor.mission.missionNameLabel')}</label>
         <input
           type="text"
           className="bg-purple-900/50 text-white px-2 py-1 rounded text-sm w-48 border border-purple-600 focus:border-purple-500 focus:outline-none"
@@ -106,12 +108,12 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
             const newName = e.target.value;
             onUpdate({ missionName: newName });
           }}
-          placeholder="Nome missione..."
+          placeholder={t('visualFlowEditor.mission.missionName')}
         />
         
         <div className="ml-auto flex items-center gap-4 text-xs text-gray-500">
-          <span>File: {block.fileName}</span>
-          <span>Blocchi: {(block.blocksMission?.length || 0) + (block.blocksFinish?.length || 0)}</span>
+          <span>{t('visualFlowEditor.mission.fileLabel')} {block.fileName}</span>
+          <span>{t('visualFlowEditor.mission.blocksLabel')} {(block.blocksMission?.length || 0) + (block.blocksFinish?.length || 0)}</span>
         </div>
       </div>
       
@@ -122,9 +124,9 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Target className="w-4 h-4 text-purple-400" />
-              <span className="text-sm font-medium text-purple-300">Blocchi Missione</span>
+              <span className="text-sm font-medium text-purple-300">{t('visualFlowEditor.mission.missionBlocksTitle')}</span>
               <span className="text-xs text-gray-400">
-                ({block.blocksMission?.length || 0} elementi)
+                ({block.blocksMission?.length || 0} {t('visualFlowEditor.mission.elements')})
               </span>
             </div>
             
@@ -133,7 +135,7 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
               <AnchorPoint
                 onDragOver={onDragOver}
                 onDrop={(e) => onDropAtIndexMission(e, 0)}
-                label="Inserisci qui"
+                label={t('visualFlowEditor.mission.insertHere')}
               />
               
               {/* Render mission blocks */}
@@ -160,9 +162,9 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Flag className="w-4 h-4 text-green-400" />
-              <span className="text-sm font-medium text-green-300">Fine Missione</span>
+              <span className="text-sm font-medium text-green-300">{t('visualFlowEditor.mission.missionFinishTitle')}</span>
               <span className="text-xs text-gray-400">
-                ({block.blocksFinish?.length || 0} elementi)
+                ({block.blocksFinish?.length || 0} {t('visualFlowEditor.mission.elements')})
               </span>
             </div>
             
@@ -171,7 +173,7 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
               <AnchorPoint
                 onDragOver={onDragOver}
                 onDrop={(e) => onDropAtIndexFinish(e, 0)}
-                label="Inserisci qui"
+                label={t('visualFlowEditor.mission.insertHere')}
               />
               
               {/* Render finish blocks */}

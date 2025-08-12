@@ -1,6 +1,7 @@
 import React from 'react';
 import { ChevronRight, Home } from 'lucide-react';
 import { NavigationPathItem } from '@/hooks/CampaignEditor/VisualFlowEditor/useZoomNavigation';
+import { useTranslation } from '@/locales';
 
 interface NavigationBreadcrumbProps {
   navigationPath: NavigationPathItem[];
@@ -17,6 +18,7 @@ export const NavigationBreadcrumb: React.FC<NavigationBreadcrumbProps> = ({
   onNavigate,
   className = ''
 }) => {
+  const { t } = useTranslation();
   if (navigationPath.length === 0) {
     return null;
   }
@@ -27,7 +29,7 @@ export const NavigationBreadcrumb: React.FC<NavigationBreadcrumbProps> = ({
       <button
         onClick={() => onNavigate(-1)}
         className="p-1 hover:bg-gray-700 rounded transition-colors"
-        title="Torna alla vista principale"
+        title={t('visualFlowEditor.navigation.backToMain')}
       >
         <Home className="w-4 h-4 text-gray-400" />
       </button>

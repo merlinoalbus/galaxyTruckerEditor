@@ -5,6 +5,7 @@ import { useVisualFlowEditor } from '@/hooks/CampaignEditor/VisualFlowEditor/use
 import { visualFlowEditorStyles } from '@/styles/CampaignEditor/VisualFlowEditor/VisualFlowEditor.styles';
 import { useFullscreen } from '@/contexts/FullscreenContext';
 import type { VisualFlowEditorProps } from '@/types/CampaignEditor/VisualFlowEditor/VisualFlowEditor.types';
+import { useTranslation } from '@/locales';
 
 // Import componenti modulari
 import { BlockRenderer } from './components/BlockRenderer/BlockRenderer';
@@ -42,6 +43,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
 }) => {
   const { isFlowFullscreen, toggleFlowFullscreen } = useFullscreen();
   const { isLoading } = useVisualFlowEditor(analysis || null);
+  const { t } = useTranslation();
 
   // Script management state
   const [availableScripts, setAvailableScripts] = useState<ScriptItem[]>([]);
@@ -199,7 +201,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
     return (
       <div className={visualFlowEditorStyles.loadingState}>
         <Code2 className="w-8 h-8 animate-pulse" />
-        <span>Caricamento Visual Flow Editor...</span>
+        <span>{t('visualFlowEditor.loading')}</span>
       </div>
     );
   }
@@ -302,7 +304,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
             <div className="flex items-center justify-center h-full">
               <div className="text-center text-gray-500">
                 <Code2 className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                <p>Nessuno script caricato</p>
+                <p>{t('visualFlowEditor.noScriptLoaded')}</p>
               </div>
             </div>
           )}

@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { Copy, Check, Eye, EyeOff } from 'lucide-react';
+import { useTranslation } from '@/locales';
 
 export interface JsonViewProps {
   /** Se true, il componente è visibile */
@@ -25,16 +26,21 @@ export interface JsonViewProps {
 export const JsonView: React.FC<JsonViewProps> = ({
   showJsonView,
   scriptJson,
-  title = 'JSON Output',
+  title,
   width = 384, // 96 * 4 = w-96 in pixels
   showToggle = false,
   onToggleView,
-  emptyPlaceholder = 'Nessuno script caricato',
+  emptyPlaceholder,
   allowFormatting = true,
   indentSize = 2
 }) => {
+  const { t } = useTranslation();
   const [isCopied, setIsCopied] = useState(false);
   const [isMinified, setIsMinified] = useState(false);
+  
+  // Valori di default con traduzioni
+  const finalTitle = title || t('visualFlowEditor.jsonView.title');
+  const finalPlaceholder = emptyPlaceholder || t('visualFlowEditor.jsonView.noScriptLoaded');
 
   const handleCopyJson = useCallback(async () => {
     if (!scriptJson) return;
@@ -48,7 +54,7 @@ export const JsonView: React.FC<JsonViewProps> = ({
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
     } catch (error) {
-      console.error('Errore nella copia del JSON:', error);
+      console.error(t('visualFlowEditor.jsonView.copyError'), error);
     }
   }, [scriptJson, isMinified, allowFormatting, indentSize]);
 
@@ -63,14 +69,14 @@ export const JsonView: React.FC<JsonViewProps> = ({
   }, [showJsonView, onToggleView]);
 
   const formatJson = useCallback((json: any) => {
-    if (!json) return emptyPlaceholder;
+    if (!json) return finalPlaceholder;
     
     if (isMinified || !allowFormatting) {
       return JSON.stringify(json);
     }
     
     return JSON.stringify(json, null, indentSize);
-  }, [isMinified, allowFormatting, indentSize, emptyPlaceholder]);
+  }, [isMinified, allowFormatting, indentSize, finalPlaceholder]);
 
   if (!showJsonView) return null;
 
@@ -86,12 +92,12 @@ export const JsonView: React.FC<JsonViewProps> = ({
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-white font-bold flex items-center gap-2">
-          {title}
+          {finalTitle}
           {showToggle && (
             <button
               onClick={handleToggleView}
               className="p-1 hover:bg-slate-700 rounded transition-colors"
-              title={showJsonView ? "Nascondi vista JSON" : "Mostra vista JSON"}
+              title={showJsonView ? t('visualFlowEditor.jsonView.hideView') : t('visualFlowEditor.jsonView.showView')}
             >
               {showJsonView ? (
                 <EyeOff className="w-4 h-4 text-gray-400" />
@@ -108,9 +114,9 @@ export const JsonView: React.FC<JsonViewProps> = ({
             <button
               onClick={handleToggleMinified}
               className="px-2 py-1 bg-slate-700 hover:bg-slate-600 text-white text-xs rounded transition-colors"
-              title={isMinified ? "Espandi JSON" : "Comprimi JSON"}
+              title={isMinified ? t('visualFlowEditor.jsonView.expand') : t('visualFlowEditor.jsonView.compress')}
             >
-              {isMinified ? "Espandi" : "Comprimi"}
+              {isMinified ? t('visualFlowEditor.jsonView.expand') : t('visualFlowEditor.jsonView.compress')}
             </button>
           )}
           
@@ -123,17 +129,17 @@ export const JsonView: React.FC<JsonViewProps> = ({
                 ? 'bg-blue-600 hover:bg-blue-700'
                 : 'bg-slate-600 cursor-not-allowed opacity-50'
             }`}
-            title="Copia JSON negli appunti"
+            title={t('visualFlowEditor.jsonView.copyToClipboard')}
           >
             {isCopied ? (
               <>
                 <Check className="w-3 h-3" />
-                Copiato!
+                {t('visualFlowEditor.jsonView.copied')}
               </>
             ) : (
               <>
                 <Copy className="w-3 h-3" />
-                Copia
+                {t('visualFlowEditor.jsonView.copy')}
               </>
             )}
           </button>
@@ -151,10 +157,10 @@ export const JsonView: React.FC<JsonViewProps> = ({
       {scriptJson && (
         <div className="mt-2 text-xs text-gray-500 flex justify-between">
           <span>
-            {Object.keys(scriptJson).length} chiavi
+            {Object.keys(scriptJson).length} {t('visualFlowEditor.jsonView.keys')}
           </span>
           <span>
-            {JSON.stringify(scriptJson).length} caratteri
+            {JSON.stringify(scriptJson).length} {t('visualFlowEditor.jsonView.characters')}
           </span>
         </div>
       )}

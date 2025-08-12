@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { IfBlockParameters } from './IfBlockParameters';
 import { AnchorPoint } from '../../AnchorPoint/AnchorPoint';
 import { ContainerBlock } from '../ContainerBlock/ContainerBlock';
+import { useTranslation } from '@/locales';
 
 const IF_TYPES = [
   { value: 'IF', label: 'IF' },
@@ -57,6 +58,7 @@ export const IfBlock: React.FC<IfBlockProps> = ({
   sessionData,
   isInvalid = false
 }) => {
+  const { t } = useTranslation();
   // Stato locale per controllare la visualizzazione del contenitore ELSE
   // Inizializzato in base alla presenza di blocchi in elseBlocks
   const [showElse, setShowElse] = useState(
@@ -137,14 +139,18 @@ export const IfBlock: React.FC<IfBlockProps> = ({
       // Se ci sono elementi, mostra T:x E:y, altrimenti mostra "0 elementi"
       if (thenCount > 0 || elseCount > 0) {
         elementCountText = `T:${thenCount} E:${elseCount}`;
-        elementCountTooltip = `Then: ${thenCount} elementi, Else: ${elseCount} elementi`;
+        elementCountTooltip = t('visualFlowEditor.if.thenElseTooltip')
+          .replace('{thenCount}', thenCount.toString())
+          .replace('{elseCount}', elseCount.toString());
       } else {
-        elementCountText = '0 elementi';
-        elementCountTooltip = 'Nessun elemento in Then o Else';
+        elementCountText = t('visualFlowEditor.if.noElements');
+        elementCountTooltip = t('visualFlowEditor.if.noElementsTooltip');
       }
     } else {
-      elementCountText = `${thenCount} elementi`;
-      elementCountTooltip = `Then: ${thenCount} elementi`;
+      elementCountText = thenCount === 1 
+        ? t('visualFlowEditor.if.elementSingle')
+        : t('visualFlowEditor.if.elements').replace('{count}', thenCount.toString());
+      elementCountTooltip = t('visualFlowEditor.if.thenTooltip').replace('{count}', thenCount.toString());
     }
     
     return {
@@ -245,7 +251,7 @@ export const IfBlock: React.FC<IfBlockProps> = ({
               <AnchorPoint
                 onDragOver={onDragOver}
                 onDrop={(e) => onDropThenAtIndex(e, 0)}
-                label="Inserisci in THEN"
+                label={t('visualFlowEditor.if.insertInThen')}
               />
               
               {/* Blocchi con punti di ancoraggio */}
@@ -275,7 +281,7 @@ export const IfBlock: React.FC<IfBlockProps> = ({
                 <AnchorPoint
                   onDragOver={onDragOver}
                   onDrop={(e) => onDropElseAtIndex(e, 0)}
-                  label="Inserisci in ELSE"
+                  label={t('visualFlowEditor.if.insertInElse')}
                 />
                 
                 {/* Blocchi con punti di ancoraggio */}

@@ -4,6 +4,7 @@ import { BaseBlock } from '../BaseBlock/BaseBlock';
 import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
 import { MultilingualTextEditor } from '../../MultilingualTextEditor';
 import { getBlockClassName } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
+import { useTranslation } from '@/locales';
 
 interface CommandBlockProps {
   block: any;
@@ -22,6 +23,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   sessionData,
   isInvalid = false
 }) => {
+  const { t } = useTranslation();
   // Stato per collapse/expand - command blocks default collapsed
   const [isCollapsed, setIsCollapsed] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -66,8 +68,8 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
             onChange={(text) => onUpdate({ 
               parameters: { ...block.parameters, text } 
             })}
-            placeholder="Testo dialogo"
-            label="Dialogo"
+            placeholder={t('visualFlowEditor.command.dialogText')}
+            label={t('visualFlowEditor.command.dialogLabel')}
           />
         );
       
@@ -80,8 +82,8 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
             onChange={(text) => onUpdate({ 
               parameters: { ...block.parameters, text } 
             })}
-            placeholder="Testo domanda"
-            label="Domanda"
+            placeholder={t('visualFlowEditor.command.questionText')}
+            label={t('visualFlowEditor.command.questionLabel')}
           />
         );
       
@@ -90,7 +92,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
           <input
             type="number"
             className="w-full p-2 bg-slate-800 text-white rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none"
-            placeholder="Millisecondi (es. 1000 = 1 secondo)"
+            placeholder={t('visualFlowEditor.command.milliseconds')}
             value={block.parameters?.duration || ''}
             onChange={(e) => onUpdate({ 
               parameters: { ...block.parameters, duration: parseInt(e.target.value) } 
@@ -107,7 +109,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
             onChange={(value) => onUpdate({ 
               parameters: { ...block.parameters, label: value } 
             })}
-            placeholder="Seleziona etichetta..."
+            placeholder={t('visualFlowEditor.command.selectLabel')}
             availableItems={sessionData?.labels || []}
             onAddItem={sessionData?.addLabel}
             className="w-full"
@@ -119,7 +121,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
           <input
             type="text"
             className="w-full p-2 bg-slate-800 text-white rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none"
-            placeholder="Nome etichetta..."
+            placeholder={t('visualFlowEditor.command.labelName')}
             value={block.parameters?.name || ''}
             onChange={(e) => {
               onUpdate({ 

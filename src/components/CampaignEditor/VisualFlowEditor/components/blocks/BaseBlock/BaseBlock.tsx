@@ -1,6 +1,7 @@
 import React, { useState, ReactNode, useRef, useEffect } from 'react';
 import { Trash2, ChevronDown, ChevronUp, GripVertical } from 'lucide-react';
 import { getBlockColors, getBlockIconBackground, getBlockDragHandle } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
+import { useTranslation } from '@/locales';
 
 interface BaseBlockProps {
   // Identificazione blocco
@@ -50,6 +51,7 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
   children,
   hideControls = false
 }) => {
+  const { t } = useTranslation();
   // Stato interno per collapse se non è controllato dall'esterno
   const [internalCollapsed, setInternalCollapsed] = useState(false);
   const [showCompactParams, setShowCompactParams] = useState(true);
@@ -129,7 +131,7 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
         <button
           onClick={onRemove}
           className="absolute top-2 right-2 p-1 bg-slate-700/80 hover:bg-red-600 border border-slate-600/50 rounded-md z-10 transition-all duration-200 backdrop-blur-sm"
-          title="Elimina blocco"
+          title={t('visualFlowEditor.block.deleteTitle')}
         >
           <Trash2 className="w-3 h-3 text-gray-400 hover:text-white" />
         </button>
@@ -140,7 +142,7 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
         <button
           onClick={handleToggleCollapse}
           className="absolute top-8 right-2 p-1 bg-slate-700/80 hover:bg-slate-600 border border-slate-600/50 rounded-md z-10 transition-all duration-200 backdrop-blur-sm"
-          title={isCollapsed ? "Espandi blocco" : "Comprimi blocco"}
+          title={isCollapsed ? t('visualFlowEditor.block.expandTitle') : t('visualFlowEditor.block.collapseTitle')}
         >
           {isCollapsed 
             ? <ChevronDown className="w-3 h-3 text-gray-400" />
@@ -155,7 +157,7 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
           className={`absolute -left-3 top-1/2 -translate-y-1/2 p-1 ${effectiveDragHandle} hover:opacity-100 opacity-70 rounded cursor-move transition-opacity`}
           draggable
           onDragStart={onDragStart}
-          title="Trascina per spostare"
+          title={t('visualFlowEditor.block.dragToMove')}
         >
           <GripVertical className="w-3 h-3 text-white" />
         </div>

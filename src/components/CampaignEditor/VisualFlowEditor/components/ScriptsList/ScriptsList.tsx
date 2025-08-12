@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search } from 'lucide-react';
 import type { ScriptsListProps } from './ScriptsList.types';
+import { useTranslation } from '@/locales';
 
 export const ScriptsList: React.FC<ScriptsListProps> = ({
   showScriptsList,
@@ -9,6 +10,7 @@ export const ScriptsList: React.FC<ScriptsListProps> = ({
   loadScript,
   buttonRef
 }) => {
+  const { t } = useTranslation();
   const [filteredScripts, setFilteredScripts] = useState(availableScripts);
   const [searchText, setSearchText] = useState('');
   const [position, setPosition] = useState({ top: 0, left: 0 });
@@ -86,7 +88,7 @@ export const ScriptsList: React.FC<ScriptsListProps> = ({
       style={positionStyle}
     >
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-white font-bold">Scripts Disponibili</h3>
+        <h3 className="text-white font-bold">{t('visualFlowEditor.scriptsList.title')}</h3>
         <button
           onClick={() => setShowScriptsList(false)}
           className="text-gray-400 hover:text-white"
@@ -100,7 +102,7 @@ export const ScriptsList: React.FC<ScriptsListProps> = ({
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
         <input
           type="text"
-          placeholder="Cerca script..."
+          placeholder={t('visualFlowEditor.scriptsList.searchPlaceholder')}
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           className="w-full pl-10 pr-3 py-2 bg-slate-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -124,7 +126,7 @@ export const ScriptsList: React.FC<ScriptsListProps> = ({
           ))
         ) : (
           <div className="text-gray-400 text-center py-4">
-            Nessuno script disponibile
+            {t('visualFlowEditor.scriptsList.noScriptsAvailable')}
           </div>
         )}
       </div>
