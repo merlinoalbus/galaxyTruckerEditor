@@ -3,7 +3,85 @@
  */
 
 export const visualFlowEditorTranslations = {
-  'visualFlowEditor.title': 'Visueller Fluss-Editor',
+  // Main Editor
+  'visualFlowEditor.title': 'Visual Flow Editor',
+  'visualFlowEditor.subtitle': 'Vollständiger visueller Editor mit allen 14 IF-Typen',
+  'visualFlowEditor.loading': 'Visual Flow Editor wird geladen...',
+  'visualFlowEditor.noScriptLoaded': 'Kein Skript geladen',
+  
+  // Toolbar
+  'visualFlowEditor.toolbar.scripts': 'Skripts',
+  'visualFlowEditor.toolbar.missions': 'Missionen',
+  'visualFlowEditor.toolbar.new': 'Neu',
+  'visualFlowEditor.toolbar.json': 'JSON',
+  'visualFlowEditor.toolbar.save': 'Speichern',
+  'visualFlowEditor.toolbar.saving': 'Speichern...',
+  'visualFlowEditor.toolbar.scriptManagement': 'Skriptverwaltung',
+  'visualFlowEditor.toolbar.missionManagement': 'Missionsverwaltung',
+  'visualFlowEditor.toolbar.newScript': 'Neues Skript',
+  'visualFlowEditor.toolbar.viewJson': 'JSON anzeigen',
+  'visualFlowEditor.toolbar.saveScript': 'Skript speichern',
+  'visualFlowEditor.toolbar.saveError': 'Fehler beim Speichern:',
+  'visualFlowEditor.toolbar.clickToSeeErrors': 'Klicken Sie, um Fehlerdetails zu sehen',
+  'visualFlowEditor.toolbar.error': 'Fehler',
+  'visualFlowEditor.toolbar.errors': 'Fehler',
+  'visualFlowEditor.toolbar.fixErrorsBeforeSaving': '{count} Fehler vor dem Speichern beheben',
+  
+  // New Script Dialog
+  'visualFlowEditor.newScriptDialog.title': 'Neues Element',
+  'visualFlowEditor.newScriptDialog.elementType': 'Elementtyp',
+  'visualFlowEditor.newScriptDialog.script': 'Skript',
+  'visualFlowEditor.newScriptDialog.mission': 'Mission',
+  'visualFlowEditor.newScriptDialog.fileName': 'Dateiname',
+  'visualFlowEditor.newScriptDialog.scriptPlaceholder': 'z.B. myScript.txt',
+  'visualFlowEditor.newScriptDialog.missionPlaceholder': 'z.B. myMission.txt',
+  'visualFlowEditor.newScriptDialog.cancel': 'Abbrechen',
+  'visualFlowEditor.newScriptDialog.create': 'Erstellen',
+  'visualFlowEditor.newScriptDialog.createScript': 'Skript erstellen',
+  'visualFlowEditor.newScriptDialog.createMission': 'Mission erstellen',
+  
+  // Scripts List
+  'visualFlowEditor.scriptsList.noScriptsAvailable': 'Keine Skripts verfügbar',
+  
+  // Missions List
+  'visualFlowEditor.missionsList.loadingMissions': 'Missionen werden geladen...',
+  
+  // Validation Errors Modal
+  'visualFlowEditor.validation.title': 'Validierungsfehler',
+  'visualFlowEditor.validation.close': 'Schließen',
+  'visualFlowEditor.validation.occurrence': 'Vorkommen',
+  'visualFlowEditor.validation.occurrences': 'Vorkommen',
+  'visualFlowEditor.validation.block': 'Block',
+  'visualFlowEditor.validation.path': 'Pfad',
+  'visualFlowEditor.validation.goToBlock': 'Gehe zu →',
+  'visualFlowEditor.validation.goToBlockTitle': 'Gehe zum Block',
+  'visualFlowEditor.validation.footer': 'Beheben Sie diese Fehler, um das ordnungsgemäße Funktionieren des Skripts zu gewährleisten. Blöcke mit Fehlern sind im Editor rot hervorgehoben.',
+  
+  // Validation Error Messages
+  'visualFlowEditor.validation.error': 'Validierungsfehler',
+  'visualFlowEditor.validation.consecutiveAskError': '🚫 Zwei aufeinanderfolgende ASK-Blöcke sind nicht erlaubt. Fügen Sie einen anderen Blocktyp zwischen die beiden ASK-Blöcke ein.',
+  'visualFlowEditor.validation.blockInBuildError': '🚫 Der {blockType}-Block kann nicht in einen BUILD-Block eingefügt werden. BUILD- und FLIGHT-Blöcke können nicht verschachtelt werden.',
+  'visualFlowEditor.validation.blockInFlightError': '🚫 Der {blockType}-Block kann nicht in einen FLIGHT-Block eingefügt werden. BUILD- und FLIGHT-Blöcke können nicht verschachtelt werden.',
+  'visualFlowEditor.validation.menuWithoutAskError': '🚫 Der MENU-Block muss von einem ASK-Block vorausgehen, um ordnungsgemäß zu funktionieren.',
+  'visualFlowEditor.validation.optOutsideMenuError': '🚫 Der OPT-Block kann nur in einen MENU-Block eingefügt werden.',
+  'visualFlowEditor.validation.onlyOptInMenuError': '🚫 Nur OPT-Blöcke können in ein MENU eingefügt werden. Der {blockType}-Block ist nicht erlaubt.',
+  'visualFlowEditor.validation.consecutiveAskDetailed': '💡 Zwei aufeinanderfolgende ASK-Blöcke sind nicht erlaubt. Das erste ASK ({firstAsk}) wird direkt von diesem ASK gefolgt. Fügen Sie einen SAY-, MENU- oder anderen Befehlsblock zwischen die beiden ASK-Blöcke ein, um sie zu trennen.',
+  'visualFlowEditor.validation.blockInBuildDetailed': '💡 Der {blockType}-Block befindet sich im Bereich "{area}" eines BUILD-Blocks. BUILD- und FLIGHT-Blöcke können nicht verschachtelt werden. Verschieben Sie diesen Block aus dem BUILD oder verwenden Sie andere Blocktypen.',
+  'visualFlowEditor.validation.blockInFlightDetailed': '💡 Der {blockType}-Block befindet sich im Bereich "{area}" eines FLIGHT-Blocks. BUILD- und FLIGHT-Blöcke können nicht verschachtelt werden. Verschieben Sie diesen Block aus dem FLIGHT.',
+  'visualFlowEditor.validation.noText': 'kein Text',
+  'visualFlowEditor.validation.areaInitialPhase': 'Anfangsphase',
+  'visualFlowEditor.validation.areaBuildStart': 'Bau-Start',
+  'visualFlowEditor.validation.areaFlightStart': 'Flug-Start',
+  'visualFlowEditor.validation.areaEvaluation': 'Auswertung',
+  'visualFlowEditor.validation.menuNeedsAsk': 'Der MENU-Block muss von einem ASK-Block vorausgehen.',
+  'visualFlowEditor.validation.menuAfterIfNoBranch': 'Das MENU folgt einem IF-Block, bei dem weder der THEN- noch der ELSE-Zweig mit ASK endet. Beide Zweige müssen mit ASK enden.',
+  'visualFlowEditor.validation.menuAfterIfNoThen': 'Das MENU folgt einem IF-Block, bei dem der THEN-Zweig nicht mit ASK endet. Fügen Sie ein ASK am Ende des THEN-Zweigs hinzu.',
+  'visualFlowEditor.validation.menuAfterIfNoElse': 'Das MENU folgt einem IF-Block, bei dem der ELSE-Zweig nicht mit ASK endet. Fügen Sie ein ASK am Ende des ELSE-Zweigs hinzu.',
+  'visualFlowEditor.validation.menuAfterMenu': 'Das MENU folgt einem anderen MENU. MENU-Blöcke enden nicht mit ASK, daher müssen Sie ein ASK zwischen die beiden MENUs einfügen.',
+  'visualFlowEditor.validation.menuAfterBlock': 'Das MENU folgt einem {blockType}-Block, der nicht mit ASK endet. Fügen Sie ein ASK vor dem MENU ein.',
+  'visualFlowEditor.validation.menuFirstBlock': 'Das MENU ist der erste Block im Skript. Es muss von mindestens einem ASK-Block vorausgegangen werden.',
+  'visualFlowEditor.validation.optOnlyInMenu': 'Der OPT-Block kann nur in einen MENU-Block eingefügt werden.',
+  'visualFlowEditor.validation.onlyOptInMenu': 'Der {blockType}-Block kann nicht in ein MENU eingefügt werden. Nur OPT-Blöcke sind erlaubt.',
   'visualFlowEditor.addBlock': 'Block hinzufügen',
   'visualFlowEditor.deleteBlock': 'Block löschen',
   'visualFlowEditor.moveUp': 'Nach oben verschieben',
@@ -17,15 +95,75 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.search': 'Suchen',
   'visualFlowEditor.searchPlaceholder': 'Blöcke suchen...',
   'visualFlowEditor.noResults': 'Keine Ergebnisse gefunden',
-  'visualFlowEditor.validation.error': 'Validierungsfehler',
   'visualFlowEditor.validation.askAfterMenu': 'ASK-Block kann nicht direkt nach MENU-Block folgen',
   'visualFlowEditor.validation.menuAfterAsk': 'MENU-Block kann nicht direkt nach ASK-Block folgen',
   'visualFlowEditor.validation.consecutiveAsk': 'Aufeinanderfolgende ASK-Blöcke sind nicht erlaubt',
+  'visualFlowEditor.validation.buildContainsBuild': 'BUILD kann keinen anderen BUILD-Block enthalten',
+  'visualFlowEditor.validation.buildContainsFlight': 'BUILD kann keinen FLIGHT-Block enthalten',
+  'visualFlowEditor.validation.flightContainsBuild': 'FLIGHT kann keinen BUILD-Block enthalten',
+  'visualFlowEditor.validation.flightContainsFlight': 'FLIGHT kann keinen anderen FLIGHT-Block enthalten',
+  'visualFlowEditor.validation.menuWithoutAsk': 'MENU muss von einem ASK-Block vorausgegangen werden',
+  'visualFlowEditor.validation.optOutsideMenu': 'OPT kann nur in einen MENU-Block eingefügt werden',
+  'visualFlowEditor.validation.genericError': 'Allgemeiner Validierungsfehler',
   'visualFlowEditor.validation.buildInsideContainer': 'BUILD-Block kann nicht in einem anderen Container-Block verschachtelt werden',
   'visualFlowEditor.validation.flightInsideContainer': 'FLIGHT-Block kann nicht in einem anderen Container-Block verschachtelt werden',
   'visualFlowEditor.validation.invalidPosition': 'Ungültige Position für diesen Block',
   'visualFlowEditor.validation.missingRequired': 'Erforderliche Felder fehlen',
+  
+  // Error Modal
+  'visualFlowEditor.errorModal.close': 'Schließen',
+  
+  // Tools Panel
+  'visualFlowEditor.tools.title': 'Werkzeuge',
+  'visualFlowEditor.tools.searchPlaceholder': 'Befehl suchen...',
+  'visualFlowEditor.tools.dragInfo': '✋ Ziehen 🖱️ Info',
+  
+  // Tool Categories
+  'visualFlowEditor.tools.category.general': 'Allgemein',
+  'visualFlowEditor.tools.category.constructs': 'Konstrukte',
+  'visualFlowEditor.tools.category.map': 'Karte',
+  'visualFlowEditor.tools.category.mission': 'Mission',
+  'visualFlowEditor.tools.category.variables': 'Variablen',
+  'visualFlowEditor.tools.category.info': 'Info & Hilfe',
+  'visualFlowEditor.tools.category.credits': 'Credits',
+  'visualFlowEditor.tools.category.achievement': 'Erfolge',
+  'visualFlowEditor.tools.category.characters': 'Charaktere',
+  'visualFlowEditor.tools.category.system': 'System',
+  'visualFlowEditor.tools.category.flow': 'Fluss',
+  'visualFlowEditor.tools.category.display': 'Anzeige',
+  'visualFlowEditor.tools.category.input': 'Eingabe',
+  'visualFlowEditor.tools.category.audio': 'Audio',
+  'visualFlowEditor.tools.category.animation': 'Animation',
+  'visualFlowEditor.tools.category.combat': 'Kampf',
+  'visualFlowEditor.tools.category.game': 'Spiel',
+  'visualFlowEditor.tools.category.special': 'Speziell',
+  
+  // JSON View
+  'visualFlowEditor.jsonView.title': 'JSON-Ansicht',
+  'visualFlowEditor.jsonView.copy': 'Kopieren',
+  'visualFlowEditor.jsonView.copied': 'Kopiert!',
+  'visualFlowEditor.jsonView.close': 'Schließen',
+  'visualFlowEditor.jsonView.noScriptLoaded': 'Kein Skript geladen',
+  'visualFlowEditor.jsonView.copyError': 'Fehler beim Kopieren von JSON:',
+  'visualFlowEditor.jsonView.hideView': 'JSON-Ansicht ausblenden',
+  'visualFlowEditor.jsonView.showView': 'JSON-Ansicht anzeigen',
+  'visualFlowEditor.jsonView.expand': 'Erweitern',
+  'visualFlowEditor.jsonView.compress': 'Komprimieren',
+  'visualFlowEditor.jsonView.copyToClipboard': 'JSON in Zwischenablage kopieren',
+  'visualFlowEditor.jsonView.keys': 'Schlüssel',
+  'visualFlowEditor.jsonView.characters': 'Zeichen',
+  
+  // Block Actions
+  'visualFlowEditor.block.delete': 'Löschen',
+  'visualFlowEditor.block.duplicate': 'Duplizieren',
+  'visualFlowEditor.block.moveUp': 'Nach oben verschieben',
+  'visualFlowEditor.block.moveDown': 'Nach unten verschieben',
+  'visualFlowEditor.block.zoomIn': 'Hineinzoomen',
+  'visualFlowEditor.block.zoomOut': 'Herauszoomen',
+  // Drag and Drop
   'visualFlowEditor.dragDrop.hint': 'Blöcke ziehen, um die Reihenfolge zu ändern',
+  'visualFlowEditor.dragDrop.dropHere': 'Hier ablegen',
+  'visualFlowEditor.dragDrop.cannotDrop': 'Hier kann nicht abgelegt werden',
   'visualFlowEditor.container.then': 'Dann',
   'visualFlowEditor.container.else': 'Sonst',
   'visualFlowEditor.container.empty': 'Leerer Container',
@@ -40,4 +178,254 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.loadError': 'Fehler beim Laden der Daten',
   'visualFlowEditor.saveSuccess': 'Änderungen erfolgreich gespeichert',
   'visualFlowEditor.saveError': 'Fehler beim Speichern der Änderungen',
+  
+  // Navigation Breadcrumb
+  'visualFlowEditor.navigation.root': 'Wurzel',
+  'visualFlowEditor.navigation.backToMain': 'Zurück zur Hauptansicht',
+  
+  // Scripts/Missions Lists
+  'visualFlowEditor.scriptsList.title': 'Verfügbare Skripts',
+  'visualFlowEditor.scriptsList.searchPlaceholder': 'Skripts suchen...',
+  'visualFlowEditor.missionsList.title': 'Verfügbare Missionen',
+  'visualFlowEditor.missionsList.searchPlaceholder': 'Missionen suchen...',
+  
+  // ToolsPanel
+  'visualFlowEditor.tools.inDevelopment': 'In Entwicklung',
+  'visualFlowEditor.tools.notImplemented': 'Nicht implementiert',
+  
+  // ZoomControls
+  'visualFlowEditor.zoom.zoomIn': 'In diesen Block hineinzoomen',
+  'visualFlowEditor.zoom.goBack': 'Zurück gehen',
+  
+  // MultilingualTextEditor
+  'visualFlowEditor.multilingual.expandLanguages': 'Sprachen erweitern',
+  'visualFlowEditor.multilingual.collapse': 'Einklappen',
+  'visualFlowEditor.multilingual.copyToAll': 'In alle Sprachen kopieren',
+  'visualFlowEditor.multilingual.copyFromEN': 'Aus EN kopieren',
+  'visualFlowEditor.multilingual.languages.en': 'Englisch',
+  'visualFlowEditor.multilingual.languages.cs': 'Tschechisch',
+  'visualFlowEditor.multilingual.languages.de': 'Deutsch',
+  'visualFlowEditor.multilingual.languages.es': 'Spanisch',
+  'visualFlowEditor.multilingual.languages.fr': 'Französisch',
+  'visualFlowEditor.multilingual.languages.pl': 'Polnisch',
+  'visualFlowEditor.multilingual.languages.ru': 'Russisch',
+  'visualFlowEditor.multilingual.defaultPlaceholder': 'Text eingeben...',
+  'visualFlowEditor.multilingual.defaultLabel': 'Text',
+  
+  // SelectWithModal
+  'visualFlowEditor.select.searchPlaceholder': 'Suchen...',
+  'visualFlowEditor.select.variableName': 'Variablenname',
+  'visualFlowEditor.select.semaphoreName': 'Semaphorname',
+  'visualFlowEditor.select.labelName': 'Labelname',
+  'visualFlowEditor.select.scriptName': 'Skriptname...',
+  'visualFlowEditor.select.missionName': 'Missionsname...',
+  'visualFlowEditor.select.selectVariable': 'Variable auswählen',
+  'visualFlowEditor.select.selectSemaphore': 'Semaphor auswählen',
+  'visualFlowEditor.select.selectLabel': 'Label auswählen',
+  'visualFlowEditor.select.selectScript': 'Skript auswählen',
+  'visualFlowEditor.select.selectMission': 'Mission auswählen',
+  'visualFlowEditor.select.select': 'Auswählen',
+  'visualFlowEditor.select.selectPlaceholder': 'Auswählen...',
+  'visualFlowEditor.select.variableType': 'Variable',
+  'visualFlowEditor.select.semaphoreType': 'Semaphor',
+  'visualFlowEditor.select.labelType': 'Label',
+  'visualFlowEditor.select.scriptType': 'Skript',
+  'visualFlowEditor.select.missionType': 'Mission',
+  'visualFlowEditor.select.alreadyExists': '{type} existiert bereits!',
+  'visualFlowEditor.select.nothingFound': 'Keine {type} gefunden',
+  'visualFlowEditor.select.nothingAvailable': 'Keine {type} verfügbar',
+  'visualFlowEditor.select.addNew': '{type} hinzufügen',
+  'visualFlowEditor.select.confirm': 'Bestätigen',
+  'visualFlowEditor.select.cancel': 'Abbrechen',
+  
+  // BaseBlock
+  'visualFlowEditor.block.deleteTitle': 'Block löschen',
+  'visualFlowEditor.block.expandTitle': 'Block erweitern',
+  'visualFlowEditor.block.collapseTitle': 'Block einklappen',
+  'visualFlowEditor.block.dragToMove': 'Ziehen zum Verschieben',
+  
+  // CommandBlock
+  'visualFlowEditor.command.dialogText': 'Dialogtext',
+  'visualFlowEditor.command.dialogLabel': 'Dialog',
+  'visualFlowEditor.command.questionText': 'Fragetext',
+  'visualFlowEditor.command.questionLabel': 'Frage',
+  'visualFlowEditor.command.milliseconds': 'Millisekunden (z.B. 1000 = 1 Sekunde)',
+  'visualFlowEditor.command.selectLabel': 'Label auswählen...',
+  'visualFlowEditor.command.labelName': 'Labelname...',
+  
+  // ScriptBlock
+  'visualFlowEditor.script.scriptName': 'Skriptname...',
+  'visualFlowEditor.script.expand': 'Block erweitern',
+  'visualFlowEditor.script.collapse': 'Block einklappen',
+  'visualFlowEditor.script.scriptNameLabel': 'Skriptname:',
+  'visualFlowEditor.script.fileLabel': 'Datei:',
+  'visualFlowEditor.script.blocksLabel': 'Blöcke:',
+  
+  // MissionBlock
+  'visualFlowEditor.mission.missionName': 'Missionsname...',
+  'visualFlowEditor.mission.expand': 'Mission erweitern',
+  'visualFlowEditor.mission.collapse': 'Mission einklappen',
+  'visualFlowEditor.mission.missionNameLabel': 'Missionsname:',
+  'visualFlowEditor.mission.fileLabel': 'Datei:',
+  'visualFlowEditor.mission.blocksLabel': 'Blöcke:',
+  'visualFlowEditor.mission.missionBlocksTitle': 'Missionsblöcke',
+  'visualFlowEditor.mission.elements': 'Elemente',
+  'visualFlowEditor.mission.insertHere': 'Hier einfügen',
+  'visualFlowEditor.mission.missionFinishTitle': 'Missionsende',
+  
+  // OptBlock
+  'visualFlowEditor.opt.selectVariable': 'Variable auswählen...',
+  'visualFlowEditor.opt.optionText': 'Optionstext...',
+  'visualFlowEditor.opt.simple': 'Einfach',
+  'visualFlowEditor.opt.conditional': 'Bedingt (IF)',
+  'visualFlowEditor.opt.conditionalNot': 'Bedingt (IF NOT)',
+  'visualFlowEditor.opt.elements': 'Elemente',
+  'visualFlowEditor.opt.conditionLabel': 'Bedingung:',
+  'visualFlowEditor.opt.optionTextLabel': 'Optionstext',
+  'visualFlowEditor.opt.insertHere': 'Hier einfügen',
+  'visualFlowEditor.opt.emptyContainer': 'Leerer Container',
+  'visualFlowEditor.opt.dragBlocksHere': 'Blöcke hier hinziehen',
+  
+  // IfBlock Parameters
+  'visualFlowEditor.if.selectSemaphore': 'Semaphor auswählen...',
+  'visualFlowEditor.if.orderPositions': 'Reihenfolgepositionen:',
+  'visualFlowEditor.if.selectVariable': 'Variable auswählen...',
+  'visualFlowEditor.if.value': 'Wert',
+  'visualFlowEditor.if.percentage': 'Prozentsatz (%)',
+  'visualFlowEditor.if.credits': 'Credits',
+  'visualFlowEditor.if.selectMission': 'Mission auswählen...',
+  'visualFlowEditor.if.result': 'Ergebnis',
+  'visualFlowEditor.if.minResult': 'Minimalergebnis',
+  'visualFlowEditor.if.campaignName': 'Kampagnenname (optional)',
+  'visualFlowEditor.if.tutorialId': 'Tutorial-ID',
+  'visualFlowEditor.if.thenElseTooltip': 'Dann: {thenCount} Elemente, Sonst: {elseCount} Elemente',
+  'visualFlowEditor.if.noElements': '0 Elemente',
+  'visualFlowEditor.if.noElementsTooltip': 'Keine Elemente in Dann oder Sonst',
+  'visualFlowEditor.if.elementSingle': '1 Element',
+  'visualFlowEditor.if.elements': '{count} Elemente',
+  'visualFlowEditor.if.thenTooltip': 'Dann: {count} Elemente',
+  'visualFlowEditor.if.insertInThen': 'In DANN einfügen',
+  'visualFlowEditor.if.insertInElse': 'In SONST einfügen',
+  
+  // BuildBlock
+  'visualFlowEditor.build.initPhase': 'Anfangsphase',
+  'visualFlowEditor.build.startPhase': 'Bau-Start',
+  'visualFlowEditor.build.insertHere': 'Hier einfügen',
+  'visualFlowEditor.build.elements': 'Elemente',
+  
+  // FlightBlock
+  'visualFlowEditor.flight.initPhase': 'Anfangsphase',
+  'visualFlowEditor.flight.startPhase': 'Flug-Start',
+  'visualFlowEditor.flight.evaluatePhase': 'Auswertung',
+  'visualFlowEditor.flight.insertHere': 'Hier einfügen',
+  'visualFlowEditor.flight.elements': 'Elemente',
+  
+  // MenuBlock
+  'visualFlowEditor.menu.elements': 'Elemente',
+  'visualFlowEditor.menu.insertHere': 'Hier einfügen',
+  'visualFlowEditor.menu.emptyContainer': 'Leerer Container',
+  'visualFlowEditor.menu.dragBlocksHere': 'Blöcke hier hinziehen',
+  
+  // AnchorPoint
+  'visualFlowEditor.anchorPoint.dropNotAllowed': 'Ablegen hier nicht erlaubt',
+  
+  // Tool Descriptions - General
+  'visualFlowEditor.tools.delay.description': 'Verzögerung in Millisekunden hinzufügen',
+  'visualFlowEditor.tools.go.description': 'Zu Label springen',
+  'visualFlowEditor.tools.subScript.description': 'Unterskript ausführen',
+  'visualFlowEditor.tools.exitMenu.description': 'Menü verlassen',
+  'visualFlowEditor.tools.say.description': 'Dialog anzeigen',
+  'visualFlowEditor.tools.changeChar.description': 'Charakter wechseln',
+  'visualFlowEditor.tools.set.description': 'Semaphor setzen',
+  'visualFlowEditor.tools.ask.description': 'Frage stellen',
+  'visualFlowEditor.tools.hideChar.description': 'Charakter verstecken',
+  'visualFlowEditor.tools.showChar.description': 'Charakter anzeigen',
+  'visualFlowEditor.tools.reset.description': 'Semaphor zurücksetzen',
+  'visualFlowEditor.tools.label.description': 'Label definieren',
+  'visualFlowEditor.tools.hideDlgScene.description': 'Dialogszene verstecken',
+  'visualFlowEditor.tools.showDlgScene.description': 'Dialogszene anzeigen',
+  'visualFlowEditor.tools.return.description': 'Von Unterskript zurückkehren',
+  'visualFlowEditor.tools.announce.description': 'Ankündigung machen',
+  'visualFlowEditor.tools.sayChar.description': 'Charakter spricht',
+  
+  // Tool Descriptions - Constructs
+  'visualFlowEditor.tools.if.description': 'Bedingungsverzweigung',
+  'visualFlowEditor.tools.menu.description': 'Menüoptionen anzeigen',
+  'visualFlowEditor.tools.opt.description': 'Menüoption',
+  'visualFlowEditor.tools.build.description': 'Bauphase',
+  'visualFlowEditor.tools.flight.description': 'Flugphase',
+  
+  // Tool Descriptions - Map
+  'visualFlowEditor.tools.showNode.description': 'Kartenknoten anzeigen',
+  'visualFlowEditor.tools.hideNode.description': 'Kartenknoten verstecken',
+  'visualFlowEditor.tools.addNode.description': 'Kartenknoten hinzufügen',
+  'visualFlowEditor.tools.setNodeKnown.description': 'Knoten als bekannt markieren',
+  'visualFlowEditor.tools.showPath.description': 'Pfad anzeigen',
+  'visualFlowEditor.tools.hidePath.description': 'Pfad verstecken',
+  'visualFlowEditor.tools.hideAllPaths.description': 'Alle Pfade verstecken',
+  'visualFlowEditor.tools.showButton.description': 'Button anzeigen',
+  'visualFlowEditor.tools.hideButton.description': 'Button verstecken',
+  'visualFlowEditor.tools.centerMapByNode.description': 'Karte auf Knoten zentrieren',
+  'visualFlowEditor.tools.centerMapByPath.description': 'Karte auf Pfad zentrieren',
+  'visualFlowEditor.tools.movePlayerToNode.description': 'Spieler zu Knoten bewegen',
+  
+  // Tool Descriptions - Mission
+  'visualFlowEditor.tools.addOpponent.description': 'Gegner hinzufügen',
+  'visualFlowEditor.tools.setShipType.description': 'Schiffstyp setzen',
+  'visualFlowEditor.tools.addPartToShip.description': 'Teil zum Schiff hinzufügen',
+  'visualFlowEditor.tools.addPartToAsideSlot.description': 'Teil zu Neben-Slot hinzufügen',
+  'visualFlowEditor.tools.addShipParts.description': 'Mehrere Teile hinzufügen',
+  'visualFlowEditor.tools.finishMission.description': 'Mission beenden',
+  'visualFlowEditor.tools.actMission.description': 'Mission aktivieren',
+  'visualFlowEditor.tools.setDeckPreparationScript.description': 'Deck-Skript setzen',
+  'visualFlowEditor.tools.setFlightDeckPreparationScript.description': 'Flugdeck-Skript setzen',
+  'visualFlowEditor.tools.setAdvPile.description': 'Abenteuer-Stapel setzen',
+  'visualFlowEditor.tools.setSecretAdvPile.description': 'Geheimen Stapel setzen',
+  'visualFlowEditor.tools.setSpecCondition.description': 'Spezielle Bedingung setzen',
+  'visualFlowEditor.tools.modifyOpponentsBuildSpeed.description': 'Baugeschwindigkeit modifizieren',
+  'visualFlowEditor.tools.setTurnBased.description': 'Rundenbasierten Modus setzen',
+  'visualFlowEditor.tools.setMissionAsFailed.description': 'Mission als fehlgeschlagen markieren',
+  'visualFlowEditor.tools.setMissionAsCompleted.description': 'Mission als abgeschlossen markieren',
+  'visualFlowEditor.tools.allShipsGiveUp.description': 'Alle Schiffe geben auf',
+  'visualFlowEditor.tools.giveUpFlight.description': 'Flug aufgeben',
+  
+  // Tool Descriptions - Variables
+  'visualFlowEditor.tools.setTo.description': 'Variablenwert setzen',
+  'visualFlowEditor.tools.add.description': 'Zu Variable hinzufügen',
+  'visualFlowEditor.tools.setFocus.description': 'Fokus setzen',
+  'visualFlowEditor.tools.resetFocus.description': 'Fokus zurücksetzen',
+  'visualFlowEditor.tools.setFocusIfCredits.description': 'Bedingten Fokus setzen',
+  
+  // Tool Descriptions - Info
+  'visualFlowEditor.tools.addInfoWindow.description': 'Info-Fenster hinzufügen',
+  'visualFlowEditor.tools.showInfoWindow.description': 'Info-Fenster anzeigen',
+  'visualFlowEditor.tools.showHelpImage.description': 'Hilfsbild anzeigen',
+  'visualFlowEditor.tools.buildingHelpScript.description': 'Bau-Hilfsskript',
+  'visualFlowEditor.tools.flightHelpScript.description': 'Flug-Hilfsskript',
+  'visualFlowEditor.tools.alienHelpScript.description': 'Alien-Hilfsskript',
+  
+  // Tool Descriptions - Credits
+  'visualFlowEditor.tools.addCredits.description': 'Credits hinzufügen',
+  'visualFlowEditor.tools.setCredits.description': 'Credits setzen',
+  'visualFlowEditor.tools.addMissionCredits.description': 'Missions-Credits hinzufügen',
+  'visualFlowEditor.tools.addMissionCreditsByResult.description': 'Credits nach Ergebnis',
+  'visualFlowEditor.tools.subOpponentCreditsByResult.description': 'Credits abziehen',
+  'visualFlowEditor.tools.addOpponentsCredits.description': 'Gegner-Credits hinzufügen',
+  
+  // Tool Descriptions - Achievement
+  'visualFlowEditor.tools.setAchievementProgress.description': 'Erfolg-Fortschritt setzen',
+  'visualFlowEditor.tools.setAchievementAttempt.description': 'Erfolg-Versuch setzen',
+  'visualFlowEditor.tools.unlockAchievement.description': 'Erfolg freischalten',
+  'visualFlowEditor.tools.unlockShipPlan.description': 'Schiffsplan freischalten',
+  'visualFlowEditor.tools.unlockShuttles.description': 'Shuttles freischalten',
+  
+  // Tool Descriptions - Characters
+  'visualFlowEditor.tools.askChar.description': 'Frage mit Charakter',
+  'visualFlowEditor.tools.focusChar.description': 'Auf Charakter fokussieren',
+  
+  // Tool Descriptions - System
+  'visualFlowEditor.tools.setFlightStatusBar.description': 'Flug-Statusleiste setzen',
+  'visualFlowEditor.tools.saveState.description': 'Spielstand speichern',
+  'visualFlowEditor.tools.loadState.description': 'Spielstand laden',
+  'visualFlowEditor.tools.quitCampaign.description': 'Kampagne verlassen',
 } as const;
