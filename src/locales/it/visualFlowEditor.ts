@@ -64,14 +64,37 @@ export const visualFlowEditorTranslations = {
   // GO Block
   'visualFlowEditor.blocks.go.anchor': 'Ancora:',
   'visualFlowEditor.blocks.go.goToLabel': 'Vai all\'etichetta',
+
+  // LABEL Block
+  'visualFlowEditor.blocks.label.anchorName': 'Nome Ancora',
+  'visualFlowEditor.blocks.label.hint': 'Non sono ammessi spazi nei nomi delle ancore',
+  
+  // SUB_SCRIPT Block
+  'visualFlowEditor.blocks.subScript.scriptName': 'Nome Script',
+  'visualFlowEditor.blocks.subScript.hint': 'Seleziona lo script da eseguire',
+  
+  // EXIT_MENU Block
+  'visualFlowEditor.blocks.exitMenu.description': 'Esci dal menu corrente',
+  'visualFlowEditor.blocks.exitMenu.info': 'Questo comando esce dal menu corrente e continua l\'esecuzione',
+  'visualFlowEditor.blocks.exitMenu.compact': 'Esci dal menu',
+  'visualFlowEditor.blocks.exitMenu.fullDescription': 'Esci dal menu corrente. Questo comando esce dal menu corrente e continua l\'esecuzione.',
   
   // Validation Error Messages (existing and new)
   'visualFlowEditor.validation.error': 'Errore di validazione',
+  'visualFlowEditor.validation.delayNoDuration': 'Il blocco DELAY deve avere un valore di durata. Imposta la durata in millisecondi.',
+  'visualFlowEditor.validation.sayNoText': 'Il blocco SAY deve avere del testo. Aggiungi almeno il testo in inglese.',
+  'visualFlowEditor.validation.askNoText': 'Il blocco ASK deve avere del testo. Aggiungi almeno il testo in inglese.',
+  'visualFlowEditor.validation.goNoLabel': 'Il blocco GO deve avere una label selezionata. Scegli una label di destinazione.',
+  'visualFlowEditor.validation.labelNoName': 'Il blocco LABEL deve avere un nome. Imposta il nome dell\'ancora.',
+  'visualFlowEditor.validation.subScriptNoName': 'Il blocco SUB_SCRIPT deve avere un nome script. Seleziona uno script da eseguire.',
+  'visualFlowEditor.validation.optNoText': 'Il blocco OPT deve avere del testo. Aggiungi almeno il testo in inglese.',
   'visualFlowEditor.validation.consecutiveAskError': '🚫 Due blocchi ASK consecutivi non sono permessi. Inserisci un altro tipo di blocco tra i due ASK.',
   'visualFlowEditor.validation.blockInBuildError': '🚫 Il blocco {blockType} non può essere inserito dentro un blocco BUILD. I blocchi BUILD e FLIGHT non possono essere annidati.',
   'visualFlowEditor.validation.blockInFlightError': '🚫 Il blocco {blockType} non può essere inserito dentro un blocco FLIGHT. I blocchi BUILD e FLIGHT non possono essere annidati.',
   'visualFlowEditor.validation.menuWithoutAskError': '🚫 Il blocco MENU deve essere preceduto da un blocco ASK per funzionare correttamente.',
   'visualFlowEditor.validation.optOutsideMenuError': '🚫 Il blocco OPT può essere inserito solo all\'interno di un blocco MENU.',
+  'visualFlowEditor.validation.exitMenuOutsideOptError': '🚫 Il blocco EXIT_MENU può essere inserito solo all\'interno di un blocco OPT.',
+  'visualFlowEditor.validation.exitMenuOnlyInOpt': 'Il blocco EXIT_MENU può essere inserito solo all\'interno di un blocco OPT.',
   'visualFlowEditor.validation.onlyOptInMenuError': '🚫 Solo blocchi OPT possono essere inseriti in un MENU. Il blocco {blockType} non è permesso.',
   'visualFlowEditor.validation.consecutiveAskDetailed': '💡 Due blocchi ASK consecutivi non sono permessi. Il primo ASK ({firstAsk}) è seguito direttamente da questo ASK. Inserisci un blocco SAY, MENU o altro comando tra i due ASK per separarli.',
   'visualFlowEditor.validation.blockInBuildDetailed': '💡 Il blocco {blockType} si trova dentro l\'area "{area}" di un blocco BUILD. I blocchi BUILD e FLIGHT non possono essere annidati. Sposta questo blocco fuori dal BUILD o usa altri tipi di blocchi.',

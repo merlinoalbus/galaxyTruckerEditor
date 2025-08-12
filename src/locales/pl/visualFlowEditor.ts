@@ -64,9 +64,18 @@ export const visualFlowEditorTranslations = {
   // GO Block
   'visualFlowEditor.blocks.go.anchor': 'Kotwica:',
   'visualFlowEditor.blocks.go.goToLabel': 'Przejdź do etykiety',
+
+  // LABEL Block
+  'visualFlowEditor.blocks.label.anchorName': 'Nazwa Kotwicy',
+  'visualFlowEditor.blocks.label.hint': 'Spacje nie są dozwolone w nazwach kotwic',
   
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Błąd walidacji',
+  'visualFlowEditor.validation.delayNoDuration': 'Blok DELAY musi mieć wartość czasu trwania. Ustaw czas trwania w milisekundach.',
+  'visualFlowEditor.validation.sayNoText': 'Blok SAY musi mieć tekst. Dodaj przynajmniej tekst angielski.',
+  'visualFlowEditor.validation.askNoText': 'Blok ASK musi mieć tekst. Dodaj przynajmniej tekst angielski.',
+  'visualFlowEditor.validation.goNoLabel': 'Blok GO musi mieć wybraną etykietę. Wybierz etykietę docelową.',
+  'visualFlowEditor.validation.labelNoName': 'Blok LABEL musi mieć nazwę. Ustaw nazwę kotwicy.',
   'visualFlowEditor.validation.consecutiveAskError': '🚫 Dwa kolejne bloki ASK nie są dozwolone. Wstaw inny typ bloku między dwa bloki ASK.',
   'visualFlowEditor.validation.blockInBuildError': '🚫 Blok {blockType} nie może być wstawiony do bloku BUILD. Bloki BUILD i FLIGHT nie mogą być zagnieżdżone.',
   'visualFlowEditor.validation.blockInFlightError': '🚫 Blok {blockType} nie może być wstawiony do bloku FLIGHT. Bloki BUILD i FLIGHT nie mogą być zagnieżdżone.',

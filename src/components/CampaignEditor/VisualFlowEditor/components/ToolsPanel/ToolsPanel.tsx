@@ -208,7 +208,7 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({ onToolDragStart }) => {
             zIndex: 9999
           }}
         >
-          <div className="font-bold text-sm">{tooltipData.tool.name}</div>
+          <div className="font-semibold text-sm">{tooltipData.tool.name}</div>
           {tooltipData.tool.description && (
             <div className="text-xs text-gray-300 mt-1">{tooltipData.tool.description}</div>
           )}

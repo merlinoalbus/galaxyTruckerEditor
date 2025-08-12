@@ -1,21 +1,12 @@
 SCRIPTS
 
   SCRIPT aaa_pippo
-    Say "Hello!!!"
+    Delay 100
     IF tutorialCompleted
-      Ask "DE How"
+      Delay 1000
     ELSE
-      Say "test"
-      Ask ""what's?!""
+      Say "Hello"
     END_OF_IF
-    MENU
-      OPT "Fine, Thks!"
-        Say "Very good!"
-      END_OF_OPT
-      OPT_IF tutorialCompleted "No, sono affranto per il tutorial"
-        GO start
-      END_OF_OPT
-    END_OF_MENU
   END_OF_SCRIPT
 
 END_OF_SCRIPTS

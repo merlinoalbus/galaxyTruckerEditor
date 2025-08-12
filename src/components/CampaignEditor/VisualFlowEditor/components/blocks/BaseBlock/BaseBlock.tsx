@@ -180,7 +180,7 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
         </div>
         
         {/* Label blocco */}
-        <span className="text-xs font-bold text-white uppercase tracking-wide whitespace-nowrap ml-2 flex-shrink-0">
+        <span className="text-xs font-semibold text-white uppercase tracking-wide whitespace-nowrap ml-2 flex-shrink-0">
           {blockType}
         </span>
         

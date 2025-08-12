@@ -64,14 +64,37 @@ export const visualFlowEditorTranslations = {
   // GO Block
   'visualFlowEditor.blocks.go.anchor': 'Anchor:',
   'visualFlowEditor.blocks.go.goToLabel': 'Go to label',
+
+  // LABEL Block
+  'visualFlowEditor.blocks.label.anchorName': 'Anchor Name',
+  'visualFlowEditor.blocks.label.hint': 'No spaces allowed in anchor names',
+  
+  // SUB_SCRIPT Block
+  'visualFlowEditor.blocks.subScript.scriptName': 'Script Name',
+  'visualFlowEditor.blocks.subScript.hint': 'Select the script to execute',
+  
+  // EXIT_MENU Block
+  'visualFlowEditor.blocks.exitMenu.description': 'Exit from current menu',
+  'visualFlowEditor.blocks.exitMenu.info': 'This command exits the current menu and continues execution',
+  'visualFlowEditor.blocks.exitMenu.compact': 'Exit menu',
+  'visualFlowEditor.blocks.exitMenu.fullDescription': 'Exit from current menu. This command exits the current menu and continues execution.',
   
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Validation error',
+  'visualFlowEditor.validation.delayNoDuration': 'DELAY block must have a duration value. Set the duration in milliseconds.',
+  'visualFlowEditor.validation.sayNoText': 'SAY block must have text. Add at least the English text.',
+  'visualFlowEditor.validation.askNoText': 'ASK block must have text. Add at least the English text.',
+  'visualFlowEditor.validation.goNoLabel': 'GO block must have a label selected. Choose a target label.',
+  'visualFlowEditor.validation.labelNoName': 'LABEL block must have a name. Set the anchor name.',
+  'visualFlowEditor.validation.optNoText': 'OPT block must have text. Add at least the English text.',
+  'visualFlowEditor.validation.subScriptNoName': 'SUB_SCRIPT block must have a script name. Select a script to execute.',
   'visualFlowEditor.validation.consecutiveAskError': '🚫 Two consecutive ASK blocks are not allowed. Insert another type of block between the two ASK blocks.',
   'visualFlowEditor.validation.blockInBuildError': '🚫 The {blockType} block cannot be inserted inside a BUILD block. BUILD and FLIGHT blocks cannot be nested.',
   'visualFlowEditor.validation.blockInFlightError': '🚫 The {blockType} block cannot be inserted inside a FLIGHT block. BUILD and FLIGHT blocks cannot be nested.',
   'visualFlowEditor.validation.menuWithoutAskError': '🚫 The MENU block must be preceded by an ASK block to function properly.',
   'visualFlowEditor.validation.optOutsideMenuError': '🚫 The OPT block can only be inserted inside a MENU block.',
+  'visualFlowEditor.validation.exitMenuOutsideOptError': '🚫 The EXIT_MENU block can only be inserted inside an OPT block.',
+  'visualFlowEditor.validation.exitMenuOnlyInOpt': 'The EXIT_MENU block can only be inserted inside an OPT block.',
   'visualFlowEditor.validation.onlyOptInMenuError': '🚫 Only OPT blocks can be inserted in a MENU. The {blockType} block is not allowed.',
   'visualFlowEditor.validation.consecutiveAskDetailed': '💡 Two consecutive ASK blocks are not allowed. The first ASK ({firstAsk}) is followed directly by this ASK. Insert a SAY, MENU or other command block between the two ASK blocks to separate them.',
   'visualFlowEditor.validation.blockInBuildDetailed': '💡 The {blockType} block is inside the "{area}" area of a BUILD block. BUILD and FLIGHT blocks cannot be nested. Move this block out of the BUILD or use other block types.',
@@ -266,6 +289,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.milliseconds': 'Milliseconds (e.g. 1000 = 1 second)',
   'visualFlowEditor.command.selectLabel': 'Select label...',
   'visualFlowEditor.command.labelName': 'Label name...',
+  'visualFlowEditor.command.selectScript': 'Select script...',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Script name...',

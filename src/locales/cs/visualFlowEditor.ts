@@ -64,9 +64,18 @@ export const visualFlowEditorTranslations = {
   // GO Block
   'visualFlowEditor.blocks.go.anchor': 'Kotva:',
   'visualFlowEditor.blocks.go.goToLabel': 'Přejít na štítek',
+
+  // LABEL Block
+  'visualFlowEditor.blocks.label.anchorName': 'Název Kotvy',
+  'visualFlowEditor.blocks.label.hint': 'V názvech kotev nejsou povoleny mezery',
   
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Chyba validace',
+  'visualFlowEditor.validation.delayNoDuration': 'Blok DELAY musí mít hodnotu trvání. Nastavte trvání v milisekundách.',
+  'visualFlowEditor.validation.sayNoText': 'Blok SAY musí mít text. Přidejte alespoň anglický text.',
+  'visualFlowEditor.validation.askNoText': 'Blok ASK musí mít text. Přidejte alespoň anglický text.',
+  'visualFlowEditor.validation.goNoLabel': 'Blok GO musí mít vybraný štítek. Vyberte cílový štítek.',
+  'visualFlowEditor.validation.labelNoName': 'Blok LABEL musí mít název. Nastavte název kotvy.',
   'visualFlowEditor.validation.consecutiveAskError': '🚫 Dva po sobě jdoucí bloky ASK nejsou povoleny. Vložte jiný typ bloku mezi dva ASK bloky.',
   'visualFlowEditor.validation.blockInBuildError': '🚫 Blok {blockType} nelze vložit do bloku BUILD. Bloky BUILD a FLIGHT nemohou být vnořené.',
   'visualFlowEditor.validation.blockInFlightError': '🚫 Blok {blockType} nelze vložit do bloku FLIGHT. Bloky BUILD a FLIGHT nemohou být vnořené.',

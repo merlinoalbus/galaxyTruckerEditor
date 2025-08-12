@@ -2,7 +2,11 @@ SCRIPTS
 
   SCRIPT aaa_pippo
     Delay 100
-    GO menu_principale
+    IF tutorialCompleted
+      Delay 1000
+    ELSE
+      Say "Hello"
+    END_OF_IF
   END_OF_SCRIPT
 
 END_OF_SCRIPTS

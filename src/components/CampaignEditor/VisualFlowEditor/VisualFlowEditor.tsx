@@ -386,6 +386,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
                 <BlockRenderer
                   key={block.id}
                   block={block}
+                  invalidBlocks={validationErrors.invalidBlocks}
                   onUpdateBlock={(id, updates) => {
                     setCurrentScriptBlocks(prev => {
                       const updated = updateBlockRecursive(prev, id, updates);
@@ -417,7 +418,6 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
                   currentFocusedBlockId={currentFocusedBlockId}
                   sessionData={extendedSessionData}
                   createDropValidator={createDropValidator}
-                  invalidBlocks={validationErrors.invalidBlocks}
                 />
               ))}
             </div>
