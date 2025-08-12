@@ -1,7 +1,7 @@
 import React from 'react';
 import { Users, FileText, ExternalLink } from 'lucide-react';
 import { Character } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 
 interface CharacterDetailProps {
   item: Character;

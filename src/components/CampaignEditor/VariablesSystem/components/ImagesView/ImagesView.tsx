@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Image as ImageIcon, Search, Download, Calendar, HardDrive, ChevronDown, ChevronRight } from 'lucide-react';
 import { useImagesView } from '@/hooks/CampaignEditor/VariablesSystem/hooks/ImagesView/useImagesView';
 import { ImageData } from '@/types/CampaignEditor/VariablesSystem/types/ImagesView/ImagesView.types';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 
 interface ImagesViewProps {
   onNavigateToScript?: (scriptName: string, imageName: string) => void;

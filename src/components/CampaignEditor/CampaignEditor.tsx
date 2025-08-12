@@ -10,7 +10,7 @@ import { VisualFlowEditor } from './VisualFlowEditor/VisualFlowEditor';
 import { VariablesSystem } from './VariablesSystem/VariablesSystem';
 import { Overview } from './Overview/Overview';
 import { ElementCounters } from './components/Header/components/ElementCounters/ElementCounters';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 
 export const CampaignEditor: React.FC = () => {
   const { t } = useTranslation();

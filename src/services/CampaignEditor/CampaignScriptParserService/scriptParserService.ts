@@ -84,7 +84,7 @@ export const scriptParserService = {
     const upperLine = trimmed.toUpperCase();
     
     let type = 'unknown';
-    let parameters: Record<string, string | number | boolean> = {};
+    let parameters: Record<string, any> = {};
     let metadata: Record<string, string | number | string[]> = {};
 
     // Identify command type and extract parameters
@@ -98,13 +98,13 @@ export const scriptParserService = {
       type = 'dialog_text';
       const match = trimmed.match(/ShowDlgText\s+"(.+)"/i);
       if (match) {
-        parameters.text = match[1];
+        parameters.text = { EN: match[1] };
       }
     } else if (upperLine.startsWith('SHOWDLGBUTTON')) {
       type = 'dialog_button';
       const match = trimmed.match(/ShowDlgButton\s+"(.+)"\s+(\w+)/i);
       if (match) {
-        parameters.text = match[1];
+        parameters.text = { EN: match[1] };
         parameters.action = match[2];
       }
     } else if (upperLine.startsWith('RUNSCRIPT')) {

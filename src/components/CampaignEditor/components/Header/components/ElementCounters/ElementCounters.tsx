@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Code, Map, Zap, Tag, Users, Database, Image, Trophy } from 'lucide-react';
 import { API_CONFIG, API_ENDPOINTS } from '@/config/constants';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 
 interface ElementCounts {
   scripts: number;

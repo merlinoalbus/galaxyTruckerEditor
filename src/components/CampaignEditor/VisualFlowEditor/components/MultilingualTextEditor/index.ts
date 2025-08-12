@@ -1,0 +1,1 @@
+export { MultilingualTextEditor } from './MultilingualTextEditor';

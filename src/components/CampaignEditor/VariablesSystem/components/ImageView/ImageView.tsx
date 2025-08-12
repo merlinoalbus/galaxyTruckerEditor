@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image as ImageIcon, FileImage } from 'lucide-react';
 import { GameImage } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 
 interface ImageViewProps {
   image: GameImage;

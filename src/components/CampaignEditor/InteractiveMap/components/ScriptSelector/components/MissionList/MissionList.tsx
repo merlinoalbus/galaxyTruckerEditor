@@ -2,7 +2,7 @@ import React from 'react';
 import { Rocket, Star } from 'lucide-react';
 import { Mission } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { scriptSelectorStyles } from '@/styles/CampaignEditor/InteractiveMap/styles/ScriptSelector/ScriptSelector.styles';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 import { MissionItem } from '../MissionItem/MissionItem';
 
 interface MissionListProps {

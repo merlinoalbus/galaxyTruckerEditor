@@ -10,7 +10,7 @@ import {
 
 import { useOverview } from '@/hooks/CampaignEditor/Overview/useOverview';
 import { overviewStyles } from '@/styles/CampaignEditor/Overview/Overview.styles';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 
 // Import componenti
 import { LanguageCoverageCard } from './components/LanguageCoverageCard/LanguageCoverageCard';

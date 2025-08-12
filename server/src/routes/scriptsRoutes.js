@@ -1,7 +1,7 @@
 // scriptsRoutes.js - Routes per gestione scripts
 const express = require('express');
 const { parseScriptContent } = require('../parsers/scriptParser');
-const { parseScriptToBlocks, convertBlocksToScript } = require('../parsers/blockParser');
+const { parseScriptToBlocks, convertBlocksToScript, serializeElement } = require('../parsers/blockParser');
 const { getLogger } = require('../utils/logger');
 const config = require('../config/config');
 const { GAME_ROOT, SUPPORTED_LANGUAGES } = config;
@@ -1145,16 +1145,28 @@ function mergeBlocksTextContent(blocks, parsedScripts, path = []) {
       mergedBlock.children = mergeBlocksTextContent(mergedBlock.children, parsedScripts, childPath);
     }
     
-    // Merge ricorsivo per thenBranch
+    // Merge ricorsivo per thenBranch (legacy)
     if (mergedBlock.thenBranch) {
       const thenPath = [...path, { prop: 'thenBranch', index }];
       mergedBlock.thenBranch = mergeBlocksTextContent(mergedBlock.thenBranch, parsedScripts, thenPath);
     }
     
-    // Merge ricorsivo per elseBranch
+    // Merge ricorsivo per elseBranch (legacy)
     if (mergedBlock.elseBranch) {
       const elsePath = [...path, { prop: 'elseBranch', index }];
       mergedBlock.elseBranch = mergeBlocksTextContent(mergedBlock.elseBranch, parsedScripts, elsePath);
+    }
+    
+    // Merge ricorsivo per thenBlocks (nuovo formato IF)
+    if (mergedBlock.thenBlocks) {
+      const thenPath = [...path, { prop: 'thenBlocks', index }];
+      mergedBlock.thenBlocks = mergeBlocksTextContent(mergedBlock.thenBlocks, parsedScripts, thenPath);
+    }
+    
+    // Merge ricorsivo per elseBlocks (nuovo formato IF)
+    if (mergedBlock.elseBlocks) {
+      const elsePath = [...path, { prop: 'elseBlocks', index }];
+      mergedBlock.elseBlocks = mergeBlocksTextContent(mergedBlock.elseBlocks, parsedScripts, elsePath);
     }
     
     return mergedBlock;
@@ -1181,6 +1193,12 @@ function countCommands(blocks) {
     }
     if (block.elseBranch) {
       count += countCommands(block.elseBranch);
+    }
+    if (block.thenBlocks) {
+      count += countCommands(block.thenBlocks);
+    }
+    if (block.elseBlocks) {
+      count += countCommands(block.elseBlocks);
     }
   }
   return count;
@@ -1216,11 +1234,22 @@ function extractVariables(blocks, variables) {
       }
     }
     
+    // Controlla anche i campi diretti per i blocchi IF
+    if (block.type === 'IF' && block.variabile) {
+      variables.add(block.variabile);
+    }
+    
     if (block.children) {
       extractVariables(block.children, variables);
     }
     if (block.elseBranch) {
       extractVariables(block.elseBranch, variables);
+    }
+    if (block.thenBlocks) {
+      extractVariables(block.thenBlocks, variables);
+    }
+    if (block.elseBlocks) {
+      extractVariables(block.elseBlocks, variables);
     }
   }
 }
@@ -1237,6 +1266,12 @@ function extractCharacters(blocks, characters) {
     if (block.elseBranch) {
       extractCharacters(block.elseBranch, characters);
     }
+    if (block.thenBlocks) {
+      extractCharacters(block.thenBlocks, characters);
+    }
+    if (block.elseBlocks) {
+      extractCharacters(block.elseBlocks, characters);
+    }
   }
 }
 
@@ -1251,6 +1286,12 @@ function extractLabels(blocks, labels) {
     }
     if (block.elseBranch) {
       extractLabels(block.elseBranch, labels);
+    }
+    if (block.thenBlocks) {
+      extractLabels(block.thenBlocks, labels);
+    }
+    if (block.elseBlocks) {
+      extractLabels(block.elseBlocks, labels);
     }
   }
 }
@@ -1706,8 +1747,8 @@ async function saveScriptMultilingual(scriptName, blocks, languages) {
         // Serializza script per la lingua specifica
         const scriptContent = convertBlocksToScript(blocks, language);
         
-        // Prepara contenuto con header SCRIPT
-        const fullScriptContent = `SCRIPT ${scriptName}\n${scriptContent}\nEND_OF_SCRIPTS\n`;
+        // Il convertBlocksToScript ora gestisce già la struttura completa
+        const fullScriptContent = scriptContent;
         
         // Salva nel file della lingua
         const scriptPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${language}`, `${scriptName}.txt`);
@@ -1754,7 +1795,7 @@ async function saveScriptMultilingual(scriptName, blocks, languages) {
 async function saveScriptSingleLanguage(scriptName, blocks, language) {
   try {
     const scriptContent = convertBlocksToScript(blocks, language);
-    const fullScriptContent = `SCRIPT ${scriptName}\n${scriptContent}\nEND_OF_SCRIPTS\n`;
+    const fullScriptContent = scriptContent;
     
     const scriptPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${language}`, `${scriptName}.txt`);
     
@@ -1831,6 +1872,7 @@ function checkForMultilingualData(scripts) {
 // Verifica ricorsivamente se ci sono parametri multilingua
 function hasMultilingualParameters(blocks) {
   for (const block of blocks) {
+    // Controlla parametri in block.parameters
     if (block.parameters) {
       for (const param of Object.values(block.parameters)) {
         if (typeof param === 'object' && param !== null && !Array.isArray(param)) {
@@ -1842,10 +1884,20 @@ function hasMultilingualParameters(blocks) {
       }
     }
     
+    // Controlla anche campi diretti come text (per SAY, ASK, etc.)
+    if (block.text && typeof block.text === 'object' && !Array.isArray(block.text)) {
+      const keys = Object.keys(block.text);
+      if (keys.length > 1 || (keys.length === 1 && keys[0].length === 2 && keys[0] !== 'EN')) {
+        return true;
+      }
+    }
+    
     // Verifica ricorsiva in tutte le proprietà che contengono array di blocchi
     if (block.children && hasMultilingualParameters(block.children)) return true;
     if (block.thenBranch && hasMultilingualParameters(block.thenBranch)) return true;
     if (block.elseBranch && hasMultilingualParameters(block.elseBranch)) return true;
+    if (block.thenBlocks && hasMultilingualParameters(block.thenBlocks)) return true;
+    if (block.elseBlocks && hasMultilingualParameters(block.elseBlocks)) return true;
   }
   return false;
 }
@@ -1858,13 +1910,14 @@ async function processFileForLanguage(filePath, fileScripts, language, results) 
   let existingScripts = {};
   
   if (fileExists) {
-    // Leggi e parsa il file esistente
+    // Leggi e parsa il file esistente per preservare script non modificati
     fileContent = await fs.readFile(filePath, 'utf8');
     const lines = fileContent.split('\n');
     
     // Estrai tutti gli script esistenti
     let currentScript = null;
     let scriptLines = [];
+    let inScript = false;
     
     for (const line of lines) {
       const trimmedLine = line.trim();
@@ -1872,12 +1925,14 @@ async function processFileForLanguage(filePath, fileScripts, language, results) 
       if (trimmedLine.startsWith('SCRIPT ')) {
         currentScript = trimmedLine.replace('SCRIPT ', '').trim();
         scriptLines = [line];
+        inScript = true;
       } else if (trimmedLine === 'END_OF_SCRIPT' && currentScript) {
         scriptLines.push(line);
-        existingScripts[currentScript] = scriptLines.join('\n');
+        existingScripts[currentScript] = scriptLines;
         currentScript = null;
         scriptLines = [];
-      } else if (currentScript) {
+        inScript = false;
+      } else if (inScript) {
         scriptLines.push(line);
       }
     }
@@ -1892,19 +1947,25 @@ async function processFileForLanguage(filePath, fileScripts, language, results) 
         actualBlocks = actualBlocks[0].children;
       }
       
-      // Usa la serializzazione multilingua per la lingua target (non estrarre prima)
-      const scriptContent = convertBlocksToScript(actualBlocks, language);
-      const contentLines = scriptContent.split('\n').filter(line => line.trim());
+      // Serializza solo il contenuto dello script (senza SCRIPTS wrapper)
+      const scriptContent = actualBlocks.map(block => serializeElement(block, language)).filter(line => line).join('\n');
       
-      // Costruisci il contenuto dello script con SCRIPT name ... END_OF_SCRIPT
-      const fullScriptContent = [
-        `SCRIPT ${script.name}`,
-        ...contentLines,
-        'END_OF_SCRIPT'
-      ].join('\n');
+      // Costruisci le linee dello script con indentazione
+      const scriptLines = [];
+      scriptLines.push(`  SCRIPT ${script.name}`);
+      
+      // Aggiungi contenuto con indentazione
+      const contentLines = scriptContent.split('\n');
+      for (const line of contentLines) {
+        if (line.trim()) {
+          scriptLines.push(`    ${line}`);
+        }
+      }
+      
+      scriptLines.push(`  END_OF_SCRIPT`);
       
       // Aggiorna o aggiungi lo script
-      existingScripts[script.name] = fullScriptContent;
+      existingScripts[script.name] = scriptLines;
       
       results.push({
         name: script.name,
@@ -1926,50 +1987,22 @@ async function processFileForLanguage(filePath, fileScripts, language, results) 
     }
   }
   
-  // Sostituisci solo gli script specifici richiesti
-  if (fileExists) {
-    // Per ogni script, sostituiscilo nel file esistente
-    for (const script of fileScripts) {
-      const actualBlocks = script.blocks.length === 1 && script.blocks[0].type === 'SCRIPT' && script.blocks[0].children 
-        ? script.blocks[0].children 
-        : script.blocks;
-      const scriptContent = convertBlocksToScript(actualBlocks, language);
-      const contentLines = scriptContent.split('\n').filter(line => line.trim());
-      
-      const newScriptLines = [
-        `  SCRIPT ${script.name}`,
-        ...contentLines.map(line => `  ${line}`),
-        '  END_OF_SCRIPT'
-      ];
-      
-      await replaceScriptInFile(filePath, script.name, newScriptLines);
-    }
-  } else {
-    // Crea nuovo file con tutti gli script richiesti
-    const scriptContents = [];
-    for (const script of fileScripts) {
-      const actualBlocks = script.blocks.length === 1 && script.blocks[0].type === 'SCRIPT' && script.blocks[0].children 
-        ? script.blocks[0].children 
-        : script.blocks;
-      const scriptContent = convertBlocksToScript(actualBlocks, language);
-      const contentLines = scriptContent.split('\n').filter(line => line.trim());
-      
-      scriptContents.push(`  SCRIPT ${script.name}`);
-      scriptContents.push(...contentLines.map(line => `  ${line}`));
-      scriptContents.push('  END_OF_SCRIPT');
-    }
-    
-    const finalContent = [
-      'SCRIPTS',
-      '',
-      ...scriptContents,
-      '',
-      'END_OF_SCRIPTS'
-    ].join('\n');
-    
-    await fs.ensureDir(path.dirname(filePath));
-    await fs.writeFile(filePath, finalContent, 'utf8');
+  // Ricostruisci il file completo
+  const finalLines = ['SCRIPTS', ''];
+  
+  // Aggiungi tutti gli script (esistenti e nuovi)
+  for (const [scriptName, scriptLines] of Object.entries(existingScripts)) {
+    finalLines.push(...scriptLines);
   }
+  
+  finalLines.push('', 'END_OF_SCRIPTS');
+  
+  // Assicurati che la directory esista
+  const scriptDir = path.dirname(filePath);
+  await fs.ensureDir(scriptDir);
+  
+  // Salva il file
+  await fs.writeFile(filePath, finalLines.join('\n'), 'utf8');
 }
 
 // Funzione helper per sostituire uno script specifico in un file

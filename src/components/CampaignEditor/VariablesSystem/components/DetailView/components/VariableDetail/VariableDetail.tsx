@@ -1,7 +1,7 @@
 import React from 'react';
 import { Hash, FileText, ExternalLink, Code } from 'lucide-react';
 import { Variable } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 
 interface VariableDetailProps {
   item: Variable;

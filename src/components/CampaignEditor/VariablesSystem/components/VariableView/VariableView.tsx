@@ -1,7 +1,7 @@
 import React from 'react';
 import { Hash } from 'lucide-react';
 import { Variable } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 
 interface VariableViewProps {
   variable: Variable;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Users, ChevronRight, Image as ImageIcon, User, FileText, ExternalLink } from 'lucide-react';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 import { useCharactersView } from '@/hooks/CampaignEditor/VariablesSystem/hooks/CharactersView/useCharactersView';
 import { CharactersViewProps } from '@/types/CampaignEditor/VariablesSystem/types/CharactersView/CharactersView.types';
 

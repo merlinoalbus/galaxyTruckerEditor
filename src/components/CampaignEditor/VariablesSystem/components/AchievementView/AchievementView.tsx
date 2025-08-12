@@ -3,7 +3,7 @@ import { Trophy, Target, Eye, EyeOff, RefreshCw } from 'lucide-react';
 import { Achievement } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getLocalizedString } from '@/utils/localization';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 
 interface AchievementViewProps {
   achievement: Achievement;
