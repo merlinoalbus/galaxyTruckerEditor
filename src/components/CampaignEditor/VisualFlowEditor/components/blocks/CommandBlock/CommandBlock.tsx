@@ -72,7 +72,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
               parameters: { ...block.parameters, text } 
             })}
             placeholder={t('visualFlowEditor.command.dialogText')}
-            label={t('visualFlowEditor.command.dialogLabel')}
+            label=""
           />
         );
       
