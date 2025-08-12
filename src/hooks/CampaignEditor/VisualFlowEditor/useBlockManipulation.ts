@@ -1,4 +1,4 @@
-import { validateAllBlocks } from './blockManipulation/validation/validateOperations';
+import { validateAllBlocks as validateAllBlocksBase } from './blockManipulation/validation/validateOperations';
 import { getDropErrorMessage as getDropErrorMessageBase } from './blockManipulation/validation/validationMessages';
 import { canDropBlock } from './blockManipulation/validation/dropValidation';
 import { updateBlockRecursive } from './blockManipulation/operations/updateOperations';
@@ -18,6 +18,11 @@ export const useBlockManipulation = () => {
     index?: number
   ) => {
     return getDropErrorMessageBase(blockType, containerId, containerType, blocks, index, t);
+  };
+  
+  // Wrapper per validateAllBlocks che passa t automaticamente
+  const validateAllBlocks = (blocks: any[]) => {
+    return validateAllBlocksBase(blocks, t);
   };
 
   return {

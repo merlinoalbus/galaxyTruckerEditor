@@ -68,7 +68,7 @@ export const validateBlockInsertion = (
  * @param blocks - Array di blocchi da validare
  * @returns Oggetto con numero di errori, blocchi invalidi e dettagli errori
  */
-export const validateAllBlocks = (blocks: any[]): { errors: number; invalidBlocks: string[]; details: any[] } => {
+export const validateAllBlocks = (blocks: any[], t?: (key: any) => string): { errors: number; invalidBlocks: string[]; details: any[] } => {
   let errors = 0;
   const invalidBlocks: string[] = [];
   const errorDetails: any[] = [];
@@ -84,7 +84,10 @@ export const validateAllBlocks = (blocks: any[]): { errors: number; invalidBlock
           blockId: block.id,
           blockType: block.type,
           errorType: 'CONSECUTIVE_ASK',
-          message: `Due blocchi ASK consecutivi non sono permessi. Il primo ASK (${prevAsk.parameters?.text?.EN || 'senza testo'}) è seguito direttamente da questo ASK. Inserisci un blocco SAY, MENU o altro comando tra i due ASK per separarli.`,
+          message: t ? 
+            t('visualFlowEditor.validation.consecutiveAskDetailed')
+              .replace('{firstAsk}', prevAsk.parameters?.text?.EN || t('visualFlowEditor.validation.noText'))
+            : `Due blocchi ASK consecutivi non sono permessi. Il primo ASK (${prevAsk.parameters?.text?.EN || 'senza testo'}) è seguito direttamente da questo ASK. Inserisci un blocco SAY, MENU o altro comando tra i due ASK per separarli.`,
           path: [...path],
           relatedBlockId: prevAsk.id
         });
@@ -99,7 +102,11 @@ export const validateAllBlocks = (blocks: any[]): { errors: number; invalidBlock
           blockId: block.id,
           blockType: block.type,
           errorType: block.type === 'BUILD' ? 'BUILD_CONTAINS_BUILD' : 'BUILD_CONTAINS_FLIGHT',
-          message: `Il blocco ${block.type} si trova dentro l'area "${containerArea}" di un blocco BUILD. I blocchi BUILD e FLIGHT non possono essere annidati. Sposta questo blocco fuori dal BUILD o usa altri tipi di blocchi.`,
+          message: t ?
+            t('visualFlowEditor.validation.blockInBuildDetailed')
+              .replace('{blockType}', block.type)
+              .replace('{area}', containerArea)
+            : `Il blocco ${block.type} si trova dentro l'area "${containerArea}" di un blocco BUILD. I blocchi BUILD e FLIGHT non possono essere annidati. Sposta questo blocco fuori dal BUILD o usa altri tipi di blocchi.`,
           path: [...path],
           relatedBlockId: parentBlock.id
         });
@@ -118,7 +125,11 @@ export const validateAllBlocks = (blocks: any[]): { errors: number; invalidBlock
           blockId: block.id,
           blockType: block.type,
           errorType: block.type === 'BUILD' ? 'FLIGHT_CONTAINS_BUILD' : 'FLIGHT_CONTAINS_FLIGHT',
-          message: `Il blocco ${block.type} si trova dentro l'area "${containerArea}" di un blocco FLIGHT. I blocchi BUILD e FLIGHT non possono essere annidati tra loro. Sposta questo blocco fuori dal FLIGHT.`,
+          message: t ?
+            t('visualFlowEditor.validation.blockInFlightDetailed')
+              .replace('{blockType}', block.type)
+              .replace('{area}', containerArea)
+            : `Il blocco ${block.type} si trova dentro l'area "${containerArea}" di un blocco FLIGHT. I blocchi BUILD e FLIGHT non possono essere annidati tra loro. Sposta questo blocco fuori dal FLIGHT.`,
           path: [...path],
           relatedBlockId: parentBlock.id
         });
