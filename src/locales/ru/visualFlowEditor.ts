@@ -57,6 +57,14 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.goToBlockTitle': 'Перейти к блоку',
   'visualFlowEditor.validation.footer': 'Исправьте эти ошибки для обеспечения правильной работы скрипта. Блоки с ошибками подсвечены красным в редакторе.',
   
+  // Delay Block
+  'visualFlowEditor.blocks.delay.duration': 'Длительность',
+  'visualFlowEditor.blocks.delay.hint': '1000 мс = 1 секунда',
+  
+  // GO Block
+  'visualFlowEditor.blocks.go.anchor': 'Якорь:',
+  'visualFlowEditor.blocks.go.goToLabel': 'Перейти к метке',
+  
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Ошибка валидации',
   'visualFlowEditor.validation.consecutiveAskError': '🚫 Два последовательных блока ASK не разрешены. Вставьте другой тип блока между двумя блоками ASK.',
@@ -114,6 +122,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.menuNoSimpleOpt': 'Блок MENU должен содержать хотя бы один простой блок OPT (без условий).',
   'visualFlowEditor.validation.askMustBeFollowedByMenu': 'Блок ASK должен следоваться блоком MENU. Если ASK внутри IF, MENU может быть в той же ветке или вне IF.',
   'visualFlowEditor.validation.askWithoutMenu': 'Блок ASK должен следоваться блоком MENU. Этот ASK является последним блоком и не имеет следующего MENU.',
+  'visualFlowEditor.validation.goWithoutLabel': 'Блок GO требует наличия хотя бы одного блока LABEL в скрипте. Добавьте блок LABEL перед использованием GO.',
   
   // Error Modal
   'visualFlowEditor.errorModal.close': 'Закрыть',

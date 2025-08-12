@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Code2 } from 'lucide-react';
 
 import { useVisualFlowEditor } from '@/hooks/CampaignEditor/VisualFlowEditor/useVisualFlowEditor';
@@ -6,6 +6,7 @@ import { visualFlowEditorStyles } from '@/styles/CampaignEditor/VisualFlowEditor
 import { useFullscreen } from '@/contexts/FullscreenContext';
 import type { VisualFlowEditorProps } from '@/types/CampaignEditor/VisualFlowEditor/VisualFlowEditor.types';
 import { useTranslation } from '@/locales';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Import componenti modulari
 import { BlockRenderer } from './components/BlockRenderer/BlockRenderer';
@@ -17,6 +18,7 @@ import { NewScriptDialog } from './components/NewScriptDialog';
 import { ToolsPanel } from './components/ToolsPanel';
 import { ErrorModal } from './components/ErrorModal/ErrorModal';
 import { ValidationErrorsModal } from './components/ValidationErrorsModal/ValidationErrorsModal';
+import { collectScriptLabels } from '@/hooks/CampaignEditor/VisualFlowEditor/utils/collectScriptLabels';
 // Import hooks custom modulari
 import { useBlockManipulation } from '@/hooks/CampaignEditor/VisualFlowEditor/useBlockManipulation';
 import { useDragAndDrop } from '@/hooks/CampaignEditor/VisualFlowEditor/useDragAndDrop';
@@ -44,6 +46,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
   const { isFlowFullscreen, toggleFlowFullscreen } = useFullscreen();
   const { isLoading } = useVisualFlowEditor(analysis || null);
   const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
 
   // Script management state
   const [availableScripts, setAvailableScripts] = useState<ScriptItem[]>([]);
@@ -63,6 +66,109 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
 
   // Usa hook per dati di sessione (variabili, semafori, labels, scripts, missions)
   const sessionData = useSessionData();
+  
+  // Raccogli le label presenti nello script corrente
+  const scriptLabels = React.useMemo(() => {
+    return collectScriptLabels(currentScriptBlocks);
+  }, [currentScriptBlocks]);
+  
+  // Funzione per navigare a un blocco LABEL
+  const goToLabel = useCallback((labelName: string) => {
+    // Funzione per trovare il blocco LABEL
+    const findLabelBlock = (blocks: any[], path: any[] = []): { block: any, path: any[] } | null => {
+      for (const block of blocks) {
+        if (block.type === 'LABEL' && block.parameters?.name === labelName) {
+          return { block, path };
+        }
+        
+        // Cerca nei figli
+        if (block.children) {
+          const found = findLabelBlock(block.children, [...path, block]);
+          if (found) return found;
+        }
+        
+        // Cerca nei rami IF
+        if (block.type === 'IF') {
+          if (block.thenBlocks) {
+            const found = findLabelBlock(block.thenBlocks, [...path, block]);
+            if (found) return found;
+          }
+          if (block.elseBlocks) {
+            const found = findLabelBlock(block.elseBlocks, [...path, block]);
+            if (found) return found;
+          }
+        }
+        
+        // Cerca nei blocchi MISSION
+        if (block.type === 'MISSION') {
+          if (block.blocksMission) {
+            const found = findLabelBlock(block.blocksMission, [...path, block]);
+            if (found) return found;
+          }
+          if (block.blocksFinish) {
+            const found = findLabelBlock(block.blocksFinish, [...path, block]);
+            if (found) return found;
+          }
+        }
+        
+        // Cerca nei blocchi BUILD
+        if (block.type === 'BUILD') {
+          if (block.blockInit) {
+            const found = findLabelBlock(block.blockInit, [...path, block]);
+            if (found) return found;
+          }
+          if (block.blockStart) {
+            const found = findLabelBlock(block.blockStart, [...path, block]);
+            if (found) return found;
+          }
+        }
+        
+        // Cerca nei blocchi FLIGHT
+        if (block.type === 'FLIGHT') {
+          if (block.blockInit) {
+            const found = findLabelBlock(block.blockInit, [...path, block]);
+            if (found) return found;
+          }
+          if (block.blockStart) {
+            const found = findLabelBlock(block.blockStart, [...path, block]);
+            if (found) return found;
+          }
+          if (block.blockEvaluate) {
+            const found = findLabelBlock(block.blockEvaluate, [...path, block]);
+            if (found) return found;
+          }
+        }
+        
+        // Cerca nei blocchi OPT
+        if (block.type === 'OPT' && block.children) {
+          const found = findLabelBlock(block.children, [...path, block]);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+    
+    const result = findLabelBlock(currentScriptBlocks);
+    if (result) {
+      // Scrolla al blocco
+      const element = document.querySelector(`[data-block-id="${result.block.id}"]`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Evidenzia temporaneamente il blocco
+        element.classList.add('ring-2', 'ring-blue-500', 'ring-offset-2', 'ring-offset-slate-900');
+        setTimeout(() => {
+          element.classList.remove('ring-2', 'ring-blue-500', 'ring-offset-2', 'ring-offset-slate-900');
+        }, 2000);
+      }
+    }
+  }, [currentScriptBlocks]);
+  
+  // Estendi sessionData con le label dello script e la funzione di navigazione
+  const extendedSessionData = React.useMemo(() => ({
+    ...sessionData,
+    scriptLabels,
+    goToLabel
+  }), [sessionData, scriptLabels, goToLabel]);
   
   // Usa hook per manipolazione blocchi
   const {
@@ -202,13 +308,15 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
     }
   }, [scriptId, loadScriptWithReset]);
 
+  // Validazione automatica quando cambiano i blocchi o la lingua
+  // NOTA: validateAllBlocks NON è memoizzato, quindi usa sempre la funzione t corrente
   useEffect(() => {
     const blocksToValidate = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
     if (blocksToValidate.length > 0) {
       const validation = validateAllBlocks(blocksToValidate);
       setValidationErrors(validation);
     }
-  }, [currentScriptBlocks, rootBlocks]); // Rimossa dipendenza da validateAllBlocks
+  }, [currentScriptBlocks, rootBlocks, currentLanguage]); // Solo currentLanguage, NON validateAllBlocks!
 
   if (isLoading) {
     return (
@@ -307,7 +415,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
                   onZoomOut={() => handleZoomOut()}
                   isZoomed={isZoomed}
                   currentFocusedBlockId={currentFocusedBlockId}
-                  sessionData={sessionData}
+                  sessionData={extendedSessionData}
                   createDropValidator={createDropValidator}
                   invalidBlocks={validationErrors.invalidBlocks}
                 />

@@ -8,6 +8,7 @@ import { validateAskInsertion } from './askValidation';
 import { validateContainerNesting } from './containerValidation';
 import { validateMenuInsertion, validateOptInsertion, validateMenuContent, canInsertMenuAfterBlock } from './menuValidation';
 import { blockEndsWithAsk } from './blockValidators';
+import { validateGoInsertion, hasLabelInScript } from './goValidation';
 
 /**
  * Valida l'inserimento di un blocco in una posizione specifica
@@ -56,6 +57,13 @@ export const validateBlockInsertion = (
   // Validazione per blocchi dentro MENU - solo OPT permessi
   if (!validateMenuContent(targetContainer, blockType)) {
     return false;
+  }
+
+  // Validazione per GO - richiede presenza di LABEL
+  if (blockType === 'GO') {
+    if (allBlocks && !validateGoInsertion(allBlocks)) {
+      return false;
+    }
   }
 
   return true;
@@ -295,6 +303,25 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string): { er
           message: t ? t('visualFlowEditor.validation.optOnlyInMenu') : 'The OPT block can only be inserted inside a MENU block.',
           path: [...path]
         });
+      }
+      
+      // Valida blocchi GO (richiedono presenza di LABEL)
+      if (block.type === 'GO') {
+        // Verifica se esiste almeno un LABEL nello script
+        const rootBlocks = allRootBlocks || blocks;
+        if (!hasLabelInScript(rootBlocks)) {
+          errors++;
+          invalidBlocks.push(block.id);
+          errorDetails.push({
+            blockId: block.id,
+            blockType: block.type,
+            errorType: 'GO_WITHOUT_LABEL',
+            message: t ? 
+              t('visualFlowEditor.validation.goWithoutLabel')
+              : 'GO block requires at least one LABEL block in the script. Add a LABEL block before using GO.',
+            path: [...path]
+          });
+        }
       }
       
       // NUOVA VALIDAZIONE: MENU non può essere senza OPT

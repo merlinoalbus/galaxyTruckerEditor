@@ -57,6 +57,14 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.goToBlockTitle': 'Idź do bloku',
   'visualFlowEditor.validation.footer': 'Napraw te błędy, aby zapewnić poprawne działanie skryptu. Bloki z błędami są podświetlone na czerwono w edytorze.',
   
+  // Delay Block
+  'visualFlowEditor.blocks.delay.duration': 'Czas trwania',
+  'visualFlowEditor.blocks.delay.hint': '1000 ms = 1 sekunda',
+  
+  // GO Block
+  'visualFlowEditor.blocks.go.anchor': 'Kotwica:',
+  'visualFlowEditor.blocks.go.goToLabel': 'Przejdź do etykiety',
+  
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Błąd walidacji',
   'visualFlowEditor.validation.consecutiveAskError': '🚫 Dwa kolejne bloki ASK nie są dozwolone. Wstaw inny typ bloku między dwa bloki ASK.',
@@ -114,6 +122,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.menuNoSimpleOpt': 'Blok MENU musi zawierać przynajmniej jeden prosty blok OPT (bez warunków).',
   'visualFlowEditor.validation.askMustBeFollowedByMenu': 'Blok ASK musi być śledzony przez blok MENU. Jeśli ASK jest wewnątrz IF, MENU może być w tej samej gałęzi lub na zewnątrz IF.',
   'visualFlowEditor.validation.askWithoutMenu': 'Blok ASK musi być śledzony przez blok MENU. Ten ASK jest ostatnim blokiem i nie ma następującego MENU.',
+  'visualFlowEditor.validation.goWithoutLabel': 'Blok GO wymaga co najmniej jednego bloku LABEL w skrypcie. Dodaj blok LABEL przed użyciem GO.',
   
   // Error Modal
   'visualFlowEditor.errorModal.close': 'Zamknij',

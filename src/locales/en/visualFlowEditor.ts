@@ -57,6 +57,14 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.goToBlockTitle': 'Go to block',
   'visualFlowEditor.validation.footer': 'Fix these errors to ensure the script works correctly. Blocks with errors are highlighted in red in the editor.',
   
+  // Delay Block
+  'visualFlowEditor.blocks.delay.duration': 'Duration',
+  'visualFlowEditor.blocks.delay.hint': '1000 ms = 1 second',
+  
+  // GO Block
+  'visualFlowEditor.blocks.go.anchor': 'Anchor:',
+  'visualFlowEditor.blocks.go.goToLabel': 'Go to label',
+  
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Validation error',
   'visualFlowEditor.validation.consecutiveAskError': '🚫 Two consecutive ASK blocks are not allowed. Insert another type of block between the two ASK blocks.',
@@ -114,6 +122,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.menuNoSimpleOpt': 'MENU block must contain at least one simple OPT block (without conditions).',
   'visualFlowEditor.validation.askMustBeFollowedByMenu': 'ASK block must be followed by a MENU block. If ASK is inside an IF, MENU can be in the same branch or outside the IF.',
   'visualFlowEditor.validation.askWithoutMenu': 'ASK block must be followed by a MENU block. This ASK is the last block and has no following MENU.',
+  'visualFlowEditor.validation.goWithoutLabel': 'GO block requires at least one LABEL block in the script. Add a LABEL block before using GO.',
   
   // Error Modal
   'visualFlowEditor.errorModal.close': 'Close',

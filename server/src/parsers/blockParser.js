@@ -127,7 +127,7 @@ const COMMAND_CATALOG = {
   'SUB_SCRIPT': { params: ['script:string'], pattern: /^SUB_SCRIPT\s+(\w+)$/i },
   'RETURN': { params: [], pattern: /^RETURN$/i },
   'EXIT_MENU': { params: [], pattern: /^EXIT_MENU$/i },
-  'DELAY': { params: ['milliseconds:number'], pattern: /^DELAY\s+(\d+)$/i },
+  'DELAY': { params: ['duration:number'], pattern: /^DELAY\s+(\d+)$/i },
   
   // MAPPA/NAVIGAZIONE
   'SHOWPATH': { params: ['route'], pattern: /^ShowPath\s+(.+)$/ },
