@@ -57,6 +57,14 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.goToBlockTitle': 'Přejít na blok',
   'visualFlowEditor.validation.footer': 'Opravte tyto chyby pro zajištění správného fungování skriptu. Bloky s chybami jsou v editoru zvýrazněny červeně.',
   
+  // Delay Block
+  'visualFlowEditor.blocks.delay.duration': 'Doba trvání',
+  'visualFlowEditor.blocks.delay.hint': '1000 ms = 1 sekunda',
+  
+  // GO Block
+  'visualFlowEditor.blocks.go.anchor': 'Kotva:',
+  'visualFlowEditor.blocks.go.goToLabel': 'Přejít na štítek',
+  
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Chyba validace',
   'visualFlowEditor.validation.consecutiveAskError': '🚫 Dva po sobě jdoucí bloky ASK nejsou povoleny. Vložte jiný typ bloku mezi dva ASK bloky.',
@@ -114,6 +122,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.menuNoSimpleOpt': 'Blok MENU musí obsahovat alespoň jeden jednoduchý blok OPT (bez podmínek).',
   'visualFlowEditor.validation.askMustBeFollowedByMenu': 'Blok ASK musí být následován blokem MENU. Pokud je ASK uvnitř IF, MENU může být ve stejné větvi nebo mimo IF.',
   'visualFlowEditor.validation.askWithoutMenu': 'Blok ASK musí být následován blokem MENU. Tento ASK je posledním blokem a nemá následující MENU.',
+  'visualFlowEditor.validation.goWithoutLabel': 'Blok GO vyžaduje alespoň jeden blok LABEL ve skriptu. Přidejte blok LABEL před použitím GO.',
   
   // Error Modal
   'visualFlowEditor.errorModal.close': 'Zavřít',

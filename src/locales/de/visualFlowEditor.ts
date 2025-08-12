@@ -57,6 +57,14 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.goToBlockTitle': 'Gehe zum Block',
   'visualFlowEditor.validation.footer': 'Beheben Sie diese Fehler, um das ordnungsgemäße Funktionieren des Skripts zu gewährleisten. Blöcke mit Fehlern sind im Editor rot hervorgehoben.',
   
+  // Delay Block
+  'visualFlowEditor.blocks.delay.duration': 'Dauer',
+  'visualFlowEditor.blocks.delay.hint': '1000 ms = 1 Sekunde',
+  
+  // GO Block
+  'visualFlowEditor.blocks.go.anchor': 'Anker:',
+  'visualFlowEditor.blocks.go.goToLabel': 'Zum Label gehen',
+  
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Validierungsfehler',
   'visualFlowEditor.validation.consecutiveAskError': '🚫 Zwei aufeinanderfolgende ASK-Blöcke sind nicht erlaubt. Fügen Sie einen anderen Blocktyp zwischen die beiden ASK-Blöcke ein.',
@@ -114,6 +122,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.menuNoSimpleOpt': 'MENU-Block muss mindestens einen einfachen OPT-Block (ohne Bedingungen) enthalten.',
   'visualFlowEditor.validation.askMustBeFollowedByMenu': 'ASK-Block muss von einem MENU-Block gefolgt werden. Wenn ASK innerhalb eines IF ist, kann MENU im selben Zweig oder außerhalb des IF sein.',
   'visualFlowEditor.validation.askWithoutMenu': 'ASK-Block muss von einem MENU-Block gefolgt werden. Dieser ASK ist der letzte Block und hat kein folgendes MENU.',
+  'visualFlowEditor.validation.goWithoutLabel': 'Der GO-Block erfordert mindestens einen LABEL-Block im Skript. Fügen Sie einen LABEL-Block hinzu, bevor Sie GO verwenden.',
   
   // Error Modal
   'visualFlowEditor.errorModal.close': 'Schließen',

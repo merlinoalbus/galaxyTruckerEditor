@@ -261,6 +261,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
         onDragStart={(e) => onDragStart(e, block)}
         sessionData={sessionData}
         isInvalid={isInvalid}
+        onGoToLabel={sessionData?.goToLabel}
       />
     </div>
   );

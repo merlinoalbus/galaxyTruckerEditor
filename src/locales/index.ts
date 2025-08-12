@@ -444,6 +444,9 @@ export type TranslationKey =
   | 'visualFlowEditor.validation.menuFirstBlock'
   | 'visualFlowEditor.validation.optOnlyInMenu'
   | 'visualFlowEditor.validation.onlyOptInMenu'
+  | 'visualFlowEditor.validation.menuWithoutOpt'
+  | 'visualFlowEditor.validation.menuNoSimpleOpt'
+  | 'visualFlowEditor.validation.goWithoutLabel'
   | 'visualFlowEditor.validation.askAfterMenu'
   | 'visualFlowEditor.validation.menuAfterAsk'
   | 'visualFlowEditor.validation.consecutiveAsk'
@@ -461,6 +464,12 @@ export type TranslationKey =
   
   // Visual Flow Editor - Error Modal
   | 'visualFlowEditor.errorModal.close'
+  
+  // Visual Flow Editor - Block Parameters
+  | 'visualFlowEditor.blocks.delay.duration'
+  | 'visualFlowEditor.blocks.delay.hint'
+  | 'visualFlowEditor.blocks.go.anchor'
+  | 'visualFlowEditor.blocks.go.goToLabel'
   
   // Visual Flow Editor - Tools
   | 'visualFlowEditor.tools.title'

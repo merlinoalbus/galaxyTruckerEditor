@@ -21,10 +21,11 @@ export const useBlockManipulation = () => {
     return getDropErrorMessageBase(blockType, containerId, containerType, blocks, index, t);
   }, [t]);
   
-  // Wrapper per validateAllBlocks che passa t automaticamente - memoizzato stabilmente
-  const validateAllBlocks = useMemo(() => {
-    return (blocks: any[]) => validateAllBlocksBase(blocks, t);
-  }, [t]);
+  // Wrapper per validateAllBlocks - NON memoizzato per evitare loop!
+  // La funzione usa sempre il t corrente al momento della chiamata
+  const validateAllBlocks = (blocks: any[]) => {
+    return validateAllBlocksBase(blocks, t);
+  };
 
   return {
     updateBlockRecursive,

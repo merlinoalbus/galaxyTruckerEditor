@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageSquare, Clock, ArrowRight, Tag, HelpCircle } from 'lucide-react';
+import { MessageSquare, Clock, ArrowRight, Tag, HelpCircle, ExternalLink } from 'lucide-react';
 import { BaseBlock } from '../BaseBlock/BaseBlock';
 import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
 import { MultilingualTextEditor } from '../../MultilingualTextEditor';
@@ -13,6 +13,7 @@ interface CommandBlockProps {
   onDragStart: (e: React.DragEvent) => void;
   sessionData?: any;
   isInvalid?: boolean;
+  onGoToLabel?: (labelName: string) => void;
 }
 
 export const CommandBlock: React.FC<CommandBlockProps> = ({
@@ -21,7 +22,8 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   onRemove,
   onDragStart,
   sessionData,
-  isInvalid = false
+  isInvalid = false,
+  onGoToLabel
 }) => {
   const { t } = useTranslation();
   // Stato per collapse/expand - command blocks default collapsed
@@ -89,31 +91,56 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
       
       case 'DELAY':
         return (
-          <input
-            type="number"
-            className="w-full p-2 bg-slate-800 text-white rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none"
-            placeholder={t('visualFlowEditor.command.milliseconds')}
-            value={block.parameters?.duration || ''}
-            onChange={(e) => onUpdate({ 
-              parameters: { ...block.parameters, duration: parseInt(e.target.value) } 
-            })}
-            onClick={(e) => e.stopPropagation()}
-          />
+          <div className="space-y-2">
+            <label className="block text-xs text-slate-400">
+              {t('visualFlowEditor.blocks.delay.duration')}
+            </label>
+            <input
+              type="number"
+              className="w-full p-2 bg-slate-800 text-white rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none"
+              placeholder={t('visualFlowEditor.command.milliseconds')}
+              value={block.parameters?.duration || ''}
+              onChange={(e) => onUpdate({ 
+                parameters: { ...block.parameters, duration: parseInt(e.target.value) } 
+              })}
+              onClick={(e) => e.stopPropagation()}
+            />
+            <span className="block text-xs text-slate-500">
+              {t('visualFlowEditor.blocks.delay.hint')}
+            </span>
+          </div>
         );
       
       case 'GO':
         return (
-          <SelectWithModal
-            type="label"
-            value={block.parameters?.label || ''}
-            onChange={(value) => onUpdate({ 
-              parameters: { ...block.parameters, label: value } 
-            })}
-            placeholder={t('visualFlowEditor.command.selectLabel')}
-            availableItems={sessionData?.labels || []}
-            onAddItem={sessionData?.addLabel}
-            className="w-full"
-          />
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-slate-400 whitespace-nowrap">
+              {t('visualFlowEditor.blocks.go.anchor')}
+            </label>
+            <SelectWithModal
+              type="label"
+              value={block.parameters?.label || ''}
+              onChange={(value) => onUpdate({ 
+                parameters: { ...block.parameters, label: value } 
+              })}
+              placeholder={t('visualFlowEditor.command.selectLabel')}
+              availableItems={sessionData?.scriptLabels || []}
+              onAddItem={undefined} // Non permettere aggiunta di nuove label
+              className="flex-1"
+            />
+            {block.parameters?.label && onGoToLabel && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onGoToLabel(block.parameters.label);
+                }}
+                className="p-1.5 bg-slate-700 hover:bg-slate-600 rounded text-white transition-colors"
+                title={t('visualFlowEditor.blocks.go.goToLabel')}
+              >
+                <ExternalLink className="w-3 h-3" />
+              </button>
+            )}
+          </div>
         );
       
       case 'LABEL':
@@ -144,11 +171,11 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
 
   const getBlockIcon = () => {
     switch (block.type) {
-      case 'SAY': return <MessageSquare className="w-4 h-4" />;
-      case 'ASK': return <HelpCircle className="w-4 h-4" />;
-      case 'DELAY': return <Clock className="w-4 h-4" />;
-      case 'GO': return <ArrowRight className="w-4 h-4" />;
-      case 'LABEL': return <Tag className="w-4 h-4" />;
+      case 'SAY': return <span className="text-2xl">💬</span>;
+      case 'ASK': return <span className="text-2xl">❓</span>;
+      case 'DELAY': return <span className="text-2xl">⏱️</span>;
+      case 'GO': return <span className="text-2xl">➡️</span>;
+      case 'LABEL': return <span className="text-2xl">🏷️</span>;
       default: return <MessageSquare className="w-4 h-4" />;
     }
   };
