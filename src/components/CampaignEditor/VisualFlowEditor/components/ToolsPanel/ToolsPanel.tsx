@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronDown, ChevronRight, Search } from 'lucide-react';
 import { TOOL_CATEGORIES, Tool, ToolCategory } from '@/types/CampaignEditor/VisualFlowEditor/ToolCategories';
+import { useTranslation } from '@/locales';
 
 interface ToolsPanelProps {
   onToolDragStart: (e: React.DragEvent, tool: Tool) => void;
@@ -14,6 +15,7 @@ interface TooltipData {
 }
 
 export const ToolsPanel: React.FC<ToolsPanelProps> = ({ onToolDragStart }) => {
+  const { t } = useTranslation();
   // Tutte le categorie chiuse di default (nessuna categoria è sempre visibile ora)
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [searchText, setSearchText] = useState('');
@@ -149,7 +151,7 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({ onToolDragStart }) => {
         {/* Header fisso con comandi Generale */}
         <div className="bg-slate-900 border-b border-slate-700">
           <div className="p-4 pb-2">
-            <h4 className="text-white font-bold text-lg mb-3">🛠️ Strumenti</h4>
+            <h4 className="text-white font-bold text-lg mb-3">🛠️ {t('visualFlowEditor.tools.title')}</h4>
             
             {/* Comandi Generale sempre visibili - non filtrabili */}
             {generalTools.length > 0 && (
@@ -165,7 +167,7 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({ onToolDragStart }) => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Cerca comando..."
+                placeholder={t('visualFlowEditor.tools.searchPlaceholder')}
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
                 className="w-full pl-10 pr-3 py-2 bg-slate-700 text-white rounded-lg 
@@ -188,7 +190,7 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({ onToolDragStart }) => {
         <div className="p-2 bg-slate-900 border-t border-slate-700 text-xs text-gray-500 text-center" 
              style={{ paddingBottom: '2.5%' }}>
           <div className="text-[10px] leading-tight">
-            ✋ Trascina 🖱️ Info
+            {t('visualFlowEditor.tools.dragInfo')}
           </div>
         </div>
       </div>
@@ -210,10 +212,10 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({ onToolDragStart }) => {
             <div className="text-xs text-gray-300 mt-1">{tooltipData.tool.description}</div>
           )}
           {tooltipData.tool.inProgress && (
-            <div className="text-xs text-yellow-400 mt-1">⚠️ In sviluppo</div>
+            <div className="text-xs text-yellow-400 mt-1">⚠️ {t('visualFlowEditor.tools.inDevelopment')}</div>
           )}
           {!tooltipData.tool.implemented && !tooltipData.tool.inProgress && (
-            <div className="text-xs text-orange-400 mt-1">⚠️ Non implementato</div>
+            <div className="text-xs text-orange-400 mt-1">⚠️ {t('visualFlowEditor.tools.notImplemented')}</div>
           )}
         </div>,
         document.body

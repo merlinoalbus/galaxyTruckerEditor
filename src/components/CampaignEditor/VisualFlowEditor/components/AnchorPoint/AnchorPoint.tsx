@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, Ban } from 'lucide-react';
+import { useTranslation } from '@/locales';
 
 interface AnchorPointProps {
   onDragOver: (e: React.DragEvent) => void;
@@ -14,6 +15,7 @@ export const AnchorPoint: React.FC<AnchorPointProps> = ({
   label = '',
   isDropAllowed
 }) => {
+  const { t } = useTranslation();
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isDropValid, setIsDropValid] = useState(true);
@@ -94,7 +96,7 @@ export const AnchorPoint: React.FC<AnchorPointProps> = ({
           ) : (
             <>
               <Ban className="w-4 h-4" />
-              <span>Drop non permesso</span>
+              <span>{t('visualFlowEditor.anchorPoint.dropNotAllowed')}</span>
             </>
           )}
         </div>

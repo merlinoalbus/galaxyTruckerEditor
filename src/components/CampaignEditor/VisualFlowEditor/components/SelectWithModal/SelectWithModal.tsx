@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, X, Check, Variable, Flag, Tag, FileCode } from 'lucide-react';
+import { useTranslation } from '@/locales';
 
 interface SelectWithModalProps {
   type: 'variable' | 'semaphore' | 'label' | 'script' | 'mission';
@@ -15,11 +16,12 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
   type,
   value,
   onChange,
-  placeholder = 'Seleziona...',
+  placeholder,
   availableItems,
   onAddItem,
   className = ''
 }) => {
+  const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [newItemName, setNewItemName] = useState('');
@@ -49,12 +51,12 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
   // Ottieni il titolo della modale
   const getModalTitle = () => {
     switch (type) {
-      case 'variable': return 'Seleziona Variabile';
-      case 'semaphore': return 'Seleziona Semaforo';
-      case 'label': return 'Seleziona Etichetta';
-      case 'script': return 'Seleziona Script';
-      case 'mission': return 'Seleziona Missione';
-      default: return 'Seleziona';
+      case 'variable': return t('visualFlowEditor.select.selectVariable');
+      case 'semaphore': return t('visualFlowEditor.select.selectSemaphore');
+      case 'label': return t('visualFlowEditor.select.selectLabel');
+      case 'script': return t('visualFlowEditor.select.selectScript');
+      case 'mission': return t('visualFlowEditor.select.selectMission');
+      default: return t('visualFlowEditor.select.select');
     }
   };
 
@@ -75,10 +77,11 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
         handleSelect(newItemName.trim());
         setNewItemName('');
       } else {
-        alert(`${type === 'variable' ? 'La variabile' : 
-               type === 'semaphore' ? 'Il semaforo' :
-               type === 'label' ? "L'etichetta" :
-               type === 'script' ? 'Lo script' : 'La missione'} esiste già!`);
+        alert(t('visualFlowEditor.select.alreadyExists').replace('{type}', 
+               type === 'variable' ? t('visualFlowEditor.select.variableType') : 
+               type === 'semaphore' ? t('visualFlowEditor.select.semaphoreType') :
+               type === 'label' ? t('visualFlowEditor.select.labelType') :
+               type === 'script' ? t('visualFlowEditor.select.scriptType') : t('visualFlowEditor.select.missionType')));
       }
     }
   };
@@ -94,7 +97,7 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
         >
           {getIcon()}
           <span className={value ? 'text-white' : 'text-gray-400'}>
-            {value || placeholder}
+            {value || placeholder || t('visualFlowEditor.select.selectPlaceholder')}
           </span>
         </button>
         {value && (
@@ -140,7 +143,7 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Cerca..."
+                  placeholder={t('visualFlowEditor.select.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full bg-slate-700 text-white pl-10 pr-4 py-2 rounded-lg border border-slate-600 focus:border-blue-500 focus:outline-none text-sm"
@@ -171,14 +174,16 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
                 <div className="text-center py-8 text-gray-400">
                   <p className="text-sm mb-2">
                     {searchTerm 
-                      ? `Nessun ${type === 'variable' ? 'variabile' : 
-                                  type === 'semaphore' ? 'semaforo' :
-                                  type === 'label' ? 'etichetta' :
-                                  type === 'script' ? 'script' : 'missione'} trovato`
-                      : `Nessun ${type === 'variable' ? 'variabile' : 
-                                  type === 'semaphore' ? 'semaforo' :
-                                  type === 'label' ? 'etichetta' :
-                                  type === 'script' ? 'script' : 'missione'} disponibile`}
+                      ? t('visualFlowEditor.select.nothingFound').replace('{type}', 
+                          type === 'variable' ? t('visualFlowEditor.select.variableType') : 
+                          type === 'semaphore' ? t('visualFlowEditor.select.semaphoreType') :
+                          type === 'label' ? t('visualFlowEditor.select.labelType') :
+                          type === 'script' ? t('visualFlowEditor.select.scriptType') : t('visualFlowEditor.select.missionType'))
+                      : t('visualFlowEditor.select.nothingAvailable').replace('{type}', 
+                          type === 'variable' ? t('visualFlowEditor.select.variableType') : 
+                          type === 'semaphore' ? t('visualFlowEditor.select.semaphoreType') :
+                          type === 'label' ? t('visualFlowEditor.select.labelType') :
+                          type === 'script' ? t('visualFlowEditor.select.scriptType') : t('visualFlowEditor.select.missionType'))}
                   </p>
                 </div>
               )}
@@ -193,19 +198,20 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
                     className="w-full bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg transition-colors flex items-center justify-center gap-2 text-sm font-medium"
                   >
                     <Plus className="w-4 h-4" />
-                    Aggiungi {type === 'variable' ? 'Variabile' : 
-                              type === 'semaphore' ? 'Semaforo' :
-                              type === 'label' ? 'Etichetta' :
-                              type === 'script' ? 'Script' : 'Missione'}
+                    {t('visualFlowEditor.select.addNew').replace('{type}', 
+                      type === 'variable' ? t('visualFlowEditor.select.variableType') : 
+                      type === 'semaphore' ? t('visualFlowEditor.select.semaphoreType') :
+                      type === 'label' ? t('visualFlowEditor.select.labelType') :
+                      type === 'script' ? t('visualFlowEditor.select.scriptType') : t('visualFlowEditor.select.missionType'))}
                   </button>
                 ) : (
                   <div className="flex gap-2">
                     <input
                       type="text"
-                      placeholder={`Nome ${type === 'variable' ? 'variabile' : 
-                                          type === 'semaphore' ? 'semaforo' :
-                                          type === 'label' ? 'etichetta' :
-                                          type === 'script' ? 'script' : 'missione'}...`}
+                      placeholder={type === 'variable' ? t('visualFlowEditor.select.variableName') : 
+                                          type === 'semaphore' ? t('visualFlowEditor.select.semaphoreName') :
+                                          type === 'label' ? t('visualFlowEditor.select.labelName') :
+                                          type === 'script' ? t('visualFlowEditor.select.scriptName') : t('visualFlowEditor.select.missionName')}
                       value={newItemName}
                       onChange={(e) => setNewItemName(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleAddNewItem()}
@@ -217,7 +223,7 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
                       disabled={!newItemName.trim()}
                       className="bg-green-600 hover:bg-green-500 disabled:bg-slate-600 disabled:opacity-50 text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium"
                     >
-                      Conferma
+                      {t('visualFlowEditor.select.confirm')}
                     </button>
                     <button
                       onClick={() => {
@@ -226,7 +232,7 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
                       }}
                       className="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium"
                     >
-                      Annulla
+                      {t('visualFlowEditor.select.cancel')}
                     </button>
                   </div>
                 )}

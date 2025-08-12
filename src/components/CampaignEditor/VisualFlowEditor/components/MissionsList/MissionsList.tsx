@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, Star } from 'lucide-react';
 import type { MissionsListProps, MissionItem } from './MissionsList.types';
+import { useTranslation } from '@/locales';
 
 export const MissionsList: React.FC<MissionsListProps> = ({
   showMissionsList,
@@ -8,6 +9,7 @@ export const MissionsList: React.FC<MissionsListProps> = ({
   loadMission,
   buttonRef
 }) => {
+  const { t } = useTranslation();
   const [missions, setMissions] = useState<MissionItem[]>([]);
   const [filteredMissions, setFilteredMissions] = useState<MissionItem[]>([]);
   const [searchText, setSearchText] = useState('');
@@ -112,7 +114,7 @@ export const MissionsList: React.FC<MissionsListProps> = ({
       style={positionStyle}
     >
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-white font-bold">Missions Disponibili</h3>
+        <h3 className="text-white font-bold">{t('visualFlowEditor.missionsList.title')}</h3>
         <button
           onClick={() => setShowMissionsList(false)}
           className="text-gray-400 hover:text-white"
@@ -126,7 +128,7 @@ export const MissionsList: React.FC<MissionsListProps> = ({
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
         <input
           type="text"
-          placeholder="Cerca mission..."
+          placeholder={t('visualFlowEditor.missionsList.searchPlaceholder')}
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
           className="w-full pl-10 pr-3 py-2 bg-slate-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -137,7 +139,7 @@ export const MissionsList: React.FC<MissionsListProps> = ({
       <div className="space-y-2 max-h-96 overflow-y-auto">
         {isLoading ? (
           <div className="text-gray-400 text-center py-4">
-            Caricamento missions...
+            {t('visualFlowEditor.missionsList.loadingMissions')}
           </div>
         ) : filteredMissions.length > 0 ? (
           filteredMissions.map(mission => (

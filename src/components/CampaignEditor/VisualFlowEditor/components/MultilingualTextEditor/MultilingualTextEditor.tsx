@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, Copy, CopyCheck, Globe } from 'lucide-react';
+import { useTranslation } from '@/locales';
 
-// Definizione delle lingue supportate
-const LANGUAGES = [
-  { code: 'EN', label: 'English', required: true },
-  { code: 'CS', label: 'Czech', required: false },
-  { code: 'DE', label: 'German', required: false },
-  { code: 'ES', label: 'Spanish', required: false },
-  { code: 'FR', label: 'French', required: false },
-  { code: 'PL', label: 'Polish', required: false },
-  { code: 'RU', label: 'Russian', required: false }
+// Funzione helper per ottenere le lingue con traduzioni
+const getLanguages = (t: any) => [
+  { code: 'EN', label: t('visualFlowEditor.multilingual.languages.en'), required: true },
+  { code: 'CS', label: t('visualFlowEditor.multilingual.languages.cs'), required: false },
+  { code: 'DE', label: t('visualFlowEditor.multilingual.languages.de'), required: false },
+  { code: 'ES', label: t('visualFlowEditor.multilingual.languages.es'), required: false },
+  { code: 'FR', label: t('visualFlowEditor.multilingual.languages.fr'), required: false },
+  { code: 'PL', label: t('visualFlowEditor.multilingual.languages.pl'), required: false },
+  { code: 'RU', label: t('visualFlowEditor.multilingual.languages.ru'), required: false }
 ];
 
 interface MultilingualTextEditorProps {
@@ -23,10 +24,14 @@ interface MultilingualTextEditorProps {
 export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
   value = {},
   onChange,
-  placeholder = 'Inserisci testo...',
+  placeholder,
   className = '',
-  label = 'Testo'
+  label
 }) => {
+  const { t } = useTranslation();
+  const LANGUAGES = getLanguages(t);
+  const finalPlaceholder = placeholder || t('visualFlowEditor.multilingual.defaultPlaceholder');
+  const finalLabel = label || t('visualFlowEditor.multilingual.defaultLabel');
   const [isExpanded, setIsExpanded] = useState(false);
   const [copiedLang, setCopiedLang] = useState<string | null>(null);
   const [copiedAll, setCopiedAll] = useState(false);
@@ -83,7 +88,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
             <textarea
               value={normalizedValue.EN}
               onChange={(e) => handleChange('EN', e.target.value)}
-              placeholder={placeholder}
+              placeholder={finalPlaceholder}
               className="flex-1 bg-slate-700/50 text-white px-2 py-1 rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none resize-y"
               rows={1}
               style={{ minHeight: '24px', lineHeight: '1.5' }}
@@ -93,7 +98,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
               type="button"
               onClick={() => setIsExpanded(true)}
               className="p-1 hover:bg-slate-700 rounded transition-colors"
-              title="Espandi lingue"
+              title={t('visualFlowEditor.multilingual.expandLanguages')}
             >
               <ChevronDown className="w-3 h-3 text-gray-400" />
             </button>
@@ -109,7 +114,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
                 <textarea
                   value={normalizedValue.EN}
                   onChange={(e) => handleChange('EN', e.target.value)}
-                  placeholder={placeholder}
+                  placeholder={finalPlaceholder}
                   className="w-full bg-slate-700/50 text-white px-2 py-1 pr-7 rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none resize-y"
                   rows={1}
                   style={{ minHeight: '24px', lineHeight: '1.5' }}
@@ -120,7 +125,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
                     type="button"
                     onClick={copyToAllLanguages}
                     className="absolute top-1 right-1 p-0.5 hover:bg-slate-600 rounded transition-colors"
-                    title="Copia in tutte le lingue"
+                    title={t('visualFlowEditor.multilingual.copyToAll')}
                   >
                     {copiedAll ? (
                       <CopyCheck className="w-2.5 h-2.5 text-green-400" />
@@ -153,7 +158,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
                       type="button"
                       onClick={() => copyToLanguage(lang.code)}
                       className="absolute top-1 right-1 p-0.5 hover:bg-slate-600 rounded transition-colors"
-                      title={`Copia da EN`}
+                      title={t('visualFlowEditor.multilingual.copyFromEN')}
                     >
                       {copiedLang === lang.code ? (
                         <CopyCheck className="w-2.5 h-2.5 text-green-400" />
@@ -172,7 +177,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
                 type="button"
                 onClick={() => setIsExpanded(false)}
                 className="p-1 hover:bg-slate-700 rounded transition-colors"
-                title="Comprimi"
+                title={t('visualFlowEditor.multilingual.collapse')}
               >
                 <ChevronUp className="w-3 h-3 text-gray-400" />
               </button>

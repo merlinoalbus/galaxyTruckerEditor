@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, AlertTriangle, ChevronRight } from 'lucide-react';
 import { createPortal } from 'react-dom';
+import { useTranslation } from '@/locales';
 
 interface ValidationError {
   blockId: string;
@@ -21,6 +22,7 @@ export const ValidationErrorsModal: React.FC<ValidationErrorsModalProps> = ({
   onClose,
   onNavigateToBlock 
 }) => {
+  const { t } = useTranslation();
   // Raggruppa errori per tipo
   const errorsByType = errors.reduce((acc, error) => {
     if (!acc[error.errorType]) {
@@ -52,21 +54,21 @@ export const ValidationErrorsModal: React.FC<ValidationErrorsModalProps> = ({
   const getErrorDescription = (errorType: string) => {
     switch (errorType) {
       case 'CONSECUTIVE_ASK':
-        return 'Due blocchi ASK consecutivi non sono permessi';
+        return t('visualFlowEditor.validation.consecutiveAsk');
       case 'BUILD_CONTAINS_BUILD':
-        return 'BUILD non può contenere un altro blocco BUILD';
+        return t('visualFlowEditor.validation.buildContainsBuild');
       case 'BUILD_CONTAINS_FLIGHT':
-        return 'BUILD non può contenere un blocco FLIGHT';
+        return t('visualFlowEditor.validation.buildContainsFlight');
       case 'FLIGHT_CONTAINS_BUILD':
-        return 'FLIGHT non può contenere un blocco BUILD';
+        return t('visualFlowEditor.validation.flightContainsBuild');
       case 'FLIGHT_CONTAINS_FLIGHT':
-        return 'FLIGHT non può contenere un altro blocco FLIGHT';
+        return t('visualFlowEditor.validation.flightContainsFlight');
       case 'MENU_WITHOUT_ASK':
-        return 'MENU deve essere preceduto da un blocco ASK';
+        return t('visualFlowEditor.validation.menuWithoutAsk');
       case 'OPT_OUTSIDE_MENU':
-        return 'OPT può essere inserito solo dentro un blocco MENU';
+        return t('visualFlowEditor.validation.optOutsideMenu');
       default:
-        return 'Errore di validazione generico';
+        return t('visualFlowEditor.validation.genericError');
     }
   };
 
@@ -78,13 +80,13 @@ export const ValidationErrorsModal: React.FC<ValidationErrorsModalProps> = ({
           <div className="flex items-center gap-3">
             <AlertTriangle className="w-6 h-6 text-red-500" />
             <h2 className="text-xl font-bold text-white">
-              Errori di Validazione ({errors.length})
+              {t('visualFlowEditor.validation.title')} ({errors.length})
             </h2>
           </div>
           <button
             onClick={onClose}
             className="p-2 hover:bg-slate-800 rounded transition-colors"
-            title="Chiudi"
+            title={t('visualFlowEditor.validation.close')}
           >
             <X className="w-5 h-5 text-gray-400" />
           </button>
@@ -102,7 +104,7 @@ export const ValidationErrorsModal: React.FC<ValidationErrorsModalProps> = ({
                     {getErrorDescription(errorType)}
                   </h3>
                   <span className="text-xs text-gray-400">
-                    {typeErrors.length} {typeErrors.length === 1 ? 'occorrenza' : 'occorrenze'}
+                    {typeErrors.length} {typeErrors.length === 1 ? t('visualFlowEditor.validation.occurrence') : t('visualFlowEditor.validation.occurrences')}
                   </span>
                 </div>
               </div>
@@ -117,7 +119,7 @@ export const ValidationErrorsModal: React.FC<ValidationErrorsModalProps> = ({
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 text-sm">
-                          <span className="text-gray-400">Blocco:</span>
+                          <span className="text-gray-400">{t('visualFlowEditor.validation.block')}:</span>
                           <span className="font-mono text-white">{error.blockType}</span>
                           <span className="text-gray-500 text-xs">#{error.blockId.slice(0, 8)}</span>
                         </div>
@@ -125,7 +127,7 @@ export const ValidationErrorsModal: React.FC<ValidationErrorsModalProps> = ({
                         {/* Path nel tree */}
                         {error.path && error.path.length > 0 && (
                           <div className="flex items-center gap-1 mt-1 text-xs text-gray-500">
-                            <span>Percorso:</span>
+                            <span>{t('visualFlowEditor.validation.path')}:</span>
                             {error.path.map((step, i) => (
                               <React.Fragment key={i}>
                                 {i > 0 && <ChevronRight className="w-3 h-3" />}
@@ -151,9 +153,9 @@ export const ValidationErrorsModal: React.FC<ValidationErrorsModalProps> = ({
                             onClose();
                           }}
                           className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded transition-colors"
-                          title="Vai al blocco"
+                          title={t('visualFlowEditor.validation.goToBlockTitle')}
                         >
-                          Vai →
+                          {t('visualFlowEditor.validation.goToBlock')}
                         </button>
                       )}
                     </div>
@@ -168,8 +170,7 @@ export const ValidationErrorsModal: React.FC<ValidationErrorsModalProps> = ({
         <div className="p-4 border-t border-slate-700 bg-slate-800/50">
           <div className="text-sm text-gray-400">
             <p>
-              ℹ️ Correggi questi errori per garantire il corretto funzionamento dello script.
-              I blocchi con errori sono evidenziati in <span className="text-red-400">rosso</span> nell'editor.
+              ℹ️ {t('visualFlowEditor.validation.footer')}
             </p>
           </div>
         </div>
