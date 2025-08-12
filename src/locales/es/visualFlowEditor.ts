@@ -64,9 +64,18 @@ export const visualFlowEditorTranslations = {
   // GO Block
   'visualFlowEditor.blocks.go.anchor': 'Ancla:',
   'visualFlowEditor.blocks.go.goToLabel': 'Ir a la etiqueta',
+
+  // LABEL Block
+  'visualFlowEditor.blocks.label.anchorName': 'Nombre de Ancla',
+  'visualFlowEditor.blocks.label.hint': 'No se permiten espacios en los nombres de anclas',
   
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Error de validación',
+  'visualFlowEditor.validation.delayNoDuration': 'El bloque DELAY debe tener un valor de duración. Establece la duración en milisegundos.',
+  'visualFlowEditor.validation.sayNoText': 'El bloque SAY debe tener texto. Añade al menos el texto en inglés.',
+  'visualFlowEditor.validation.askNoText': 'El bloque ASK debe tener texto. Añade al menos el texto en inglés.',
+  'visualFlowEditor.validation.goNoLabel': 'El bloque GO debe tener una etiqueta seleccionada. Elige una etiqueta de destino.',
+  'visualFlowEditor.validation.labelNoName': 'El bloque LABEL debe tener un nombre. Establece el nombre del ancla.',
   'visualFlowEditor.validation.consecutiveAskError': '🚫 No se permiten dos bloques ASK consecutivos. Inserte otro tipo de bloque entre los dos bloques ASK.',
   'visualFlowEditor.validation.blockInBuildError': '🚫 El bloque {blockType} no se puede insertar dentro de un bloque BUILD. Los bloques BUILD y FLIGHT no pueden anidarse.',
   'visualFlowEditor.validation.blockInFlightError': '🚫 El bloque {blockType} no se puede insertar dentro de un bloque FLIGHT. Los bloques BUILD y FLIGHT no pueden anidarse.',

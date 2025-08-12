@@ -64,9 +64,18 @@ export const visualFlowEditorTranslations = {
   // GO Block
   'visualFlowEditor.blocks.go.anchor': 'Ancre:',
   'visualFlowEditor.blocks.go.goToLabel': 'Aller à l\'étiquette',
+
+  // LABEL Block
+  'visualFlowEditor.blocks.label.anchorName': 'Nom de l\'Ancre',
+  'visualFlowEditor.blocks.label.hint': 'Les espaces ne sont pas autorisés dans les noms d\'ancres',
   
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Erreur de validation',
+  'visualFlowEditor.validation.delayNoDuration': 'Le bloc DELAY doit avoir une valeur de durée. Définissez la durée en millisecondes.',
+  'visualFlowEditor.validation.sayNoText': 'Le bloc SAY doit avoir du texte. Ajoutez au moins le texte en anglais.',
+  'visualFlowEditor.validation.askNoText': 'Le bloc ASK doit avoir du texte. Ajoutez au moins le texte en anglais.',
+  'visualFlowEditor.validation.goNoLabel': 'Le bloc GO doit avoir une étiquette sélectionnée. Choisissez une étiquette cible.',
+  'visualFlowEditor.validation.labelNoName': 'Le bloc LABEL doit avoir un nom. Définissez le nom de l\'ancre.',
   'visualFlowEditor.validation.consecutiveAskError': '🚫 Deux blocs ASK consécutifs ne sont pas autorisés. Insérez un autre type de bloc entre les deux blocs ASK.',
   'visualFlowEditor.validation.blockInBuildError': '🚫 Le bloc {blockType} ne peut pas être inséré dans un bloc BUILD. Les blocs BUILD et FLIGHT ne peuvent pas être imbriqués.',
   'visualFlowEditor.validation.blockInFlightError': '🚫 Le bloc {blockType} ne peut pas être inséré dans un bloc FLIGHT. Les blocs BUILD et FLIGHT ne peuvent pas être imbriqués.',

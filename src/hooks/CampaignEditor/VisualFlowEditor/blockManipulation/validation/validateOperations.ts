@@ -9,6 +9,7 @@ import { validateContainerNesting } from './containerValidation';
 import { validateMenuInsertion, validateOptInsertion, validateMenuContent, canInsertMenuAfterBlock } from './menuValidation';
 import { blockEndsWithAsk } from './blockValidators';
 import { validateGoInsertion, hasLabelInScript } from './goValidation';
+import { validateBlockParameters } from './parameterValidation';
 
 /**
  * Valida l'inserimento di un blocco in una posizione specifica
@@ -53,6 +54,13 @@ export const validateBlockInsertion = (
       return false;
     }
   }
+  
+  // Validazione per EXIT_MENU - può essere inserito solo dentro OPT
+  if (blockType === 'EXIT_MENU') {
+    if (!targetContainer || targetContainer.type !== 'OPT') {
+      return false;
+    }
+  }
 
   // Validazione per blocchi dentro MENU - solo OPT permessi
   if (!validateMenuContent(targetContainer, blockType)) {
@@ -83,6 +91,64 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string): { er
   
   const validateRecursive = (blocks: any[], parentBlock?: any, allRootBlocks?: any[], path: string[] = []): void => {
     blocks.forEach((block, index) => {
+      // VALIDAZIONE PARAMETRI: Controlla che i blocchi abbiano i parametri obbligatori valorizzati
+      const paramValidation = validateBlockParameters(block);
+      if (!paramValidation.valid) {
+        errors++;
+        invalidBlocks.push(block.id);
+        
+        // Genera messaggio specifico in base al tipo di errore
+        let message = '';
+        switch (paramValidation.error) {
+          case 'DELAY_NO_DURATION':
+            message = t ? 
+              t('visualFlowEditor.validation.delayNoDuration')
+              : 'DELAY block must have a duration value. Set the duration in milliseconds.';
+            break;
+          case 'SAY_NO_TEXT':
+            message = t ? 
+              t('visualFlowEditor.validation.sayNoText')
+              : 'SAY block must have text. Add at least the English text.';
+            break;
+          case 'ASK_NO_TEXT':
+            message = t ? 
+              t('visualFlowEditor.validation.askNoText')
+              : 'ASK block must have text. Add at least the English text.';
+            break;
+          case 'GO_NO_LABEL':
+            message = t ? 
+              t('visualFlowEditor.validation.goNoLabel')
+              : 'GO block must have a label selected. Choose a target label.';
+            break;
+          case 'LABEL_NO_NAME':
+            message = t ? 
+              t('visualFlowEditor.validation.labelNoName')
+              : 'LABEL block must have a name. Set the anchor name.';
+            break;
+          case 'SUB_SCRIPT_NO_NAME':
+            message = t ? 
+              t('visualFlowEditor.validation.subScriptNoName')
+              : 'SUB_SCRIPT block must have a script name. Select a script to execute.';
+            break;
+          case 'OPT_NO_TEXT':
+            message = t ? 
+              t('visualFlowEditor.validation.optNoText')
+              : 'OPT block must have text. Add at least the English text.';
+            break;
+          default:
+            message = t ? 
+              t('visualFlowEditor.validation.error')
+              : 'Validation error';
+        }
+        
+        errorDetails.push({
+          blockId: block.id,
+          blockType: block.type,
+          errorType: paramValidation.error,
+          message: message,
+          path: [...path]
+        });
+      }
       // NUOVA VALIDAZIONE: ASK non può seguire un altro ASK
       if (block.type === 'ASK' && index > 0 && blocks[index - 1].type === 'ASK') {
         errors++;
@@ -301,6 +367,19 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string): { er
           blockType: block.type,
           errorType: 'OPT_OUTSIDE_MENU',
           message: t ? t('visualFlowEditor.validation.optOnlyInMenu') : 'The OPT block can only be inserted inside a MENU block.',
+          path: [...path]
+        });
+      }
+      
+      // Valida blocchi EXIT_MENU (devono essere dentro OPT)
+      if (block.type === 'EXIT_MENU' && (!parentBlock || parentBlock.type !== 'OPT')) {
+        errors++;
+        invalidBlocks.push(block.id);
+        errorDetails.push({
+          blockId: block.id,
+          blockType: block.type,
+          errorType: 'EXIT_MENU_OUTSIDE_OPT',
+          message: t ? t('visualFlowEditor.validation.exitMenuOnlyInOpt') : 'The EXIT_MENU block can only be inserted inside an OPT block.',
           path: [...path]
         });
       }

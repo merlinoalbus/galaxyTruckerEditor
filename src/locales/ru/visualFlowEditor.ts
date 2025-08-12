@@ -64,9 +64,18 @@ export const visualFlowEditorTranslations = {
   // GO Block
   'visualFlowEditor.blocks.go.anchor': 'Якорь:',
   'visualFlowEditor.blocks.go.goToLabel': 'Перейти к метке',
+
+  // LABEL Block
+  'visualFlowEditor.blocks.label.anchorName': 'Имя Якоря',
+  'visualFlowEditor.blocks.label.hint': 'Пробелы не допускаются в именах якорей',
   
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Ошибка валидации',
+  'visualFlowEditor.validation.delayNoDuration': 'Блок DELAY должен иметь значение длительности. Установите длительность в миллисекундах.',
+  'visualFlowEditor.validation.sayNoText': 'Блок SAY должен иметь текст. Добавьте хотя бы английский текст.',
+  'visualFlowEditor.validation.askNoText': 'Блок ASK должен иметь текст. Добавьте хотя бы английский текст.',
+  'visualFlowEditor.validation.goNoLabel': 'Блок GO должен иметь выбранную метку. Выберите целевую метку.',
+  'visualFlowEditor.validation.labelNoName': 'Блок LABEL должен иметь имя. Установите имя якоря.',
   'visualFlowEditor.validation.consecutiveAskError': '🚫 Два последовательных блока ASK не разрешены. Вставьте другой тип блока между двумя блоками ASK.',
   'visualFlowEditor.validation.blockInBuildError': '🚫 Блок {blockType} не может быть вставлен внутри блока BUILD. Блоки BUILD и FLIGHT не могут быть вложенными.',
   'visualFlowEditor.validation.blockInFlightError': '🚫 Блок {blockType} не может быть вставлен внутри блока FLIGHT. Блоки BUILD и FLIGHT не могут быть вложенными.',

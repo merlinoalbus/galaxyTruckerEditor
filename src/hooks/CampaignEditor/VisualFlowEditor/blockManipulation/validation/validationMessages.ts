@@ -59,6 +59,11 @@ export const getDropErrorMessage = (
     return t ? t('visualFlowEditor.validation.optOutsideMenuError') : '🚫 The OPT block can only be inserted inside a MENU block.';
   }
   
+  // Controlla EXIT_MENU fuori da OPT
+  if (blockType === 'EXIT_MENU' && targetContainer.type !== 'OPT') {
+    return t ? t('visualFlowEditor.validation.exitMenuOutsideOptError') : '🚫 The EXIT_MENU block can only be inserted inside an OPT block.';
+  }
+  
   // Controlla blocchi non-OPT dentro MENU
   if (targetContainer.type === 'MENU' && blockType !== 'OPT') {
     return t ? t('visualFlowEditor.validation.onlyOptInMenuError').replace('{blockType}', blockType) : `🚫 Only OPT blocks can be inserted in a MENU. The ${blockType} block is not allowed.`;

@@ -28,12 +28,13 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   const { t } = useTranslation();
   // Stato per collapse/expand - command blocks default collapsed
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   
-  // Auto-collapse se lo spazio è insufficiente
+  // Auto-collapse se lo spazio è insufficiente (ma non se l'utente ha espanso manualmente)
   useEffect(() => {
     const checkSpace = () => {
-      if (containerRef.current && !isCollapsed) {
+      if (containerRef.current && !isCollapsed && !isManuallyExpanded) {
         const container = containerRef.current;
         const width = container.offsetWidth;
         
@@ -58,7 +59,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
     return () => {
       resizeObserver.disconnect();
     };
-  }, [isCollapsed]);
+  }, [isCollapsed, isManuallyExpanded]);
   const renderParameters = () => {
     switch (block.type) {
       case 'SAY':
@@ -145,22 +146,76 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
       
       case 'LABEL':
         return (
-          <input
-            type="text"
-            className="w-full p-2 bg-slate-800 text-white rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none"
-            placeholder={t('visualFlowEditor.command.labelName')}
-            value={block.parameters?.name || ''}
-            onChange={(e) => {
-              onUpdate({ 
-                parameters: { ...block.parameters, name: e.target.value } 
-              });
-              // Aggiungi automaticamente la label quando viene definita
-              if (e.target.value && sessionData?.addLabel && !sessionData?.labels?.includes(e.target.value)) {
-                sessionData.addLabel(e.target.value);
-              }
-            }}
-            onClick={(e) => e.stopPropagation()}
-          />
+          <div className="space-y-2">
+            <label className="block text-xs text-slate-400">
+              {t('visualFlowEditor.blocks.label.anchorName')}
+            </label>
+            <SelectWithModal
+              type="label"
+              value={block.parameters?.name || ''}
+              onChange={(value) => {
+                // Rimuovi spazi dal nome
+                const cleanedValue = value.replace(/\s+/g, '');
+                onUpdate({ 
+                  parameters: { ...block.parameters, name: cleanedValue } 
+                });
+                // Aggiungi automaticamente la label quando viene definita
+                if (cleanedValue && sessionData?.addLabel && !sessionData?.labels?.includes(cleanedValue)) {
+                  sessionData.addLabel(cleanedValue);
+                }
+              }}
+              placeholder={t('visualFlowEditor.command.labelName')}
+              availableItems={sessionData?.labels || []}
+              onAddItem={(newLabel) => {
+                // Rimuovi spazi dal nome quando si aggiunge una nuova label
+                const cleanedLabel = newLabel.replace(/\s+/g, '');
+                if (cleanedLabel && sessionData?.addLabel) {
+                  sessionData.addLabel(cleanedLabel);
+                  onUpdate({ 
+                    parameters: { ...block.parameters, name: cleanedLabel } 
+                  });
+                }
+              }}
+              className="w-full"
+            />
+            <span className="block text-xs text-slate-500">
+              {t('visualFlowEditor.blocks.label.hint')}
+            </span>
+          </div>
+        );
+      
+      case 'SUB_SCRIPT':
+        return (
+          <div className="space-y-2">
+            <label className="block text-xs text-slate-400">
+              {t('visualFlowEditor.blocks.subScript.scriptName')}
+            </label>
+            <SelectWithModal
+              type="script"
+              value={block.parameters?.scriptName || ''}
+              onChange={(value) => onUpdate({ 
+                parameters: { ...block.parameters, scriptName: value } 
+              })}
+              placeholder={t('visualFlowEditor.command.selectScript')}
+              availableItems={sessionData?.availableScripts || []}
+              onAddItem={undefined} // Non permettere aggiunta di nuovi script
+              className="w-full"
+            />
+            <span className="block text-xs text-slate-500">
+              {t('visualFlowEditor.blocks.subScript.hint')}
+            </span>
+          </div>
+        );
+      
+      case 'EXIT_MENU':
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {t('visualFlowEditor.blocks.exitMenu.fullDescription')}
+              </p>
+            </div>
+          </div>
         );
       
       default:
@@ -176,6 +231,8 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
       case 'DELAY': return <span className="text-2xl">⏱️</span>;
       case 'GO': return <span className="text-2xl">➡️</span>;
       case 'LABEL': return <span className="text-2xl">🏷️</span>;
+      case 'SUB_SCRIPT': return <span className="text-2xl">📄</span>;
+      case 'EXIT_MENU': return <span className="text-2xl">🚪</span>;
       default: return <MessageSquare className="w-4 h-4" />;
     }
   };
@@ -202,7 +259,23 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         break;
       case 'GO':
         if (block.parameters?.label) {
-          return <span>→ {block.parameters.label}</span>;
+          return (
+            <div className="flex items-center gap-2">
+              <span>→ {block.parameters.label}</span>
+              {onGoToLabel && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onGoToLabel(block.parameters.label);
+                  }}
+                  className="p-1 bg-slate-700 hover:bg-slate-600 rounded text-white transition-colors"
+                  title={t('visualFlowEditor.blocks.go.goToLabel')}
+                >
+                  <ExternalLink className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+          );
         }
         break;
       case 'LABEL':
@@ -222,6 +295,13 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
           );
         }
         break;
+      case 'SUB_SCRIPT':
+        if (block.parameters?.scriptName) {
+          return <span>📄 {block.parameters.scriptName}</span>;
+        }
+        break;
+      case 'EXIT_MENU':
+        return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.exitMenu.compact')}</span>;
     }
     return null;
   };
@@ -235,7 +315,17 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         onRemove={onRemove}
         onDragStart={onDragStart}
         isCollapsed={isCollapsed}
-        onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
+        onToggleCollapse={() => {
+          if (isCollapsed) {
+            // Se stiamo espandendo, segna come espansione manuale
+            setIsManuallyExpanded(true);
+            setIsCollapsed(false);
+          } else {
+            // Se stiamo collassando, rimuovi il flag di espansione manuale
+            setIsManuallyExpanded(false);
+            setIsCollapsed(true);
+          }
+        }}
         className={`${getBlockClassName(block.type, isInvalid)} p-3 mb-2 transition-all hover:shadow-lg`}
         isInvalid={isInvalid}
       >

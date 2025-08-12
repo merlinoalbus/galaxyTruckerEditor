@@ -19,18 +19,14 @@ import { findBlockBeforeContainer } from '../search';
 export const canInsertMenuAfterBlock = (prevBlock: any): boolean => {
   if (!prevBlock) return false;
   
-  console.log('🔍 canInsertMenuAfterBlock:', prevBlock.type, prevBlock.id?.slice(0, 8));
-  
   // Per blocchi IF, la logica è gestita in validateMenuInsertion
   // Qui ritorniamo false per evitare duplicazione della logica
   if (prevBlock.type === 'IF') {
-    console.log('🔍 IF block - logic handled in validateMenuInsertion');
     return false;
   }
   
   // Verifica ricorsivamente se il blocco precedente garantisce un ASK nel flusso
   const result = blockEndsWithAsk(prevBlock);
-  console.log('🔍 blockEndsWithAsk result:', result);
   return result;
 };
 
@@ -53,13 +49,6 @@ export const validateMenuInsertion = (
   let prevBlock = null;
   let blocks: any[] = [];
   
-  console.log('🔍 MENU validation:', {
-    targetContainerType,
-    containerId: targetContainer?.id,
-    containerType: targetContainer?.type,
-    index,
-    hasAllBlocks: !!allBlocks
-  });
   
   // Gestione uniforme per tutti i tipi di container
   if (targetContainerType === 'thenBlocks' || targetContainerType === 'elseBlocks' || 
@@ -68,37 +57,30 @@ export const validateMenuInsertion = (
       targetContainerType === 'blockStart' || targetContainerType === 'blockEvaluate') {
     
     blocks = targetContainer[targetContainerType] || [];
-    console.log('🔍 Blocks in container:', blocks.length, blocks.map(b => b.type));
     
     if (index !== undefined && index > 0) {
       // C'è un blocco prima nell'array
       prevBlock = blocks[index - 1];
-      console.log('🔍 Case 1: prevBlock from index', index - 1, ':', prevBlock?.type, prevBlock?.id?.slice(0, 8));
     } else if (index === 0) {
       // È il primo blocco del container - controlla il blocco prima del container
       if (allBlocks) {
         prevBlock = findBlockBeforeContainer(allBlocks, targetContainer.id);
-        console.log('🔍 Case 2: findBlockBeforeContainer:', prevBlock?.type, prevBlock?.id?.slice(0, 8));
       }
     } else if (index === undefined) {
       if (blocks.length > 0) {
         // Aggiunto alla fine
         prevBlock = blocks[blocks.length - 1];
-        console.log('🔍 Case 3: last block:', prevBlock?.type, prevBlock?.id?.slice(0, 8));
       } else {
         // Container vuoto - controlla il blocco prima del container
         if (allBlocks) {
           prevBlock = findBlockBeforeContainer(allBlocks, targetContainer.id);
-          console.log('🔍 Case 4: findBlockBeforeContainer (empty):', prevBlock?.type, prevBlock?.id?.slice(0, 8));
         }
       }
     }
   }
 
-  console.log('🔍 Final prevBlock:', prevBlock?.type, prevBlock?.id?.slice(0, 8));
   
   if (!prevBlock) {
-    console.log('🔴 FAILED: No prevBlock');
     return false;
   }
   
@@ -118,55 +100,37 @@ export const validateMenuInsertion = (
         // Se l'ultimo blocco è MENU, controlla il penultimo
         const secondToLastThen = prevBlock.thenBlocks[prevBlock.thenBlocks.length - 2];
         thenEndsWithAsk = blockEndsWithAsk(secondToLastThen);
-        console.log('🔍 THEN: ultimo è MENU, controllo penultimo:', secondToLastThen.type, 'endsWithAsk:', thenEndsWithAsk);
       } else {
         thenEndsWithAsk = blockEndsWithAsk(lastThenBlock);
-        console.log('🔍 THEN: ultimo non è MENU:', lastThenBlock.type, 'endsWithAsk:', thenEndsWithAsk);
       }
     }
     
     // Controlla ramo ELSE  
     if (!prevBlock.elseBlocks || prevBlock.elseBlocks.length === 0) {
       elseEndsWithAsk = true; // ELSE vuoto è valido
-      console.log('🔍 ELSE: vuoto, considerato valido');
     } else {
       const lastElseBlock = prevBlock.elseBlocks[prevBlock.elseBlocks.length - 1];
       if (lastElseBlock.type === 'MENU' && prevBlock.elseBlocks.length > 1) {
         // Se l'ultimo blocco è MENU, controlla il penultimo
         const secondToLastElse = prevBlock.elseBlocks[prevBlock.elseBlocks.length - 2];
         elseEndsWithAsk = blockEndsWithAsk(secondToLastElse);
-        console.log('🔍 ELSE: ultimo è MENU, controllo penultimo:', secondToLastElse.type, 'endsWithAsk:', elseEndsWithAsk);
       } else {
         elseEndsWithAsk = blockEndsWithAsk(lastElseBlock);
-        console.log('🔍 ELSE: ultimo non è MENU:', lastElseBlock.type, 'endsWithAsk:', elseEndsWithAsk);
       }
     }
     
-    console.log('🔍 IF analysis (drag&drop con logica MENU):', {
-      ifId: prevBlock.id?.slice(0, 8),
-      thenBlocks: prevBlock.thenBlocks?.length || 0,
-      elseBlocks: prevBlock.elseBlocks?.length || 0,
-      thenEndsWithAsk,
-      elseEndsWithAsk,
-      lastThenType: prevBlock.thenBlocks?.[prevBlock.thenBlocks.length - 1]?.type,
-      lastElseType: prevBlock.elseBlocks?.[prevBlock.elseBlocks.length - 1]?.type
-    });
     
     const canInsert = thenEndsWithAsk && elseEndsWithAsk;
-    console.log(canInsert ? '🟢 SUCCESS: IF validation passed' : '🔴 FAILED: IF validation failed');
     return canInsert;
   }
   
   // Per altri blocchi, usa la logica esistente
   const canInsert = canInsertMenuAfterBlock(prevBlock);
-  console.log('🔍 canInsertMenuAfterBlock result:', canInsert);
   
   if (!canInsert) {
-    console.log('🔴 FAILED: canInsertMenuAfterBlock returned false');
     return false;
   }
   
-  console.log('🟢 SUCCESS: MENU insertion valid');
   return true;
 };
 

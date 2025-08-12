@@ -64,9 +64,18 @@ export const visualFlowEditorTranslations = {
   // GO Block
   'visualFlowEditor.blocks.go.anchor': 'Anker:',
   'visualFlowEditor.blocks.go.goToLabel': 'Zum Label gehen',
+
+  // LABEL Block
+  'visualFlowEditor.blocks.label.anchorName': 'Ankername',
+  'visualFlowEditor.blocks.label.hint': 'Keine Leerzeichen in Ankernamen erlaubt',
   
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Validierungsfehler',
+  'visualFlowEditor.validation.delayNoDuration': 'Der DELAY-Block muss einen Dauerwert haben. Stellen Sie die Dauer in Millisekunden ein.',
+  'visualFlowEditor.validation.sayNoText': 'Der SAY-Block muss Text haben. Fügen Sie mindestens den englischen Text hinzu.',
+  'visualFlowEditor.validation.askNoText': 'Der ASK-Block muss Text haben. Fügen Sie mindestens den englischen Text hinzu.',
+  'visualFlowEditor.validation.goNoLabel': 'Der GO-Block muss ein Label ausgewählt haben. Wählen Sie ein Ziel-Label.',
+  'visualFlowEditor.validation.labelNoName': 'Der LABEL-Block muss einen Namen haben. Legen Sie den Ankernamen fest.',
   'visualFlowEditor.validation.consecutiveAskError': '🚫 Zwei aufeinanderfolgende ASK-Blöcke sind nicht erlaubt. Fügen Sie einen anderen Blocktyp zwischen die beiden ASK-Blöcke ein.',
   'visualFlowEditor.validation.blockInBuildError': '🚫 Der {blockType}-Block kann nicht in einen BUILD-Block eingefügt werden. BUILD- und FLIGHT-Blöcke können nicht verschachtelt werden.',
   'visualFlowEditor.validation.blockInFlightError': '🚫 Der {blockType}-Block kann nicht in einen FLIGHT-Block eingefügt werden. BUILD- und FLIGHT-Blöcke können nicht verschachtelt werden.',
