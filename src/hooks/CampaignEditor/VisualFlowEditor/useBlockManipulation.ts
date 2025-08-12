@@ -5,12 +5,13 @@ import { updateBlockRecursive } from './blockManipulation/operations/updateOpera
 import { removeBlockRecursive } from './blockManipulation/operations/removeOperations';
 import { addBlockAtIndex, addBlockToContainer } from './blockManipulation/operations/insertOperations';
 import { useTranslation } from '@/locales';
+import { useCallback, useMemo } from 'react';
 
 export const useBlockManipulation = () => {
   const { t } = useTranslation();
   
   // Wrapper per getDropErrorMessage che passa t automaticamente
-  const getDropErrorMessage = (
+  const getDropErrorMessage = useCallback((
     blockType: string,
     containerId: string,
     containerType: string,
@@ -18,12 +19,12 @@ export const useBlockManipulation = () => {
     index?: number
   ) => {
     return getDropErrorMessageBase(blockType, containerId, containerType, blocks, index, t);
-  };
+  }, [t]);
   
-  // Wrapper per validateAllBlocks che passa t automaticamente
-  const validateAllBlocks = (blocks: any[]) => {
-    return validateAllBlocksBase(blocks, t);
-  };
+  // Wrapper per validateAllBlocks che passa t automaticamente - memoizzato stabilmente
+  const validateAllBlocks = useMemo(() => {
+    return (blocks: any[]) => validateAllBlocksBase(blocks, t);
+  }, [t]);
 
   return {
     updateBlockRecursive,

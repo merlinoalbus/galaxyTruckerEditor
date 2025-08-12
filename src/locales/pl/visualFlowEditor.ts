@@ -109,6 +109,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.flightInsideContainer': 'Blok FLIGHT nie może być zagnieżdżony w innym bloku kontenerowym',
   'visualFlowEditor.validation.invalidPosition': 'Nieprawidłowa pozycja dla tego bloku',
   'visualFlowEditor.validation.missingRequired': 'Brakuje wymaganych pól',
+  'visualFlowEditor.validation.ifEmptyThen': 'Blok IF nie może mieć pustej gałęzi THEN. Dodaj przynajmniej jeden blok do gałęzi THEN.',
+  'visualFlowEditor.validation.menuWithoutOpt': 'Blok MENU nie może być pusty. Dodaj przynajmniej jeden blok OPT do MENU.',
+  'visualFlowEditor.validation.menuNoSimpleOpt': 'Blok MENU musi zawierać przynajmniej jeden prosty blok OPT (bez warunków).',
+  'visualFlowEditor.validation.askMustBeFollowedByMenu': 'Blok ASK musi być śledzony przez blok MENU. Jeśli ASK jest wewnątrz IF, MENU może być w tej samej gałęzi lub na zewnątrz IF.',
+  'visualFlowEditor.validation.askWithoutMenu': 'Blok ASK musi być śledzony przez blok MENU. Ten ASK jest ostatnim blokiem i nie ma następującego MENU.',
   
   // Error Modal
   'visualFlowEditor.errorModal.close': 'Zamknij',

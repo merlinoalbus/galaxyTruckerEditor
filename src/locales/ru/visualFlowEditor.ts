@@ -109,6 +109,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.flightInsideContainer': 'Блок FLIGHT не может быть вложен в другой блок-контейнер',
   'visualFlowEditor.validation.invalidPosition': 'Недопустимая позиция для этого блока',
   'visualFlowEditor.validation.missingRequired': 'Отсутствуют обязательные поля',
+  'visualFlowEditor.validation.ifEmptyThen': 'Блок IF не может иметь пустую ветку THEN. Добавьте хотя бы один блок в ветку THEN.',
+  'visualFlowEditor.validation.menuWithoutOpt': 'Блок MENU не может быть пустым. Добавьте хотя бы один блок OPT в MENU.',
+  'visualFlowEditor.validation.menuNoSimpleOpt': 'Блок MENU должен содержать хотя бы один простой блок OPT (без условий).',
+  'visualFlowEditor.validation.askMustBeFollowedByMenu': 'Блок ASK должен следоваться блоком MENU. Если ASK внутри IF, MENU может быть в той же ветке или вне IF.',
+  'visualFlowEditor.validation.askWithoutMenu': 'Блок ASK должен следоваться блоком MENU. Этот ASK является последним блоком и не имеет следующего MENU.',
   
   // Error Modal
   'visualFlowEditor.errorModal.close': 'Закрыть',

@@ -16,7 +16,7 @@ interface TooltipData {
 
 export const ToolsPanel: React.FC<ToolsPanelProps> = ({ onToolDragStart }) => {
   const { t } = useTranslation();
-  const TOOL_CATEGORIES = getToolCategories(t);
+  const TOOL_CATEGORIES = React.useMemo(() => getToolCategories(t), [t]);
   // Tutte le categorie chiuse di default (nessuna categoria è sempre visibile ora)
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [searchText, setSearchText] = useState('');

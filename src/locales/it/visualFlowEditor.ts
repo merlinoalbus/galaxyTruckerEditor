@@ -96,6 +96,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.genericError': 'Errore di validazione generico',
   'visualFlowEditor.validation.invalidPosition': 'Posizione non valida per questo blocco',
   'visualFlowEditor.validation.missingRequired': 'Campi obbligatori mancanti',
+  'visualFlowEditor.validation.ifEmptyThen': 'Il blocco IF non può avere il ramo THEN vuoto. Aggiungi almeno un blocco al ramo THEN.',
+  'visualFlowEditor.validation.menuWithoutOpt': 'Il blocco MENU non può essere vuoto. Aggiungi almeno un blocco OPT al MENU.',
+  'visualFlowEditor.validation.menuNoSimpleOpt': 'Il blocco MENU deve contenere almeno un blocco OPT semplice (senza condizioni).',
+  'visualFlowEditor.validation.askMustBeFollowedByMenu': 'Il blocco ASK deve essere seguito da un blocco MENU. Se l\'ASK è dentro un IF, il MENU può essere nel ramo stesso o fuori dall\'IF.',
+  'visualFlowEditor.validation.askWithoutMenu': 'Il blocco ASK deve essere seguito da un blocco MENU. Questo ASK è l\'ultimo blocco e non ha un MENU seguente.',
   
   // Error Modal
   'visualFlowEditor.errorModal.close': 'Chiudi',
