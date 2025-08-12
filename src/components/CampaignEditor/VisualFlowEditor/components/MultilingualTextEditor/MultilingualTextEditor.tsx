@@ -1,6 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { ChevronDown, ChevronUp, Copy, CopyCheck, Globe } from 'lucide-react';
 import { useTranslation } from '@/locales';
+import { MetacodeButtonBar, METACODE_PATTERNS } from '../MetacodeEditor/MetacodeButtons';
+import { GenderModal } from '../MetacodeEditor/modals/GenderModal';
+import { VerbModal } from '../MetacodeEditor/modals/VerbModal';
+import { ImagePickerModal } from '../MetacodeEditor/modals/ImagePickerModal';
+import { PluralModal } from '../MetacodeEditor/modals/PluralModal';
+import { StringModal } from '../MetacodeEditor/modals/StringModal';
+import { PlayerModal } from '../MetacodeEditor/modals/PlayerModal';
+import { NumberModal } from '../MetacodeEditor/modals/NumberModal';
+import { MetacodeTextEditor } from '../MetacodeEditor/MetacodeTextEditor';
+import { 
+  insertMetacodeAtCursor,
+  generateSimpleCode,
+  parseMetacode,
+  replaceMetacode 
+} from '../MetacodeEditor/utils/metacodeParser';
+import { MetacodePattern, ParsedMetacode } from '../MetacodeEditor/types';
 
 // Funzione helper per ottenere le lingue con traduzioni
 const getLanguages = (t: any) => [
@@ -35,6 +51,12 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [copiedLang, setCopiedLang] = useState<string | null>(null);
   const [copiedAll, setCopiedAll] = useState(false);
+  
+  // Stati per metacodice
+  const [activeLanguage, setActiveLanguage] = useState<string>('EN');
+  const [modalType, setModalType] = useState<string | null>(null);
+  const [selectedPattern, setSelectedPattern] = useState<string | undefined>(undefined);
+  const [editingMetacode, setEditingMetacode] = useState<ParsedMetacode | null>(null);
 
   // Inizializza i valori per tutte le lingue
   const normalizedValue = React.useMemo(() => {
@@ -51,6 +73,46 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
       ...normalizedValue,
       [langCode]: text
     });
+  };
+
+  // Gestione click su pattern metacodice
+  const handlePatternClick = (pattern: MetacodePattern) => {
+    if (!pattern.hasModal) {
+      // Inserisci direttamente pattern semplici alla fine del testo attivo
+      const code = generateSimpleCode(pattern.type);
+      const currentText = normalizedValue[activeLanguage] || '';
+      handleChange(activeLanguage, currentText + code);
+    } else {
+      // Apri modal per pattern complessi
+      setModalType(pattern.type);
+      setSelectedPattern(pattern.id);
+    }
+  };
+
+
+  // Gestione click su metacodici esistenti
+  const handleMetacodeClick = (metacode: ParsedMetacode, language: string) => {
+    setActiveLanguage(language);
+    setEditingMetacode(metacode);
+    setModalType(metacode.type);
+    setSelectedPattern(metacode.type);
+  };
+
+  // Gestione inserimento da modal
+  const handleModalInsert = (code: string) => {
+    if (editingMetacode) {
+      // Sostituisci metacodice esistente
+      const currentText = normalizedValue[activeLanguage] || '';
+      const newText = replaceMetacode(currentText, editingMetacode, code);
+      handleChange(activeLanguage, newText);
+      setEditingMetacode(null);
+    } else {
+      // Inserisci nuovo metacodice alla fine
+      const currentText = normalizedValue[activeLanguage] || '';
+      handleChange(activeLanguage, currentText + code);
+    }
+    setModalType(null);
+    setSelectedPattern(undefined);
   };
 
   // Copia il testo inglese in una lingua specifica
@@ -85,13 +147,12 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
           <div className="flex items-center gap-2">
             <Globe className="w-4 h-4 text-blue-400" />
             <span className="text-xs font-medium text-gray-400 w-6">EN</span>
-            <textarea
+            <MetacodeTextEditor
               value={normalizedValue.EN}
-              onChange={(e) => handleChange('EN', e.target.value)}
+              onChange={(text) => handleChange('EN', text)}
+              onMetacodeClick={(metacode) => handleMetacodeClick(metacode, 'EN')}
               placeholder={finalPlaceholder}
-              className="flex-1 bg-slate-700/50 text-white px-2 py-1 rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none resize-y"
-              rows={1}
-              style={{ minHeight: '24px', lineHeight: '1.5' }}
+              className="flex-1"
             />
             {/* Pulsante expand separato, non sovrapposto */}
             <button
@@ -105,26 +166,42 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
           </div>
         ) : (
           // Visualizzazione espansa - una riga per ogni lingua
-          <div className="space-y-1">
+          <div className="space-y-2">
+            {/* Barra pulsanti metacodice - sempre visibile quando espanso */}
+            <MetacodeButtonBar
+              onPatternClick={handlePatternClick}
+              activePattern={selectedPattern}
+              visiblePatterns={[
+                // Solo i 6 pattern più usati
+                'gender',      // Genere M/F/N
+                'plural',      // Singolare/Plurale  
+                'image',       // Immagini
+                'verb',        // Tap/Click
+                'playerName',  // Nome giocatore
+                'missionResult' // Risultato missione
+              ]}
+            />
+            
+            <div className="space-y-1">
             {/* Prima riga EN con icona */}
             <div className="flex items-center gap-2">
               <Globe className="w-4 h-4 text-blue-400" />
               <span className="text-xs font-medium text-blue-400 w-6">EN</span>
-              <div className="flex-1 relative">
-                <textarea
+              <div className="flex-1 relative" onClick={() => setActiveLanguage('EN')}>
+                <MetacodeTextEditor
                   value={normalizedValue.EN}
-                  onChange={(e) => handleChange('EN', e.target.value)}
+                  onChange={(text) => handleChange('EN', text)}
+                  onMetacodeClick={(metacode) => handleMetacodeClick(metacode, 'EN')}
                   placeholder={finalPlaceholder}
-                  className="w-full bg-slate-700/50 text-white px-2 py-1 pr-7 rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none resize-y"
-                  rows={1}
-                  style={{ minHeight: '24px', lineHeight: '1.5' }}
+                  className="w-full pr-7"
                 />
+                
                 {/* Pulsante copia tutto piccolo e compatto dentro la textarea */}
                 {normalizedValue.EN && (
                   <button
                     type="button"
                     onClick={copyToAllLanguages}
-                    className="absolute top-1 right-1 p-0.5 hover:bg-slate-600 rounded transition-colors"
+                    className="absolute top-1 right-1 p-0.5 hover:bg-slate-600 rounded transition-colors z-10"
                     title={t('visualFlowEditor.multilingual.copyToAll')}
                   >
                     {copiedAll ? (
@@ -143,21 +220,21 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
                 <span className="text-xs font-medium text-gray-400 w-6">
                   {lang.code}
                 </span>
-                <div className="flex-1 relative">
-                  <textarea
+                <div className="flex-1 relative" onClick={() => setActiveLanguage(lang.code)}>
+                  <MetacodeTextEditor
                     value={normalizedValue[lang.code]}
-                    onChange={(e) => handleChange(lang.code, e.target.value)}
+                    onChange={(text) => handleChange(lang.code, text)}
+                    onMetacodeClick={(metacode) => handleMetacodeClick(metacode, lang.code)}
                     placeholder={`${placeholder} (${lang.label})`}
-                    className="w-full bg-slate-700/50 text-white px-2 py-1 pr-7 rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none resize-y"
-                    rows={1}
-                    style={{ minHeight: '24px', lineHeight: '1.5' }}
+                    className="w-full pr-7"
                   />
+                  
                   {/* Pulsante copia singola piccolo e compatto dentro la textarea */}
                   {normalizedValue.EN && (
                     <button
                       type="button"
                       onClick={() => copyToLanguage(lang.code)}
-                      className="absolute top-1 right-1 p-0.5 hover:bg-slate-600 rounded transition-colors"
+                      className="absolute top-1 right-1 p-0.5 hover:bg-slate-600 rounded transition-colors z-10"
                       title={t('visualFlowEditor.multilingual.copyFromEN')}
                     >
                       {copiedLang === lang.code ? (
@@ -182,9 +259,108 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
                 <ChevronUp className="w-3 h-3 text-gray-400" />
               </button>
             </div>
+            </div>
           </div>
         )}
       </div>
+      
+      {/* Modali metacodice */}
+      {modalType === 'gender' && (
+        <GenderModal
+          isOpen={true}
+          onClose={() => {
+            setModalType(null);
+            setSelectedPattern(undefined);
+            setEditingMetacode(null);
+          }}
+          onInsert={handleModalInsert}
+          language={activeLanguage}
+          currentText={normalizedValue[activeLanguage]}
+          cursorPosition={normalizedValue[activeLanguage]?.length || 0}
+          existingData={editingMetacode?.data}
+        />
+      )}
+      
+      {modalType === 'verb' && (
+        <VerbModal
+          isOpen={true}
+          onClose={() => {
+            setModalType(null);
+            setSelectedPattern(undefined);
+            setEditingMetacode(null);
+          }}
+          onInsert={handleModalInsert}
+          language={activeLanguage}
+          existingData={editingMetacode?.data}
+        />
+      )}
+      
+      {modalType === 'image' && (
+        <ImagePickerModal
+          isOpen={true}
+          onClose={() => {
+            setModalType(null);
+            setSelectedPattern(undefined);
+            setEditingMetacode(null);
+          }}
+          onInsert={handleModalInsert}
+          availableImages={[]}
+          existingData={editingMetacode?.data}
+        />
+      )}
+      
+      {modalType === 'plural' && (
+        <PluralModal
+          isOpen={true}
+          onClose={() => {
+            setModalType(null);
+            setSelectedPattern(undefined);
+            setEditingMetacode(null);
+          }}
+          onInsert={handleModalInsert}
+          language={activeLanguage}
+          existingData={editingMetacode?.data}
+        />
+      )}
+      
+      {modalType === 'string' && (
+        <StringModal
+          isOpen={true}
+          onClose={() => {
+            setModalType(null);
+            setSelectedPattern(undefined);
+            setEditingMetacode(null);
+          }}
+          onInsert={handleModalInsert}
+          existingData={editingMetacode?.data}
+        />
+      )}
+      
+      {modalType === 'player' && (
+        <PlayerModal
+          isOpen={true}
+          onClose={() => {
+            setModalType(null);
+            setSelectedPattern(undefined);
+            setEditingMetacode(null);
+          }}
+          onInsert={handleModalInsert}
+          existingData={editingMetacode?.data}
+        />
+      )}
+      
+      {modalType === 'number' && (
+        <NumberModal
+          isOpen={true}
+          onClose={() => {
+            setModalType(null);
+            setSelectedPattern(undefined);
+            setEditingMetacode(null);
+          }}
+          onInsert={handleModalInsert}
+          existingData={editingMetacode?.data}
+        />
+      )}
     </div>
   );
 };
