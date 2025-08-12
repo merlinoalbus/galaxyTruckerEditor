@@ -4,6 +4,7 @@
  */
 
 export { commonTranslations } from './common';
+export { campaignEditorTranslations } from './campaignEditor';
 export { errorTranslations } from './errors';
 export { headerTranslations } from './header';
 export { tabsTranslations } from './tabs';

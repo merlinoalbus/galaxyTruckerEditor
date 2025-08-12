@@ -84,7 +84,8 @@
       "Bash(then echo \"=== $file ===\")",
       "Bash(fi)",
       "Bash(head:*)",
-      "Bash(od:*)"
+      "Bash(od:*)",
+      "mcp__ide__getDiagnostics"
     ],
     "deny": []
   },
