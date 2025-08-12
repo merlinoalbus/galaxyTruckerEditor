@@ -1,6 +1,6 @@
 import React from 'react';
 import { Search } from 'lucide-react';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 import { scriptSelectorStyles } from '@/styles/CampaignEditor/InteractiveMap/styles/ScriptSelector/ScriptSelector.styles';
 
 interface SearchInputProps {

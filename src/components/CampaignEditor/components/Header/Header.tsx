@@ -4,7 +4,7 @@ import { RefreshCw, Download, Upload } from 'lucide-react';
 
 import { useGameData } from '@/contexts/GameDataContext';
 import { LanguageSelector } from '@/components/CampaignEditor/components/Header/components/LanguageSelector/LanguageSelector';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export function Header() {

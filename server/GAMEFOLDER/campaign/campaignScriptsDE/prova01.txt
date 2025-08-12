@@ -1,0 +1,79 @@
+SCRIPTS
+
+  SCRIPT aaa_pippo
+    Say "Hello!!!"
+    IF tutorialCompleted
+      Ask "DE How"
+    ELSE
+      Say "test"
+      Ask ""what's?!""
+    END_OF_IF
+    MENU
+      OPT "Fine, Thks!"
+        Say "Very good!"
+      END_OF_OPT
+      OPT_IF tutorialCompleted "No, sono affranto per il tutorial"
+        GO start
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_SCRIPT
+
+MISSION pippoMission
+  AddOpponent roughTrucker
+  SetDeckPreparationScript meteor1Deck
+  SetSpecCondition bet
+  INIT_BUILD
+    BuildingHelpScript 500 tutorialAdditionalConcepts
+    RESET shouldShowFlightTutorial
+    ModifyOpponentsBuildSpeed 75
+    SetShipType STI
+    SUB_SCRIPT stdParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+    FlightHelpScript tutorialAdditionalFlightConcepts
+  EVALUATE_FLIGHT
+    ShowDlgScene
+    ShowChar roughtrucker left
+    Delay 500
+    IF wasBet
+      IFMISSIONRESULTIS 1
+        Say "*Seufz.*"
+        Say "Die Zockerei wird mich noch ruinieren."
+        AddMissionCredits 3
+        AddOpponentsCredits 1 -3
+        Announce "Du hast 3 Credits von deinem Truckerkumpel bekommen."
+        UnlockAchievement camp_bet
+      ELSE
+        IFMISSIONRESULTIS 0
+          Say "Ich hab gewonnen. Rück die Kohle raus, [g(Jungchen|Schätzchen)]."
+          AddMissionCredits -3
+          AddOpponentsCredits 1 3
+          Announce "Du musst deinem Truckerkumpel 3 Credits bezahlen."
+        ELSE
+          Say "Oha. So viel zu unserem Rennen. Es hat uns beide geschrottet."
+          Say "Ich tippe, dass es daher keinen Gewinner gibt."
+          Say "Vielleicht nächstes Mal."
+        END_OF_IF
+      END_OF_IF
+    ELSE
+      IFMISSIONRESULTIS 1
+        Say "Oha. Mann, freue ich mich, dass du nicht gewettet hast."
+      ELSE
+        IFMISSIONRESULTIS 0
+          Say "Ha, ich hab gewonnen! Zu schade, dass wir nicht gewettet haben."
+        ELSE
+          Say "Oha. So viel zu unserem Rennen. Es hat uns beide geschrottet."
+        END_OF_IF
+      END_OF_IF
+    END_OF_IF
+    Delay 300
+    HideChar roughtrucker
+    Delay 200
+    HideDlgScene
+  END_FLIGHT
+FINISH_MISSION
+END_OF_MISSION
+
+END_OF_SCRIPTS

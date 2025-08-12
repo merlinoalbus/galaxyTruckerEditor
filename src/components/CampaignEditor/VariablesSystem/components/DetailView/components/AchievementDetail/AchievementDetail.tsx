@@ -1,7 +1,7 @@
 import React from 'react';
 import { Trophy, FileText, ExternalLink } from 'lucide-react';
 import { Achievement } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 
 interface AchievementDetailProps {
   item: Achievement & { achievement?: string; scripts?: string[] };

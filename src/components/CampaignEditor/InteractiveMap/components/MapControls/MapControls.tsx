@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ZoomIn, ZoomOut, Home, RotateCcw, ChevronUp, ChevronDown, Navigation } from 'lucide-react';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 
 import { MapControlsProps } from '@/types/CampaignEditor/InteractiveMap/types/MapControls/MapControls.types';
 import { useMapControls } from '@/hooks/CampaignEditor/InteractiveMap/hooks/MapControls/useMapControls';

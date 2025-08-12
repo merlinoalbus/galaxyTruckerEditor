@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronUp, ChevronDown } from 'lucide-react';
-import { useTranslation } from '@/locales/translations';
+import { useTranslation } from '@/locales';
 
 export const MapLegend: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
