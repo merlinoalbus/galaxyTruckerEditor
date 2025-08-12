@@ -89,7 +89,11 @@
       "Bash(do echo \"=== $lang/common.ts ===\")",
       "Bash(do echo \"=== $lang/views.ts ===\")",
       "Bash(do echo \"=== $lang ===\")",
-      "Bash(do echo -n \"$lang: \")"
+      "Bash(do echo -n \"$lang: \")",
+      "Bash(do grep -o \"\\[[^]]*\\]\" \"$file\")",
+      "Bash(do grep -ho \"\\[[^]]*\\]\" \"$f\")",
+      "Bash(do [ -f \"$f\" ])",
+      "Bash(do grep -o \"\\[[a-zA-Z][^]]*\\]\" \"$f\")"
     ],
     "deny": []
   },
