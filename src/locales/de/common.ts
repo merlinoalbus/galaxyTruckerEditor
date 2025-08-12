@@ -4,18 +4,18 @@
  */
 
 export const common = {
-  'common.search': 'Suchen',
   'common.loading': 'Lädt...',
   'common.error': 'Fehler',
   'common.save': 'Speichern',
   'common.cancel': 'Abbrechen',
-  'common.confirm': 'Bestätigen',
-  'common.edit': 'Bearbeiten',
-  'common.delete': 'Löschen',
-  'common.reset': 'Zurücksetzen',
-  'common.goToLine': 'Gehe zu',
+  'common.close': 'Schließen',
+  'common.search': 'Suchen',
+  'common.refresh': 'Aktualisieren',
+  'common.export': 'Exportieren',
+  'common.import': 'Importieren',
+  'common.connected': 'Verbunden',
+  'common.connecting': 'Verbinden...',
+  'common.noData': 'Keine Daten verfügbar',
   'common.usedIn': 'Verwendet in:',
   'common.others': 'andere',
-  'common.noResults': 'Keine Ergebnisse',
-  'common.close': 'Schließen',
 } as const;

@@ -8,6 +8,28 @@ interface ImagesViewProps {
   onNavigateToScript?: (scriptName: string, imageName: string) => void;
 }
 
+// Helper per tradurre categorie
+const translateCategory = (category: string, t: (key: any) => string): string => {
+  const key = `imageView.category.${category.toLowerCase()}`;
+  try {
+    return t(key);
+  } catch {
+    // Fallback se la traduzione fallisce
+    return category.charAt(0).toUpperCase() + category.slice(1);
+  }
+};
+
+// Helper per tradurre sottocategorie
+const translateSubcategory = (subcategory: string, t: (key: any) => string): string => {
+  const key = `imageView.subcategory.${subcategory.toLowerCase()}`;
+  try {
+    return t(key);
+  } catch {
+    // Fallback se la traduzione fallisce
+    return subcategory.charAt(0).toUpperCase() + subcategory.slice(1);
+  }
+};
+
 export const ImagesView: React.FC<ImagesViewProps> = () => {
   const {
     images,
@@ -133,7 +155,7 @@ export const ImagesView: React.FC<ImagesViewProps> = () => {
               <option value="all">{t('imageView.allCategories')}</option>
               {categories.map(cat => (
                 <option key={cat.id} value={cat.id}>
-                  {cat.label} ({cat.count})
+                  {translateCategory(cat.label, t)} ({cat.count})
                 </option>
               ))}
             </select>
@@ -160,7 +182,7 @@ export const ImagesView: React.FC<ImagesViewProps> = () => {
                     <ChevronDown className="w-3 h-3 text-gray-400" />
                   }
                   <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                    {group.tipo} / {group.sottotipo} ({group.images.length})
+                    {translateCategory(group.tipo, t)} / {translateSubcategory(group.sottotipo, t)} ({group.images.length})
                   </h3>
                 </div>
                 

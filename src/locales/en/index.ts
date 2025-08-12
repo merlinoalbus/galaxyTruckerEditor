@@ -17,3 +17,4 @@ export { variablesSystemTranslations } from './variablesSystem';
 export { scriptSelectorTranslations } from './scriptSelector';
 export { tooltipTranslations } from './tooltip';
 export { viewsTranslations } from './views';
+export { visualFlowEditorTranslations } from './visualFlowEditor';

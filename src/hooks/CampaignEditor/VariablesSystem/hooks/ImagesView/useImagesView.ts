@@ -29,7 +29,7 @@ export const useImagesView = () => {
         // Crea array di categorie
         const categoriesArray: ImageCategory[] = Array.from(categoryMap.entries()).map(([id, count]) => ({
           id,
-          label: id.charAt(0).toUpperCase() + id.slice(1),
+          label: id, // Mantieni l'id originale, la traduzione sarà nel componente
           count
         }));
         

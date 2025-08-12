@@ -42,7 +42,7 @@ export const LanguageDistribution: React.FC<LanguageDistributionProps> = ({
               </div>
               <div className={overviewStyles.languageItem.right}>
                 <span className={overviewStyles.languageItem.count}>
-                  {count} scripts
+                  {count} {t('overview.scripts')}
                 </span>
                 <span className={overviewStyles.languageItem.percentage}>
                   {percentage}%

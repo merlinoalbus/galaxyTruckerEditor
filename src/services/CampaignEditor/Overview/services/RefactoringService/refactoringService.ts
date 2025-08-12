@@ -16,14 +16,11 @@ export const refactoringService = {
         id: `ref-${++idCounter}`,
         scriptName: script.name,
         type: 'split',
-        reason: `Script con ${commandCount} comandi (limite consigliato: 200)`,
+        reasonKey: 'overview.refactoring.oversizedScript',
+        reasonParams: { commandCount, limit: 200 },
         complexity: commandCount,
         estimatedEffort: this.estimateEffort(commandCount),
-        suggestedActions: [
-          'Dividi in sub-script logici',
-          'Estrai funzioni riutilizzabili',
-          'Separa logica di inizializzazione'
-        ],
+        suggestedActionsKey: 'overview.refactoring.splitActions',
         priority: 'high',
         potentialImpact: {
           maintainability: 80,
@@ -40,13 +37,12 @@ export const refactoringService = {
         id: `ref-${++idCounter}`,
         scriptName: set.join(', '),
         type: 'merge',
-        reason: `Script correlati con meno di 20 comandi ciascuno`,
+        reasonKey: 'overview.refactoring.smallRelatedScripts',
+        reasonParams: { threshold: 20 },
         complexity: 20,
         estimatedEffort: 'low',
-        suggestedActions: [
-          `Unisci ${set.join(' e ')} in un unico script`,
-          'Mantieni separazione logica con etichette'
-        ],
+        suggestedActionsKey: 'overview.refactoring.mergeActions',
+        suggestedActionsParams: { scripts: set.join(' e ') },
         priority: 'low',
         potentialImpact: {
           maintainability: 40,
@@ -63,14 +59,11 @@ export const refactoringService = {
         id: `ref-${++idCounter}`,
         scriptName: pattern.scripts.join(', '),
         type: 'extract',
-        reason: `Pattern di ${pattern.commands.length} comandi ripetuto ${pattern.occurrences} volte`,
+        reasonKey: 'overview.refactoring.duplicatedPattern',
+        reasonParams: { length: pattern.commands.length, occurrences: pattern.occurrences },
         complexity: pattern.commands.length * pattern.occurrences,
         estimatedEffort: 'medium',
-        suggestedActions: [
-          'Estrai in sub-script comune',
-          'Crea funzione riutilizzabile',
-          'Usa parametri per le variazioni'
-        ],
+        suggestedActionsKey: 'overview.refactoring.extractActions',
         priority: pattern.occurrences > 5 ? 'high' : 'medium',
         potentialImpact: {
           maintainability: 70,
@@ -87,14 +80,11 @@ export const refactoringService = {
         id: `ref-${++idCounter}`,
         scriptName: script.name,
         type: 'simplify',
-        reason: `Complessità ciclomatica elevata (${script.complexity})`,
+        reasonKey: 'overview.refactoring.highComplexity',
+        reasonParams: { complexity: script.complexity },
         complexity: script.complexity,
         estimatedEffort: 'high',
-        suggestedActions: [
-          'Riduci annidamento condizioni',
-          'Estrai logica in sub-script',
-          'Semplifica catene di IF/ELSE'
-        ],
+        suggestedActionsKey: 'overview.refactoring.simplifyActions',
         priority: 'medium',
         potentialImpact: {
           maintainability: 60,
@@ -111,14 +101,10 @@ export const refactoringService = {
         id: `ref-${++idCounter}`,
         scriptName: script,
         type: 'remove',
-        reason: 'Script mai chiamato e non è un entry point',
+        reasonKey: 'overview.refactoring.deadScript',
         complexity: 0,
         estimatedEffort: 'low',
-        suggestedActions: [
-          'Verifica se realmente inutilizzato',
-          'Rimuovi se confermato',
-          'Documenta se mantenuto per compatibilità'
-        ],
+        suggestedActionsKey: 'overview.refactoring.removeActions',
         priority: 'low',
         potentialImpact: {
           maintainability: 20,

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Globe, AlertTriangle, CheckCircle } from 'lucide-react';
+import { useTranslation } from '@/locales';
 import type { LanguageCoverage } from '@/types/CampaignEditor/Overview/Overview.types';
 
 interface LanguageCoverageCardProps {
@@ -15,6 +16,7 @@ export const LanguageCoverageCard: React.FC<LanguageCoverageCardProps> = ({
   overallCoverage,
   criticalGaps
 }) => {
+  const { t } = useTranslation();
   const getStatusIcon = (percentage: number) => {
     if (percentage >= 80) return <CheckCircle className="w-4 h-4 text-green-500" />;
     if (percentage >= 50) return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
@@ -32,10 +34,10 @@ export const LanguageCoverageCard: React.FC<LanguageCoverageCardProps> = ({
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Globe className="w-5 h-5 text-blue-400" />
-          <h3 className="text-lg font-semibold">Copertura Linguistica</h3>
+          <h3 className="text-lg font-semibold">{t('overview.languageCoverage')}</h3>
         </div>
         <div className="flex items-center gap-4 text-sm">
-          <span className="text-gray-400">Copertura:</span>
+          <span className="text-gray-400">{t('overview.coverage')}:</span>
           <span className={`font-semibold ${
             overallCoverage >= 80 ? 'text-green-400' :
             overallCoverage >= 50 ? 'text-yellow-400' : 'text-red-400'
@@ -45,7 +47,7 @@ export const LanguageCoverageCard: React.FC<LanguageCoverageCardProps> = ({
           {criticalGaps > 0 && (
             <span className="text-red-400 flex items-center gap-1">
               <AlertTriangle className="w-4 h-4" />
-              {criticalGaps} gap critici
+              {criticalGaps} {t('overview.criticalGaps')}
             </span>
           )}
         </div>
@@ -76,7 +78,7 @@ export const LanguageCoverageCard: React.FC<LanguageCoverageCardProps> = ({
             
             {lang.gapAnalysis.critical.length > 0 && (
               <div className="text-xs text-red-400 pl-2">
-                Script critici mancanti: {lang.gapAnalysis.critical.slice(0, 3).join(', ')}
+                {t('overview.criticalScriptsMissing')}: {lang.gapAnalysis.critical.slice(0, 3).join(', ')}
                 {lang.gapAnalysis.critical.length > 3 && ` +${lang.gapAnalysis.critical.length - 3}`}
               </div>
             )}
