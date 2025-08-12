@@ -9,7 +9,7 @@ import { METACODE_PATTERNS_BY_FREQUENCY, getFrequencyColor, getPatternColor } fr
 export const METACODE_PATTERNS: MetacodePattern[] = METACODE_PATTERNS_BY_FREQUENCY.map(p => ({
   id: p.id,
   type: p.id, // Usa id come type
-  icon: p.icon,
+  icon: p.icon, // Ora è LucideIcon
   tooltip: p.tooltip,
   hasModal: p.hasModal
 }));
@@ -22,20 +22,30 @@ export const MetacodeButton: React.FC<MetacodeButtonProps> = ({
   onClick,
   isActive = false
 }) => {
+  // Trova le informazioni complete del pattern
+  const patternInfo = METACODE_PATTERNS_BY_FREQUENCY.find(p => p.id === pattern.id);
+  const IconComponent = patternInfo?.icon;
+
   return (
     <button
       type="button"
       onClick={onClick}
       title={pattern.tooltip}
       className={`
-        px-2 py-1 rounded text-xs font-mono transition-colors
+        px-2 py-1.5 rounded text-xs transition-colors flex items-center justify-center min-w-[28px]
         ${isActive 
-          ? 'bg-blue-600 text-white' 
-          : 'bg-slate-700 hover:bg-slate-600 text-gray-300'
+          ? 'bg-blue-600 text-white shadow-lg' 
+          : 'bg-slate-700 hover:bg-slate-600 text-gray-300 hover:text-white'
         }
       `}
     >
-      {pattern.icon}
+      {IconComponent && typeof IconComponent !== 'string' ? (
+        <IconComponent className="w-3 h-3" />
+      ) : (
+        <span className="font-mono text-[10px]">
+          {typeof IconComponent === 'string' ? IconComponent : patternInfo?.iconText}
+        </span>
+      )}
     </button>
   );
 };

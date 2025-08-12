@@ -205,7 +205,6 @@ export const MetacodeEditor: React.FC<MetacodeEditorProps> = ({
             setEditingMetacode(null);
           }}
           onInsert={handleModalInsert}
-          existingData={editingMetacode?.data}
         />
       )}
       

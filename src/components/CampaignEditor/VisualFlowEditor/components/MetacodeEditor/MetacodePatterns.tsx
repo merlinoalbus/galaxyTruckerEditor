@@ -3,10 +3,21 @@
  * Ordinati per frequenza d'uso (dall'analisi METACODE_COMPLETE_ANALYSIS.md)
  */
 
+import { 
+  Users, 
+  Hash, 
+  Image, 
+  MousePointer, 
+  User, 
+  Target,
+  LucideIcon 
+} from 'lucide-react';
+
 export interface MetacodePatternInfo {
   id: string;
   category: 'localization' | 'ui' | 'dynamic' | 'logic';
-  icon: string;
+  icon: LucideIcon;
+  iconText: string; // Backup text per compatibilità
   label: string;
   tooltip: string;
   frequency: 'very-high' | 'high' | 'medium' | 'low';
@@ -21,7 +32,8 @@ export const METACODE_PATTERNS_BY_FREQUENCY: MetacodePatternInfo[] = [
   {
     id: 'gender',
     category: 'localization',
-    icon: 'G',
+    icon: Users,
+    iconText: 'G',
     label: 'Genere',
     tooltip: 'Genere (M/F/N)',
     frequency: 'very-high',
@@ -32,7 +44,8 @@ export const METACODE_PATTERNS_BY_FREQUENCY: MetacodePatternInfo[] = [
   {
     id: 'plural',
     category: 'localization',
-    icon: 'N',
+    icon: Hash,
+    iconText: 'N',
     label: 'Plurale',
     tooltip: 'Singolare/Plurale',
     frequency: 'high',
@@ -45,7 +58,8 @@ export const METACODE_PATTERNS_BY_FREQUENCY: MetacodePatternInfo[] = [
   {
     id: 'image',
     category: 'ui',
-    icon: 'IMG',
+    icon: Image,
+    iconText: 'IMG',
     label: 'Immagine',
     tooltip: 'Immagine',
     frequency: 'high',
@@ -56,7 +70,8 @@ export const METACODE_PATTERNS_BY_FREQUENCY: MetacodePatternInfo[] = [
   {
     id: 'verb',
     category: 'ui',
-    icon: 'V',
+    icon: MousePointer,
+    iconText: 'V',
     label: 'Azione',
     tooltip: 'Tap/Click',
     frequency: 'medium',
@@ -69,7 +84,8 @@ export const METACODE_PATTERNS_BY_FREQUENCY: MetacodePatternInfo[] = [
   {
     id: 'playerName',
     category: 'dynamic',
-    icon: 'NAME',
+    icon: User,
+    iconText: 'NAME',
     label: 'Nome',
     tooltip: 'Nome giocatore',
     frequency: 'medium',
@@ -80,11 +96,12 @@ export const METACODE_PATTERNS_BY_FREQUENCY: MetacodePatternInfo[] = [
   {
     id: 'missionResult',
     category: 'dynamic',
-    icon: 'RES',
+    icon: Target,
+    iconText: 'RES',
     label: 'Risultato',
     tooltip: 'Risultato missione',
     frequency: 'low',
-    hasModal: false,
+    hasModal: true, // Cambiato a true perché ora abbiamo la modal
     generateDefault: () => '[missionResult]',
     examples: ['[missionResult]']
   }

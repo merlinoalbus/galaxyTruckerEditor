@@ -189,7 +189,8 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
     handleZoomIn,
     handleZoomOut,
     updateRootBlocksIfNeeded,
-    isZoomed
+    isZoomed,
+    resetNavigationState
   } = useZoomNavigation({
     currentScriptBlocks,
     setCurrentScriptBlocks
@@ -255,7 +256,10 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
     setShowScriptsList,
     currentScriptBlocks,
     rootBlocks,
-    isZoomed
+    isZoomed,
+    resetNavigationState,
+    setValidationErrors,
+    setDropError
   });
 
   // Usa hook per conversione JSON
@@ -289,17 +293,21 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
 
   // Wrapper per loadScript con reset completo dello stato
   const loadScriptWithReset = useCallback(async (scriptId: string) => {
+    // Reset completo di tutti gli stati
     setValidationErrors({ errors: 0, invalidBlocks: [] });
-    // Reset dei navigation path e root blocks (gestito dall'effetto di cambio in currentScriptBlocks)
+    setDropError(null);
+    resetNavigationState();
     return loadScript(scriptId);
-  }, [loadScript]);
+  }, [loadScript, resetNavigationState]);
 
   // Wrapper per loadMission con reset completo dello stato
   const loadMissionWithReset = useCallback(async (missionId: string) => {
+    // Reset completo di tutti gli stati
     setValidationErrors({ errors: 0, invalidBlocks: [] });
-    // Reset dei navigation path e root blocks (gestito dall'effetto di cambio in currentScriptBlocks)
+    setDropError(null);
+    resetNavigationState();
     return loadMission(missionId);
-  }, [loadMission]);
+  }, [loadMission, resetNavigationState]);
 
   // Carica script se viene passato uno scriptId dal componente chiamante
   useEffect(() => {

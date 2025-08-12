@@ -11,7 +11,10 @@
       "start",
       "stop",
       "restart",
-      "consolidaCodice"
+      "consolidaCodice",
+      "Bash(npm run build:*)",
+      "Bash(bash:*)",
+      "Bash(npm start)"
     ],
     "deny": []
   },
