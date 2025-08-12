@@ -109,6 +109,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.flightInsideContainer': 'Le bloc FLIGHT ne peut pas être imbriqué dans un autre bloc conteneur',
   'visualFlowEditor.validation.invalidPosition': 'Position invalide pour ce bloc',
   'visualFlowEditor.validation.missingRequired': 'Champs obligatoires manquants',
+  'visualFlowEditor.validation.ifEmptyThen': 'Le bloc IF ne peut pas avoir une branche THEN vide. Ajoutez au moins un bloc à la branche THEN.',
+  'visualFlowEditor.validation.menuWithoutOpt': 'Le bloc MENU ne peut pas être vide. Ajoutez au moins un bloc OPT au MENU.',
+  'visualFlowEditor.validation.menuNoSimpleOpt': 'Le bloc MENU doit contenir au moins un bloc OPT simple (sans conditions).',
+  'visualFlowEditor.validation.askMustBeFollowedByMenu': 'Le bloc ASK doit être suivi par un bloc MENU. Si ASK est dans un IF, MENU peut être dans la même branche ou en dehors de l\'IF.',
+  'visualFlowEditor.validation.askWithoutMenu': 'Le bloc ASK doit être suivi par un bloc MENU. Ce ASK est le dernier bloc et n\'a pas de MENU suivant.',
   
   // Error Modal
   'visualFlowEditor.errorModal.close': 'Fermer',

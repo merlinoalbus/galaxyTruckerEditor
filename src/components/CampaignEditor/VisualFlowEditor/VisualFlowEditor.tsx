@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Code2 } from 'lucide-react';
 
 import { useVisualFlowEditor } from '@/hooks/CampaignEditor/VisualFlowEditor/useVisualFlowEditor';
@@ -181,21 +181,34 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
   }, [analysis]);
 
 
+  // Wrapper per loadScript con reset completo dello stato
+  const loadScriptWithReset = useCallback(async (scriptId: string) => {
+    setValidationErrors({ errors: 0, invalidBlocks: [] });
+    // Reset dei navigation path e root blocks (gestito dall'effetto di cambio in currentScriptBlocks)
+    return loadScript(scriptId);
+  }, [loadScript]);
+
+  // Wrapper per loadMission con reset completo dello stato
+  const loadMissionWithReset = useCallback(async (missionId: string) => {
+    setValidationErrors({ errors: 0, invalidBlocks: [] });
+    // Reset dei navigation path e root blocks (gestito dall'effetto di cambio in currentScriptBlocks)
+    return loadMission(missionId);
+  }, [loadMission]);
+
   // Carica script se viene passato uno scriptId dal componente chiamante
   useEffect(() => {
     if (scriptId) {
-      loadScript(scriptId);
+      loadScriptWithReset(scriptId);
     }
-  }, [scriptId, loadScript]);
+  }, [scriptId, loadScriptWithReset]);
 
-  // Valida i blocchi ogni volta che cambiano (qualsiasi modifica)
   useEffect(() => {
     const blocksToValidate = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
     if (blocksToValidate.length > 0) {
       const validation = validateAllBlocks(blocksToValidate);
       setValidationErrors(validation);
     }
-  }, [currentScriptBlocks, rootBlocks, validateAllBlocks]);
+  }, [currentScriptBlocks, rootBlocks]); // Rimossa dipendenza da validateAllBlocks
 
   if (isLoading) {
     return (
@@ -241,14 +254,14 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
         showScriptsList={showScriptsList}
         setShowScriptsList={setShowScriptsList}
         availableScripts={availableScripts}
-        loadScript={loadScript}
+        loadScript={loadScriptWithReset}
         buttonRef={scriptsButtonRef}
       />
       
       <MissionsList
         showMissionsList={showMissionsList}
         setShowMissionsList={setShowMissionsList}
-        loadMission={loadMission}
+        loadMission={loadMissionWithReset}
         buttonRef={missionsButtonRef}
       />
 

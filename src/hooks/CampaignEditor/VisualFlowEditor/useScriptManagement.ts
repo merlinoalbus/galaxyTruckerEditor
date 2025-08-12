@@ -117,6 +117,10 @@ export const useScriptManagement = ({
   // Carica mission via API
   const loadMission = useCallback(async (missionId: string) => {
     setIsLoadingScript(true);
+    
+    // Reset dello stato del Visual Flow Editor
+    setCurrentScriptBlocks([]);
+    
     try {
       const response = await fetch(`http://localhost:3001/api/missions/${missionId}?multilingua=true&format=blocks`);
       if (!response.ok) {
@@ -193,6 +197,10 @@ export const useScriptManagement = ({
   // Carica script via API
   const loadScript = useCallback(async (scriptId: string) => {
     setIsLoadingScript(true);
+    
+    // Reset dello stato del Visual Flow Editor
+    setCurrentScriptBlocks([]);
+    
     try {
       const response = await fetch(`http://localhost:3001/api/scripts/${scriptId}?multilingua=true&format=blocks`);
       if (!response.ok) {

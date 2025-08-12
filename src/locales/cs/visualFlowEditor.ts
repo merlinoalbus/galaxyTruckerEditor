@@ -109,6 +109,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.flightInsideContainer': 'Blok FLIGHT nemůže být vnořen do jiného kontejnerového bloku',
   'visualFlowEditor.validation.invalidPosition': 'Neplatná pozice pro tento blok',
   'visualFlowEditor.validation.missingRequired': 'Chybí povinná pole',
+  'visualFlowEditor.validation.ifEmptyThen': 'Blok IF nemůže mít prázdnou větev THEN. Přidejte alespoň jeden blok do větve THEN.',
+  'visualFlowEditor.validation.menuWithoutOpt': 'Blok MENU nemůže být prázdný. Přidejte alespoň jeden blok OPT do MENU.',
+  'visualFlowEditor.validation.menuNoSimpleOpt': 'Blok MENU musí obsahovat alespoň jeden jednoduchý blok OPT (bez podmínek).',
+  'visualFlowEditor.validation.askMustBeFollowedByMenu': 'Blok ASK musí být následován blokem MENU. Pokud je ASK uvnitř IF, MENU může být ve stejné větvi nebo mimo IF.',
+  'visualFlowEditor.validation.askWithoutMenu': 'Blok ASK musí být následován blokem MENU. Tento ASK je posledním blokem a nemá následující MENU.',
   
   // Error Modal
   'visualFlowEditor.errorModal.close': 'Zavřít',

@@ -93,6 +93,72 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string): { er
         });
       }
       
+      // NUOVA VALIDAZIONE: Ad un blocco ASK deve seguire un blocco MENU
+      if (block.type === 'ASK') {
+        let hasValidMenu = false;
+        
+        // Controllo 1: Blocco successivo nello stesso container è MENU
+        const nextBlock = index < blocks.length - 1 ? blocks[index + 1] : null;
+        if (nextBlock && nextBlock.type === 'MENU') {
+          hasValidMenu = true;
+        }
+        
+        // Controllo 2: Se ASK è l'ultimo blocco in un ramo IF, 
+        // il MENU può essere fuori dall'IF come primo blocco dopo l'IF
+        if (!hasValidMenu && !nextBlock && parentBlock && parentBlock.type === 'IF') {
+          // Trova il blocco IF nell'albero completo e controlla cosa viene dopo
+          if (allRootBlocks) {
+            const findBlockAfterIf = (blocks: any[], ifBlock: any): any | null => {
+              for (let i = 0; i < blocks.length; i++) {
+                if (blocks[i].id === ifBlock.id) {
+                  return i < blocks.length - 1 ? blocks[i + 1] : null;
+                }
+                // Cerca ricorsivamente nei figli
+                if (blocks[i].children) {
+                  const found = findBlockAfterIf(blocks[i].children, ifBlock);
+                  if (found) return found;
+                }
+                if (blocks[i].thenBlocks) {
+                  const found = findBlockAfterIf(blocks[i].thenBlocks, ifBlock);
+                  if (found) return found;
+                }
+                if (blocks[i].elseBlocks) {
+                  const found = findBlockAfterIf(blocks[i].elseBlocks, ifBlock);
+                  if (found) return found;
+                }
+              }
+              return null;
+            };
+            
+            const blockAfterIf = findBlockAfterIf(allRootBlocks, parentBlock);
+            if (blockAfterIf && blockAfterIf.type === 'MENU') {
+              hasValidMenu = true;
+            }
+          }
+        }
+        
+        if (!hasValidMenu) {
+          errors++;
+          invalidBlocks.push(block.id);
+          errorDetails.push({
+            blockId: block.id,
+            blockType: block.type,
+            errorType: nextBlock ? 'ASK_NOT_FOLLOWED_BY_MENU' : 'ASK_WITHOUT_MENU',
+            message: t ? 
+              (nextBlock ? 
+                t('visualFlowEditor.validation.askMustBeFollowedByMenu')
+                : t('visualFlowEditor.validation.askWithoutMenu')
+              )
+              : (nextBlock ? 
+                'ASK block must be followed by a MENU block. Insert a MENU block after this ASK.'
+                : 'ASK block must be followed by a MENU block. This ASK is the last block and has no following MENU.'
+              ),
+            path: [...path],
+            relatedBlockId: nextBlock?.id
+          });
+        }
+      }
+      
       // NUOVA VALIDAZIONE: BUILD/FLIGHT dentro BUILD
       if ((block.type === 'BUILD' || block.type === 'FLIGHT') && parentBlock && parentBlock.type === 'BUILD') {
         errors++;
@@ -158,7 +224,24 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string): { er
           prevBlock = null;
         }
         
-        if (!prevBlock || !canInsertMenuAfterBlock(prevBlock)) {
+        // Controlla se il MENU può essere inserito usando la logica unificata
+        let canInsertMenu = false;
+        
+        if (prevBlock) {
+          if (prevBlock.type === 'IF') {
+            // Logica per IF: entrambi i rami devono terminare con ASK
+            const thenEndsWithAsk = prevBlock.thenBlocks && prevBlock.thenBlocks.length > 0 && 
+                                   blockEndsWithAsk(prevBlock.thenBlocks[prevBlock.thenBlocks.length - 1]);
+            const elseEndsWithAsk = !prevBlock.elseBlocks || prevBlock.elseBlocks.length === 0 || 
+                                   blockEndsWithAsk(prevBlock.elseBlocks[prevBlock.elseBlocks.length - 1]);
+            canInsertMenu = thenEndsWithAsk && elseEndsWithAsk;
+          } else {
+            // Per altri blocchi usa la funzione esistente
+            canInsertMenu = canInsertMenuAfterBlock(prevBlock);
+          }
+        }
+        
+        if (!canInsertMenu) {
           errors++;
           invalidBlocks.push(block.id);
           
@@ -214,23 +297,58 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string): { er
         });
       }
       
-      // Valida contenuto dei MENU (solo OPT permessi)
-      if (block.type === 'MENU' && block.children) {
-        block.children.forEach((child: any) => {
-          if (child.type !== 'OPT') {
+      // NUOVA VALIDAZIONE: MENU non può essere senza OPT
+      if (block.type === 'MENU') {
+        if (!block.children || block.children.length === 0) {
+          errors++;
+          invalidBlocks.push(block.id);
+          errorDetails.push({
+            blockId: block.id,
+            blockType: block.type,
+            errorType: 'MENU_WITHOUT_OPT',
+            message: t ? 
+              t('visualFlowEditor.validation.menuWithoutOpt')
+              : 'MENU block cannot be empty. Add at least one OPT block to the MENU.',
+            path: [...path]
+          });
+        } else {
+          // NUOVA VALIDAZIONE: MENU deve avere almeno un OPT semplice
+          const hasSimpleOpt = block.children.some((child: any) => 
+            child.type === 'OPT' && 
+            (!child.optType || child.optType === 'OPT_SIMPLE')
+          );
+          
+          if (!hasSimpleOpt) {
             errors++;
-            invalidBlocks.push(child.id);
+            invalidBlocks.push(block.id);
             errorDetails.push({
-              blockId: child.id,
-              blockType: child.type,
-              errorType: 'NON_OPT_IN_MENU',
+              blockId: block.id,
+              blockType: block.type,
+              errorType: 'MENU_NO_SIMPLE_OPT',
               message: t ? 
-                t('visualFlowEditor.validation.onlyOptInMenu').replace('{blockType}', child.type)
-                : `The ${child.type} block cannot be inserted in a MENU. Only OPT blocks are allowed.`,
-              path: [...path, 'MENU']
+                t('visualFlowEditor.validation.menuNoSimpleOpt')
+                : 'MENU block must contain at least one simple OPT block (without conditions).',
+              path: [...path]
             });
           }
-        });
+          
+          // Valida contenuto dei MENU (solo OPT permessi)
+          block.children.forEach((child: any) => {
+            if (child.type !== 'OPT') {
+              errors++;
+              invalidBlocks.push(child.id);
+              errorDetails.push({
+                blockId: child.id,
+                blockType: child.type,
+                errorType: 'NON_OPT_IN_MENU',
+                message: t ? 
+                  t('visualFlowEditor.validation.onlyOptInMenu').replace('{blockType}', child.type)
+                  : `The ${child.type} block cannot be inserted in a MENU. Only OPT blocks are allowed.`,
+                path: [...path, 'MENU']
+              });
+            }
+          });
+        }
       }
       
       // Ricorsione per container
@@ -238,6 +356,23 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string): { er
         // Per i container normali, passa il blocco corrente come parent e mantieni allRootBlocks
         const newPath = [...path, `${block.type}${block.id ? '#' + block.id.slice(0, 8) : ''}`];
         validateRecursive(block.children, block, allRootBlocks || blocks, newPath);
+      }
+      
+      // NUOVA VALIDAZIONE: IF non può avere ramo THEN vuoto
+      if (block.type === 'IF') {
+        if (!block.thenBlocks || block.thenBlocks.length === 0) {
+          errors++;
+          invalidBlocks.push(block.id);
+          errorDetails.push({
+            blockId: block.id,
+            blockType: block.type,
+            errorType: 'IF_EMPTY_THEN',
+            message: t ? 
+              t('visualFlowEditor.validation.ifEmptyThen') 
+              : 'IF block cannot have an empty THEN branch. Add at least one block to the THEN branch.',
+            path: [...path]
+          });
+        }
       }
       
       // Ricorsione per IF

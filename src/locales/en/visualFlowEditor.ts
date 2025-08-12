@@ -109,6 +109,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.flightInsideContainer': 'FLIGHT block cannot be nested inside another container block',
   'visualFlowEditor.validation.invalidPosition': 'Invalid position for this block',
   'visualFlowEditor.validation.missingRequired': 'Missing required fields',
+  'visualFlowEditor.validation.ifEmptyThen': 'IF block cannot have an empty THEN branch. Add at least one block to the THEN branch.',
+  'visualFlowEditor.validation.menuWithoutOpt': 'MENU block cannot be empty. Add at least one OPT block to the MENU.',
+  'visualFlowEditor.validation.menuNoSimpleOpt': 'MENU block must contain at least one simple OPT block (without conditions).',
+  'visualFlowEditor.validation.askMustBeFollowedByMenu': 'ASK block must be followed by a MENU block. If ASK is inside an IF, MENU can be in the same branch or outside the IF.',
+  'visualFlowEditor.validation.askWithoutMenu': 'ASK block must be followed by a MENU block. This ASK is the last block and has no following MENU.',
   
   // Error Modal
   'visualFlowEditor.errorModal.close': 'Close',

@@ -1,10 +1,5 @@
 import { BlockType } from './BlockTypes';
 
-// Funzione helper per ottenere le traduzioni
-export const getToolCategories = (t: any): ToolCategory[] => {
-  return TOOL_CATEGORIES_DEFINITION(t);
-};
-
 export interface Tool {
   id: string;
   name: string;
@@ -25,6 +20,20 @@ export interface ToolCategory {
   tools: Tool[];
 }
 
+// Funzione helper per ottenere le traduzioni
+export const getToolCategories = (t: any): ToolCategory[] => {
+  try {
+    if (!t || typeof t !== 'function') {
+      throw new Error('Translation function not available');
+    }
+    return TOOL_CATEGORIES_DEFINITION(t);
+  } catch (error) {
+    console.error('Error loading tool categories:', error);
+    // Fallback senza traduzioni
+    return [];
+  }
+};
+
 // Definizione delle categorie e dei comandi - TUTTI I COMANDI RICHIESTI
 const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
   {
@@ -33,11 +42,11 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
     icon: '⭐',
     alwaysVisible: false,
     tools: [
-      { id: 'delay', name: 'DELAY', icon: '⏱️', blockType: 'DELAY', description: t('visualFlowEditor.tools.delay.description'), implemented: false },
-      { id: 'go', name: 'GO', icon: '➡️', blockType: 'GO', description: t('visualFlowEditor.tools.go.description'), implemented: false },
-      { id: 'sub_script', name: 'SUB_SCRIPT', icon: '📄', blockType: 'SUB_SCRIPT', description: t('visualFlowEditor.tools.subScript.description'), implemented: false },
-      { id: 'exit_menu', name: 'EXIT_MENU', icon: '🚪', blockType: 'EXIT_MENU', description: t('visualFlowEditor.tools.exitMenu.description'), implemented: false },
-      { id: 'say', name: 'SAY', icon: '💬', blockType: 'SAY', description: t('visualFlowEditor.tools.say.description'), implemented: false, inProgress: true },
+      { id: 'delay', name: 'DELAY', icon: '⏱️', blockType: 'DELAY', description: t('visualFlowEditor.tools.delay.description'), implemented: true, inProgress: true },
+      { id: 'go', name: 'GO', icon: '➡️', blockType: 'GO', description: t('visualFlowEditor.tools.go.description'), implemented: true, inProgress: true },
+      { id: 'sub_script', name: 'SUB_SCRIPT', icon: '📄', blockType: 'SUB_SCRIPT', description: t('visualFlowEditor.tools.subScript.description'), implemented: false, inProgress: true },
+      { id: 'exit_menu', name: 'EXIT_MENU', icon: '🚪', blockType: 'EXIT_MENU', description: t('visualFlowEditor.tools.exitMenu.description'), implemented: false, inProgress: true },
+      { id: 'say', name: 'SAY', icon: '💬', blockType: 'SAY', description: t('visualFlowEditor.tools.say.description'), implemented: true },
       { id: 'changechar', name: 'CHANGECHAR', icon: '🎭', blockType: 'CHANGECHAR', description: t('visualFlowEditor.tools.changeChar.description'), implemented: false },
       { id: 'set', name: 'SET', icon: '✅', blockType: 'SET', description: t('visualFlowEditor.tools.set.description'), implemented: false },
       { id: 'ask', name: 'ASK', icon: '❓', blockType: 'ASK', description: t('visualFlowEditor.tools.ask.description'), implemented: false },
@@ -61,8 +70,8 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
       { id: 'if', name: 'IF', icon: '🔀', blockType: 'IF', description: t('visualFlowEditor.tools.if.description'), implemented: true },
       { id: 'menu', name: 'MENU', icon: '☰', blockType: 'MENU', description: t('visualFlowEditor.tools.menu.description'), implemented: true },
       { id: 'opt', name: 'OPT', icon: '⭕', blockType: 'OPT', description: t('visualFlowEditor.tools.opt.description'), implemented: true },
-      { id: 'build', name: 'BUILD', icon: '🔨', blockType: 'BUILD', description: t('visualFlowEditor.tools.build.description'), implemented: true, inProgress: true },
-      { id: 'flight', name: 'FLIGHT', icon: '✈️', blockType: 'FLIGHT', description: t('visualFlowEditor.tools.flight.description'), implemented: true, inProgress: true }
+      { id: 'build', name: 'BUILD', icon: '🔨', blockType: 'BUILD', description: t('visualFlowEditor.tools.build.description'), implemented: true },
+      { id: 'flight', name: 'FLIGHT', icon: '✈️', blockType: 'FLIGHT', description: t('visualFlowEditor.tools.flight.description'), implemented: true }
     ]
   },
   {
@@ -181,16 +190,5 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
   }
 ];
 
-// Export per retrocompatibilità - usa traduzioni inglesi di default
-export const TOOL_CATEGORIES: ToolCategory[] = TOOL_CATEGORIES_DEFINITION({
-  'visualFlowEditor.tools.category.general': 'General',
-  'visualFlowEditor.tools.category.constructs': 'Constructs',
-  'visualFlowEditor.tools.category.map': 'Map',
-  'visualFlowEditor.tools.category.mission': 'Mission',
-  'visualFlowEditor.tools.category.variables': 'Variables',
-  'visualFlowEditor.tools.category.info': 'Info & Help',
-  'visualFlowEditor.tools.category.credits': 'Credits',
-  'visualFlowEditor.tools.category.achievement': 'Achievement',
-  'visualFlowEditor.tools.category.characters': 'Characters',
-  'visualFlowEditor.tools.category.system': 'System'
-});
+// Nota: TOOL_CATEGORIES rimosso per evitare esecuzione durante l'import
+// Usare sempre getToolCategories(t) per ottenere le categorie con traduzioni
