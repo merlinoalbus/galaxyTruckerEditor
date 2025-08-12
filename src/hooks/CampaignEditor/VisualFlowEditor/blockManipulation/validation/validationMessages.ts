@@ -22,7 +22,8 @@ export const getDropErrorMessage = (
   containerId: string,
   containerType: string,
   blocks: any[],
-  index?: number
+  index?: number,
+  t?: (key: any) => string
 ): string | null => {
   // Trova il container target usando la funzione importata
   const targetContainer = findContainer(blocks, containerId);
@@ -31,36 +32,36 @@ export const getDropErrorMessage = (
   // Controlla ASK consecutivi usando la funzione di validazione generale
   if (blockType === 'ASK') {
     if (!validateBlockInsertion(blockType, targetContainer, containerType, index, blocks)) {
-      return '🚫 Due blocchi ASK consecutivi non sono permessi. Inserisci un altro tipo di blocco tra i due ASK.';
+      return t ? t('visualFlowEditor.validation.consecutiveAskError') : '🚫 Due blocchi ASK consecutivi non sono permessi. Inserisci un altro tipo di blocco tra i due ASK.';
     }
   }
   
   // Controlla BUILD/FLIGHT dentro BUILD
   if ((blockType === 'BUILD' || blockType === 'FLIGHT') && targetContainer.type === 'BUILD') {
-    return `🚫 Il blocco ${blockType} non può essere inserito dentro un blocco BUILD. I blocchi BUILD e FLIGHT non possono essere annidati.`;
+    return t ? t('visualFlowEditor.validation.blockInBuildError').replace('{blockType}', blockType) : `🚫 Il blocco ${blockType} non può essere inserito dentro un blocco BUILD. I blocchi BUILD e FLIGHT non possono essere annidati.`;
   }
   
   // Controlla BUILD/FLIGHT dentro FLIGHT
   if ((blockType === 'BUILD' || blockType === 'FLIGHT') && targetContainer.type === 'FLIGHT') {
-    return `🚫 Il blocco ${blockType} non può essere inserito dentro un blocco FLIGHT. I blocchi BUILD e FLIGHT non possono essere annidati.`;
+    return t ? t('visualFlowEditor.validation.blockInFlightError').replace('{blockType}', blockType) : `🚫 Il blocco ${blockType} non può essere inserito dentro un blocco FLIGHT. I blocchi BUILD e FLIGHT non possono essere annidati.`;
   }
   
   // Controlla MENU senza ASK precedente
   if (blockType === 'MENU') {
     // Per MENU, usa la logica esistente di validateBlockInsertion
     if (!validateBlockInsertion(blockType, targetContainer, containerType, index, blocks)) {
-      return '🚫 Il blocco MENU deve essere preceduto da un blocco ASK per funzionare correttamente.';
+      return t ? t('visualFlowEditor.validation.menuWithoutAskError') : '🚫 Il blocco MENU deve essere preceduto da un blocco ASK per funzionare correttamente.';
     }
   }
   
   // Controlla OPT fuori da MENU
   if (blockType === 'OPT' && targetContainer.type !== 'MENU') {
-    return '🚫 Il blocco OPT può essere inserito solo all\'interno di un blocco MENU.';
+    return t ? t('visualFlowEditor.validation.optOutsideMenuError') : '🚫 Il blocco OPT può essere inserito solo all\'interno di un blocco MENU.';
   }
   
   // Controlla blocchi non-OPT dentro MENU
   if (targetContainer.type === 'MENU' && blockType !== 'OPT') {
-    return `🚫 Solo blocchi OPT possono essere inseriti in un MENU. Il blocco ${blockType} non è permesso.`;
+    return t ? t('visualFlowEditor.validation.onlyOptInMenuError').replace('{blockType}', blockType) : `🚫 Solo blocchi OPT possono essere inseriti in un MENU. Il blocco ${blockType} non è permesso.`;
   }
   
   return null;
