@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronDown, ChevronRight, Search } from 'lucide-react';
-import { TOOL_CATEGORIES, Tool, ToolCategory } from '@/types/CampaignEditor/VisualFlowEditor/ToolCategories';
+import { getToolCategories, Tool, ToolCategory } from '@/types/CampaignEditor/VisualFlowEditor/ToolCategories';
 import { useTranslation } from '@/locales';
 
 interface ToolsPanelProps {
@@ -16,6 +16,7 @@ interface TooltipData {
 
 export const ToolsPanel: React.FC<ToolsPanelProps> = ({ onToolDragStart }) => {
   const { t } = useTranslation();
+  const TOOL_CATEGORIES = getToolCategories(t);
   // Tutte le categorie chiuse di default (nessuna categoria è sempre visibile ora)
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [searchText, setSearchText] = useState('');

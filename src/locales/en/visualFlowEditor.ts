@@ -59,6 +59,12 @@ export const visualFlowEditorTranslations = {
   
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Validation error',
+  'visualFlowEditor.validation.consecutiveAskError': '🚫 Two consecutive ASK blocks are not allowed. Insert another type of block between the two ASK blocks.',
+  'visualFlowEditor.validation.blockInBuildError': '🚫 The {blockType} block cannot be inserted inside a BUILD block. BUILD and FLIGHT blocks cannot be nested.',
+  'visualFlowEditor.validation.blockInFlightError': '🚫 The {blockType} block cannot be inserted inside a FLIGHT block. BUILD and FLIGHT blocks cannot be nested.',
+  'visualFlowEditor.validation.menuWithoutAskError': '🚫 The MENU block must be preceded by an ASK block to function properly.',
+  'visualFlowEditor.validation.optOutsideMenuError': '🚫 The OPT block can only be inserted inside a MENU block.',
+  'visualFlowEditor.validation.onlyOptInMenuError': '🚫 Only OPT blocks can be inserted in a MENU. The {blockType} block is not allowed.',
   'visualFlowEditor.addBlock': 'Add Block',
   'visualFlowEditor.deleteBlock': 'Delete Block',
   'visualFlowEditor.moveUp': 'Move Up',
