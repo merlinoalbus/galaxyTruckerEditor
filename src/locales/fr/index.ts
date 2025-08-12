@@ -3,7 +3,7 @@
  * Exports all translation modules for French language
  */
 
-export { common } from './common';
+export { common as commonTranslations } from './common';
 export { campaignEditorTranslations } from './campaignEditor';
 export { errorTranslations } from './errors';
 export { headerTranslations } from './header';

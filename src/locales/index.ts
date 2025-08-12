@@ -296,6 +296,7 @@ type Translations = {
 function mergeLanguageModules(modules: any) {
   return {
     ...modules.commonTranslations,
+    ...modules.campaignEditorTranslations,
     ...modules.errorTranslations,
     ...modules.headerTranslations,
     ...modules.tabsTranslations,
