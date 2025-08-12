@@ -9,6 +9,7 @@ import { PluralModal } from '../MetacodeEditor/modals/PluralModal';
 import { StringModal } from '../MetacodeEditor/modals/StringModal';
 import { PlayerModal } from '../MetacodeEditor/modals/PlayerModal';
 import { NumberModal } from '../MetacodeEditor/modals/NumberModal';
+import { MissionResultModal } from '../MetacodeEditor/modals/MissionResultModal';
 import { MetacodeTextEditor } from '../MetacodeEditor/MetacodeTextEditor';
 import { 
   insertMetacodeAtCursor,
@@ -57,6 +58,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
   const [modalType, setModalType] = useState<string | null>(null);
   const [selectedPattern, setSelectedPattern] = useState<string | undefined>(undefined);
   const [editingMetacode, setEditingMetacode] = useState<ParsedMetacode | null>(null);
+  const [cursorPosition, setCursorPosition] = useState<Record<string, number>>({});
 
   // Inizializza i valori per tutte le lingue
   const normalizedValue = React.useMemo(() => {
@@ -75,13 +77,30 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
     });
   };
 
+  // Gestione posizione cursore per lingua
+  const handleCursorPositionChange = (language: string, position: number) => {
+    setCursorPosition(prev => ({
+      ...prev,
+      [language]: position
+    }));
+  };
+
   // Gestione click su pattern metacodice
   const handlePatternClick = (pattern: MetacodePattern) => {
     if (!pattern.hasModal) {
-      // Inserisci direttamente pattern semplici alla fine del testo attivo
+      // Inserisci direttamente pattern semplici alla posizione del cursore
       const code = generateSimpleCode(pattern.type);
       const currentText = normalizedValue[activeLanguage] || '';
-      handleChange(activeLanguage, currentText + code);
+      const currentCursor = cursorPosition[activeLanguage] || currentText.length;
+      
+      const result = insertMetacodeAtCursor(currentText, currentCursor, code);
+      handleChange(activeLanguage, result.newText);
+      
+      // Aggiorna posizione cursore
+      setCursorPosition(prev => ({
+        ...prev,
+        [activeLanguage]: result.newCursorPosition
+      }));
     } else {
       // Apri modal per pattern complessi
       setModalType(pattern.type);
@@ -107,9 +126,18 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
       handleChange(activeLanguage, newText);
       setEditingMetacode(null);
     } else {
-      // Inserisci nuovo metacodice alla fine
+      // Inserisci nuovo metacodice alla posizione del cursore
       const currentText = normalizedValue[activeLanguage] || '';
-      handleChange(activeLanguage, currentText + code);
+      const currentCursor = cursorPosition[activeLanguage] || currentText.length;
+      
+      const result = insertMetacodeAtCursor(currentText, currentCursor, code);
+      handleChange(activeLanguage, result.newText);
+      
+      // Aggiorna posizione cursore
+      setCursorPosition(prev => ({
+        ...prev,
+        [activeLanguage]: result.newCursorPosition
+      }));
     }
     setModalType(null);
     setSelectedPattern(undefined);
@@ -151,6 +179,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
               value={normalizedValue.EN}
               onChange={(text) => handleChange('EN', text)}
               onMetacodeClick={(metacode) => handleMetacodeClick(metacode, 'EN')}
+              onCursorPositionChange={(pos) => handleCursorPositionChange('EN', pos)}
               placeholder={finalPlaceholder}
               className="flex-1"
             />
@@ -192,6 +221,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
                   value={normalizedValue.EN}
                   onChange={(text) => handleChange('EN', text)}
                   onMetacodeClick={(metacode) => handleMetacodeClick(metacode, 'EN')}
+                  onCursorPositionChange={(pos) => handleCursorPositionChange('EN', pos)}
                   placeholder={finalPlaceholder}
                   className="w-full pr-7"
                 />
@@ -225,6 +255,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
                     value={normalizedValue[lang.code]}
                     onChange={(text) => handleChange(lang.code, text)}
                     onMetacodeClick={(metacode) => handleMetacodeClick(metacode, lang.code)}
+                    onCursorPositionChange={(pos) => handleCursorPositionChange(lang.code, pos)}
                     placeholder={`${placeholder} (${lang.label})`}
                     className="w-full pr-7"
                   />
@@ -277,7 +308,6 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
           language={activeLanguage}
           currentText={normalizedValue[activeLanguage]}
           cursorPosition={normalizedValue[activeLanguage]?.length || 0}
-          existingData={editingMetacode?.data}
         />
       )}
       
@@ -351,6 +381,19 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
       
       {modalType === 'number' && (
         <NumberModal
+          isOpen={true}
+          onClose={() => {
+            setModalType(null);
+            setSelectedPattern(undefined);
+            setEditingMetacode(null);
+          }}
+          onInsert={handleModalInsert}
+          existingData={editingMetacode?.data}
+        />
+      )}
+      
+      {modalType === 'missionResult' && (
+        <MissionResultModal
           isOpen={true}
           onClose={() => {
             setModalType(null);

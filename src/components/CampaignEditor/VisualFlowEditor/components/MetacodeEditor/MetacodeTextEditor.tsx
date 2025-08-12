@@ -6,6 +6,7 @@ interface MetacodeTextEditorProps {
   value: string;
   onChange: (value: string) => void;
   onMetacodeClick?: (metacode: ParsedMetacode) => void;
+  onCursorPositionChange?: (position: number) => void;
   placeholder?: string;
   className?: string;
 }
@@ -160,6 +161,7 @@ export const MetacodeTextEditor: React.FC<MetacodeTextEditorProps> = ({
   value,
   onChange,
   onMetacodeClick,
+  onCursorPositionChange,
   placeholder,
   className = ''
 }) => {
@@ -168,6 +170,13 @@ export const MetacodeTextEditor: React.FC<MetacodeTextEditorProps> = ({
   const hiddenTextareaRef = useRef<HTMLTextAreaElement>(null);
   const visibleEditorRef = useRef<HTMLDivElement>(null);
   const parsedCodes = parseMetacode(value);
+
+  // Notifica cambio posizione cursore
+  useEffect(() => {
+    if (onCursorPositionChange) {
+      onCursorPositionChange(cursorPosition);
+    }
+  }, [cursorPosition, onCursorPositionChange]);
 
   // Renderizza il testo con icone al posto dei metacodici
   const renderVisualText = () => {
@@ -245,6 +254,16 @@ export const MetacodeTextEditor: React.FC<MetacodeTextEditorProps> = ({
   // Gestisce l'input nella textarea nascosta
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value);
+    
+    // Aggiorna posizione cursore
+    const textarea = e.target;
+    setCursorPosition(textarea.selectionStart || 0);
+  };
+
+  // Gestisce il cambio di selezione del cursore
+  const handleSelectionChange = (e: React.SyntheticEvent<HTMLTextAreaElement>) => {
+    const textarea = e.target as HTMLTextAreaElement;
+    setCursorPosition(textarea.selectionStart || 0);
   };
 
   // Gestisce blur per tornare alla visualizzazione icone
@@ -272,6 +291,9 @@ export const MetacodeTextEditor: React.FC<MetacodeTextEditorProps> = ({
           ref={hiddenTextareaRef}
           value={value}
           onChange={handleTextareaChange}
+          onSelect={handleSelectionChange}
+          onKeyUp={handleSelectionChange}
+          onMouseUp={handleSelectionChange}
           onBlur={handleBlur}
           placeholder={placeholder}
           className="w-full bg-slate-700/50 text-white px-2 py-1 rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none resize-y"

@@ -2,10 +2,12 @@
  * Types for Metacode Editor System
  */
 
+import { LucideIcon } from 'lucide-react';
+
 export interface MetacodePattern {
   id: string;
   type: string; // Cambiato a string generico per compatibilità
-  icon: string;
+  icon: LucideIcon | string; // Supporta sia icone Lucide che stringhe per compatibilità
   tooltip: string;
   hasModal: boolean;
 }
