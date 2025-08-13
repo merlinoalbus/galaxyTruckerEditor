@@ -19,6 +19,13 @@ export const useZoomNavigation = ({
   const [currentFocusedBlock, setCurrentFocusedBlock] = useState<any>(null);
   const [rootBlocks, setRootBlocks] = useState<any[]>([]);
 
+  // Funzione per resettare completamente lo stato della navigazione
+  const resetNavigationState = useCallback(() => {
+    setNavigationPath([]);
+    setCurrentFocusedBlock(null);
+    setRootBlocks([]);
+  }, []);
+
   // Funzione ricorsiva per trovare e aggiornare un blocco nell'albero
   const updateBlockInNavigationTree = useCallback((blocks: any[], blockId: string, newBlock: any): any[] => {
     return blocks.map(block => {
@@ -215,6 +222,7 @@ export const useZoomNavigation = ({
     handleZoomIn,
     handleZoomOut,
     updateRootBlocksIfNeeded,
-    isZoomed: navigationPath.length > 0
+    isZoomed: navigationPath.length > 0,
+    resetNavigationState
   };
 };

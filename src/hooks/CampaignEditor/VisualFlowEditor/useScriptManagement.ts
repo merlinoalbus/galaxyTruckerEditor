@@ -16,6 +16,9 @@ interface UseScriptManagementProps {
   currentScriptBlocks?: any[];
   rootBlocks?: any[];
   isZoomed?: boolean;
+  resetNavigationState?: () => void;
+  setValidationErrors?: (errors: any) => void;
+  setDropError?: (error: string | null) => void;
 }
 
 export const useScriptManagement = ({ 
@@ -23,7 +26,10 @@ export const useScriptManagement = ({
   setShowScriptsList,
   currentScriptBlocks = [],
   rootBlocks = [],
-  isZoomed = false
+  isZoomed = false,
+  resetNavigationState,
+  setValidationErrors,
+  setDropError
 }: UseScriptManagementProps) => {
   const [currentScript, setCurrentScript] = useState<ScriptData | null>(null);
   const [isLoadingScript, setIsLoadingScript] = useState(false);
@@ -51,6 +57,11 @@ export const useScriptManagement = ({
     
     const scriptName = fileName.replace('.txt', '');
     
+    // Reset completo dello stato prima di creare il nuovo script
+    if (resetNavigationState) resetNavigationState();
+    if (setValidationErrors) setValidationErrors({ errors: 0, invalidBlocks: [] });
+    if (setDropError) setDropError(null);
+    
     const newScriptBlock = {
       id: generateBlockId('SCRIPT'),
       type: 'SCRIPT',
@@ -73,7 +84,7 @@ export const useScriptManagement = ({
     
     setNewScriptDialog({ isOpen: false, fileName: '' });
     setShowScriptsList(false);
-  }, [newScriptDialog.fileName, setCurrentScriptBlocks, setShowScriptsList]);
+  }, [newScriptDialog.fileName, setCurrentScriptBlocks, setShowScriptsList, resetNavigationState, setValidationErrors, setDropError]);
 
   // Conferma creazione nuova mission
   const confirmNewMission = useCallback(() => {
@@ -88,6 +99,11 @@ export const useScriptManagement = ({
     }
     
     const missionName = fileName.replace('.txt', '');
+    
+    // Reset completo dello stato prima di creare la nuova mission
+    if (resetNavigationState) resetNavigationState();
+    if (setValidationErrors) setValidationErrors({ errors: 0, invalidBlocks: [] });
+    if (setDropError) setDropError(null);
     
     const newMissionBlock = {
       id: generateBlockId('MISSION'),
@@ -112,14 +128,17 @@ export const useScriptManagement = ({
     
     setNewScriptDialog({ isOpen: false, fileName: '' });
     setShowScriptsList(false);
-  }, [newScriptDialog.fileName, setCurrentScriptBlocks, setShowScriptsList]);
+  }, [newScriptDialog.fileName, setCurrentScriptBlocks, setShowScriptsList, resetNavigationState, setValidationErrors, setDropError]);
 
   // Carica mission via API
   const loadMission = useCallback(async (missionId: string) => {
     setIsLoadingScript(true);
     
-    // Reset dello stato del Visual Flow Editor
+    // Reset completo dello stato del Visual Flow Editor
     setCurrentScriptBlocks([]);
+    if (resetNavigationState) resetNavigationState();
+    if (setValidationErrors) setValidationErrors({ errors: 0, invalidBlocks: [] });
+    if (setDropError) setDropError(null);
     
     try {
       const response = await fetch(`http://localhost:3001/api/missions/${missionId}?multilingua=true&format=blocks`);
@@ -192,14 +211,17 @@ export const useScriptManagement = ({
       setIsLoadingScript(false);
       setShowScriptsList(false);
     }
-  }, [setCurrentScriptBlocks, setShowScriptsList]);
+  }, [setCurrentScriptBlocks, setShowScriptsList, resetNavigationState, setValidationErrors, setDropError]);
 
   // Carica script via API
   const loadScript = useCallback(async (scriptId: string) => {
     setIsLoadingScript(true);
     
-    // Reset dello stato del Visual Flow Editor
+    // Reset completo dello stato del Visual Flow Editor
     setCurrentScriptBlocks([]);
+    if (resetNavigationState) resetNavigationState();
+    if (setValidationErrors) setValidationErrors({ errors: 0, invalidBlocks: [] });
+    if (setDropError) setDropError(null);
     
     try {
       const response = await fetch(`http://localhost:3001/api/scripts/${scriptId}?multilingua=true&format=blocks`);
@@ -286,7 +308,7 @@ export const useScriptManagement = ({
       setIsLoadingScript(false);
       setShowScriptsList(false);
     }
-  }, [setCurrentScriptBlocks, setShowScriptsList]);
+  }, [setCurrentScriptBlocks, setShowScriptsList, resetNavigationState, setValidationErrors, setDropError]);
 
   // Salva script via API
   const saveScript = useCallback(async () => {
