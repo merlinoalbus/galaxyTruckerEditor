@@ -1,14 +1,14 @@
 SCRIPTS
 
   SCRIPT aaa_pippo
-    Say "prova [g(llo|lla)]"
+    Say "Giovanni[g(|no)] [NAME] prova pr[n(1:ova|2:ima|6:ippo)] [NAME][img(achievements\images\at__9_normal.jpg)*3]"
     Ask "Say"
     MENU
       OPT "asss"
       END_OF_OPT
     END_OF_MENU
     Delay 100
-    Say "[NAME][NAME] pover[g(o|a)]"
+    Say "[NAME][NAME][NAME]"
     Ask "whats?"
     MENU
       OPT "check"
