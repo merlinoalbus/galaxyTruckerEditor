@@ -1,8 +1,8 @@
 SCRIPTS
 
   SCRIPT aaa_pippo
-    Say "prova"
-    Ask "Say"
+    Say "prova paperon[g(e|a|i)]"
+    Ask "[g(e|a|i)]Say"
     MENU
       OPT "asss"
       END_OF_OPT

@@ -4,13 +4,45 @@ const { parseScriptContent } = require('../parsers/scriptParser');
 const { parseScriptToBlocks, convertBlocksToScript, serializeElement } = require('../parsers/blockParser');
 const { getLogger } = require('../utils/logger');
 const config = require('../config/config');
-const { GAME_ROOT, SUPPORTED_LANGUAGES } = config;
+const { GAME_ROOT, SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } = config;
 const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
+const { initializeLanguage, isLanguageInitialized, getAvailableLanguages } = require('../utils/languageInitializer');
 
 const router = express.Router();
 const logger = getLogger();
+
+// API 2.5: Lista lingue disponibili (dinamica)
+router.get('/languages', async (req, res) => {
+  try {
+    logger.info('API call: GET /api/scripts/languages');
+    
+    // Ottiene lingue inizializzate dal filesystem
+    const availableLanguages = await getAvailableLanguages(GAME_ROOT);
+    
+    // Combina con le lingue supportate di default per assicurare completezza
+    const allLanguages = [...new Set([...SUPPORTED_LANGUAGES, ...availableLanguages])].sort();
+    
+    res.json({
+      success: true,
+      data: {
+        languages: allLanguages,
+        defaultLanguage: DEFAULT_LANGUAGE,
+        initializedLanguages: availableLanguages,
+        supportedLanguages: SUPPORTED_LANGUAGES
+      },
+      count: allLanguages.length
+    });
+  } catch (error) {
+    logger.error(`Error retrieving languages: ${error.message}`);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to retrieve languages',
+      message: error.message 
+    });
+  }
+});
 
 // API 3: Lista variabili con scansione ricorsiva campaign
 router.get('/variables', async (req, res) => {
@@ -1733,14 +1765,33 @@ async function saveScriptMultilingual(scriptName, blocks, languages) {
   const results = {
     languagesProcessed: [],
     filesGenerated: [],
-    validation: { isValid: true, languageValidations: {} }
+    validation: { isValid: true, languageValidations: {} },
+    newLanguagesInitialized: []
   };
   
   try {
-    // Supporta tutte le lingue del gioco
-    const allLanguages = SUPPORTED_LANGUAGES;
-    const targetLanguages = languages.filter(lang => allLanguages.includes(lang));
+    // Supporta tutte le lingue richieste, anche se non sono nella lista predefinita
+    // Questo permette l'aggiunta dinamica di nuove lingue
+    const targetLanguages = languages;
     
+    // Verifica e inizializza lingue non esistenti
+    for (const language of targetLanguages) {
+      if (!await isLanguageInitialized(language, GAME_ROOT)) {
+        logger.info(`Detected new language ${language}, initializing...`);
+        try {
+          await initializeLanguage(language, GAME_ROOT);
+          results.newLanguagesInitialized.push(language);
+          logger.info(`Successfully initialized new language: ${language}`);
+        } catch (initError) {
+          logger.error(`Failed to initialize language ${language}: ${initError.message}`);
+          results.validation.languageValidations[language] = {
+            isValid: false,
+            error: `Failed to initialize language: ${initError.message}`
+          };
+          continue; // Salta questa lingua se l'inizializzazione fallisce
+        }
+      }
+    }
     
     for (const language of targetLanguages) {
       try {
@@ -1753,7 +1804,7 @@ async function saveScriptMultilingual(scriptName, blocks, languages) {
         // Salva nel file della lingua
         const scriptPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${language}`, `${scriptName}.txt`);
         
-        // Assicurati che la directory esista
+        // Assicurati che la directory esista (dovrebbe già esistere dopo inizializzazione)
         const scriptDir = path.dirname(scriptPath);
         await fs.ensureDir(scriptDir);
         

@@ -5,6 +5,7 @@ import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
 import { MultilingualTextEditor } from '../../MultilingualTextEditor';
 import { getBlockClassName } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
 import { useTranslation } from '@/locales';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface CommandBlockProps {
   block: any;
@@ -26,6 +27,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   onGoToLabel
 }) => {
   const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
   // Stato per collapse/expand - command blocks default collapsed
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
@@ -242,9 +244,18 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
     switch (block.type) {
       case 'SAY':
         if (block.parameters?.text) {
-          const text = typeof block.parameters.text === 'string' 
-            ? block.parameters.text 
-            : (block.parameters.text.EN || '');
+          let text = '';
+          if (typeof block.parameters.text === 'string') {
+            text = block.parameters.text;
+          } else {
+            // Prima prova con la lingua dell'interfaccia corrente
+            if (block.parameters.text[currentLanguage] && block.parameters.text[currentLanguage].trim()) {
+              text = block.parameters.text[currentLanguage];
+            } else {
+              // Altrimenti usa EN come fallback
+              text = block.parameters.text.EN || '';
+            }
+          }
           return (
             <span className="truncate max-w-[300px]" title={text}>
               "{text}"
@@ -285,9 +296,18 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         break;
       case 'ASK':
         if (block.parameters?.text) {
-          const text = typeof block.parameters.text === 'string'
-            ? block.parameters.text
-            : (block.parameters.text.EN || '');
+          let text = '';
+          if (typeof block.parameters.text === 'string') {
+            text = block.parameters.text;
+          } else {
+            // Prima prova con la lingua dell'interfaccia corrente
+            if (block.parameters.text[currentLanguage] && block.parameters.text[currentLanguage].trim()) {
+              text = block.parameters.text[currentLanguage];
+            } else {
+              // Altrimenti usa EN come fallback
+              text = block.parameters.text.EN || '';
+            }
+          }
           return (
             <span className="truncate max-w-[300px]" title={text}>
               "{text}"

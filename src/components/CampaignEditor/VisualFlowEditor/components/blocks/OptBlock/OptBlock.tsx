@@ -5,6 +5,7 @@ import { MultilingualTextEditor } from '../../MultilingualTextEditor';
 import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
 import { OptType } from '@/types/CampaignEditor/VisualFlowEditor/BlockTypes';
 import { useTranslation } from '@/locales';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const getOptTypes = (t: any) => [
   { value: 'OPT_SIMPLE', label: t('visualFlowEditor.opt.simple'), icon: '⭕' },
@@ -46,6 +47,7 @@ export const OptBlock: React.FC<OptBlockProps> = ({
   isInvalid = false
 }) => {
   const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
   // Stato per collapse/expand
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
@@ -133,9 +135,18 @@ export const OptBlock: React.FC<OptBlockProps> = ({
     
     // Aggiungi preview del testo se presente - solo se c'è spazio
     if (block.text) {
-      const textPreview = typeof block.text === 'string' 
-        ? block.text 
-        : (block.text.EN || '');
+      let textPreview = '';
+      if (typeof block.text === 'string') {
+        textPreview = block.text;
+      } else {
+        // Prima prova con la lingua dell'interfaccia corrente
+        if (block.text[currentLanguage] && block.text[currentLanguage].trim()) {
+          textPreview = block.text[currentLanguage];
+        } else {
+          // Altrimenti usa EN come fallback
+          textPreview = block.text.EN || '';
+        }
+      }
       if (textPreview) {
         parts.push(
           <span key="text" className="truncate" title={textPreview}>
