@@ -1,0 +1,17 @@
+{
+  "scriptName": "test_italian",
+  "languages": ["IT"],
+  "blocks": [
+    {
+      "id": "1",
+      "type": "COMMAND",
+      "command": "SAY",
+      "character": "narrator",
+      "parameters": {
+        "text": {
+          "IT": "Questo è un test in italiano"
+        }
+      }
+    }
+  ]
+}
