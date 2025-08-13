@@ -8,11 +8,13 @@ SCRIPTS
       END_OF_OPT
     END_OF_MENU
     Delay 100
-    IF tutorialCompleted
-      Delay 1000
-    ELSE
-      Say "Hello"
-    END_OF_IF
+    Say "[NAME][NAME] pover[g(o|a)]"
+    Ask "whats?"
+    MENU
+      OPT "check"
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
   END_OF_SCRIPT
 
 END_OF_SCRIPTS
