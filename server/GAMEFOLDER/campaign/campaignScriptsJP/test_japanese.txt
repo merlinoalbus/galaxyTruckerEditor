@@ -1,3 +1,0 @@
-SCRIPTS
-COMMAND {"text":{"JP":"これは日本語のテストです"}}
-END_OF_SCRIPTS
