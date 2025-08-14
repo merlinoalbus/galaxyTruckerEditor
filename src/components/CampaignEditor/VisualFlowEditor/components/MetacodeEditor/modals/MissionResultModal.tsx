@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Target } from 'lucide-react';
+import { TIMEOUT_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
 
 interface MissionResultModalProps {
   isOpen: boolean;
@@ -38,7 +39,7 @@ export const MissionResultModal: React.FC<MissionResultModalProps> = ({
       if (inputRef.current && resultType === 'formatted') {
         setTimeout(() => {
           inputRef.current?.focus();
-        }, 100);
+        }, TIMEOUT_CONSTANTS.SCROLL_DELAY);
       }
     }
   }, [isOpen, existingData, resultType]);

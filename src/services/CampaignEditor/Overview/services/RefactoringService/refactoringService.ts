@@ -2,6 +2,7 @@
 
 import type { CampaignAnalysis, ParsedScript } from '@/types/CampaignEditor';
 import type { RefactoringRecommendation } from '@/types/CampaignEditor/Overview/Overview.types';
+import { REFACTORING_CONSTANTS, MAINTENANCE_CONSTANTS } from '@/constants/Overview.constants';
 
 export const refactoringService = {
   generateRecommendations(analysis: CampaignAnalysis): RefactoringRecommendation[] {
@@ -17,15 +18,15 @@ export const refactoringService = {
         scriptName: script.name,
         type: 'split',
         reasonKey: 'overview.refactoring.oversizedScript',
-        reasonParams: { commandCount, limit: 200 },
+        reasonParams: { commandCount, limit: REFACTORING_CONSTANTS.MIN_COMPLEXITY },
         complexity: commandCount,
         estimatedEffort: this.estimateEffort(commandCount),
         suggestedActionsKey: 'overview.refactoring.splitActions',
         priority: 'high',
         potentialImpact: {
-          maintainability: 80,
-          performance: 30,
-          readability: 90
+          maintainability: MAINTENANCE_CONSTANTS.SCORE_MAX - MAINTENANCE_CONSTANTS.MIN_SCRIPT_SIZE,
+          performance: MAINTENANCE_CONSTANTS.SCORE_LARGE,
+          readability: MAINTENANCE_CONSTANTS.SCORE_OPTIMAL
         }
       });
     });
@@ -38,16 +39,16 @@ export const refactoringService = {
         scriptName: set.join(', '),
         type: 'merge',
         reasonKey: 'overview.refactoring.smallRelatedScripts',
-        reasonParams: { threshold: 20 },
-        complexity: 20,
+        reasonParams: { threshold: MAINTENANCE_CONSTANTS.MIN_SCRIPT_SIZE },
+        complexity: MAINTENANCE_CONSTANTS.MIN_SCRIPT_SIZE,
         estimatedEffort: 'low',
         suggestedActionsKey: 'overview.refactoring.mergeActions',
         suggestedActionsParams: { scripts: set.join(' e ') },
         priority: 'low',
         potentialImpact: {
-          maintainability: 40,
-          performance: 20,
-          readability: 30
+          maintainability: MAINTENANCE_CONSTANTS.SCORE_TINY,
+          performance: MAINTENANCE_CONSTANTS.MIN_SCRIPT_SIZE,
+          readability: MAINTENANCE_CONSTANTS.SCORE_LARGE
         }
       });
     });
@@ -64,11 +65,11 @@ export const refactoringService = {
         complexity: pattern.commands.length * pattern.occurrences,
         estimatedEffort: 'medium',
         suggestedActionsKey: 'overview.refactoring.extractActions',
-        priority: pattern.occurrences > 5 ? 'high' : 'medium',
+        priority: pattern.occurrences > MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_HIGH ? 'high' : 'medium',
         potentialImpact: {
-          maintainability: 70,
-          performance: 10,
-          readability: 60
+          maintainability: MAINTENANCE_CONSTANTS.SCORE_MAX - MAINTENANCE_CONSTANTS.SCORE_LARGE,
+          performance: MAINTENANCE_CONSTANTS.DUPLICATION_PERCENT_FACTOR,
+          readability: MAINTENANCE_CONSTANTS.SCORE_SMALL
         }
       });
     });
@@ -87,9 +88,9 @@ export const refactoringService = {
         suggestedActionsKey: 'overview.refactoring.simplifyActions',
         priority: 'medium',
         potentialImpact: {
-          maintainability: 60,
-          performance: 40,
-          readability: 80
+          maintainability: MAINTENANCE_CONSTANTS.SCORE_SMALL,
+          performance: MAINTENANCE_CONSTANTS.SCORE_TINY,
+          readability: MAINTENANCE_CONSTANTS.SCORE_MAX - MAINTENANCE_CONSTANTS.MIN_SCRIPT_SIZE
         }
       });
     });
@@ -107,9 +108,9 @@ export const refactoringService = {
         suggestedActionsKey: 'overview.refactoring.removeActions',
         priority: 'low',
         potentialImpact: {
-          maintainability: 20,
-          performance: 10,
-          readability: 10
+          maintainability: MAINTENANCE_CONSTANTS.MIN_SCRIPT_SIZE,
+          performance: MAINTENANCE_CONSTANTS.DUPLICATION_PERCENT_FACTOR,
+          readability: MAINTENANCE_CONSTANTS.DUPLICATION_PERCENT_FACTOR
         }
       });
     });
@@ -119,20 +120,20 @@ export const refactoringService = {
         const priorityOrder = { high: 3, medium: 2, low: 1 };
         return priorityOrder[b.priority] - priorityOrder[a.priority];
       })
-      .slice(0, 20); // Top 20 recommendations
+      .slice(0, MAINTENANCE_CONSTANTS.MIN_SCRIPT_SIZE); // Top recommendations
   },
   
   findOversizedScripts(scripts: ParsedScript[]): ParsedScript[] {
     return scripts.filter(script => {
       const commandCount = script.backendData?.numero_comandi || script.commands?.length || 0;
-      return commandCount > 200;
+      return commandCount > REFACTORING_CONSTANTS.MIN_COMPLEXITY;
     });
   },
   
   findMergeableScripts(analysis: CampaignAnalysis): string[][] {
     const smallScripts = analysis.scripts.filter(script => {
       const commandCount = script.backendData?.numero_comandi || script.commands?.length || 0;
-      return commandCount < 20 && commandCount > 0; // Escludi script vuoti
+      return commandCount < MAINTENANCE_CONSTANTS.MIN_SCRIPT_SIZE && commandCount > 0; // Escludi script vuoti
     });
     
     const groups: string[][] = [];
@@ -155,8 +156,8 @@ export const refactoringService = {
       }
     });
     
-    console.log('Mergeable script groups found:', groups);
-    return groups.slice(0, 3); // Limita a 3 gruppi più significativi
+    // Mergeable script groups found
+    return groups.slice(0, MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_MEDIUM); // Limita ai gruppi più significativi
   },
   
   areRelated(name1: string, name2: string): boolean {
@@ -168,9 +169,9 @@ export const refactoringService = {
     
     if (base1 === base2) return false; // Se sono identici dopo pulizia, non sono correlati
     
-    // Controlla prefissi comuni significativi (almeno 8 caratteri)
+    // Controlla prefissi comuni significativi
     const commonPrefix = this.getCommonPrefix(base1, base2);
-    if (commonPrefix.length >= 8) return true;
+    if (commonPrefix.length >= MAINTENANCE_CONSTANTS.DUPLICATION_HIGH) return true;
     
     // Controlla pattern correlati
     const patterns = [
@@ -207,11 +208,11 @@ export const refactoringService = {
     // Solo per script con abbastanza comandi
     const significantScripts = analysis.scripts.filter(script => {
       const commandCount = script.backendData?.numero_comandi || script.commands?.length || 0;
-      return commandCount > 10;
+      return commandCount > MAINTENANCE_CONSTANTS.DUPLICATION_PERCENT_FACTOR;
     });
     
     significantScripts.forEach(script => {
-      const sequences = this.extractSequences(script, 3); // Sequenze di 3 comandi (più specifico)
+      const sequences = this.extractSequences(script, MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_MEDIUM); // Sequenze di comandi
       
       sequences.forEach(seq => {
         // Filtra sequenze troppo generiche
@@ -231,14 +232,14 @@ export const refactoringService = {
     });
     
     return Array.from(patterns.values())
-      .filter(p => p.scripts.size >= 3 && p.commands.length >= 3) // Pattern significativi
+      .filter(p => p.scripts.size >= MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_MEDIUM && p.commands.length >= MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_MEDIUM) // Pattern significativi
       .sort((a, b) => b.scripts.size - a.scripts.size)
       .map(p => ({
         commands: p.commands,
         occurrences: p.scripts.size,
-        scripts: Array.from(p.scripts).slice(0, 3)
+        scripts: Array.from(p.scripts).slice(0, MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_MEDIUM)
       }))
-      .slice(0, 3); // Limita a 3 pattern più significativi
+      .slice(0, MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_MEDIUM); // Limita ai pattern più significativi
   },
   
   extractSequences(script: ParsedScript, length: number): string[][] {
@@ -279,13 +280,13 @@ export const refactoringService = {
         name: script.name,
         complexity: this.calculateCyclomaticComplexity(script)
       }))
-      .filter(s => s.complexity > 10)
+      .filter(s => s.complexity > MAINTENANCE_CONSTANTS.DUPLICATION_PERCENT_FACTOR)
       .sort((a, b) => b.complexity - a.complexity)
-      .slice(0, 10);
+      .slice(0, MAINTENANCE_CONSTANTS.DUPLICATION_PERCENT_FACTOR);
   },
   
   calculateCyclomaticComplexity(script: ParsedScript): number {
-    let complexity = 1; // Base complexity
+    let complexity = MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_LOW; // Base complexity
     
     script.commands?.forEach(cmd => {
       const cmdType = cmd.type?.toUpperCase();
@@ -297,7 +298,7 @@ export const refactoringService = {
       
       // Loop aumentano la complessità
       if (['WHILE', 'FOR', 'REPEAT'].includes(cmdType || '')) {
-        complexity += 2;
+        complexity += MAINTENANCE_CONSTANTS.OPTIMAL_DEPENDENCIES;
       }
       
       // GOTO/GOSUB aumentano la complessità
@@ -328,12 +329,12 @@ export const refactoringService = {
         return !isEntry && !called.has(script.name);
       })
       .map(s => s.name)
-      .slice(0, 10);
+      .slice(0, MAINTENANCE_CONSTANTS.DUPLICATION_PERCENT_FACTOR);
   },
   
   estimateEffort(complexity: number): 'low' | 'medium' | 'high' {
-    if (complexity < 100) return 'low';
-    if (complexity < 300) return 'medium';
+    if (complexity < REFACTORING_CONSTANTS.DEFAULT_SCORE) return 'low';
+    if (complexity < REFACTORING_CONSTANTS.MAX_COMPLEXITY) return 'medium';
     return 'high';
   }
 };

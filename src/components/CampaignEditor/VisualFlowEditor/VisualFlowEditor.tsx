@@ -9,6 +9,7 @@ import { useTranslation } from '@/locales';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
 import type { IFlowBlock, ValidationResult, ScriptContext, OpenedScript } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
+import { TIMEOUT_CONSTANTS, PERFORMANCE_CONSTANTS, UI_CONSTANTS, API_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
 
 // Import componenti modulari
 import { BlockRenderer } from './components/BlockRenderer/BlockRenderer';
@@ -88,8 +89,14 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
   
   // Funzione per navigare a un blocco LABEL
   const goToLabel = useCallback((labelName: string) => {
-    // Funzione per trovare il blocco LABEL
-    const findLabelBlock = (blocks: IFlowBlock[], path: IFlowBlock[] = []): { block: IFlowBlock, path: IFlowBlock[] } | null => {
+    // Funzione per trovare il blocco LABEL con limite di ricorsione
+    const findLabelBlock = (blocks: IFlowBlock[], path: IFlowBlock[] = [], depth: number = 0): { block: IFlowBlock, path: IFlowBlock[] } | null => {
+      // Limite di ricorsione per prevenire stack overflow
+      const MAX_RECURSION_DEPTH = PERFORMANCE_CONSTANTS.MAX_RECURSION_DEPTH;
+      if (depth > MAX_RECURSION_DEPTH) {
+        console.warn(`Maximum recursion depth (${MAX_RECURSION_DEPTH}) reached while searching for label: ${labelName}`);
+        return null;
+      }
       for (const block of blocks) {
         if (block.type === 'LABEL' && block.parameters?.name === labelName) {
           return { block, path };
@@ -97,18 +104,18 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
         
         // Cerca nei figli
         if (block.children) {
-          const found = findLabelBlock(block.children, [...path, block]);
+          const found = findLabelBlock(block.children, [...path, block], depth + 1);
           if (found) return found;
         }
         
         // Cerca nei rami IF
         if (block.type === 'IF') {
           if (block.thenBlocks) {
-            const found = findLabelBlock(block.thenBlocks, [...path, block]);
+            const found = findLabelBlock(block.thenBlocks, [...path, block], depth + 1);
             if (found) return found;
           }
           if (block.elseBlocks) {
-            const found = findLabelBlock(block.elseBlocks, [...path, block]);
+            const found = findLabelBlock(block.elseBlocks, [...path, block], depth + 1);
             if (found) return found;
           }
         }
@@ -116,11 +123,11 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
         // Cerca nei blocchi MISSION
         if (block.type === 'MISSION') {
           if (block.blocksMission) {
-            const found = findLabelBlock(block.blocksMission, [...path, block]);
+            const found = findLabelBlock(block.blocksMission, [...path, block], depth + 1);
             if (found) return found;
           }
           if (block.blocksFinish) {
-            const found = findLabelBlock(block.blocksFinish, [...path, block]);
+            const found = findLabelBlock(block.blocksFinish, [...path, block], depth + 1);
             if (found) return found;
           }
         }
@@ -128,11 +135,11 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
         // Cerca nei blocchi BUILD
         if (block.type === 'BUILD') {
           if (block.blockInit) {
-            const found = findLabelBlock(block.blockInit, [...path, block]);
+            const found = findLabelBlock(block.blockInit, [...path, block], depth + 1);
             if (found) return found;
           }
           if (block.blockStart) {
-            const found = findLabelBlock(block.blockStart, [...path, block]);
+            const found = findLabelBlock(block.blockStart, [...path, block], depth + 1);
             if (found) return found;
           }
         }
@@ -140,22 +147,22 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
         // Cerca nei blocchi FLIGHT
         if (block.type === 'FLIGHT') {
           if (block.blockInit) {
-            const found = findLabelBlock(block.blockInit, [...path, block]);
+            const found = findLabelBlock(block.blockInit, [...path, block], depth + 1);
             if (found) return found;
           }
           if (block.blockStart) {
-            const found = findLabelBlock(block.blockStart, [...path, block]);
+            const found = findLabelBlock(block.blockStart, [...path, block], depth + 1);
             if (found) return found;
           }
           if (block.blockEvaluate) {
-            const found = findLabelBlock(block.blockEvaluate, [...path, block]);
+            const found = findLabelBlock(block.blockEvaluate, [...path, block], depth + 1);
             if (found) return found;
           }
         }
         
         // Cerca nei blocchi OPT
         if (block.type === 'OPT' && block.children) {
-          const found = findLabelBlock(block.children, [...path, block]);
+          const found = findLabelBlock(block.children, [...path, block], depth + 1);
           if (found) return found;
         }
       }
@@ -168,13 +175,11 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
       const element = document.querySelector(`[data-block-id="${result.block.id}"]`);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        // Evidenzia temporaneamente il blocco
-        element.classList.add('ring-2', 'ring-blue-500', 'ring-offset-2', 'ring-offset-slate-900');
-        const timeoutId = setTimeout(() => {
-          element.classList.remove('ring-2', 'ring-blue-500', 'ring-offset-2', 'ring-offset-slate-900');
-          highlightTimeoutsRef.current.delete(timeoutId);
-        }, 2000);
-        highlightTimeoutsRef.current.add(timeoutId);
+        // Evidenzia temporaneamente il blocco con safe timeout
+        element.classList.add(`ring-${UI_CONSTANTS.RING_WIDTH_HIGHLIGHT}`, 'ring-blue-500', `ring-offset-${UI_CONSTANTS.RING_OFFSET}`, 'ring-offset-slate-900');
+        addSafeTimeout(() => {
+          element.classList.remove(`ring-${UI_CONSTANTS.RING_WIDTH_HIGHLIGHT}`, 'ring-blue-500', `ring-offset-${UI_CONSTANTS.RING_OFFSET}`, 'ring-offset-slate-900');
+        }, TIMEOUT_CONSTANTS.HIGHLIGHT_DURATION);
       }
     }
   }, [currentScriptBlocks]);
@@ -353,7 +358,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
       
       if (!scriptData) {
         // Carica lo script via API solo se non è già in cache
-        const response = await fetch(`http://localhost:3001/api/scripts/${scriptName}?multilingua=true&format=blocks`);
+        const response = await fetch(`http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/scripts/${scriptName}?multilingua=true&format=blocks`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -573,7 +578,59 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
   // Ref per i timeout di highlighting (per evitare memory leak)
   const highlightTimeoutsRef = useRef<Set<NodeJS.Timeout>>(new Set());
   
-  // Validazione automatica con debouncing di 300ms e performance monitoring per script >1000 blocchi
+  // Ref per tracking del numero massimo di timeout attivi
+  const maxActiveTimeouts = useRef<number>(0);
+  
+  // Funzione helper per gestione sicura dei timeout
+  const addSafeTimeout = useCallback((callback: () => void, delay: number): NodeJS.Timeout | null => {
+    // Limit massimo di timeout attivi per prevenire accumulo
+    const MAX_CONCURRENT_TIMEOUTS = PERFORMANCE_CONSTANTS.MAX_CONCURRENT_TIMEOUTS;
+    
+    if (highlightTimeoutsRef.current.size >= MAX_CONCURRENT_TIMEOUTS) {
+      console.warn(`[VisualFlowEditor] Maximum timeout limit reached (${MAX_CONCURRENT_TIMEOUTS}), skipping timeout`);
+      return null;
+    }
+    
+    const timeoutId = setTimeout(() => {
+      try {
+        callback();
+      } catch (error) {
+        console.error('[VisualFlowEditor] Error in timeout callback:', error);
+        // Notifica l'utente dell'errore nel timeout callback
+        const errorMessage = error instanceof Error ? error.message : 'Errore sconosciuto';
+        setDropError(`Errore durante l'operazione: ${errorMessage}`);
+      } finally {
+        highlightTimeoutsRef.current.delete(timeoutId);
+      }
+    }, delay);
+    
+    highlightTimeoutsRef.current.add(timeoutId);
+    
+    // Track maximum number for monitoring
+    if (highlightTimeoutsRef.current.size > maxActiveTimeouts.current) {
+      maxActiveTimeouts.current = highlightTimeoutsRef.current.size;
+      if (maxActiveTimeouts.current > PERFORMANCE_CONSTANTS.HIGH_TIMEOUT_WARNING) {
+        console.warn(`[VisualFlowEditor] High timeout count detected: ${maxActiveTimeouts.current}`);
+      }
+    }
+    
+    return timeoutId;
+  }, []);
+  
+  // Cleanup function per tutti i timeout attivi
+  const clearAllTimeouts = useCallback(() => {
+    highlightTimeoutsRef.current.forEach(timeoutId => {
+      clearTimeout(timeoutId);
+    });
+    highlightTimeoutsRef.current.clear();
+    
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+      debounceTimeoutRef.current = null;
+    }
+  }, []);
+  
+  // Validazione automatica con debouncing e performance monitoring per script grandi
   useEffect(() => {
     // Cancella timeout precedente per implementare vero debouncing
     if (debounceTimeoutRef.current) {
@@ -584,11 +641,11 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
       const blocksToValidate = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
       if (blocksToValidate.length > 0) {
         let validationResult;
-        if (blocksToValidate.length > 1000) {
+        if (blocksToValidate.length > PERFORMANCE_CONSTANTS.LARGE_SCRIPT_THRESHOLD) {
           const startTime = performance.now();
           validationResult = validateAllBlocks(blocksToValidate);
           const endTime = performance.now();
-          console.log(`[Performance] Validation of ${blocksToValidate.length} blocks took ${(endTime - startTime).toFixed(2)}ms`);
+          // Performance monitoring: ${blocksToValidate.length} blocks validated in ${(endTime - startTime).toFixed(2)}ms
         } else {
           validationResult = validateAllBlocks(blocksToValidate);
         }
@@ -596,7 +653,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
       } else {
         setValidationErrors({ errors: 0, invalidBlocks: [] });
       }
-    }, 300); // Debounce di 300ms come da specifica
+    }, TIMEOUT_CONSTANTS.VALIDATION_DEBOUNCE); // Debounce come da specifica
     
     // Cleanup del timeout
     return () => {
@@ -608,19 +665,8 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
   
   // Cleanup al unmount del componente
   useEffect(() => {
-    return () => {
-      // Cleanup del timeout di debouncing
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
-      }
-      
-      // Cleanup di tutti i timeout di highlighting
-      highlightTimeoutsRef.current.forEach(timeoutId => {
-        clearTimeout(timeoutId);
-      });
-      highlightTimeoutsRef.current.clear();
-    };
-  }, []);
+    return clearAllTimeouts;
+  }, [clearAllTimeouts]);
 
   if (isLoading) {
     return (
@@ -778,7 +824,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
           ) : (
             <div className="flex items-center justify-center h-full">
               <div className="text-center text-gray-500">
-                <Code2 className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                <Code2 className={`w-${UI_CONSTANTS.ICON_SIZE} h-${UI_CONSTANTS.ICON_SIZE} mx-auto mb-4 opacity-50`} />
                 <p>{t('visualFlowEditor.noScriptLoaded')}</p>
               </div>
             </div>
@@ -802,7 +848,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
       {dropError && (
         <ErrorModal
           message={dropError}
-          duration={5000}
+          duration={TIMEOUT_CONSTANTS.ERROR_MODAL_DURATION}
           onClose={() => setDropError(null)}
         />
       )}
@@ -822,22 +868,18 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
                     // Naviga al container che contiene il blocco
                     handleZoomIn(path[path.length - 1].id);
                   }
-                  // Scrolla al blocco dopo un breve delay per permettere il rendering
-                  const delayTimeoutId = setTimeout(() => {
+                  // Scrolla al blocco dopo un breve delay per permettere il rendering con safe timeout
+                  addSafeTimeout(() => {
                     const element = document.querySelector(`[data-block-id="${targetId}"]`);
                     if (element) {
                       element.scrollIntoView({ behavior: 'smooth', block: 'center' });
                       // Aggiungi un'animazione di highlight
-                      element.classList.add('ring-4', 'ring-red-500', 'ring-opacity-75');
-                      const highlightTimeoutId = setTimeout(() => {
-                        element.classList.remove('ring-4', 'ring-red-500', 'ring-opacity-75');
-                        highlightTimeoutsRef.current.delete(highlightTimeoutId);
-                      }, 2000);
-                      highlightTimeoutsRef.current.add(highlightTimeoutId);
+                      element.classList.add(`ring-${UI_CONSTANTS.RING_WIDTH_ERROR}`, 'ring-red-500', 'ring-opacity-75');
+                      addSafeTimeout(() => {
+                        element.classList.remove(`ring-${UI_CONSTANTS.RING_WIDTH_ERROR}`, 'ring-red-500', 'ring-opacity-75');
+                      }, TIMEOUT_CONSTANTS.HIGHLIGHT_DURATION);
                     }
-                    highlightTimeoutsRef.current.delete(delayTimeoutId);
-                  }, 100);
-                  highlightTimeoutsRef.current.add(delayTimeoutId);
+                  }, TIMEOUT_CONSTANTS.SCROLL_DELAY);
                   return true;
                 }
                 

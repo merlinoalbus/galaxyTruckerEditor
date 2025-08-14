@@ -4,6 +4,7 @@ import { addUniqueIds, generateBlockId } from '@/utils/CampaignEditor/VisualFlow
 import { cleanupScriptBlocks } from '@/utils/CampaignEditor/VisualFlowEditor/blockCleaner';
 import { generateScriptJson, generateMissionJson, convertBlocksToJson } from '@/utils/CampaignEditor/VisualFlowEditor/jsonConverter';
 import type { IFlowBlock, ValidationResult } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
+import { API_CONSTANTS, UI_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
 
 export interface NewScriptDialogType {
   isOpen: boolean;
@@ -142,7 +143,7 @@ export const useScriptManagement = ({
     if (setDropError) setDropError(null);
     
     try {
-      const response = await fetch(`http://localhost:3001/api/missions/${missionId}?multilingua=true&format=blocks`);
+      const response = await fetch(`http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/missions/${missionId}?multilingua=true&format=blocks`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -195,7 +196,7 @@ export const useScriptManagement = ({
         const missionBlock: IFlowBlock = {
           id: generateBlockId('MISSION'),
           type: 'MISSION',
-          position: { x: 100, y: 100 },
+          position: { x: UI_CONSTANTS.DEFAULT_POSITION_X, y: UI_CONSTANTS.DEFAULT_POSITION_Y },
           isContainer: true,
           blocksMission: blocksMission,
           blocksFinish: blocksFinish,
@@ -228,7 +229,7 @@ export const useScriptManagement = ({
     if (setDropError) setDropError(null);
     
     try {
-      const response = await fetch(`http://localhost:3001/api/scripts/${scriptId}?multilingua=true&format=blocks`);
+      const response = await fetch(`http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/scripts/${scriptId}?multilingua=true&format=blocks`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -294,7 +295,7 @@ export const useScriptManagement = ({
           finalScriptBlock = {
             id: generateBlockId('SCRIPT'),
             type: 'SCRIPT',
-            position: { x: 100, y: 100 },
+            position: { x: UI_CONSTANTS.DEFAULT_POSITION_X, y: UI_CONSTANTS.DEFAULT_POSITION_Y },
             isContainer: true,
             children: cleanedBlocks,
             scriptName: result.data.name,
@@ -370,7 +371,7 @@ export const useScriptManagement = ({
     // Salvataggio di ${scriptsToSave.length} script in corso
 
     try {
-      const response = await fetch('http://localhost:3001/api/scripts/saveScript', {
+      const response = await fetch(`http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/scripts/saveScript`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -427,7 +428,7 @@ export const useScriptManagement = ({
     const payload = [missionJson];
 
     try {
-      const response = await fetch('http://localhost:3001/api/missions/saveMission', {
+      const response = await fetch('http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/missions/saveMission', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

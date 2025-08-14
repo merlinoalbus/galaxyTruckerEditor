@@ -5,7 +5,7 @@ import type { LanguageCoverage } from '@/types/CampaignEditor/Overview/Overview.
 
 export const languageCoverageService = {
   calculateCoverage(analysis: CampaignAnalysis): LanguageCoverage[] {
-    console.log('Analyzing language coverage for', analysis.scripts.length, 'scripts');
+    // Analyzing language coverage
     
     // Definisci tutte le lingue supportate dall'interfaccia (inclusa IT)
     const allSupportedLanguages = ['IT', 'EN', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU'];
@@ -25,7 +25,7 @@ export const languageCoverageService = {
     
     // Per ogni script, conta le lingue supportate
     analysis.scripts.forEach((script, index) => {
-      console.log(`Script ${index + 1}/${totalScripts}: ${script.name} - languages:`, script.languages);
+      // Processing script languages
       
       if (script.languages && Array.isArray(script.languages)) {
         script.languages.forEach(lang => {
@@ -36,7 +36,7 @@ export const languageCoverageService = {
       }
     });
     
-    console.log('Language counts (including IT):', Object.fromEntries(languageCountMap));
+    // Language counts calculated
     
     const coverage: LanguageCoverage[] = [];
     
@@ -83,7 +83,7 @@ export const languageCoverageService = {
       });
     });
     
-    console.log('Coverage calculated:', coverage);
+    // Coverage calculation completed
     return coverage.sort((a, b) => b.coveragePercentage - a.coveragePercentage);
   },
   

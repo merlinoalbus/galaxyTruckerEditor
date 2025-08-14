@@ -3,10 +3,143 @@ const router = express.Router();
 const fs = require('fs').promises;
 const path = require('path');
 
+// Constants
+const REGEX_CONSTANTS = {
+  DEFAULT_TIMEOUT: 1000, // ms
+  EXEC_TIMEOUT: 2000, // ms
+  MAX_ITERATIONS: 1000,
+  GENDER_ITERATIONS: 500,
+  NUMBER_ITERATIONS: 500,
+  IMAGE_ITERATIONS: 500,
+  NAME_ITERATIONS: 1000,
+  GENDER_TIMEOUT: 1000, // ms
+  NUMBER_TIMEOUT: 1000, // ms
+  IMAGE_TIMEOUT: 1000, // ms
+  NAME_TIMEOUT: 500 // ms
+};
+
+const CACHE_CONSTANTS = {
+  DURATION: 60 * 60 * 1000, // 1 hour in ms
+  MAX_CONTENT_SIZE: 10 * 1024 * 1024 // 10MB
+};
+
+// Security: Path sanitization helper
+const sanitizePath = (inputPath) => {
+  // Input validation
+  if (!inputPath || typeof inputPath !== 'string') {
+    return '';
+  }
+  // Remove dangerous characters and patterns
+  const sanitized = inputPath
+    .replace(/[<>:"|?*\x00-\x1F]/g, '') // Remove invalid filename chars
+    .replace(/\.{2,}/g, '.') // Replace multiple dots with single
+    .trim();
+  
+  // Normalize path and prevent directory traversal
+  const normalized = path.normalize(sanitized);
+  // Remove any attempts to go up directories and Windows absolute paths
+  return normalized.replace(/^(\.\.[/\\])+|^[A-Za-z]:\\\\/g, '');
+};
+
+// Security: Validate file path is within allowed directory
+const isPathSafe = (filePath, baseDir) => {
+  try {
+    // Input validation
+    if (!filePath || !baseDir || typeof filePath !== 'string' || typeof baseDir !== 'string') {
+      return false;
+    }
+    const resolvedPath = path.resolve(baseDir, filePath);
+    const resolvedBase = path.resolve(baseDir);
+    return resolvedPath.startsWith(resolvedBase);
+  } catch (error) {
+    // Path resolution failed, treat as unsafe
+    return false;
+  }
+};
+
+// Security: Sanitize content for safe processing
+const sanitizeContent = (content) => {
+  if (!content || typeof content !== 'string') {
+    return '';
+  }
+  // Limit content size to prevent memory issues (10MB)
+  const MAX_CONTENT_SIZE = CACHE_CONSTANTS.MAX_CONTENT_SIZE;
+  if (content.length > MAX_CONTENT_SIZE) {
+    console.warn('Content exceeds maximum size, truncating');
+    return content.substring(0, MAX_CONTENT_SIZE);
+  }
+  return content;
+};
+
+// Security: Safe regex execution with timeout
+const safeRegexMatch = (string, pattern, timeout = REGEX_CONSTANTS.DEFAULT_TIMEOUT) => {
+  if (!string || typeof string !== 'string') {
+    return null;
+  }
+  
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error('Regex timeout'));
+    }, timeout);
+    
+    try {
+      const result = string.match(pattern);
+      clearTimeout(timer);
+      resolve(result);
+    } catch (error) {
+      clearTimeout(timer);
+      reject(error);
+    }
+  });
+};
+
+// Security: Safe regex exec with iteration limit
+const safeRegexExec = (pattern, string, maxIterations = REGEX_CONSTANTS.MAX_ITERATIONS, timeout = REGEX_CONSTANTS.EXEC_TIMEOUT) => {
+  if (!string || typeof string !== 'string') {
+    return [];
+  }
+  
+  const results = [];
+  let iterations = 0;
+  const startTime = Date.now();
+  
+  try {
+    let match;
+    // Reset pattern lastIndex for safety
+    pattern.lastIndex = 0;
+    
+    while ((match = pattern.exec(string)) !== null) {
+      results.push(match);
+      iterations++;
+      
+      // Check iteration limit
+      if (iterations >= maxIterations) {
+        console.warn(`Regex execution stopped: max iterations (${maxIterations}) reached`);
+        break;
+      }
+      
+      // Check timeout
+      if (Date.now() - startTime > timeout) {
+        console.warn(`Regex execution stopped: timeout (${timeout}ms) reached`);
+        break;
+      }
+      
+      // Prevent infinite loop on zero-length matches
+      if (match.index === pattern.lastIndex) {
+        pattern.lastIndex++;
+      }
+    }
+  } catch (error) {
+    console.error('Safe regex exec error:', error);
+  }
+  
+  return results;
+};
+
 // Cache per i metacodici più usati (aggiornata periodicamente)
 let metacodesCache = null;
 let cacheTimestamp = 0;
-const CACHE_DURATION = 60 * 60 * 1000; // 1 ora
+const CACHE_DURATION = CACHE_CONSTANTS.DURATION; // 1 ora
 
 /**
  * Analizza tutti i file di script per trovare i metacodici più usati
@@ -14,9 +147,23 @@ const CACHE_DURATION = 60 * 60 * 1000; // 1 ora
  * Restituisce solo dati reali, nessun default
  */
 async function analyzeMetacodesUsage() {
-  const customScriptsPath = path.join(__dirname, '../../GAMEFOLDER/customScripts');
-  const campaignPath = path.join(__dirname, '../../GAMEFOLDER/campaign');
-  const localizationPath = path.join(__dirname, '../../GAMEFOLDER/localization_strings');
+  // Security: Use resolved absolute paths
+  const baseGameFolder = path.resolve(__dirname, '../../GAMEFOLDER');
+  const customScriptsPath = path.join(baseGameFolder, 'customScripts');
+  const campaignPath = path.join(baseGameFolder, 'campaign');
+  const localizationPath = path.join(baseGameFolder, 'localization_strings');
+  
+  // Validate paths exist and are safe
+  try {
+    await fs.access(baseGameFolder);
+    if (!isPathSafe(customScriptsPath, baseGameFolder) || 
+        !isPathSafe(campaignPath, baseGameFolder) || 
+        !isPathSafe(localizationPath, baseGameFolder)) {
+      throw new Error('Invalid path configuration detected');
+    }
+  } catch (error) {
+    throw new Error('Base game folder not accessible or invalid paths');
+  }
   
   // Conteggi separati per lingua
   const metacodesByLang = {};
@@ -36,9 +183,18 @@ async function analyzeMetacodesUsage() {
     // 1. Analizza file di customScripts (comuni a tutte le lingue)
     const scriptFiles = await fs.readdir(customScriptsPath).catch(() => []);
     for (const file of scriptFiles) {
-      if (file.endsWith('.txt') || file.endsWith('.yaml')) {
+      // Security: Sanitize and validate file name
+      const sanitizedFile = sanitizePath(file);
+      if ((sanitizedFile.endsWith('.txt') || sanitizedFile.endsWith('.yaml'))) {
         try {
-          const content = await fs.readFile(path.join(customScriptsPath, file), 'utf8');
+          const filePath = path.join(customScriptsPath, sanitizedFile);
+          // Security: Validate file path is within allowed directory
+          if (!isPathSafe(filePath, baseGameFolder)) {
+            console.warn(`Skipping unsafe file path: ${sanitizedFile}`);
+            continue;
+          }
+          const rawContent = await fs.readFile(filePath, 'utf8');
+          const content = sanitizeContent(rawContent);
           // Aggiungi i metacodici degli script a tutte le lingue
           supportedLangs.forEach(lang => {
             analyzeContent(content, metacodesByLang[lang]);
@@ -55,9 +211,16 @@ async function analyzeMetacodesUsage() {
       try {
         const langFiles = await fs.readdir(langScriptsPath).catch(() => []);
         for (const file of langFiles) {
-          if (file.endsWith('.txt')) {
+          // Security: Sanitize and validate file name
+          const sanitizedFile = sanitizePath(file);
+          if (sanitizedFile.endsWith('.txt')) {
             try {
-              const content = await fs.readFile(path.join(langScriptsPath, file), 'utf8');
+              const filePath = path.join(langScriptsPath, sanitizedFile);
+              if (!isPathSafe(filePath, baseGameFolder)) {
+                continue;
+              }
+              const rawContent = await fs.readFile(filePath, 'utf8');
+              const content = sanitizeContent(rawContent);
               // Analizza contenuto specifico per questa lingua
               analyzeContent(content, metacodesByLang[lang]);
             } catch (err) {
@@ -74,14 +237,29 @@ async function analyzeMetacodesUsage() {
     // 3. Analizza file di localizzazione per lingua
     const locFiles = await fs.readdir(localizationPath).catch(() => []);
     for (const file of locFiles) {
-      if (file.endsWith('.yaml')) {
+      // Security: Sanitize file name
+      const sanitizedFile = sanitizePath(file);
+      if (sanitizedFile.endsWith('.yaml')) {
         // Estrai il codice lingua dal nome del file (es: game_strings_EN.yaml -> EN)
-        const langMatch = file.match(/_([A-Z]{2,3})\.yaml$/);
+        const sanitizedFileName = sanitizePath(file);
+        let langMatch = null;
+        try {
+          // Safe regex match with timeout protection
+          langMatch = sanitizedFileName.match(/_([A-Z]{2,3})\.yaml$/);
+        } catch (error) {
+          console.warn('Regex timeout in language extraction:', error);
+          langMatch = null;
+        }
         if (langMatch) {
           const lang = langMatch[1];
           if (metacodesByLang[lang]) {
             try {
-              const content = await fs.readFile(path.join(localizationPath, file), 'utf8');
+              const filePath = path.join(localizationPath, sanitizedFile);
+              if (!isPathSafe(filePath, baseGameFolder)) {
+                continue;
+              }
+              const rawContent = await fs.readFile(filePath, 'utf8');
+              const content = sanitizeContent(rawContent);
               analyzeContent(content, metacodesByLang[lang]);
             } catch (err) {
               console.error(`Error reading localization file ${file}:`, err);
@@ -107,37 +285,53 @@ async function analyzeMetacodesUsage() {
  * Analizza il contenuto per trovare metacodici
  */
 function analyzeContent(content, metacodesCount) {
-  // Pattern per genere [g(male|female|neutral)]
-  const genderPattern = /\[g\(([^|)]*)\|([^|)]*)(?:\|([^)]*))?\)\]/g;
-  let match;
-  while ((match = genderPattern.exec(content)) !== null) {
-    const key = `[g(${match[1]}|${match[2]}${match[3] ? '|' + match[3] : ''})]`;
-    metacodesCount.gender[key] = (metacodesCount.gender[key] || 0) + 1;
+  // Input validation
+  if (!content || typeof content !== 'string') {
+    return;
   }
+  
+  try {
+    // Pattern per genere [g(male|female|neutral)] - with safe execution
+    const genderPattern = /\[g\(([^|)]*)\|([^|)]*)(?:\|([^)]*))?\)\]/g;
+    const genderMatches = safeRegexExec(genderPattern, content, REGEX_CONSTANTS.GENDER_ITERATIONS, REGEX_CONSTANTS.GENDER_TIMEOUT);
+    genderMatches.forEach(match => {
+      const key = `[g(${match[1]}|${match[2]}${match[3] ? '|' + match[3] : ''})]`;
+      metacodesCount.gender[key] = (metacodesCount.gender[key] || 0) + 1;
+    });
 
-  // Pattern per numero con quantificatori multipli [n(2:prove|6:test|10:altro)]
-  const numberPattern = /\[n\((?:\d+:[^|)]+(?:\||\)))+\]/g;
-  while ((match = numberPattern.exec(content)) !== null) {
-    const key = match[0];
-    metacodesCount.number[key] = (metacodesCount.number[key] || 0) + 1;
+    // Pattern per numero con quantificatori multipli [n(2:prove|6:test|10:altro)] - with safe execution
+    const numberPattern = /\[n\((?:\d+:[^|)]+(?:\||\)))+\]/g;
+    const numberMatches = safeRegexExec(numberPattern, content, REGEX_CONSTANTS.NUMBER_ITERATIONS, REGEX_CONSTANTS.NUMBER_TIMEOUT);
+    numberMatches.forEach(match => {
+      const key = match[0];
+      metacodesCount.number[key] = (metacodesCount.number[key] || 0) + 1;
+    });
+
+    // Pattern per immagini [img(path)*count] - with safe execution
+    const imagePattern = /\[img\(([^)]+)\)\*(\d+)\]/g;
+    const imageMatches = safeRegexExec(imagePattern, content, REGEX_CONSTANTS.IMAGE_ITERATIONS, REGEX_CONSTANTS.IMAGE_TIMEOUT);
+    imageMatches.forEach(match => {
+      const key = `[img(${match[1]})*${match[2]}]`;
+      metacodesCount.image[key] = (metacodesCount.image[key] || 0) + 1;
+    });
+
+    // Pattern per nome - solo [NAME] - with safe execution and length limit
+    const namePattern = /\[NAME\]/g;
+    const nameMatches = safeRegexExec(namePattern, content, REGEX_CONSTANTS.NAME_ITERATIONS, REGEX_CONSTANTS.NAME_TIMEOUT);
+    metacodesCount.name['[NAME]'] += nameMatches.length;
+  } catch (error) {
+    console.error('Error in analyzeContent regex processing:', error);
   }
-
-  // Pattern per immagini [img(path)*count]
-  const imagePattern = /\[img\(([^)]+)\)\*(\d+)\]/g;
-  while ((match = imagePattern.exec(content)) !== null) {
-    const key = `[img(${match[1]})*${match[2]}]`;
-    metacodesCount.image[key] = (metacodesCount.image[key] || 0) + 1;
-  }
-
-  // Pattern per nome - solo [NAME]
-  const nameCount = (content.match(/\[NAME\]/g) || []).length;
-  metacodesCount.name['[NAME]'] += nameCount;
 }
 
 /**
  * Escape caratteri speciali per regex
  */
 function escapeRegex(string) {
+  // Input validation
+  if (!string || typeof string !== 'string') {
+    return '';
+  }
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
@@ -159,7 +353,12 @@ function formatTop5Metacodes(metacodesCount) {
     .slice(0, 5);
   
   result.gender = genderSorted.map(([code, usage]) => {
-    const match = code.match(/\[g\(([^|]*)\|([^|]*)(?:\|([^)]*))?\)\]/);
+    let match = null;
+    try {
+      match = code.match(/\[g\(([^|]*)\|([^|]*)(?:\|([^)]*))?\)\]/);
+    } catch (error) {
+      console.warn('Regex timeout in gender formatting:', error);
+    }
     const label = match ? `${match[1] || '∅'}/${match[2] || '∅'}${match[3] ? '/' + match[3] : ''}` : code;
     return { code, label, usage };
   });
@@ -171,7 +370,12 @@ function formatTop5Metacodes(metacodesCount) {
   
   result.number = numberSorted.map(([code, usage]) => {
     // Estrai una label semplificata dal pattern numerico
-    const parts = code.match(/\d+:[^|)]+/g) || [];
+    let parts = [];
+    try {
+      parts = code.match(/\d+:[^|)]+/g) || [];
+    } catch (error) {
+      console.warn('Regex timeout in number formatting:', error);
+    }
     const label = parts.slice(0, 2).join('/');
     return { code, label, usage };
   });
@@ -182,7 +386,12 @@ function formatTop5Metacodes(metacodesCount) {
     .slice(0, 5);
   
   result.image = imageSorted.map(([code, usage]) => {
-    const match = code.match(/\[img\(([^)]+)\)\*(\d+)\]/);
+    let match = null;
+    try {
+      match = code.match(/\[img\(([^)]+)\)\*(\d+)\]/);
+    } catch (error) {
+      console.warn('Regex timeout in image formatting:', error);
+    }
     const path = match ? match[1] : 'unknown';
     const label = path.split('/').pop()?.split('.')[0] || 'img';
     return { code, label, usage };
@@ -237,7 +446,11 @@ router.post('/refresh', async (req, res) => {
  */
 router.get('/top5/:lang?', async (req, res) => {
   try {
-    const requestedLang = req.params.lang?.toUpperCase();
+    // Sanitize input parameters
+    const langInput = req.params.lang;
+    const requestedLang = langInput ? 
+      langInput.replace(/[^A-Z]/gi, '').substring(0, 3).toUpperCase() : 
+      undefined;
     const forceRefresh = req.query.refresh === 'true';
     
     // Controlla se la cache è valida o se è richiesto un refresh forzato
@@ -292,29 +505,6 @@ router.get('/top5/:lang?', async (req, res) => {
         image: [],
         name: []
       }
-    });
-  }
-});
-
-/**
- * POST /api/metacodes/refresh
- * Forza il refresh della cache dei metacodici
- */
-router.post('/refresh', async (req, res) => {
-  try {
-    metacodesCache = await analyzeMetacodesUsage();
-    cacheTimestamp = Date.now();
-    
-    res.json({
-      success: true,
-      message: 'Cache refreshed successfully',
-      data: metacodesCache
-    });
-  } catch (error) {
-    console.error('Error refreshing metacodes cache:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message
     });
   }
 });
