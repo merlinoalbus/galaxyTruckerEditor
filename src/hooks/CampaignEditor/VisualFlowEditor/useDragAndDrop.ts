@@ -232,11 +232,75 @@ export const useDragAndDrop = ({
       : draggedBlock; // MANTIENI L'ID ORIGINALE!
     
     if (draggedBlock && !draggedTool) {
-      // Prima rimuovi il blocco dalla posizione attuale
+      // Per spostare un blocco esistente, dobbiamo correggere l'indice se il blocco
+      // viene spostato nello stesso container dopo la sua posizione originale
       updateBlocks(prev => {
+        // Trova la posizione originale del blocco nel container specifico
+        const findOriginalIndex = (blocks: any[]): { originalIndex: number; foundInSameContainer: boolean } => {
+          let originalIndex = -1;
+          let foundInSameContainer = false;
+          
+          // Prima controlla se il blocco è nel container root (stesso livello)
+          if (containerId === 'root' && containerType === 'children') {
+            blocks.forEach((block, idx) => {
+              if (block.id === draggedBlock.id) {
+                originalIndex = idx;
+                foundInSameContainer = true;
+              }
+            });
+            if (foundInSameContainer) return { originalIndex, foundInSameContainer };
+          }
+          
+          // Cerca il container target e verifica se contiene il blocco
+          for (const block of blocks) {
+            if (block.id === containerId) {
+              const containerBlocks = block[containerType] || [];
+              for (let idx = 0; idx < containerBlocks.length; idx++) {
+                if (containerBlocks[idx].id === draggedBlock.id) {
+                  originalIndex = idx;
+                  foundInSameContainer = true;
+                  break;
+                }
+              }
+              if (foundInSameContainer) return { originalIndex, foundInSameContainer };
+            }
+            
+            // Ricerca ricorsiva nei vari tipi di container
+            const checkContainers = [
+              { name: 'children', blocks: block.children },
+              { name: 'thenBlocks', blocks: block.thenBlocks },
+              { name: 'elseBlocks', blocks: block.elseBlocks },
+              { name: 'blocksMission', blocks: block.blocksMission },
+              { name: 'blocksFinish', blocks: block.blocksFinish },
+              { name: 'blockInit', blocks: block.blockInit },
+              { name: 'blockStart', blocks: block.blockStart },
+              { name: 'blockEvaluate', blocks: block.blockEvaluate }
+            ];
+            
+            for (const container of checkContainers) {
+              if (container.blocks) {
+                const result = findOriginalIndex(container.blocks);
+                if (result.foundInSameContainer) return result;
+              }
+            }
+          }
+          
+          return { originalIndex, foundInSameContainer };
+        };
+        
+        const { originalIndex, foundInSameContainer } = findOriginalIndex(prev);
+        
+        // Rimuovi il blocco dalla posizione attuale
         const withoutBlock = removeBlockRecursive(prev, draggedBlock.id);
-        // Poi aggiungilo nella nuova posizione con l'ID originale
-        const result = addBlockAtIndex(withoutBlock, containerId, containerType, draggedBlock, index);
+        
+        // Calcola l'indice corretto solo se il blocco era nello stesso container
+        let adjustedIndex = index;
+        if (foundInSameContainer && originalIndex !== -1 && originalIndex < index) {
+          adjustedIndex = index - 1;
+        }
+        
+        // Aggiungi il blocco nella nuova posizione con l'indice corretto
+        const result = addBlockAtIndex(withoutBlock, containerId, containerType, draggedBlock, adjustedIndex);
         return result;
       });
     } else if (draggedTool) {

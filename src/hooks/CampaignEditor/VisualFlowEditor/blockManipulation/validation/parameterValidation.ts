@@ -91,7 +91,8 @@ export const validateLabelParameters = (block: any): { valid: boolean; error?: s
  * Valida i parametri di un blocco SUB_SCRIPT
  */
 export const validateSubScriptParameters = (block: any): { valid: boolean; error?: string } => {
-  if (!block.parameters?.scriptName || block.parameters.scriptName.trim().length === 0) {
+  // SUB_SCRIPT usa 'script' come nome del parametro, non 'scriptName'
+  if (!block.parameters?.script || block.parameters.script.trim().length === 0) {
     return { 
       valid: false, 
       error: 'SUB_SCRIPT_NO_NAME' 
