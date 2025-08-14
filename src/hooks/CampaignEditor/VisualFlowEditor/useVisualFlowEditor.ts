@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { CampaignAnalysis } from '@/types/CampaignEditor';
+import { TIMEOUT_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
 
 export const useVisualFlowEditor = (analysis: CampaignAnalysis | null) => {
   const [isInitialized, setIsInitialized] = useState(false);
@@ -12,7 +13,7 @@ export const useVisualFlowEditor = (analysis: CampaignAnalysis | null) => {
       setIsLoading(true);
       
       // Placeholder per logica di inizializzazione
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, TIMEOUT_CONSTANTS.SAFE_TIMEOUT_DEFAULT));
       
       setIsInitialized(true);
       setIsLoading(false);

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Search, Star } from 'lucide-react';
 import type { MissionsListProps, MissionItem } from './MissionsList.types';
 import { useTranslation } from '@/locales';
+import { API_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
 
 export const MissionsList: React.FC<MissionsListProps> = ({
   showMissionsList,
@@ -65,7 +66,7 @@ export const MissionsList: React.FC<MissionsListProps> = ({
   const fetchMissions = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/api/missions');
+      const response = await fetch(`http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/missions`);
       const result = await response.json();
       
       if (result.success && result.data) {

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, ChevronUp, Copy, CopyCheck, Globe, User, Users } from 'lucide-react';
 import { useTranslation } from '@/locales';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { TIMEOUT_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
 import { ParsedMetacode, getMetacodeContext } from './metacodeParser';
 import { MetacodeTextarea } from './MetacodeTextarea';
 import { MetacodeInsertButtons } from './MetacodeInsertButtons';
@@ -166,7 +167,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
         setFocusedField(null);
         setPendingFocusLoss(false);
       }
-    }, 200);
+    }, TIMEOUT_CONSTANTS.FOCUS_DELAY);
   };
 
   // Cleanup al unmount
@@ -190,7 +191,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
     if (normalizedValue.EN) {
       handleChange(targetLang, normalizedValue.EN);
       setCopiedLang(targetLang);
-      setTimeout(() => setCopiedLang(null), 1500);
+      setTimeout(() => setCopiedLang(null), TIMEOUT_CONSTANTS.NOTIFICATION_DURATION);
     }
   };
 
@@ -205,7 +206,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
       });
       onChange(updated);
       setCopiedAll(true);
-      setTimeout(() => setCopiedAll(false), 1500);
+      setTimeout(() => setCopiedAll(false), TIMEOUT_CONSTANTS.NOTIFICATION_DURATION);
     }
   };
 

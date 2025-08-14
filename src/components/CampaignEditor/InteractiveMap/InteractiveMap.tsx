@@ -3,6 +3,7 @@ import { Maximize2, Minimize2 } from 'lucide-react';
 
 import { InteractiveMapProps, MapNode, MapConnection } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { useInteractiveMap } from '@/hooks/CampaignEditor/InteractiveMap/useInteractiveMap';
+import { TIMEOUT_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
 import { interactiveMapStyles } from '@/styles/CampaignEditor/InteractiveMap/InteractiveMap.styles';
 import { useTranslation } from '@/locales';
 import { useFullscreen } from '@/contexts/FullscreenContext';
@@ -110,7 +111,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
       recalculateViewport();
       // Force re-render of MapCanvas to update background
       setRenderKey(prev => prev + 1);
-    }, 100); // Small delay to ensure DOM has updated
+    }, TIMEOUT_CONSTANTS.SCROLL_DELAY); // Small delay to ensure DOM has updated
 
     return () => clearTimeout(timer);
   }, [isMapFullscreen, recalculateViewport]);

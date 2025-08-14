@@ -17,7 +17,7 @@ export const cleanupScriptBlocks = (blocks: any[]): any[] => {
   for (const block of blocks) {
     // Se troviamo un blocco SCRIPT anonimo (senza scriptName), estrai i suoi children
     if (block.type === 'SCRIPT' && !block.scriptName) {
-      console.log('Trovato blocco SCRIPT anonimo, estraggo i children:', block);
+      // Trovato blocco SCRIPT anonimo, estraggo i children
       if (block.children && block.children.length > 0) {
         // Ricorsivamente pulisci i children e aggiungili direttamente
         cleanedBlocks.push(...cleanupScriptBlocks(block.children));
