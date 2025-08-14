@@ -152,7 +152,7 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({ onToolDragStart }) => {
         {/* Header fisso con comandi Generale */}
         <div className="bg-slate-900 border-b border-slate-700">
           <div className="p-4 pb-2">
-            <h4 className="text-white font-bold text-lg mb-3">🛠️ {t('visualFlowEditor.tools.title')}</h4>
+            <h4 className="text-white font-bold text-lg mb-3 galaxy-title">🛠️ {t('visualFlowEditor.tools.title')}</h4>
             
             {/* Comandi Generale sempre visibili - non filtrabili */}
             {generalTools.length > 0 && (

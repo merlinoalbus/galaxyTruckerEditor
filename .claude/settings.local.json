@@ -35,7 +35,10 @@
       "Bash(./stop-be.sh:*)",
       "Bash(./start-be.sh:*)",
       "mcp__ide__executeCode",
-      "Bash(rg:*)"
+      "Bash(rg:*)",
+      "Bash(rm:*)",
+      "Bash(npm test:*)",
+      "Bash(python:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",

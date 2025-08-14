@@ -7,7 +7,7 @@ export const visualFlowEditorStyles = {
     container: 'flex items-center justify-between p-4 border-b border-slate-700 bg-slate-800/50',
     titleSection: 'flex items-center space-x-3',
     icon: 'w-6 h-6 text-gt-accent',
-    title: 'text-lg font-semibold text-white',
+    title: 'text-lg font-semibold text-white galaxy-title',
     subtitle: 'text-sm text-gray-400',
     actions: 'flex items-center space-x-2'
   },

@@ -25,6 +25,18 @@ export const addBlockAtIndex = (
   newBlock: any,
   index: number
 ): any[] => {
+  // Gestione speciale per il container root
+  if (containerId === 'root' && containerType === 'children') {
+    // Valida l'inserimento nel container root
+    if (!validateBlockInsertion(newBlock.type, null, 'root', index, blocks)) {
+      return blocks; // Non inserire se la validazione fallisce
+    }
+    // Inserisci direttamente nell'array principale
+    const newBlocks = [...blocks];
+    newBlocks.splice(index, 0, newBlock);
+    return newBlocks;
+  }
+
   // Trova il container per la validazione usando la funzione importata
   const targetContainer = findContainer(blocks, containerId);
   if (targetContainer && !validateBlockInsertion(newBlock.type, targetContainer, containerType, index, blocks)) {
@@ -124,6 +136,16 @@ export const addBlockToContainer = (
   containerType: string,
   newBlock: any
 ): any[] => {
+  // Gestione speciale per il container root
+  if (containerId === 'root' && containerType === 'children') {
+    // Valida l'inserimento nel container root
+    if (!validateBlockInsertion(newBlock.type, null, 'root', undefined, blocks)) {
+      return blocks; // Non inserire se la validazione fallisce
+    }
+    // Aggiungi direttamente alla fine dell'array principale
+    return [...blocks, newBlock];
+  }
+
   // Trova il container per la validazione usando la funzione importata
   const targetContainer = findContainer(blocks, containerId);
   if (targetContainer && !validateBlockInsertion(newBlock.type, targetContainer, containerType, undefined, blocks)) {
