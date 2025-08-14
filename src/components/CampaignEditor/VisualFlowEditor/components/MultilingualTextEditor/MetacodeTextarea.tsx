@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { parseMetacodes, processText, ParsedMetacode, resolveMetacode } from './metacodeParser';
+import { useTranslation } from '@/locales';
 
 interface MetacodeTextareaProps {
   value: string;
@@ -26,6 +27,7 @@ export const MetacodeTextarea: React.FC<MetacodeTextareaProps> = ({
   onBlur,
   onCursorChange
 }) => {
+  const { t } = useTranslation();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -69,7 +71,7 @@ export const MetacodeTextarea: React.FC<MetacodeTextareaProps> = ({
           metacode,
           genderState,
           numberState,
-          'Player',
+          t('visualFlowEditor.metacode.playerDefault'),
           2
         );
         
@@ -104,7 +106,7 @@ export const MetacodeTextarea: React.FC<MetacodeTextareaProps> = ({
               const mousePos = { x: e.clientX, y: e.clientY };
               onMetacodeClick?.(metacode, mousePos);
             }}
-            title="Click per modificare"
+            title={t('visualFlowEditor.metacode.clickToEdit')}
           >
             {displayText}
           </span>

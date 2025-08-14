@@ -1,18 +1,7 @@
 import React from 'react';
 import { MetacodePattern, MetacodeButtonProps } from './types';
-import { METACODE_PATTERNS_BY_FREQUENCY, getFrequencyColor, getPatternColor } from './MetacodePatterns';
+import { useMetacodePatterns, getFrequencyColor, getPatternColor } from './MetacodePatterns';
 
-/**
- * Pattern reali basati su analisi METACODE_COMPLETE_ANALYSIS.md
- * Ordinati per frequenza d'uso (5000+ → 10+ occorrenze)
- */
-export const METACODE_PATTERNS: MetacodePattern[] = METACODE_PATTERNS_BY_FREQUENCY.map(p => ({
-  id: p.id,
-  type: p.id, // Usa id come type
-  icon: p.icon, // Ora è LucideIcon
-  tooltip: p.tooltip,
-  hasModal: p.hasModal
-}));
 
 /**
  * Singolo pulsante per inserimento metacodice - compatto e uniforme
@@ -23,7 +12,8 @@ export const MetacodeButton: React.FC<MetacodeButtonProps> = ({
   isActive = false
 }) => {
   // Trova le informazioni complete del pattern
-  const patternInfo = METACODE_PATTERNS_BY_FREQUENCY.find(p => p.id === pattern.id);
+  const patterns = useMetacodePatterns();
+  const patternInfo = patterns.find(p => p.id === pattern.id);
   const IconComponent = patternInfo?.icon;
 
   return (
@@ -64,18 +54,27 @@ export const MetacodeButtonBar: React.FC<MetacodeButtonBarProps> = ({
   activePattern,
   visiblePatterns
 }) => {
-  const patterns = visiblePatterns 
-    ? METACODE_PATTERNS.filter(p => visiblePatterns.includes(p.id))
-    : METACODE_PATTERNS;
+  const patternInfos = useMetacodePatterns();
+  const patterns: MetacodePattern[] = patternInfos.map(p => ({
+    id: p.id,
+    type: p.id,
+    icon: p.icon,
+    tooltip: p.tooltip,
+    hasModal: p.hasModal
+  }));
+
+  const filteredPatterns = visiblePatterns 
+    ? patterns.filter(p => visiblePatterns.includes(p.id))
+    : patterns;
 
   // Trova i pattern info per raggruppamento
-  const localizationPatterns = patterns.filter(p => {
-    const info = METACODE_PATTERNS_BY_FREQUENCY.find(i => i.id === p.id);
+  const localizationPatterns = filteredPatterns.filter(p => {
+    const info = patternInfos.find(i => i.id === p.id);
     return info?.category === 'localization';
   });
   
-  const otherPatterns = patterns.filter(p => {
-    const info = METACODE_PATTERNS_BY_FREQUENCY.find(i => i.id === p.id);
+  const otherPatterns = filteredPatterns.filter(p => {
+    const info = patternInfos.find(i => i.id === p.id);
     return info?.category !== 'localization';
   });
 

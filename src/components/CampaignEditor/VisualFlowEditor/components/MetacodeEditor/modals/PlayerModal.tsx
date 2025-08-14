@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Gamepad2 } from 'lucide-react';
+import { useTranslation } from '@/locales';
 
 interface PlayerModalProps {
   isOpen: boolean;
@@ -16,6 +17,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
   onInsert,
   existingData
 }) => {
+  const { t } = useTranslation();
   const [playerNumber, setPlayerNumber] = useState(existingData?.number || '');
 
   const handleInsert = () => {
@@ -34,7 +36,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-white flex items-center gap-2">
             <Gamepad2 className="w-5 h-5" />
-            Riferimento Giocatore
+            {t('visualFlowEditor.metacode.playerReference')}
           </h3>
           <button
             onClick={onClose}
@@ -46,14 +48,14 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
 
         {/* Info */}
         <div className="mb-4 p-2 bg-slate-900/50 rounded text-xs text-gray-400">
-          Riferimento a un giocatore specifico in modalità multiplayer.
+          {t('visualFlowEditor.metacode.playerReferenceDescription')}
         </div>
 
         {/* Form */}
         <div className="space-y-3 mb-4">
           <div>
             <label className="block text-xs text-gray-400 mb-2">
-              Seleziona giocatore
+              {t('visualFlowEditor.metacode.selectPlayer')}
             </label>
             <div className="grid grid-cols-3 gap-2">
               <button
@@ -66,7 +68,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
                 }`}
               >
                 <div className="text-sm font-medium">[p]</div>
-                <div className="text-xs text-gray-400">Corrente</div>
+                <div className="text-xs text-gray-400">{t('visualFlowEditor.metacode.current')}</div>
               </button>
               
               {[1, 2, 3, 4].map(num => (
@@ -81,7 +83,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
                   }`}
                 >
                   <div className="text-sm font-medium">[p{num}]</div>
-                  <div className="text-xs text-gray-400">Player {num}</div>
+                  <div className="text-xs text-gray-400">{t('visualFlowEditor.metacode.playerNumber').replace('{num}', String(num))}</div>
                 </button>
               ))}
             </div>
@@ -90,7 +92,7 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
 
         {/* Preview */}
         <div className="mb-4 p-3 bg-slate-900 rounded border border-slate-700">
-          <div className="text-xs text-gray-500 mb-1">Codice generato:</div>
+          <div className="text-xs text-gray-500 mb-1">{t('visualFlowEditor.metacode.generatedCode')}</div>
           <code className="text-sm text-green-400 font-mono">
             {playerNumber ? `[p${playerNumber}]` : '[p]'}
           </code>
@@ -102,13 +104,13 @@ export const PlayerModal: React.FC<PlayerModalProps> = ({
             onClick={onClose}
             className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors"
           >
-            Annulla
+            {t('visualFlowEditor.metacode.cancel')}
           </button>
           <button
             onClick={handleInsert}
             className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-500 text-white rounded transition-colors"
           >
-            Inserisci
+            {t('visualFlowEditor.metacode.insert')}
           </button>
         </div>
       </div>

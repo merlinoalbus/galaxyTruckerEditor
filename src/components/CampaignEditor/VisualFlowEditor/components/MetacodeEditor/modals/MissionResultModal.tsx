@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Target } from 'lucide-react';
 import { TIMEOUT_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
+import { useTranslation } from '@/locales';
 
 interface MissionResultModalProps {
   isOpen: boolean;
@@ -15,6 +16,7 @@ export const MissionResultModal: React.FC<MissionResultModalProps> = ({
   onInsert,
   existingData
 }) => {
+  const { t } = useTranslation();
   const [resultType, setResultType] = useState<'simple' | 'formatted'>('simple');
   const [customText, setCustomText] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -73,14 +75,14 @@ export const MissionResultModal: React.FC<MissionResultModalProps> = ({
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Target className="w-5 h-5 text-red-400" />
-            <h3 className="text-sm font-medium text-white">Risultato Missione</h3>
+            <h3 className="text-sm font-medium text-white">{t('visualFlowEditor.metacode.missionResult')}</h3>
           </div>
           <button onClick={onClose} className="p-1 hover:bg-slate-700 rounded">
             <X className="w-4 h-4 text-gray-400" />
           </button>
         </div>
 
-        {/* Tipo di risultato */}
+        {/* {t('visualFlowEditor.metacode.resultType')} */}
         <div className="space-y-3 mb-4">
           <div className="flex gap-2">
             <label className="flex items-center">
@@ -91,7 +93,7 @@ export const MissionResultModal: React.FC<MissionResultModalProps> = ({
                 onChange={(e) => setResultType(e.target.value as 'simple')}
                 className="mr-2"
               />
-              <span className="text-sm text-white">Risultato Standard</span>
+              <span className="text-sm text-white">{t('visualFlowEditor.metacode.standardResult')}</span>
             </label>
             <label className="flex items-center">
               <input
@@ -101,15 +103,15 @@ export const MissionResultModal: React.FC<MissionResultModalProps> = ({
                 onChange={(e) => setResultType(e.target.value as 'formatted')}
                 className="mr-2"
               />
-              <span className="text-sm text-white">Risultato Personalizzato</span>
+              <span className="text-sm text-white">{t('visualFlowEditor.metacode.customResult')}</span>
             </label>
           </div>
 
           {/* Descrizione */}
           <div className="text-xs text-gray-400">
             {resultType === 'simple' 
-              ? 'Usa il risultato automatico della missione'
-              : 'Specifica un testo personalizzato per il risultato'
+              ? t('visualFlowEditor.metacode.useAutoResult')
+              : t('visualFlowEditor.metacode.specifyCustomText')
             }
           </div>
         </div>
@@ -123,32 +125,32 @@ export const MissionResultModal: React.FC<MissionResultModalProps> = ({
                 onClick={() => handlePresetClick('victory')}
                 className="px-2 py-1 text-xs bg-green-600 hover:bg-green-500 rounded text-white"
               >
-                Vittoria
+                {t('visualFlowEditor.metacode.victory')}
               </button>
               <button
                 onClick={() => handlePresetClick('defeat')}
                 className="px-2 py-1 text-xs bg-red-600 hover:bg-red-500 rounded text-white"
               >
-                Sconfitta
+                {t('visualFlowEditor.metacode.defeat')}
               </button>
               <button
                 onClick={() => handlePresetClick('draw')}
                 className="px-2 py-1 text-xs bg-yellow-600 hover:bg-yellow-500 rounded text-white"
               >
-                Pareggio
+                {t('visualFlowEditor.metacode.draw')}
               </button>
               <button
                 onClick={() => handlePresetClick('timeout')}
                 className="px-2 py-1 text-xs bg-orange-600 hover:bg-orange-500 rounded text-white"
               >
-                Timeout
+                {t('visualFlowEditor.metacode.timeout')}
               </button>
             </div>
 
             {/* Input personalizzato */}
             <div>
               <label className="block text-xs text-gray-400 mb-1">
-                Testo personalizzato:
+                {t('visualFlowEditor.metacode.customText')}:
               </label>
               <input
                 ref={inputRef}
@@ -156,7 +158,7 @@ export const MissionResultModal: React.FC<MissionResultModalProps> = ({
                 value={customText}
                 onChange={(e) => setCustomText(e.target.value)}
                 className="w-full bg-slate-900 text-white px-3 py-2 rounded border border-slate-600 text-sm focus:border-blue-500 focus:outline-none"
-                placeholder="es. victory, defeat, custom_result"
+                placeholder={t('visualFlowEditor.metacode.customTextPlaceholder')}
               />
             </div>
           </div>
@@ -164,7 +166,7 @@ export const MissionResultModal: React.FC<MissionResultModalProps> = ({
         
         {/* Live preview */}
         <div className="p-3 bg-slate-900 rounded text-xs mb-4">
-          <div className="text-gray-500 mb-1">Risultato:</div>
+          <div className="text-gray-500 mb-1">{t('visualFlowEditor.metacode.result')}:</div>
           <code className="text-green-400 font-mono">
             {resultType === 'simple' 
               ? '[missionResult]'
@@ -177,9 +179,9 @@ export const MissionResultModal: React.FC<MissionResultModalProps> = ({
 
         {/* Esempi di utilizzo */}
         <div className="text-xs text-gray-400 mb-4 space-y-1">
-          <div className="font-medium">Esempi:</div>
-          <div>• Standard: Mostra automaticamente il risultato della missione</div>
-          <div>• Personalizzato: "victory" → Mostra sempre "Vittoria"</div>
+          <div className="font-medium">{t('visualFlowEditor.metacode.examples')}:</div>
+          <div>• {t('visualFlowEditor.metacode.standardResultDesc')}</div>
+          <div>• {t('visualFlowEditor.metacode.customResultDesc')}</div>
         </div>
         
         {/* Actions */}
@@ -188,13 +190,13 @@ export const MissionResultModal: React.FC<MissionResultModalProps> = ({
             onClick={onClose}
             className="px-3 py-1.5 text-sm text-gray-400 hover:text-white transition-colors"
           >
-            Annulla
+            {t('visualFlowEditor.metacode.cancel')}
           </button>
           <button
             onClick={handleInsert}
             className="px-4 py-1.5 text-sm bg-red-600 hover:bg-red-500 text-white rounded transition-colors"
           >
-            Inserisci
+            {t('visualFlowEditor.metacode.insert')}
           </button>
         </div>
       </div>
