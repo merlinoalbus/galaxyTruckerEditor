@@ -28,12 +28,20 @@
       "Bash(bash:*)",
       "mcp__ide__getDiagnostics",
       "Bash(timeout 15s npm start)",
-      "Bash(timeout 240 npm run build)"
+      "Bash(timeout 240 npm run build)",
+      "Bash(npm test)",
+      "Bash(npm start)",
+      "Bash(stopBE)",
+      "Bash(./stop-be.sh:*)",
+      "Bash(./start-be.sh:*)",
+      "mcp__ide__executeCode",
+      "Bash(rg:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",
     "additionalDirectories": [
-      "C:\\d C:\\Users\\rober\\OneDrive\\Documenti\\Repository"
+      "C:\\d C:\\Users\\rober\\OneDrive\\Documenti\\Repository",
+      "C:\\c\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit"
     ]
   },
   "commands": {

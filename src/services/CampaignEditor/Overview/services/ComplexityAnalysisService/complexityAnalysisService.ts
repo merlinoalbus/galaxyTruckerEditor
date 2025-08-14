@@ -14,7 +14,7 @@ export const complexityAnalysisService = {
   },
   
   calculateScriptComplexity(script: ParsedScript): ScriptComplexity {
-    console.log(`Analyzing complexity for script: ${script.name}`);
+    // Analyzing script complexity
     
     // Usa i dati reali dal backend se disponibili nei metadati
     const backendData = (script as any).backendData;
@@ -38,7 +38,7 @@ export const complexityAnalysisService = {
     
     const complexityLevel = this.getComplexityLevel(complexityScore);
     
-    console.log(`Script ${script.name}: commands=${commandCount}, variables=${variableCount}, semaphores=${semaphoreCount}, score=${Math.round(complexityScore)}`);
+    // Script complexity calculated
     
     return {
       scriptName: script.name,
@@ -112,7 +112,7 @@ export const complexityAnalysisService = {
       .slice(0, 15) // Limita a 15 script più significativi
       .map(s => s.name);
     
-    console.log(`Found ${orphanScripts.length} orphan scripts:`, orphanScripts);
+    // Found orphan scripts
     return orphanScripts;
   },
   

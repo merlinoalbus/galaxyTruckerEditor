@@ -9,7 +9,7 @@ import {
   replaceMetacode,
   generateSimpleCode 
 } from './utils/metacodeParser';
-import { MetacodeEditorProps, ParsedMetacode } from './types';
+import { MetacodeEditorProps, ParsedMetacode, MetacodePattern } from './types';
 
 /**
  * Editor avanzato con supporto metacodice visuale
@@ -36,7 +36,7 @@ export const MetacodeEditor: React.FC<MetacodeEditorProps> = ({
   }, [value]);
 
   // Gestione click su pattern
-  const handlePatternClick = (pattern: any) => {
+  const handlePatternClick = (pattern: MetacodePattern) => {
     if (!pattern.hasModal) {
       // Inserisci direttamente pattern semplici
       const code = generateSimpleCode(pattern.type);

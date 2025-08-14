@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { X, AlertCircle } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from '@/locales';
+import { TIMEOUT_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
 
 interface ErrorModalProps {
   message: string;
@@ -22,7 +23,7 @@ export const ErrorModal: React.FC<ErrorModalProps> = ({
     // Timer per auto-chiusura
     const timer = setTimeout(() => {
       setIsVisible(false);
-      setTimeout(onClose, 300); // Aspetta l'animazione di fade out
+      setTimeout(onClose, TIMEOUT_CONSTANTS.MODAL_ANIMATION_DURATION); // Aspetta l'animazione di fade out
     }, duration);
 
     // Progress bar animation
@@ -41,7 +42,7 @@ export const ErrorModal: React.FC<ErrorModalProps> = ({
 
   const handleClose = () => {
     setIsVisible(false);
-    setTimeout(onClose, 300);
+    setTimeout(onClose, TIMEOUT_CONSTANTS.MODAL_ANIMATION_DURATION);
   };
 
   return createPortal(

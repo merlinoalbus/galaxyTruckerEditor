@@ -2,18 +2,19 @@
 
 import type { CampaignAnalysis, ParsedScript } from '@/types/CampaignEditor';
 import type { QualityIssue } from '@/types/CampaignEditor/Overview/Overview.types';
+import { QUALITY_CONSTANTS, MAINTENANCE_CONSTANTS } from '@/constants/Overview.constants';
 
 export const qualityAnalysisService = {
   analyzeQuality(analysis: CampaignAnalysis): QualityIssue[] {
     const issues: QualityIssue[] = [];
     let issueCounter = 0;
     
-    console.log(`Analyzing quality for ${analysis.scripts.length} scripts`);
+    // Analyzing quality for scripts
     
     // 1. Script troppo grandi (priorità ALTA)
     const oversizedScripts = analysis.scripts.filter(script => {
       const size = script.backendData?.numero_comandi || script.commands?.length || 0;
-      return size > 500; // Solo script molto grandi
+      return size > QUALITY_CONSTANTS.LARGE_SCRIPT_THRESHOLD; // Solo script molto grandi
     });
     
     oversizedScripts.forEach(script => {
@@ -24,7 +25,7 @@ export const qualityAnalysisService = {
         severity: 'high',
         scriptName: script.name,
         descriptionKey: 'overview.quality.oversizedScript',
-        descriptionParams: { size, threshold: 500 },
+        descriptionParams: { size, threshold: QUALITY_CONSTANTS.LARGE_SCRIPT_THRESHOLD },
         suggestionKey: 'overview.quality.oversizedScriptSuggestion'
       });
     });
@@ -32,7 +33,7 @@ export const qualityAnalysisService = {
     // 2. Script con troppe variabili (priorità MEDIA)
     analysis.scripts.forEach(script => {
       const varCount = script.variables?.length || 0;
-      if (varCount > 25) { // Soglia significativa
+      if (varCount > MAINTENANCE_CONSTANTS.MIN_SCRIPT_SIZE + MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_HIGH) { // Soglia significativa
         issues.push({
           id: `issue-${++issueCounter}`,
           type: 'too-many-variables',
@@ -40,7 +41,7 @@ export const qualityAnalysisService = {
           scriptName: script.name,
           elementName: `${varCount} variabili`,
           descriptionKey: 'overview.quality.tooManyVariables',
-          descriptionParams: { count: varCount, threshold: 25 },
+          descriptionParams: { count: varCount, threshold: MAINTENANCE_CONSTANTS.MIN_SCRIPT_SIZE + MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_HIGH },
           suggestionKey: 'overview.quality.tooManyVariablesSuggestion'
         });
       }
@@ -53,17 +54,17 @@ export const qualityAnalysisService = {
       issues.push({
         id: `issue-${++issueCounter}`,
         type: 'orphan-script',
-        severity: size > 100 ? 'high' : 'medium',
+        severity: size > QUALITY_CONSTANTS.DEFAULT_SCORE ? 'high' : 'medium',
         scriptName: script.name,
         descriptionKey: 'overview.quality.orphanScript',
         descriptionParams: { size },
-        suggestionKey: size > 100 ? 'overview.quality.orphanScriptSuggestion.large' : 'overview.quality.orphanScriptSuggestion.small'
+        suggestionKey: size > QUALITY_CONSTANTS.DEFAULT_SCORE ? 'overview.quality.orphanScriptSuggestion.large' : 'overview.quality.orphanScriptSuggestion.small'
       });
     });
     
     // 4. Dipendenze circolari (priorità CRITICA)
     const circularDeps = this.findCircularDependencies(analysis);
-    circularDeps.slice(0, 3).forEach(cycle => { // Limita a 3 più critiche
+    circularDeps.slice(0, MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_MEDIUM).forEach(cycle => { // Limita alle più critiche
       issues.push({
         id: `issue-${++issueCounter}`,
         type: 'circular-dependency',
@@ -76,7 +77,7 @@ export const qualityAnalysisService = {
     
     // 5. Semafori mono-stato significativi (priorità BASSA)
     const monoStateSemaphores = this.findMonoStateSemaphores(analysis);
-    monoStateSemaphores.slice(0, 5).forEach(sem => { // Solo i primi 5
+    monoStateSemaphores.slice(0, MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_HIGH).forEach(sem => { // Solo i primi
       issues.push({
         id: `issue-${++issueCounter}`,
         type: 'mono-state-semaphore',
@@ -88,8 +89,8 @@ export const qualityAnalysisService = {
       });
     });
     
-    console.log(`Quality analysis found ${issues.length} issues`);
-    return issues.slice(0, 15); // Limita a 15 issue più importanti
+    // Quality analysis completed
+    return issues.slice(0, MAINTENANCE_CONSTANTS.COMPLEXITY_SCORE_DIVISOR + MAINTENANCE_CONSTANTS.OPTIMAL_DEPENDENCIES + MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_LOW); // Limita alle issue più importanti
   },
   
   findSignificantOrphanScripts(analysis: CampaignAnalysis): Array<{name: string, size: number}> {
@@ -110,14 +111,14 @@ export const qualityAnalysisService = {
         const isCalled = calledScripts.has(script.name);
         const size = script.backendData?.numero_comandi || script.commands?.length || 0;
         
-        return !isEntryPoint && !isTest && !isCalled && size > 10; // Solo script significativi
+        return !isEntryPoint && !isTest && !isCalled && size > MAINTENANCE_CONSTANTS.DUPLICATION_PERCENT_FACTOR; // Solo script significativi
       })
       .map(script => ({
         name: script.name,
         size: script.backendData?.numero_comandi || script.commands?.length || 0
       }))
       .sort((a, b) => b.size - a.size) // I più grandi prima
-      .slice(0, 8); // Massimo 8 script orfani più significativi
+      .slice(0, MAINTENANCE_CONSTANTS.DUPLICATION_HIGH); // Massimo script orfani più significativi
   },
   
   findUnusedVariables(script: ParsedScript, analysis: CampaignAnalysis): string[] {
@@ -220,7 +221,7 @@ export const qualityAnalysisService = {
         return !isEntry && !called.has(script.name);
       })
       .map(s => s.name)
-      .slice(0, 10);
+      .slice(0, MAINTENANCE_CONSTANTS.DUPLICATION_PERCENT_FACTOR);
   },
   
   findCircularDependencies(analysis: CampaignAnalysis): string[][] {
@@ -259,15 +260,15 @@ export const qualityAnalysisService = {
       }
     });
     
-    return cycles.slice(0, 5);
+    return cycles.slice(0, MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_HIGH);
   },
   
   calculateQualityScore(issues: QualityIssue[]): number {
     const severityWeights = {
-      low: 1,
-      medium: 2,
-      high: 4,
-      critical: 8
+      low: MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_LOW,
+      medium: MAINTENANCE_CONSTANTS.OPTIMAL_DEPENDENCIES,
+      high: MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_HIGH - MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_LOW,
+      critical: MAINTENANCE_CONSTANTS.DUPLICATION_HIGH
     };
     
     const totalPenalty = issues.reduce(
@@ -275,6 +276,6 @@ export const qualityAnalysisService = {
       0
     );
     
-    return Math.max(0, 100 - totalPenalty);
+    return Math.max(0, QUALITY_CONSTANTS.DEFAULT_SCORE - totalPenalty);
   }
 };

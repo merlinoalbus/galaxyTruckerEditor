@@ -57,7 +57,7 @@ export const useInteractiveMap = (
 
   const handleMissionSelect = useCallback((mission: Mission) => {
     // Per ora logghiamo solo la selezione della missione
-    console.log('Mission selected:', mission);
+    // Mission selected
   }, []);
 
   const {

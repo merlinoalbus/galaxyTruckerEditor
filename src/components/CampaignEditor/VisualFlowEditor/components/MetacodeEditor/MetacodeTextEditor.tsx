@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { parseMetacode, insertMetacodeAtCursor, replaceMetacode } from './utils/metacodeParser';
 import { ParsedMetacode } from './types';
+import { TIMEOUT_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
 
 interface MetacodeTextEditorProps {
   value: string;
@@ -270,7 +271,7 @@ export const MetacodeTextEditor: React.FC<MetacodeTextEditorProps> = ({
   const handleBlur = () => {
     setTimeout(() => {
       setIsEditing(false);
-    }, 100);
+    }, TIMEOUT_CONSTANTS.SCROLL_DELAY);
   };
 
   return (
