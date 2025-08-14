@@ -15,6 +15,7 @@ interface CommandBlockProps {
   sessionData?: any;
   isInvalid?: boolean;
   onGoToLabel?: (labelName: string) => void;
+  onNavigateToSubScript?: (scriptName: string, parentBlock: any) => void;
 }
 
 export const CommandBlock: React.FC<CommandBlockProps> = ({
@@ -24,7 +25,8 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   onDragStart,
   sessionData,
   isInvalid = false,
-  onGoToLabel
+  onGoToLabel,
+  onNavigateToSubScript
 }) => {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
@@ -188,24 +190,34 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
       
       case 'SUB_SCRIPT':
         return (
-          <div className="space-y-2">
-            <label className="block text-xs text-slate-400">
-              {t('visualFlowEditor.blocks.subScript.scriptName')}
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-slate-400 whitespace-nowrap">
+              {t('visualFlowEditor.blocks.subScript.scriptName')}:
             </label>
             <SelectWithModal
               type="script"
-              value={block.parameters?.scriptName || ''}
+              value={block.parameters?.script || ''}
               onChange={(value) => onUpdate({ 
-                parameters: { ...block.parameters, scriptName: value } 
+                parameters: { ...block.parameters, script: value } 
               })}
               placeholder={t('visualFlowEditor.command.selectScript')}
-              availableItems={sessionData?.availableScripts || []}
+              availableItems={sessionData?.availableScripts?.map((s: any) => s.name) || []}
               onAddItem={undefined} // Non permettere aggiunta di nuovi script
-              className="w-full"
+              className="flex-1"
             />
-            <span className="block text-xs text-slate-500">
-              {t('visualFlowEditor.blocks.subScript.hint')}
-            </span>
+            <button
+              type="button"
+              onClick={() => {
+                if (block.parameters?.script && onNavigateToSubScript) {
+                  onNavigateToSubScript(block.parameters.script, block);
+                }
+              }}
+              disabled={!block.parameters?.script}
+              className="p-1 hover:bg-slate-700 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title={t('visualFlowEditor.blocks.subScript.navigate')}
+            >
+              <ArrowRight className="w-4 h-4 text-blue-400" />
+            </button>
           </div>
         );
       
@@ -316,8 +328,8 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         }
         break;
       case 'SUB_SCRIPT':
-        if (block.parameters?.scriptName) {
-          return <span>📄 {block.parameters.scriptName}</span>;
+        if (block.parameters?.script) {
+          return <span>📄 {block.parameters.script}</span>;
         }
         break;
       case 'EXIT_MENU':

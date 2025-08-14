@@ -49,6 +49,8 @@ export const OptBlock: React.FC<OptBlockProps> = ({
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
   // Stato per collapse/expand
+  // Se siamo in zoom e c'è onZoomOut, significa che questo è il blocco root in zoom, quindi espanso
+  const isRootInZoom = isZoomed && !!onZoomOut;
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -190,8 +192,8 @@ export const OptBlock: React.FC<OptBlockProps> = ({
         blockColor="bg-cyan-700"
         iconBgColor="bg-cyan-900/80"
       >
-        {/* Parametri editabili - visibili solo se non collapsed */}
-        {!isCollapsed && (
+        {/* Parametri editabili - visibili solo se non collapsed o se è root in zoom */}
+        {(!isCollapsed || isRootInZoom) && (
           <div className="mb-3 pl-8">
             {/* Prima riga: Tipo */}
             <div className="flex items-center gap-3 mb-3">
@@ -238,7 +240,7 @@ export const OptBlock: React.FC<OptBlockProps> = ({
         )}
         
         {/* Children container with anchor points */}
-        {!isCollapsed && (
+        {(!isCollapsed || isRootInZoom) && (
           <div className="space-y-2 pl-8">
           {/* Initial anchor point */}
           <AnchorPoint

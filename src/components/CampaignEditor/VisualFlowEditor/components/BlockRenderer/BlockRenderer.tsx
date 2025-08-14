@@ -262,6 +262,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
         sessionData={sessionData}
         isInvalid={isInvalid}
         onGoToLabel={sessionData?.goToLabel}
+        onNavigateToSubScript={sessionData?.onNavigateToSubScript}
       />
     </div>
   );

@@ -69,6 +69,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.label.anchorName': 'Ankername',
   'visualFlowEditor.blocks.label.hint': 'Keine Leerzeichen in Ankernamen erlaubt',
   
+  // SUB_SCRIPT Block
+  'visualFlowEditor.blocks.subScript.scriptName': 'Skriptname',
+  'visualFlowEditor.blocks.subScript.hint': 'Wählen Sie das auszuführende Skript',
+  'visualFlowEditor.blocks.subScript.navigate': 'Zum Unterskript navigieren',
+  
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Validierungsfehler',
   'visualFlowEditor.validation.delayNoDuration': 'Der DELAY-Block muss einen Dauerwert haben. Stellen Sie die Dauer in Millisekunden ein.',

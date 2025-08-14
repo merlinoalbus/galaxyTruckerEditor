@@ -483,6 +483,7 @@ export type TranslationKey =
   | 'visualFlowEditor.blocks.label.hint'
   | 'visualFlowEditor.blocks.subScript.scriptName'
   | 'visualFlowEditor.blocks.subScript.hint'
+  | 'visualFlowEditor.blocks.subScript.navigate'
   | 'visualFlowEditor.blocks.exitMenu.description'
   | 'visualFlowEditor.blocks.exitMenu.info'
   | 'visualFlowEditor.blocks.exitMenu.compact'

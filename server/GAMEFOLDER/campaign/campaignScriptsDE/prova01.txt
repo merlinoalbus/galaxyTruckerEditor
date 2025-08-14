@@ -5,6 +5,7 @@ SCRIPTS
     Ask "Say"
     MENU
       OPT "asss"
+        SUB_SCRIPT add2RandomOpponentsHard
       END_OF_OPT
     END_OF_MENU
     Delay 100
