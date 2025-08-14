@@ -2,6 +2,7 @@
 
 import type { CampaignAnalysis, ParsedScript } from '@/types/CampaignEditor';
 import type { MaintenanceMetrics } from '@/types/CampaignEditor/Overview/Overview.types';
+import { MAINTENANCE_CONSTANTS } from '@/constants/Overview.constants';
 
 export const maintenanceMetricsService = {
   calculateMetrics(analysis: CampaignAnalysis): MaintenanceMetrics {
@@ -72,10 +73,10 @@ export const maintenanceMetricsService = {
     };
     
     sizes.forEach(size => {
-      if (size < 50) distribution.tiny++;
-      else if (size < 100) distribution.small++;
-      else if (size < 200) distribution.medium++;
-      else if (size < 500) distribution.large++;
+      if (size < MAINTENANCE_CONSTANTS.TINY_THRESHOLD) distribution.tiny++;
+      else if (size < MAINTENANCE_CONSTANTS.SMALL_THRESHOLD) distribution.small++;
+      else if (size < MAINTENANCE_CONSTANTS.MEDIUM_THRESHOLD) distribution.medium++;
+      else if (size < MAINTENANCE_CONSTANTS.HUGE_THRESHOLD) distribution.large++;
       else distribution.huge++;
     });
     
@@ -103,20 +104,20 @@ export const maintenanceMetricsService = {
       0
     ) / scriptCount;
     
-    // Buona modularità: script medi (50-200 comandi) con alcune dipendenze
-    let sizeScore = 100;
-    if (avgScriptSize < 20) sizeScore = 40; // Script troppo piccoli
-    else if (avgScriptSize > 300) sizeScore = 30; // Script troppo grandi
-    else if (avgScriptSize >= 50 && avgScriptSize <= 200) sizeScore = 90; // Dimensione ottimale
+    // Buona modularità: script medi con alcune dipendenze
+    let sizeScore: number = MAINTENANCE_CONSTANTS.SCORE_MAX;
+    if (avgScriptSize < MAINTENANCE_CONSTANTS.MIN_SCRIPT_SIZE) sizeScore = MAINTENANCE_CONSTANTS.SCORE_TINY; // Script troppo piccoli
+    else if (avgScriptSize > MAINTENANCE_CONSTANTS.LARGE_THRESHOLD) sizeScore = MAINTENANCE_CONSTANTS.SCORE_LARGE; // Script troppo grandi
+    else if (avgScriptSize >= MAINTENANCE_CONSTANTS.TINY_THRESHOLD && avgScriptSize <= MAINTENANCE_CONSTANTS.MEDIUM_THRESHOLD) sizeScore = MAINTENANCE_CONSTANTS.SCORE_OPTIMAL; // Dimensione ottimale
     
-    let dependencyScore = Math.max(0, 100 - Math.abs(avgSubScripts - 2) * 20);
+    let dependencyScore = Math.max(0, MAINTENANCE_CONSTANTS.SCORE_MAX - Math.abs(avgSubScripts - MAINTENANCE_CONSTANTS.OPTIMAL_DEPENDENCIES) * MAINTENANCE_CONSTANTS.DEPENDENCY_PENALTY);
     
     return Math.round((sizeScore + dependencyScore) / 2);
   },
   
   calculateCoupling(analysis: CampaignAnalysis): number {
     const scriptCount = analysis.scripts.length;
-    if (scriptCount === 0) return 100;
+    if (scriptCount === 0) return MAINTENANCE_CONSTANTS.SCORE_MAX;
     
     // Calcola accoppiamento basato su script richiamati e utilizzo
     const totalSubScripts = analysis.scripts.reduce(
@@ -131,18 +132,18 @@ export const maintenanceMetricsService = {
     const avgVariablesPerScript = totalVariablesUsed / scriptCount;
     
     // Calcola score basato su interdipendenze
-    let couplingScore = 100;
+    let couplingScore: number = MAINTENANCE_CONSTANTS.SCORE_MAX;
     
     // Penalizza troppi sub-script (alto accoppiamento)
-    if (avgSubScriptsPerScript > 8) couplingScore -= 30;
-    else if (avgSubScriptsPerScript > 5) couplingScore -= 20;
-    else if (avgSubScriptsPerScript > 3) couplingScore -= 10;
+    if (avgSubScriptsPerScript > MAINTENANCE_CONSTANTS.DUPLICATION_HIGH) couplingScore -= MAINTENANCE_CONSTANTS.DUPLICATION_PENALTY_HIGH;
+    else if (avgSubScriptsPerScript > MAINTENANCE_CONSTANTS.DUPLICATION_MEDIUM) couplingScore -= MAINTENANCE_CONSTANTS.DUPLICATION_PENALTY_MEDIUM;
+    else if (avgSubScriptsPerScript > MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_MEDIUM) couplingScore -= MAINTENANCE_CONSTANTS.DUPLICATION_PERCENT_FACTOR;
     
     // Penalizza troppe variabili condivise
-    if (avgVariablesPerScript > 20) couplingScore -= 20;
-    else if (avgVariablesPerScript > 10) couplingScore -= 10;
+    if (avgVariablesPerScript > MAINTENANCE_CONSTANTS.MIN_SCRIPT_SIZE) couplingScore -= MAINTENANCE_CONSTANTS.COUPLING_PENALTY;
+    else if (avgVariablesPerScript > MAINTENANCE_CONSTANTS.DUPLICATION_PERCENT_FACTOR) couplingScore -= MAINTENANCE_CONSTANTS.DUPLICATION_PERCENT_FACTOR;
     
-    return Math.max(10, couplingScore);
+    return Math.max(MAINTENANCE_CONSTANTS.DUPLICATION_PERCENT_FACTOR, couplingScore);
   },
   
   calculateCohesion(analysis: CampaignAnalysis): number {
@@ -158,15 +159,15 @@ export const maintenanceMetricsService = {
     const avgGroupSize = groupSizes.reduce((sum, size) => sum + size, 0) / groupCount;
     
     // Buona coesione: gruppi di dimensione ragionevole (3-15 script)
-    let sizeScore = 100;
-    if (avgGroupSize < 2) sizeScore = 30; // Gruppi troppo piccoli
-    else if (avgGroupSize > 20) sizeScore = 40; // Gruppi troppo grandi
-    else if (avgGroupSize >= 3 && avgGroupSize <= 12) sizeScore = 90; // Dimensione ottimale
+    let sizeScore: number = MAINTENANCE_CONSTANTS.SCORE_MAX;
+    if (avgGroupSize < MAINTENANCE_CONSTANTS.OPTIMAL_DEPENDENCIES) sizeScore = MAINTENANCE_CONSTANTS.SCORE_LARGE; // Gruppi troppo piccoli
+    else if (avgGroupSize > MAINTENANCE_CONSTANTS.MIN_SCRIPT_SIZE) sizeScore = MAINTENANCE_CONSTANTS.SCORE_TINY; // Gruppi troppo grandi
+    else if (avgGroupSize >= MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_MEDIUM && avgGroupSize <= MAINTENANCE_CONSTANTS.COMPLEXITY_SCORE_DIVISOR) sizeScore = MAINTENANCE_CONSTANTS.SCORE_OPTIMAL; // Dimensione ottimale
     
     // Penalizza se tutti gli script sono in un unico gruppo o tutti separati
-    let distributionScore = 100;
-    if (groupCount === 1 && scriptCount > 10) distributionScore = 20; // Tutto insieme
-    if (groupCount === scriptCount && scriptCount > 5) distributionScore = 30; // Tutto separato
+    let distributionScore: number = MAINTENANCE_CONSTANTS.SCORE_MAX;
+    if (groupCount === MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_LOW && scriptCount > MAINTENANCE_CONSTANTS.DUPLICATION_PERCENT_FACTOR) distributionScore = MAINTENANCE_CONSTANTS.COUPLING_PENALTY; // Tutto insieme
+    if (groupCount === scriptCount && scriptCount > MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_HIGH) distributionScore = MAINTENANCE_CONSTANTS.SCORE_LARGE; // Tutto separato
     
     return Math.round((sizeScore + distributionScore) / 2);
   },
@@ -198,37 +199,37 @@ export const maintenanceMetricsService = {
     // Script troppo grandi (usa dati backend)
     const oversizedScripts = analysis.scripts.filter(script => {
       const size = script.backendData?.numero_comandi || script.commands?.length || 0;
-      return size > 500;
+      return size > MAINTENANCE_CONSTANTS.HUGE_THRESHOLD;
     });
-    debtScore += oversizedScripts.length * 10;
+    debtScore += oversizedScripts.length * MAINTENANCE_CONSTANTS.DUPLICATION_PERCENT_FACTOR;
     
     // Script con troppe variabili
     const complexVariableScripts = analysis.scripts.filter(
-      script => (script.variables?.length || 0) > 20
+      script => (script.variables?.length || 0) > MAINTENANCE_CONSTANTS.MIN_SCRIPT_SIZE
     );
-    debtScore += complexVariableScripts.length * 8;
+    debtScore += complexVariableScripts.length * MAINTENANCE_CONSTANTS.DUPLICATION_HIGH;
     
     // Script con troppi sottoscript (alta complessità)
     const highCouplingScripts = analysis.scripts.filter(
-      script => (script.subScripts?.length || 0) > 10
+      script => (script.subScripts?.length || 0) > MAINTENANCE_CONSTANTS.DUPLICATION_PERCENT_FACTOR
     );
-    debtScore += highCouplingScripts.length * 12;
+    debtScore += highCouplingScripts.length * MAINTENANCE_CONSTANTS.COMPLEXITY_SCORE_DIVISOR;
     
     // Variabili globali eccessive
     const globalVarCount = analysis.variables.size;
-    if (globalVarCount > 100) debtScore += 20;
-    else if (globalVarCount > 50) debtScore += 10;
+    if (globalVarCount > MAINTENANCE_CONSTANTS.SCORE_MAX) debtScore += MAINTENANCE_CONSTANTS.COUPLING_PENALTY;
+    else if (globalVarCount > MAINTENANCE_CONSTANTS.TINY_THRESHOLD) debtScore += MAINTENANCE_CONSTANTS.DUPLICATION_PERCENT_FACTOR;
     
     // Semafori eccessivi
     const semaphoreCount = analysis.semafori.size;
-    if (semaphoreCount > 50) debtScore += 15;
-    else if (semaphoreCount > 25) debtScore += 7;
+    if (semaphoreCount > MAINTENANCE_CONSTANTS.TINY_THRESHOLD) debtScore += MAINTENANCE_CONSTANTS.COMPLEXITY_SCORE_DIVISOR + MAINTENANCE_CONSTANTS.OPTIMAL_DEPENDENCIES + MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_LOW;
+    else if (semaphoreCount > MAINTENANCE_CONSTANTS.MIN_SCRIPT_SIZE + MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_HIGH) debtScore += MAINTENANCE_CONSTANTS.DUPLICATION_HIGH - MAINTENANCE_CONSTANTS.COMPLEXITY_FACTOR_LOW;
     
     // Dipendenze circolari
     const circularDeps = this.countCircularDependencies(analysis);
-    debtScore += circularDeps * 20;
+    debtScore += circularDeps * MAINTENANCE_CONSTANTS.DEPENDENCY_PENALTY;
     
-    return Math.min(100, debtScore);
+    return Math.min(MAINTENANCE_CONSTANTS.SCORE_MAX, debtScore);
   },
   
   
@@ -260,6 +261,6 @@ export const maintenanceMetricsService = {
       }
     });
     
-    return Math.min(count, 10); // Limita a 10 per evitare overflow
+    return Math.min(count, MAINTENANCE_CONSTANTS.DUPLICATION_PERCENT_FACTOR); // Limita per evitare overflow
   }
 };

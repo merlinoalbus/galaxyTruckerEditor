@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Copy, Check, Eye, EyeOff } from 'lucide-react';
 import { useTranslation } from '@/locales';
+import { TIMEOUT_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
 
 export interface JsonViewProps {
   /** Se true, il componente è visibile */
@@ -52,7 +53,7 @@ export const JsonView: React.FC<JsonViewProps> = ({
       
       await navigator.clipboard.writeText(jsonText);
       setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
+      setTimeout(() => setIsCopied(false), TIMEOUT_CONSTANTS.COPY_FEEDBACK_DURATION);
     } catch (error) {
       console.error(t('visualFlowEditor.jsonView.copyError'), error);
     }

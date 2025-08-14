@@ -1,9 +1,11 @@
 import { ImagesApiResponse, ImageBinaryResponse } from '@/types/CampaignEditor/VariablesSystem/types/ImagesView/ImagesView.types';
+import { IMAGE_CONSTANTS } from '@/constants/Overview.constants';
+import { API_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
 
-const API_BASE_URL = 'http://localhost:3001/api';
+const API_BASE_URL = `http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api`;
 
 class ImagesViewService {
-  async getImages(includeThumbnail: boolean = true, thumbnailSize: number = 100): Promise<ImagesApiResponse> {
+  async getImages(includeThumbnail: boolean = true, thumbnailSize: number = IMAGE_CONSTANTS.DEFAULT_THUMBNAIL_SIZE): Promise<ImagesApiResponse> {
     try {
       const params = new URLSearchParams();
       if (includeThumbnail) {

@@ -33,7 +33,7 @@ export const scriptLoaderService = {
       
       // Cache risultato positivo
       fileCache.set(cacheKey, data);
-      console.log(`Loaded ${data.count} scripts with detailed analysis`);
+      // Scripts loaded successfully
       return data;
     } catch (error) {
       console.error('Error loading scripts:', error);

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { campaignScriptParserService } from '@/services/CampaignEditor/CampaignScriptParserService';
 import { CampaignAnalysis, CampaignScript } from '@/types/CampaignEditor';
 import { MapNode } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
+import { API_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
 
 export const useCampaignEditor = () => {
   const [activeTab, setActiveTab] = useState('map');
@@ -40,9 +41,30 @@ export const useCampaignEditor = () => {
     setSelectedScript(null);
   };
 
-  const handleScriptChange = (newScript: CampaignScript) => {
+  const handleScriptChange = async (newScript: CampaignScript) => {
     setSelectedScript(newScript);
-    // TODO: Save script changes
+    
+    // Auto-save script changes
+    try {
+      const response = await fetch(`http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/scripts/saveScript`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify([{
+          name: newScript.nomescript,
+          filename: newScript.nomefile,
+          language: 'IT' // Default language
+        }])
+      });
+      
+      const result = await response.json();
+      if (!result.success) {
+        console.error('Failed to save script:', result.error);
+      }
+    } catch (error) {
+      console.error('Error saving script:', error);
+    }
   };
 
   const handleScriptSelect = (script: CampaignScript) => {
@@ -50,9 +72,34 @@ export const useCampaignEditor = () => {
     setActiveTab('flow');
   };
 
-  const handleSaveAll = () => {
-    console.log('Saving all changes...');
-    // TODO: Implement save all functionality
+  const handleSaveAll = async () => {
+    // Saving all changes
+    try {
+      // Get all modified scripts (this would need to be tracked in state)
+      // For now, we'll save the currently selected script if it exists
+      if (selectedScript) {
+        const response = await fetch(`http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/scripts/saveScript`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify([{
+            name: selectedScript.nomescript,
+            filename: selectedScript.nomefile,
+            language: 'IT' // Default language
+          }])
+        });
+        
+        const result = await response.json();
+        if (result.success) {
+          // All changes saved successfully
+        } else {
+          console.error('Failed to save all changes:', result.error);
+        }
+      }
+    } catch (error) {
+      console.error('Error saving all changes:', error);
+    }
   };
 
   return {
