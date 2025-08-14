@@ -3,8 +3,11 @@
  */
 
 export const overviewTranslations = {
-  'overview.title': 'Přehled kampaně',
-  'overview.description': 'Komplexní analýza struktury a obsahu vaší kampaně',
+  'overview.title': 'Pokročilá analýza kampaně',
+  'overview.description': 'Detailní metriky a návrhy pro zlepšení kvality kódu',
+  'overview.exportReport': 'Exportovat zprávu',
+  'overview.importantWarnings': 'Důležitá upozornění',
+  'overview.suggestedOptimizations': 'Navrhované optimalizace',
   'overview.loading': 'Načítání dat přehledu...',
   'overview.noCampaignData': 'Žádná data kampaně',
   'overview.loadCampaignMessage': 'Načtěte skripty kampaně pro zobrazení statistik přehledu',
@@ -25,4 +28,98 @@ export const overviewTranslations = {
   'overview.labels': 'Štítky',
   'overview.avgPerScript': 'průměr na skript',
   'overview.commands': 'příkazy',
+  'overview.maxCommandsPerScript': 'Maximální příkazy na skript',
+  
+  // Language Coverage Card
+  'overview.languageCoverage': 'Pokrytí jazyků',
+  'overview.coverage': 'Pokrytí',
+  'overview.criticalGaps': 'kritické mezery',
+  'overview.criticalScriptsMissing': 'Chybí kritické skripty',
+  
+  // Complexity Analysis Card
+  'overview.complexityAnalysisTitle': 'Analýza složitosti',
+  'overview.mostComplexScripts': 'Nejsložitější skripty',
+  'overview.orphanScripts': 'Osamocené skripty',
+  'overview.circularDependencies': 'Cyklické závislosti',
+  'overview.mostReferencedScripts': 'Nejreferovanější skripty',
+  'overview.score': 'Skóre',
+  'overview.others': 'ostatní',
+  'overview.cycles': 'cykly',
+  'overview.cmd': 'příkazy',
+  'overview.var': 'proměnné',
+  
+  // Quality Issues Card
+  'overview.codeQuality': 'Kvalita kódu',
+  'overview.otherIssues': 'další problémy',
+  'overview.severity.critical': 'kritické',
+  'overview.severity.high': 'vysoké',
+  'overview.severity.medium': 'střední',
+  'overview.severity.low': 'nízké',
+  
+  // Maintenance Metrics Card
+  'overview.maintenanceMetrics': 'Metriky udržitelnosti',
+  'overview.modularity': 'Modularita',
+  'overview.coupling': 'Vazba',
+  'overview.cohesion': 'Koheze',
+  'overview.technicalDebt': 'Technický dluh',
+  'overview.scriptSizeDistribution': 'Distribuce velikostí skriptů',
+  'overview.size.tiny': 'Drobné',
+  'overview.size.small': 'Malé',
+  'overview.size.medium': 'Střední',
+  'overview.size.large': 'Velké',
+  'overview.size.huge': 'Obrovské',
+  'overview.largest': 'Největší',
+  'overview.smallest': 'Nejmenší',
+  'overview.lines': 'řádky',
+  
+  // Refactoring Recommendations Card
+  'overview.refactoringRecommendations': 'Doporučení refaktoringu',
+  'overview.effort': 'úsilí',
+  'overview.impact': 'Dopad:',
+  'overview.maintainability': 'Udržitelnost',
+  'overview.performance': 'Výkon',
+  'overview.readability': 'Čitelnost',
+  'overview.noRefactoringSuggestions': 'Žádná doporučení refaktoringu nejsou k dispozici',
+  'overview.priority.high': 'vysoká',
+  'overview.priority.medium': 'střední',
+  'overview.priority.low': 'nízká',
+
+  // Quality Analysis Service messages
+  'overview.quality.oversizedScript': 'Velmi velký skript: {size} příkazů (práh: {threshold})',
+  'overview.quality.oversizedScriptSuggestion': 'Zvažte rozdělení na menší skripty',
+  'overview.quality.tooManyVariables': 'Skript s mnoha proměnnými: {count} (práh: {threshold})',
+  'overview.quality.tooManyVariablesSuggestion': 'Seskupte související proměnné nebo použijte datové struktury',
+  'overview.quality.orphanScript': 'Nikdy nevolaný skript s {size} příkazy',
+  'overview.quality.orphanScriptSuggestion.large': 'Velký nepoužívaný skript - ověřte, zda je potřebný',
+  'overview.quality.orphanScriptSuggestion.small': 'Ověřte, zda je skript stále potřebný',
+  'overview.quality.circularDependency': 'Cyklická závislost: {cycle}',
+  'overview.quality.circularDependencySuggestion': 'Refaktorujte pro odstranění cyklu závislostí',
+  'overview.quality.monoStateSemaphore': "Semafor '{name}' používán pouze jako SET nebo RESET",
+  'overview.quality.monoStateSemaphoreSuggestion': 'Zvažte použití boolean proměnné',
+
+  // Refactoring Service messages
+  'overview.refactoring.oversizedScript': 'Skript s {commandCount} příkazy (doporučený limit: {limit})',
+  'overview.refactoring.splitActions': ['Rozdělit na logické sub-skripty', 'Extrahovat znovupoužitelné funkce', 'Oddělit inicializační logiku'],
+  'overview.refactoring.smallRelatedScripts': 'Související skripty s méně než {threshold} příkazy každý',
+  'overview.refactoring.mergeActions': ['Sloučit {scripts} do jediného skriptu', 'Zachovat logické oddělení štítky'],
+  'overview.refactoring.duplicatedPattern': 'Pattern {length} příkazů opakovaný {occurrences}krát',
+  'overview.refactoring.extractActions': ['Extrahovat do společného sub-skriptu', 'Vytvořit znovupoužitelnou funkci', 'Použít parametry pro variace'],
+  'overview.refactoring.highComplexity': 'Vysoká cyklomatická složitost ({complexity})',
+  'overview.refactoring.simplifyActions': ['Snížit vnořování podmínek', 'Extrahovat logiku do sub-skriptů', 'Zjednodušit řetězce IF/ELSE'],
+  'overview.refactoring.deadScript': 'Nikdy nevolaný skript a není vstupním bodem',
+  'overview.refactoring.removeActions': ['Ověřte, zda je skutečně nepoužívaný', 'Odeberte, pokud je potvrzeno', 'Dokumentujte, pokud je ponechán pro kompatibilitu'],
+
+  // Warnings
+  'overview.warnings.criticalIssues': '{count} kritických problémů zjištěno',
+  'overview.warnings.hugeScripts': '{count} skriptů s více než 500 příkazy',
+  'overview.warnings.circularDependencies': '{count} cyklických závislostí zjištěno',
+  'overview.warnings.lowCoverage': '{count} jazyků s pokrytím < 50%',
+
+  // Optimizations
+  'overview.optimizations.improveModularity': 'Zlepšit modularitu rozdělením velkých skriptů',
+  'overview.optimizations.reduceCoupling': 'Snížit vazbu mezi skripty',
+  'overview.optimizations.improveCohesion': 'Zlepšit kohezi seskupením související funkcionality',
+  'overview.optimizations.reduceTechnicalDebt': 'Snížit technický dluh cíleným refaktoringem',
+  'overview.optimizations.refactorHugeScripts': 'Refaktorovat největší skripty (>500 řádků)',
+  'overview.optimizations.mergeSmallScripts': 'Zvážit sloučení velmi malých souvisejících skriptů',
 } as const;

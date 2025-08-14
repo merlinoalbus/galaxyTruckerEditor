@@ -127,7 +127,7 @@ const COMMAND_CATALOG = {
   'SUB_SCRIPT': { params: ['script:string'], pattern: /^SUB_SCRIPT\s+(\w+)$/i },
   'RETURN': { params: [], pattern: /^RETURN$/i },
   'EXIT_MENU': { params: [], pattern: /^EXIT_MENU$/i },
-  'DELAY': { params: ['milliseconds:number'], pattern: /^DELAY\s+(\d+)$/i },
+  'DELAY': { params: ['duration:number'], pattern: /^DELAY\s+(\d+)$/i },
   
   // MAPPA/NAVIGAZIONE
   'SHOWPATH': { params: ['route'], pattern: /^ShowPath\s+(.+)$/ },
@@ -142,11 +142,11 @@ const COMMAND_CATALOG = {
   'MOVEPLAYERTONODE': { params: ['node'], pattern: /^MOVEPLAYERTONODE\s+(\w+)$/i },
   
   // MISSION MANAGEMENT  
-  'ADDOPPONENT': { params: ['character'], pattern: /^AddOpponent\s+"?(\w+)"?$/ },
-  'ACT_MISSION': { params: ['mission'], pattern: /^ACT_MISSION\s+(\w+)$/ },
+  'ADDOPPONENT': { params: ['character'], pattern: /^AddOpponent\s+([\w-]+)$/ },
+  'ACT_MISSION': { params: ['mission'], pattern: /^ACT_MISSION\s+([\w-]+)$/ },
   'ADDOPPONENTSCREDITS': { params: ['index:number', 'credits:number'], pattern: /^AddOpponentsCredits\s+(\d+)\s+(-?\d+)$/ },
   'MODIFYOPPONENTSBUILDSPEED': { params: ['percentage:number'], pattern: /^ModifyOpponentsBuildSpeed\s+(\d+)$/i },
-  'SETSHIPTYPE': { params: ['type'], pattern: /^SetShipType\s+(\w+)$/ },
+  'SETSHIPTYPE': { params: ['type'], pattern: /^SetShipType\s+([\w-]+)$/ },
   'SETDECKPREPARATIONSCRIPT': { params: ['script:string'], pattern: /^SetDeckPreparationScript\s+"?(\w+)"?$/ },
   'SETFLIGHTDECKPREPARATIONSCRIPT': { params: ['script:string'], pattern: /^SetFlightDeckPreparationScript\s+"?(\w+)"?$/i },
   'SETTURNBASED': { params: [], pattern: /^SetTurnBased$/ },
@@ -1508,8 +1508,8 @@ function serializeCommand(element, targetLanguage = 'EN') {
           }
         } else {
           // Per parametri stringa che necessitano virgolette
-          // NON aggiungere virgolette per: achievement, shiptype, condition, pile, progress, node, image
-          const noQuoteParams = ['achievement', 'shiptype', 'pile', 'progress', 'node', 'image'];
+          // NON aggiungere virgolette per: achievement, shiptype, condition, pile, progress, node, image, script
+          const noQuoteParams = ['achievement', 'shiptype', 'pile', 'progress', 'node', 'image', 'script'];
           const needQuoteParams = ['path', 'file']; // Parametri che necessitano sempre virgolette
           
           if ((paramType === 'string' && !noQuoteParams.includes(paramName)) || needQuoteParams.includes(paramName)) {

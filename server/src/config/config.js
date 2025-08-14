@@ -20,8 +20,9 @@ const config = {
   HOST_ADDRESS: HOST_ADDRESS,
   DEFAULT_PORT: 3001, // Mantenuto per retrocompatibilità
   
-  // Languages supportate
-  SUPPORTED_LANGUAGES: ['EN', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU'],
+  // Languages supportate - ora include IT e supporta aggiunta dinamica
+  SUPPORTED_LANGUAGES: ['EN', 'IT', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU'],
+  DEFAULT_LANGUAGE: 'EN', // Lingua di default per inizializzazione
   
   // File extensions
   SCRIPT_EXTENSIONS: ['.txt'],

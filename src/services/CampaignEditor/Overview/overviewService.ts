@@ -147,13 +147,16 @@ export const overviewService = {
     return bySeverity;
   },
   
-  generateWarnings(analysis: CampaignAnalysis, issues: QualityIssue[]): string[] {
-    const warnings: string[] = [];
+  generateWarnings(analysis: CampaignAnalysis, issues: QualityIssue[]): Array<{key: string, params: Record<string, any>}> {
+    const warnings: Array<{key: string, params: Record<string, any>}> = [];
     
     // Warning per problemi critici
     const criticalIssues = issues.filter(i => i.severity === 'critical');
     if (criticalIssues.length > 0) {
-      warnings.push(`${criticalIssues.length} problemi critici rilevati`);
+      warnings.push({
+        key: 'overview.warnings.criticalIssues',
+        params: { count: criticalIssues.length }
+      });
     }
     
     // Warning per script troppo grandi
@@ -161,20 +164,29 @@ export const overviewService = {
       s => (s.commands?.length || 0) > 500
     );
     if (hugeScripts.length > 0) {
-      warnings.push(`${hugeScripts.length} script con più di 500 comandi`);
+      warnings.push({
+        key: 'overview.warnings.hugeScripts',
+        params: { count: hugeScripts.length }
+      });
     }
     
     // Warning per dipendenze circolari
     const circularCount = complexityAnalysisService.findCircularDependencies(analysis).length;
     if (circularCount > 0) {
-      warnings.push(`${circularCount} dipendenze circolari rilevate`);
+      warnings.push({
+        key: 'overview.warnings.circularDependencies',
+        params: { count: circularCount }
+      });
     }
     
     // Warning per copertura linguistica bassa
     const lowCoverage = languageCoverageService.calculateCoverage(analysis)
       .filter(lang => lang.coveragePercentage < 50 && lang.language !== 'IT');
     if (lowCoverage.length > 0) {
-      warnings.push(`${lowCoverage.length} lingue con copertura < 50%`);
+      warnings.push({
+        key: 'overview.warnings.lowCoverage',
+        params: { count: lowCoverage.length }
+      });
     }
     
     return warnings.slice(0, 10);
@@ -185,31 +197,31 @@ export const overviewService = {
     
     // Ottimizzazione modularità
     if (metrics.modularityIndex < 50) {
-      optimizations.push('Migliora la modularità dividendo script grandi');
+      optimizations.push('overview.optimizations.improveModularity');
     }
     
     // Ottimizzazione accoppiamento
     if (metrics.couplingScore < 50) {
-      optimizations.push('Riduci l\'accoppiamento tra script');
+      optimizations.push('overview.optimizations.reduceCoupling');
     }
     
     // Ottimizzazione coesione
     if (metrics.cohesionScore < 50) {
-      optimizations.push('Migliora la coesione raggruppando funzionalità correlate');
+      optimizations.push('overview.optimizations.improveCohesion');
     }
     
     // Ottimizzazione debito tecnico
     if (metrics.technicalDebtScore > 50) {
-      optimizations.push('Riduci il debito tecnico con refactoring mirati');
+      optimizations.push('overview.optimizations.reduceTechnicalDebt');
     }
     
     // Ottimizzazione distribuzione dimensioni
     if (metrics.scriptSizeDistribution.huge > 5) {
-      optimizations.push('Rifattorizza gli script più grandi (>500 linee)');
+      optimizations.push('overview.optimizations.refactorHugeScripts');
     }
     
     if (metrics.scriptSizeDistribution.tiny > analysis.scripts.length * 0.5) {
-      optimizations.push('Considera di unire script molto piccoli correlati');
+      optimizations.push('overview.optimizations.mergeSmallScripts');
     }
     
     return optimizations.slice(0, 10);

@@ -2,7 +2,13 @@
 
 import React from 'react';
 import { Lightbulb, ArrowRight, Zap } from 'lucide-react';
+import { useTranslation } from '@/locales';
 import type { RefactoringRecommendation } from '@/types/CampaignEditor/Overview/Overview.types';
+
+// Helper per interpolazione parametri
+const interpolate = (template: string, params: Record<string, any>) => {
+  return template.replace(/{(\w+)}/g, (_, key) => params[key] || '');
+};
 
 interface RefactoringRecommendationsCardProps {
   recommendations: RefactoringRecommendation[];
@@ -11,6 +17,7 @@ interface RefactoringRecommendationsCardProps {
 export const RefactoringRecommendationsCard: React.FC<RefactoringRecommendationsCardProps> = ({
   recommendations
 }) => {
+  const { t } = useTranslation();
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high': return 'text-red-400 bg-red-500/20';
@@ -44,7 +51,7 @@ export const RefactoringRecommendationsCard: React.FC<RefactoringRecommendations
     <div className="bg-gray-800 rounded-lg p-6">
       <div className="flex items-center gap-2 mb-4">
         <Lightbulb className="w-5 h-5 text-yellow-400" />
-        <h3 className="text-lg font-semibold">Suggerimenti Refactoring</h3>
+        <h3 className="text-lg font-semibold">{t('overview.refactoringRecommendations')}</h3>
       </div>
       
       <div className="space-y-3 max-h-96 overflow-y-auto">
@@ -57,43 +64,64 @@ export const RefactoringRecommendationsCard: React.FC<RefactoringRecommendations
               </div>
               <div className="flex items-center gap-2">
                 <span className={`text-xs px-2 py-1 rounded-full font-medium ${getPriorityColor(rec.priority)}`}>
-                  {rec.priority}
+                  {t(`overview.priority.${rec.priority}` as any)}
                 </span>
                 <span className={`text-xs ${getEffortBadge(rec.estimatedEffort)}`}>
-                  {rec.estimatedEffort} effort
+                  {rec.estimatedEffort} {t('overview.effort')}
                 </span>
               </div>
             </div>
             
-            <p className="text-sm text-gray-300 mb-2">{rec.reason}</p>
+            <p className="text-sm text-gray-300 mb-2">
+              {rec.reasonKey 
+                ? interpolate(t(rec.reasonKey as any), rec.reasonParams || {})
+                : rec.reason}
+            </p>
             
             {/* Azioni suggerite */}
             <div className="space-y-1 mb-3">
-              {rec.suggestedActions.slice(0, 2).map((action, idx) => (
-                <div key={idx} className="flex items-center gap-2 text-xs text-gray-400">
-                  <ArrowRight className="w-3 h-3" />
-                  <span>{action}</span>
-                </div>
-              ))}
+              {rec.suggestedActionsKey ? (
+                // Se abbiamo una chiave, le azioni sono un array tradotto
+                (t(rec.suggestedActionsKey as any) as unknown as string[])
+                  .slice(0, 2)
+                  .map((action: string, idx: number) => (
+                    <div key={idx} className="flex items-center gap-2 text-xs text-gray-400">
+                      <ArrowRight className="w-3 h-3" />
+                      <span>
+                        {rec.suggestedActionsParams 
+                          ? interpolate(action, rec.suggestedActionsParams)
+                          : action}
+                      </span>
+                    </div>
+                  ))
+              ) : (
+                // Fallback ai valori legacy
+                (rec.suggestedActions || []).slice(0, 2).map((action, idx) => (
+                  <div key={idx} className="flex items-center gap-2 text-xs text-gray-400">
+                    <ArrowRight className="w-3 h-3" />
+                    <span>{action}</span>
+                  </div>
+                ))
+              )}
             </div>
             
             {/* Impatto potenziale */}
             <div className="flex items-center gap-4 pt-2 border-t border-gray-700">
               <div className="flex items-center gap-1">
                 <Zap className="w-3 h-3 text-blue-400" />
-                <span className="text-xs text-gray-400">Impatto:</span>
+                <span className="text-xs text-gray-400">{t('overview.impact')}:</span>
               </div>
               <div className="flex gap-3 text-xs">
                 <div className="flex items-center gap-1">
-                  <span className="text-gray-500">Manutenibilità</span>
+                  <span className="text-gray-500">{t('overview.maintainability')}</span>
                   <span className="font-semibold text-blue-400">+{rec.potentialImpact.maintainability}%</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="text-gray-500">Performance</span>
+                  <span className="text-gray-500">{t('overview.performance')}</span>
                   <span className="font-semibold text-green-400">+{rec.potentialImpact.performance}%</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="text-gray-500">Leggibilità</span>
+                  <span className="text-gray-500">{t('overview.readability')}</span>
                   <span className="font-semibold text-purple-400">+{rec.potentialImpact.readability}%</span>
                 </div>
               </div>
@@ -105,7 +133,7 @@ export const RefactoringRecommendationsCard: React.FC<RefactoringRecommendations
       {recommendations.length === 0 && (
         <div className="text-center py-8 text-gray-500">
           <Lightbulb className="w-12 h-12 mx-auto mb-2 opacity-30" />
-          <p className="text-sm">Nessun suggerimento di refactoring disponibile</p>
+          <p className="text-sm">{t('overview.noRefactoringSuggestions')}</p>
         </div>
       )}
     </div>

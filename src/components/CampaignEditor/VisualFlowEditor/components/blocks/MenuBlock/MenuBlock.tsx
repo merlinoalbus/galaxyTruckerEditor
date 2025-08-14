@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AnchorPoint } from '../../AnchorPoint/AnchorPoint';
 import { ContainerBlock } from '../ContainerBlock/ContainerBlock';
+import { useTranslation } from '@/locales';
 
 interface MenuBlockProps {
   block: any;
@@ -31,6 +32,7 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({
   isZoomed = false,
   isInvalid = false
 }) => {
+  const { t } = useTranslation();
   // Stato per collapse/expand - container blocks default expanded
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
@@ -102,7 +104,7 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({
     const count = block.children?.length || 0;
     return {
       params: null, // MenuBlock non ha parametri aggiuntivi
-      elementCount: <span className="text-gray-500 whitespace-nowrap">{count} elementi</span>
+      elementCount: <span className="text-gray-500 whitespace-nowrap">{count} {t('visualFlowEditor.menu.elements')}</span>
     };
   };
 
@@ -129,7 +131,7 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({
             <AnchorPoint
               onDragOver={onDragOver}
               onDrop={(e) => onDropAtIndex(e, 0)}
-              label="Inserisci qui"
+              label={t('visualFlowEditor.menu.insertHere')}
             />
             
             {/* Render children with anchor points between them */}
@@ -146,8 +148,8 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({
               ))
             ) : (
               <div className="text-center text-gray-500 py-8">
-                <p className="text-xs">Container vuoto</p>
-                <p className="text-xs text-gray-600 mt-1">Trascina qui i blocchi</p>
+                <p className="text-xs">{t('visualFlowEditor.menu.emptyContainer')}</p>
+                <p className="text-xs text-gray-600 mt-1">{t('visualFlowEditor.menu.dragBlocksHere')}</p>
               </div>
             )}
           </div>

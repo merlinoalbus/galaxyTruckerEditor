@@ -2,7 +2,13 @@
 
 import React from 'react';
 import { AlertTriangle, Shield, Bug } from 'lucide-react';
+import { useTranslation } from '@/locales';
 import type { QualityIssue } from '@/types/CampaignEditor/Overview/Overview.types';
+
+// Helper per interpolazione parametri
+const interpolate = (template: string, params: Record<string, any>) => {
+  return template.replace(/{(\w+)}/g, (_, key) => params[key] || '');
+};
 
 interface QualityIssuesCardProps {
   issues: QualityIssue[];
@@ -15,6 +21,7 @@ export const QualityIssuesCard: React.FC<QualityIssuesCardProps> = ({
   qualityScore,
   issuesBySeverity
 }) => {
+  const { t } = useTranslation();
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'critical': return 'text-red-400 bg-red-500/20';
@@ -47,10 +54,10 @@ export const QualityIssuesCard: React.FC<QualityIssuesCardProps> = ({
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Shield className="w-5 h-5 text-cyan-400" />
-          <h3 className="text-lg font-semibold">Qualità Codice</h3>
+          <h3 className="text-lg font-semibold">{t('overview.codeQuality')}</h3>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-400">Score:</span>
+          <span className="text-sm text-gray-400">{t('overview.score')}:</span>
           <span className={`text-2xl font-bold ${getScoreColor(qualityScore)}`}>
             {qualityScore}
           </span>
@@ -67,7 +74,7 @@ export const QualityIssuesCard: React.FC<QualityIssuesCardProps> = ({
           })
           .map(([severity, count]) => (
             <div key={severity} className={`px-3 py-1 rounded-full text-xs font-medium ${getSeverityColor(severity)}`}>
-              {count} {severity}
+              {count} {t(`overview.severity.${severity}` as any)}
             </div>
           ))
         }
@@ -83,7 +90,11 @@ export const QualityIssuesCard: React.FC<QualityIssuesCardProps> = ({
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-sm font-medium">{issue.description}</span>
+                  <span className="text-sm font-medium">
+                    {issue.descriptionKey 
+                      ? interpolate(t(issue.descriptionKey as any), issue.descriptionParams || {})
+                      : issue.description}
+                  </span>
                 </div>
                 {issue.scriptName && (
                   <div className="text-xs text-gray-400 font-mono">
@@ -91,9 +102,11 @@ export const QualityIssuesCard: React.FC<QualityIssuesCardProps> = ({
                     {issue.lineNumber && `:${issue.lineNumber}`}
                   </div>
                 )}
-                {issue.suggestion && (
+                {(issue.suggestionKey || issue.suggestion) && (
                   <div className="text-xs text-blue-400 mt-1">
-                    → {issue.suggestion}
+                    → {issue.suggestionKey 
+                      ? interpolate(t(issue.suggestionKey as any), issue.suggestionParams || {})
+                      : issue.suggestion}
                   </div>
                 )}
               </div>
@@ -104,7 +117,7 @@ export const QualityIssuesCard: React.FC<QualityIssuesCardProps> = ({
       
       {issues.length > 10 && (
         <div className="text-center text-sm text-gray-500 mt-2">
-          +{issues.length - 10} altri problemi
+          +{issues.length - 10} {t('overview.otherIssues')}
         </div>
       )}
     </div>

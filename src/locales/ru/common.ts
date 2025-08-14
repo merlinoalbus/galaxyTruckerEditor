@@ -3,7 +3,7 @@
  * General purpose strings used across the application
  */
 
-export const commonTranslations = {
+export const common = {
   'common.loading': 'Загрузка...',
   'common.error': 'Ошибка',
   'common.save': 'Сохранить',

@@ -1,5 +1,6 @@
 import React from 'react';
 import { ZoomIn, ZoomOut } from 'lucide-react';
+import { useTranslation } from '@/locales';
 
 interface ZoomControlsProps {
   /** Funzione per fare zoom in sul blocco */
@@ -25,6 +26,7 @@ export const ZoomControls: React.FC<ZoomControlsProps> = ({
   position = 'top-left',
   className = ''
 }) => {
+  const { t } = useTranslation();
   // Se nessuna funzione è fornita, non renderizzare nulla
   if (!onZoomIn && !onZoomOut) {
     return null;
@@ -72,7 +74,7 @@ export const ZoomControls: React.FC<ZoomControlsProps> = ({
         border rounded-md z-10 transition-all duration-200 backdrop-blur-sm
         ${className}
       `}
-      title={isBackMode ? "Torna indietro" : "Zoom su questo blocco"}
+      title={isBackMode ? t('visualFlowEditor.zoom.goBack') : t('visualFlowEditor.zoom.zoomIn')}
     >
       {isBackMode 
         ? <ZoomOut className={`${config.icon} text-gray-300`} />
@@ -91,6 +93,7 @@ export const InlineZoomControls: React.FC<Omit<ZoomControlsProps, 'position'>> =
   size = 'medium',
   className = ''
 }) => {
+  const { t } = useTranslation();
   if (!onZoomIn && !onZoomOut) {
     return null;
   }
@@ -125,7 +128,7 @@ export const InlineZoomControls: React.FC<Omit<ZoomControlsProps, 'position'>> =
         border rounded transition-all duration-200 opacity-80 hover:opacity-100
         ${className}
       `}
-      title={isBackMode ? "Torna indietro" : "Zoom su questo blocco"}
+      title={isBackMode ? t('visualFlowEditor.zoom.goBack') : t('visualFlowEditor.zoom.zoomIn')}
     >
       {isBackMode 
         ? <ZoomOut className={`${config.icon} text-gray-300`} />

@@ -23,8 +23,9 @@ export const qualityAnalysisService = {
         type: 'oversized-script',
         severity: 'high',
         scriptName: script.name,
-        description: `Script molto grande: ${size} comandi (soglia: 500)`,
-        suggestion: 'Considera di dividere in script più piccoli'
+        descriptionKey: 'overview.quality.oversizedScript',
+        descriptionParams: { size, threshold: 500 },
+        suggestionKey: 'overview.quality.oversizedScriptSuggestion'
       });
     });
     
@@ -38,8 +39,9 @@ export const qualityAnalysisService = {
           severity: 'medium',
           scriptName: script.name,
           elementName: `${varCount} variabili`,
-          description: `Script con molte variabili: ${varCount} (soglia: 25)`,
-          suggestion: 'Raggruppa variabili correlate o usa strutture dati'
+          descriptionKey: 'overview.quality.tooManyVariables',
+          descriptionParams: { count: varCount, threshold: 25 },
+          suggestionKey: 'overview.quality.tooManyVariablesSuggestion'
         });
       }
     });
@@ -53,8 +55,9 @@ export const qualityAnalysisService = {
         type: 'orphan-script',
         severity: size > 100 ? 'high' : 'medium',
         scriptName: script.name,
-        description: `Script mai chiamato con ${size} comandi`,
-        suggestion: size > 100 ? 'Script grande non utilizzato - verifica se necessario' : 'Verifica se lo script è ancora necessario'
+        descriptionKey: 'overview.quality.orphanScript',
+        descriptionParams: { size },
+        suggestionKey: size > 100 ? 'overview.quality.orphanScriptSuggestion.large' : 'overview.quality.orphanScriptSuggestion.small'
       });
     });
     
@@ -65,8 +68,9 @@ export const qualityAnalysisService = {
         id: `issue-${++issueCounter}`,
         type: 'circular-dependency',
         severity: 'critical',
-        description: `Dipendenza circolare: ${cycle.join(' → ')}`,
-        suggestion: 'Rifattorizza per eliminare il ciclo di dipendenze'
+        descriptionKey: 'overview.quality.circularDependency',
+        descriptionParams: { cycle: cycle.join(' → ') },
+        suggestionKey: 'overview.quality.circularDependencySuggestion'
       });
     });
     
@@ -78,8 +82,9 @@ export const qualityAnalysisService = {
         type: 'mono-state-semaphore',
         severity: 'low',
         elementName: sem,
-        description: `Semaforo '${sem}' usato solo come SET o RESET`,
-        suggestion: 'Considera di usare una variabile booleana'
+        descriptionKey: 'overview.quality.monoStateSemaphore',
+        descriptionParams: { name: sem },
+        suggestionKey: 'overview.quality.monoStateSemaphoreSuggestion'
       });
     });
     

@@ -51,7 +51,7 @@ export const ComplexityAnalysis: React.FC<ComplexityAnalysisProps> = ({
           </div>
           <div className={overviewStyles.complexityList.item}>
             <span className={overviewStyles.complexityList.label}>
-              Massimo {t('overview.commands')} per Script
+              {t('overview.maxCommandsPerScript')}
             </span>
             <span className={overviewStyles.complexityList.value}>
               {complexityMetrics.max}

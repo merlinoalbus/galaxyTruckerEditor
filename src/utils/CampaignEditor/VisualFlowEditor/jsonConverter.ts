@@ -55,6 +55,11 @@ export const convertBlocksToJson = (blocks: any[]): any[] => {
       jsonBlock.scriptName = block.scriptName || '';
       jsonBlock.fileName = block.fileName || '';
       jsonBlock.children = convertBlocksToJson(block.children);
+    } else if (block.type === 'SUB_SCRIPT' && block.parameters) {
+      // SUB_SCRIPT usa solo 'script' come parametro
+      jsonBlock.parameters = {
+        script: block.parameters.script || ''
+      };
     } else if (block.isContainer && block.children) {
       jsonBlock.children = convertBlocksToJson(block.children);
     } else if (block.parameters) {

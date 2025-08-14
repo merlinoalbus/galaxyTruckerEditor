@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { AnchorPoint } from '../../AnchorPoint/AnchorPoint';
 import { ContainerBlock } from '../ContainerBlock/ContainerBlock';
 import { getBlockClassName } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
+import { useTranslation } from '@/locales';
 
 interface FlightBlockProps {
   block: any;
@@ -42,6 +43,7 @@ export const FlightBlock: React.FC<FlightBlockProps> = ({
   isZoomed = false,
   isInvalid = false
 }) => {
+  const { t } = useTranslation();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -108,7 +110,7 @@ export const FlightBlock: React.FC<FlightBlockProps> = ({
     return {
       params: null, // FLIGHT non ha parametri aggiuntivi
       elementCount: (
-        <span className="text-gray-500 whitespace-nowrap" title={`Fase Iniziale: ${initCount} elementi, Inizio Volo: ${startCount} elementi, Valutazione: ${evalCount} elementi`}>
+        <span className="text-gray-500 whitespace-nowrap" title={`${t('visualFlowEditor.flight.initPhase')}: ${initCount} ${t('visualFlowEditor.flight.elements')}, ${t('visualFlowEditor.flight.startPhase')}: ${startCount} ${t('visualFlowEditor.flight.elements')}, ${t('visualFlowEditor.flight.evaluatePhase')}: ${evalCount} ${t('visualFlowEditor.flight.elements')}`}>
           I:{initCount} S:{startCount} E:{evalCount}
         </span>
       )
@@ -136,7 +138,7 @@ export const FlightBlock: React.FC<FlightBlockProps> = ({
         <div className="space-y-4">
           {/* Area INIT */}
           <div className="relative">
-            <div className="text-xs font-semibold text-sky-300 mb-2 uppercase">Fase Iniziale</div>
+            <div className="text-xs font-semibold text-sky-300 mb-2 uppercase">{t('visualFlowEditor.flight.initPhase')}</div>
             
             <div className="bg-sky-900/30 rounded-lg p-3 min-h-[50px] border border-sky-800/50">
               {block.blockInit && block.blockInit.length > 0 ? (
@@ -163,7 +165,7 @@ export const FlightBlock: React.FC<FlightBlockProps> = ({
                   <AnchorPoint
                     onDrop={(e) => onDropInitAtIndex(e, 0)}
                     onDragOver={onDragOver}
-                    label="Inserisci qui"
+                    label={t('visualFlowEditor.flight.insertHere')}
                   />
                   <div className="text-center text-sky-500 text-lg py-2">
                     +
@@ -175,7 +177,7 @@ export const FlightBlock: React.FC<FlightBlockProps> = ({
 
           {/* Area START */}
           <div className="relative">
-            <div className="text-xs font-semibold text-sky-300 mb-2 uppercase">Inizio Volo</div>
+            <div className="text-xs font-semibold text-sky-300 mb-2 uppercase">{t('visualFlowEditor.flight.startPhase')}</div>
             
             <div className="bg-sky-900/30 rounded-lg p-3 min-h-[50px] border border-sky-800/50">
               {block.blockStart && block.blockStart.length > 0 ? (
@@ -202,7 +204,7 @@ export const FlightBlock: React.FC<FlightBlockProps> = ({
                   <AnchorPoint
                     onDrop={(e) => onDropStartAtIndex(e, 0)}
                     onDragOver={onDragOver}
-                    label="Inserisci qui"
+                    label={t('visualFlowEditor.flight.insertHere')}
                   />
                   <div className="text-center text-sky-500 text-lg py-2">
                     +
@@ -214,7 +216,7 @@ export const FlightBlock: React.FC<FlightBlockProps> = ({
 
           {/* Area EVALUATE */}
           <div className="relative">
-            <div className="text-xs font-semibold text-sky-300 mb-2 uppercase">Valutazione</div>
+            <div className="text-xs font-semibold text-sky-300 mb-2 uppercase">{t('visualFlowEditor.flight.evaluatePhase')}</div>
             
             <div className="bg-sky-900/30 rounded-lg p-3 min-h-[50px] border border-sky-800/50">
               {block.blockEvaluate && block.blockEvaluate.length > 0 ? (
@@ -241,7 +243,7 @@ export const FlightBlock: React.FC<FlightBlockProps> = ({
                   <AnchorPoint
                     onDrop={(e) => onDropEvaluateAtIndex(e, 0)}
                     onDragOver={onDragOver}
-                    label="Inserisci qui"
+                    label={t('visualFlowEditor.flight.insertHere')}
                   />
                   <div className="text-center text-sky-500 text-lg py-2">
                     +

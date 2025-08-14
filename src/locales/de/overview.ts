@@ -3,8 +3,11 @@
  */
 
 export const overviewTranslations = {
-  'overview.title': 'Kampagnenübersicht',
-  'overview.description': 'Umfassende Analyse Ihrer Kampagnenstruktur und -inhalte',
+  'overview.title': 'Erweiterte Kampagnenanalyse',
+  'overview.description': 'Detaillierte Metriken und Vorschläge zur Verbesserung der Codequalität',
+  'overview.exportReport': 'Bericht exportieren',
+  'overview.importantWarnings': 'Wichtige Warnungen',
+  'overview.suggestedOptimizations': 'Vorgeschlagene Optimierungen',
   'overview.loading': 'Übersichtsdaten werden geladen...',
   'overview.noCampaignData': 'Keine Kampagnendaten',
   'overview.loadCampaignMessage': 'Laden Sie Kampagnenskripte, um Übersichtsstatistiken zu sehen',
@@ -25,4 +28,98 @@ export const overviewTranslations = {
   'overview.labels': 'Etiketten',
   'overview.avgPerScript': 'Durchschnitt pro Skript',
   'overview.commands': 'Befehle',
+  'overview.maxCommandsPerScript': 'Maximale Befehle pro Skript',
+  
+  // Language Coverage Card
+  'overview.languageCoverage': 'Sprachabdeckung',
+  'overview.coverage': 'Abdeckung',
+  'overview.criticalGaps': 'kritische Lücken',
+  'overview.criticalScriptsMissing': 'Kritische Skripte fehlen',
+  
+  // Complexity Analysis Card
+  'overview.complexityAnalysisTitle': 'Komplexitätsanalyse',
+  'overview.mostComplexScripts': 'Komplexeste Skripte',
+  'overview.orphanScripts': 'Verwaiste Skripte',
+  'overview.circularDependencies': 'Zirkuläre Abhängigkeiten',
+  'overview.mostReferencedScripts': 'Meist referenzierte Skripte',
+  'overview.score': 'Bewertung',
+  'overview.others': 'andere',
+  'overview.cycles': 'Zyklen',
+  'overview.cmd': 'Befehle',
+  'overview.var': 'Variablen',
+  
+  // Quality Issues Card
+  'overview.codeQuality': 'Codequalität',
+  'overview.otherIssues': 'weitere Probleme',
+  'overview.severity.critical': 'kritisch',
+  'overview.severity.high': 'hoch',
+  'overview.severity.medium': 'mittel',
+  'overview.severity.low': 'niedrig',
+  
+  // Maintenance Metrics Card
+  'overview.maintenanceMetrics': 'Wartungsmetriken',
+  'overview.modularity': 'Modularität',
+  'overview.coupling': 'Kopplung',
+  'overview.cohesion': 'Kohäsion',
+  'overview.technicalDebt': 'Technische Schulden',
+  'overview.scriptSizeDistribution': 'Skriptgrößenverteilung',
+  'overview.largest': 'Größtes',
+  'overview.smallest': 'Kleinstes',
+  'overview.lines': 'Zeilen',
+  'overview.size.tiny': 'Winzig',
+  'overview.size.small': 'Klein',
+  'overview.size.medium': 'Mittel',
+  'overview.size.large': 'Groß',
+  'overview.size.huge': 'Riesig',
+  
+  // Refactoring Recommendations Card
+  'overview.refactoringRecommendations': 'Refactoring-Empfehlungen',
+  'overview.effort': 'Aufwand',
+  'overview.impact': 'Auswirkung:',
+  'overview.maintainability': 'Wartbarkeit',
+  'overview.performance': 'Leistung',
+  'overview.readability': 'Lesbarkeit',
+  'overview.noRefactoringSuggestions': 'Keine Refactoring-Vorschläge verfügbar',
+  'overview.priority.high': 'hoch',
+  'overview.priority.medium': 'mittel',
+  'overview.priority.low': 'niedrig',
+
+  // Quality Analysis Service messages
+  'overview.quality.oversizedScript': 'Sehr großes Skript: {size} Befehle (Grenzwert: {threshold})',
+  'overview.quality.oversizedScriptSuggestion': 'Erwägen Sie die Aufteilung in kleinere Skripte',
+  'overview.quality.tooManyVariables': 'Skript mit vielen Variablen: {count} (Grenzwert: {threshold})',
+  'overview.quality.tooManyVariablesSuggestion': 'Verwandte Variablen gruppieren oder Datenstrukturen verwenden',
+  'overview.quality.orphanScript': 'Nie aufgerufenes Skript mit {size} Befehlen',
+  'overview.quality.orphanScriptSuggestion.large': 'Großes ungenutztes Skript - prüfen Sie, ob es notwendig ist',
+  'overview.quality.orphanScriptSuggestion.small': 'Prüfen Sie, ob das Skript noch notwendig ist',
+  'overview.quality.circularDependency': 'Zirkuläre Abhängigkeit: {cycle}',
+  'overview.quality.circularDependencySuggestion': 'Refaktorieren, um den Abhängigkeitszyklus zu eliminieren',
+  'overview.quality.monoStateSemaphore': "Semaphor '{name}' wird nur als SET oder RESET verwendet",
+  'overview.quality.monoStateSemaphoreSuggestion': 'Erwägen Sie die Verwendung einer boolean Variable',
+
+  // Refactoring Service messages
+  'overview.refactoring.oversizedScript': 'Skript mit {commandCount} Befehlen (empfohlenes Limit: {limit})',
+  'overview.refactoring.splitActions': ['In logische Sub-Skripte aufteilen', 'Wiederverwendbare Funktionen extrahieren', 'Initialisierungslogik trennen'],
+  'overview.refactoring.smallRelatedScripts': 'Verwandte Skripte mit jeweils weniger als {threshold} Befehlen',
+  'overview.refactoring.mergeActions': ['{scripts} in ein einziges Skript zusammenführen', 'Logische Trennung mit Labels beibehalten'],
+  'overview.refactoring.duplicatedPattern': 'Muster von {length} Befehlen {occurrences} Mal wiederholt',
+  'overview.refactoring.extractActions': ['In gemeinsames Sub-Skript extrahieren', 'Wiederverwendbare Funktion erstellen', 'Parameter für Variationen verwenden'],
+  'overview.refactoring.highComplexity': 'Hohe zyklomatische Komplexität ({complexity})',
+  'overview.refactoring.simplifyActions': ['Verschachtelung von Bedingungen reduzieren', 'Logik in Sub-Skripte extrahieren', 'IF/ELSE-Ketten vereinfachen'],
+  'overview.refactoring.deadScript': 'Nie aufgerufenes Skript und kein Einstiegspunkt',
+  'overview.refactoring.removeActions': ['Prüfen Sie, ob wirklich ungenutzt', 'Entfernen wenn bestätigt', 'Dokumentieren wenn für Kompatibilität beibehalten'],
+
+  // Warnings
+  'overview.warnings.criticalIssues': '{count} kritische Probleme erkannt',
+  'overview.warnings.hugeScripts': '{count} Skripte mit mehr als 500 Befehlen',
+  'overview.warnings.circularDependencies': '{count} zirkuläre Abhängigkeiten erkannt',
+  'overview.warnings.lowCoverage': '{count} Sprachen mit Abdeckung < 50%',
+
+  // Optimizations
+  'overview.optimizations.improveModularity': 'Modularität durch Aufteilen großer Skripte verbessern',
+  'overview.optimizations.reduceCoupling': 'Kopplung zwischen Skripten reduzieren',
+  'overview.optimizations.improveCohesion': 'Kohäsion durch Gruppierung verwandter Funktionalität verbessern',
+  'overview.optimizations.reduceTechnicalDebt': 'Technische Schulden durch gezieltes Refactoring reduzieren',
+  'overview.optimizations.refactorHugeScripts': 'Die größten Skripte refaktorieren (>500 Zeilen)',
+  'overview.optimizations.mergeSmallScripts': 'Zusammenführung sehr kleiner verwandter Skripte erwägen',
 } as const;
