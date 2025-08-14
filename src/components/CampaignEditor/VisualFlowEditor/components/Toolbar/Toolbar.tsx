@@ -20,6 +20,10 @@ interface ToolbarProps {
   onZoomOut: (targetLevel?: number) => void;
   /** Path di navigazione utilizzato dal componente NavigationBreadcrumb */
   navigationPath: NavigationPathItem[];
+  /** Path di navigazione tra script diversi */
+  scriptNavigationPath?: Array<{ scriptName: string; parentBlockId?: string }>;
+  /** Funzione per navigare tra script */
+  onNavigateToScript?: (index: number) => void;
   validationErrors?: number;
   onValidationErrorsClick?: () => void;
   onSaveScript?: () => Promise<{ success: boolean; error?: string }>;
@@ -41,6 +45,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   isZoomed = false,
   onZoomOut,
   navigationPath = [],
+  scriptNavigationPath = [],
+  onNavigateToScript,
   validationErrors = 0,
   onValidationErrorsClick,
   onSaveScript,
@@ -70,7 +76,30 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   };
   return (
     <div className="space-y-2">
-      {/* Breadcrumb di navigazione */}
+      {/* Breadcrumb per navigazione tra script */}
+      {scriptNavigationPath.length > 0 && onNavigateToScript && (
+        <div className="flex items-center gap-2 px-3 py-2 bg-slate-800 rounded-lg">
+          <span className="text-xs text-gray-400">Script:</span>
+          {scriptNavigationPath.map((item, index) => (
+            <React.Fragment key={`script-${index}`}>
+              {index > 0 && <span className="text-gray-500">→</span>}
+              <button
+                onClick={() => onNavigateToScript(index - 1)}
+                className={`px-2 py-1 text-sm rounded transition-colors ${
+                  index === scriptNavigationPath.length - 1
+                    ? 'text-white bg-blue-600 cursor-default'
+                    : 'text-gray-300 hover:bg-slate-700 hover:text-white cursor-pointer'
+                }`}
+                disabled={index === scriptNavigationPath.length - 1}
+              >
+                📄 {item.scriptName}
+              </button>
+            </React.Fragment>
+          ))}
+        </div>
+      )}
+      
+      {/* Breadcrumb di navigazione zoom interno */}
       <NavigationBreadcrumb
         navigationPath={navigationPath}
         onNavigate={onZoomOut}

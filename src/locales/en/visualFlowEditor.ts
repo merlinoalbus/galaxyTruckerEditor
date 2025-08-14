@@ -72,6 +72,7 @@ export const visualFlowEditorTranslations = {
   // SUB_SCRIPT Block
   'visualFlowEditor.blocks.subScript.scriptName': 'Script Name',
   'visualFlowEditor.blocks.subScript.hint': 'Select the script to execute',
+  'visualFlowEditor.blocks.subScript.navigate': 'Navigate to sub-script',
   
   // EXIT_MENU Block
   'visualFlowEditor.blocks.exitMenu.description': 'Exit from current menu',

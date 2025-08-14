@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { ScriptData } from '@/components/CampaignEditor/VisualFlowEditor/components/ScriptsList';
 import { addUniqueIds, generateBlockId } from '@/utils/CampaignEditor/VisualFlowEditor/blockIdManager';
 import { cleanupScriptBlocks } from '@/utils/CampaignEditor/VisualFlowEditor/blockCleaner';
-import { generateScriptJson, generateMissionJson } from '@/utils/CampaignEditor/VisualFlowEditor/jsonConverter';
+import { generateScriptJson, generateMissionJson, convertBlocksToJson } from '@/utils/CampaignEditor/VisualFlowEditor/jsonConverter';
 
 export interface NewScriptDialogType {
   isOpen: boolean;
@@ -310,24 +310,57 @@ export const useScriptManagement = ({
     }
   }, [setCurrentScriptBlocks, setShowScriptsList, resetNavigationState, setValidationErrors, setDropError]);
 
-  // Salva script via API
-  const saveScript = useCallback(async () => {
-    // Usa sempre rootBlocks se disponibile (contiene l'albero completo), altrimenti currentScriptBlocks
-    const blocksToSave = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
+  // Salva script via API - ora può salvare multipli script
+  const saveScript = useCallback(async (openedScripts?: Map<string, any>) => {
+    const scriptsToSave = [];
+    const savedScriptNames = new Set<string>(); // Per evitare duplicati
     
-    if (!blocksToSave || blocksToSave.length === 0) {
-      console.error('Nessun blocco da salvare');
-      return { success: false, error: 'Nessun blocco da salvare' };
+    // Se abbiamo script aperti, salva tutti quelli modificati
+    if (openedScripts && openedScripts.size > 0) {
+      openedScripts.forEach((scriptData, scriptName) => {
+        if (scriptData.blocks && scriptData.blocks.length > 0) {
+          // Genera JSON per ogni script
+          let scriptJson;
+          
+          // Verifica se è uno script normale o una mission
+          const firstBlock = scriptData.blocks[0];
+          if (firstBlock && firstBlock.type === 'SCRIPT') {
+            scriptJson = generateScriptJson(scriptData.blocks);
+          } else if (firstBlock && firstBlock.type === 'MISSION') {
+            scriptJson = generateMissionJson(scriptData.blocks);
+          } else {
+            // Fallback per blocchi senza wrapper
+            scriptJson = {
+              name: scriptData.scriptName || scriptName,
+              fileName: scriptData.fileName,
+              blocks: convertBlocksToJson(scriptData.blocks)
+            };
+          }
+          
+          if (scriptJson && !savedScriptNames.has(scriptJson.name)) {
+            scriptsToSave.push(scriptJson);
+            savedScriptNames.add(scriptJson.name);
+          }
+        }
+      });
+    } else {
+      // Se non ci sono script aperti, salva solo lo script corrente
+      const mainBlocks = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
+      if (mainBlocks && mainBlocks.length > 0) {
+        const mainScriptJson = generateScriptJson(mainBlocks);
+        if (mainScriptJson && !savedScriptNames.has(mainScriptJson.name)) {
+          scriptsToSave.push(mainScriptJson);
+          savedScriptNames.add(mainScriptJson.name);
+        }
+      }
+    }
+    
+    if (scriptsToSave.length === 0) {
+      console.error('Nessun script da salvare');
+      return { success: false, error: 'Nessun script da salvare' };
     }
 
-    const scriptJson = generateScriptJson(blocksToSave);
-    if (!scriptJson) {
-      console.error('Impossibile generare JSON dello script');
-      return { success: false, error: 'Impossibile generare JSON' };
-    }
-
-    // L'API si aspetta un array di script
-    const payload = [scriptJson];
+    console.log(`📝 Salvataggio di ${scriptsToSave.length} script...`);
 
     try {
       const response = await fetch('http://localhost:3001/api/scripts/saveScript', {
@@ -335,13 +368,21 @@ export const useScriptManagement = ({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(scriptsToSave)
       });
 
       const result = await response.json();
       
       if (result.success) {
-        console.log('✅ Script salvato con successo');
+        console.log(`✅ ${scriptsToSave.length} script salvati con successo`);
+        
+        // Reset flag isModified per tutti gli script salvati
+        if (openedScripts) {
+          openedScripts.forEach((scriptData) => {
+            scriptData.isModified = false;
+          });
+        }
+        
         return { success: true };
       } else {
         console.error('❌ Errore nel salvataggio:', result.error);

@@ -21,8 +21,8 @@ export const useJsonConversion = ({
 
   // Aggiorna JSON quando i blocchi cambiano e logga ogni modifica
   useEffect(() => {
-    // Usa rootBlocks quando siamo in zoom, altrimenti usa currentScriptBlocks
-    const blocksToUse = isZoomed && rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
+    // Mostra sempre i currentScriptBlocks che sono i blocchi attualmente visualizzati
+    const blocksToUse = currentScriptBlocks;
     
     if (blocksToUse.length > 0) {
       const scriptBlock = blocksToUse.find(b => b.type === 'SCRIPT');

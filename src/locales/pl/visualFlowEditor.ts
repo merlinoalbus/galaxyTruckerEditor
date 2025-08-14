@@ -69,6 +69,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.label.anchorName': 'Nazwa Kotwicy',
   'visualFlowEditor.blocks.label.hint': 'Spacje nie są dozwolone w nazwach kotwic',
   
+  // SUB_SCRIPT Block
+  'visualFlowEditor.blocks.subScript.scriptName': 'Nazwa skryptu',
+  'visualFlowEditor.blocks.subScript.hint': 'Wybierz skrypt do wykonania',
+  'visualFlowEditor.blocks.subScript.navigate': 'Przejdź do podskryptu',
+  
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Błąd walidacji',
   'visualFlowEditor.validation.delayNoDuration': 'Blok DELAY musi mieć wartość czasu trwania. Ustaw czas trwania w milisekundach.',

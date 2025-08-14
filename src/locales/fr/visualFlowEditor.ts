@@ -69,6 +69,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.label.anchorName': 'Nom de l\'Ancre',
   'visualFlowEditor.blocks.label.hint': 'Les espaces ne sont pas autorisés dans les noms d\'ancres',
   
+  // SUB_SCRIPT Block
+  'visualFlowEditor.blocks.subScript.scriptName': 'Nom du script',
+  'visualFlowEditor.blocks.subScript.hint': 'Sélectionnez le script à exécuter',
+  'visualFlowEditor.blocks.subScript.navigate': 'Naviguer vers le sous-script',
+  
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Erreur de validation',
   'visualFlowEditor.validation.delayNoDuration': 'Le bloc DELAY doit avoir une valeur de durée. Définissez la durée en millisecondes.',

@@ -90,6 +90,7 @@ export const useZoomNavigation = ({
   const getBlockDisplayName = (block: any): string => {
     switch (block.type) {
       case 'SCRIPT': return block.scriptName || 'Script';
+      case 'SUB_SCRIPT': return block.scriptName || 'Sub-Script';
       case 'MISSION': return block.missionName || 'Mission';
       case 'IF': return `IF ${block.ifType || ''}`.trim();
       case 'MENU': return 'MENU';
@@ -124,6 +125,7 @@ export const useZoomNavigation = ({
                        result.block.type === 'MENU' || 
                        result.block.type === 'OPT' ||
                        result.block.type === 'SCRIPT' ||
+                       result.block.type === 'SUB_SCRIPT' ||
                        result.block.type === 'MISSION';
     
     if (!isContainer) {
@@ -216,12 +218,15 @@ export const useZoomNavigation = ({
 
   return {
     navigationPath,
+    setNavigationPath,
     currentFocusedBlock,
     currentFocusedBlockId: currentFocusedBlock?.id || null,
     rootBlocks,
+    setRootBlocks,
     handleZoomIn,
     handleZoomOut,
     updateRootBlocksIfNeeded,
+    updateBlockInNavigationTree,
     isZoomed: navigationPath.length > 0,
     resetNavigationState
   };

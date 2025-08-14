@@ -69,6 +69,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.label.anchorName': 'Имя Якоря',
   'visualFlowEditor.blocks.label.hint': 'Пробелы не допускаются в именах якорей',
   
+  // SUB_SCRIPT Block
+  'visualFlowEditor.blocks.subScript.scriptName': 'Имя скрипта',
+  'visualFlowEditor.blocks.subScript.hint': 'Выберите скрипт для выполнения',
+  'visualFlowEditor.blocks.subScript.navigate': 'Перейти к подскрипту',
+  
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Ошибка валидации',
   'visualFlowEditor.validation.delayNoDuration': 'Блок DELAY должен иметь значение длительности. Установите длительность в миллисекундах.',

@@ -1508,8 +1508,8 @@ function serializeCommand(element, targetLanguage = 'EN') {
           }
         } else {
           // Per parametri stringa che necessitano virgolette
-          // NON aggiungere virgolette per: achievement, shiptype, condition, pile, progress, node, image
-          const noQuoteParams = ['achievement', 'shiptype', 'pile', 'progress', 'node', 'image'];
+          // NON aggiungere virgolette per: achievement, shiptype, condition, pile, progress, node, image, script
+          const noQuoteParams = ['achievement', 'shiptype', 'pile', 'progress', 'node', 'image', 'script'];
           const needQuoteParams = ['path', 'file']; // Parametri che necessitano sempre virgolette
           
           if ((paramType === 'string' && !noQuoteParams.includes(paramName)) || needQuoteParams.includes(paramName)) {

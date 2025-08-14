@@ -69,6 +69,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.label.anchorName': 'Název Kotvy',
   'visualFlowEditor.blocks.label.hint': 'V názvech kotev nejsou povoleny mezery',
   
+  // SUB_SCRIPT Block
+  'visualFlowEditor.blocks.subScript.scriptName': 'Název skriptu',
+  'visualFlowEditor.blocks.subScript.hint': 'Vyberte skript k provedení',
+  'visualFlowEditor.blocks.subScript.navigate': 'Přejít na sub-skript',
+  
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Chyba validace',
   'visualFlowEditor.validation.delayNoDuration': 'Blok DELAY musí mít hodnotu trvání. Nastavte trvání v milisekundách.',
