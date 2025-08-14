@@ -2,6 +2,7 @@ import React, { useState, ReactNode, useRef, useEffect } from 'react';
 import { Trash2, ChevronDown, ChevronUp, GripVertical } from 'lucide-react';
 import { getBlockColors, getBlockIconBackground, getBlockDragHandle } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
 import { useTranslation } from '@/locales';
+import { CharacterAvatar } from '../../CharacterAvatar';
 
 interface BaseBlockProps {
   // Identificazione blocco
@@ -30,6 +31,12 @@ interface BaseBlockProps {
   
   // Se true, nasconde i controlli (per ScriptBlock root)
   hideControls?: boolean;
+  
+  // Componente aggiuntivo da renderizzare (es. SceneDebugButton)
+  extraControls?: ReactNode;
+  
+  // Mostra avatar per blocchi SAY/ASK
+  showAvatar?: boolean;
 }
 
 /**
@@ -49,7 +56,9 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
   blockColor = 'bg-gray-700',
   iconBgColor = '',
   children,
-  hideControls = false
+  hideControls = false,
+  extraControls,
+  showAvatar = false
 }) => {
   const { t } = useTranslation();
   // Stato interno per collapse se non è controllato dall'esterno
@@ -163,6 +172,9 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
         </div>
       )}
       
+      {/* Extra controls (es. Scene Debug Button) */}
+      {extraControls}
+      
       {/* Header standardizzato */}
       <div 
         ref={headerRef}
@@ -243,6 +255,13 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
           
           return null;
         })()}
+        
+        {/* Avatar per SAY/ASK sempre visibile */}
+        {showAvatar && (
+          <div className="ml-auto mr-2">
+            <CharacterAvatar />
+          </div>
+        )}
       </div>
       
       {/* Main content - visibile solo se non collapsed */}

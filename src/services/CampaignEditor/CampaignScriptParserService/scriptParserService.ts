@@ -89,11 +89,11 @@ export const scriptParserService = {
 
     // Identify command type and extract parameters
     if (upperLine.startsWith('SHOWDLGSCENE')) {
-      type = 'dialog_start';
-      const match = trimmed.match(/ShowDlgScene\s+(\w+)/i);
-      if (match) {
-        parameters.character = match[1];
-      }
+      type = 'SHOWDLGSCENE';
+      // No parameters for SHOWDLGSCENE
+    } else if (upperLine.startsWith('HIDEDLGSCENE')) {
+      type = 'HIDEDLGSCENE';
+      // No parameters for HIDEDLGSCENE
     } else if (upperLine.startsWith('SHOWDLGTEXT')) {
       type = 'dialog_text';
       const match = trimmed.match(/ShowDlgText\s+"(.+)"/i);

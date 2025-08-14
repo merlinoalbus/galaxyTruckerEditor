@@ -1,6 +1,7 @@
 SCRIPTS
 
   SCRIPT aaa_pippo
+    ShowDlgScene
     Say "Giovanni[g(|no)]"
     Ask "Say"
     MENU
@@ -16,6 +17,7 @@ SCRIPTS
         EXIT_MENU
       END_OF_OPT
     END_OF_MENU
+    HideDlgScene
   END_OF_SCRIPT
 
 END_OF_SCRIPTS

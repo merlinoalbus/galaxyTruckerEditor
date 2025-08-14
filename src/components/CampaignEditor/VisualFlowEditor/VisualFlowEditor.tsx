@@ -10,6 +10,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
 import type { IFlowBlock, ValidationResult, ScriptContext, OpenedScript } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 import { TIMEOUT_CONSTANTS, PERFORMANCE_CONSTANTS, UI_CONSTANTS, API_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
+import { SceneProvider, useScene } from '@/contexts/SceneContext';
 
 // Import componenti modulari
 import { BlockRenderer } from './components/BlockRenderer/BlockRenderer';
@@ -40,9 +41,8 @@ import { useSessionData } from '@/hooks/CampaignEditor/VisualFlowEditor/useSessi
  * - Separazione netta tra logica di business (hook) e presentazione (componente)
  */
 
-
-
-export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({ 
+// Componente interno che usa il SceneContext
+const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({ 
   analysis,
   scriptId 
 }) => {
@@ -50,6 +50,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
   const { isLoading } = useVisualFlowEditor(analysis || null);
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
+  const { state: sceneState, showDialogScene, hideDialogScene, clearScenes } = useScene();
 
   // Script management state
   const [availableScripts, setAvailableScripts] = useState<ScriptItem[]>([]);
@@ -668,6 +669,54 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
     return clearAllTimeouts;
   }, [clearAllTimeouts]);
 
+  // Ricostruisce lo stato delle scene quando cambiano i blocchi o viene caricato uno script
+  useEffect(() => {
+    // Pulisci le scene precedenti
+    clearScenes();
+    
+    // Funzione ricorsiva per analizzare i blocchi e ricostruire lo stato delle scene
+    const reconstructScenes = (blocks: IFlowBlock[]) => {
+      for (const block of blocks) {
+        // Se troviamo SHOWDLGSCENE, aggiungi una nuova scena
+        if (block.type === 'SHOWDLGSCENE') {
+          showDialogScene();
+        }
+        // Se troviamo HIDEDLGSCENE, chiudi la scena corrente
+        else if (block.type === 'HIDEDLGSCENE') {
+          hideDialogScene();
+        }
+        
+        // Ricorsione per blocchi annidati
+        if (block.type === 'IF') {
+          if (block.thenBlocks) reconstructScenes(block.thenBlocks);
+          if (block.elseBlocks) reconstructScenes(block.elseBlocks);
+        } else if (block.type === 'MENU' && block.children) {
+          reconstructScenes(block.children);
+        } else if (block.type === 'OPT' && block.children) {
+          reconstructScenes(block.children);
+        } else if (block.type === 'BUILD') {
+          if (block.blockInit) reconstructScenes(block.blockInit);
+          if (block.blockStart) reconstructScenes(block.blockStart);
+        } else if (block.type === 'FLIGHT') {
+          if (block.blockInit) reconstructScenes(block.blockInit);
+          if (block.blockStart) reconstructScenes(block.blockStart);
+          if (block.blockEvaluate) reconstructScenes(block.blockEvaluate);
+        } else if (block.type === 'MISSION') {
+          if (block.blocksMission) reconstructScenes(block.blocksMission);
+          if (block.blocksFinish) reconstructScenes(block.blocksFinish);
+        } else if (block.children) {
+          reconstructScenes(block.children);
+        }
+      }
+    };
+    
+    // Ricostruisci le scene dai blocchi correnti
+    const blocksToAnalyze = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
+    if (blocksToAnalyze.length > 0) {
+      reconstructScenes(blocksToAnalyze);
+    }
+  }, [currentScriptBlocks, rootBlocks, clearScenes, showDialogScene, hideDialogScene]); // Dipende dai blocchi e dalle funzioni del context
+
   if (isLoading) {
     return (
       <div className={visualFlowEditorStyles.loadingState}>
@@ -787,6 +836,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
                   key={block.id}
                   block={block}
                   invalidBlocks={validationErrors.invalidBlocks}
+                  allBlocks={currentScriptBlocks}
                   onUpdateBlock={(id, updates) => {
                     setCurrentScriptBlocks(prev => {
                       const updated = updateBlockRecursive(prev, id, updates);
@@ -920,5 +970,14 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
       )}
     </div>
     </ErrorBoundary>
+  );
+};
+
+// Export del componente wrappato con SceneProvider
+export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = (props) => {
+  return (
+    <SceneProvider>
+      <VisualFlowEditorInternal {...props} />
+    </SceneProvider>
   );
 };

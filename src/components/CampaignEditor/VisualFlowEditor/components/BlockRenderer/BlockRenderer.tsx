@@ -26,6 +26,7 @@ interface BlockRendererProps {
   sessionData?: any;
   createDropValidator?: (containerId: string, containerType: string, index?: number) => (e: React.DragEvent) => boolean;
   invalidBlocks?: string[];
+  allBlocks?: IFlowBlock[];
 }
 
 export const BlockRenderer: React.FC<BlockRendererProps> = ({
@@ -44,7 +45,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
   currentFocusedBlockId,
   sessionData,
   createDropValidator,
-  invalidBlocks = []
+  invalidBlocks = [],
+  allBlocks = []
 }) => {
   const updateBlock = useCallback((updates: BlockUpdate) => {
     onUpdateBlock(block.id, updates);
@@ -80,6 +82,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
         sessionData={sessionData}
         createDropValidator={createDropValidator}
         invalidBlocks={invalidBlocks}
+        allBlocks={allBlocks}
       />
     ));
   }, [depth, onUpdateBlock, onRemoveBlock, onDragStart, onDragOver, onDrop, onDropAtIndex, isDragActive, onZoomIn, onZoomOut, isZoomed, currentFocusedBlockId, sessionData, createDropValidator, invalidBlocks]);
@@ -264,6 +267,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
         isInvalid={isInvalid}
         onGoToLabel={sessionData?.goToLabel}
         onNavigateToSubScript={sessionData?.onNavigateToSubScript}
+        allBlocks={allBlocks}
       />
     </div>
   );

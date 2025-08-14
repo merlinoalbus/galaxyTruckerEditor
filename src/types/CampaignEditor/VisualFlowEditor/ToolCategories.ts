@@ -54,8 +54,8 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
       { id: 'showchar', name: 'SHOWCHAR', icon: '👤', blockType: 'SHOWCHAR', description: t('visualFlowEditor.tools.showChar.description'), implemented: false, inProgress: true },
       { id: 'reset', name: 'RESET', icon: '❌', blockType: 'RESET', description: t('visualFlowEditor.tools.reset.description'), implemented: false },
       { id: 'label', name: 'LABEL', icon: '🏷️', blockType: 'LABEL', description: t('visualFlowEditor.tools.label.description'), implemented: true },
-      { id: 'hidedlgscene', name: 'HIDEDLGSCENE', icon: '🚫', blockType: 'HIDEDLGSCENE', description: t('visualFlowEditor.tools.hideDlgScene.description'), implemented: false, inProgress: true },
-      { id: 'showdlgscene', name: 'SHOWDLGSCENE', icon: '🗨️', blockType: 'SHOWDLGSCENE', description: t('visualFlowEditor.tools.showDlgScene.description'), implemented: false, inProgress: true },
+      { id: 'hidedlgscene', name: 'HIDEDLGSCENE', icon: '🚫', blockType: 'HIDEDLGSCENE', description: t('visualFlowEditor.tools.hideDlgScene.description'), implemented: true },
+      { id: 'showdlgscene', name: 'SHOWDLGSCENE', icon: '🗨️', blockType: 'SHOWDLGSCENE', description: t('visualFlowEditor.tools.showDlgScene.description'), implemented: true },
       { id: 'return', name: 'RETURN', icon: '↩️', blockType: 'RETURN', description: t('visualFlowEditor.tools.return.description'), implemented: false },
       { id: 'announce', name: 'ANNOUNCE', icon: '📢', blockType: 'ANNOUNCE', description: t('visualFlowEditor.tools.announce.description'), implemented: false },
       { id: 'saychar', name: 'SAYCHAR', icon: '🗣️', blockType: 'SAYCHAR', description: t('visualFlowEditor.tools.sayChar.description'), implemented: false, inProgress: true }

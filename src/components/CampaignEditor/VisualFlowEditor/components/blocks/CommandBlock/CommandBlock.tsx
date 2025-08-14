@@ -6,6 +6,9 @@ import { MultilingualTextEditor } from '../../MultilingualTextEditor';
 import { getBlockClassName } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
 import { useTranslation } from '@/locales';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { SceneDebugButton } from '../../SceneDebugButton';
+import { CharacterAvatar } from '../../CharacterAvatar';
+import { useScene } from '@/contexts/SceneContext';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 interface CommandBlockProps {
@@ -17,6 +20,7 @@ interface CommandBlockProps {
   isInvalid?: boolean;
   onGoToLabel?: (labelName: string) => void;
   onNavigateToSubScript?: (scriptName: string, parentBlock: IFlowBlock) => void;
+  allBlocks?: IFlowBlock[];
 }
 
 export const CommandBlock: React.FC<CommandBlockProps> = ({
@@ -27,10 +31,12 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   sessionData,
   isInvalid = false,
   onGoToLabel,
-  onNavigateToSubScript
+  onNavigateToSubScript,
+  allBlocks = []
 }) => {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
+  const { getCurrentScene } = useScene();
   // Stato per collapse/expand - command blocks default collapsed
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
@@ -70,7 +76,15 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   const renderParameters = () => {
     switch (block.type) {
       case 'SAY':
-        return (
+      case 'ASK': {
+        const currentScene = getCurrentScene();
+        const lastCharacter = currentScene?.personaggi && currentScene.personaggi.length > 0
+          ? currentScene.personaggi[currentScene.personaggi.length - 1]
+          : null;
+        
+        const isLeftPosition = lastCharacter?.posizione === 'left';
+        
+        const textEditor = (
           <MultilingualTextEditor
             value={typeof block.parameters?.text === 'string' 
               ? { EN: block.parameters.text } 
@@ -78,24 +92,31 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
             onChange={(text) => onUpdate({ 
               parameters: { ...block.parameters, text } 
             })}
-            placeholder={t('visualFlowEditor.command.dialogText')}
-            label=""
+            placeholder={block.type === 'SAY' 
+              ? t('visualFlowEditor.command.dialogText')
+              : t('visualFlowEditor.command.questionText')}
+            label={block.type === 'ASK' ? t('visualFlowEditor.command.questionLabel') : ""}
           />
         );
-      
-      case 'ASK':
+        
         return (
-          <MultilingualTextEditor
-            value={typeof block.parameters?.text === 'string' 
-              ? { EN: block.parameters.text } 
-              : (block.parameters?.text || {})}
-            onChange={(text) => onUpdate({ 
-              parameters: { ...block.parameters, text } 
-            })}
-            placeholder={t('visualFlowEditor.command.questionText')}
-            label={t('visualFlowEditor.command.questionLabel')}
-          />
+          <div className="flex items-start gap-3">
+            {isLeftPosition && (
+              <div className="flex-shrink-0">
+                <CharacterAvatar size="large" />
+              </div>
+            )}
+            <div className="flex-1">
+              {textEditor}
+            </div>
+            {!isLeftPosition && (
+              <div className="flex-shrink-0">
+                <CharacterAvatar size="large" />
+              </div>
+            )}
+          </div>
         );
+      }
       
       case 'DELAY':
         return (
@@ -235,6 +256,28 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
           </div>
         );
       
+      case 'SHOWDLGSCENE':
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {t('visualFlowEditor.blocks.showDlgScene.fullDescription')}
+              </p>
+            </div>
+          </div>
+        );
+      
+      case 'HIDEDLGSCENE':
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {t('visualFlowEditor.blocks.hideDlgScene.fullDescription')}
+              </p>
+            </div>
+          </div>
+        );
+      
       default:
         return null;
     }
@@ -250,6 +293,8 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
       case 'LABEL': return <span className="text-2xl">🏷️</span>;
       case 'SUB_SCRIPT': return <span className="text-2xl">📄</span>;
       case 'EXIT_MENU': return <span className="text-2xl">🚪</span>;
+      case 'SHOWDLGSCENE': return <span className="text-2xl">🗨️</span>;
+      case 'HIDEDLGSCENE': return <span className="text-2xl">🚫</span>;
       default: return <MessageSquare className="w-4 h-4" />;
     }
   };
@@ -337,6 +382,10 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         break;
       case 'EXIT_MENU':
         return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.exitMenu.compact')}</span>;
+      case 'SHOWDLGSCENE':
+        return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.showDlgScene.compact')}</span>;
+      case 'HIDEDLGSCENE':
+        return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.hideDlgScene.compact')}</span>;
     }
     return null;
   };
@@ -363,6 +412,8 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         }}
         className={`${getBlockClassName(block.type, isInvalid)} p-3 mb-2 transition-all hover:shadow-lg`}
         isInvalid={isInvalid}
+        extraControls={allBlocks.length > 0 && <SceneDebugButton block={block} allBlocks={allBlocks} />}
+        showAvatar={(block.type === 'SAY' || block.type === 'ASK')}
       >
         {/* Block parameters - visibili solo se expanded */}
         {renderParameters()}
