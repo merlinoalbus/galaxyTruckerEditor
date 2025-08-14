@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AnchorPoint } from '../../AnchorPoint/AnchorPoint';
 import { ContainerBlock } from '../ContainerBlock/ContainerBlock';
+import { useTranslation } from '@/locales';
+import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 interface BuildBlockProps {
-  block: any;
-  onUpdate: (updates: any) => void;
+  block: IFlowBlock;
+  onUpdate: (updates: BlockUpdate) => void;
   onRemove?: () => void;
   onDragStart: (e: React.DragEvent) => void;
   onDragOver: (e: React.DragEvent) => void;
@@ -12,7 +14,7 @@ interface BuildBlockProps {
   onDropStart: (e: React.DragEvent) => void;
   onDropInitAtIndex: (e: React.DragEvent, index: number) => void;
   onDropStartAtIndex: (e: React.DragEvent, index: number) => void;
-  renderChildren: (blocks: any[]) => React.ReactNode;
+  renderChildren: (blocks: IFlowBlock[]) => React.ReactNode;
   isDragActive?: boolean;
   onZoomIn?: () => void;
   onZoomOut?: () => void;
@@ -37,6 +39,7 @@ export const BuildBlock: React.FC<BuildBlockProps> = ({
   isZoomed = false,
   isInvalid = false
 }) => {
+  const { t } = useTranslation();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -97,7 +100,7 @@ export const BuildBlock: React.FC<BuildBlockProps> = ({
     return {
       params: null, // BUILD non ha parametri aggiuntivi
       elementCount: (
-        <span className="text-gray-500 whitespace-nowrap" title={`Fase Iniziale: ${initCount} elementi, Inizio Build: ${startCount} elementi`}>
+        <span className="text-gray-500 whitespace-nowrap" title={`${t('visualFlowEditor.build.initPhase')}: ${initCount} ${t('visualFlowEditor.build.elements')}, ${t('visualFlowEditor.build.startPhase')}: ${startCount} ${t('visualFlowEditor.build.elements')}`}>
           I:{initCount} S:{startCount}
         </span>
       )
@@ -127,7 +130,7 @@ export const BuildBlock: React.FC<BuildBlockProps> = ({
         <div className="space-y-4">
           {/* Area INIT */}
           <div className="relative">
-            <div className="text-xs font-semibold text-teal-300 mb-2 uppercase">Fase Iniziale</div>
+            <div className="text-xs font-semibold text-teal-300 mb-2 uppercase">{t('visualFlowEditor.build.initPhase')}</div>
             
             <div className="bg-teal-900/30 rounded-lg p-3 min-h-[60px] border border-teal-700/50">
               {block.blockInit && block.blockInit.length > 0 ? (
@@ -154,7 +157,7 @@ export const BuildBlock: React.FC<BuildBlockProps> = ({
                   <AnchorPoint
                     onDrop={(e) => onDropInitAtIndex(e, 0)}
                     onDragOver={onDragOver}
-                    label="Inserisci qui"
+                    label={t('visualFlowEditor.build.insertHere')}
                   />
                   <div className="text-center text-teal-500 text-lg py-4">
                     +
@@ -166,7 +169,7 @@ export const BuildBlock: React.FC<BuildBlockProps> = ({
 
           {/* Area START */}
           <div className="relative">
-            <div className="text-xs font-semibold text-teal-300 mb-2 uppercase">Inizio Build</div>
+            <div className="text-xs font-semibold text-teal-300 mb-2 uppercase">{t('visualFlowEditor.build.startPhase')}</div>
             
             <div className="bg-teal-900/30 rounded-lg p-3 min-h-[60px] border border-teal-700/50">
               {block.blockStart && block.blockStart.length > 0 ? (
@@ -193,7 +196,7 @@ export const BuildBlock: React.FC<BuildBlockProps> = ({
                   <AnchorPoint
                     onDrop={(e) => onDropStartAtIndex(e, 0)}
                     onDragOver={onDragOver}
-                    label="Inserisci qui"
+                    label={t('visualFlowEditor.build.insertHere')}
                   />
                   <div className="text-center text-teal-500 text-lg py-4">
                     +

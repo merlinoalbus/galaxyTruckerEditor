@@ -12,6 +12,7 @@ const apiRoutes = require('./src/routes/apiRoutes');
 const scriptsRoutes = require('./src/routes/scriptsRoutes');
 const missionsRoutes = require('./src/routes/missionsRoutes');
 const gameRoutes = require('./src/routes/gameRoutes');
+const metacodesRoutes = require('./src/routes/metacodesRoutes');
 
 const app = express();
 const PORT = config.SERVER_PORT;
@@ -76,6 +77,7 @@ app.use('/api', apiRoutes);
 app.use('/api/scripts', scriptsRoutes);
 app.use('/api/missions', missionsRoutes);
 app.use('/api/game', gameRoutes);
+app.use('/api/metacodes', metacodesRoutes);
 
 // File watcher per hot reload (development)
 if (process.env.NODE_ENV !== 'production') {

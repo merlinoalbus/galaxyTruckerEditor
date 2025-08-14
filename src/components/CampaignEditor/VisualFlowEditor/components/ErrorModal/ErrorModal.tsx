@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { X, AlertCircle } from 'lucide-react';
 import { createPortal } from 'react-dom';
+import { useTranslation } from '@/locales';
 
 interface ErrorModalProps {
   message: string;
@@ -13,6 +14,7 @@ export const ErrorModal: React.FC<ErrorModalProps> = ({
   duration = 5000,
   onClose 
 }) => {
+  const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(true);
   const [progress, setProgress] = useState(100);
 
@@ -62,12 +64,12 @@ export const ErrorModal: React.FC<ErrorModalProps> = ({
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2 text-red-400">
               <AlertCircle className="w-5 h-5" />
-              <span className="font-semibold">Errore Validazione</span>
+              <span className="font-semibold">{t('visualFlowEditor.validation.error')}</span>
             </div>
             <button
               onClick={handleClose}
               className="p-1 hover:bg-red-800/50 rounded transition-colors"
-              title="Chiudi"
+              title={t('visualFlowEditor.errorModal.close')}
             >
               <X className="w-4 h-4 text-red-400" />
             </button>

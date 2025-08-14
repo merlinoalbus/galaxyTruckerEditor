@@ -1,5 +1,6 @@
 import React from 'react';
 import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
+import { useTranslation } from '@/locales';
 
 interface IfBlockParametersProps {
   block: any;
@@ -8,6 +9,7 @@ interface IfBlockParametersProps {
 }
 
 export const IfBlockParameters: React.FC<IfBlockParametersProps> = ({ block, onUpdate, sessionData }) => {
+  const { t } = useTranslation();
   const ifType = block.ifType || 'IF';
   
   switch (ifType) {
@@ -18,7 +20,7 @@ export const IfBlockParameters: React.FC<IfBlockParametersProps> = ({ block, onU
           type="semaphore"
           value={block.variabile || ''}
           onChange={(value) => onUpdate({ variabile: value })}
-          placeholder="Seleziona semaforo..."
+          placeholder={t('visualFlowEditor.if.selectSemaphore')}
           availableItems={sessionData?.semaphores || []}
           onAddItem={sessionData?.addSemaphore}
           className="flex-1"
@@ -34,7 +36,7 @@ export const IfBlockParameters: React.FC<IfBlockParametersProps> = ({ block, onU
             type="variable"
             value={block.variabile || ''}
             onChange={(value) => onUpdate({ variabile: value })}
-            placeholder="Seleziona variabile..."
+            placeholder={t('visualFlowEditor.if.selectVariable')}
             availableItems={sessionData?.variables || []}
             onAddItem={sessionData?.addVariable}
             className="flex-1"
@@ -42,7 +44,7 @@ export const IfBlockParameters: React.FC<IfBlockParametersProps> = ({ block, onU
           <input
             type="text"
             className="flex-1 bg-slate-800/50 text-white px-2 py-1 rounded text-xs border border-slate-700 focus:border-blue-600 focus:outline-none"
-            placeholder="Valore"
+            placeholder={t('visualFlowEditor.if.value')}
             value={block.valore || ''}
             onChange={(e) => onUpdate({ valore: e.target.value })}
             onClick={(e) => e.stopPropagation()}
@@ -55,7 +57,7 @@ export const IfBlockParameters: React.FC<IfBlockParametersProps> = ({ block, onU
         <input
           type="number"
           className="bg-slate-800/50 text-white px-2 py-1 rounded text-xs border border-slate-700 focus:border-blue-600 focus:outline-none"
-          placeholder="Percentuale (%)"
+          placeholder={t('visualFlowEditor.if.percentage')}
           min="0"
           max="100"
           value={block.valore || ''}
@@ -69,7 +71,7 @@ export const IfBlockParameters: React.FC<IfBlockParametersProps> = ({ block, onU
         <input
           type="number"
           className="bg-slate-800/50 text-white px-2 py-1 rounded text-xs border border-slate-700 focus:border-blue-600 focus:outline-none"
-          placeholder="Crediti"
+          placeholder={t('visualFlowEditor.if.credits')}
           value={block.valore || ''}
           onChange={(e) => onUpdate({ valore: parseInt(e.target.value) })}
           onClick={(e) => e.stopPropagation()}
@@ -83,7 +85,7 @@ export const IfBlockParameters: React.FC<IfBlockParametersProps> = ({ block, onU
             type="mission"
             value={block.variabile || ''}
             onChange={(value) => onUpdate({ variabile: value })}
-            placeholder="Seleziona missione..."
+            placeholder={t('visualFlowEditor.if.selectMission')}
             availableItems={sessionData?.missions || []}
             onAddItem={sessionData?.addMission}
             className="flex-1"
@@ -91,7 +93,7 @@ export const IfBlockParameters: React.FC<IfBlockParametersProps> = ({ block, onU
           <input
             type="text"
             className="flex-1 bg-slate-800/50 text-white px-2 py-1 rounded text-xs border border-slate-700 focus:border-blue-600 focus:outline-none"
-            placeholder="Risultato"
+            placeholder={t('visualFlowEditor.if.result')}
             value={block.valore || ''}
             onChange={(e) => onUpdate({ valore: e.target.value })}
             onClick={(e) => e.stopPropagation()}
@@ -106,7 +108,7 @@ export const IfBlockParameters: React.FC<IfBlockParametersProps> = ({ block, onU
             type="mission"
             value={block.variabile || ''}
             onChange={(value) => onUpdate({ variabile: value })}
-            placeholder="Seleziona missione..."
+            placeholder={t('visualFlowEditor.if.selectMission')}
             availableItems={sessionData?.missions || []}
             onAddItem={sessionData?.addMission}
             className="flex-1"
@@ -114,7 +116,7 @@ export const IfBlockParameters: React.FC<IfBlockParametersProps> = ({ block, onU
           <input
             type="number"
             className="flex-1 bg-slate-800/50 text-white px-2 py-1 rounded text-xs border border-slate-700 focus:border-blue-600 focus:outline-none"
-            placeholder="Risultato Minimo"
+            placeholder={t('visualFlowEditor.if.minResult')}
             value={block.valore || ''}
             onChange={(e) => onUpdate({ valore: parseInt(e.target.value) })}
             onClick={(e) => e.stopPropagation()}
@@ -126,7 +128,7 @@ export const IfBlockParameters: React.FC<IfBlockParametersProps> = ({ block, onU
       const orderValues = Array.isArray(block.valore) ? block.valore : [];
       return (
         <div className="mt-1">
-          <span className="text-xs text-gray-400">Posizioni Ordine:</span>
+          <span className="text-xs text-gray-400">{t('visualFlowEditor.if.orderPositions')}</span>
           <div className="flex gap-2 mt-1">
             {[0, 1, 2, 3].map(position => (
               <label key={position} className="flex items-center gap-1">
@@ -157,7 +159,7 @@ export const IfBlockParameters: React.FC<IfBlockParametersProps> = ({ block, onU
         <input
           type="text"
           className="bg-slate-800/50 text-white px-2 py-1 rounded text-xs border border-slate-700 focus:border-blue-600 focus:outline-none"
-          placeholder="Nome Campagna (opzionale)"
+          placeholder={t('visualFlowEditor.if.campaignName')}
           value={block.valore || ''}
           onChange={(e) => onUpdate({ valore: e.target.value })}
           onClick={(e) => e.stopPropagation()}
@@ -170,7 +172,7 @@ export const IfBlockParameters: React.FC<IfBlockParametersProps> = ({ block, onU
           type="mission"
           value={block.valore || ''}
           onChange={(value) => onUpdate({ valore: value })}
-          placeholder="Seleziona missione..."
+          placeholder={t('visualFlowEditor.if.selectMission')}
           availableItems={sessionData?.missions || []}
           onAddItem={sessionData?.addMission}
           className="flex-1"
@@ -182,7 +184,7 @@ export const IfBlockParameters: React.FC<IfBlockParametersProps> = ({ block, onU
         <input
           type="text"
           className="bg-slate-800/50 text-white px-2 py-1 rounded text-xs border border-slate-700 focus:border-blue-600 focus:outline-none"
-          placeholder="ID Tutorial"
+          placeholder={t('visualFlowEditor.if.tutorialId')}
           value={block.valore || ''}
           onChange={(e) => onUpdate({ valore: e.target.value })}
           onClick={(e) => e.stopPropagation()}

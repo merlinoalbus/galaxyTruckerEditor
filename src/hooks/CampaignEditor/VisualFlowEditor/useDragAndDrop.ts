@@ -194,7 +194,7 @@ export const useDragAndDrop = ({
     
     resetDragState();
     setDropTarget(null);
-  }, [draggedTool, draggedBlock, addBlockToContainer, removeBlockRecursive, createNewBlock, resetDragState, updateBlocks, canDropBlock, currentScriptBlocks]);
+  }, [draggedTool, draggedBlock, addBlockToContainer, removeBlockRecursive, createNewBlock, resetDragState, updateBlocks, canDropBlock, currentScriptBlocks, getDropErrorMessage, onDropError]);
 
   // Handler per drop con indice specifico
   const handleDropAtIndex = useCallback((
@@ -245,7 +245,7 @@ export const useDragAndDrop = ({
     }
     
     resetDragState();
-  }, [draggedTool, draggedBlock, addBlockAtIndex, removeBlockRecursive, createNewBlock, resetDragState, updateBlocks, canDropBlock, currentScriptBlocks]);
+  }, [draggedTool, draggedBlock, addBlockAtIndex, removeBlockRecursive, createNewBlock, resetDragState, updateBlocks, canDropBlock, currentScriptBlocks, getDropErrorMessage, onDropError]);
 
   return {
     draggedTool,

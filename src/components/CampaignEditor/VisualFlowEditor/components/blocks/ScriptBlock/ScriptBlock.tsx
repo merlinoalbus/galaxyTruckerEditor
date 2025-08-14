@@ -2,9 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FileCode, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { AnchorPoint } from '../../AnchorPoint/AnchorPoint';
 import { InlineZoomControls } from '../../ZoomControls';
+import { useTranslation } from '@/locales';
+import type { IFlowBlock } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 interface ScriptBlockProps {
-  block: any;
+  block: IFlowBlock;
   onUpdateName: (name: string) => void;
   onDragOver: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent) => void;
@@ -26,6 +28,7 @@ export const ScriptBlock: React.FC<ScriptBlockProps> = ({
   onZoomIn,
   onZoomOut
 }) => {
+  const { t } = useTranslation();
   // Stato per collapse/expand - ScriptBlock default expanded (è un container)
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
@@ -90,7 +93,7 @@ export const ScriptBlock: React.FC<ScriptBlockProps> = ({
           }
         }}
         className="absolute top-8 right-3 p-1 bg-slate-700/80 hover:bg-slate-600 border border-slate-600/50 rounded-md z-10 transition-all duration-200 backdrop-blur-sm"
-        title={isCollapsed ? "Espandi blocco" : "Comprimi blocco"}
+        title={isCollapsed ? t('visualFlowEditor.script.expand') : t('visualFlowEditor.script.collapse')}
       >
         {isCollapsed 
           ? <ChevronDown className="w-3 h-3 text-gray-400" />
@@ -103,7 +106,7 @@ export const ScriptBlock: React.FC<ScriptBlockProps> = ({
         <div className="bg-slate-700/50 p-2 rounded-lg">
           <FileCode className="w-4 h-4 text-blue-400" />
         </div>
-        <label className="text-xs text-gray-400">Nome Script:</label>
+        <label className="text-xs text-gray-400">{t('visualFlowEditor.script.scriptNameLabel')}</label>
         <input
           type="text"
           className="bg-slate-700 text-white px-2 py-1 rounded text-sm w-48 border border-slate-600 focus:border-slate-500 focus:outline-none"
@@ -112,12 +115,12 @@ export const ScriptBlock: React.FC<ScriptBlockProps> = ({
             const newName = e.target.value;
             onUpdateName(newName);
           }}
-          placeholder="Nome script..."
+          placeholder={t('visualFlowEditor.script.scriptName')}
         />
         
         <div className="ml-auto flex items-center gap-4 text-xs text-gray-500">
-          <span>File: {block.fileName}</span>
-          <span>Blocchi: {block.children?.length || 0}</span>
+          <span>{t('visualFlowEditor.script.fileLabel')} {block.fileName}</span>
+          <span>{t('visualFlowEditor.script.blocksLabel')} {block.children?.length || 0}</span>
         </div>
       </div>
       

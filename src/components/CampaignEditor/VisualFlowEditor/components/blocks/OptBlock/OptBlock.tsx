@@ -4,27 +4,30 @@ import { ContainerBlock } from '../ContainerBlock/ContainerBlock';
 import { MultilingualTextEditor } from '../../MultilingualTextEditor';
 import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
 import { OptType } from '@/types/CampaignEditor/VisualFlowEditor/BlockTypes';
+import { useTranslation } from '@/locales';
+import { useLanguage } from '@/contexts/LanguageContext';
+import type { IFlowBlock, BlockUpdate, SessionData } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
-const OPT_TYPES = [
-  { value: 'OPT_SIMPLE', label: 'Semplice', icon: '⭕' },
-  { value: 'OPT_CONDITIONAL', label: 'Condizionale (IF)', icon: '🚩' },
-  { value: 'OPT_CONDITIONAL_NOT', label: 'Condizionale (IF NOT)', icon: '🏳️' }
+const getOptTypes = (t: any) => [
+  { value: 'OPT_SIMPLE', label: t('visualFlowEditor.opt.simple'), icon: '⭕' },
+  { value: 'OPT_CONDITIONAL', label: t('visualFlowEditor.opt.conditional'), icon: '🚩' },
+  { value: 'OPT_CONDITIONAL_NOT', label: t('visualFlowEditor.opt.conditionalNot'), icon: '🏳️' }
 ];
 
 interface OptBlockProps {
-  block: any;
-  onUpdate: (updates: any) => void;
+  block: IFlowBlock;
+  onUpdate: (updates: BlockUpdate) => void;
   onRemove?: () => void;
   onDragStart: (e: React.DragEvent) => void;
   onDragOver: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent) => void;
   onDropAtIndex: (e: React.DragEvent, index: number) => void;
-  renderChildren: (blocks: any[]) => React.ReactNode;
+  renderChildren: (blocks: IFlowBlock[]) => React.ReactNode;
   isDragActive?: boolean;
   onZoomIn?: () => void;
   onZoomOut?: () => void;
   isZoomed?: boolean;
-  sessionData?: any;
+  sessionData?: SessionData;
   isInvalid?: boolean;
 }
 
@@ -44,7 +47,11 @@ export const OptBlock: React.FC<OptBlockProps> = ({
   sessionData,
   isInvalid = false
 }) => {
+  const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
   // Stato per collapse/expand
+  // Se siamo in zoom e c'è onZoomOut, significa che questo è il blocco root in zoom, quindi espanso
+  const isRootInZoom = isZoomed && !!onZoomOut;
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -85,6 +92,8 @@ export const OptBlock: React.FC<OptBlockProps> = ({
     }
   }, [block.optType, onUpdate]);
 
+  const OPT_TYPES = getOptTypes(t);
+  
   // Ottieni l'icona per il tipo corrente
   const getCurrentIcon = () => {
     const currentType = OPT_TYPES.find(t => t.value === block.optType);
@@ -118,7 +127,7 @@ export const OptBlock: React.FC<OptBlockProps> = ({
     const parts = [];
     
     // Aggiungi tipo OPT
-    const typeLabel = OPT_TYPES.find(t => t.value === block.optType)?.label || 'Semplice';
+    const typeLabel = OPT_TYPES.find(type => type.value === block.optType)?.label || t('visualFlowEditor.opt.simple');
     
     // Aggiungi condizione se presente
     if ((block.optType === 'OPT_CONDITIONAL' || block.optType === 'OPT_CONDITIONAL_NOT') && block.condition) {
@@ -129,9 +138,18 @@ export const OptBlock: React.FC<OptBlockProps> = ({
     
     // Aggiungi preview del testo se presente - solo se c'è spazio
     if (block.text) {
-      const textPreview = typeof block.text === 'string' 
-        ? block.text 
-        : (block.text.EN || '');
+      let textPreview = '';
+      if (typeof block.text === 'string') {
+        textPreview = block.text;
+      } else {
+        // Prima prova con la lingua dell'interfaccia corrente
+        if (block.text[currentLanguage] && block.text[currentLanguage].trim()) {
+          textPreview = block.text[currentLanguage];
+        } else {
+          // Altrimenti usa EN come fallback
+          textPreview = block.text.EN || '';
+        }
+      }
       if (textPreview) {
         parts.push(
           <span key="text" className="truncate" title={textPreview}>
@@ -150,7 +168,7 @@ export const OptBlock: React.FC<OptBlockProps> = ({
           {parts}
         </div>
       ) : null,
-      elementCount: <span className="text-gray-500 whitespace-nowrap">{count} elementi</span>
+      elementCount: <span className="text-gray-500 whitespace-nowrap">{count} {t('visualFlowEditor.opt.elements')}</span>
     };
   };
 
@@ -175,8 +193,8 @@ export const OptBlock: React.FC<OptBlockProps> = ({
         blockColor="bg-cyan-700"
         iconBgColor="bg-cyan-900/80"
       >
-        {/* Parametri editabili - visibili solo se non collapsed */}
-        {!isCollapsed && (
+        {/* Parametri editabili - visibili solo se non collapsed o se è root in zoom */}
+        {(!isCollapsed || isRootInZoom) && (
           <div className="mb-3 pl-8">
             {/* Prima riga: Tipo */}
             <div className="flex items-center gap-3 mb-3">
@@ -197,12 +215,12 @@ export const OptBlock: React.FC<OptBlockProps> = ({
             {/* Campo condition per OPT_CONDITIONAL */}
             {(block.optType === 'OPT_CONDITIONAL' || block.optType === 'OPT_CONDITIONAL_NOT') && (
               <div className="mb-3 flex items-center gap-2">
-                <span className="text-xs text-cyan-400">Condizione:</span>
+                <span className="text-xs text-cyan-400">{t('visualFlowEditor.opt.conditionLabel')}</span>
                 <SelectWithModal
                   type="variable"
                   value={block.condition || ''}
                   onChange={(value) => onUpdate({ condition: value })}
-                  placeholder="Seleziona variabile..."
+                  placeholder={t('visualFlowEditor.opt.selectVariable')}
                   availableItems={sessionData?.variables || []}
                   onAddItem={sessionData?.addVariable}
                   className="flex-1"
@@ -213,23 +231,23 @@ export const OptBlock: React.FC<OptBlockProps> = ({
             {/* Editor testo multilingua */}
             <div>
               <MultilingualTextEditor
-                value={block.text || { EN: '', CS: null, DE: null, ES: null, FR: null, PL: null, RU: null }}
+                value={(typeof block.text === 'object' ? block.text : {}) as Record<string, string>}
                 onChange={(text) => onUpdate({ text })}
-                placeholder="Testo opzione..."
-                label="Testo Opzione"
+                placeholder={t('visualFlowEditor.opt.optionText')}
+                label={t('visualFlowEditor.opt.optionTextLabel')}
               />
             </div>
           </div>
         )}
         
         {/* Children container with anchor points */}
-        {!isCollapsed && (
+        {(!isCollapsed || isRootInZoom) && (
           <div className="space-y-2 pl-8">
           {/* Initial anchor point */}
           <AnchorPoint
             onDragOver={onDragOver}
             onDrop={(e) => onDropAtIndex(e, 0)}
-            label="Inserisci qui"
+            label={t('visualFlowEditor.opt.insertHere')}
           />
           
           {/* Render children with anchor points between them */}
@@ -246,8 +264,8 @@ export const OptBlock: React.FC<OptBlockProps> = ({
             ))
           ) : (
             <div className="text-center text-gray-500 py-8">
-              <p className="text-xs">Container vuoto</p>
-              <p className="text-xs text-gray-600 mt-1">Trascina qui i blocchi</p>
+              <p className="text-xs">{t('visualFlowEditor.opt.emptyContainer')}</p>
+              <p className="text-xs text-gray-600 mt-1">{t('visualFlowEditor.opt.dragBlocksHere')}</p>
             </div>
           )}
           </div>

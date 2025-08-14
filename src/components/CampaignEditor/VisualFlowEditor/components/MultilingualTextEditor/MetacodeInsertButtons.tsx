@@ -1,0 +1,331 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { Type, Hash, Image, User, ChevronDown } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+
+interface MetacodeInsertButtonsProps {
+  onInsert: (metacode: string) => void;
+  onOpenModal?: (type: 'gender' | 'number' | 'image', mousePos?: { x: number; y: number }) => void;
+  disabled?: boolean;
+  focusedField?: string | null;
+  currentLang?: string; // Lingua corrente del campo focalizzato
+}
+
+// Hook per ottenere i top 5 metacodici dal BE per lingua specifica
+const useTop5Metacodes = (language?: string) => {
+  const [topMetacodes, setTopMetacodes] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const { currentLanguage } = useLanguage();
+  
+  // Usa la lingua passata o quella del contesto
+  const activeLang = language || currentLanguage || 'IT';
+
+  useEffect(() => {
+    const fetchTopMetacodes = async () => {
+      try {
+        // Chiama l'API con la lingua specifica
+        const response = await fetch(`http://localhost:3001/api/metacodes/top5/${activeLang}`);
+        if (response.ok) {
+          const result = await response.json();
+          setTopMetacodes(result.data);
+        } else {
+          // Nessun fallback - solo dati reali
+          setTopMetacodes({ gender: [], number: [], image: [], name: [] });
+        }
+      } catch (error) {
+        // Se il backend non è raggiungibile, lista vuota
+        console.info(`Backend non disponibile - nessun top 5 per lingua ${activeLang}`);
+        setTopMetacodes({ gender: [], number: [], image: [], name: [] });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTopMetacodes();
+  }, [activeLang]); // Ricarica quando cambia la lingua
+
+  return { topMetacodes, loading };
+};
+
+// Nessun dato di default - solo valori reali dal BE
+
+export const MetacodeInsertButtons: React.FC<MetacodeInsertButtonsProps> = ({
+  onInsert,
+  onOpenModal,
+  disabled = false,
+  focusedField,
+  currentLang
+}) => {
+  const { topMetacodes, loading } = useTop5Metacodes(currentLang);
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const genderButtonRef = useRef<HTMLButtonElement>(null);
+  const numberButtonRef = useRef<HTMLButtonElement>(null);
+  const imageButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Chiudi menu quando si clicca fuori
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setActiveMenu(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleButtonClick = (type: string) => {
+    if (activeMenu === type) {
+      setActiveMenu(null);
+    } else {
+      setActiveMenu(type);
+    }
+  };
+
+  const handleMetacodeSelect = (metacode: string) => {
+    onInsert(metacode);
+    setActiveMenu(null);
+  };
+
+  const handleCustomInsert = (type: 'gender' | 'number' | 'image', event: React.MouseEvent) => {
+    // CATTURA LA POSIZIONE DEL MOUSE DALL'EVENTO
+    const mousePos = { x: event.clientX, y: event.clientY };
+    
+    // Chiudi il menu
+    setActiveMenu(null);
+    
+    // Apre la modale corrispondente per configurazione personalizzata
+    if (onOpenModal) {
+      onOpenModal(type, mousePos);
+    } else {
+      // Fallback: inserisce template vuoto se la modale non è disponibile
+      let customCode = '';
+      switch (type) {
+        case 'gender':
+          customCode = '[g(|)]';
+          break;
+        case 'number':
+          customCode = '[n(1:|2:)]';
+          break;
+        case 'image':
+          customCode = '[img()*1]';
+          break;
+      }
+      onInsert(customCode);
+    }
+  };
+
+  const isDisabled = disabled || !focusedField || loading;
+
+  return (
+    <div className="flex items-center gap-2" ref={menuRef}>
+      {/* Indicatore campo attivo */}
+      {focusedField && (
+        <span className="text-[10px] text-green-400 font-medium">
+          {focusedField}
+        </span>
+      )}
+      
+      {/* Pulsante Genere */}
+      <div className="relative">
+        <button
+          ref={genderButtonRef}
+          type="button"
+          onClick={() => handleButtonClick('gender')}
+          disabled={isDisabled}
+          className={`flex items-center gap-0.5 px-1.5 py-0.5 text-xs rounded transition-colors ${
+            isDisabled 
+              ? 'bg-slate-700/50 text-gray-500 cursor-not-allowed' 
+              : activeMenu === 'gender'
+                ? 'bg-blue-500 text-white'
+                : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+          }`}
+          title={isDisabled ? 'Seleziona un campo di testo' : 'Inserisci metacodice genere'}
+        >
+          <Type className="w-3 h-3" />
+          <span className="text-[10px]">G</span>
+          <ChevronDown className="w-2.5 h-2.5" />
+        </button>
+        
+        {activeMenu === 'gender' && !isDisabled && (
+          <div className="absolute top-full left-0 mt-1 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-50">
+            <div className="p-1">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCustomInsert('gender', e);
+                }}
+                className="w-full px-2 py-1 text-xs text-blue-400 hover:bg-slate-700 rounded transition-colors text-left border-b border-slate-700 mb-1"
+              >
+                + Personalizzato
+              </button>
+              {(topMetacodes?.gender || []).length > 0 ? (
+                <>
+                  <div className="px-2 py-1 text-[10px] font-semibold text-gray-400 uppercase">
+                    Metacodici Genere
+                  </div>
+                  {topMetacodes.gender.map((item: any, index: number) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => handleMetacodeSelect(item.code)}
+                      className="w-full flex items-center justify-between px-2 py-1 text-xs text-gray-300 hover:bg-slate-700 rounded transition-colors"
+                    >
+                      <span className="font-mono">{item.label}</span>
+                      <span className="text-[10px] text-gray-500">{item.usage}</span>
+                    </button>
+                  ))}
+                </>
+              ) : (
+                <div className="px-2 py-2 text-xs text-gray-500 text-center">
+                  Nessun dato disponibile
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Pulsante Numero */}
+      <div className="relative">
+        <button
+          ref={numberButtonRef}
+          type="button"
+          onClick={() => handleButtonClick('number')}
+          disabled={isDisabled}
+          className={`flex items-center gap-0.5 px-1.5 py-0.5 text-xs rounded transition-colors ${
+            isDisabled 
+              ? 'bg-slate-700/50 text-gray-500 cursor-not-allowed' 
+              : activeMenu === 'number'
+                ? 'bg-green-500 text-white'
+                : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+          }`}
+          title={isDisabled ? 'Seleziona un campo di testo' : 'Inserisci metacodice numero'}
+        >
+          <Hash className="w-3 h-3" />
+          <span className="text-[10px]">N</span>
+          <ChevronDown className="w-2.5 h-2.5" />
+        </button>
+        
+        {activeMenu === 'number' && !isDisabled && (
+          <div className="absolute top-full left-0 mt-1 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-50">
+            <div className="p-1">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCustomInsert('number', e);
+                }}
+                className="w-full px-2 py-1 text-xs text-green-400 hover:bg-slate-700 rounded transition-colors text-left border-b border-slate-700 mb-1"
+              >
+                + Personalizzato
+              </button>
+              {(topMetacodes?.number || []).length > 0 ? (
+                <>
+                  <div className="px-2 py-1 text-[10px] font-semibold text-gray-400 uppercase">
+                    Metacodici Numero
+                  </div>
+                  {topMetacodes.number.map((item: any, index: number) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => handleMetacodeSelect(item.code)}
+                      className="w-full flex items-center justify-between px-2 py-1 text-xs text-gray-300 hover:bg-slate-700 rounded transition-colors"
+                    >
+                      <span className="font-mono">{item.label}</span>
+                      <span className="text-[10px] text-gray-500">{item.usage}</span>
+                    </button>
+                  ))}
+                </>
+              ) : (
+                <div className="px-2 py-2 text-xs text-gray-500 text-center">
+                  Nessun dato disponibile
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Pulsante Immagine */}
+      <div className="relative">
+        <button
+          ref={imageButtonRef}
+          type="button"
+          onClick={() => handleButtonClick('image')}
+          disabled={isDisabled}
+          className={`flex items-center gap-0.5 px-1.5 py-0.5 text-xs rounded transition-colors ${
+            isDisabled 
+              ? 'bg-slate-700/50 text-gray-500 cursor-not-allowed' 
+              : activeMenu === 'image'
+                ? 'bg-purple-500 text-white'
+                : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+          }`}
+          title={isDisabled ? 'Seleziona un campo di testo' : 'Inserisci metacodice immagine'}
+        >
+          <Image className="w-3 h-3" />
+          <ChevronDown className="w-2.5 h-2.5" />
+        </button>
+        
+        {activeMenu === 'image' && !isDisabled && (
+          <div className="absolute top-full left-0 mt-1 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-50">
+            <div className="p-1">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCustomInsert('image', e);
+                }}
+                className="w-full px-2 py-1 text-xs text-purple-400 hover:bg-slate-700 rounded transition-colors text-left border-b border-slate-700 mb-1"
+              >
+                + Personalizzato
+              </button>
+              {(topMetacodes?.image || []).length > 0 ? (
+                <>
+                  <div className="px-2 py-1 text-[10px] font-semibold text-gray-400 uppercase">
+                    Metacodici Immagini
+                  </div>
+                    {topMetacodes.image.map((item: any, index: number) => (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => handleMetacodeSelect(item.code)}
+                        className="w-full flex items-center justify-between px-2 py-1 text-xs text-gray-300 hover:bg-slate-700 rounded transition-colors"
+                      >
+                        <span className="flex items-center gap-1">
+                          <span>{item.label}</span>
+                          <span className="font-mono text-[10px]">{item.code.match(/\[img\(([^)]+)\)/)?.[1]}</span>
+                        </span>
+                        <span className="text-[10px] text-gray-500">{item.usage}</span>
+                      </button>
+                    ))}
+                  </>
+                ) : (
+                  <div className="px-2 py-2 text-xs text-gray-500 text-center">
+                    Nessun dato disponibile
+                  </div>
+                )}
+              </div>
+            </div>
+        )}
+      </div>
+
+      {/* Pulsante Nome - inserimento diretto */}
+      <button
+        type="button"
+        onClick={() => handleMetacodeSelect('[NAME]')}
+        disabled={isDisabled}
+        className={`flex items-center gap-0.5 px-1.5 py-0.5 text-xs rounded transition-colors ${
+          isDisabled 
+            ? 'bg-slate-700/50 text-gray-500 cursor-not-allowed' 
+            : 'bg-slate-700 text-gray-300 hover:bg-orange-500 hover:text-white'
+        }`}
+        title={isDisabled ? 'Seleziona un campo di testo' : 'Inserisci [NAME]'}
+      >
+        <User className="w-3 h-3" />
+        <span className="text-[10px]">NAME</span>
+      </button>
+    </div>
+  );
+};

@@ -1,0 +1,17 @@
+{
+  "scriptName": "test_japanese",
+  "languages": ["JP"],
+  "blocks": [
+    {
+      "id": "1",
+      "type": "COMMAND",
+      "command": "SAY",
+      "character": "narrator",
+      "parameters": {
+        "text": {
+          "JP": "これは日本語のテストです"
+        }
+      }
+    }
+  ]
+}

@@ -8,6 +8,8 @@ import { validateAskInsertion } from './askValidation';
 import { validateContainerNesting } from './containerValidation';
 import { validateMenuInsertion, validateOptInsertion, validateMenuContent, canInsertMenuAfterBlock } from './menuValidation';
 import { blockEndsWithAsk } from './blockValidators';
+import { validateGoInsertion, hasLabelInScript } from './goValidation';
+import { validateBlockParameters } from './parameterValidation';
 
 /**
  * Valida l'inserimento di un blocco in una posizione specifica
@@ -52,10 +54,24 @@ export const validateBlockInsertion = (
       return false;
     }
   }
+  
+  // Validazione per EXIT_MENU - può essere inserito solo dentro OPT
+  if (blockType === 'EXIT_MENU') {
+    if (!targetContainer || targetContainer.type !== 'OPT') {
+      return false;
+    }
+  }
 
   // Validazione per blocchi dentro MENU - solo OPT permessi
   if (!validateMenuContent(targetContainer, blockType)) {
     return false;
+  }
+
+  // Validazione per GO - richiede presenza di LABEL
+  if (blockType === 'GO') {
+    if (allBlocks && !validateGoInsertion(allBlocks)) {
+      return false;
+    }
   }
 
   return true;
@@ -68,13 +84,71 @@ export const validateBlockInsertion = (
  * @param blocks - Array di blocchi da validare
  * @returns Oggetto con numero di errori, blocchi invalidi e dettagli errori
  */
-export const validateAllBlocks = (blocks: any[]): { errors: number; invalidBlocks: string[]; details: any[] } => {
+export const validateAllBlocks = (blocks: any[], t?: (key: any) => string): { errors: number; invalidBlocks: string[]; details: any[] } => {
   let errors = 0;
   const invalidBlocks: string[] = [];
   const errorDetails: any[] = [];
   
   const validateRecursive = (blocks: any[], parentBlock?: any, allRootBlocks?: any[], path: string[] = []): void => {
     blocks.forEach((block, index) => {
+      // VALIDAZIONE PARAMETRI: Controlla che i blocchi abbiano i parametri obbligatori valorizzati
+      const paramValidation = validateBlockParameters(block);
+      if (!paramValidation.valid) {
+        errors++;
+        invalidBlocks.push(block.id);
+        
+        // Genera messaggio specifico in base al tipo di errore
+        let message = '';
+        switch (paramValidation.error) {
+          case 'DELAY_NO_DURATION':
+            message = t ? 
+              t('visualFlowEditor.validation.delayNoDuration')
+              : 'DELAY block must have a duration value. Set the duration in milliseconds.';
+            break;
+          case 'SAY_NO_TEXT':
+            message = t ? 
+              t('visualFlowEditor.validation.sayNoText')
+              : 'SAY block must have text. Add at least the English text.';
+            break;
+          case 'ASK_NO_TEXT':
+            message = t ? 
+              t('visualFlowEditor.validation.askNoText')
+              : 'ASK block must have text. Add at least the English text.';
+            break;
+          case 'GO_NO_LABEL':
+            message = t ? 
+              t('visualFlowEditor.validation.goNoLabel')
+              : 'GO block must have a label selected. Choose a target label.';
+            break;
+          case 'LABEL_NO_NAME':
+            message = t ? 
+              t('visualFlowEditor.validation.labelNoName')
+              : 'LABEL block must have a name. Set the anchor name.';
+            break;
+          case 'SUB_SCRIPT_NO_NAME':
+            message = t ? 
+              t('visualFlowEditor.validation.subScriptNoName')
+              : 'SUB_SCRIPT block must have a script name. Select a script to execute.';
+            break;
+          case 'OPT_NO_TEXT':
+            message = t ? 
+              t('visualFlowEditor.validation.optNoText')
+              : 'OPT block must have text. Add at least the English text.';
+            break;
+          default:
+            message = t ? 
+              t('visualFlowEditor.validation.error')
+              : 'Validation error';
+        }
+        
+        errorDetails.push({
+          blockId: block.id,
+          blockType: block.type,
+          errorType: paramValidation.error,
+          message: message,
+          path: [...path]
+        });
+      }
       // NUOVA VALIDAZIONE: ASK non può seguire un altro ASK
       if (block.type === 'ASK' && index > 0 && blocks[index - 1].type === 'ASK') {
         errors++;
@@ -84,22 +158,97 @@ export const validateAllBlocks = (blocks: any[]): { errors: number; invalidBlock
           blockId: block.id,
           blockType: block.type,
           errorType: 'CONSECUTIVE_ASK',
-          message: `Due blocchi ASK consecutivi non sono permessi. Il primo ASK (${prevAsk.parameters?.text?.EN || 'senza testo'}) è seguito direttamente da questo ASK. Inserisci un blocco SAY, MENU o altro comando tra i due ASK per separarli.`,
+          message: t ? 
+            t('visualFlowEditor.validation.consecutiveAskDetailed')
+              .replace('{firstAsk}', prevAsk.parameters?.text?.EN || t('visualFlowEditor.validation.noText'))
+            : `Two consecutive ASK blocks are not allowed. The first ASK (${prevAsk.parameters?.text?.EN || 'no text'}) is followed directly by this ASK. Insert a SAY, MENU or other command between the two ASK blocks.`,
           path: [...path],
           relatedBlockId: prevAsk.id
         });
+      }
+      
+      // NUOVA VALIDAZIONE: Ad un blocco ASK deve seguire un blocco MENU
+      if (block.type === 'ASK') {
+        let hasValidMenu = false;
+        
+        // Controllo 1: Blocco successivo nello stesso container è MENU
+        const nextBlock = index < blocks.length - 1 ? blocks[index + 1] : null;
+        if (nextBlock && nextBlock.type === 'MENU') {
+          hasValidMenu = true;
+        }
+        
+        // Controllo 2: Se ASK è l'ultimo blocco in un ramo IF, 
+        // il MENU può essere fuori dall'IF come primo blocco dopo l'IF
+        if (!hasValidMenu && !nextBlock && parentBlock && parentBlock.type === 'IF') {
+          // Trova il blocco IF nell'albero completo e controlla cosa viene dopo
+          if (allRootBlocks) {
+            const findBlockAfterIf = (blocks: any[], ifBlock: any): any | null => {
+              for (let i = 0; i < blocks.length; i++) {
+                if (blocks[i].id === ifBlock.id) {
+                  return i < blocks.length - 1 ? blocks[i + 1] : null;
+                }
+                // Cerca ricorsivamente nei figli
+                if (blocks[i].children) {
+                  const found = findBlockAfterIf(blocks[i].children, ifBlock);
+                  if (found) return found;
+                }
+                if (blocks[i].thenBlocks) {
+                  const found = findBlockAfterIf(blocks[i].thenBlocks, ifBlock);
+                  if (found) return found;
+                }
+                if (blocks[i].elseBlocks) {
+                  const found = findBlockAfterIf(blocks[i].elseBlocks, ifBlock);
+                  if (found) return found;
+                }
+              }
+              return null;
+            };
+            
+            const blockAfterIf = findBlockAfterIf(allRootBlocks, parentBlock);
+            if (blockAfterIf && blockAfterIf.type === 'MENU') {
+              hasValidMenu = true;
+            }
+          }
+        }
+        
+        if (!hasValidMenu) {
+          errors++;
+          invalidBlocks.push(block.id);
+          errorDetails.push({
+            blockId: block.id,
+            blockType: block.type,
+            errorType: nextBlock ? 'ASK_NOT_FOLLOWED_BY_MENU' : 'ASK_WITHOUT_MENU',
+            message: t ? 
+              (nextBlock ? 
+                t('visualFlowEditor.validation.askMustBeFollowedByMenu')
+                : t('visualFlowEditor.validation.askWithoutMenu')
+              )
+              : (nextBlock ? 
+                'ASK block must be followed by a MENU block. Insert a MENU block after this ASK.'
+                : 'ASK block must be followed by a MENU block. This ASK is the last block and has no following MENU.'
+              ),
+            path: [...path],
+            relatedBlockId: nextBlock?.id
+          });
+        }
       }
       
       // NUOVA VALIDAZIONE: BUILD/FLIGHT dentro BUILD
       if ((block.type === 'BUILD' || block.type === 'FLIGHT') && parentBlock && parentBlock.type === 'BUILD') {
         errors++;
         invalidBlocks.push(block.id);
-        const containerArea = path[path.length - 1]?.includes('Init') ? 'Fase Iniziale' : 'Inizio Build';
+        const containerArea = t ? 
+          (path[path.length - 1]?.includes('Init') ? t('visualFlowEditor.validation.areaInitialPhase') : t('visualFlowEditor.validation.areaBuildStart'))
+          : (path[path.length - 1]?.includes('Init') ? 'Initial Phase' : 'Build Start');
         errorDetails.push({
           blockId: block.id,
           blockType: block.type,
           errorType: block.type === 'BUILD' ? 'BUILD_CONTAINS_BUILD' : 'BUILD_CONTAINS_FLIGHT',
-          message: `Il blocco ${block.type} si trova dentro l'area "${containerArea}" di un blocco BUILD. I blocchi BUILD e FLIGHT non possono essere annidati. Sposta questo blocco fuori dal BUILD o usa altri tipi di blocchi.`,
+          message: t ?
+            t('visualFlowEditor.validation.blockInBuildDetailed')
+              .replace('{blockType}', block.type)
+              .replace('{area}', containerArea)
+            : `The ${block.type} block is inside the "${containerArea}" area of a BUILD block. BUILD and FLIGHT blocks cannot be nested. Move this block out of the BUILD or use other block types.`,
           path: [...path],
           relatedBlockId: parentBlock.id
         });
@@ -110,15 +259,25 @@ export const validateAllBlocks = (blocks: any[]): { errors: number; invalidBlock
         errors++;
         invalidBlocks.push(block.id);
         let containerArea = 'FLIGHT';
-        if (path[path.length - 1]?.includes('Init')) containerArea = 'Fase Iniziale';
-        else if (path[path.length - 1]?.includes('Start')) containerArea = 'Inizio Volo';
-        else if (path[path.length - 1]?.includes('Evaluate')) containerArea = 'Valutazione';
+        if (t) {
+          if (path[path.length - 1]?.includes('Init')) containerArea = t('visualFlowEditor.validation.areaInitialPhase');
+          else if (path[path.length - 1]?.includes('Start')) containerArea = t('visualFlowEditor.validation.areaFlightStart');
+          else if (path[path.length - 1]?.includes('Evaluate')) containerArea = t('visualFlowEditor.validation.areaEvaluation');
+        } else {
+          if (path[path.length - 1]?.includes('Init')) containerArea = 'Initial Phase';
+          else if (path[path.length - 1]?.includes('Start')) containerArea = 'Flight Start';
+          else if (path[path.length - 1]?.includes('Evaluate')) containerArea = 'Evaluation';
+        }
         
         errorDetails.push({
           blockId: block.id,
           blockType: block.type,
           errorType: block.type === 'BUILD' ? 'FLIGHT_CONTAINS_BUILD' : 'FLIGHT_CONTAINS_FLIGHT',
-          message: `Il blocco ${block.type} si trova dentro l'area "${containerArea}" di un blocco FLIGHT. I blocchi BUILD e FLIGHT non possono essere annidati tra loro. Sposta questo blocco fuori dal FLIGHT.`,
+          message: t ?
+            t('visualFlowEditor.validation.blockInFlightDetailed')
+              .replace('{blockType}', block.type)
+              .replace('{area}', containerArea)
+            : `The ${block.type} block is inside the "${containerArea}" area of a FLIGHT block. BUILD and FLIGHT blocks cannot be nested. Move this block out of the FLIGHT.`,
           path: [...path],
           relatedBlockId: parentBlock.id
         });
@@ -139,12 +298,29 @@ export const validateAllBlocks = (blocks: any[]): { errors: number; invalidBlock
           prevBlock = null;
         }
         
-        if (!prevBlock || !canInsertMenuAfterBlock(prevBlock)) {
+        // Controlla se il MENU può essere inserito usando la logica unificata
+        let canInsertMenu = false;
+        
+        if (prevBlock) {
+          if (prevBlock.type === 'IF') {
+            // Logica per IF: entrambi i rami devono terminare con ASK
+            const thenEndsWithAsk = prevBlock.thenBlocks && prevBlock.thenBlocks.length > 0 && 
+                                   blockEndsWithAsk(prevBlock.thenBlocks[prevBlock.thenBlocks.length - 1]);
+            const elseEndsWithAsk = !prevBlock.elseBlocks || prevBlock.elseBlocks.length === 0 || 
+                                   blockEndsWithAsk(prevBlock.elseBlocks[prevBlock.elseBlocks.length - 1]);
+            canInsertMenu = thenEndsWithAsk && elseEndsWithAsk;
+          } else {
+            // Per altri blocchi usa la funzione esistente
+            canInsertMenu = canInsertMenuAfterBlock(prevBlock);
+          }
+        }
+        
+        if (!canInsertMenu) {
           errors++;
           invalidBlocks.push(block.id);
           
           // Genera messaggio specifico in base al blocco precedente
-          let specificMessage = 'Il blocco MENU deve essere preceduto da un blocco ASK.';
+          let specificMessage = t ? t('visualFlowEditor.validation.menuNeedsAsk') : 'The MENU block must be preceded by an ASK block.';
           if (prevBlock) {
             if (prevBlock.type === 'IF') {
               // Analizza i rami dell'IF per capire cosa manca
@@ -154,19 +330,21 @@ export const validateAllBlocks = (blocks: any[]): { errors: number; invalidBlock
                                      blockEndsWithAsk(prevBlock.elseBlocks[prevBlock.elseBlocks.length - 1]);
               
               if (!thenEndsWithAsk && !elseEndsWithAsk) {
-                specificMessage = `Il MENU segue un blocco IF dove né il ramo THEN né il ramo ELSE terminano con ASK. Entrambi i rami devono terminare con ASK.`;
+                specificMessage = t ? t('visualFlowEditor.validation.menuAfterIfNoBranch') : 'The MENU follows an IF block where neither THEN nor ELSE branch ends with ASK. Both branches must end with ASK.';
               } else if (!thenEndsWithAsk) {
-                specificMessage = `Il MENU segue un blocco IF dove il ramo THEN non termina con ASK. Aggiungi un ASK alla fine del ramo THEN.`;
+                specificMessage = t ? t('visualFlowEditor.validation.menuAfterIfNoThen') : 'The MENU follows an IF block where the THEN branch doesn\'t end with ASK. Add an ASK at the end of the THEN branch.';
               } else if (!elseEndsWithAsk) {
-                specificMessage = `Il MENU segue un blocco IF dove il ramo ELSE non termina con ASK. Aggiungi un ASK alla fine del ramo ELSE.`;
+                specificMessage = t ? t('visualFlowEditor.validation.menuAfterIfNoElse') : 'The MENU follows an IF block where the ELSE branch doesn\'t end with ASK. Add an ASK at the end of the ELSE branch.';
               }
             } else if (prevBlock.type === 'MENU') {
-              specificMessage = `Il MENU segue un altro MENU. I blocchi MENU non terminano con ASK, quindi devi inserire un ASK tra i due MENU.`;
+              specificMessage = t ? t('visualFlowEditor.validation.menuAfterMenu') : 'The MENU follows another MENU. MENU blocks don\'t end with ASK, so you need to insert an ASK between the two MENUs.';
             } else {
-              specificMessage = `Il MENU segue un blocco ${prevBlock.type} che non termina con ASK. Inserisci un ASK prima del MENU.`;
+              specificMessage = t ? 
+                t('visualFlowEditor.validation.menuAfterBlock').replace('{blockType}', prevBlock.type)
+                : `The MENU follows a ${prevBlock.type} block that doesn't end with ASK. Insert an ASK before the MENU.`;
             }
           } else if (index === 0) {
-            specificMessage = 'Il MENU è il primo blocco dello script. Deve essere preceduto da almeno un blocco ASK.';
+            specificMessage = t ? t('visualFlowEditor.validation.menuFirstBlock') : 'The MENU is the first block in the script. It must be preceded by at least one ASK block.';
           }
           
           errorDetails.push({
@@ -188,26 +366,95 @@ export const validateAllBlocks = (blocks: any[]): { errors: number; invalidBlock
           blockId: block.id,
           blockType: block.type,
           errorType: 'OPT_OUTSIDE_MENU',
-          message: 'Il blocco OPT può essere inserito solo all\'interno di un blocco MENU.',
+          message: t ? t('visualFlowEditor.validation.optOnlyInMenu') : 'The OPT block can only be inserted inside a MENU block.',
           path: [...path]
         });
       }
       
-      // Valida contenuto dei MENU (solo OPT permessi)
-      if (block.type === 'MENU' && block.children) {
-        block.children.forEach((child: any) => {
-          if (child.type !== 'OPT') {
+      // Valida blocchi EXIT_MENU (devono essere dentro OPT)
+      if (block.type === 'EXIT_MENU' && (!parentBlock || parentBlock.type !== 'OPT')) {
+        errors++;
+        invalidBlocks.push(block.id);
+        errorDetails.push({
+          blockId: block.id,
+          blockType: block.type,
+          errorType: 'EXIT_MENU_OUTSIDE_OPT',
+          message: t ? t('visualFlowEditor.validation.exitMenuOnlyInOpt') : 'The EXIT_MENU block can only be inserted inside an OPT block.',
+          path: [...path]
+        });
+      }
+      
+      // Valida blocchi GO (richiedono presenza di LABEL)
+      if (block.type === 'GO') {
+        // Verifica se esiste almeno un LABEL nello script
+        const rootBlocks = allRootBlocks || blocks;
+        if (!hasLabelInScript(rootBlocks)) {
+          errors++;
+          invalidBlocks.push(block.id);
+          errorDetails.push({
+            blockId: block.id,
+            blockType: block.type,
+            errorType: 'GO_WITHOUT_LABEL',
+            message: t ? 
+              t('visualFlowEditor.validation.goWithoutLabel')
+              : 'GO block requires at least one LABEL block in the script. Add a LABEL block before using GO.',
+            path: [...path]
+          });
+        }
+      }
+      
+      // NUOVA VALIDAZIONE: MENU non può essere senza OPT
+      if (block.type === 'MENU') {
+        if (!block.children || block.children.length === 0) {
+          errors++;
+          invalidBlocks.push(block.id);
+          errorDetails.push({
+            blockId: block.id,
+            blockType: block.type,
+            errorType: 'MENU_WITHOUT_OPT',
+            message: t ? 
+              t('visualFlowEditor.validation.menuWithoutOpt')
+              : 'MENU block cannot be empty. Add at least one OPT block to the MENU.',
+            path: [...path]
+          });
+        } else {
+          // NUOVA VALIDAZIONE: MENU deve avere almeno un OPT semplice
+          const hasSimpleOpt = block.children.some((child: any) => 
+            child.type === 'OPT' && 
+            (!child.optType || child.optType === 'OPT_SIMPLE')
+          );
+          
+          if (!hasSimpleOpt) {
             errors++;
-            invalidBlocks.push(child.id);
+            invalidBlocks.push(block.id);
             errorDetails.push({
-              blockId: child.id,
-              blockType: child.type,
-              errorType: 'NON_OPT_IN_MENU',
-              message: `Il blocco ${child.type} non può essere inserito in un MENU. Solo blocchi OPT sono permessi.`,
-              path: [...path, 'MENU']
+              blockId: block.id,
+              blockType: block.type,
+              errorType: 'MENU_NO_SIMPLE_OPT',
+              message: t ? 
+                t('visualFlowEditor.validation.menuNoSimpleOpt')
+                : 'MENU block must contain at least one simple OPT block (without conditions).',
+              path: [...path]
             });
           }
-        });
+          
+          // Valida contenuto dei MENU (solo OPT permessi)
+          block.children.forEach((child: any) => {
+            if (child.type !== 'OPT') {
+              errors++;
+              invalidBlocks.push(child.id);
+              errorDetails.push({
+                blockId: child.id,
+                blockType: child.type,
+                errorType: 'NON_OPT_IN_MENU',
+                message: t ? 
+                  t('visualFlowEditor.validation.onlyOptInMenu').replace('{blockType}', child.type)
+                  : `The ${child.type} block cannot be inserted in a MENU. Only OPT blocks are allowed.`,
+                path: [...path, 'MENU']
+              });
+            }
+          });
+        }
       }
       
       // Ricorsione per container
@@ -215,6 +462,23 @@ export const validateAllBlocks = (blocks: any[]): { errors: number; invalidBlock
         // Per i container normali, passa il blocco corrente come parent e mantieni allRootBlocks
         const newPath = [...path, `${block.type}${block.id ? '#' + block.id.slice(0, 8) : ''}`];
         validateRecursive(block.children, block, allRootBlocks || blocks, newPath);
+      }
+      
+      // NUOVA VALIDAZIONE: IF non può avere ramo THEN vuoto
+      if (block.type === 'IF') {
+        if (!block.thenBlocks || block.thenBlocks.length === 0) {
+          errors++;
+          invalidBlocks.push(block.id);
+          errorDetails.push({
+            blockId: block.id,
+            blockType: block.type,
+            errorType: 'IF_EMPTY_THEN',
+            message: t ? 
+              t('visualFlowEditor.validation.ifEmptyThen') 
+              : 'IF block cannot have an empty THEN branch. Add at least one block to the THEN branch.',
+            path: [...path]
+          });
+        }
       }
       
       // Ricorsione per IF
