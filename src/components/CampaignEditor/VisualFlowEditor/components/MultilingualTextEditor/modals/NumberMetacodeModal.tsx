@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { X, Plus, Trash2 } from 'lucide-react';
 import { ParsedMetacode, generateExtendedNumberCode, NumberData } from '../metacodeParser';
+import { useTranslation } from '@/locales';
 
 interface NumberMetacodeModalProps {
   isOpen: boolean;
@@ -20,6 +21,7 @@ export const NumberMetacodeModal: React.FC<NumberMetacodeModalProps> = ({
   textContext = '',
   mousePosition
 }) => {
+  const { t } = useTranslation();
   const [quantifiers, setQuantifiers] = useState<Array<{threshold: number; text: string}>>([
     { threshold: 1, text: '' },
     { threshold: 2, text: '' }
@@ -158,7 +160,7 @@ export const NumberMetacodeModal: React.FC<NumberMetacodeModalProps> = ({
             <div className="bg-gradient-to-r from-green-600 to-orange-600 px-3 py-2">
               <div className="flex justify-between items-center">
                 <h3 className="text-xs font-semibold text-white">
-                  Metacodice Numero
+                  {t('visualFlowEditor.metacode.numberMetacode')}
                 </h3>
                 <button
                   onClick={onClose}
@@ -187,7 +189,7 @@ export const NumberMetacodeModal: React.FC<NumberMetacodeModalProps> = ({
                       value={q.text}
                       onChange={(e) => updateQuantifier(index, 'text', e.target.value)}
                       className="flex-1 px-1.5 py-0.5 bg-slate-800 text-white text-xs border border-slate-700 rounded focus:outline-none focus:ring-1 focus:ring-green-500"
-                      placeholder="testo"
+                      placeholder={t('visualFlowEditor.metacode.textPlaceholder')}
                       autoFocus={index === 0}
                     />
                     {quantifiers.length > 1 && (
@@ -209,7 +211,7 @@ export const NumberMetacodeModal: React.FC<NumberMetacodeModalProps> = ({
                   className="w-full flex items-center justify-center gap-1 px-2 py-1 text-xs text-green-400 bg-slate-800 hover:bg-slate-700 rounded transition-colors"
                 >
                   <Plus className="w-3 h-3" />
-                  <span>Aggiungi soglia</span>
+                  <span>{t('visualFlowEditor.metacode.addThreshold')}</span>
                 </button>
               </div>
 
@@ -218,7 +220,7 @@ export const NumberMetacodeModal: React.FC<NumberMetacodeModalProps> = ({
               
               {/* Risultato */}
               <div className="px-2 py-1">
-                <p className="text-[10px] text-gray-500 uppercase font-semibold">Risultato:</p>
+                <p className="text-[10px] text-gray-500 uppercase font-semibold">{t('visualFlowEditor.metacode.result')}:</p>
                 <p className={`text-[11px] font-mono ${hasValidInput ? 'text-green-400' : 'text-yellow-400'}`}>
                   {preview}
                 </p>
@@ -233,14 +235,14 @@ export const NumberMetacodeModal: React.FC<NumberMetacodeModalProps> = ({
                   onClick={onClose}
                   className="flex-1 px-2 py-1 text-[10px] text-gray-300 bg-slate-800 rounded hover:bg-slate-700 transition-colors font-medium"
                 >
-                  Annulla
+                  {t('visualFlowEditor.metacode.cancel')}
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={!hasValidInput}
                   className="flex-1 px-2 py-1 text-[10px] bg-gradient-to-r from-green-500 to-orange-500 text-white rounded hover:from-green-600 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium"
                 >
-                  Applica
+                  {t('visualFlowEditor.metacode.apply')}
                 </button>
               </div>
             </div>

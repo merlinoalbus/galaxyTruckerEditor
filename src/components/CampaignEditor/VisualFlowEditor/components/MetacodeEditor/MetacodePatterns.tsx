@@ -12,6 +12,7 @@ import {
   Target,
   LucideIcon 
 } from 'lucide-react';
+import { useTranslation } from '@/locales';
 
 export interface MetacodePatternInfo {
   id: string;
@@ -26,113 +27,114 @@ export interface MetacodePatternInfo {
   examples?: string[];
 }
 
-// Solo i 6 pattern più usati
-export const METACODE_PATTERNS_BY_FREQUENCY: MetacodePatternInfo[] = [
-  // Localizzazione (raggruppati)
-  {
-    id: 'gender',
-    category: 'localization',
-    icon: Users,
-    iconText: 'G',
-    label: 'Genere',
-    tooltip: 'Genere (M/F/N)',
-    frequency: 'very-high',
-    hasModal: true,
-    generateDefault: () => '[g(|a|)]',
-    examples: ['[g(o|a|)]', '[g(his|her|its)]']
-  },
-  {
-    id: 'plural',
-    category: 'localization',
-    icon: Hash,
-    iconText: 'N',
-    label: 'Plurale',
-    tooltip: 'Singolare/Plurale',
-    frequency: 'high',
-    hasModal: true,
-    generateDefault: () => '[n(1:|2:s)]',
-    examples: ['[n(1:point|2:points)]']
-  },
-  
-  // UI
-  {
-    id: 'image',
-    category: 'ui',
-    icon: Image,
-    iconText: 'IMG',
-    label: 'Immagine',
-    tooltip: 'Immagine',
-    frequency: 'high',
-    hasModal: true,
-    generateDefault: () => '[img(path.png)]',
-    examples: ['[img(icon.png)]']
-  },
-  {
-    id: 'verb',
-    category: 'ui',
-    icon: MousePointer,
-    iconText: 'V',
-    label: 'Azione',
-    tooltip: 'Tap/Click',
-    frequency: 'medium',
-    hasModal: true,
-    generateDefault: () => '[v(tap|click)]',
-    examples: ['[v(tap|click)]']
-  },
-  
-  // Dinamici
-  {
-    id: 'playerName',
-    category: 'dynamic',
-    icon: User,
-    iconText: 'NAME',
-    label: 'Nome',
-    tooltip: 'Nome giocatore',
-    frequency: 'medium',
-    hasModal: false,
-    generateDefault: () => '[NAME]',
-    examples: ['[NAME]']
-  },
-  {
-    id: 'missionResult',
-    category: 'dynamic',
-    icon: Target,
-    iconText: 'RES',
-    label: 'Risultato',
-    tooltip: 'Risultato missione',
-    frequency: 'low',
-    hasModal: true, // Cambiato a true perché ora abbiamo la modal
-    generateDefault: () => '[missionResult]',
-    examples: ['[missionResult]']
-  }
-];
+// Hook per ottenere i pattern con traduzioni
+export const useMetacodePatterns = (): MetacodePatternInfo[] => {
+  const { t } = useTranslation();
 
-// Gruppi per categoria per UI organizzata
-export const PATTERNS_BY_CATEGORY = {
-  localization: METACODE_PATTERNS_BY_FREQUENCY.filter(p => p.category === 'localization'),
-  ui: METACODE_PATTERNS_BY_FREQUENCY.filter(p => p.category === 'ui'),
-  dynamic: METACODE_PATTERNS_BY_FREQUENCY.filter(p => p.category === 'dynamic'),
-  logic: METACODE_PATTERNS_BY_FREQUENCY.filter(p => p.category === 'logic')
+  return [
+    // Localizzazione (raggruppati)
+    {
+      id: 'gender',
+      category: 'localization',
+      icon: Users,
+      iconText: 'G',
+      label: t('visualFlowEditor.metacode.genderLabel'),
+      tooltip: t('visualFlowEditor.metacode.genderTooltip'),
+      frequency: 'very-high',
+      hasModal: true,
+      generateDefault: () => '[g(|a|)]',
+      examples: ['[g(o|a|)]', '[g(his|her|its)]']
+    },
+    {
+      id: 'plural',
+      category: 'localization',
+      icon: Hash,
+      iconText: 'N',
+      label: t('visualFlowEditor.metacode.pluralLabel'),
+      tooltip: t('visualFlowEditor.metacode.pluralTooltip'),
+      frequency: 'high',
+      hasModal: true,
+      generateDefault: () => '[n(1:|2:s)]',
+      examples: ['[n(1:point|2:points)]']
+    },
+    
+    // UI
+    {
+      id: 'image',
+      category: 'ui',
+      icon: Image,
+      iconText: 'IMG',
+      label: t('visualFlowEditor.metacode.imageLabel'),
+      tooltip: t('visualFlowEditor.metacode.imageTooltip'),
+      frequency: 'high',
+      hasModal: true,
+      generateDefault: () => '[img(path.png)]',
+      examples: ['[img(icon.png)]']
+    },
+    {
+      id: 'verb',
+      category: 'ui',
+      icon: MousePointer,
+      iconText: 'V',
+      label: t('visualFlowEditor.metacode.actionLabel'),
+      tooltip: t('visualFlowEditor.metacode.actionTooltip'),
+      frequency: 'medium',
+      hasModal: true,
+      generateDefault: () => '[v(tap|click)]',
+      examples: ['[v(tap|click)]']
+    },
+    
+    // Dinamici
+    {
+      id: 'playerName',
+      category: 'dynamic',
+      icon: User,
+      iconText: 'NAME',
+      label: t('visualFlowEditor.metacode.nameLabel'),
+      tooltip: t('visualFlowEditor.metacode.nameTooltip'),
+      frequency: 'medium',
+      hasModal: false,
+      generateDefault: () => '[NAME]',
+      examples: ['[NAME]']
+    },
+    {
+      id: 'missionResult',
+      category: 'dynamic',
+      icon: Target,
+      iconText: 'RES',
+      label: t('visualFlowEditor.metacode.missionResultLabel'),
+      tooltip: t('visualFlowEditor.metacode.missionResultTooltip'),
+      frequency: 'low',
+      hasModal: true,
+      generateDefault: () => '[MISSION_RESULT(missionId)]',
+      examples: ['[MISSION_RESULT(mission01)]']
+    }
+  ];
 };
 
-// Helper per ottenere il colore in base alla frequenza
-export function getFrequencyColor(frequency: string): string {
-  switch (frequency) {
-    case 'very-high': return 'text-red-500 bg-red-100';
-    case 'high': return 'text-orange-500 bg-orange-100';
-    case 'medium': return 'text-yellow-600 bg-yellow-100';
-    case 'low': return 'text-gray-600 bg-gray-100';
-    default: return 'text-gray-500 bg-gray-50';
-  }
-}
 
-// Helper per ottenere il colore del pattern
-export function getPatternColor(category: string): string {
-  switch (category) {
-    case 'localization': return 'bg-blue-500';
-    case 'ui': return 'bg-purple-500';
-    case 'dynamic': return 'bg-green-500';
-    case 'logic': return 'bg-orange-500';
-    default: return 'bg-gray-500';
+/**
+ * Ottieni colore basato su frequenza per gradienti visuali
+ */
+export const getFrequencyColor = (frequency: string): string => {
+  switch(frequency) {
+    case 'very-high': return 'from-purple-600 to-blue-600';
+    case 'high': return 'from-blue-600 to-cyan-600';
+    case 'medium': return 'from-cyan-600 to-teal-600';
+    case 'low': return 'from-teal-600 to-green-600';
+    default: return 'from-gray-600 to-gray-700';
   }
-}
+};
+
+/**
+ * Ottieni colore solido basato su categoria
+ */
+export const getPatternColor = (category: string): string => {
+  switch(category) {
+    case 'localization': return 'bg-blue-600';
+    case 'ui': return 'bg-purple-600';
+    case 'dynamic': return 'bg-green-600';
+    case 'logic': return 'bg-orange-600';
+    default: return 'bg-gray-600';
+  }
+};

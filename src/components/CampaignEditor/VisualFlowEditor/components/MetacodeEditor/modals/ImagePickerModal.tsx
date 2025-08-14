@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Image, Search } from 'lucide-react';
 import { generateImageCode } from '../utils/metacodeParser';
+import { useTranslation } from '@/locales';
 
 interface ImagePickerModalProps {
   isOpen: boolean;
@@ -20,6 +21,7 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
   availableImages,
   existingData
 }) => {
+  const { t } = useTranslation();
   const [selectedImage, setSelectedImage] = useState(existingData?.path || '');
   const [multiplier, setMultiplier] = useState(existingData?.multiplier || '');
   const [searchTerm, setSearchTerm] = useState('');
@@ -70,7 +72,7 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-white flex items-center gap-2">
             <Image className="w-5 h-5" />
-            Inserisci Immagine
+            {t('visualFlowEditor.metacode.selectImage')}
           </h3>
           <button
             onClick={onClose}
@@ -87,7 +89,7 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Cerca immagine..."
+            placeholder={t('visualFlowEditor.metacode.selectFromList')}
             className="w-full bg-slate-900 text-white pl-10 pr-3 py-2 rounded border border-slate-600 focus:border-blue-500 focus:outline-none text-sm"
           />
         </div>
@@ -121,24 +123,24 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
         {/* Multiplier */}
         <div className="mb-3">
           <label className="text-sm text-gray-400 mb-1 block">
-            Moltiplicatore (opzionale)
+            {t('visualFlowEditor.metacode.imageSize')}
           </label>
           <input
             type="text"
             value={multiplier}
             onChange={(e) => setMultiplier(e.target.value)}
-            placeholder="es. n, 3, playerCount"
+            placeholder={t('visualFlowEditor.metacode.imageSizePlaceholder')}
             className="w-full bg-slate-900 text-white px-3 py-2 rounded border border-slate-600 focus:border-blue-500 focus:outline-none text-sm"
           />
           <div className="text-xs text-gray-500 mt-1">
-            Lascia vuoto per immagine singola, o inserisci una variabile/numero
+            {t('visualFlowEditor.metacode.imageSize')}
           </div>
         </div>
 
         {/* Preview */}
         {preview && (
           <div className="mb-3 p-3 bg-slate-900 rounded border border-slate-700">
-            <div className="text-xs text-gray-500 mb-1">Codice generato:</div>
+            <div className="text-xs text-gray-500 mb-1">{t('visualFlowEditor.metacode.preview')}:</div>
             <code className="text-sm text-green-400 font-mono">{preview}</code>
           </div>
         )}
@@ -149,14 +151,14 @@ export const ImagePickerModal: React.FC<ImagePickerModalProps> = ({
             onClick={onClose}
             className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors"
           >
-            Annulla
+            {t('visualFlowEditor.metacode.cancel')}
           </button>
           <button
             onClick={handleInsert}
             disabled={!selectedImage}
             className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:text-gray-500 text-white rounded transition-colors"
           >
-            Inserisci
+            {t('visualFlowEditor.metacode.insert')}
           </button>
         </div>
       </div>
