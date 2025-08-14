@@ -24,9 +24,11 @@
       "Bash(scripts/restart-be.sh:*)",
       "Bash(restartBE)",
       "Bash(./scripts/restart-be.sh:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(bash:*)"
     ],
-    "deny": []
+    "deny": [],
+    "defaultMode": "acceptEdits"
   },
   "commands": {
     "startBE": {
