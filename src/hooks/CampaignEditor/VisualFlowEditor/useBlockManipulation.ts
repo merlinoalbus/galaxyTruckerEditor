@@ -5,7 +5,7 @@ import { updateBlockRecursive } from './blockManipulation/operations/updateOpera
 import { removeBlockRecursive } from './blockManipulation/operations/removeOperations';
 import { addBlockAtIndex, addBlockToContainer } from './blockManipulation/operations/insertOperations';
 import { useTranslation } from '@/locales';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 
 export const useBlockManipulation = () => {
   const { t } = useTranslation();
@@ -21,11 +21,11 @@ export const useBlockManipulation = () => {
     return getDropErrorMessageBase(blockType, containerId, containerType, blocks, index, t);
   }, [t]);
   
-  // Wrapper per validateAllBlocks - NON memoizzato per evitare loop!
-  // La funzione usa sempre il t corrente al momento della chiamata
-  const validateAllBlocks = (blocks: any[]) => {
+  // Wrapper per validateAllBlocks - memoizzato con useCallback
+  // La funzione usa il t corrente al momento della chiamata
+  const validateAllBlocks = useCallback((blocks: any[]) => {
     return validateAllBlocksBase(blocks, t);
-  };
+  }, [t]);
 
   return {
     updateBlockRecursive,

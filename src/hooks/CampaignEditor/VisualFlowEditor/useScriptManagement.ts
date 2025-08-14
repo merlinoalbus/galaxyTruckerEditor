@@ -3,6 +3,7 @@ import { ScriptData } from '@/components/CampaignEditor/VisualFlowEditor/compone
 import { addUniqueIds, generateBlockId } from '@/utils/CampaignEditor/VisualFlowEditor/blockIdManager';
 import { cleanupScriptBlocks } from '@/utils/CampaignEditor/VisualFlowEditor/blockCleaner';
 import { generateScriptJson, generateMissionJson, convertBlocksToJson } from '@/utils/CampaignEditor/VisualFlowEditor/jsonConverter';
+import type { IFlowBlock, ValidationResult } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 export interface NewScriptDialogType {
   isOpen: boolean;
@@ -11,13 +12,13 @@ export interface NewScriptDialogType {
 }
 
 interface UseScriptManagementProps {
-  setCurrentScriptBlocks: (blocks: any[]) => void;
+  setCurrentScriptBlocks: (blocks: IFlowBlock[]) => void;
   setShowScriptsList: (show: boolean) => void;
-  currentScriptBlocks?: any[];
-  rootBlocks?: any[];
+  currentScriptBlocks?: IFlowBlock[];
+  rootBlocks?: IFlowBlock[];
   isZoomed?: boolean;
   resetNavigationState?: () => void;
-  setValidationErrors?: (errors: any) => void;
+  setValidationErrors?: (errors: ValidationResult) => void;
   setDropError?: (error: string | null) => void;
 }
 
@@ -62,7 +63,7 @@ export const useScriptManagement = ({
     if (setValidationErrors) setValidationErrors({ errors: 0, invalidBlocks: [] });
     if (setDropError) setDropError(null);
     
-    const newScriptBlock = {
+    const newScriptBlock: IFlowBlock = {
       id: generateBlockId('SCRIPT'),
       type: 'SCRIPT',
       position: { x: 100, y: 100 },
@@ -105,14 +106,14 @@ export const useScriptManagement = ({
     if (setValidationErrors) setValidationErrors({ errors: 0, invalidBlocks: [] });
     if (setDropError) setDropError(null);
     
-    const newMissionBlock = {
+    const newMissionBlock: IFlowBlock = {
       id: generateBlockId('MISSION'),
       type: 'MISSION',
       position: { x: 100, y: 100 },
       isContainer: true,
       blocksMission: [],
       blocksFinish: [],
-      missionName: missionName,
+      name: missionName,
       fileName: fileName
     };
     
@@ -191,14 +192,14 @@ export const useScriptManagement = ({
         const blocksFinish = result.data.blocksFinish ? addContainerFlags(result.data.blocksFinish) : [];
         
         // Crea il blocco MISSION principale
-        const missionBlock = {
+        const missionBlock: IFlowBlock = {
           id: generateBlockId('MISSION'),
           type: 'MISSION',
           position: { x: 100, y: 100 },
           isContainer: true,
           blocksMission: blocksMission,
           blocksFinish: blocksFinish,
-          missionName: result.data.name,
+          name: result.data.name,
           fileName: result.data.fileName,
           children: [] // MISSION usa blocksMission/blocksFinish, non children
         };
@@ -206,7 +207,10 @@ export const useScriptManagement = ({
         setCurrentScriptBlocks([missionBlock]);
       }
     } catch (error) {
-      console.error('❌ Errore nel caricamento della mission:', error);
+      console.error('[VisualFlowEditor] Error loading mission:', error);
+      if (setDropError) {
+        setDropError('Errore nel caricamento della mission. Controlla il formato del file.');
+      }
     } finally {
       setIsLoadingScript(false);
       setShowScriptsList(false);
@@ -303,7 +307,10 @@ export const useScriptManagement = ({
         setCurrentScriptBlocks([finalScriptBlock]);
       }
     } catch (error) {
-      console.error('❌ Errore nel caricamento dello script:', error);
+      console.error('[VisualFlowEditor] Error loading script:', error);
+      if (setDropError) {
+        setDropError('Errore nel caricamento dello script. Controlla il formato del file.');
+      }
     } finally {
       setIsLoadingScript(false);
       setShowScriptsList(false);
@@ -356,11 +363,11 @@ export const useScriptManagement = ({
     }
     
     if (scriptsToSave.length === 0) {
-      console.error('Nessun script da salvare');
+      console.error('[VisualFlowEditor] No scripts to save');
       return { success: false, error: 'Nessun script da salvare' };
     }
 
-    console.log(`📝 Salvataggio di ${scriptsToSave.length} script...`);
+    // Salvataggio di ${scriptsToSave.length} script in corso
 
     try {
       const response = await fetch('http://localhost:3001/api/scripts/saveScript', {
@@ -374,7 +381,7 @@ export const useScriptManagement = ({
       const result = await response.json();
       
       if (result.success) {
-        console.log(`✅ ${scriptsToSave.length} script salvati con successo`);
+        // ${scriptsToSave.length} script salvati con successo
         
         // Reset flag isModified per tutti gli script salvati
         if (openedScripts) {
@@ -385,11 +392,17 @@ export const useScriptManagement = ({
         
         return { success: true };
       } else {
-        console.error('❌ Errore nel salvataggio:', result.error);
+        console.error('[VisualFlowEditor] Save error:', result.error);
+      if (setDropError) {
+        setDropError('Errore durante il salvataggio dello script.');
+      }
         return { success: false, error: result.error };
       }
     } catch (error) {
-      console.error('❌ Errore nella chiamata API:', error);
+      console.error('[VisualFlowEditor] API call error:', error);
+      if (setDropError) {
+        setDropError('Errore nella comunicazione con il server.');
+      }
       return { success: false, error: error instanceof Error ? error.message : String(error) };
     }
   }, [currentScriptBlocks, rootBlocks]);
@@ -425,14 +438,20 @@ export const useScriptManagement = ({
       const result = await response.json();
       
       if (result.success) {
-        console.log('✅ Mission salvata con successo');
+        // Mission salvata con successo
         return { success: true };
       } else {
-        console.error('❌ Errore nel salvataggio della mission:', result.error);
+        console.error('[VisualFlowEditor] Mission save error:', result.error);
+      if (setDropError) {
+        setDropError('Errore durante il salvataggio della mission.');
+      }
         return { success: false, error: result.error };
       }
     } catch (error) {
-      console.error('❌ Errore nella chiamata API:', error);
+      console.error('[VisualFlowEditor] API call error:', error);
+      if (setDropError) {
+        setDropError('Errore nella comunicazione con il server.');
+      }
       return { success: false, error: error instanceof Error ? error.message : String(error) };
     }
   }, [currentScriptBlocks, rootBlocks]);

@@ -50,7 +50,7 @@ export interface ParsedMetacode {
   raw: string;
   start: number;
   end: number;
-  data: any;
+  data: Record<string, any>; // More flexible type for metacode data
 }
 
 export interface MetacodeEditorProps {

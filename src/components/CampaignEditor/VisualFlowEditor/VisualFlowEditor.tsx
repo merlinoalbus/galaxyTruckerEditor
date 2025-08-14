@@ -7,6 +7,8 @@ import { useFullscreen } from '@/contexts/FullscreenContext';
 import type { VisualFlowEditorProps } from '@/types/CampaignEditor/VisualFlowEditor/VisualFlowEditor.types';
 import { useTranslation } from '@/locales';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
+import type { IFlowBlock, ValidationResult, ScriptContext, OpenedScript } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 // Import componenti modulari
 import { BlockRenderer } from './components/BlockRenderer/BlockRenderer';
@@ -55,24 +57,16 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
   const [showJsonView, setShowJsonView] = useState(false);
   
   // Editor state
-  const [currentScriptBlocks, setCurrentScriptBlocks] = useState<any[]>([]);
-  const [validationErrors, setValidationErrors] = useState<{ errors: number; invalidBlocks: string[]; details?: any[] }>({ errors: 0, invalidBlocks: [] });
+  const [currentScriptBlocks, setCurrentScriptBlocks] = useState<IFlowBlock[]>([]);
+  const [validationErrors, setValidationErrors] = useState<ValidationResult>({ errors: 0, invalidBlocks: [] });
   const [dropError, setDropError] = useState<string | null>(null);
   const [showValidationDetails, setShowValidationDetails] = useState(false);
   
   // Multi-script management - tiene traccia di tutti gli script aperti
-  const [openedScripts, setOpenedScripts] = useState<Map<string, {
-    scriptName: string;
-    fileName: string;
-    blocks: any[];
-    isModified: boolean;
-  }>>(new Map());
+  const [openedScripts, setOpenedScripts] = useState<Map<string, OpenedScript>>(new Map());
   
   // Script corrente in visualizzazione (può essere main o sub-script)
-  const [currentScriptContext, setCurrentScriptContext] = useState<{
-    scriptName: string;
-    isSubScript: boolean;
-  } | null>(null);
+  const [currentScriptContext, setCurrentScriptContext] = useState<ScriptContext | null>(null);
   
   // Path di navigazione tra script (diverso da navigationPath che è per zoom interno)
   const [scriptNavigationPath, setScriptNavigationPath] = useState<Array<{
@@ -95,7 +89,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
   // Funzione per navigare a un blocco LABEL
   const goToLabel = useCallback((labelName: string) => {
     // Funzione per trovare il blocco LABEL
-    const findLabelBlock = (blocks: any[], path: any[] = []): { block: any, path: any[] } | null => {
+    const findLabelBlock = (blocks: IFlowBlock[], path: IFlowBlock[] = []): { block: IFlowBlock, path: IFlowBlock[] } | null => {
       for (const block of blocks) {
         if (block.type === 'LABEL' && block.parameters?.name === labelName) {
           return { block, path };
@@ -176,9 +170,11 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
         // Evidenzia temporaneamente il blocco
         element.classList.add('ring-2', 'ring-blue-500', 'ring-offset-2', 'ring-offset-slate-900');
-        setTimeout(() => {
+        const timeoutId = setTimeout(() => {
           element.classList.remove('ring-2', 'ring-blue-500', 'ring-offset-2', 'ring-offset-slate-900');
+          highlightTimeoutsRef.current.delete(timeoutId);
         }, 2000);
+        highlightTimeoutsRef.current.add(timeoutId);
       }
     }
   }, [currentScriptBlocks]);
@@ -236,11 +232,14 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
           
           // Controllo di sicurezza: assicurati che updated sia valido
           if (!updated || !Array.isArray(updated)) {
+            console.error('[VisualFlowEditor] Invalid block update: result is not an array', { updated });
+            setDropError('Errore nell\'aggiornamento dei blocchi: risultato non valido');
             return prev; // Mantieni lo stato precedente se c'è un errore
           }
           
           // Se siamo in modalità zoom, non dovremmo mai avere un array vuoto
           if (updated.length === 0 && isZoomed) {
+            console.warn('[VisualFlowEditor] Attempted to clear blocks while in zoom mode');
             return prev;
           }
           
@@ -249,6 +248,15 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
           
           return updated;
         } catch (error) {
+          // Log dettagliato dell'errore per debugging
+          console.error('[VisualFlowEditor] Error updating blocks:', error);
+          console.error('[VisualFlowEditor] Stack trace:', error instanceof Error ? error.stack : 'N/A');
+          console.error('[VisualFlowEditor] Previous state:', prev);
+          
+          // Feedback all'utente per errori recuperabili
+          const errorMessage = error instanceof Error ? error.message : 'Errore sconosciuto';
+          setDropError(`Errore durante l'aggiornamento: ${errorMessage}`);
+          
           return prev; // Mantieni lo stato precedente in caso di errore
         }
       });
@@ -338,7 +346,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
   }, [loadMission, resetNavigationState]);
 
   // Funzione per navigare a un sub-script - carica un nuovo script mantenendo quello precedente
-  const handleNavigateToSubScript = useCallback(async (scriptName: string, parentBlock: any) => {
+  const handleNavigateToSubScript = useCallback(async (scriptName: string, parentBlock: IFlowBlock) => {
     try {
       // Controlla se lo script è già stato caricato
       let scriptData = openedScripts.get(scriptName);
@@ -362,9 +370,9 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
           blocksToLoad = addUniqueIds(blocksToLoad);
           
           // Aggiungi flag isContainer dove necessario
-          const addContainerFlags = (blocks: any[]): any[] => {
+          const addContainerFlags = (blocks: IFlowBlock[]): IFlowBlock[] => {
             return blocks.map(block => {
-              const newBlock = { ...block };
+              const newBlock = { ...block } as IFlowBlock;
               if (block.children || block.thenBlocks || block.elseBlocks || block.blocksMission || block.blocksFinish) {
                 newBlock.isContainer = true;
               }
@@ -477,10 +485,10 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
       });
       
     } catch (error) {
-      console.error('Errore nel caricamento del sub-script:', error);
+      console.error('[VisualFlowEditor] Error loading sub-script:', error);
       setDropError(`Errore nel caricamento del sub-script: ${scriptName}`);
     }
-  }, [currentScriptBlocks, currentScriptContext, openedScripts, rootBlocks, navigationPath, setNavigationPath, setRootBlocks, setCurrentScriptBlocks, currentScript, isZoomed, resetNavigationState]);
+  }, [currentScriptBlocks, currentScriptContext, openedScripts, rootBlocks, setRootBlocks, setCurrentScriptBlocks, currentScript, isZoomed, resetNavigationState]);
 
   // Funzione per navigare indietro tra script
   const handleNavigateBackToScript = useCallback((targetIndex: number) => {
@@ -541,7 +549,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
         setScriptNavigationPath(prev => prev.slice(0, targetIndex + 1));
       }
     }
-  }, [currentScriptBlocks, rootBlocks, openedScripts, currentScript, resetNavigationState, scriptNavigationPath]);
+  }, [openedScripts, currentScript, resetNavigationState, scriptNavigationPath, setRootBlocks]);
 
   // Estendi sessionData con le label dello script, availableScripts e la funzione di navigazione
   const extendedSessionData = React.useMemo(() => ({
@@ -559,15 +567,60 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
     }
   }, [scriptId, loadScriptWithReset]);
 
-  // Validazione automatica quando cambiano i blocchi o la lingua
-  // NOTA: validateAllBlocks NON è memoizzato, quindi usa sempre la funzione t corrente
+  // Ref per il timeout di debouncing
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Ref per i timeout di highlighting (per evitare memory leak)
+  const highlightTimeoutsRef = useRef<Set<NodeJS.Timeout>>(new Set());
+  
+  // Validazione automatica con debouncing di 300ms e performance monitoring per script >1000 blocchi
   useEffect(() => {
-    const blocksToValidate = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
-    if (blocksToValidate.length > 0) {
-      const validation = validateAllBlocks(blocksToValidate);
-      setValidationErrors(validation);
+    // Cancella timeout precedente per implementare vero debouncing
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
     }
-  }, [currentScriptBlocks, rootBlocks, currentLanguage]); // Solo currentLanguage, NON validateAllBlocks!
+    
+    debounceTimeoutRef.current = setTimeout(() => {
+      const blocksToValidate = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
+      if (blocksToValidate.length > 0) {
+        let validationResult;
+        if (blocksToValidate.length > 1000) {
+          const startTime = performance.now();
+          validationResult = validateAllBlocks(blocksToValidate);
+          const endTime = performance.now();
+          console.log(`[Performance] Validation of ${blocksToValidate.length} blocks took ${(endTime - startTime).toFixed(2)}ms`);
+        } else {
+          validationResult = validateAllBlocks(blocksToValidate);
+        }
+        setValidationErrors(validationResult);
+      } else {
+        setValidationErrors({ errors: 0, invalidBlocks: [] });
+      }
+    }, 300); // Debounce di 300ms come da specifica
+    
+    // Cleanup del timeout
+    return () => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+    };
+  }, [currentScriptBlocks, rootBlocks, currentLanguage]); // validateAllBlocks rimosso per evitare loop
+  
+  // Cleanup al unmount del componente
+  useEffect(() => {
+    return () => {
+      // Cleanup del timeout di debouncing
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+      
+      // Cleanup di tutti i timeout di highlighting
+      highlightTimeoutsRef.current.forEach(timeoutId => {
+        clearTimeout(timeoutId);
+      });
+      highlightTimeoutsRef.current.clear();
+    };
+  }, []);
 
   if (isLoading) {
     return (
@@ -579,7 +632,8 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
   }
 
   return (
-    <div className={`${visualFlowEditorStyles.container} ${isFlowFullscreen ? 'h-full overflow-hidden' : ''}`}>
+    <ErrorBoundary>
+      <div className={`${visualFlowEditorStyles.container} ${isFlowFullscreen ? 'h-full overflow-hidden' : ''}`}>
       <Toolbar
         isFlowFullscreen={isFlowFullscreen}
         toggleFlowFullscreen={toggleFlowFullscreen}
@@ -760,7 +814,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
           onClose={() => setShowValidationDetails(false)}
           onNavigateToBlock={(blockId) => {
             // Cerca il blocco nell'albero e naviga ad esso
-            const findAndNavigate = (blocks: any[], targetId: string, path: any[] = []): boolean => {
+            const findAndNavigate = (blocks: IFlowBlock[], targetId: string, path: IFlowBlock[] = []): boolean => {
               for (const block of blocks) {
                 if (block.id === targetId) {
                   // Se il blocco è in un container zoomato, prima esci dallo zoom
@@ -769,17 +823,21 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
                     handleZoomIn(path[path.length - 1].id);
                   }
                   // Scrolla al blocco dopo un breve delay per permettere il rendering
-                  setTimeout(() => {
+                  const delayTimeoutId = setTimeout(() => {
                     const element = document.querySelector(`[data-block-id="${targetId}"]`);
                     if (element) {
                       element.scrollIntoView({ behavior: 'smooth', block: 'center' });
                       // Aggiungi un'animazione di highlight
                       element.classList.add('ring-4', 'ring-red-500', 'ring-opacity-75');
-                      setTimeout(() => {
+                      const highlightTimeoutId = setTimeout(() => {
                         element.classList.remove('ring-4', 'ring-red-500', 'ring-opacity-75');
+                        highlightTimeoutsRef.current.delete(highlightTimeoutId);
                       }, 2000);
+                      highlightTimeoutsRef.current.add(highlightTimeoutId);
                     }
+                    highlightTimeoutsRef.current.delete(delayTimeoutId);
                   }, 100);
+                  highlightTimeoutsRef.current.add(delayTimeoutId);
                   return true;
                 }
                 
@@ -819,5 +877,6 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
         />
       )}
     </div>
+    </ErrorBoundary>
   );
 };

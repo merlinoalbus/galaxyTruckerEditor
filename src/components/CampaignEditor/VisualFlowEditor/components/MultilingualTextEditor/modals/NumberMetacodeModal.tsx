@@ -114,12 +114,12 @@ export const NumberMetacodeModal: React.FC<NumberMetacodeModalProps> = ({
     }
   };
   
-  const updateQuantifier = (index: number, field: 'threshold' | 'text', value: any) => {
+  const updateQuantifier = (index: number, field: 'threshold' | 'text', value: string | number) => {
     const updated = [...quantifiers];
     if (field === 'threshold') {
-      updated[index].threshold = parseInt(value) || 0;
+      updated[index].threshold = parseInt(String(value)) || 0;
     } else {
-      updated[index].text = value;
+      updated[index].text = String(value);
     }
     setQuantifiers(updated);
   };

@@ -3,9 +3,10 @@ import { FileCode, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { AnchorPoint } from '../../AnchorPoint/AnchorPoint';
 import { InlineZoomControls } from '../../ZoomControls';
 import { useTranslation } from '@/locales';
+import type { IFlowBlock } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 interface ScriptBlockProps {
-  block: any;
+  block: IFlowBlock;
   onUpdateName: (name: string) => void;
   onDragOver: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent) => void;

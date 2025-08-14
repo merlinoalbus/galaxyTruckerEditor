@@ -7,13 +7,14 @@ import { OptBlock } from '../blocks/OptBlock/OptBlock';
 import { MissionBlock } from '../blocks/MissionBlock/MissionBlock';
 import { BuildBlock } from '../blocks/BuildBlock/BuildBlock';
 import { FlightBlock } from '../blocks/FlightBlock/FlightBlock';
+import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 interface BlockRendererProps {
-  block: any;
+  block: IFlowBlock;
   depth?: number;
-  onUpdateBlock: (blockId: string, updates: any) => void;
+  onUpdateBlock: (blockId: string, updates: BlockUpdate) => void;
   onRemoveBlock: (blockId: string) => void;
-  onDragStart: (e: React.DragEvent, block: any) => void;
+  onDragStart: (e: React.DragEvent, block: IFlowBlock) => void;
   onDragOver: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent, containerId: string, containerType: string) => void;
   onDropAtIndex: (e: React.DragEvent, containerId: string, containerType: string, index: number) => void;
@@ -45,7 +46,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
   createDropValidator,
   invalidBlocks = []
 }) => {
-  const updateBlock = useCallback((updates: any) => {
+  const updateBlock = useCallback((updates: BlockUpdate) => {
     onUpdateBlock(block.id, updates);
   }, [block.id, onUpdateBlock]);
 
@@ -59,8 +60,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
   // Determina se questo blocco è il root in zoom (non può essere eliminato)
   const isRootInZoom = isZoomed && depth === 0;
 
-  const renderChildren = useCallback((blocks: any[]) => {
-    return blocks.map((child: any) => (
+  const renderChildren = useCallback((blocks: IFlowBlock[]) => {
+    return blocks.map((child: IFlowBlock) => (
       <BlockRenderer
         key={child.id}
         block={child}

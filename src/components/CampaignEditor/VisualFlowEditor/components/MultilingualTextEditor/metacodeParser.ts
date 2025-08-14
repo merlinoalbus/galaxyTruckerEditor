@@ -5,7 +5,7 @@ export interface ParsedMetacode {
   raw: string;
   start: number;
   end: number;
-  data: any;
+  data: GenderData | NumberData | ImageData | string | null;
   prefix?: string; // Testo prima del metacodice (es: "Giovann" in "Giovann[g(i|a)]")
   extendedRaw?: string; // Forma estesa completa (es: "Giovann[g(i|a)]")
   extendedStart?: number; // Inizio della forma estesa

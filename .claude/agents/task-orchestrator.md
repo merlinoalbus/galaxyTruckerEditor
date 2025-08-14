@@ -20,7 +20,7 @@ Orchestrate multi-agent workflows to:
 
 ### **CORE AGENTS**
 1. **architecture-enforcer**: Structural compliance and patterns
-2. **task-completion-verifier**: Implementation completeness
+2. **galaxy-task-validator**: Implementation completeness
 3. **health-monitor**: Overall project health metrics
 
 ### **SPECIALIZED AGENTS**
@@ -70,7 +70,7 @@ Phase 3: [Final validation agents]
 
 ### **NEW FEATURE IMPLEMENTATION**
 ```
-Agents: architecture-enforcer → task-completion-verifier → code-quality-analyzer → documentation-keeper
+Agents: architecture-enforcer → galaxy-task-validator → code-quality-analyzer → documentation-keeper
 Focus: Ensure feature follows patterns and is complete
 ```
 
