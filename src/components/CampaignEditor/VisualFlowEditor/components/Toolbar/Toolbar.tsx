@@ -4,6 +4,7 @@ import { visualFlowEditorStyles } from '@/styles/CampaignEditor/VisualFlowEditor
 import { NavigationBreadcrumb } from '../NavigationBreadcrumb';
 import { NavigationPathItem } from '@/hooks/CampaignEditor/VisualFlowEditor/useZoomNavigation';
 import { useTranslation } from '@/locales';
+import type { ScriptData } from '../ScriptsList/ScriptsList.types';
 
 interface ToolbarProps {
   isFlowFullscreen: boolean;
@@ -15,7 +16,7 @@ interface ToolbarProps {
   showJsonView: boolean;
   setShowJsonView: (show: boolean) => void;
   handleNewScript: () => void;
-  currentScript: any;
+  currentScript: ScriptData | null;
   isZoomed: boolean;
   onZoomOut: (targetLevel?: number) => void;
   /** Path di navigazione utilizzato dal componente NavigationBreadcrumb */

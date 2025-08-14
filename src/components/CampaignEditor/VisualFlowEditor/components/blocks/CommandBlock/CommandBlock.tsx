@@ -6,16 +6,17 @@ import { MultilingualTextEditor } from '../../MultilingualTextEditor';
 import { getBlockClassName } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
 import { useTranslation } from '@/locales';
 import { useLanguage } from '@/contexts/LanguageContext';
+import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 interface CommandBlockProps {
-  block: any;
-  onUpdate: (updates: any) => void;
+  block: IFlowBlock;
+  onUpdate: (updates: BlockUpdate) => void;
   onRemove?: () => void;
   onDragStart: (e: React.DragEvent) => void;
   sessionData?: any;
   isInvalid?: boolean;
   onGoToLabel?: (labelName: string) => void;
-  onNavigateToSubScript?: (scriptName: string, parentBlock: any) => void;
+  onNavigateToSubScript?: (scriptName: string, parentBlock: IFlowBlock) => void;
 }
 
 export const CommandBlock: React.FC<CommandBlockProps> = ({
@@ -37,25 +38,27 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   
   // Auto-collapse se lo spazio è insufficiente (ma non se l'utente ha espanso manualmente)
   useEffect(() => {
-    const checkSpace = () => {
-      if (containerRef.current && !isCollapsed && !isManuallyExpanded) {
-        const container = containerRef.current;
-        const width = container.offsetWidth;
-        
-        // Calcola lo spazio minimo necessario per CommandBlock
-        // Icon(40px) + Label(80px) + padding(60px) = ~180px minimo
-        const minRequiredWidth = 300;
-        
-        // Se larghezza insufficiente, collapse automaticamente
-        if (width < minRequiredWidth) {
-          setIsCollapsed(true);
+    const resizeObserver = new ResizeObserver((entries) => {
+      // Throttle con requestAnimationFrame per evitare DOM reads troppo frequenti
+      requestAnimationFrame(() => {
+        for (const entry of entries) {
+          const { width } = entry.contentRect;
+          
+          // Solo auto-collapse se non è stato espanso manualmente e non è già collapsed
+          if (!isManuallyExpanded && !isCollapsed) {
+            // Calcola lo spazio minimo necessario per CommandBlock
+            // Icon(40px) + Label(80px) + padding(60px) = ~180px minimo
+            const minRequiredWidth = 300;
+            
+            // Se larghezza insufficiente, collapse automaticamente
+            if (width < minRequiredWidth) {
+              setIsCollapsed(true);
+            }
+          }
         }
-      }
-    };
+      });
+    });
     
-    checkSpace();
-    // Ricontrolla quando il container viene ridimensionato
-    const resizeObserver = new ResizeObserver(checkSpace);
     if (containerRef.current) {
       resizeObserver.observe(containerRef.current);
     }
@@ -63,7 +66,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
     return () => {
       resizeObserver.disconnect();
     };
-  }, [isCollapsed, isManuallyExpanded]);
+  }, [isManuallyExpanded]); // Rimuovo isCollapsed dalle dipendenze per evitare loop
   const renderParameters = () => {
     switch (block.type) {
       case 'SAY':
@@ -137,7 +140,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  onGoToLabel(block.parameters.label);
+                  if (block.parameters?.label) onGoToLabel(block.parameters.label);
                 }}
                 className="p-1.5 bg-slate-700 hover:bg-slate-600 rounded text-white transition-colors"
                 title={t('visualFlowEditor.blocks.go.goToLabel')}
@@ -156,7 +159,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
             </label>
             <SelectWithModal
               type="label"
-              value={block.parameters?.name || ''}
+              value={(block.parameters?.name as string) || ''}
               onChange={(value) => {
                 // Rimuovi spazi dal nome
                 const cleanedValue = value.replace(/\s+/g, '');
@@ -289,7 +292,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    onGoToLabel(block.parameters.label);
+                    if (block.parameters?.label) onGoToLabel(block.parameters.label);
                   }}
                   className="p-1 bg-slate-700 hover:bg-slate-600 rounded text-white transition-colors"
                   title={t('visualFlowEditor.blocks.go.goToLabel')}

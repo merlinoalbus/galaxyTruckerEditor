@@ -229,7 +229,7 @@ export const MetacodeEditor: React.FC<MetacodeEditorProps> = ({
           }}
           onInsert={handleModalInsert}
           availableImages={availableImages}
-          existingData={editingMetacode?.data}
+          existingData={editingMetacode?.data as { path: string; multiplier?: string } | undefined}
         />
       )}
     </div>

@@ -6,6 +6,7 @@ import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
 import { OptType } from '@/types/CampaignEditor/VisualFlowEditor/BlockTypes';
 import { useTranslation } from '@/locales';
 import { useLanguage } from '@/contexts/LanguageContext';
+import type { IFlowBlock, BlockUpdate, SessionData } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 const getOptTypes = (t: any) => [
   { value: 'OPT_SIMPLE', label: t('visualFlowEditor.opt.simple'), icon: '⭕' },
@@ -14,19 +15,19 @@ const getOptTypes = (t: any) => [
 ];
 
 interface OptBlockProps {
-  block: any;
-  onUpdate: (updates: any) => void;
+  block: IFlowBlock;
+  onUpdate: (updates: BlockUpdate) => void;
   onRemove?: () => void;
   onDragStart: (e: React.DragEvent) => void;
   onDragOver: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent) => void;
   onDropAtIndex: (e: React.DragEvent, index: number) => void;
-  renderChildren: (blocks: any[]) => React.ReactNode;
+  renderChildren: (blocks: IFlowBlock[]) => React.ReactNode;
   isDragActive?: boolean;
   onZoomIn?: () => void;
   onZoomOut?: () => void;
   isZoomed?: boolean;
-  sessionData?: any;
+  sessionData?: SessionData;
   isInvalid?: boolean;
 }
 
@@ -230,7 +231,7 @@ export const OptBlock: React.FC<OptBlockProps> = ({
             {/* Editor testo multilingua */}
             <div>
               <MultilingualTextEditor
-                value={block.text || { EN: '', CS: null, DE: null, ES: null, FR: null, PL: null, RU: null }}
+                value={(typeof block.text === 'object' ? block.text : {}) as Record<string, string>}
                 onChange={(text) => onUpdate({ text })}
                 placeholder={t('visualFlowEditor.opt.optionText')}
                 label={t('visualFlowEditor.opt.optionTextLabel')}

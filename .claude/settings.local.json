@@ -25,10 +25,16 @@
       "Bash(restartBE)",
       "Bash(./scripts/restart-be.sh:*)",
       "Bash(git add:*)",
-      "Bash(bash:*)"
+      "Bash(bash:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(timeout 15s npm start)",
+      "Bash(timeout 240 npm run build)"
     ],
     "deny": [],
-    "defaultMode": "acceptEdits"
+    "defaultMode": "acceptEdits",
+    "additionalDirectories": [
+      "C:\\d C:\\Users\\rober\\OneDrive\\Documenti\\Repository"
+    ]
   },
   "commands": {
     "startBE": {

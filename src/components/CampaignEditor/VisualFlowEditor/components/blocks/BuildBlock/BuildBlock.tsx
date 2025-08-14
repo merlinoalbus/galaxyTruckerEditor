@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { AnchorPoint } from '../../AnchorPoint/AnchorPoint';
 import { ContainerBlock } from '../ContainerBlock/ContainerBlock';
 import { useTranslation } from '@/locales';
+import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 interface BuildBlockProps {
-  block: any;
-  onUpdate: (updates: any) => void;
+  block: IFlowBlock;
+  onUpdate: (updates: BlockUpdate) => void;
   onRemove?: () => void;
   onDragStart: (e: React.DragEvent) => void;
   onDragOver: (e: React.DragEvent) => void;
@@ -13,7 +14,7 @@ interface BuildBlockProps {
   onDropStart: (e: React.DragEvent) => void;
   onDropInitAtIndex: (e: React.DragEvent, index: number) => void;
   onDropStartAtIndex: (e: React.DragEvent, index: number) => void;
-  renderChildren: (blocks: any[]) => React.ReactNode;
+  renderChildren: (blocks: IFlowBlock[]) => React.ReactNode;
   isDragActive?: boolean;
   onZoomIn?: () => void;
   onZoomOut?: () => void;

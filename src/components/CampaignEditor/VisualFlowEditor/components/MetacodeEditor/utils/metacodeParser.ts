@@ -43,7 +43,7 @@ export function parseMetacode(text: string): ParsedMetacode[] {
       data: {
         male: match[1],
         female: match[2],
-        neutral: match[4] || null
+        neutral: match[4] || ''
       }
     });
   }

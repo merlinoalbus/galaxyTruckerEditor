@@ -1,5 +1,7 @@
 // Interfacce per il componente ScriptsList e gestione script
 
+import type { IFlowBlock } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
+
 export interface ScriptItem {
   id: string;
   name: string;
@@ -10,7 +12,7 @@ export interface ScriptData {
   name: string;
   fileName: string;
   language: string;
-  blocks: any[];
+  blocks: IFlowBlock[];
   metadata: {
     blockCount: number;
     commandCount: number;
