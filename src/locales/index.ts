@@ -897,9 +897,11 @@ export type TranslationKey =
   | 'visualFlowEditor.blocks.showDlgScene.title'
   | 'visualFlowEditor.blocks.showDlgScene.description'
   | 'visualFlowEditor.blocks.showDlgScene.compact'
+  | 'visualFlowEditor.blocks.showDlgScene.fullDescription'
   | 'visualFlowEditor.blocks.hideDlgScene.title'
   | 'visualFlowEditor.blocks.hideDlgScene.description'
   | 'visualFlowEditor.blocks.hideDlgScene.compact'
+  | 'visualFlowEditor.blocks.hideDlgScene.fullDescription'
   
   // Visual Flow Editor - Tool Descriptions
   | 'visualFlowEditor.tools.delay.description'

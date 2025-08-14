@@ -176,6 +176,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.hideDlgScene.title': 'Dialogszene ausblenden',
   'visualFlowEditor.blocks.hideDlgScene.description': 'Blendet das aktuelle Dialogfenster aus',
   'visualFlowEditor.blocks.hideDlgScene.compact': 'Szene ausblenden',
+  'visualFlowEditor.blocks.showDlgScene.fullDescription': 'Dialogszene anzeigen. Dieser Befehl öffnet eine Dialogszene, in der Charaktere angezeigt und Gespräche geführt werden können. Verwende ihn vor SAY, ASK oder charakterbezogenen Befehlen.',
+  'visualFlowEditor.blocks.hideDlgScene.fullDescription': 'Dialogszene ausblenden. Dieser Befehl schließt die aktuelle Dialogszene und versteckt alle sichtbaren Charaktere. Verwende ihn, wenn du eine Gesprächssequenz beenden möchtest.',
   
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Validierungsfehler',
@@ -240,6 +242,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askMustBeFollowedByMenu': 'ASK-Block muss von einem MENU-Block gefolgt werden. Wenn ASK innerhalb eines IF ist, kann MENU im selben Zweig oder außerhalb des IF sein.',
   'visualFlowEditor.validation.askWithoutMenu': 'ASK-Block muss von einem MENU-Block gefolgt werden. Dieser ASK ist der letzte Block und hat kein folgendes MENU.',
   'visualFlowEditor.validation.goWithoutLabel': 'Der GO-Block erfordert mindestens einen LABEL-Block im Skript. Fügen Sie einen LABEL-Block hinzu, bevor Sie GO verwenden.',
+  
+  // Scene Dialog Validation Messages
+  'visualFlowEditor.validation.dialogOutsideScene': '{blockType}-Block kann nur innerhalb einer Dialogszene verwendet werden. Fügen Sie einen SHOWDLGSCENE-Block hinzu, bevor Sie {blockType} verwenden.',
+  'visualFlowEditor.validation.characterOutsideScene': '{blockType}-Block kann nur innerhalb einer Dialogszene verwendet werden. Fügen Sie einen SHOWDLGSCENE-Block hinzu, bevor Sie {blockType} verwenden.',
+  'visualFlowEditor.validation.hideSceneWithoutShow': 'HIDEDLGSCENE-Block kann nur verwendet werden, wenn eine aktive Dialogszene vorhanden ist. Fügen Sie einen SHOWDLGSCENE-Block hinzu, bevor Sie HIDEDLGSCENE verwenden.',
   
   // Error Modal
   'visualFlowEditor.errorModal.close': 'Schließen',

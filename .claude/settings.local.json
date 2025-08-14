@@ -38,7 +38,10 @@
       "Bash(rg:*)",
       "Bash(rm:*)",
       "Bash(npm test:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(for lang in de es fr pl cs ru)",
+      "Bash(do echo \"=== $lang ===\")",
+      "Bash(done)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",

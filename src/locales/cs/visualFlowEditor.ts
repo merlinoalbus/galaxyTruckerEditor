@@ -176,6 +176,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.hideDlgScene.title': 'Skrýt dialogovou scénu',
   'visualFlowEditor.blocks.hideDlgScene.description': 'Skryje aktuální dialogové okno',
   'visualFlowEditor.blocks.hideDlgScene.compact': 'Skrýt scénu',
+  'visualFlowEditor.blocks.showDlgScene.fullDescription': 'Zobrazit Dialogovou Scénu. Tento příkaz otevře dialogovou scénu, kde mohou být zobrazeny postavy a mohou probíhat rozhovory. Použijte jej před SAY, ASK nebo příkazy související s postavami.',
+  'visualFlowEditor.blocks.hideDlgScene.fullDescription': 'Skrýt Dialogovou Scénu. Tento příkaz zavře aktuální dialogovou scénu a skryje všechny viditelné postavy. Použijte jej, když chcete ukončit sekvenci rozhovoru.',
   
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Chyba validace',
@@ -240,6 +242,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askMustBeFollowedByMenu': 'Blok ASK musí být následován blokem MENU. Pokud je ASK uvnitř IF, MENU může být ve stejné větvi nebo mimo IF.',
   'visualFlowEditor.validation.askWithoutMenu': 'Blok ASK musí být následován blokem MENU. Tento ASK je posledním blokem a nemá následující MENU.',
   'visualFlowEditor.validation.goWithoutLabel': 'Blok GO vyžaduje alespoň jeden blok LABEL ve skriptu. Přidejte blok LABEL před použitím GO.',
+  
+  // Scene Dialog Validation Messages
+  'visualFlowEditor.validation.dialogOutsideScene': 'Blok {blockType} lze použít pouze uvnitř dialogové scény. Přidejte blok SHOWDLGSCENE před použitím {blockType}.',
+  'visualFlowEditor.validation.characterOutsideScene': 'Blok {blockType} lze použít pouze uvnitř dialogové scény. Přidejte blok SHOWDLGSCENE před použitím {blockType}.',
+  'visualFlowEditor.validation.hideSceneWithoutShow': 'Blok HIDEDLGSCENE lze použít pouze když je aktivní dialogová scéna. Přidejte blok SHOWDLGSCENE před použitím HIDEDLGSCENE.',
   
   // Error Modal
   'visualFlowEditor.errorModal.close': 'Zavřít',

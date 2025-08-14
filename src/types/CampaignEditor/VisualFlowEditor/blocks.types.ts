@@ -47,6 +47,8 @@ export type BlockType =
   | 'SCRIPT' | 'MISSION'
   // Text/Dialog
   | 'TEXT' | 'SAY' | 'ASK'
+  // Dialog Scene
+  | 'SHOWDLGSCENE' | 'HIDEDLGSCENE'
   // Menu/Options
   | 'MENU' | 'OPT' | 'EXIT_MENU' 
   // Flow Control

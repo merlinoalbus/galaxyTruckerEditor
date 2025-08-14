@@ -179,9 +179,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.showDlgScene.title': 'Mostra Scena Dialogo',
   'visualFlowEditor.blocks.showDlgScene.description': 'Mostra la finestra di dialogo per visualizzare personaggi e conversazioni',
   'visualFlowEditor.blocks.showDlgScene.compact': 'Mostra scena',
+  'visualFlowEditor.blocks.showDlgScene.fullDescription': 'Mostra Scena Dialogo. Questo comando apre una scena di dialogo dove i personaggi possono essere visualizzati e le conversazioni possono aver luogo. Usalo prima di SAY, ASK o comandi relativi ai personaggi.',
   'visualFlowEditor.blocks.hideDlgScene.title': 'Nascondi Scena Dialogo',
   'visualFlowEditor.blocks.hideDlgScene.description': 'Nasconde la finestra di dialogo corrente',
   'visualFlowEditor.blocks.hideDlgScene.compact': 'Nascondi scena',
+  'visualFlowEditor.blocks.hideDlgScene.fullDescription': 'Nasconde Scena Dialogo. Questo comando chiude la scena di dialogo corrente e nasconde tutti i personaggi visibili. Usalo quando vuoi terminare una sequenza di conversazione.',
   
   // Validation Error Messages (existing and new)
   'visualFlowEditor.validation.error': 'Errore di validazione',
@@ -235,6 +237,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.menuWithoutOpt': 'Il blocco MENU non può essere vuoto. Aggiungi almeno un blocco OPT al MENU.',
   'visualFlowEditor.validation.menuNoSimpleOpt': 'Il blocco MENU deve contenere almeno un blocco OPT semplice (senza condizioni).',
   'visualFlowEditor.validation.askMustBeFollowedByMenu': 'Il blocco ASK deve essere seguito da un blocco MENU. Se l\'ASK è dentro un IF, il MENU può essere nel ramo stesso o fuori dall\'IF.',
+  
+  // Scene Dialog Validation Messages
+  'visualFlowEditor.validation.dialogOutsideScene': 'Il blocco {blockType} può essere utilizzato solo all\'interno di una scena di dialogo. Aggiungi un blocco SHOWDLGSCENE prima di usare {blockType}.',
+  'visualFlowEditor.validation.characterOutsideScene': 'Il blocco {blockType} può essere utilizzato solo all\'interno di una scena di dialogo. Aggiungi un blocco SHOWDLGSCENE prima di usare {blockType}.',
+  'visualFlowEditor.validation.hideSceneWithoutShow': 'Il blocco HIDEDLGSCENE può essere utilizzato solo quando c\'è una scena di dialogo attiva. Aggiungi un blocco SHOWDLGSCENE prima di usare HIDEDLGSCENE.',
   'visualFlowEditor.validation.askWithoutMenu': 'Il blocco ASK deve essere seguito da un blocco MENU. Questo ASK è l\'ultimo blocco e non ha un MENU seguente.',
   'visualFlowEditor.validation.goWithoutLabel': 'Il blocco GO richiede almeno un blocco LABEL nello script. Aggiungi un blocco LABEL prima di usare GO.',
   

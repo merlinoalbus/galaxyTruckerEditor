@@ -176,6 +176,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.hideDlgScene.title': 'Ukryj Scenę Dialogu',
   'visualFlowEditor.blocks.hideDlgScene.description': 'Ukrywa scenę dialogu',
   'visualFlowEditor.blocks.hideDlgScene.compact': 'Ukryj scenę',
+  'visualFlowEditor.blocks.showDlgScene.fullDescription': 'Pokaż Scenę Dialogową. To polecenie otwiera scenę dialogową, w której mogą być wyświetlane postacie i mogą toczyć się rozmowy. Użyj tego przed SAY, ASK lub poleceniami związanymi z postaciami.',
+  'visualFlowEditor.blocks.hideDlgScene.fullDescription': 'Ukryj Scenę Dialogową. To polecenie zamyka bieżącą scenę dialogową i ukrywa wszystkie widoczne postacie. Użyj tego, gdy chcesz zakończyć sekwencję rozmowy.',
   
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Błąd walidacji',
@@ -240,6 +242,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askMustBeFollowedByMenu': 'Blok ASK musi być śledzony przez blok MENU. Jeśli ASK jest wewnątrz IF, MENU może być w tej samej gałęzi lub na zewnątrz IF.',
   'visualFlowEditor.validation.askWithoutMenu': 'Blok ASK musi być śledzony przez blok MENU. Ten ASK jest ostatnim blokiem i nie ma następującego MENU.',
   'visualFlowEditor.validation.goWithoutLabel': 'Blok GO wymaga co najmniej jednego bloku LABEL w skrypcie. Dodaj blok LABEL przed użyciem GO.',
+  
+  // Scene Dialog Validation Messages
+  'visualFlowEditor.validation.dialogOutsideScene': 'Blok {blockType} może być używany tylko w obrębie sceny dialogowej. Dodaj blok SHOWDLGSCENE przed użyciem {blockType}.',
+  'visualFlowEditor.validation.characterOutsideScene': 'Blok {blockType} może być używany tylko w obrębie sceny dialogowej. Dodaj blok SHOWDLGSCENE przed użyciem {blockType}.',
+  'visualFlowEditor.validation.hideSceneWithoutShow': 'Blok HIDEDLGSCENE może być używany tylko gdy istnieje aktywna scena dialogowa. Dodaj blok SHOWDLGSCENE przed użyciem HIDEDLGSCENE.',
   
   // Error Modal
   'visualFlowEditor.errorModal.close': 'Zamknij',

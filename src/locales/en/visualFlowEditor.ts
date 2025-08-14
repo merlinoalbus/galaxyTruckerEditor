@@ -179,9 +179,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.showDlgScene.title': 'Show Dialog Scene',
   'visualFlowEditor.blocks.showDlgScene.description': 'Shows the dialog window for displaying characters and conversations',
   'visualFlowEditor.blocks.showDlgScene.compact': 'Show scene',
+  'visualFlowEditor.blocks.showDlgScene.fullDescription': 'Show Dialog Scene. This command opens a dialog scene where characters can be displayed and conversations can take place. Use this before SAY, ASK, or character-related commands.',
   'visualFlowEditor.blocks.hideDlgScene.title': 'Hide Dialog Scene',
   'visualFlowEditor.blocks.hideDlgScene.description': 'Hides the current dialog window',
   'visualFlowEditor.blocks.hideDlgScene.compact': 'Hide scene',
+  'visualFlowEditor.blocks.hideDlgScene.fullDescription': 'Hide Dialog Scene. This command closes the current dialog scene and hides all visible characters. Use this when you want to end a conversation sequence.',
   
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Validation error',
@@ -217,6 +219,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.menuFirstBlock': 'The MENU is the first block in the script. It must be preceded by at least one ASK block.',
   'visualFlowEditor.validation.optOnlyInMenu': 'The OPT block can only be inserted inside a MENU block.',
   'visualFlowEditor.validation.onlyOptInMenu': 'The {blockType} block cannot be inserted in a MENU. Only OPT blocks are allowed.',
+  
+  // Scene Dialog Validation Messages
+  'visualFlowEditor.validation.dialogOutsideScene': '{blockType} block can only be used inside a dialog scene. Add a SHOWDLGSCENE block before using {blockType}.',
+  'visualFlowEditor.validation.characterOutsideScene': '{blockType} block can only be used inside a dialog scene. Add a SHOWDLGSCENE block before using {blockType}.',
+  'visualFlowEditor.validation.hideSceneWithoutShow': 'HIDEDLGSCENE block can only be used when there is an active dialog scene. Add a SHOWDLGSCENE block before using HIDEDLGSCENE.',
   'visualFlowEditor.addBlock': 'Add Block',
   'visualFlowEditor.deleteBlock': 'Delete Block',
   'visualFlowEditor.moveUp': 'Move Up',

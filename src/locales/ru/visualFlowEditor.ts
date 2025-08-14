@@ -176,6 +176,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.hideDlgScene.title': 'Скрыть Сцену Диалога',
   'visualFlowEditor.blocks.hideDlgScene.description': 'Скрывает сцену диалога',
   'visualFlowEditor.blocks.hideDlgScene.compact': 'Скрыть сцену',
+  'visualFlowEditor.blocks.showDlgScene.fullDescription': 'Показать Сцену Диалога. Эта команда открывает сцену диалога, где могут быть показаны персонажи и могут происходить разговоры. Используйте ее перед SAY, ASK или командами, связанными с персонажами.',
+  'visualFlowEditor.blocks.hideDlgScene.fullDescription': 'Скрыть Сцену Диалога. Эта команда закрывает текущую сцену диалога и скрывает всех видимых персонажей. Используйте ее, когда хотите завершить последовательность разговоров.',
   
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Ошибка валидации',
@@ -240,6 +242,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askMustBeFollowedByMenu': 'Блок ASK должен следоваться блоком MENU. Если ASK внутри IF, MENU может быть в той же ветке или вне IF.',
   'visualFlowEditor.validation.askWithoutMenu': 'Блок ASK должен следоваться блоком MENU. Этот ASK является последним блоком и не имеет следующего MENU.',
   'visualFlowEditor.validation.goWithoutLabel': 'Блок GO требует наличия хотя бы одного блока LABEL в скрипте. Добавьте блок LABEL перед использованием GO.',
+  
+  // Scene Dialog Validation Messages
+  'visualFlowEditor.validation.dialogOutsideScene': 'Блок {blockType} можно использовать только внутри сцены диалога. Добавьте блок SHOWDLGSCENE перед использованием {blockType}.',
+  'visualFlowEditor.validation.characterOutsideScene': 'Блок {blockType} можно использовать только внутри сцены диалога. Добавьте блок SHOWDLGSCENE перед использованием {blockType}.',
+  'visualFlowEditor.validation.hideSceneWithoutShow': 'Блок HIDEDLGSCENE можно использовать только когда есть активная сцена диалога. Добавьте блок SHOWDLGSCENE перед использованием HIDEDLGSCENE.',
   
   // Error Modal
   'visualFlowEditor.errorModal.close': 'Закрыть',

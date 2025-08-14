@@ -10,6 +10,7 @@ import { validateMenuInsertion, validateOptInsertion, validateMenuContent, canIn
 import { blockEndsWithAsk } from './blockValidators';
 import { validateGoInsertion, hasLabelInScript } from './goValidation';
 import { validateBlockParameters } from './parameterValidation';
+import { isValidInDialogContext } from './sceneValidation';
 
 /**
  * Valida l'inserimento di un blocco in una posizione specifica
@@ -78,8 +79,51 @@ export const validateBlockInsertion = (
 };
 
 /**
+ * Crea una lista flat di tutti i blocchi nell'ordine di esecuzione
+ * Considera la struttura annidata: IF (then/else), MENU (opts), BUILD/FLIGHT/MISSION (init/start/evaluate)
+ * 
+ * @param blocks - Array di blocchi da elaborare
+ * @returns Array flat di tutti i blocchi nell'ordine
+ */
+const createFlatBlockList = (blocks: any[]): any[] => {
+  const flatBlocks: any[] = [];
+  
+  const addBlocksRecursively = (blocks: any[]): void => {
+    blocks.forEach(block => {
+      flatBlocks.push(block);
+      
+      // Aggiungi blocchi figli in base al tipo
+      if (block.type === 'IF') {
+        if (block.thenBlocks) addBlocksRecursively(block.thenBlocks);
+        if (block.elseBlocks) addBlocksRecursively(block.elseBlocks);
+      } else if (block.type === 'MENU' && block.children) {
+        addBlocksRecursively(block.children);
+      } else if (block.type === 'OPT' && block.children) {
+        addBlocksRecursively(block.children);
+      } else if (block.type === 'BUILD') {
+        if (block.blockInit) addBlocksRecursively(block.blockInit);
+        if (block.blockStart) addBlocksRecursively(block.blockStart);
+      } else if (block.type === 'FLIGHT') {
+        if (block.blockInit) addBlocksRecursively(block.blockInit);
+        if (block.blockStart) addBlocksRecursively(block.blockStart);
+        if (block.blockEvaluate) addBlocksRecursively(block.blockEvaluate);
+      } else if (block.type === 'MISSION') {
+        if (block.blocksMission) addBlocksRecursively(block.blocksMission);
+        if (block.blocksFinish) addBlocksRecursively(block.blocksFinish);
+      } else if (block.children) {
+        addBlocksRecursively(block.children);
+      }
+    });
+  };
+  
+  addBlocksRecursively(blocks);
+  return flatBlocks;
+};
+
+/**
  * Valida tutti i blocchi esistenti e conta gli errori
  * Esegue una validazione completa ricorsiva su tutto l'albero dei blocchi
+ * CORRETTO: Ora analizza ricorsivamente TUTTI i blocchi inclusi quelli annidati
  * 
  * @param blocks - Array di blocchi da validare
  * @returns Oggetto con numero di errori, blocchi invalidi e dettagli errori
@@ -88,6 +132,24 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string): { er
   let errors = 0;
   const invalidBlocks: string[] = [];
   const errorDetails: any[] = [];
+  
+  // CORREZIONE CRITICA: Crea una lista flat di TUTTI i blocchi per analisi corretta
+  const scriptBlock = blocks.find(b => b.type === 'SCRIPT');
+  const missionBlock = blocks.find(b => b.type === 'MISSION');
+  
+  let allFlatBlocks: any[] = [];
+  if (scriptBlock && scriptBlock.children) {
+    allFlatBlocks = createFlatBlockList(scriptBlock.children);
+  } else if (missionBlock) {
+    if (missionBlock.blocksMission) {
+      allFlatBlocks = allFlatBlocks.concat(createFlatBlockList(missionBlock.blocksMission));
+    }
+    if (missionBlock.blocksFinish) {
+      allFlatBlocks = allFlatBlocks.concat(createFlatBlockList(missionBlock.blocksFinish));
+    }
+  } else {
+    allFlatBlocks = createFlatBlockList(blocks);
+  }
   
   const validateRecursive = (blocks: any[], parentBlock?: any, allRootBlocks?: any[], path: string[] = []): void => {
     blocks.forEach((block, index) => {
@@ -403,6 +465,41 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string): { er
         }
       }
       
+      // NUOVA VALIDAZIONE: Controlli per scene di dialogo - USA LA LISTA FLAT CORRETTA
+      if (!isValidInDialogContext(block, allFlatBlocks)) {
+        errors++;
+        invalidBlocks.push(block.id);
+        
+        let errorType = '';
+        let message = '';
+        
+        if (block.type === 'SAY' || block.type === 'ASK') {
+          errorType = 'DIALOG_OUTSIDE_SCENE';
+          message = t ? 
+            t('visualFlowEditor.validation.dialogOutsideScene').replace('{blockType}', block.type)
+            : `${block.type} block can only be used inside a dialog scene. Add a SHOWDLGSCENE block before using ${block.type}.`;
+        } else if (block.type === 'SHOWCHAR' || block.type === 'HIDECHAR' || block.type === 'CHANGECHAR' || 
+                   block.type === 'SAYCHAR' || block.type === 'ASKCHAR' || block.type === 'FOCUSCHAR') {
+          errorType = 'CHARACTER_OUTSIDE_SCENE';
+          message = t ? 
+            t('visualFlowEditor.validation.characterOutsideScene').replace('{blockType}', block.type)
+            : `${block.type} block can only be used inside a dialog scene. Add a SHOWDLGSCENE block before using ${block.type}.`;
+        } else if (block.type === 'HIDEDLGSCENE') {
+          errorType = 'HIDE_SCENE_WITHOUT_SHOW';
+          message = t ? 
+            t('visualFlowEditor.validation.hideSceneWithoutShow')
+            : 'HIDEDLGSCENE block can only be used when there is an active dialog scene. Add a SHOWDLGSCENE block before using HIDEDLGSCENE.';
+        }
+        
+        errorDetails.push({
+          blockId: block.id,
+          blockType: block.type,
+          errorType: errorType,
+          message: message,
+          path: [...path]
+        });
+      }
+      
       // NUOVA VALIDAZIONE: MENU non può essere senza OPT
       if (block.type === 'MENU') {
         if (!block.children || block.children.length === 0) {
@@ -528,8 +625,7 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string): { er
   };
   
   // Inizia la validazione dal blocco principale (SCRIPT o MISSION)
-  const scriptBlock = blocks.find(b => b.type === 'SCRIPT');
-  const missionBlock = blocks.find(b => b.type === 'MISSION');
+  // scriptBlock e missionBlock già dichiarati sopra alle righe 137-138
   
   if (scriptBlock && scriptBlock.children) {
     validateRecursive(scriptBlock.children, scriptBlock, blocks);
