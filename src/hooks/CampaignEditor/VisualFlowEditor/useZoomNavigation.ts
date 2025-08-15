@@ -135,7 +135,10 @@ export const useZoomNavigation = ({
       const currentZoomPath = [...navigationPath];
       
       // Controlla se lo script è già stato caricato
+      console.log('[handleNavigateToSubScript] Looking for script:', scriptName);
+      console.log('[handleNavigateToSubScript] Current openedScripts:', Array.from(openedScripts.keys()));
       let scriptData = openedScripts.get(scriptName);
+      console.log('[handleNavigateToSubScript] Script found in cache:', !!scriptData);
       
       if (!scriptData) {
         // Carica lo script via API solo se non è già in cache
@@ -174,47 +177,78 @@ export const useZoomNavigation = ({
           
           // Salva lo script nella mappa degli script aperti
           scriptData = {
-            scriptName: result.data.name || scriptName,
+            scriptName: scriptName,  // Usa sempre scriptName come chiave consistente
             fileName: result.data.fileName || scriptName,
             blocks: blocksToLoad,
             isModified: false
           };
-          setOpenedScripts(new Map(openedScripts).set(scriptName, scriptData));
+          const updatedScripts = new Map(openedScripts);
+          updatedScripts.set(scriptName, scriptData);  // Usa scriptName come chiave
+          console.log('[handleNavigateToSubScript] Saving script:', scriptName);
+          console.log('[handleNavigateToSubScript] Updated scripts map:', Array.from(updatedScripts.keys()));
+          
+          // Salva lo stato corrente dello script USANDO LA MAPPA GIÀ AGGIORNATA
+          const blocksToSave = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
+          
+          if (currentScriptContext && currentScriptContext.isSubScript) {
+            // Salva i blocchi correnti del sub-script
+            const current = updatedScripts.get(currentScriptContext.scriptName);
+            if (current) {
+              current.blocks = blocksToSave;
+              current.isModified = true;
+            }
+          } else {
+            // Salva lo script principale
+            const scriptNameToSave = currentScriptContext?.scriptName || currentScript?.name || 'main';
+            
+            if (updatedScripts.has(scriptNameToSave)) {
+              const existing = updatedScripts.get(scriptNameToSave)!;
+              existing.blocks = blocksToSave;
+              existing.isModified = true;
+            } else {
+              updatedScripts.set(scriptNameToSave, {
+                scriptName: scriptNameToSave,
+                fileName: currentScript?.fileName || scriptNameToSave + '.txt',
+                blocks: blocksToSave,
+                isModified: true
+              });
+            }
+          }
+          
+          // Salva la mappa aggiornata UNA SOLA VOLTA
+          setOpenedScripts(updatedScripts);
         } else {
           throw new Error('Nessun dato ricevuto dal server');
         }
-      }
-      
-      // Salva lo stato corrente dello script
-      const blocksToSave = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
-      
-      if (currentScriptContext && currentScriptContext.isSubScript) {
-        // Salva i blocchi correnti del sub-script
-        const updated = new Map(openedScripts);
-        const current = updated.get(currentScriptContext.scriptName);
-        if (current) {
-          current.blocks = blocksToSave;
-          current.isModified = true;
-        }
-        setOpenedScripts(updated);
       } else {
-        // Salva lo script principale
-        const scriptNameToSave = currentScriptContext?.scriptName || currentScript?.name || 'main';
-        const updated = new Map(openedScripts);
+        // Script già caricato, salva comunque lo stato corrente
+        const blocksToSave = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
+        const updatedScripts = new Map(openedScripts);
         
-        if (updated.has(scriptNameToSave)) {
-          const existing = updated.get(scriptNameToSave)!;
-          existing.blocks = blocksToSave;
-          existing.isModified = true;
+        if (currentScriptContext && currentScriptContext.isSubScript) {
+          const current = updatedScripts.get(currentScriptContext.scriptName);
+          if (current) {
+            current.blocks = blocksToSave;
+            current.isModified = true;
+          }
         } else {
-          updated.set(scriptNameToSave, {
-            scriptName: scriptNameToSave,
-            fileName: currentScript?.fileName || scriptNameToSave + '.txt',
-            blocks: blocksToSave,
-            isModified: true
-          });
+          const scriptNameToSave = currentScriptContext?.scriptName || currentScript?.name || 'main';
+          
+          if (updatedScripts.has(scriptNameToSave)) {
+            const existing = updatedScripts.get(scriptNameToSave)!;
+            existing.blocks = blocksToSave;
+            existing.isModified = true;
+          } else {
+            updatedScripts.set(scriptNameToSave, {
+              scriptName: scriptNameToSave,
+              fileName: currentScript?.fileName || scriptNameToSave + '.txt',
+              blocks: blocksToSave,
+              isModified: true
+            });
+          }
         }
-        setOpenedScripts(updated);
+        
+        setOpenedScripts(updatedScripts);
       }
       
       // Imposta il nuovo contesto dello script
@@ -238,16 +272,23 @@ export const useZoomNavigation = ({
       }
       
       // Mantieni il path di zoom dello script principale e aggiungi il subscript
-      // Filtra via eventuali blocchi SCRIPT wrapper dal path corrente
-      const cleanCurrentPath = currentZoomPath.filter(item => !item.name.startsWith('Script:') && item.name !== '');
+      // Usa navigationPath che contiene il percorso completo corrente
+      const cleanCurrentPath = navigationPath.filter(item => 
+        !item.name.startsWith('Script:') && 
+        item.name !== '' && 
+        !item.id.startsWith('subscript-') // Rimuovi eventuali subscript precedenti
+      );
       const newNavigationPath = [
-        ...cleanCurrentPath, // Mantieni tutto il percorso di zoom nello script principale (pulito)
+        ...cleanCurrentPath, // Mantieni tutto il percorso di zoom nello script principale
         {
           id: `subscript-${scriptName}`,
           name: scriptName, // Solo il nome, senza emoji qui
           block: blocksToLoad[0]
         }
       ];
+      console.log('[handleNavigateToSubScript] Current navigation path:', cleanCurrentPath.map(p => p.name));
+      console.log('[handleNavigateToSubScript] Setting navigation path with subscript:', scriptName);
+      console.log('[handleNavigateToSubScript] Full new path:', newNavigationPath.map(p => p.name));
       setNavigationPath(newNavigationPath);
       setRootBlocks([]);  // Reset rootBlocks per il nuovo contesto
       setCurrentScriptBlocks(blocksToLoad);
@@ -497,7 +538,7 @@ export const useZoomNavigation = ({
         // Se siamo in un sub-script, mantieni solo il marker del sub-script
         setNavigationPath([navigationPath[subscriptIndex]]);
         // Carica i blocchi completi del sub-script
-        const subscriptName = navigationPath[subscriptIndex].name.replace('📄 ', '');
+        const subscriptName = navigationPath[subscriptIndex].name;  // Il nome è già pulito nel path
         const scriptData = openedScripts.get(subscriptName);
         if (scriptData) {
           setRootBlocks([]);
@@ -517,19 +558,56 @@ export const useZoomNavigation = ({
           setCurrentScriptBlocks(rootBlocks);
         }
       }
+    } else if (targetIndex === subscriptIndex && isInSubScript) {
+      // Caso speciale: cliccato esattamente sul sub-script nel breadcrumb
+      // Mostra SEMPRE la vista root del sub-script
+      const targetItem = navigationPath[subscriptIndex];
+      // Usa il nome dall'item, non processare l'id
+      const subscriptName = targetItem.name;
+      
+      console.log('[handleZoomOut] Target item:', targetItem);
+      console.log('[handleZoomOut] Looking for script:', subscriptName);
+      console.log('[handleZoomOut] Available scripts:', Array.from(openedScripts.keys()));
+      console.log('[handleZoomOut] OpenedScripts size:', openedScripts.size);
+      
+      const scriptData = openedScripts.get(subscriptName);
+      
+      if (scriptData) {
+        console.log('[handleZoomOut] Found script data, resetting to root');
+        // Mantieni tutto il percorso fino al sub-script
+        const pathUpToSubscript = navigationPath.slice(0, targetIndex + 1);
+        console.log('[handleZoomOut] Maintaining path up to subscript:', pathUpToSubscript.map(p => p.name));
+        setNavigationPath(pathUpToSubscript); // Mantieni il percorso completo fino al sub-script
+        setRootBlocks([]);
+        setCurrentScriptBlocks(scriptData.blocks);
+        setCurrentFocusedBlock(null);
+        
+        // Assicurati che il contesto sia corretto
+        if (!currentScriptContext || currentScriptContext.scriptName !== subscriptName) {
+          setCurrentScriptContext({
+            scriptName: subscriptName,
+            isSubScript: true
+          });
+        }
+      } else {
+        console.log('[handleZoomOut] Script data NOT found!');
+      }
     } else if (targetIndex < navigationPath.length) {
       // Naviga al livello specificato nel path
       const newPath = navigationPath.slice(0, targetIndex + 1);
       const targetItem = newPath[newPath.length - 1];
       
-      // Se il target è il sub-script stesso, mostra SEMPRE la vista root del sub-script
+      // Se il target è il sub-script stesso (non dovrebbe mai arrivare qui ora)
       if (targetItem.id.startsWith('subscript-')) {
-        // Estrai il nome del sub-script dall'id (subscript-nomescript)
-        const subscriptName = targetItem.id.replace('subscript-', '');
+        // Usa il nome dall'item invece di processare l'id
+        const subscriptName = targetItem.name;
+        console.log('[handleZoomOut] Navigating to subscript root:', subscriptName);
         const scriptData = openedScripts.get(subscriptName);
+        console.log('[handleZoomOut] Script data found:', !!scriptData);
         
         if (scriptData) {
           // Reset completo alla vista root del sub-script
+          console.log('[handleZoomOut] Setting navigation path to subscript only');
           setNavigationPath([targetItem]); // Mantieni solo il marker del sub-script
           setRootBlocks([]);
           setCurrentScriptBlocks(scriptData.blocks);
@@ -537,6 +615,7 @@ export const useZoomNavigation = ({
           
           // Assicurati che il contesto sia corretto
           if (!currentScriptContext || currentScriptContext.scriptName !== subscriptName) {
+            console.log('[handleZoomOut] Updating script context');
             setCurrentScriptContext({
               scriptName: subscriptName,
               isSubScript: true
