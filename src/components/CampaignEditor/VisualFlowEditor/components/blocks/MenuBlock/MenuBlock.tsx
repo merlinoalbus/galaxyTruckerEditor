@@ -16,6 +16,7 @@ interface MenuBlockProps {
   onZoomOut?: () => void;
   isZoomed?: boolean;
   isInvalid?: boolean;
+  validationType?: 'error' | 'warning';
 }
 
 export const MenuBlock: React.FC<MenuBlockProps> = ({
@@ -30,7 +31,8 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({
   onZoomIn,
   onZoomOut,
   isZoomed = false,
-  isInvalid = false
+  isInvalid = false,
+  validationType
 }) => {
   const { t } = useTranslation();
   // Stato per collapse/expand - container blocks default expanded
@@ -122,6 +124,7 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({
         onZoomOut={onZoomOut}
         className={`${getBlockStyle()} rounded border p-4 mb-3`}
         isInvalid={isInvalid}
+        validationType={validationType}
         blockColor="bg-gray-600"
       >
         {/* Children container with anchor points - visibile solo se non collapsed */}

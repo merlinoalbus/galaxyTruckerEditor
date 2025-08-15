@@ -23,6 +23,7 @@ interface BaseBlockProps {
   // Styling
   className?: string;
   isInvalid?: boolean;
+  validationType?: 'error' | 'warning';
   blockColor?: string; // Per personalizzare il colore del drag handle
   iconBgColor?: string; // Colore di sfondo per l'icona
   
@@ -54,6 +55,7 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
   compactParams,
   className = '',
   isInvalid = false,
+  validationType,
   blockColor = 'bg-gray-700',
   iconBgColor = '',
   children,
@@ -135,8 +137,20 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
   const effectiveIconBg = iconBgColor || blockColors.icon;
   const effectiveDragHandle = blockColor || blockColors.dragHandle;
 
+  // Determina le classi di bordo in base al tipo di validazione
+  const getValidationClasses = () => {
+    if (!isInvalid) return '';
+    
+    // Se validationType è esplicitamente 'warning', usa arancione
+    if (validationType === 'warning') {
+      return 'border-orange-500 border-2 shadow-orange-500/50 shadow-lg';
+    }
+    // Altrimenti usa rosso (per 'error' o undefined)
+    return 'border-red-500 border-2 shadow-red-500/50 shadow-lg';
+  };
+
   return (
-    <div className={`relative ${className || ''} ${paddingClass} ${isInvalid ? 'border-red-500 border-2 shadow-red-500/50 shadow-lg' : ''}`}>
+    <div className={`relative ${className || ''} ${paddingClass} ${getValidationClasses()}`}>
       {/* Delete button - solo se onRemove è definito e non hideControls */}
       {!hideControls && onRemove && (
         <button

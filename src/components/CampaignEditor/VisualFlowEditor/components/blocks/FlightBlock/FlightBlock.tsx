@@ -22,6 +22,7 @@ interface FlightBlockProps {
   onZoomOut?: () => void;
   isZoomed?: boolean;
   isInvalid?: boolean;
+  validationType?: 'error' | 'warning';
 }
 
 export const FlightBlock: React.FC<FlightBlockProps> = ({
@@ -41,7 +42,8 @@ export const FlightBlock: React.FC<FlightBlockProps> = ({
   onZoomIn,
   onZoomOut,
   isZoomed = false,
-  isInvalid = false
+  isInvalid = false,
+  validationType
 }) => {
   const { t } = useTranslation();
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -129,8 +131,9 @@ export const FlightBlock: React.FC<FlightBlockProps> = ({
         onToggleCollapse={handleToggleCollapse}
         onZoomIn={onZoomIn}
         onZoomOut={onZoomOut}
-        className={`${getBlockClassName('FLIGHT', isInvalid)} shadow-xl p-4 transition-all duration-300`}
+        className={`${getBlockClassName('FLIGHT', isInvalid, validationType)} shadow-xl p-4 transition-all duration-300`}
         isInvalid={isInvalid}
+        validationType={validationType}
       >
 
         {/* Contenuto FLIGHT - visibile solo se non collapsed */}

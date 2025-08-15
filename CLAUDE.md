@@ -4,143 +4,165 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architettura del Progetto
 
-Questo è un editor visuale completo per Galaxy Trucker, composto da:
-- **Frontend React**: TypeScript, Tailwind CSS, gestione stato tramite Context API
-- **Backend Express**: Server Node.js per gestione file reali del gioco
-- **Visual Flow Editor**: Editor drag-and-drop per script di campagna
-- **Interactive Map**: Visualizzazione e navigazione grafo delle missioni
+Editor visuale completo per Galaxy Trucker con gestione real-time di script, missioni e sistemi di gioco.
+
+### Stack Tecnologico
+- **Frontend**: React 18, TypeScript, Tailwind CSS, Context API
+- **Backend**: Express.js, Node.js, gestione file reali YAML/TXT  
+- **Editor**: Monaco Editor, drag-and-drop nativo, validazione real-time
 
 ### Struttura Modularizzata
 
-Il progetto segue un'architettura modulare con separazione chiara:
 ```
 src/
 ├── components/CampaignEditor/
-│   ├── VisualFlowEditor/     # Editor visuale drag-and-drop
-│   ├── InteractiveMap/        # Mappa interattiva missioni
-│   ├── VariablesSystem/       # Sistema gestione variabili
-│   └── Overview/              # Dashboard metriche
-├── hooks/                     # Hook React personalizzati
-├── services/                  # Parser e servizi
+│   ├── VisualFlowEditor/     # Editor drag-and-drop blocchi script
+│   ├── InteractiveMap/        # Grafo interattivo missioni
+│   ├── VariablesSystem/       # Gestione variabili/achievement
+│   └── Overview/              # Dashboard metriche qualità
+├── hooks/                     # Custom hooks React
+├── services/                  # Parser e business logic
 ├── types/                     # TypeScript types
-└── contexts/                  # Context providers
+└── contexts/                  # Context providers globali
+
+server/
+├── GAMEFOLDER/               # File reali del gioco
+│   ├── campaignScripts*/     # Script per lingua
+│   ├── missions/             # Missioni YAML
+│   └── localization_strings/ # Traduzioni
+├── routes/                   # API endpoints
+└── server.js                 # Entry point backend
 ```
 
 ## Comandi di Sviluppo
 
 ### Gestione Server
 
-I server richiedono avvio manuale tramite script configurati. Gli script sono configurati nella cartella `scripts/`:
-
 ```bash
-# Backend (porta 3001) - NON si ricarica automaticamente
-startBE     # Avvia il Backend
-stopBE      # Ferma il Backend  
-restartBE   # Riavvia il Backend
+# Backend (porta 3001) - Richiede restart manuale dopo modifiche
+startBE     # Avvia Backend con verifica
+stopBE      # Ferma Backend
+restartBE   # Riavvia Backend
 
 # Frontend (porta 3000) - Hot reload automatico
-startFE     # Avvia il Frontend
-stopFE      # Ferma il Frontend
-restartFE   # Riavvia il Frontend
+startFE     # Avvia Frontend con verifica
+stopFE      # Ferma Frontend  
+restartFE   # Riavvia Frontend
 
-# Entrambi
-start       # Avvia Backend e Frontend
+# Gestione combinata
+start       # Avvia entrambi in sequenza
 stop        # Ferma entrambi
 restart     # Riavvia entrambi
 ```
 
-**IMPORTANTE**: Il Backend NON ha hot reload. Dopo modifiche ai file in `server/`, riavviare sempre con `restartBE`.
+**IMPORTANTE**: Backend NON ha hot reload. Dopo modifiche in `server/`, sempre `restartBE`.
 
 ### Build e Test
 
 ```bash
 # Frontend
-npm run build      # Build produzione con Craco
-npm test          # Test con Jest
+npm run build    # Build produzione con Craco
+npm test         # Test Jest
 
-# Backend (dalla cartella server/)
-npm start         # Avvia server
-npm run dev       # Modalità sviluppo con nodemon
+# Backend
+cd server && npm start    # Produzione
+cd server && npm run dev  # Development con nodemon
 ```
 
-## Pattern di Sviluppo
+## Visual Flow Editor - Sistema Blocchi
 
-### Visual Flow Editor
+### Tipologie Blocchi Supportati
 
-L'editor supporta blocchi drag-and-drop per comandi di campagna:
-- **Blocchi Base**: TEXT, MENU, OPT, IF, GO, EXIT_MENU
-- **Blocchi Contenitori**: IF con rami THEN/ELSE, MENU con OPT annidati
-- **Metacode Editor**: Editor integrato per metacodici multilingua
-- **Validazione Real-time**: Controllo errori durante editing
+- **Comandi Base**: TEXT, SAY, GO, EXIT_MENU, LAUNCH_MISSION
+- **Contenitori**: MENU (con OPT figli), IF (con THEN/ELSE)
+- **Scene**: SHOW_SCENE, HIDE_SCENE
+- **Personaggi**: SHOW_CHAR, HIDE_CHAR
+- **Costruzione**: BUILD, FLIGHT
 
-### Sistema di Parsing
+### Aggiunta Nuovo Blocco
 
-Il progetto usa parser specializzati per diversi formati:
-- `CampaignScriptParser`: Parsing script campagna con supporto blocchi annidati
-- `services/parsers/`: Parser per missioni, script, variabili
-- Supporto completo metacodici (`[player]`, `[credits]`, etc.)
+1. **Definire tipo** in `types/CampaignEditor/VisualFlowEditor/blocks.types.ts`
+2. **Creare componente** in `components/.../blocks/NuovoBlocco/`
+3. **Registrare rendering** in `BlockRenderer.tsx`
+4. **Aggiungere colore** in `utils/.../blockColors.ts`
+5. **Implementare validazione** in `hooks/.../validation/`
+6. **Estendere parser** in `CampaignScriptParserService.ts`
 
-### Gestione Multilingua
+## Sistema Parsing Bidirezionale
 
-Supporto completo per 7 lingue (EN, DE, FR, ES, PL, CS, RU):
-- File localizzazione in `server/GAMEFOLDER/localization_strings/`
-- Script campagna per lingua in `campaignScripts{LANG}/`
-- Context `LanguageContext` per cambio lingua runtime
+Parser specializzati per conversione script ↔ blocchi:
 
-### API Backend
+- **CampaignScriptParserService**: Parser principale script campagna
+- **scriptParserService**: Parsing blocchi annidati e metacodici
+- **Preserva**: Commenti, linee vuote, formattazione originale
 
-Il server Express espone endpoint RESTful:
-- `/api/scripts`: CRUD script campagna
-- `/api/missions`: Gestione missioni multiplayer
-- `/api/variables`: Sistema variabili/achievement
-- `/api/images`: Gestione immagini personaggi
-- Validazione con `jsonschema` e sanitizzazione input
+## Multilingua e Metacodici
 
-## Convenzioni di Codice
+### Lingue Supportate
+EN, DE, FR, ES, PL, CS, RU
+
+### Metacodici Principali (50+ pattern)
+- `[player]`, `[credits]`, `[flight]`, `[ship]`
+- `[mission_result:ID]`, `[string:KEY]`
+- `[gender:M|F|N:testo]`, `[plural:N|S:testo]`
+- `[image:character:NAME]`
+
+### Sincronizzazione
+Modifiche strutturali propagate automaticamente tra lingue mantenendo traduzioni esistenti.
+
+## API Backend
+
+```
+/api/scripts      # CRUD script campagna
+/api/missions     # Gestione missioni multiplayer
+/api/variables    # Sistema variabili/achievement
+/api/images       # Immagini personaggi
+/api/validation   # Validazione real-time
+```
+
+Tutti gli endpoint validano input con `jsonschema` e sanitizzano path.
+
+## Convenzioni Codice
 
 ### TypeScript
+- Types in file `.types.ts` dedicati
+- Interfacce prefisso `I` (es. `IFlowBlock`)
+- Discriminated unions per varianti
+- Strict mode abilitato
 
-- Tipi definiti in file `.types.ts` separati
-- Interfacce con prefisso `I` (es. `IFlowBlock`)
-- Props components sempre tipizzate
-- Uso di discriminated unions per variant types
+### React
+- Functional components + hooks
+- Custom hooks prefisso `use`
+- React.memo per ottimizzazione
+- Context API per stato globale
 
-### React Components
+### Styling
+- Tailwind CSS utilities-first
+- Theme custom `gt-*` per Galaxy Trucker
+- Animazioni CSS native
+- Dark mode non supportato
 
-- Componenti funzionali con hooks
-- Custom hooks in `hooks/` con prefisso `use`
-- Memo/useCallback per ottimizzazioni performance
-- Context providers per stato globale
+## Validazione e Testing
 
-### Stile e CSS
+### Validazione Automatica
+- Sintassi comandi e struttura nidificata
+- Esistenza file referenziati (missioni, immagini)
+- Coerenza metacodici multilingua
+- Limiti caratteri per localizzazione
 
-- Tailwind CSS per styling
-- Classi custom in `tailwind.config.js`
-- Theme Galaxy Trucker con colori `gt-*`
-- Animazioni CSS per transizioni fluide
+### Checklist Pre-Commit
+1. `npm run build` senza errori
+2. `restartBE` avvio corretto
+3. Validazione editor pulita
+4. Test drag-and-drop preserva struttura
+5. Parsing round-trip mantiene contenuto
 
-## Testing e Validazione
+## Note Critiche
 
-### Validazione Script
-
-Il sistema valida automaticamente:
-- Sintassi comandi (MENU/OPT matching, GO labels)
-- Riferimenti file (missioni, script, immagini)
-- Metacodici e parametri
-- Struttura blocchi annidati
-
-### Test da Eseguire
-
-Prima di ogni commit verificare:
-1. Frontend compila senza errori: `npm run build`
-2. Backend avvia correttamente: `restartBE`
-3. Validazione script nell'editor non mostra errori
-4. Drag-and-drop mantiene struttura corretta
-
-## Note Importanti
-
-- **File Reali**: Il backend opera su file reali in `server/GAMEFOLDER/`
-- **Backup**: Sempre backup prima di modifiche massive
-- **Performance**: Con script >2000 righe, usare virtualizzazione
-- **Sicurezza**: Validazione lato server per tutti input utente
-- **Browser**: Testato principalmente su Chrome/Edge, verificare Firefox per drag-and-drop
+- **File Reali**: Backend modifica direttamente `server/GAMEFOLDER/`
+- **Backup**: Obbligatorio prima modifiche massive
+- **Performance**: Virtualizzare script >2000 righe
+- **Parser**: Mai modificare logica preservazione commenti
+- **Multilingua**: Sempre sincronizzare struttura tra lingue
+- **Hot Reload**: Solo Frontend, Backend richiede restart
+- **Browser**: Chrome/Edge ottimali, Firefox può avere issue drag-and-drop

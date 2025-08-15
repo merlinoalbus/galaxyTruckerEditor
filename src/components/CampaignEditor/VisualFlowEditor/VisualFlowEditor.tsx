@@ -62,7 +62,10 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
   const [currentScriptBlocks, setCurrentScriptBlocks] = useState<IFlowBlock[]>([]);
   const [validationErrors, setValidationErrors] = useState<ValidationResult>({ errors: 0, invalidBlocks: [] });
   const [dropError, setDropError] = useState<string | null>(null);
-  const [showValidationDetails, setShowValidationDetails] = useState(false);
+  const [showValidationDetails, setShowValidationDetails] = useState<'errors' | 'warnings' | false>(false);
+  
+  // Mappa per tracciare il tipo di validazione per ogni blocco
+  const [blockValidationTypes, setBlockValidationTypes] = useState<Map<string, 'error' | 'warning'>>(new Map());
   
   // Multi-script management - tiene traccia di tutti gli script aperti
   const [openedScripts, setOpenedScripts] = useState<Map<string, OpenedScript>>(new Map());
@@ -651,8 +654,21 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
           validationResult = validateAllBlocks(blocksToValidate);
         }
         setValidationErrors(validationResult);
+        
+        // Popola la mappa dei tipi di validazione
+        const typeMap = new Map<string, 'error' | 'warning'>();
+        if (validationResult.details) {
+          validationResult.details.forEach(detail => {
+            if (!typeMap.has(detail.blockId) || detail.type === 'error') {
+              // Se un blocco ha sia error che warning, priorità a error
+              typeMap.set(detail.blockId, detail.type || 'error');
+            }
+          });
+        }
+        setBlockValidationTypes(typeMap);
       } else {
         setValidationErrors({ errors: 0, invalidBlocks: [] });
+        setBlockValidationTypes(new Map());
       }
     }, TIMEOUT_CONSTANTS.VALIDATION_DEBOUNCE); // Debounce come da specifica
     
@@ -746,7 +762,9 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
         scriptNavigationPath={scriptNavigationPath}
         onNavigateToScript={handleNavigateBackToScript}
         validationErrors={validationErrors.errors}
-        onValidationErrorsClick={() => setShowValidationDetails(true)}
+        validationWarnings={validationErrors.warnings}
+        onValidationErrorsClick={() => setShowValidationDetails('errors')}
+        onValidationWarningsClick={() => setShowValidationDetails('warnings')}
         scriptsButtonRef={scriptsButtonRef}
         missionsButtonRef={missionsButtonRef}
         onSaveScript={() => {
@@ -836,6 +854,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
                   key={block.id}
                   block={block}
                   invalidBlocks={validationErrors.invalidBlocks}
+                  blockValidationTypes={blockValidationTypes}
                   allBlocks={currentScriptBlocks}
                   onUpdateBlock={(id, updates) => {
                     setCurrentScriptBlocks(prev => {
@@ -907,6 +926,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
       {showValidationDetails && validationErrors.details && (
         <ValidationErrorsModal
           errors={validationErrors.details}
+          displayType={showValidationDetails}
           onClose={() => setShowValidationDetails(false)}
           onNavigateToBlock={(blockId) => {
             // Cerca il blocco nell'albero e naviga ad esso

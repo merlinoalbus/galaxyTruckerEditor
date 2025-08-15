@@ -29,6 +29,7 @@ interface OptBlockProps {
   isZoomed?: boolean;
   sessionData?: SessionData;
   isInvalid?: boolean;
+  validationType?: 'error' | 'warning';
 }
 
 export const OptBlock: React.FC<OptBlockProps> = ({
@@ -45,7 +46,8 @@ export const OptBlock: React.FC<OptBlockProps> = ({
   onZoomOut,
   isZoomed = false,
   sessionData,
-  isInvalid = false
+  isInvalid = false,
+  validationType
 }) => {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
@@ -190,6 +192,7 @@ export const OptBlock: React.FC<OptBlockProps> = ({
             : 'border-cyan-800/80'
         } p-4 mb-3`}
         isInvalid={isInvalid}
+        validationType={validationType}
         blockColor="bg-cyan-700"
         iconBgColor="bg-cyan-900/80"
       >
