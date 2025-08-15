@@ -20,6 +20,9 @@ interface MissionBlockProps {
   isZoomed?: boolean;
   isInvalid?: boolean;
   validationType?: 'error' | 'warning';
+  collapseAllTrigger?: number;
+  expandAllTrigger?: number;
+  globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
 }
 
 export const MissionBlock: React.FC<MissionBlockProps> = ({
@@ -37,12 +40,32 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
   onZoomOut,
   isZoomed = false,
   isInvalid = false,
-  validationType = 'error'
+  validationType = 'error',
+  collapseAllTrigger = 0,
+  expandAllTrigger = 0,
+  globalCollapseState = 'manual'
 }) => {
   const { t } = useTranslation();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    return globalCollapseState === 'collapsed';
+  });
   const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Reagisci ai trigger di collapse/expand all
+  useEffect(() => {
+    if (collapseAllTrigger > 0) {
+      setIsCollapsed(true);
+      setIsManuallyExpanded(false);
+    }
+  }, [collapseAllTrigger]);
+  
+  useEffect(() => {
+    if (expandAllTrigger > 0) {
+      setIsCollapsed(false);
+      setIsManuallyExpanded(true);
+    }
+  }, [expandAllTrigger]);
   
   // Auto-collapse se lo spazio è insufficiente
   useEffect(() => {

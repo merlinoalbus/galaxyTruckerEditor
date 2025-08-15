@@ -30,6 +30,9 @@ interface OptBlockProps {
   sessionData?: SessionData;
   isInvalid?: boolean;
   validationType?: 'error' | 'warning';
+  collapseAllTrigger?: number;
+  expandAllTrigger?: number;
+  globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
 }
 
 export const OptBlock: React.FC<OptBlockProps> = ({
@@ -47,16 +50,36 @@ export const OptBlock: React.FC<OptBlockProps> = ({
   isZoomed = false,
   sessionData,
   isInvalid = false,
-  validationType
+  validationType,
+  collapseAllTrigger = 0,
+  expandAllTrigger = 0,
+  globalCollapseState = 'manual'
 }) => {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
   // Stato per collapse/expand
   // Se siamo in zoom e c'è onZoomOut, significa che questo è il blocco root in zoom, quindi espanso
   const isRootInZoom = isZoomed && !!onZoomOut;
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    return globalCollapseState === 'collapsed';
+  });
   const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Reagisci ai trigger di collapse/expand all
+  useEffect(() => {
+    if (collapseAllTrigger > 0) {
+      setIsCollapsed(true);
+      setIsManuallyExpanded(false);
+    }
+  }, [collapseAllTrigger]);
+  
+  useEffect(() => {
+    if (expandAllTrigger > 0) {
+      setIsCollapsed(false);
+      setIsManuallyExpanded(true);
+    }
+  }, [expandAllTrigger]);
   
   // Auto-collapse se lo spazio è insufficiente
   useEffect(() => {

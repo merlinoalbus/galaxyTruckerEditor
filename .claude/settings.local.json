@@ -17,7 +17,9 @@
       "Bash(npx tsc:*)",
       "Bash(timeout 60 npm run build)",
       "Bash(npm run generate:translations:*)",
-      "Bash(restartBE)"
+      "Bash(restartBE)",
+      "Bash(npm start)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",

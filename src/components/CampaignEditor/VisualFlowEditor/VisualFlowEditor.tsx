@@ -64,8 +64,16 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
   const [dropError, setDropError] = useState<string | null>(null);
   const [showValidationDetails, setShowValidationDetails] = useState<'errors' | 'warnings' | false>(false);
   
+  // Collapse/Expand All state
+  const [collapseAllTrigger, setCollapseAllTrigger] = useState(0);
+  const [expandAllTrigger, setExpandAllTrigger] = useState(0);
+  const [globalCollapseState, setGlobalCollapseState] = useState<'collapsed' | 'expanded' | 'manual'>('manual');
+  
   // Mappa per tracciare il tipo di validazione per ogni blocco
   const [blockValidationTypes, setBlockValidationTypes] = useState<Map<string, 'error' | 'warning'>>(new Map());
+  
+  // Set per tracciare gli errori bypassati
+  const [bypassedErrors, setBypassedErrors] = useState<Set<string>>(new Set());
   
   // Multi-script management - tiene traccia di tutti gli script aperti
   const [openedScripts, setOpenedScripts] = useState<Map<string, OpenedScript>>(new Map());
@@ -84,6 +92,30 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
   const scriptLabels = React.useMemo(() => {
     return collectScriptLabels(currentScriptBlocks);
   }, [currentScriptBlocks]);
+  
+  // Funzioni per Collapse/Expand All
+  const handleCollapseAll = useCallback(() => {
+    setGlobalCollapseState('collapsed');
+    setCollapseAllTrigger(prev => prev + 1);
+  }, []);
+  
+  const handleExpandAll = useCallback(() => {
+    setGlobalCollapseState('expanded');
+    setExpandAllTrigger(prev => prev + 1);
+  }, []);
+  
+  // Funzione per gestire il bypass degli errori
+  const handleToggleBypass = useCallback((blockId: string) => {
+    setBypassedErrors(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(blockId)) {
+        newSet.delete(blockId);
+      } else {
+        newSet.add(blockId);
+      }
+      return newSet;
+    });
+  }, []);
   
   // Funzione per navigare a un blocco LABEL
   const goToLabel = useCallback((labelName: string) => {
@@ -604,12 +636,16 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
         navigationPath={navigationPath}
         scriptNavigationPath={scriptNavigationPath}
         onNavigateToScript={handleNavigateBackToScript}
-        validationErrors={validationErrors.errors}
+        validationErrors={Math.max(0, validationErrors.errors - bypassedErrors.size)}
         validationWarnings={validationErrors.warnings}
         onValidationErrorsClick={() => setShowValidationDetails('errors')}
         onValidationWarningsClick={() => setShowValidationDetails('warnings')}
         scriptsButtonRef={scriptsButtonRef}
         missionsButtonRef={missionsButtonRef}
+        onCollapseAll={handleCollapseAll}
+        onExpandAll={handleExpandAll}
+        bypassedErrorsCount={bypassedErrors.size}
+        totalErrors={validationErrors.errors}
         onSaveScript={() => {
           // Aggiorna lo stato corrente nella mappa prima di salvare
           const updatedOpenedScripts = new Map(openedScripts);
@@ -730,6 +766,9 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
                   currentFocusedBlockId={currentFocusedBlockId}
                   sessionData={extendedSessionData}
                   createDropValidator={createDropValidator}
+                  collapseAllTrigger={collapseAllTrigger}
+                  expandAllTrigger={expandAllTrigger}
+                  globalCollapseState={globalCollapseState}
                 />
               ))}
             </div>
@@ -771,6 +810,8 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
           errors={validationErrors.details}
           displayType={showValidationDetails}
           onClose={() => setShowValidationDetails(false)}
+          bypassedErrors={bypassedErrors}
+          onToggleBypass={handleToggleBypass}
           onNavigateToBlock={(blockId) => {
             // Cerca il blocco nell'albero e naviga ad esso
             const findAndNavigate = (blocks: IFlowBlock[], targetId: string, path: IFlowBlock[] = []): boolean => {
