@@ -12,6 +12,7 @@ interface CharacterSelectorProps {
   className?: string;
   characters?: Character[];  // Opzionale, se passato usa questi invece di caricarli
   simulatedSceneState?: SimulatedSceneState | null;  // Stato simulato della scena
+  forceColumns?: number;  // Forza un numero specifico di colonne
 }
 
 export const CharacterSelector: React.FC<CharacterSelectorProps> = ({
@@ -20,7 +21,8 @@ export const CharacterSelector: React.FC<CharacterSelectorProps> = ({
   mode,
   className = '',
   characters: propsCharacters,
-  simulatedSceneState
+  simulatedSceneState,
+  forceColumns
 }) => {
   const { t } = useTranslation();
   const { getCurrentScene } = useScene();
@@ -96,8 +98,8 @@ export const CharacterSelector: React.FC<CharacterSelectorProps> = ({
         </div>
       </div>
       
-      {/* Character grid con immagini - 5 colonne adattive */}
-      <div className="overflow-y-auto bg-slate-800 border border-slate-600 rounded p-1 flex-1">
+      {/* Character grid con immagini */}
+      <div className="overflow-y-auto bg-slate-800 border border-slate-600 rounded p-1 flex-1" style={{ minHeight: 0 }}>
         {filteredCharacters.length === 0 ? (
           <div className="text-center text-gray-500 text-xs py-2">
             {mode === 'show'
@@ -105,7 +107,10 @@ export const CharacterSelector: React.FC<CharacterSelectorProps> = ({
               : t('visualFlowEditor.blocks.characterSelector.noVisible')}
           </div>
         ) : (
-          <div className={`grid ${mode === 'hide' ? 'grid-cols-10' : 'grid-cols-7'} gap-1`}>
+          <div 
+            className={`grid gap-1 ${!forceColumns ? (mode === 'hide' ? 'grid-cols-10' : 'grid-cols-7') : ''}`}
+            style={forceColumns ? { gridTemplateColumns: `repeat(${forceColumns}, minmax(0, 1fr))` } : {}}
+          >
             {/* Opzione "Nessuno" per deselezionare */}
             {mode === 'show' && (
               <div
@@ -116,7 +121,7 @@ export const CharacterSelector: React.FC<CharacterSelectorProps> = ({
                 `}
                 title="Nessuno"
               >
-                <div className="w-full aspect-square mb-0.5 overflow-hidden rounded">
+                <div className="w-full aspect-square mb-0.5 overflow-hidden rounded transform scale-90">
                   <div className="w-full h-full rounded bg-slate-800 border border-slate-600 flex items-center justify-center">
                     <span className="text-[16px] text-gray-400">∅</span>
                   </div>
@@ -146,7 +151,7 @@ export const CharacterSelector: React.FC<CharacterSelectorProps> = ({
                   title={char.nomepersonaggio}
                 >
                   {/* Character image - quadrata con object-position per taglio dall'alto */}
-                  <div className="w-full aspect-square mb-0.5 overflow-hidden rounded">
+                  <div className="w-full aspect-square mb-0.5 overflow-hidden rounded transform scale-90">
                     {imageUrl ? (
                       <img 
                         src={imageUrl}

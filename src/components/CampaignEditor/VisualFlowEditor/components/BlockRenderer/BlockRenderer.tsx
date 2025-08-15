@@ -8,6 +8,7 @@ import { MissionBlock } from '../blocks/MissionBlock/MissionBlock';
 import { BuildBlock } from '../blocks/BuildBlock/BuildBlock';
 import { FlightBlock } from '../blocks/FlightBlock/FlightBlock';
 import { ChangeCharBlock } from '../blocks/ChangeCharBlock/ChangeCharBlock';
+import { SayCharBlock } from '../blocks/SayCharBlock/SayCharBlock';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 interface BlockRendererProps {
@@ -271,6 +272,24 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
     return (
       <div data-block-id={block.id}>
         <ChangeCharBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          sessionData={sessionData}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          allBlocks={allBlocks}
+        />
+      </div>
+    );
+  }
+
+  // Render SAYCHAR block
+  if (block.type === 'SAYCHAR') {
+    return (
+      <div data-block-id={block.id}>
+        <SayCharBlock
           block={block}
           onUpdate={updateBlock}
           onRemove={isRootInZoom ? undefined : removeBlock}

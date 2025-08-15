@@ -68,7 +68,7 @@ export function simulateSceneExecution(
   
   const processBlocksUntilTarget = (blocks: IFlowBlock[]): boolean => {
     for (const block of blocks) {
-      // Se abbiamo raggiunto il target, fermati
+      // Se abbiamo raggiunto il target, fermati PRIMA di processarlo
       if (block.id === targetBlockId) {
         return true;
       }
@@ -190,6 +190,43 @@ export function simulateSceneExecution(
               }
             }
           }
+        }
+      } else if (block.type === 'SAYCHAR' && block.parameters?.character) {
+        if (sceneStack.length > 0) {
+          const currentScene = sceneStack[sceneStack.length - 1];
+          
+          // Trova se il personaggio è già presente nella scena
+          const existingCharIndex = currentScene.personaggi.findIndex(
+            p => p.nomepersonaggio === block.parameters!.character
+          );
+          
+          if (existingCharIndex >= 0) {
+            // Se il personaggio esiste già, rendilo visibile
+            currentScene.personaggi[existingCharIndex].visible = true;
+          } else {
+            // Se il personaggio non esiste, aggiungilo alla scena a sinistra (comportamento default)
+            const imageToUse = getCharacterBaseImage(block.parameters.character);
+            
+            const newChar: SimulatedCharacter = {
+              nomepersonaggio: block.parameters.character,
+              lastImmagine: imageToUse,
+              visible: true,
+              posizione: 'left' // SAYCHAR mette sempre il personaggio a sinistra per default
+            };
+            
+            // Nascondi eventuali personaggi nella stessa posizione
+            const charInSamePosition = currentScene.personaggi.find(
+              p => p.posizione === 'left' && p.visible
+            );
+            if (charInSamePosition) {
+              charInSamePosition.visible = false;
+            }
+            
+            currentScene.personaggi.push(newChar);
+          }
+          
+          // Imposta come ultimo personaggio modificato
+          lastModifiedCharacter = block.parameters.character;
         }
       }
       
