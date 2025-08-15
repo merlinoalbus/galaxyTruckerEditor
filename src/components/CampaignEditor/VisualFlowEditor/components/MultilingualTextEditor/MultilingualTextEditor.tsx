@@ -227,7 +227,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
                   ? 'bg-blue-500 text-white' 
                   : 'bg-slate-700 text-gray-400 hover:bg-slate-600'
               }`}
-              title="Maschile"
+              title={t('visualFlowEditor.metacode.male')}
             >
               M
             </button>
@@ -239,7 +239,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
                   ? 'bg-pink-500 text-white' 
                   : 'bg-slate-700 text-gray-400 hover:bg-slate-600'
               }`}
-              title="Femminile"
+              title={t('visualFlowEditor.metacode.female')}
             >
               F
             </button>
@@ -251,7 +251,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
                   ? 'bg-gray-600 text-white' 
                   : 'bg-slate-700 text-gray-400 hover:bg-slate-600'
               }`}
-              title="Disabilitato"
+              title={t('visualFlowEditor.metacode.disabled')}
             >
               ×
             </button>
@@ -306,7 +306,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
                     ? 'bg-red-500 text-white' 
                     : 'bg-slate-700 text-gray-400 hover:bg-slate-600'
                 }`}
-                title="Più di 100"
+                title={t('visualFlowEditor.metacode.moreThan100')}
               >
                 100+
               </button>
@@ -319,7 +319,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
                     ? 'bg-gray-600 text-white' 
                     : 'bg-slate-700 text-gray-400 hover:bg-slate-600'
                 }`}
-                title="Mostra metacode"
+                title={t('visualFlowEditor.metacode.showMetacode')}
               >
                 ×
               </button>

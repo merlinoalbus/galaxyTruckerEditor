@@ -7,6 +7,12 @@ import { OptBlock } from '../blocks/OptBlock/OptBlock';
 import { MissionBlock } from '../blocks/MissionBlock/MissionBlock';
 import { BuildBlock } from '../blocks/BuildBlock/BuildBlock';
 import { FlightBlock } from '../blocks/FlightBlock/FlightBlock';
+import { ChangeCharBlock } from '../blocks/ChangeCharBlock/ChangeCharBlock';
+import { SayCharBlock } from '../blocks/SayCharBlock/SayCharBlock';
+import { AnnounceBlock } from '../blocks/AnnounceBlock/AnnounceBlock';
+import { ReturnBlock } from '../blocks/ReturnBlock/ReturnBlock';
+import { SetBlock } from '../blocks/SetBlock/SetBlock';
+import { ResetBlock } from '../blocks/ResetBlock/ResetBlock';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 interface BlockRendererProps {
@@ -26,6 +32,11 @@ interface BlockRendererProps {
   sessionData?: any;
   createDropValidator?: (containerId: string, containerType: string, index?: number) => (e: React.DragEvent) => boolean;
   invalidBlocks?: string[];
+  blockValidationTypes?: Map<string, 'error' | 'warning'>;
+  allBlocks?: IFlowBlock[];
+  collapseAllTrigger?: number;
+  expandAllTrigger?: number;
+  globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
 }
 
 export const BlockRenderer: React.FC<BlockRendererProps> = ({
@@ -44,7 +55,12 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
   currentFocusedBlockId,
   sessionData,
   createDropValidator,
-  invalidBlocks = []
+  invalidBlocks = [],
+  blockValidationTypes,
+  allBlocks = [],
+  collapseAllTrigger = 0,
+  expandAllTrigger = 0,
+  globalCollapseState = 'manual'
 }) => {
   const updateBlock = useCallback((updates: BlockUpdate) => {
     onUpdateBlock(block.id, updates);
@@ -54,8 +70,9 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
     onRemoveBlock(block.id);
   }, [block.id, onRemoveBlock]);
 
-  // Determina se questo blocco è invalido
-  const isInvalid = invalidBlocks.includes(block.id);
+  // Determina se questo blocco ha validazione e il tipo
+  const validationType = blockValidationTypes?.get(block.id);
+  const isInvalid = !!validationType; // Il blocco è invalido se ha un tipo di validazione
   
   // Determina se questo blocco è il root in zoom (non può essere eliminato)
   const isRootInZoom = isZoomed && depth === 0;
@@ -80,9 +97,14 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
         sessionData={sessionData}
         createDropValidator={createDropValidator}
         invalidBlocks={invalidBlocks}
+        blockValidationTypes={blockValidationTypes}
+        allBlocks={allBlocks}
+        collapseAllTrigger={collapseAllTrigger}
+        expandAllTrigger={expandAllTrigger}
+        globalCollapseState={globalCollapseState}
       />
     ));
-  }, [depth, onUpdateBlock, onRemoveBlock, onDragStart, onDragOver, onDrop, onDropAtIndex, isDragActive, onZoomIn, onZoomOut, isZoomed, currentFocusedBlockId, sessionData, createDropValidator, invalidBlocks]);
+  }, [depth, onUpdateBlock, onRemoveBlock, onDragStart, onDragOver, onDrop, onDropAtIndex, isDragActive, onZoomIn, onZoomOut, isZoomed, currentFocusedBlockId, sessionData, createDropValidator, invalidBlocks, blockValidationTypes, allBlocks, collapseAllTrigger, expandAllTrigger, globalCollapseState]);
 
   // Render SCRIPT block
   if (block.type === 'SCRIPT') {
@@ -125,6 +147,10 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           isZoomed={isZoomed}
           sessionData={sessionData}
           isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
         />
       </div>
     );
@@ -149,6 +175,10 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           isZoomed={isZoomed}
           sessionData={sessionData}
           isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
         />
       </div>
     );
@@ -173,6 +203,10 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
           isZoomed={isZoomed}
           isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
         />
       </div>
     );
@@ -198,6 +232,10 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
           isZoomed={isZoomed}
           isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
         />
       </div>
     );
@@ -225,6 +263,10 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
           isZoomed={isZoomed}
           isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
         />
       </div>
     );
@@ -247,6 +289,130 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
           isZoomed={isZoomed}
           isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+        />
+      </div>
+    );
+  }
+
+  // Render CHANGECHAR block
+  if (block.type === 'CHANGECHAR') {
+    return (
+      <div data-block-id={block.id}>
+        <ChangeCharBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          sessionData={sessionData}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          allBlocks={allBlocks}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+        />
+      </div>
+    );
+  }
+
+  // Render SAYCHAR block
+  if (block.type === 'SAYCHAR') {
+    return (
+      <div data-block-id={block.id}>
+        <SayCharBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          sessionData={sessionData}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          allBlocks={allBlocks}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+        />
+      </div>
+    );
+  }
+
+  // Render ANNOUNCE block
+  if (block.type === 'ANNOUNCE') {
+    return (
+      <div data-block-id={block.id}>
+        <AnnounceBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+        />
+      </div>
+    );
+  }
+
+  // Render RETURN block
+  if (block.type === 'RETURN') {
+    return (
+      <div data-block-id={block.id}>
+        <ReturnBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          navigationPath={sessionData?.navigationPath}
+          onNavigateBack={sessionData?.onNavigateBack}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+        />
+      </div>
+    );
+  }
+
+  // Render SET block
+  if (block.type === 'SET') {
+    return (
+      <div data-block-id={block.id}>
+        <SetBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+        />
+      </div>
+    );
+  }
+
+  // Render RESET block
+  if (block.type === 'RESET') {
+    return (
+      <div data-block-id={block.id}>
+        <ResetBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
         />
       </div>
     );
@@ -262,8 +428,13 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
         onDragStart={(e) => onDragStart(e, block)}
         sessionData={sessionData}
         isInvalid={isInvalid}
+        validationType={validationType}
         onGoToLabel={sessionData?.goToLabel}
         onNavigateToSubScript={sessionData?.onNavigateToSubScript}
+        allBlocks={allBlocks}
+        collapseAllTrigger={collapseAllTrigger}
+        expandAllTrigger={expandAllTrigger}
+        globalCollapseState={globalCollapseState}
       />
     </div>
   );

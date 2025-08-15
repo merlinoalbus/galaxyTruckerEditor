@@ -1,4 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
+import { variablesSystemApiService } from '@/services/CampaignEditor/VariablesSystem/variablesSystemApiService';
+import type { Character } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
 
 interface SessionData {
   variables: string[];
@@ -6,6 +8,7 @@ interface SessionData {
   labels: string[];
   scripts: string[];
   missions: string[];
+  characters: Character[];
 }
 
 const STORAGE_KEY = 'visualFlowEditor_sessionData';
@@ -26,6 +29,7 @@ export const useSessionData = () => {
     
     // Dati di default
     return {
+      characters: [], // Verranno caricati dall'API
       variables: [
         'playerName',
         'playerLevel',
@@ -89,9 +93,24 @@ export const useSessionData = () => {
     };
   });
 
-  // Salva in localStorage quando cambiano i dati
+  // Carica i personaggi all'avvio
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(sessionData));
+    variablesSystemApiService.loadAllData()
+      .then(data => {
+        setSessionData(prev => ({
+          ...prev,
+          characters: data.characters || []
+        }));
+      })
+      .catch(err => {
+        console.error('Errore caricamento personaggi:', err);
+      });
+  }, []); // Esegui solo una volta all'avvio
+
+  // Salva in localStorage quando cambiano i dati (escludi characters per evitare dati pesanti)
+  useEffect(() => {
+    const { characters, ...dataToStore } = sessionData;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToStore));
   }, [sessionData]);
 
   // Aggiungi una variabile
@@ -213,6 +232,7 @@ export const useSessionData = () => {
 
     // Aggiorna i dati di sessione con i nuovi elementi trovati
     setSessionData(prev => ({
+      ...prev, // Mantieni tutti i campi esistenti incluso characters
       variables: [...new Set([...prev.variables, ...variables])],
       semaphores: [...new Set([...prev.semaphores, ...semaphores])],
       labels: [...new Set([...prev.labels, ...labels])],
@@ -228,6 +248,7 @@ export const useSessionData = () => {
     labels: sessionData.labels,
     scripts: sessionData.scripts,
     missions: sessionData.missions,
+    characters: sessionData.characters,
     
     // Metodi di aggiunta
     addVariable,

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Type, Hash, Image, User, ChevronDown } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTranslation } from '@/locales';
 import { API_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
 
 interface MetacodeInsertButtonsProps {
@@ -56,6 +57,7 @@ export const MetacodeInsertButtons: React.FC<MetacodeInsertButtonsProps> = ({
   focusedField,
   currentLang
 }) => {
+  const { t } = useTranslation();
   const { topMetacodes, loading } = useTop5Metacodes(currentLang);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -141,7 +143,7 @@ export const MetacodeInsertButtons: React.FC<MetacodeInsertButtonsProps> = ({
                 ? 'bg-blue-500 text-white'
                 : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
           }`}
-          title={isDisabled ? 'Seleziona un campo di testo' : 'Inserisci metacodice genere'}
+          title={isDisabled ? t('visualFlowEditor.metacode.selectTextField') : t('visualFlowEditor.metacode.insertGenderMetacode')}
         >
           <Type className="w-3 h-3" />
           <span className="text-[10px]">G</span>
@@ -159,12 +161,12 @@ export const MetacodeInsertButtons: React.FC<MetacodeInsertButtonsProps> = ({
                 }}
                 className="w-full px-2 py-1 text-xs text-blue-400 hover:bg-slate-700 rounded transition-colors text-left border-b border-slate-700 mb-1"
               >
-                + Personalizzato
+                {t('visualFlowEditor.metacode.custom')}
               </button>
               {(topMetacodes?.gender || []).length > 0 ? (
                 <>
                   <div className="px-2 py-1 text-[10px] font-semibold text-gray-400 uppercase">
-                    Metacodici Genere
+                    {t('visualFlowEditor.metacode.genderMetacodes')}
                   </div>
                   {topMetacodes.gender.map((item: any, index: number) => (
                     <button
@@ -180,7 +182,7 @@ export const MetacodeInsertButtons: React.FC<MetacodeInsertButtonsProps> = ({
                 </>
               ) : (
                 <div className="px-2 py-2 text-xs text-gray-500 text-center">
-                  Nessun dato disponibile
+                  {t('visualFlowEditor.metacode.noDataAvailable')}
                 </div>
               )}
             </div>
@@ -202,7 +204,7 @@ export const MetacodeInsertButtons: React.FC<MetacodeInsertButtonsProps> = ({
                 ? 'bg-green-500 text-white'
                 : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
           }`}
-          title={isDisabled ? 'Seleziona un campo di testo' : 'Inserisci metacodice numero'}
+          title={isDisabled ? t('visualFlowEditor.metacode.selectTextField') : t('visualFlowEditor.metacode.insertGenderMetacode')}
         >
           <Hash className="w-3 h-3" />
           <span className="text-[10px]">N</span>
@@ -220,12 +222,12 @@ export const MetacodeInsertButtons: React.FC<MetacodeInsertButtonsProps> = ({
                 }}
                 className="w-full px-2 py-1 text-xs text-green-400 hover:bg-slate-700 rounded transition-colors text-left border-b border-slate-700 mb-1"
               >
-                + Personalizzato
+                {t('visualFlowEditor.metacode.custom')}
               </button>
               {(topMetacodes?.number || []).length > 0 ? (
                 <>
                   <div className="px-2 py-1 text-[10px] font-semibold text-gray-400 uppercase">
-                    Metacodici Numero
+                    {t('visualFlowEditor.metacode.numberMetacodes')}
                   </div>
                   {topMetacodes.number.map((item: any, index: number) => (
                     <button
@@ -241,7 +243,7 @@ export const MetacodeInsertButtons: React.FC<MetacodeInsertButtonsProps> = ({
                 </>
               ) : (
                 <div className="px-2 py-2 text-xs text-gray-500 text-center">
-                  Nessun dato disponibile
+                  {t('visualFlowEditor.metacode.noDataAvailable')}
                 </div>
               )}
             </div>
@@ -263,7 +265,7 @@ export const MetacodeInsertButtons: React.FC<MetacodeInsertButtonsProps> = ({
                 ? 'bg-purple-500 text-white'
                 : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
           }`}
-          title={isDisabled ? 'Seleziona un campo di testo' : 'Inserisci metacodice immagine'}
+          title={isDisabled ? t('visualFlowEditor.metacode.selectTextField') : t('visualFlowEditor.metacode.insertImageMetacode')}
         >
           <Image className="w-3 h-3" />
           <ChevronDown className="w-2.5 h-2.5" />
@@ -280,12 +282,12 @@ export const MetacodeInsertButtons: React.FC<MetacodeInsertButtonsProps> = ({
                 }}
                 className="w-full px-2 py-1 text-xs text-purple-400 hover:bg-slate-700 rounded transition-colors text-left border-b border-slate-700 mb-1"
               >
-                + Personalizzato
+                {t('visualFlowEditor.metacode.custom')}
               </button>
               {(topMetacodes?.image || []).length > 0 ? (
                 <>
                   <div className="px-2 py-1 text-[10px] font-semibold text-gray-400 uppercase">
-                    Metacodici Immagini
+                    {t('visualFlowEditor.metacode.imageMetacodes')}
                   </div>
                     {topMetacodes.image.map((item: any, index: number) => (
                       <button
@@ -304,7 +306,7 @@ export const MetacodeInsertButtons: React.FC<MetacodeInsertButtonsProps> = ({
                   </>
                 ) : (
                   <div className="px-2 py-2 text-xs text-gray-500 text-center">
-                    Nessun dato disponibile
+                    {t('visualFlowEditor.metacode.noDataAvailable')}
                   </div>
                 )}
               </div>
@@ -322,7 +324,7 @@ export const MetacodeInsertButtons: React.FC<MetacodeInsertButtonsProps> = ({
             ? 'bg-slate-700/50 text-gray-500 cursor-not-allowed' 
             : 'bg-slate-700 text-gray-300 hover:bg-orange-500 hover:text-white'
         }`}
-        title={isDisabled ? 'Seleziona un campo di testo' : 'Inserisci [NAME]'}
+        title={isDisabled ? t('visualFlowEditor.metacode.selectTextField') : t('visualFlowEditor.metacode.nameMetacode')}
       >
         <User className="w-3 h-3" />
         <span className="text-[10px]">NAME</span>

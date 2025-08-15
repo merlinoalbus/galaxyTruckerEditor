@@ -2,6 +2,7 @@ import React, { useState, ReactNode, useRef, useEffect } from 'react';
 import { Trash2, ChevronDown, ChevronUp, GripVertical } from 'lucide-react';
 import { getBlockColors, getBlockIconBackground, getBlockDragHandle } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
 import { useTranslation } from '@/locales';
+import { CharacterAvatar } from '../../CharacterAvatar';
 
 interface BaseBlockProps {
   // Identificazione blocco
@@ -22,6 +23,7 @@ interface BaseBlockProps {
   // Styling
   className?: string;
   isInvalid?: boolean;
+  validationType?: 'error' | 'warning';
   blockColor?: string; // Per personalizzare il colore del drag handle
   iconBgColor?: string; // Colore di sfondo per l'icona
   
@@ -30,6 +32,13 @@ interface BaseBlockProps {
   
   // Se true, nasconde i controlli (per ScriptBlock root)
   hideControls?: boolean;
+  
+  // Componente aggiuntivo da renderizzare (es. SceneDebugButton)
+  extraControls?: ReactNode;
+  
+  // Mostra avatar per blocchi SAY/ASK
+  showAvatar?: boolean;
+  avatarCharacter?: any; // Personaggio da mostrare nell'avatar
 }
 
 /**
@@ -46,10 +55,14 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
   compactParams,
   className = '',
   isInvalid = false,
+  validationType,
   blockColor = 'bg-gray-700',
   iconBgColor = '',
   children,
-  hideControls = false
+  hideControls = false,
+  extraControls,
+  showAvatar = false,
+  avatarCharacter
 }) => {
   const { t } = useTranslation();
   // Stato interno per collapse se non è controllato dall'esterno
@@ -124,8 +137,20 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
   const effectiveIconBg = iconBgColor || blockColors.icon;
   const effectiveDragHandle = blockColor || blockColors.dragHandle;
 
+  // Determina le classi di bordo in base al tipo di validazione
+  const getValidationClasses = () => {
+    if (!isInvalid) return '';
+    
+    // Se validationType è esplicitamente 'warning', usa arancione
+    if (validationType === 'warning') {
+      return 'border-orange-500 border-2 shadow-orange-500/50 shadow-lg';
+    }
+    // Altrimenti usa rosso (per 'error' o undefined)
+    return 'border-red-500 border-2 shadow-red-500/50 shadow-lg';
+  };
+
   return (
-    <div className={`relative ${className || ''} ${paddingClass} ${isInvalid ? 'border-red-500 border-2 shadow-red-500/50 shadow-lg' : ''}`}>
+    <div className={`relative ${className || ''} ${paddingClass} ${getValidationClasses()}`}>
       {/* Delete button - solo se onRemove è definito e non hideControls */}
       {!hideControls && onRemove && (
         <button
@@ -163,6 +188,9 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
         </div>
       )}
       
+      {/* Extra controls (es. Scene Debug Button) */}
+      {extraControls}
+      
       {/* Header standardizzato */}
       <div 
         ref={headerRef}
@@ -180,7 +208,7 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
         </div>
         
         {/* Label blocco */}
-        <span className="text-xs font-semibold text-white uppercase tracking-wide whitespace-nowrap ml-2 flex-shrink-0">
+        <span className="text-base font-semibold text-white tracking-wide whitespace-nowrap ml-2 flex-shrink-0 galaxy-title">
           {blockType}
         </span>
         
@@ -243,6 +271,13 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
           
           return null;
         })()}
+        
+        {/* Avatar per SAY/ASK sempre visibile */}
+        {showAvatar && (
+          <div className="ml-auto mr-2">
+            <CharacterAvatar character={avatarCharacter} />
+          </div>
+        )}
       </div>
       
       {/* Main content - visibile solo se non collapsed */}

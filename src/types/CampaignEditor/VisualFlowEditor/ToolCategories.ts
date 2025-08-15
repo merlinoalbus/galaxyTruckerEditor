@@ -42,23 +42,32 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
     icon: '⭐',
     alwaysVisible: false,
     tools: [
-      { id: 'delay', name: 'DELAY', icon: '⏱️', blockType: 'DELAY', description: t('visualFlowEditor.tools.delay.description'), implemented: true },
+      // === GRUPPO SCENE/DIALOGHI (più frequenti) ===
+      { id: 'showdlgscene', name: 'SHOWDLGSCENE', icon: '🗨️', blockType: 'SHOWDLGSCENE', description: t('visualFlowEditor.tools.showDlgScene.description'), implemented: true },
+      { id: 'say', name: 'SAY', icon: '💬', blockType: 'SAY', description: t('visualFlowEditor.tools.say.description'), implemented: true },
+      { id: 'ask', name: 'ASK', icon: '❓', blockType: 'ASK', description: t('visualFlowEditor.tools.ask.description'), implemented: true },
+      { id: 'hidedlgscene', name: 'HIDEDLGSCENE', icon: '🚫', blockType: 'HIDEDLGSCENE', description: t('visualFlowEditor.tools.hideDlgScene.description'), implemented: true },
+      { id: 'announce', name: 'ANNOUNCE', icon: '📢', blockType: 'ANNOUNCE', description: t('visualFlowEditor.tools.announce.description'), implemented: true },
+      { id: 'saychar', name: 'SAYCHAR', icon: '🗣️', blockType: 'SAYCHAR', description: t('visualFlowEditor.tools.sayChar.description'), implemented: true },
+      
+      // === GRUPPO PERSONAGGI ===
+      { id: 'showchar', name: 'SHOWCHAR', icon: '👤', blockType: 'SHOWCHAR', description: t('visualFlowEditor.tools.showChar.description'), implemented: true },
+      { id: 'hidechar', name: 'HIDECHAR', icon: '👻', blockType: 'HIDECHAR', description: t('visualFlowEditor.tools.hideChar.description'), implemented: true },
+      { id: 'changechar', name: 'CHANGECHAR', icon: '🎭', blockType: 'CHANGECHAR', description: t('visualFlowEditor.tools.changeChar.description'), implemented: true },
+      
+      // === GRUPPO CONTROLLO FLUSSO ===
+      { id: 'label', name: 'LABEL', icon: '🏷️', blockType: 'LABEL', description: t('visualFlowEditor.tools.label.description'), implemented: true },
       { id: 'go', name: 'GO', icon: '➡️', blockType: 'GO', description: t('visualFlowEditor.tools.go.description'), implemented: true },
       { id: 'sub_script', name: 'SUB_SCRIPT', icon: '📄', blockType: 'SUB_SCRIPT', description: t('visualFlowEditor.tools.subScript.description'), implemented: true },
+      { id: 'return', name: 'RETURN', icon: '↩️', blockType: 'RETURN', description: t('visualFlowEditor.tools.return.description'), implemented: true },
       { id: 'exit_menu', name: 'EXIT_MENU', icon: '🚪', blockType: 'EXIT_MENU', description: t('visualFlowEditor.tools.exitMenu.description'), implemented: true },
-      { id: 'say', name: 'SAY', icon: '💬', blockType: 'SAY', description: t('visualFlowEditor.tools.say.description'), implemented: true },
-      { id: 'changechar', name: 'CHANGECHAR', icon: '🎭', blockType: 'CHANGECHAR', description: t('visualFlowEditor.tools.changeChar.description'), implemented: false },
-      { id: 'set', name: 'SET', icon: '✅', blockType: 'SET', description: t('visualFlowEditor.tools.set.description'), implemented: false },
-      { id: 'ask', name: 'ASK', icon: '❓', blockType: 'ASK', description: t('visualFlowEditor.tools.ask.description'), implemented: true },
-      { id: 'hidechar', name: 'HIDECHAR', icon: '👻', blockType: 'HIDECHAR', description: t('visualFlowEditor.tools.hideChar.description'), implemented: false },
-      { id: 'showchar', name: 'SHOWCHAR', icon: '👤', blockType: 'SHOWCHAR', description: t('visualFlowEditor.tools.showChar.description'), implemented: false },
-      { id: 'reset', name: 'RESET', icon: '❌', blockType: 'RESET', description: t('visualFlowEditor.tools.reset.description'), implemented: false },
-      { id: 'label', name: 'LABEL', icon: '🏷️', blockType: 'LABEL', description: t('visualFlowEditor.tools.label.description'), implemented: true },
-      { id: 'hidedlgscene', name: 'HIDEDLGSCENE', icon: '🚫', blockType: 'HIDEDLGSCENE', description: t('visualFlowEditor.tools.hideDlgScene.description'), implemented: false },
-      { id: 'showdlgscene', name: 'SHOWDLGSCENE', icon: '🗨️', blockType: 'SHOWDLGSCENE', description: t('visualFlowEditor.tools.showDlgScene.description'), implemented: false },
-      { id: 'return', name: 'RETURN', icon: '↩️', blockType: 'RETURN', description: t('visualFlowEditor.tools.return.description'), implemented: false },
-      { id: 'announce', name: 'ANNOUNCE', icon: '📢', blockType: 'ANNOUNCE', description: t('visualFlowEditor.tools.announce.description'), implemented: false },
-      { id: 'saychar', name: 'SAYCHAR', icon: '🗣️', blockType: 'SAYCHAR', description: t('visualFlowEditor.tools.sayChar.description'), implemented: false }
+      
+      // === GRUPPO VARIABILI/SEMAFORI ===
+      { id: 'set', name: 'SET', icon: '✅', blockType: 'SET', description: t('visualFlowEditor.tools.set.description'), implemented: true },
+      { id: 'reset', name: 'RESET', icon: '❌', blockType: 'RESET', description: t('visualFlowEditor.tools.reset.description'), implemented: true },
+      
+      // === GRUPPO UTILITY ===
+      { id: 'delay', name: 'DELAY', icon: '⏱️', blockType: 'DELAY', description: t('visualFlowEditor.tools.delay.description'), implemented: true }
     ]
   },
   {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Hash } from 'lucide-react';
+import { useTranslation } from '@/locales';
 
 interface NumberModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ export const NumberModal: React.FC<NumberModalProps> = ({
   onInsert,
   existingData
 }) => {
+  const { t } = useTranslation();
   const [index, setIndex] = useState(existingData?.index || '');
   const [suffix, setSuffix] = useState(existingData?.suffix || '');
   const [isOrdinal, setIsOrdinal] = useState(false);
@@ -45,7 +47,7 @@ export const NumberModal: React.FC<NumberModalProps> = ({
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-white flex items-center gap-2">
             <Hash className="w-5 h-5" />
-            Valore Numerico
+{t('visualFlowEditor.metacode.numericValue')}
           </h3>
           <button
             onClick={onClose}
@@ -57,7 +59,7 @@ export const NumberModal: React.FC<NumberModalProps> = ({
 
         {/* Info */}
         <div className="mb-4 p-2 bg-slate-900/50 rounded text-xs text-gray-400">
-          Inserisce un valore numerico dinamico o ordinale.
+{t('visualFlowEditor.metacode.numericValueDescription')}
         </div>
 
         {/* Form */}
@@ -70,7 +72,7 @@ export const NumberModal: React.FC<NumberModalProps> = ({
                 onChange={(e) => setIsOrdinal(e.target.checked)}
                 className="rounded border-gray-600 bg-slate-900 focus:ring-blue-500"
               />
-              <span className="text-sm text-gray-300">Numero ordinale (1°, 2°, 3°...)</span>
+              <span className="text-sm text-gray-300">{t('visualFlowEditor.metacode.ordinalNumber')}</span>
             </label>
           </div>
 
@@ -78,35 +80,35 @@ export const NumberModal: React.FC<NumberModalProps> = ({
             <>
               <div>
                 <label className="block text-xs text-gray-400 mb-1">
-                  Indice (opzionale)
+{t('visualFlowEditor.metacode.indexOptional')}
                 </label>
                 <input
                   type="text"
                   value={index}
                   onChange={(e) => setIndex(e.target.value.replace(/\D/g, ''))}
                   className="w-full bg-slate-900 text-white px-2 py-1 rounded border border-slate-600 focus:border-blue-500 focus:outline-none text-sm"
-                  placeholder="1, 2, 3..."
+placeholder={t('visualFlowEditor.metacode.indexPlaceholder')}
                 />
                 <div className="text-xs text-gray-500 mt-1">
-                  Per riferimenti multipli: [n1], [n2], etc.
+{t('visualFlowEditor.metacode.multipleReferences')}
                 </div>
               </div>
 
               <div>
                 <label className="block text-xs text-gray-400 mb-1">
-                  Suffisso (opzionale)
+{t('visualFlowEditor.metacode.suffixOptional')}
                 </label>
                 <select
                   value={suffix}
                   onChange={(e) => setSuffix(e.target.value)}
                   className="w-full bg-slate-900 text-white px-2 py-1 rounded border border-slate-600 focus:border-blue-500 focus:outline-none text-sm"
                 >
-                  <option value="">Nessuno</option>
-                  <option value="s">s - Plurale</option>
-                  <option value="e">e - Esteso</option>
+                  <option value="">{t('visualFlowEditor.metacode.none')}</option>
+                  <option value="s">{t('visualFlowEditor.metacode.pluralSuffix')}</option>
+                  <option value="e">{t('visualFlowEditor.metacode.extendedSuffix')}</option>
                 </select>
                 <div className="text-xs text-gray-500 mt-1">
-                  Modifica il formato del numero
+{t('visualFlowEditor.metacode.modifyNumberFormat')}
                 </div>
               </div>
             </>
@@ -115,14 +117,14 @@ export const NumberModal: React.FC<NumberModalProps> = ({
           {isOrdinal && (
             <div>
               <label className="block text-xs text-gray-400 mb-1">
-                Posizione ordinale
+{t('visualFlowEditor.metacode.ordinalPosition')}
               </label>
               <input
                 type="text"
                 value={index}
                 onChange={(e) => setIndex(e.target.value.replace(/\D/g, ''))}
                 className="w-full bg-slate-900 text-white px-2 py-1 rounded border border-slate-600 focus:border-blue-500 focus:outline-none text-sm"
-                placeholder="1, 2, 3..."
+                placeholder={t('visualFlowEditor.metacode.indexPlaceholder')}
               />
             </div>
           )}
@@ -130,7 +132,7 @@ export const NumberModal: React.FC<NumberModalProps> = ({
 
         {/* Preview */}
         <div className="mb-4 p-3 bg-slate-900 rounded border border-slate-700">
-          <div className="text-xs text-gray-500 mb-1">Codice generato:</div>
+          <div className="text-xs text-gray-500 mb-1">{t('visualFlowEditor.metacode.generatedCode')}</div>
           <code className="text-sm text-green-400 font-mono">
             {isOrdinal 
               ? `[numth${index || '1'}]`
@@ -145,13 +147,13 @@ export const NumberModal: React.FC<NumberModalProps> = ({
             onClick={onClose}
             className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors"
           >
-            Annulla
+{t('visualFlowEditor.metacode.cancel')}
           </button>
           <button
             onClick={handleInsert}
             className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-500 text-white rounded transition-colors"
           >
-            Inserisci
+{t('visualFlowEditor.metacode.insert')}
           </button>
         </div>
       </div>

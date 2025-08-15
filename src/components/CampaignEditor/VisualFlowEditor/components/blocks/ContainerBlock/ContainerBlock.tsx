@@ -23,6 +23,7 @@ interface ContainerBlockProps {
   // Styling
   className?: string;
   isInvalid?: boolean;
+  validationType?: 'error' | 'warning';
   blockColor?: string;
   iconBgColor?: string;
   
@@ -52,6 +53,7 @@ export const ContainerBlock: React.FC<ContainerBlockProps> = ({
   onZoomOut,
   className = '',
   isInvalid = false,
+  validationType,
   blockColor = 'bg-gray-700',
   iconBgColor = '',
   children,
@@ -81,6 +83,7 @@ export const ContainerBlock: React.FC<ContainerBlockProps> = ({
         compactParams={compactParams}
         className={className}
         isInvalid={isInvalid}
+        validationType={validationType}
         blockColor={blockColor}
         iconBgColor={iconBgColor}
         hideControls={hideControls}

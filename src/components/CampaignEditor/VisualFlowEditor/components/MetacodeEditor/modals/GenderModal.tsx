@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
+import { useTranslation } from '@/locales';
 
 interface GenderModalProps {
   isOpen: boolean;
@@ -18,6 +19,7 @@ export const GenderModal: React.FC<GenderModalProps> = ({
   currentText = '',
   cursorPosition = 0
 }) => {
+  const { t } = useTranslation();
   const [male, setMale] = useState('');
   const [female, setFemale] = useState('');
   const [neutral, setNeutral] = useState('');
@@ -121,10 +123,10 @@ export const GenderModal: React.FC<GenderModalProps> = ({
         {/* Header con contesto */}
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h3 className="text-sm font-medium text-white">Adattamento Genere</h3>
+            <h3 className="text-sm font-medium text-white">{t('visualFlowEditor.metacode.genderAdaptation')}</h3>
             {wordToReplace && (
               <div className="text-xs text-blue-400 mt-1">
-                Completa: <span className="font-mono bg-slate-900 px-1 rounded">{wordToReplace}</span>
+                {t('visualFlowEditor.metacode.complete')}: <span className="font-mono bg-slate-900 px-1 rounded">{wordToReplace}</span>
               </div>
             )}
           </div>
@@ -139,66 +141,66 @@ export const GenderModal: React.FC<GenderModalProps> = ({
             onClick={() => { setMale('o'); setFemale('a'); setNeutral(''); }}
             className="px-2 py-1 text-xs bg-slate-700 hover:bg-slate-600 rounded"
           >
-            o/a
+            {t('visualFlowEditor.metacode.presetOA')}
           </button>
           <button
             onClick={() => { setMale('e'); setFemale('e'); setNeutral(''); }}
             className="px-2 py-1 text-xs bg-slate-700 hover:bg-slate-600 rounded"
           >
-            e/e
+            {t('visualFlowEditor.metacode.presetEE')}
           </button>
           <button
             onClick={() => { setMale('his'); setFemale('her'); setNeutral('its'); }}
             className="px-2 py-1 text-xs bg-slate-700 hover:bg-slate-600 rounded"
           >
-            his/her/its
+            {t('visualFlowEditor.metacode.presetHisHerIts')}
           </button>
           <button
             onClick={() => { setMale('il'); setFemale('la'); setNeutral(''); }}
             className="px-2 py-1 text-xs bg-slate-700 hover:bg-slate-600 rounded"
           >
-            il/la
+            {t('visualFlowEditor.metacode.presetIlLa')}
           </button>
         </div>
 
         {/* Input fields */}
         <div className="space-y-2 mb-3">
           <div className="flex items-center gap-2">
-            <label className="text-xs text-gray-400 w-16">Masch:</label>
+            <label className="text-xs text-gray-400 w-16">{t('visualFlowEditor.metacode.male')}:</label>
             <input
               ref={inputRef}
               type="text"
               value={male}
               onChange={(e) => setMale(e.target.value)}
               className="flex-1 bg-slate-900 text-white px-2 py-1 rounded border border-slate-600 text-sm focus:border-blue-500 focus:outline-none"
-              placeholder={wordToReplace ? `${wordToReplace}...` : "maschile"}
+              placeholder={wordToReplace ? `${wordToReplace}...` : t('visualFlowEditor.metacode.male').toLowerCase()}
             />
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-xs text-gray-400 w-16">Femm:</label>
+            <label className="text-xs text-gray-400 w-16">{t('visualFlowEditor.metacode.female')}:</label>
             <input
               type="text"
               value={female}
               onChange={(e) => setFemale(e.target.value)}
               className="flex-1 bg-slate-900 text-white px-2 py-1 rounded border border-slate-600 text-sm focus:border-blue-500 focus:outline-none"
-              placeholder={wordToReplace ? `${wordToReplace}...` : "femminile"}
+              placeholder={wordToReplace ? `${wordToReplace}...` : t('visualFlowEditor.metacode.female').toLowerCase()}
             />
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-xs text-gray-400 w-16">Neutro:</label>
+            <label className="text-xs text-gray-400 w-16">{t('visualFlowEditor.metacode.neutral')}:</label>
             <input
               type="text"
               value={neutral}
               onChange={(e) => setNeutral(e.target.value)}
               className="flex-1 bg-slate-900 text-white px-2 py-1 rounded border border-slate-600 text-sm focus:border-blue-500 focus:outline-none"
-              placeholder="opzionale (its)"
+              placeholder={t('visualFlowEditor.metacode.neutral').toLowerCase()}
             />
           </div>
         </div>
         
         {/* Live preview */}
         <div className="p-2 bg-slate-900 rounded text-xs mb-3">
-          <div className="text-gray-500 mb-1">Risultato:</div>
+          <div className="text-gray-500 mb-1">{t('visualFlowEditor.metacode.preview')}:</div>
           <code className="text-green-400 font-mono">
             {wordToReplace && (
               <>
@@ -215,9 +217,9 @@ export const GenderModal: React.FC<GenderModalProps> = ({
 
         {/* Esempi di output */}
         <div className="text-xs text-gray-400 mb-3 space-y-1">
-          <div>M: {wordToReplace}{male}</div>
-          <div>F: {wordToReplace}{female}</div>
-          {neutral && <div>N: {wordToReplace}{neutral}</div>}
+          <div>{t('visualFlowEditor.metacode.maleLabel')} {wordToReplace}{male}</div>
+          <div>{t('visualFlowEditor.metacode.femaleLabel')} {wordToReplace}{female}</div>
+          {neutral && <div>{t('visualFlowEditor.metacode.neutralLabel')} {wordToReplace}{neutral}</div>}
         </div>
         
         {/* Actions */}
@@ -226,14 +228,14 @@ export const GenderModal: React.FC<GenderModalProps> = ({
             onClick={onClose}
             className="px-3 py-1.5 text-sm text-gray-400 hover:text-white transition-colors"
           >
-            Annulla
+            {t('visualFlowEditor.metacode.cancel')}
           </button>
           <button
             onClick={handleInsert}
             disabled={!male && !female}
             className="px-4 py-1.5 text-sm bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:text-gray-500 text-white rounded transition-colors"
           >
-            Inserisci
+            {t('visualFlowEditor.metacode.insert')}
           </button>
         </div>
       </div>

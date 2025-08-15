@@ -11,6 +11,7 @@ import {
   Autocomplete,
   Chip
 } from '@mui/material';
+import { useTranslation } from '@/locales';
 
 // Tipi di semafori disponibili
 const AVAILABLE_SEMAPHORES = [
@@ -67,6 +68,7 @@ export const IfParameterControls: React.FC<IfParameterControlsProps> = ({
   onVariableChange,
   onValueChange
 }) => {
+  const { t } = useTranslation();
   
   const renderSemaphoreSelector = () => (
     <Autocomplete
@@ -78,7 +80,7 @@ export const IfParameterControls: React.FC<IfParameterControlsProps> = ({
           {...params}
           label="Semaforo"
           size="small"
-          placeholder="Seleziona o digita semaforo"
+          placeholder={t('visualFlowEditor.if.semaphorePlaceholder')}
         />
       )}
       freeSolo
@@ -97,7 +99,7 @@ export const IfParameterControls: React.FC<IfParameterControlsProps> = ({
           {...params}
           label="Variabile"
           size="small"
-          placeholder="Seleziona o digita variabile"
+          placeholder={t('visualFlowEditor.if.variablePlaceholder')}
         />
       )}
       freeSolo
