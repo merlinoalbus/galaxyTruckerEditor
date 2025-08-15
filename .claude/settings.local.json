@@ -19,7 +19,8 @@
       "Bash(npm run generate:translations:*)",
       "Bash(restartBE)",
       "Bash(npm start)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "mcp__ide__getDiagnostics"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",

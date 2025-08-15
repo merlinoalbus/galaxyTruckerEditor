@@ -167,6 +167,39 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           };
         }
       }
+      
+      // Gestione speciale per ADDOPPONENT e SETSHIPTYPE: controllano se sono dentro MISSION (warning)
+      if ((block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE') && paramValidation.valid) {
+        // Verifica se siamo dentro un blocco MISSION
+        let isInsideMission = false;
+        
+        // Controlla il path per vedere se c'è un MISSION
+        if (path && path.length > 0) {
+          isInsideMission = path.some(p => p.includes('MISSION'));
+        }
+        
+        // Se parentBlock esiste, controlla anche quello
+        if (!isInsideMission && parentBlock) {
+          let currentParent = parentBlock;
+          while (currentParent && !isInsideMission) {
+            if (currentParent.type === 'MISSION') {
+              isInsideMission = true;
+            }
+            currentParent = currentParent.parent;
+          }
+        }
+        
+        // Se non è dentro MISSION, genera un warning
+        if (!isInsideMission) {
+          const errorKey = block.type === 'ADDOPPONENT' 
+            ? 'ADDOPPONENT_NOT_IN_MISSION'
+            : 'SETSHIPTYPE_NOT_IN_MISSION';
+          paramValidation = { 
+            valid: false,
+            error: errorKey
+          };
+        }
+      }
       if (!paramValidation.valid) {
         // Determina se è un warning o error
         const isWarning = [
@@ -182,7 +215,9 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           'ASK_NO_SCENE',
           'ASK_IF_INVALID_THEN',
           'ASK_IF_INVALID_ELSE',
-          'RETURN_AT_ROOT_LEVEL'
+          'RETURN_AT_ROOT_LEVEL',
+          'ADDOPPONENT_NOT_IN_MISSION',
+          'SETSHIPTYPE_NOT_IN_MISSION'
         ].includes(paramValidation.error || '');
         
         if (isWarning) {
@@ -334,6 +369,26 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
             message = t ?
               t('visualFlowEditor.validation.askIfInvalidElse')
               : 'After ASK, IF block\'s ELSE branch must start with MENU or GO.';
+            break;
+          case 'ADDOPPONENT_NO_CHARACTER':
+            message = t ?
+              t('visualFlowEditor.validation.addOpponentNoCharacter')
+              : 'ADDOPPONENT block must have a character selected. Choose an opponent character.';
+            break;
+          case 'ADDOPPONENT_NOT_IN_MISSION':
+            message = t ?
+              t('visualFlowEditor.validation.addOpponentNotInMission')
+              : 'ADDOPPONENT should be inside a MISSION block. Consider moving this block inside a mission.';
+            break;
+          case 'SETSHIPTYPE_NO_TYPE':
+            message = t ?
+              t('visualFlowEditor.validation.setShipTypeNoType')
+              : 'SETSHIPTYPE block must have a ship type selected. Choose a ship class (STI, STII, or STIII).';
+            break;
+          case 'SETSHIPTYPE_NOT_IN_MISSION':
+            message = t ?
+              t('visualFlowEditor.validation.setShipTypeNotInMission')
+              : 'SETSHIPTYPE should be inside a MISSION block. Consider moving this block inside a mission.';
             break;
           default:
             message = t ? 

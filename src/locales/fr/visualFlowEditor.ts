@@ -5,7 +5,7 @@
 export const visualFlowEditorTranslations = {
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
-  'visualFlowEditor.subtitle': 'Éditeur visuel complet avec tous les 14 types d\'IF',
+  'visualFlowEditor.subtitle': 'Éditeur Visuel Complet',
   'visualFlowEditor.loading': 'Chargement du Visual Flow Editor...',
   'visualFlowEditor.noScriptLoaded': 'Aucun script chargé',
   
@@ -56,6 +56,10 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.goToBlock': 'Aller →',
   'visualFlowEditor.validation.goToBlockTitle': 'Aller au bloc',
   'visualFlowEditor.validation.footer': 'Corrigez ces erreurs pour assurer le bon fonctionnement du script. Les blocs avec des erreurs sont surlignés en rouge dans l\'éditeur.',
+  'visualFlowEditor.validation.addOpponentNoCharacter': 'Le bloc ADDOPPONENT doit avoir un personnage sélectionné.',
+  'visualFlowEditor.validation.addOpponentNotInMission': 'ADDOPPONENT devrait être dans un bloc MISSION.',
+  'visualFlowEditor.validation.setShipTypeNoType': 'Le bloc SETSHIPTYPE doit avoir un type de vaisseau sélectionné.',
+  'visualFlowEditor.validation.setShipTypeNotInMission': 'SETSHIPTYPE devrait être dans un bloc MISSION.',
   
   // Delay Block
   'visualFlowEditor.blocks.delay.duration': 'Durée',
@@ -391,6 +395,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.milliseconds': 'Millisecondes (ex. 1000 = 1 seconde)',
   'visualFlowEditor.command.selectLabel': 'Sélectionner une étiquette...',
   'visualFlowEditor.command.labelName': 'Nom de l\'étiquette...',
+  'visualFlowEditor.command.selectScript': 'Sélectionner un script...',
+  'visualFlowEditor.command.opponent': 'Personnage Adversaire',
+  'visualFlowEditor.command.opponentPlaceholder': 'marchand, ennemi, etc.',
+  'visualFlowEditor.command.shipClassI': 'Classe I',
+  'visualFlowEditor.command.shipClassII': 'Classe II',
+  'visualFlowEditor.command.shipClassIII': 'Classe III',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Nom du script...',
