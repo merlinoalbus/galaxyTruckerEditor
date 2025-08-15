@@ -477,7 +477,6 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.subScript.description': 'Ejecutar subscript',
   'visualFlowEditor.tools.exitMenu.description': 'Salir del menú',
   'visualFlowEditor.tools.say.description': 'Mostrar diálogo',
-  'visualFlowEditor.tools.changeChar.description': 'Cambiar personaje',
   'visualFlowEditor.tools.set.description': 'Establecer semáforo',
   'visualFlowEditor.tools.ask.description': 'Hacer pregunta',
   'visualFlowEditor.tools.hideChar.description': 'Ocultar personaje',
@@ -564,6 +563,16 @@ export const visualFlowEditorTranslations = {
   // Tool Descriptions - Characters
   'visualFlowEditor.tools.askChar.description': 'Preguntar con personaje',
   'visualFlowEditor.tools.focusChar.description': 'Enfocar en personaje',
+  'visualFlowEditor.tools.changeChar.description': 'Cambiar imagen del personaje',
+  
+  // CHANGECHAR Block
+  'visualFlowEditor.blocks.changeChar.title': 'Cambiar Personaje',
+  'visualFlowEditor.blocks.changeChar.description': 'Cambia la imagen de un personaje visible',
+  'visualFlowEditor.blocks.changeChar.selectCharacter': 'Seleccionar personaje',
+  'visualFlowEditor.blocks.changeChar.selectNewImage': 'Nueva imagen',
+  'visualFlowEditor.blocks.changeChar.noVisibleCharacters': 'No hay personajes visibles con múltiples imágenes',
+  'visualFlowEditor.blocks.changeChar.selectCharacterFirst': 'Primero selecciona un personaje',
+  'visualFlowEditor.blocks.changeChar.noImagesAvailable': 'No hay imágenes alternativas disponibles',
   
   // Tool Descriptions - System
   'visualFlowEditor.tools.setFlightStatusBar.description': 'Establecer barra de estado de vuelo',

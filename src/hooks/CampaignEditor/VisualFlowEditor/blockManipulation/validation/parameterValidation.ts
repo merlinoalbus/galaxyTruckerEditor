@@ -169,6 +169,77 @@ export const validateSubScriptParameters = (block: any): { valid: boolean; error
 };
 
 /**
+ * Valida i parametri di un blocco CHANGECHAR
+ */
+export const validateChangeCharParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
+  // Prima controlla i parametri base
+  if (!block.parameters?.character || block.parameters.character.trim().length === 0) {
+    return { 
+      valid: false, 
+      error: 'CHANGECHAR_NO_CHARACTER' 
+    };
+  }
+  if (!block.parameters?.image || block.parameters.image.trim().length === 0) {
+    return { 
+      valid: false, 
+      error: 'CHANGECHAR_NO_IMAGE' 
+    };
+  }
+  
+  // Se abbiamo il contesto, verifica che siamo in una scena
+  if (allBlocks && block.id) {
+    const sceneState = simulateSceneExecution(allBlocks, block.id, characters);
+    
+    // Verifica che siamo in una scena (warning)
+    if (!sceneState.isInDialogScene) {
+      return {
+        valid: false,
+        error: 'CHANGECHAR_NO_SCENE'
+      };
+    }
+    
+    // Verifica che ci siano personaggi visibili (warning)
+    if (sceneState.currentScene) {
+      const visibleCharacters = sceneState.currentScene.personaggi.filter(p => p.visible);
+      if (visibleCharacters.length === 0) {
+        return {
+          valid: false,
+          error: 'CHANGECHAR_NO_VISIBLE_CHARACTERS'
+        };
+      }
+      
+      // Verifica che il personaggio selezionato sia visibile nella scena (warning)
+      const selectedCharVisible = visibleCharacters.find(p => p.nomepersonaggio === block.parameters.character);
+      if (!selectedCharVisible) {
+        return {
+          valid: false,
+          error: 'CHANGECHAR_CHARACTER_NOT_VISIBLE'
+        };
+      }
+    }
+  }
+  
+  // Verifica che l'immagine selezionata faccia parte della lista immagini del personaggio (warning)
+  if (characters && block.parameters?.character && block.parameters?.image) {
+    const character = characters.find((c: any) => c.nomepersonaggio === block.parameters.character);
+    if (character && character.listaimmagini) {
+      const imageExists = character.listaimmagini.find((img: any) => 
+        img.percorso === block.parameters.image || 
+        img.nomefile === block.parameters.image // fallback per compatibilità
+      );
+      if (!imageExists) {
+        return {
+          valid: false,
+          error: 'CHANGECHAR_IMAGE_NOT_IN_LIST'
+        };
+      }
+    }
+  }
+  
+  return { valid: true };
+};
+
+/**
  * Valida i parametri di un blocco OPT
  */
 export const validateOptParameters = (block: any): { valid: boolean; error?: string } => {
@@ -296,6 +367,8 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return validateShowCharParameters(block, allBlocks, characters);
     case 'HIDECHAR':
       return validateHideCharParameters(block, allBlocks, characters);
+    case 'CHANGECHAR':
+      return validateChangeCharParameters(block, allBlocks, characters);
     // EXIT_MENU, SHOWDLGSCENE, HIDEDLGSCENE non hanno parametri da validare
     default:
       return { valid: true };

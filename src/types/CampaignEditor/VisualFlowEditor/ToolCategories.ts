@@ -47,7 +47,7 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
       { id: 'sub_script', name: 'SUB_SCRIPT', icon: '📄', blockType: 'SUB_SCRIPT', description: t('visualFlowEditor.tools.subScript.description'), implemented: true },
       { id: 'exit_menu', name: 'EXIT_MENU', icon: '🚪', blockType: 'EXIT_MENU', description: t('visualFlowEditor.tools.exitMenu.description'), implemented: true },
       { id: 'say', name: 'SAY', icon: '💬', blockType: 'SAY', description: t('visualFlowEditor.tools.say.description'), implemented: true },
-      { id: 'changechar', name: 'CHANGECHAR', icon: '🎭', blockType: 'CHANGECHAR', description: t('visualFlowEditor.tools.changeChar.description'), implemented: false, inProgress: true },
+      { id: 'changechar', name: 'CHANGECHAR', icon: '🎭', blockType: 'CHANGECHAR', description: t('visualFlowEditor.tools.changeChar.description'), implemented: true },
       { id: 'set', name: 'SET', icon: '✅', blockType: 'SET', description: t('visualFlowEditor.tools.set.description'), implemented: false },
       { id: 'ask', name: 'ASK', icon: '❓', blockType: 'ASK', description: t('visualFlowEditor.tools.ask.description'), implemented: true },
       { id: 'hidechar', name: 'HIDECHAR', icon: '👻', blockType: 'HIDECHAR', description: t('visualFlowEditor.tools.hideChar.description'), implemented: true },

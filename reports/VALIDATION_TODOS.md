@@ -1,36 +1,42 @@
-1)Parliamo dell'implementazione del comando SHOWCHAR ed HIDECHAR.i comandi arrivano con i seguenti JSON:
+1)Parliamo dell'implementazione del comando CHANGECHAR. Il comando è associato al seguente JSON:
 {
-type: "SHOWCHAR",
+type: "CHANGECHAR",
 parameters: {
-character: "designer",
-position: "left"
+character: "<nomepersonaggio>",
+image: "<percorso image selezionato tra uno dei possibili dentro listaimmagini>"
 }
-},
-{
-type: "HIDECHAR",
-parameters: {
-character: "designer"
-}
-}
-Il blocco SHOWCHAR dovrà quindi gestire nel suo body la selezione di uno dei personaggi possibili (che non sia già in scena e con stato visible=true. può essere già in scena con stato visible=false in tal caso lo rimette visible a true). Deve avere un sistema di ricerca filtro, mostrare le anteprime delle immagini base dei vari personaggi (vedi Characters in Variables & System) e permettere all'utente di selezionare un personaggio e una posizione che può un valore a scelta tra left, right,top bottom, lefbottom, lefttop, rightbottom, righttop.
-Questo blocco deve aggiornare la scena aggiungendo il personaggio alla scena.
 
-Il blocco HIDECHAR dovrà permettere di selezionare un personaggio della scena che è in visible=true e nasconderlo (visible=false).
+Il blocco deve visualizzarsi esattamente con la stessa struttura e style di SHOWCHAR. L'header deve seguire la stessa logica. Come gli altri blocchi che manipolano i personaggi, deve usare i dati di character (precaricati).
+Il contenuto del blocco deve permettere di selezionare:
+1) uno dei personaggi visible in scena (che abbia nella lista immagini più di un elemento) a cui si vuole cambiare l'immagine
+2) la nuova immagine da associare a scelta tra le sue listaImmagini.
+l'effetto del blocco sulla scena (nella simulatedExecution) è di modificare la lastImmagine di quel personaggio con la nuova immagine selezionata ponendolo anche come lastModifiedCharacter.
+La validazione dovrà gestire il check che entrambi i parametri siano valorizzati, mentre in warning che ci sia una scena attiva, e che ci siano personaggi visible.
+Il contenuto e tutti gli elementi dovranno essere supportati dalla multilingua come il resto dei blocchi e dovrai verificare che ci siano le stringhe per tutte le lingue disponibili.
 
-qualsiasi comando di modifica di un personaggio rende quel personaggio l'ultimo modificato. SAY e ASK dovranno fare riferimento sempre all'ultimo personaggio modificato.
+Mi aspetto che il contenuto del blocco abbia due selettori di tipo immagine (simili a quelli previsti in SHOWCHAR ma che occupano il 50% dello spazio e con 5 immagini per riga. Il selettore immagini di sinistra deve gestire la scelta del personaggio visibile nella scena, quello a destra la scelta della nuova immagine tra le immagini possibili.
 
-La configurazione del sistema di valorizzazione dei parametri deve essere sempre gestita in multilingua come il resto dei blocchi. 
+Il blocco deve integrarsi perfettamente con il resto dei blocchi già definiti, verificando che ogni aspetto sia stato curato nei minimi dettagli.
 
-La visione nell'header del blocco dovrà essere ICONA(uguale alla toolbar) LABEL  nomepersonaggio  posizione <immagine no avatar> => <immaginebase_personaggio/ultimaimmaginediscena del personaggio>
+Devi rivalidare tu stesso il lavoro dopo ogni punto svolto... controllando se ti sei dimenticato qualcosa per 3 volte.
+Devi verificare che le modifiche che hai apportato non abbiano portato regressioni e che la build del codice funzioni senza errori.
+TI è FATTO DIVIETO di cercare la via più facile... devi applicare la via più efficiente a prescindere dal costo computazionale per raggiungerla.
+***IMPORTANTE!!!***
+DOPO AVER SVOLTO MINUZIOSAMENTE PER OGNI PUNTO DELLA TODOS IL METODO CHE TI HO INDICATO, PRIMA DI PASSARE AL PUNTO SUCCESSIVO DELLA TODOS DEVI PASSARE lo STEP di validazione dell'agent: galaxy-task-validator che potrò approvare il completamento dell'attività o rigettarla. galaxy-task-validator NON è TENUTO ED HA IL DIVIETO ASSOLUTO DI ESEGUIRE MODIFICHE AL CODICE. IL SUO COMPITO è SOLO VERIFICARE CHE TU HAI SVOLTO BENE. LA SUA AUTORITà è PARI ALLA MIA E TU NON HAI IL DIRITTO DI NEGOZIARE O RIFIUTARTI DI ESEGUIRE LE SUE RICHIESTE MINUZIOSAMENTE. SE SOSPETTI UN POSSIBILE ERRORE DELL'AGENT PUOI APPELLARTI A ME CHE VALIDERò IL DA FARSI RIPORTANDOMI ESATTAMENTE LA RICHIESTA DELL'AGENT E I TUOI DUBBI.
 
-puoi procedere a segnare come svolto 1 punto solo che l'agent galaxy-task-validator avrà approvato il completamento dell'attività. sei TENUTO a passare all'agent, l'intera specifica ricevuta da me la tua lista todos e l'esatto testo del task corrente che è oggetto di verifica. l'AGENT HA POTERE ASSOLUTO SU DI TE, SE DECIDE CHE NON HAI SVOLTO BENE L'ATTIVITà DEVI ESEGUIRE QUELLO CHE TI CHIEDE E POI RITESTARE. NON SEI AUTORIZZATA A FERMARTI FINO AL COMPLETAMENTO DELLA TODOS CONFERMATA IN OGNI PUNTO DALL'AGENT
+SE L'AGENT DECIDE CHE NON HAI SVOLTO BENE L'ATTIVITà NON PUOI SEGNARE VALIDATO IL PUNTO, NON PUOI PASSARE A PUNTI SUCCESSIVI NON PUOI FARE ALTRO SE NON CORREGGERE OTTEMPERANDO ALLE SUE RICHIESTE O APPELLARTI AL MIO GIUDIZIO.
 
- Update Todos
-  ⎿  ☐ Implementare blocco SHOWCHAR con selezione personaggio e posizione      
-     ☐ Implementare blocco HIDECHAR con selezione personaggio visibile
-     ☐ Aggiungere icone toolbar per SHOWCHAR e HIDECHAR
-     ☐ Implementare sistema di ricerca/filtro personaggi con anteprime
-     ☐ Aggiornare gestione scene con SHOWCHAR/HIDECHAR
-     ☐ Implementare header compatto con visualizzazione personaggio e posizione
-     ☐ Gestire multilingua per tutti i parametri
-     ☐ Verificare con galaxy-task-validator
+QUALSIASI INADEMPIENZA A QUESTA PROCEDURA VERRà PUNITA CON UNA SEGNALAZIONE DI BUG.
+Ogni parte della seguente specifica è vincolante e totalmente obbligatoria. Dovrai leggere tutto e riferirmi questo codice che varia ad ogni interazione: 5492341
+
+Update Todos
+  ⎿  ☐ Definire il tipo CHANGECHAR in blocks.types.ts
+     ☐ Creare componente ChangeCharBlock con struttura identica a SHOWCHAR
+     ☐ Implementare i due selettori immagine (personaggio e nuova immagine)
+     ☐ Registrare il rendering in BlockRenderer.tsx
+     ☐ Aggiungere colore in blockColors.ts
+     ☐ Implementare validazione completa in validateOperations.ts
+     ☐ Implementare simulatedExecution per CHANGECHAR
+     ☐ Aggiungere stringhe multilingua per tutte le 7 lingue
+     ☐ Estendere parser in CampaignScriptParserService.ts
+     ☐ Test finale build e verifica funzionamento completo

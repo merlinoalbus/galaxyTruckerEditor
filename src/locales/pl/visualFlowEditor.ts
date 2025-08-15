@@ -477,7 +477,6 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.subScript.description': 'Wykonaj podskrypt',
   'visualFlowEditor.tools.exitMenu.description': 'Wyjdź z menu',
   'visualFlowEditor.tools.say.description': 'Pokaż dialog',
-  'visualFlowEditor.tools.changeChar.description': 'Zmień postać',
   'visualFlowEditor.tools.set.description': 'Ustaw semafor',
   'visualFlowEditor.tools.ask.description': 'Zadaj pytanie',
   'visualFlowEditor.tools.hideChar.description': 'Ukryj postać',
@@ -564,6 +563,16 @@ export const visualFlowEditorTranslations = {
   // Tool Descriptions - Characters
   'visualFlowEditor.tools.askChar.description': 'Pytanie z postacią',
   'visualFlowEditor.tools.focusChar.description': 'Skup się na postaci',
+  'visualFlowEditor.tools.changeChar.description': 'Zmień obraz postaci',
+  
+  // CHANGECHAR Block
+  'visualFlowEditor.blocks.changeChar.title': 'Zmień Postać',
+  'visualFlowEditor.blocks.changeChar.description': 'Zmienia obraz widocznej postaci',
+  'visualFlowEditor.blocks.changeChar.selectCharacter': 'Wybierz postać',
+  'visualFlowEditor.blocks.changeChar.selectNewImage': 'Nowy obraz',
+  'visualFlowEditor.blocks.changeChar.noVisibleCharacters': 'Brak widocznych postaci z wieloma obrazami',
+  'visualFlowEditor.blocks.changeChar.selectCharacterFirst': 'Najpierw wybierz postać',
+  'visualFlowEditor.blocks.changeChar.noImagesAvailable': 'Brak alternatywnych obrazów',
   
   // Tool Descriptions - System
   'visualFlowEditor.tools.setFlightStatusBar.description': 'Ustaw pasek stanu lotu',

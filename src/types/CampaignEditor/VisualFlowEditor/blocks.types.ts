@@ -104,7 +104,7 @@ export interface BlockParameters {
   condition?: string;
   script?: string;
   mission?: string;
-  image?: string;
+  image?: string; // For SHOWCHAR, CHANGECHAR
   status?: string;
   duration?: number | string; // For DELAY command
   [key: string]: string | number | boolean | Record<string, string> | undefined;
