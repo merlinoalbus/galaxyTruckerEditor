@@ -383,9 +383,23 @@ export function getBlockBorder(blockType: string): string {
 /**
  * Ottiene la classe CSS completa per un blocco
  */
-export function getBlockClassName(blockType: string, isInvalid: boolean = false): string {
+export function getBlockClassName(
+  blockType: string, 
+  isInvalid: boolean = false, 
+  validationType: 'error' | 'warning' = 'error'
+): string {
   const colors = getBlockColors(blockType);
-  const invalidClass = isInvalid ? 'border-red-500 border-2 shadow-red-500/50' : colors.border;
+  
+  let invalidClass = colors.border;
+  if (isInvalid) {
+    if (validationType === 'warning') {
+      // Warning: bordo arancione
+      invalidClass = 'border-orange-500 border-2 shadow-orange-500/50';
+    } else {
+      // Error: bordo rosso
+      invalidClass = 'border-red-500 border-2 shadow-red-500/50';
+    }
+  }
   
   return `${colors.background} ${invalidClass} rounded-lg`;
 }

@@ -22,6 +22,7 @@ interface CommandBlockProps {
   onDragStart: (e: React.DragEvent) => void;
   sessionData?: any;
   isInvalid?: boolean;
+  validationType?: 'error' | 'warning';
   onGoToLabel?: (labelName: string) => void;
   onNavigateToSubScript?: (scriptName: string, parentBlock: IFlowBlock) => void;
   allBlocks?: IFlowBlock[];
@@ -34,6 +35,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   onDragStart,
   sessionData,
   isInvalid = false,
+  validationType,
   onGoToLabel,
   onNavigateToSubScript,
   allBlocks = []
@@ -737,8 +739,9 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
             setIsCollapsed(true);
           }
         }}
-        className={`${getBlockClassName(block.type, isInvalid)} p-3 mb-2 transition-all hover:shadow-lg`}
+        className={`${getBlockClassName(block.type, isInvalid, validationType)} p-3 mb-2 transition-all hover:shadow-lg`}
         isInvalid={isInvalid}
+        validationType={validationType}
         extraControls={allBlocks.length > 0 && <SceneDebugButton block={block} allBlocks={allBlocks} characters={characters} />}
         showAvatar={(block.type === 'SAY' || block.type === 'ASK')}
         avatarCharacter={avatarCharacter}

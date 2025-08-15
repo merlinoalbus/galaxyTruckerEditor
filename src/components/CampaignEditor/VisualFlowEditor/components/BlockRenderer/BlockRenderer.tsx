@@ -26,6 +26,7 @@ interface BlockRendererProps {
   sessionData?: any;
   createDropValidator?: (containerId: string, containerType: string, index?: number) => (e: React.DragEvent) => boolean;
   invalidBlocks?: string[];
+  blockValidationTypes?: Map<string, 'error' | 'warning'>;
   allBlocks?: IFlowBlock[];
 }
 
@@ -46,6 +47,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
   sessionData,
   createDropValidator,
   invalidBlocks = [],
+  blockValidationTypes,
   allBlocks = []
 }) => {
   const updateBlock = useCallback((updates: BlockUpdate) => {
@@ -56,8 +58,9 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
     onRemoveBlock(block.id);
   }, [block.id, onRemoveBlock]);
 
-  // Determina se questo blocco è invalido
-  const isInvalid = invalidBlocks.includes(block.id);
+  // Determina se questo blocco ha validazione e il tipo
+  const validationType = blockValidationTypes?.get(block.id);
+  const isInvalid = !!validationType; // Il blocco è invalido se ha un tipo di validazione
   
   // Determina se questo blocco è il root in zoom (non può essere eliminato)
   const isRootInZoom = isZoomed && depth === 0;
@@ -82,10 +85,11 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
         sessionData={sessionData}
         createDropValidator={createDropValidator}
         invalidBlocks={invalidBlocks}
+        blockValidationTypes={blockValidationTypes}
         allBlocks={allBlocks}
       />
     ));
-  }, [depth, onUpdateBlock, onRemoveBlock, onDragStart, onDragOver, onDrop, onDropAtIndex, isDragActive, onZoomIn, onZoomOut, isZoomed, currentFocusedBlockId, sessionData, createDropValidator, invalidBlocks]);
+  }, [depth, onUpdateBlock, onRemoveBlock, onDragStart, onDragOver, onDrop, onDropAtIndex, isDragActive, onZoomIn, onZoomOut, isZoomed, currentFocusedBlockId, sessionData, createDropValidator, invalidBlocks, blockValidationTypes, allBlocks]);
 
   // Render SCRIPT block
   if (block.type === 'SCRIPT') {
@@ -128,6 +132,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           isZoomed={isZoomed}
           sessionData={sessionData}
           isInvalid={isInvalid}
+          validationType={validationType}
         />
       </div>
     );
@@ -152,6 +157,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           isZoomed={isZoomed}
           sessionData={sessionData}
           isInvalid={isInvalid}
+          validationType={validationType}
         />
       </div>
     );
@@ -176,6 +182,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
           isZoomed={isZoomed}
           isInvalid={isInvalid}
+          validationType={validationType}
         />
       </div>
     );
@@ -201,6 +208,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
           isZoomed={isZoomed}
           isInvalid={isInvalid}
+          validationType={validationType}
         />
       </div>
     );
@@ -228,6 +236,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
           isZoomed={isZoomed}
           isInvalid={isInvalid}
+          validationType={validationType}
         />
       </div>
     );
@@ -250,6 +259,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
           isZoomed={isZoomed}
           isInvalid={isInvalid}
+          validationType={validationType}
         />
       </div>
     );
@@ -265,6 +275,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
         onDragStart={(e) => onDragStart(e, block)}
         sessionData={sessionData}
         isInvalid={isInvalid}
+        validationType={validationType}
         onGoToLabel={sessionData?.goToLabel}
         onNavigateToSubScript={sessionData?.onNavigateToSubScript}
         allBlocks={allBlocks}

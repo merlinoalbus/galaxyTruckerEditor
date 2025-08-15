@@ -38,6 +38,7 @@ interface IfBlockProps {
   isZoomed?: boolean;
   sessionData?: any;
   isInvalid?: boolean;
+  validationType?: 'error' | 'warning';
 }
 
 export const IfBlock: React.FC<IfBlockProps> = ({
@@ -56,7 +57,8 @@ export const IfBlock: React.FC<IfBlockProps> = ({
   onZoomOut,
   isZoomed = false,
   sessionData,
-  isInvalid = false
+  isInvalid = false,
+  validationType
 }) => {
   const { t } = useTranslation();
   // Stato locale per controllare la visualizzazione del contenitore ELSE
@@ -188,6 +190,7 @@ export const IfBlock: React.FC<IfBlockProps> = ({
             : 'border-gray-600/80'
         } p-4 mb-2 shadow-xl hover:shadow-2xl transition-shadow duration-200`}
         isInvalid={isInvalid}
+        validationType={validationType}
         blockColor="bg-blue-900/80"
         iconBgColor="bg-blue-900/80"
       >

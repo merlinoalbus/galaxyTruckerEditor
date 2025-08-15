@@ -9,22 +9,31 @@ interface ValidationError {
   errorType: string;
   message: string;
   path?: string[]; // percorso nel tree dei blocchi
+  type?: 'error' | 'warning' | 'info';
 }
 
 interface ValidationErrorsModalProps {
   errors: ValidationError[];
+  displayType?: 'errors' | 'warnings';
   onClose: () => void;
   onNavigateToBlock?: (blockId: string) => void;
 }
 
 export const ValidationErrorsModal: React.FC<ValidationErrorsModalProps> = ({ 
   errors, 
+  displayType = 'errors',
   onClose,
   onNavigateToBlock 
 }) => {
   const { t } = useTranslation();
-  // Raggruppa errori per tipo
-  const errorsByType = errors.reduce((acc, error) => {
+  
+  // Filtra in base al tipo da visualizzare
+  const filteredErrors = displayType === 'warnings' 
+    ? errors.filter(e => e.type === 'warning')
+    : errors.filter(e => e.type === 'error' || !e.type);
+  
+  // Raggruppa per tipo
+  const groupedByType = filteredErrors.reduce((acc, error) => {
     if (!acc[error.errorType]) {
       acc[error.errorType] = [];
     }
@@ -74,13 +83,13 @@ export const ValidationErrorsModal: React.FC<ValidationErrorsModalProps> = ({
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-slate-900 border border-red-600 rounded-lg shadow-2xl max-w-2xl w-full mx-4 max-h-[80vh] flex flex-col">
+      <div className={`bg-slate-900 border ${displayType === 'warnings' ? 'border-orange-600' : 'border-red-600'} rounded-lg shadow-2xl max-w-2xl w-full mx-4 max-h-[80vh] flex flex-col`}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-slate-700">
           <div className="flex items-center gap-3">
-            <AlertTriangle className="w-6 h-6 text-red-500" />
+            <AlertTriangle className={`w-6 h-6 ${displayType === 'warnings' ? 'text-orange-500' : 'text-red-500'}`} />
             <h2 className="text-xl font-bold text-white">
-              {t('visualFlowEditor.validation.title')} ({errors.length})
+              {displayType === 'warnings' ? 'Warning' : 'Errori'} ({filteredErrors.length})
             </h2>
           </div>
           <button
@@ -94,7 +103,7 @@ export const ValidationErrorsModal: React.FC<ValidationErrorsModalProps> = ({
         
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-4">
-          {Object.entries(errorsByType).map(([errorType, typeErrors]) => (
+          {Object.entries(groupedByType).map(([errorType, typeErrors]) => (
             <div key={errorType} className="mb-6">
               {/* Error Type Header */}
               <div className="flex items-center gap-2 mb-3">
@@ -114,7 +123,7 @@ export const ValidationErrorsModal: React.FC<ValidationErrorsModalProps> = ({
                 {typeErrors.map((error, index) => (
                   <div 
                     key={`${error.blockId}-${index}`}
-                    className="bg-slate-800/50 border border-slate-700 rounded p-3 hover:border-red-600/50 transition-colors"
+                    className={`bg-slate-800/50 border ${displayType === 'warnings' ? 'border-orange-700' : 'border-slate-700'} rounded p-3 ${displayType === 'warnings' ? 'hover:border-orange-500/50' : 'hover:border-red-600/50'} transition-colors`}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex-1">

@@ -19,6 +19,7 @@ interface MissionBlockProps {
   onZoomOut?: () => void;
   isZoomed?: boolean;
   isInvalid?: boolean;
+  validationType?: 'error' | 'warning';
 }
 
 export const MissionBlock: React.FC<MissionBlockProps> = ({
@@ -35,7 +36,8 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
   onZoomIn,
   onZoomOut,
   isZoomed = false,
-  isInvalid = false
+  isInvalid = false,
+  validationType = 'error'
 }) => {
   const { t } = useTranslation();
   const [isCollapsed, setIsCollapsed] = useState(false);

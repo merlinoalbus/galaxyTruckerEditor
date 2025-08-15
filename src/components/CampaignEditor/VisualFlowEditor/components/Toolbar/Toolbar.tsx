@@ -26,7 +26,9 @@ interface ToolbarProps {
   /** Funzione per navigare tra script */
   onNavigateToScript?: (index: number) => void;
   validationErrors?: number;
+  validationWarnings?: number;
   onValidationErrorsClick?: () => void;
+  onValidationWarningsClick?: () => void;
   onSaveScript?: () => Promise<{ success: boolean; error?: string }>;
   scriptsButtonRef?: React.RefObject<HTMLButtonElement>;
   missionsButtonRef?: React.RefObject<HTMLButtonElement>;
@@ -49,7 +51,9 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   scriptNavigationPath = [],
   onNavigateToScript,
   validationErrors = 0,
+  validationWarnings = 0,
   onValidationErrorsClick,
+  onValidationWarningsClick,
   onSaveScript,
   scriptsButtonRef: externalScriptsButtonRef,
   missionsButtonRef: externalMissionsButtonRef
@@ -63,6 +67,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   const missionsButtonRef = externalMissionsButtonRef || internalMissionsButtonRef;
   
   const handleSave = async () => {
+    // Permetti il salvataggio se ci sono solo warning, ma non se ci sono errori
     if (!onSaveScript || validationErrors > 0) return;
     
     setIsSaving(true);
@@ -121,15 +126,31 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         </div>
       
         <div className={visualFlowEditorStyles.header.actions}>
-          {/* Indicatore errori di validazione */}
+          {/* Indicatore errori di validazione - pulsante rosso */}
           {validationErrors > 0 && (
             <button
               onClick={onValidationErrorsClick}
               className="flex items-center gap-2 px-3 py-2 bg-red-900/50 border border-red-600 text-red-400 rounded-lg hover:bg-red-900/70 transition-colors cursor-pointer"
               title={t('visualFlowEditor.toolbar.clickToSeeErrors')}
             >
-              <AlertCircle className="w-4 h-4" />
-              <span className="text-sm font-medium">{validationErrors} {validationErrors === 1 ? t('visualFlowEditor.toolbar.error') : t('visualFlowEditor.toolbar.errors')}</span>
+              <AlertCircle className="w-4 h-4 text-red-400" />
+              <span className="text-sm font-medium">
+                {validationErrors} {validationErrors === 1 ? t('visualFlowEditor.toolbar.error') : t('visualFlowEditor.toolbar.errors')}
+              </span>
+            </button>
+          )}
+          
+          {/* Indicatore warnings di validazione - pulsante arancione */}
+          {validationWarnings > 0 && (
+            <button
+              onClick={onValidationWarningsClick}
+              className="flex items-center gap-2 px-3 py-2 bg-orange-900/50 border border-orange-600 text-orange-400 rounded-lg hover:bg-orange-900/70 transition-colors cursor-pointer"
+              title="Clicca per vedere i warning"
+            >
+              <AlertCircle className="w-4 h-4 text-orange-400" />
+              <span className="text-sm font-medium">
+                {validationWarnings} {validationWarnings === 1 ? 'warning' : 'warnings'}
+              </span>
             </button>
           )}
           
@@ -178,10 +199,18 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             onClick={handleSave}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
               validationErrors > 0 || isSaving
-                ? 'bg-gray-700 text-gray-500 cursor-not-allowed opacity-50' 
+                ? 'bg-gray-700 text-gray-500 cursor-not-allowed opacity-50'
+                : validationWarnings > 0
+                ? 'bg-orange-600 hover:bg-orange-700 text-white'
                 : 'bg-purple-600 hover:bg-purple-700 text-white'
             }`}
-            title={validationErrors > 0 ? t('visualFlowEditor.toolbar.fixErrorsBeforeSaving').replace('{count}', validationErrors.toString()) : t('visualFlowEditor.toolbar.saveScript')}
+            title={
+              validationErrors > 0 
+                ? t('visualFlowEditor.toolbar.fixErrorsBeforeSaving').replace('{count}', validationErrors.toString())
+                : validationWarnings > 0
+                ? `${t('visualFlowEditor.toolbar.saveScript')} (${validationWarnings} warning${validationWarnings > 1 ? 's' : ''})`
+                : t('visualFlowEditor.toolbar.saveScript')
+            }
             disabled={validationErrors > 0 || isSaving}
           >
             <Save className="w-4 h-4" />

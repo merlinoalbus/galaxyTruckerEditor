@@ -20,6 +20,7 @@ interface BuildBlockProps {
   onZoomOut?: () => void;
   isZoomed?: boolean;
   isInvalid?: boolean;
+  validationType?: 'error' | 'warning';
 }
 
 export const BuildBlock: React.FC<BuildBlockProps> = ({
@@ -37,7 +38,8 @@ export const BuildBlock: React.FC<BuildBlockProps> = ({
   onZoomIn,
   onZoomOut,
   isZoomed = false,
-  isInvalid = false
+  isInvalid = false,
+  validationType
 }) => {
   const { t } = useTranslation();
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -121,6 +123,7 @@ export const BuildBlock: React.FC<BuildBlockProps> = ({
         onZoomOut={onZoomOut}
         className={`bg-teal-950/90 border-2 ${isInvalid ? 'border-red-500' : 'border-teal-700/80'} rounded-lg shadow-xl p-4 transition-all duration-300`}
         isInvalid={isInvalid}
+        validationType={validationType}
         blockColor="bg-teal-700"
         iconBgColor="bg-teal-900/80"
       >

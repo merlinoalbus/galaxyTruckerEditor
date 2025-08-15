@@ -122,6 +122,7 @@ export interface ValidationError {
 
 export interface ValidationResult {
   errors: number;
+  warnings?: number;
   invalidBlocks: string[];
   details?: ValidationError[];
 }
