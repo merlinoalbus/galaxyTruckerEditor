@@ -334,12 +334,14 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
     setDropError(null);
     resetNavigationState();
     
-    // IMPORTANTE: Pulisci completamente la memoria degli script aperti
-    setOpenedScripts(new Map());
+    // IMPORTANTE: Pulisci completamente la memoria degli script aperti ma prepara per salvare lo script principale
+    const newOpenedScripts = new Map<string, OpenedScript>();
+    setOpenedScripts(newOpenedScripts);
     setCurrentScriptContext(null);
     setScriptNavigationPath([]);
     
-    return loadScript(scriptId);
+    const scriptData = await loadScript(scriptId);
+    return scriptData;
   }, [loadScript, resetNavigationState]);
 
   // Wrapper per loadMission con reset completo dello stato
@@ -383,6 +385,29 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
       loadScriptWithReset(scriptId);
     }
   }, [scriptId, loadScriptWithReset]);
+  
+  // Salva lo script principale nella mappa quando viene caricato per la prima volta
+  useEffect(() => {
+    if (currentScript && currentScriptBlocks.length > 0 && !currentScriptContext) {
+      const scriptName = currentScript.name || scriptId || 'main';
+      
+      setOpenedScripts(prevScripts => {
+        // Solo se la mappa è vuota (primo caricamento)
+        // Non modificare se ci sono già script nella mappa
+        if (prevScripts.size === 0 && !prevScripts.has(scriptName)) {
+          const newOpenedScripts = new Map(prevScripts);
+          newOpenedScripts.set(scriptName, {
+            scriptName: scriptName,
+            fileName: currentScript.fileName || scriptName + '.txt',
+            blocks: currentScriptBlocks,
+            isModified: false
+          });
+          return newOpenedScripts;
+        }
+        return prevScripts; // Non modificare se ci sono già script
+      });
+    }
+  }, [currentScript, currentScriptBlocks, currentScriptContext, scriptId, setOpenedScripts]);
 
   // Ref per il timeout di debouncing
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
