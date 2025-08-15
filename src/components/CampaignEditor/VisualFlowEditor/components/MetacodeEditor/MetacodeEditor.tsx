@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MetacodeButtonBar, METACODE_PATTERNS } from './MetacodeButtons';
+import { MetacodeButtonBar } from './MetacodeButtons';
+import { useMetacodePatterns } from './MetacodePatterns';
 import { GenderModal } from './modals/GenderModal';
 import { VerbModal } from './modals/VerbModal';
 import { ImagePickerModal } from './modals/ImagePickerModal';
@@ -10,6 +11,7 @@ import {
   generateSimpleCode 
 } from './utils/metacodeParser';
 import { MetacodeEditorProps, ParsedMetacode, MetacodePattern } from './types';
+import { useTranslation } from '@/locales';
 
 /**
  * Editor avanzato con supporto metacodice visuale
@@ -22,6 +24,7 @@ export const MetacodeEditor: React.FC<MetacodeEditorProps> = ({
   availableIcons = [],
   showPatternButtons = true
 }) => {
+  const { t } = useTranslation();
   const [cursorPosition, setCursorPosition] = useState(0);
   const [selectedPattern, setSelectedPattern] = useState<string | undefined>(undefined);
   const [modalType, setModalType] = useState<string | null>(null);
@@ -178,7 +181,7 @@ export const MetacodeEditor: React.FC<MetacodeEditorProps> = ({
           onClick={handleTextClick}
           onSelect={(e) => setCursorPosition(e.currentTarget.selectionStart)}
           className="w-full bg-slate-900 text-white px-3 py-2 rounded border border-slate-600 focus:border-blue-500 focus:outline-none text-sm font-mono min-h-[100px] resize-y"
-          placeholder={`Testo ${language}...`}
+          placeholder={t('visualFlowEditor.metacode.placeholder').replace('{language}', language)}
         />
         
         {/* Overlay per visualizzazione metacodici (solo in modalità view) */}
@@ -192,7 +195,7 @@ export const MetacodeEditor: React.FC<MetacodeEditorProps> = ({
       {/* Info sui metacodici trovati */}
       {parsedCodes.length > 0 && (
         <div className="text-xs text-gray-500">
-          Trovati {parsedCodes.length} pattern: {parsedCodes.map(p => p.type).join(', ')}
+          {t('visualFlowEditor.metacode.found')} {parsedCodes.length} {t('visualFlowEditor.metacode.pattern')}: {parsedCodes.map(p => p.type).join(', ')}
         </div>
       )}
 

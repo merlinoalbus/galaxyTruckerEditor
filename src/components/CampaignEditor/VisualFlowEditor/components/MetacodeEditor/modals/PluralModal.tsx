@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
+import { useTranslation } from '@/locales';
 
 interface PluralModalProps {
   isOpen: boolean;
@@ -18,8 +19,9 @@ export const PluralModal: React.FC<PluralModalProps> = ({
   language = 'EN',
   existingData
 }) => {
+  const { t } = useTranslation();
   const [singular, setSingular] = useState(existingData?.forms?.[0]?.text || '');
-  const [plural, setPlural] = useState(existingData?.forms?.[1]?.text || 's');
+  const [plural, setPlural] = useState(existingData?.forms?.[1]?.text || t('visualFlowEditor.metacode.defaultPluralSuffix'));
   const [special, setSpecial] = useState(existingData?.forms?.[2]?.text || '');
   
   const needsSpecial = ['CS', 'PL', 'RU'].includes(language);
@@ -43,7 +45,7 @@ export const PluralModal: React.FC<PluralModalProps> = ({
       <div className="relative bg-slate-800 rounded-lg border border-slate-700 p-3 w-[280px]">
         {/* Header */}
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-sm font-medium text-white">Plurale</h3>
+          <h3 className="text-sm font-medium text-white">{t('visualFlowEditor.metacode.plural')}</h3>
           <button onClick={onClose} className="p-1 hover:bg-slate-700 rounded">
             <X className="w-4 h-4 text-gray-400" />
           </button>
@@ -58,7 +60,7 @@ export const PluralModal: React.FC<PluralModalProps> = ({
               value={singular}
               onChange={(e) => setSingular(e.target.value)}
               className="flex-1 bg-slate-900 text-white px-2 py-1 rounded border border-slate-600 text-sm focus:border-blue-500 focus:outline-none"
-              placeholder="singolare (es. point)"
+placeholder={t('visualFlowEditor.metacode.singularExample')}
               autoFocus
             />
           </div>
@@ -69,7 +71,7 @@ export const PluralModal: React.FC<PluralModalProps> = ({
               value={plural}
               onChange={(e) => setPlural(e.target.value)}
               className="flex-1 bg-slate-900 text-white px-2 py-1 rounded border border-slate-600 text-sm focus:border-blue-500 focus:outline-none"
-              placeholder="plurale (es. points)"
+placeholder={t('visualFlowEditor.metacode.pluralExample')}
             />
           </div>
           {needsSpecial && (
@@ -80,7 +82,7 @@ export const PluralModal: React.FC<PluralModalProps> = ({
                 value={special}
                 onChange={(e) => setSpecial(e.target.value)}
                 className="flex-1 bg-slate-900 text-white px-2 py-1 rounded border border-slate-600 text-sm focus:border-blue-500 focus:outline-none"
-                placeholder={language === 'CS' ? 'es. bodů' : language === 'PL' ? 'es. punktów' : 'speciale'}
+                placeholder={t('visualFlowEditor.metacode.specialPluralPlaceholder')}
               />
             </div>
           )}
@@ -102,13 +104,13 @@ export const PluralModal: React.FC<PluralModalProps> = ({
             onClick={onClose}
             className="px-3 py-1 text-sm text-gray-400 hover:text-white transition-colors"
           >
-            Annulla
+{t('visualFlowEditor.metacode.cancel')}
           </button>
           <button
             onClick={handleInsert}
             className="px-3 py-1 text-sm bg-blue-600 hover:bg-blue-500 text-white rounded transition-colors"
           >
-            Inserisci
+{t('visualFlowEditor.metacode.insert')}
           </button>
         </div>
       </div>

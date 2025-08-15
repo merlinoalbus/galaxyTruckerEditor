@@ -16,6 +16,10 @@ interface MenuBlockProps {
   onZoomOut?: () => void;
   isZoomed?: boolean;
   isInvalid?: boolean;
+  validationType?: 'error' | 'warning';
+  collapseAllTrigger?: number;
+  expandAllTrigger?: number;
+  globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
 }
 
 export const MenuBlock: React.FC<MenuBlockProps> = ({
@@ -30,13 +34,35 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({
   onZoomIn,
   onZoomOut,
   isZoomed = false,
-  isInvalid = false
+  isInvalid = false,
+  validationType,
+  collapseAllTrigger = 0,
+  expandAllTrigger = 0,
+  globalCollapseState = 'manual'
 }) => {
   const { t } = useTranslation();
-  // Stato per collapse/expand - container blocks default expanded
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  // Stato per collapse/expand - rispetta il globalCollapseState all'inizializzazione
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    // Se c'è uno stato globale, rispettalo all'inizializzazione
+    return globalCollapseState === 'collapsed';
+  });
   const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Reagisci ai trigger di collapse/expand all
+  useEffect(() => {
+    if (collapseAllTrigger > 0) {
+      setIsCollapsed(true);
+      setIsManuallyExpanded(false);
+    }
+  }, [collapseAllTrigger]);
+  
+  useEffect(() => {
+    if (expandAllTrigger > 0) {
+      setIsCollapsed(false);
+      setIsManuallyExpanded(true);
+    }
+  }, [expandAllTrigger]);
   
   // Auto-collapse se lo spazio è insufficiente
   useEffect(() => {
@@ -122,6 +148,7 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({
         onZoomOut={onZoomOut}
         className={`${getBlockStyle()} rounded border p-4 mb-3`}
         isInvalid={isInvalid}
+        validationType={validationType}
         blockColor="bg-gray-600"
       >
         {/* Children container with anchor points - visibile solo se non collapsed */}

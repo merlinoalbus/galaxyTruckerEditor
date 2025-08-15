@@ -23,8 +23,8 @@ export const useBlockManipulation = () => {
   
   // Wrapper per validateAllBlocks - memoizzato con useCallback
   // La funzione usa il t corrente al momento della chiamata
-  const validateAllBlocks = useCallback((blocks: any[]) => {
-    return validateAllBlocksBase(blocks, t);
+  const validateAllBlocks = useCallback((blocks: any[], navigationPath?: any[]) => {
+    return validateAllBlocksBase(blocks, t, undefined, navigationPath);
   }, [t]);
 
   return {

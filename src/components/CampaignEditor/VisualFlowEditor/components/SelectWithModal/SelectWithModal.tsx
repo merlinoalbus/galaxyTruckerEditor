@@ -283,7 +283,7 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
                 <div className="flex gap-1">
                   <input
                     type="text"
-                    placeholder={type === 'label' ? 'Name...' : 'Name...'}
+                    placeholder={t('visualFlowEditor.select.namePlaceholder')}
                     value={newItemName}
                     onChange={(e) => setNewItemName(e.target.value)}
                     onKeyPress={(e) => {

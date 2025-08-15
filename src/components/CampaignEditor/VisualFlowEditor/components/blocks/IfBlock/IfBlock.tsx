@@ -38,6 +38,10 @@ interface IfBlockProps {
   isZoomed?: boolean;
   sessionData?: any;
   isInvalid?: boolean;
+  validationType?: 'error' | 'warning';
+  collapseAllTrigger?: number;
+  expandAllTrigger?: number;
+  globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
 }
 
 export const IfBlock: React.FC<IfBlockProps> = ({
@@ -56,7 +60,11 @@ export const IfBlock: React.FC<IfBlockProps> = ({
   onZoomOut,
   isZoomed = false,
   sessionData,
-  isInvalid = false
+  isInvalid = false,
+  validationType,
+  collapseAllTrigger = 0,
+  expandAllTrigger = 0,
+  globalCollapseState = 'manual'
 }) => {
   const { t } = useTranslation();
   // Stato locale per controllare la visualizzazione del contenitore ELSE
@@ -65,10 +73,27 @@ export const IfBlock: React.FC<IfBlockProps> = ({
     block.elseBlocks && block.elseBlocks.length > 0
   );
   
-  // Stato per collapse/expand - IF blocks sono container quindi default expanded
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  // Stato per collapse/expand - rispetta il globalCollapseState all'inizializzazione
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    return globalCollapseState === 'collapsed';
+  });
   const [isManuallyExpanded, setIsManuallyExpanded] = useState(false); // Flag per espansione manuale
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Reagisci ai trigger di collapse/expand all
+  useEffect(() => {
+    if (collapseAllTrigger > 0) {
+      setIsCollapsed(true);
+      setIsManuallyExpanded(false);
+    }
+  }, [collapseAllTrigger]);
+  
+  useEffect(() => {
+    if (expandAllTrigger > 0) {
+      setIsCollapsed(false);
+      setIsManuallyExpanded(true);
+    }
+  }, [expandAllTrigger]);
   
   // Auto-collapse se lo spazio è insufficiente
   useEffect(() => {
@@ -188,6 +213,7 @@ export const IfBlock: React.FC<IfBlockProps> = ({
             : 'border-gray-600/80'
         } p-4 mb-2 shadow-xl hover:shadow-2xl transition-shadow duration-200`}
         isInvalid={isInvalid}
+        validationType={validationType}
         blockColor="bg-blue-900/80"
         iconBgColor="bg-blue-900/80"
       >

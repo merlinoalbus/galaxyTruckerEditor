@@ -20,7 +20,6 @@ SCRIPT addMediumGroup1
     END_OF_IF
   END_OF_IF
 END_OF_SCRIPT
-
 SCRIPT addMediumGroup2
 
   IF_PROB 20
@@ -41,7 +40,6 @@ SCRIPT addMediumGroup2
     END_OF_IF
   END_OF_IF
 END_OF_SCRIPT
-
 SCRIPT addMediumGroup3
 
   IF_PROB 20
@@ -62,7 +60,6 @@ SCRIPT addMediumGroup3
     END_OF_IF
   END_OF_IF
 END_OF_SCRIPT
-
 SCRIPT add1RandomOpponentsEasy
 
   IF_PROB 20
@@ -83,7 +80,6 @@ SCRIPT add1RandomOpponentsEasy
     END_OF_IF
   END_OF_IF
 END_OF_SCRIPT
-
 SCRIPT add2RandomOpponentsEasy
 
   IF_PROB 20
@@ -109,7 +105,6 @@ SCRIPT add2RandomOpponentsEasy
     END_OF_IF
   END_OF_IF
 END_OF_SCRIPT
-
 SCRIPT add3RandomOpponentsEasy
 
   IF_PROB 20
@@ -140,7 +135,6 @@ SCRIPT add3RandomOpponentsEasy
     END_OF_IF
   END_OF_IF
 END_OF_SCRIPT
-
 SCRIPT addRandomOpponentsEasy
 
   IF_PROB 50
@@ -153,7 +147,6 @@ SCRIPT addRandomOpponentsEasy
     END_OF_IF
   END_OF_IF
 END_OF_SCRIPT
-
 SCRIPT add1RandomOpponentsMedium
 
   IF_PROB 33
@@ -166,7 +159,6 @@ SCRIPT add1RandomOpponentsMedium
     END_OF_IF
   END_OF_IF
 END_OF_SCRIPT
-
 SCRIPT add2RandomOpponentsMedium
 
   IF_PROB 33
@@ -182,14 +174,12 @@ SCRIPT add2RandomOpponentsMedium
     END_OF_IF
   END_OF_IF
 END_OF_SCRIPT
-
 SCRIPT add3RandomOpponentsMedium
 
   SUB_SCRIPT addMediumGroup1
   SUB_SCRIPT addMediumGroup2
   SUB_SCRIPT addMediumGroup3
 END_OF_SCRIPT
-
 SCRIPT addRandomOpponentsMedium
 
   IF_PROB 50
@@ -202,7 +192,6 @@ SCRIPT addRandomOpponentsMedium
     END_OF_IF
   END_OF_IF
 END_OF_SCRIPT
-
 SCRIPT add1RandomOpponentsHard
 
   IF_PROB 33
@@ -215,30 +204,26 @@ SCRIPT add1RandomOpponentsHard
     END_OF_IF
   END_OF_IF
 END_OF_SCRIPT
-
-SCRIPT add2RandomOpponentsHard
-
-  IF_PROB 33
-    AddOpponent random3-1
-    AddOpponent random3-2
-  ELSE
-    IF_PROB 50
-      AddOpponent random3-2
-      AddOpponent random3-3
-    ELSE
+  SCRIPT add2RandomOpponentsHard
+    IF_PROB 33
       AddOpponent random3-1
-      AddOpponent random3-3
+      AddOpponent random3-2
+    ELSE
+      IF_PROB 50
+        AddOpponent random3-2
+        AddOpponent random3-3
+      ELSE
+        AddOpponent random3-1
+        AddOpponent random3-3
+      END_OF_IF
     END_OF_IF
-  END_OF_IF
-END_OF_SCRIPT
-
+  END_OF_SCRIPT
 SCRIPT add3RandomOpponentsHard
 
   AddOpponent random3-1
   AddOpponent random3-2
   AddOpponent random3-3
 END_OF_SCRIPT
-
 SCRIPT addRandomOpponentsHard
 
   IF_PROB 50
@@ -251,7 +236,6 @@ SCRIPT addRandomOpponentsHard
     END_OF_IF
   END_OF_IF
 END_OF_SCRIPT
-
 SCRIPT stdParts
 
   IF purpleUnlocked
@@ -264,7 +248,6 @@ SCRIPT stdParts
     AddShipParts "parts/noAliens.yaml"
   END_OF_IF
 END_OF_SCRIPT
-
 SCRIPT universalParts
 
   IF purpleUnlocked
@@ -277,530 +260,5 @@ SCRIPT universalParts
     AddShipParts "parts/noAliens-universal.yaml"
   END_OF_IF
 END_OF_SCRIPT
-
-MISSION noMission
-  SetDeckPreparationScript "starDeck"
-  INIT_BUILD
-  SetAdvPile 1 0
-  SetSecretAdvPile 1 1
-  SetShipType STI
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION basic1easy2p
-  SUB_SCRIPT add1RandomOpponentsEasy
-  SetDeckPreparationScript "originalDeck"
-  INIT_BUILD
-  SetShipType STI
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION basic1easy3p
-  SUB_SCRIPT add2RandomOpponentsEasy
-  SetDeckPreparationScript "originalDeck"
-  INIT_BUILD
-  SetShipType STI
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION basic1easy4p
-  SUB_SCRIPT add3RandomOpponentsEasy
-  SetDeckPreparationScript "originalDeck"
-  INIT_BUILD
-  SetShipType STI
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION basic1medium2p
-  SUB_SCRIPT add1RandomOpponentsMedium
-  SetDeckPreparationScript "originalDeck"
-  INIT_BUILD
-  SetShipType STI
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION basic1medium3p
-  SUB_SCRIPT add2RandomOpponentsMedium
-  SetDeckPreparationScript "originalDeck"
-  INIT_BUILD
-  SetShipType STI
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION basic1medium4p
-  SUB_SCRIPT add3RandomOpponentsMedium
-  SetDeckPreparationScript "originalDeck"
-  INIT_BUILD
-  SetShipType STI
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION adv1easy2p
-  SUB_SCRIPT add1RandomOpponentsEasy
-  SetDeckPreparationScript "digitalDeck"
-  INIT_BUILD
-  SetShipType STI
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION adv1easy3p
-  SUB_SCRIPT add2RandomOpponentsEasy
-  SetDeckPreparationScript "digitalDeck"
-  INIT_BUILD
-  SetShipType STI
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION adv1easy4p
-  SUB_SCRIPT add3RandomOpponentsEasy
-  SetDeckPreparationScript "digitalDeck"
-  INIT_BUILD
-  SetShipType STI
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION adv1medium2p
-  SUB_SCRIPT add1RandomOpponentsMedium
-  SetDeckPreparationScript "digitalDeck"
-  INIT_BUILD
-  SetShipType STI
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION adv1medium3p
-  SUB_SCRIPT add2RandomOpponentsMedium
-  SetDeckPreparationScript "digitalDeck"
-  INIT_BUILD
-  SetShipType STI
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION adv1medium4p
-  SUB_SCRIPT add3RandomOpponentsMedium
-  SetDeckPreparationScript "digitalDeck"
-  INIT_BUILD
-  SetShipType STI
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION adv1mediumRand
-  SUB_SCRIPT addRandomOpponentsMedium
-  SetDeckPreparationScript "digitalDeck"
-  INIT_BUILD
-  SetShipType STI
-  IF brownUnlocked
-    IFNOT brownTutorial
-      BuildingHelpScript 500 brownInfo
-    END_OF_IF
-  END_OF_IF
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION adv2mediumRand
-  SUB_SCRIPT addRandomOpponentsMedium
-  SetDeckPreparationScript "digitalDeck"
-  INIT_BUILD
-  SetShipType STII
-  IFNOT wasTutorialSideMeteors
-    BuildingHelpScript 500 "tutorialSideMeteors"
-  END_OF_IF
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION adv3mediumRand
-  SUB_SCRIPT addRandomOpponentsMedium
-  SetDeckPreparationScript "digitalDeck"
-  INIT_BUILD
-  SetShipType STIII
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION adv3mediumRandShort
-  SUB_SCRIPT addRandomOpponentsMedium
-  SetDeckPreparationScript "digitalDeck"
-  INIT_BUILD
-  SetAdvPile 1 0
-  SetAdvPile 2 1
-  SetAdvPile 3 2
-  SetSecretAdvPile 1 0
-  SetSecretAdvPile 2 1
-  SetSecretAdvPile 3 2
-  SetShipType STIII
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION adv3mediumRandLong
-  SUB_SCRIPT addRandomOpponentsMedium
-  SetDeckPreparationScript "digitalDeck"
-  INIT_BUILD
-  SetAdvPile 1 1
-  SetAdvPile 2 1
-  SetAdvPile 3 3
-  SetSecretAdvPile 1 1
-  SetSecretAdvPile 2 1
-  SetSecretAdvPile 3 3
-  SetShipType STIII
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION turnBased1
-  SetTurnBased
-  SET_TO destination 1
-  SetSpecCondition "OnlyWinner"
-  IF_PROB 25
-    AddOpponent easy_basic_pap
-  ELSE
-    IF_PROB 33
-      AddOpponent easy_safe_pap
-    ELSE
-      IF_PROB 50
-        AddOpponent easy_rich_pap
-      ELSE
-        AddOpponent easy_angry_pap
-      END_OF_IF
-    END_OF_IF
-  END_OF_IF
-  SetDeckPreparationScript "digitalDeck"
-  INIT_BUILD
-  SetShipType STI
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION turnBased2
-  SetTurnBased
-  SET_TO destination 2
-  SetSpecCondition "OnlyWinner"
-  IF_PROB 25
-    AddOpponent medium_basic_pap
-    AddOpponent medium_angry_pap
-  ELSE
-    IF_PROB 33
-      AddOpponent medium_angry_pap
-      AddOpponent medium_safe_pap
-    ELSE
-      IF_PROB 50
-        AddOpponent medium_safe_pap
-        AddOpponent medium_rich_pap
-      ELSE
-        AddOpponent medium_rich_pap
-        AddOpponent medium_basic_pap
-      END_OF_IF
-    END_OF_IF
-  END_OF_IF
-  SetDeckPreparationScript "digitalDeck"
-  INIT_BUILD
-  SetShipType STII
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION turnBased3
-  SetTurnBased
-  SET_TO destination 3
-  SetSpecCondition "OnlyWinner"
-  IF_PROB 25
-    AddOpponent hard_basic_pap
-    AddOpponent hard_angry_pap
-    AddOpponent hard_safe_pap
-  ELSE
-    IF_PROB 33
-      AddOpponent hard_angry_pap
-      AddOpponent hard_safe_pap
-      AddOpponent hard_rich_pap
-    ELSE
-      IF_PROB 50
-        AddOpponent hard_safe_pap
-        AddOpponent hard_rich_pap
-        AddOpponent hard_basic_pap
-      ELSE
-        AddOpponent hard_rich_pap
-        AddOpponent hard_basic_pap
-        AddOpponent hard_angry_pap
-      END_OF_IF
-    END_OF_IF
-  END_OF_IF
-  SetDeckPreparationScript "digitalDeck"
-  INIT_BUILD
-  SetShipType STIII
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION turnBased1random
-  SetTurnBased
-  SET_TO opponents 0
-  IF_PROB 50
-    AddOpponent easy_basic_pap
-    ADD opponents 1
-  END_OF_IF
-  IF_PROB 50
-    AddOpponent easy_rich_pap
-    ADD opponents 1
-  END_OF_IF
-  IF_PROB 50
-    AddOpponent easy_safe_pap
-    ADD opponents 1
-  END_OF_IF
-  IF_PROB 50
-    IF_MAX opponents 2
-      AddOpponent easy_angry_pap
-      ADD opponents 1
-    END_OF_IF
-  END_OF_IF
-  IF_IS opponents 0
-    AddOpponent easy_basic_pap
-  END_OF_IF
-  SetDeckPreparationScript "digitalDeck"
-  INIT_BUILD
-  SetShipType STI
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION turnBased2random
-  SetTurnBased
-  SET_TO opponents 0
-  IF_PROB 50
-    AddOpponent medium_basic_pap
-    ADD opponents 1
-  END_OF_IF
-  IF_PROB 50
-    AddOpponent medium_rich_pap
-    ADD opponents 1
-  END_OF_IF
-  IF_PROB 50
-    AddOpponent medium_safe_pap
-    ADD opponents 1
-  END_OF_IF
-  IF_PROB 50
-    IF_MAX opponents 2
-      AddOpponent medium_angry_pap
-      ADD opponents 1
-    END_OF_IF
-  END_OF_IF
-  IF_IS opponents 0
-    AddOpponent medium_basic_pap
-  END_OF_IF
-  SetDeckPreparationScript "digitalDeck"
-  INIT_BUILD
-  SetShipType STII
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION turnBased3random
-  SetTurnBased
-  SET_TO opponents 0
-  IF_PROB 50
-    AddOpponent hard_basic_pap
-    ADD opponents 1
-  END_OF_IF
-  IF_PROB 50
-    AddOpponent hard_rich_pap
-    ADD opponents 1
-  END_OF_IF
-  IF_PROB 50
-    AddOpponent hard_safe_pap
-    ADD opponents 1
-  END_OF_IF
-  IF_PROB 50
-    IF_MAX opponents 2
-      AddOpponent hard_angry_pap
-      ADD opponents 1
-    END_OF_IF
-  END_OF_IF
-  IF_IS opponents 0
-    AddOpponent hard_basic_pap
-  END_OF_IF
-  SetDeckPreparationScript "digitalDeck"
-  INIT_BUILD
-  SetShipType STIII
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-MISSION turnBasedSolo
-  SetTurnBased
-  AddOpponent alterEgo
-  SET_TO destination 0
-  SetSpecCondition "OnlyWinner"
-  SetDeckPreparationScript "alterEgoDeck"
-  INIT_BUILD
-  SetSecretAdvPile 1 0
-  SetSecretAdvPile 2 0
-  SetSecretAdvPile 3 0
-  SetShipType STIII
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
 
 END_OF_SCRIPTS

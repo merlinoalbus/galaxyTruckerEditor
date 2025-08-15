@@ -1,7 +1,16 @@
 SCRIPTS
 
   SCRIPT aaa_pippo
+    ShowDlgScene
+    Announce "prova"
+    RETURN
+    SET questCompleted
+    RESET achievement02
+    ShowChar bartender right
+    ShowChar ambassador left
+    SayChar catapult_fanatic "prova"
     Say "Giovanni[g(|no)] [NAME] prova pr[n(1:ova|2:ima|6:ippo)] [NAME][img(achievements\images\at__9_normal.jpg)*3]"
+    ChangeChar bartender campaign/bartender-warehouse.png
     Ask "Say"
     MENU
       OPT "asss"
@@ -16,6 +25,7 @@ SCRIPTS
         EXIT_MENU
       END_OF_OPT
     END_OF_MENU
+    HideDlgScene
   END_OF_SCRIPT
 
 END_OF_SCRIPTS

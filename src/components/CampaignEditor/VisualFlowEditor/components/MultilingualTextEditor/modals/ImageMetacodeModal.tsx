@@ -4,6 +4,7 @@ import { X, Image, ChevronDown, Search } from 'lucide-react';
 import { ParsedMetacode, generateImageCode } from '../metacodeParser';
 import { imagesViewService } from '@/services/CampaignEditor/VariablesSystem/services/ImagesView/imagesViewService';
 import { ImageData } from '@/types/CampaignEditor/VariablesSystem/types/ImagesView/ImagesView.types';
+import { useTranslation } from '@/locales';
 
 interface ImageMetacodeModalProps {
   isOpen: boolean;
@@ -20,6 +21,7 @@ export const ImageMetacodeModal: React.FC<ImageMetacodeModalProps> = ({
   onSave,
   mousePosition
 }) => {
+  const { t } = useTranslation();
   const [imagePath, setImagePath] = useState('');
   const [count, setCount] = useState(1);
   const [systemImages, setSystemImages] = useState<ImageData[]>([]);
@@ -52,11 +54,11 @@ export const ImageMetacodeModal: React.FC<ImageMetacodeModalProps> = ({
           if (response.success) {
             setSystemImages(response.data);
           } else {
-            setImageError('Impossibile caricare le immagini');
+            setImageError(t('visualFlowEditor.metacode.loadImagesError'));
           }
         })
         .catch(err => {
-          setImageError('Errore di connessione al server');
+          setImageError(t('visualFlowEditor.metacode.serverConnectionError'));
           console.error('Failed to load system images:', err);
         })
         .finally(() => setLoadingImages(false));
@@ -156,7 +158,7 @@ export const ImageMetacodeModal: React.FC<ImageMetacodeModalProps> = ({
             <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-3 py-2">
               <div className="flex justify-between items-center">
                 <h3 className="text-xs font-semibold text-white">
-                  Metacodice Immagine
+                  {t('visualFlowEditor.metacode.imageMetacodeTitle')}
                 </h3>
                 <button
                   onClick={onClose}
@@ -171,7 +173,7 @@ export const ImageMetacodeModal: React.FC<ImageMetacodeModalProps> = ({
               {/* Input percorso con selezione e anteprima */}
               <div className="mb-1.5">
                 <label className="block text-[10px] font-semibold text-purple-400 uppercase mb-1">
-                  Immagine
+                  {t('visualFlowEditor.metacode.imagePathLabel')}
                 </label>
                 <div className="flex gap-1">
                   <div className="flex-1 flex items-center gap-1">
@@ -190,7 +192,7 @@ export const ImageMetacodeModal: React.FC<ImageMetacodeModalProps> = ({
                         setSelectedImageThumbnail(null); // Reset thumbnail se l'utente modifica manualmente
                       }}
                       className="flex-1 px-1.5 py-0.5 bg-slate-800 text-white text-xs border border-slate-700 rounded focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
-                      placeholder="path/image.png"
+                      placeholder={t('visualFlowEditor.metacode.imagePathPlaceholder')}
                       autoFocus
                     />
                   </div>
@@ -198,7 +200,7 @@ export const ImageMetacodeModal: React.FC<ImageMetacodeModalProps> = ({
                     type="button"
                     onClick={() => setShowImagePicker(!showImagePicker)}
                     className="px-2 py-0.5 bg-purple-700 hover:bg-purple-600 text-white text-xs rounded transition-colors flex items-center gap-1"
-                    title="Seleziona da sistema"
+                    title={t('visualFlowEditor.metacode.selectFromSystem')}
                   >
                     <Image className="w-3 h-3" />
                     <ChevronDown className="w-2 h-2" />
@@ -215,7 +217,7 @@ export const ImageMetacodeModal: React.FC<ImageMetacodeModalProps> = ({
                         type="text"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Filtra immagini..."
+                        placeholder={t('visualFlowEditor.metacode.filterImages')}
                         className="w-full pl-6 pr-2 py-1 bg-slate-800 text-white text-[10px] border border-slate-700 rounded focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-purple-500"
                       />
                     </div>
@@ -223,13 +225,13 @@ export const ImageMetacodeModal: React.FC<ImageMetacodeModalProps> = ({
                     {/* Griglia immagini con scroll */}
                     <div className="flex-1 overflow-y-auto">
                       {loadingImages ? (
-                        <div className="text-[10px] text-gray-400 text-center py-2">Caricamento immagini...</div>
+                        <div className="text-[10px] text-gray-400 text-center py-2">{t('visualFlowEditor.metacode.loadingImages')}</div>
                       ) : imageError ? (
                         <div className="text-[10px] text-red-400 text-center py-2">{imageError}</div>
                       ) : filteredImages.length > 0 ? (
                         <>
                           <div className="text-[9px] text-gray-500 mb-1 px-1">
-                            {filteredImages.length} immagini trovate
+                            {t('visualFlowEditor.metacode.imagesFound').replace('{count}', String(filteredImages.length))}
                           </div>
                           <div className="grid grid-cols-8 gap-0.5 px-0.5">
                             {filteredImages.map((img, idx) => (
@@ -261,7 +263,7 @@ export const ImageMetacodeModal: React.FC<ImageMetacodeModalProps> = ({
                         </>
                       ) : (
                         <div className="text-[10px] text-gray-500 text-center py-2">
-                          {searchTerm ? 'Nessuna immagine trovata' : 'Nessuna immagine disponibile'}
+                          {searchTerm ? t('visualFlowEditor.metacode.noImagesFound') : t('visualFlowEditor.metacode.noImagesAvailable')}
                         </div>
                       )}
                     </div>
@@ -272,7 +274,7 @@ export const ImageMetacodeModal: React.FC<ImageMetacodeModalProps> = ({
               {/* Input numero con controlli rapidi */}
               <div className="mb-1.5">
                 <label className="block text-[10px] font-semibold text-indigo-400 uppercase mb-1">
-                  Ripetizioni
+                  {t('visualFlowEditor.metacode.repeatLabel')}
                 </label>
                 <div className="flex items-center gap-1">
                   <button
@@ -305,7 +307,7 @@ export const ImageMetacodeModal: React.FC<ImageMetacodeModalProps> = ({
               
               {/* Risultato */}
               <div className="px-2 py-1">
-                <p className="text-[10px] text-gray-500 uppercase font-semibold">Risultato:</p>
+                <p className="text-[10px] text-gray-500 uppercase font-semibold">{t('visualFlowEditor.metacode.resultLabel')}</p>
                 <p className={`text-[11px] font-mono ${hasValidInput ? 'text-purple-400' : 'text-yellow-400'}`}>
                   {preview}
                 </p>
@@ -320,14 +322,14 @@ export const ImageMetacodeModal: React.FC<ImageMetacodeModalProps> = ({
                   onClick={onClose}
                   className="flex-1 px-2 py-1 text-[10px] text-gray-300 bg-slate-800 rounded hover:bg-slate-700 transition-colors font-medium"
                 >
-                  Annulla
+                  {t('visualFlowEditor.metacode.cancelButton')}
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={!imagePath}
                   className="flex-1 px-2 py-1 text-[10px] bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded hover:from-purple-600 hover:to-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium"
                 >
-                  Applica
+                  {t('visualFlowEditor.metacode.applyButton')}
                 </button>
               </div>
             </div>

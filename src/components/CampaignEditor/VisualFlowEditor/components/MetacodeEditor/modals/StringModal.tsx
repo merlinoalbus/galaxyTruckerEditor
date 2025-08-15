@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Type } from 'lucide-react';
+import { useTranslation } from '@/locales';
 
 interface StringModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ export const StringModal: React.FC<StringModalProps> = ({
   onInsert,
   existingData
 }) => {
+  const { t } = useTranslation();
   const [index, setIndex] = useState(existingData?.index || '');
   const [uppercase, setUppercase] = useState(existingData?.uppercase || false);
 
@@ -41,7 +43,7 @@ export const StringModal: React.FC<StringModalProps> = ({
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-white flex items-center gap-2">
             <Type className="w-5 h-5" />
-            Stringa Dinamica
+{t('visualFlowEditor.metacode.dynamicString')}
           </h3>
           <button
             onClick={onClose}
@@ -53,24 +55,24 @@ export const StringModal: React.FC<StringModalProps> = ({
 
         {/* Info */}
         <div className="mb-4 p-2 bg-slate-900/50 rounded text-xs text-gray-400">
-          Inserisce un placeholder per una stringa dinamica che verrà sostituita a runtime.
+{t('visualFlowEditor.metacode.dynamicStringDescription')}
         </div>
 
         {/* Form */}
         <div className="space-y-3 mb-4">
           <div>
             <label className="block text-xs text-gray-400 mb-1">
-              Indice (opzionale)
+{t('visualFlowEditor.metacode.indexOptional')}
             </label>
             <input
               type="text"
               value={index}
               onChange={(e) => setIndex(e.target.value.replace(/\D/g, ''))}
               className="w-full bg-slate-900 text-white px-2 py-1 rounded border border-slate-600 focus:border-blue-500 focus:outline-none text-sm"
-              placeholder="1, 2, 3..."
+              placeholder={t('visualFlowEditor.metacode.indexPlaceholder')}
             />
             <div className="text-xs text-gray-500 mt-1">
-              Lascia vuoto per [s], o specifica un numero per [s1], [s2], etc.
+{t('visualFlowEditor.metacode.stringIndexDescription')}
             </div>
           </div>
 
@@ -82,17 +84,17 @@ export const StringModal: React.FC<StringModalProps> = ({
                 onChange={(e) => setUppercase(e.target.checked)}
                 className="rounded border-gray-600 bg-slate-900 focus:ring-blue-500"
               />
-              <span className="text-sm text-gray-300">Maiuscola ([S])</span>
+              <span className="text-sm text-gray-300">{t('visualFlowEditor.metacode.uppercase')}</span>
             </label>
             <div className="text-xs text-gray-500 mt-1">
-              Forza la prima lettera maiuscola
+{t('visualFlowEditor.metacode.forceUppercase')}
             </div>
           </div>
         </div>
 
         {/* Preview */}
         <div className="mb-4 p-3 bg-slate-900 rounded border border-slate-700">
-          <div className="text-xs text-gray-500 mb-1">Codice generato:</div>
+          <div className="text-xs text-gray-500 mb-1">{t('visualFlowEditor.metacode.generatedCode')}</div>
           <code className="text-sm text-green-400 font-mono">
             {uppercase ? '[S' : '[s'}{index}{']'}
           </code>
@@ -104,13 +106,13 @@ export const StringModal: React.FC<StringModalProps> = ({
             onClick={onClose}
             className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors"
           >
-            Annulla
+{t('visualFlowEditor.metacode.cancel')}
           </button>
           <button
             onClick={handleInsert}
             className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-500 text-white rounded transition-colors"
           >
-            Inserisci
+{t('visualFlowEditor.metacode.insert')}
           </button>
         </div>
       </div>

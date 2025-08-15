@@ -10,6 +10,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
 import type { IFlowBlock, ValidationResult, ScriptContext, OpenedScript } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 import { TIMEOUT_CONSTANTS, PERFORMANCE_CONSTANTS, UI_CONSTANTS, API_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
+import { SceneProvider, useScene } from '@/contexts/SceneContext';
 
 // Import componenti modulari
 import { BlockRenderer } from './components/BlockRenderer/BlockRenderer';
@@ -40,9 +41,8 @@ import { useSessionData } from '@/hooks/CampaignEditor/VisualFlowEditor/useSessi
  * - Separazione netta tra logica di business (hook) e presentazione (componente)
  */
 
-
-
-export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({ 
+// Componente interno che usa il SceneContext
+const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({ 
   analysis,
   scriptId 
 }) => {
@@ -50,6 +50,7 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
   const { isLoading } = useVisualFlowEditor(analysis || null);
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
+  const { state: sceneState, showDialogScene, hideDialogScene, clearScenes } = useScene();
 
   // Script management state
   const [availableScripts, setAvailableScripts] = useState<ScriptItem[]>([]);
@@ -61,19 +62,24 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
   const [currentScriptBlocks, setCurrentScriptBlocks] = useState<IFlowBlock[]>([]);
   const [validationErrors, setValidationErrors] = useState<ValidationResult>({ errors: 0, invalidBlocks: [] });
   const [dropError, setDropError] = useState<string | null>(null);
-  const [showValidationDetails, setShowValidationDetails] = useState(false);
+  const [showValidationDetails, setShowValidationDetails] = useState<'errors' | 'warnings' | false>(false);
+  
+  // Collapse/Expand All state
+  const [collapseAllTrigger, setCollapseAllTrigger] = useState(0);
+  const [expandAllTrigger, setExpandAllTrigger] = useState(0);
+  const [globalCollapseState, setGlobalCollapseState] = useState<'collapsed' | 'expanded' | 'manual'>('manual');
+  
+  // Mappa per tracciare il tipo di validazione per ogni blocco
+  const [blockValidationTypes, setBlockValidationTypes] = useState<Map<string, 'error' | 'warning'>>(new Map());
+  
+  // Set per tracciare gli errori bypassati
+  const [bypassedErrors, setBypassedErrors] = useState<Set<string>>(new Set());
   
   // Multi-script management - tiene traccia di tutti gli script aperti
   const [openedScripts, setOpenedScripts] = useState<Map<string, OpenedScript>>(new Map());
   
   // Script corrente in visualizzazione (può essere main o sub-script)
   const [currentScriptContext, setCurrentScriptContext] = useState<ScriptContext | null>(null);
-  
-  // Path di navigazione tra script (diverso da navigationPath che è per zoom interno)
-  const [scriptNavigationPath, setScriptNavigationPath] = useState<Array<{
-    scriptName: string;
-    parentBlockId?: string;
-  }>>([]);
   
   // Button refs per posizionamento contestuale
   const scriptsButtonRef = React.useRef<HTMLButtonElement>(null);
@@ -86,6 +92,30 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
   const scriptLabels = React.useMemo(() => {
     return collectScriptLabels(currentScriptBlocks);
   }, [currentScriptBlocks]);
+  
+  // Funzioni per Collapse/Expand All
+  const handleCollapseAll = useCallback(() => {
+    setGlobalCollapseState('collapsed');
+    setCollapseAllTrigger(prev => prev + 1);
+  }, []);
+  
+  const handleExpandAll = useCallback(() => {
+    setGlobalCollapseState('expanded');
+    setExpandAllTrigger(prev => prev + 1);
+  }, []);
+  
+  // Funzione per gestire il bypass degli errori
+  const handleToggleBypass = useCallback((blockId: string) => {
+    setBypassedErrors(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(blockId)) {
+        newSet.delete(blockId);
+      } else {
+        newSet.add(blockId);
+      }
+      return newSet;
+    });
+  }, []);
   
   // Funzione per navigare a un blocco LABEL
   const goToLabel = useCallback((labelName: string) => {
@@ -194,8 +224,31 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
     validateAllBlocks,
     getDropErrorMessage
   } = useBlockManipulation();
+
+  // Usa hook per gestione script (prima di useZoomNavigation che lo usa)
+  const {
+    currentScript,
+    newScriptDialog,
+    setNewScriptDialog,
+    handleNewScript,
+    confirmNewScript,
+    confirmNewMission,
+    loadScript,
+    loadMission,
+    saveScript,
+    saveMission
+  } = useScriptManagement({
+    setCurrentScriptBlocks,
+    setShowScriptsList,
+    currentScriptBlocks,
+    rootBlocks: [],  // Temporaneo, verrà aggiornato dopo
+    isZoomed: false,  // Temporaneo, verrà aggiornato dopo
+    resetNavigationState: () => {},  // Temporaneo, verrà aggiornato dopo
+    setValidationErrors,
+    setDropError
+  });
   
-  // Usa hook per zoom navigation
+  // Usa hook per zoom navigation con supporto unificato per script e sub-script
   const {
     navigationPath,
     setNavigationPath,
@@ -207,10 +260,19 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
     updateRootBlocksIfNeeded,
     updateBlockInNavigationTree,
     isZoomed,
-    resetNavigationState
+    resetNavigationState,
+    scriptNavigationPath,
+    setScriptNavigationPath,
+    handleNavigateToSubScript,
+    handleNavigateBackToScript
   } = useZoomNavigation({
     currentScriptBlocks,
-    setCurrentScriptBlocks
+    setCurrentScriptBlocks,
+    openedScripts,
+    setOpenedScripts,
+    currentScriptContext,
+    setCurrentScriptContext,
+    currentScript
   });
 
   // Usa hook per drag & drop
@@ -268,29 +330,6 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
     }
   });
 
-  // Usa hook per gestione script
-  const {
-    currentScript,
-    newScriptDialog,
-    setNewScriptDialog,
-    handleNewScript,
-    confirmNewScript,
-    confirmNewMission,
-    loadScript,
-    loadMission,
-    saveScript,
-    saveMission
-  } = useScriptManagement({
-    setCurrentScriptBlocks,
-    setShowScriptsList,
-    currentScriptBlocks,
-    rootBlocks,
-    isZoomed,
-    resetNavigationState,
-    setValidationErrors,
-    setDropError
-  });
-
   // Usa hook per conversione JSON
   const { scriptJson } = useJsonConversion({ 
     currentScriptBlocks,
@@ -327,12 +366,14 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
     setDropError(null);
     resetNavigationState();
     
-    // IMPORTANTE: Pulisci completamente la memoria degli script aperti
-    setOpenedScripts(new Map());
+    // IMPORTANTE: Pulisci completamente la memoria degli script aperti ma prepara per salvare lo script principale
+    const newOpenedScripts = new Map<string, OpenedScript>();
+    setOpenedScripts(newOpenedScripts);
     setCurrentScriptContext(null);
     setScriptNavigationPath([]);
     
-    return loadScript(scriptId);
+    const scriptData = await loadScript(scriptId);
+    return scriptData;
   }, [loadScript, resetNavigationState]);
 
   // Wrapper per loadMission con reset completo dello stato
@@ -350,211 +391,8 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
     return loadMission(missionId);
   }, [loadMission, resetNavigationState]);
 
-  // Funzione per navigare a un sub-script - carica un nuovo script mantenendo quello precedente
-  const handleNavigateToSubScript = useCallback(async (scriptName: string, parentBlock: IFlowBlock) => {
-    try {
-      // Controlla se lo script è già stato caricato
-      let scriptData = openedScripts.get(scriptName);
-      
-      if (!scriptData) {
-        // Carica lo script via API solo se non è già in cache
-        const response = await fetch(`http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/scripts/${scriptName}?multilingua=true&format=blocks`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
-        if (result.success && result.data && result.data.blocks) {
-          // Importa le funzioni necessarie per pulire e aggiungere ID
-          const { addUniqueIds } = await import('@/utils/CampaignEditor/VisualFlowEditor/blockIdManager');
-          const { cleanupScriptBlocks } = await import('@/utils/CampaignEditor/VisualFlowEditor/blockCleaner');
-          
-          // Pulisci e aggiungi ID ai blocchi
-          let blocksToLoad = result.data.blocks || [];
-          blocksToLoad = cleanupScriptBlocks(blocksToLoad);
-          blocksToLoad = addUniqueIds(blocksToLoad);
-          
-          // Aggiungi flag isContainer dove necessario
-          const addContainerFlags = (blocks: IFlowBlock[]): IFlowBlock[] => {
-            return blocks.map(block => {
-              const newBlock = { ...block } as IFlowBlock;
-              if (block.children || block.thenBlocks || block.elseBlocks || block.blocksMission || block.blocksFinish) {
-                newBlock.isContainer = true;
-              }
-              if (newBlock.children) newBlock.children = addContainerFlags(newBlock.children);
-              if (newBlock.thenBlocks) newBlock.thenBlocks = addContainerFlags(newBlock.thenBlocks);
-              if (newBlock.elseBlocks) newBlock.elseBlocks = addContainerFlags(newBlock.elseBlocks);
-              if (newBlock.blocksMission) newBlock.blocksMission = addContainerFlags(newBlock.blocksMission);
-              if (newBlock.blocksFinish) newBlock.blocksFinish = addContainerFlags(newBlock.blocksFinish);
-              return newBlock;
-            });
-          };
-          blocksToLoad = addContainerFlags(blocksToLoad);
-          
-          // Salva lo script nella mappa degli script aperti
-          scriptData = {
-            scriptName: result.data.name || scriptName,
-            fileName: result.data.fileName || scriptName,
-            blocks: blocksToLoad,
-            isModified: false
-          };
-          setOpenedScripts(prev => new Map(prev).set(scriptName, scriptData!));
-        } else {
-          throw new Error('Nessun dato ricevuto dal server');
-        }
-      }
-      
-      // Prima di navigare, salva sempre lo stato corrente
-      const blocksToSave = isZoomed && rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
-      
-      if (currentScriptContext && currentScriptContext.isSubScript) {
-        // Salva i blocchi correnti del sub-script
-        setOpenedScripts(prev => {
-          const updated = new Map(prev);
-          const current = updated.get(currentScriptContext.scriptName);
-          if (current) {
-            current.blocks = blocksToSave;
-            current.isModified = true;
-          }
-          return updated;
-        });
-      } else {
-        // Salva lo script principale (o quello che stiamo visualizzando)
-        const scriptNameToSave = currentScriptContext?.scriptName || currentScript?.name || 'main';
-        setOpenedScripts(prev => {
-          const updated = new Map(prev);
-          
-          // Se lo script esiste già, aggiorna i suoi blocchi
-          if (updated.has(scriptNameToSave)) {
-            const existing = updated.get(scriptNameToSave)!;
-            existing.blocks = blocksToSave;
-            existing.isModified = true;
-          } else {
-            // Altrimenti crea una nuova entry
-            updated.set(scriptNameToSave, {
-              scriptName: scriptNameToSave,
-              fileName: currentScript?.fileName || scriptNameToSave + '.txt',
-              blocks: blocksToSave,
-              isModified: true
-            });
-          }
-          return updated;
-        });
-      }
-      
-      // Reset dello stato di zoom per il nuovo script
-      resetNavigationState();
-      setRootBlocks([]); // Reset rootBlocks per il nuovo script
-      
-      // Imposta il nuovo contesto dello script
-      setCurrentScriptContext({
-        scriptName: scriptName,
-        isSubScript: true
-      });
-      
-      // Carica i blocchi del sub-script
-      // Se lo script ha un wrapper SCRIPT, usalo, altrimenti creane uno
-      let blocksToLoad = scriptData.blocks;
-      if (!blocksToLoad.some(b => b.type === 'SCRIPT')) {
-        // Crea un wrapper SCRIPT per permettere la navigazione
-        blocksToLoad = [{
-          id: `script-wrapper-${scriptName}`,
-          type: 'SCRIPT',
-          scriptName: scriptData.scriptName,
-          fileName: scriptData.fileName,
-          isContainer: true,
-          children: scriptData.blocks
-        }];
-      }
-      
-      // Mostra i blocchi del sub-script
-      setCurrentScriptBlocks(blocksToLoad);
-      
-      // Aggiorna il path di navigazione tra script
-      setScriptNavigationPath(prev => {
-        // Se è vuoto, aggiungi prima lo script principale
-        if (prev.length === 0) {
-          const mainScriptName = currentScript?.name || 'main';
-          return [
-            { scriptName: mainScriptName },
-            { scriptName: scriptName, parentBlockId: parentBlock.id }
-          ];
-        }
-        
-        // Aggiungi sempre il nuovo script al path corrente
-        // Questo permette navigazione annidata: A -> B -> C -> D ...
-        return [...prev, {
-          scriptName: scriptName,
-          parentBlockId: parentBlock.id
-        }];
-      });
-      
-    } catch (error) {
-      console.error('[VisualFlowEditor] Error loading sub-script:', error);
-      setDropError(`Errore nel caricamento del sub-script: ${scriptName}`);
-    }
-  }, [currentScriptBlocks, currentScriptContext, openedScripts, rootBlocks, setRootBlocks, setCurrentScriptBlocks, currentScript, isZoomed, resetNavigationState]);
-
-  // Funzione per navigare indietro tra script
-  const handleNavigateBackToScript = useCallback((targetIndex: number) => {
-    // NON salvare lo stato corrente se stiamo tornando indietro (come da specifica)
-    // Questo significa che le modifiche non salvate del sub-script vanno perse
-    
-    // Rimuovi dalla memoria tutti gli script dopo il target
-    const scriptsToRemove: string[] = [];
-    if (targetIndex < 0) {
-      // Tornando allo script principale, rimuovi tutti i sub-script
-      scriptNavigationPath.forEach(item => {
-        if (item.scriptName !== currentScript?.name) {
-          scriptsToRemove.push(item.scriptName);
-        }
-      });
-    } else {
-      // Tornando a uno script intermedio, rimuovi tutti quelli dopo
-      for (let i = targetIndex + 1; i < scriptNavigationPath.length; i++) {
-        scriptsToRemove.push(scriptNavigationPath[i].scriptName);
-      }
-    }
-    
-    // Rimuovi gli script dalla memoria
-    setOpenedScripts(prev => {
-      const updated = new Map(prev);
-      scriptsToRemove.forEach(scriptName => {
-        updated.delete(scriptName);
-      });
-      return updated;
-    });
-    
-    // Determina quale script caricare
-    if (targetIndex < 0) {
-      // Torna allo script principale
-      const mainScriptName = currentScript?.name || 'main';
-      const mainScriptData = openedScripts.get(mainScriptName);
-      
-      if (mainScriptData) {
-        resetNavigationState();
-        setRootBlocks([]);
-        setCurrentScriptBlocks(mainScriptData.blocks);
-        setCurrentScriptContext(null);
-        setScriptNavigationPath([]);
-      }
-    } else if (targetIndex < scriptNavigationPath.length) {
-      // Naviga a uno script specifico nel path
-      const targetScript = scriptNavigationPath[targetIndex];
-      const scriptData = openedScripts.get(targetScript.scriptName);
-      
-      if (scriptData) {
-        resetNavigationState();
-        setRootBlocks([]);
-        setCurrentScriptBlocks(scriptData.blocks);
-        setCurrentScriptContext({
-          scriptName: targetScript.scriptName,
-          isSubScript: targetIndex > 0 // È sub-script solo se non è il primo nel path
-        });
-        setScriptNavigationPath(prev => prev.slice(0, targetIndex + 1));
-      }
-    }
-  }, [openedScripts, currentScript, resetNavigationState, scriptNavigationPath, setRootBlocks]);
+  // Le funzioni handleNavigateToSubScript e handleNavigateBackToScript sono ora gestite dall'hook useZoomNavigation
+  // Rimangono solo come wrapper per mantenere compatibilità
 
   // Estendi sessionData con le label dello script, availableScripts e la funzione di navigazione
   const extendedSessionData = React.useMemo(() => ({
@@ -562,8 +400,26 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
     scriptLabels,
     goToLabel,
     availableScripts,
-    onNavigateToSubScript: handleNavigateToSubScript
-  }), [sessionData, scriptLabels, goToLabel, availableScripts, handleNavigateToSubScript]);
+    onNavigateToSubScript: handleNavigateToSubScript,
+    navigationPath: scriptNavigationPath, // Usa scriptNavigationPath invece di navigationPath
+    onNavigateBack: () => {
+      // Naviga al livello precedente nel path degli script
+      if (scriptNavigationPath && scriptNavigationPath.length > 1) {
+        // Trova l'indice del subscript corrente nel navigationPath
+        const subscriptIndex = navigationPath.findIndex(item => item.id.startsWith('subscript-'));
+        
+        if (subscriptIndex > 0) {
+          // Abbiamo un percorso prima del subscript, torna al blocco che contiene il GO
+          // Usa handleZoomOut per navigare al blocco che contiene il comando GO
+          handleZoomOut(subscriptIndex - 1);
+        } else {
+          // Fallback: torna allo script precedente
+          const targetLevel = scriptNavigationPath.length - 2;
+          handleNavigateBackToScript(targetLevel);
+        }
+      }
+    }
+  }), [sessionData, scriptLabels, goToLabel, availableScripts, handleNavigateToSubScript, scriptNavigationPath, handleNavigateBackToScript, navigationPath, handleZoomOut]);
 
   // Carica script se viene passato uno scriptId dal componente chiamante
   useEffect(() => {
@@ -571,6 +427,29 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
       loadScriptWithReset(scriptId);
     }
   }, [scriptId, loadScriptWithReset]);
+  
+  // Salva lo script principale nella mappa quando viene caricato per la prima volta
+  useEffect(() => {
+    if (currentScript && currentScriptBlocks.length > 0 && !currentScriptContext) {
+      const scriptName = currentScript.name || scriptId || 'main';
+      
+      setOpenedScripts(prevScripts => {
+        // Solo se la mappa è vuota (primo caricamento)
+        // Non modificare se ci sono già script nella mappa
+        if (prevScripts.size === 0 && !prevScripts.has(scriptName)) {
+          const newOpenedScripts = new Map(prevScripts);
+          newOpenedScripts.set(scriptName, {
+            scriptName: scriptName,
+            fileName: currentScript.fileName || scriptName + '.txt',
+            blocks: currentScriptBlocks,
+            isModified: false
+          });
+          return newOpenedScripts;
+        }
+        return prevScripts; // Non modificare se ci sono già script
+      });
+    }
+  }, [currentScript, currentScriptBlocks, currentScriptContext, scriptId, setOpenedScripts]);
 
   // Ref per il timeout di debouncing
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -643,15 +522,28 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
         let validationResult;
         if (blocksToValidate.length > PERFORMANCE_CONSTANTS.LARGE_SCRIPT_THRESHOLD) {
           const startTime = performance.now();
-          validationResult = validateAllBlocks(blocksToValidate);
+          validationResult = validateAllBlocks(blocksToValidate, navigationPath);
           const endTime = performance.now();
           // Performance monitoring: ${blocksToValidate.length} blocks validated in ${(endTime - startTime).toFixed(2)}ms
         } else {
-          validationResult = validateAllBlocks(blocksToValidate);
+          validationResult = validateAllBlocks(blocksToValidate, navigationPath);
         }
         setValidationErrors(validationResult);
+        
+        // Popola la mappa dei tipi di validazione
+        const typeMap = new Map<string, 'error' | 'warning'>();
+        if (validationResult.details) {
+          validationResult.details.forEach(detail => {
+            if (!typeMap.has(detail.blockId) || detail.type === 'error') {
+              // Se un blocco ha sia error che warning, priorità a error
+              typeMap.set(detail.blockId, detail.type || 'error');
+            }
+          });
+        }
+        setBlockValidationTypes(typeMap);
       } else {
         setValidationErrors({ errors: 0, invalidBlocks: [] });
+        setBlockValidationTypes(new Map());
       }
     }, TIMEOUT_CONSTANTS.VALIDATION_DEBOUNCE); // Debounce come da specifica
     
@@ -667,6 +559,54 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
   useEffect(() => {
     return clearAllTimeouts;
   }, [clearAllTimeouts]);
+
+  // Ricostruisce lo stato delle scene quando cambiano i blocchi o viene caricato uno script
+  useEffect(() => {
+    // Pulisci le scene precedenti
+    clearScenes();
+    
+    // Funzione ricorsiva per analizzare i blocchi e ricostruire lo stato delle scene
+    const reconstructScenes = (blocks: IFlowBlock[]) => {
+      for (const block of blocks) {
+        // Se troviamo SHOWDLGSCENE, aggiungi una nuova scena
+        if (block.type === 'SHOWDLGSCENE') {
+          showDialogScene();
+        }
+        // Se troviamo HIDEDLGSCENE, chiudi la scena corrente
+        else if (block.type === 'HIDEDLGSCENE') {
+          hideDialogScene();
+        }
+        
+        // Ricorsione per blocchi annidati
+        if (block.type === 'IF') {
+          if (block.thenBlocks) reconstructScenes(block.thenBlocks);
+          if (block.elseBlocks) reconstructScenes(block.elseBlocks);
+        } else if (block.type === 'MENU' && block.children) {
+          reconstructScenes(block.children);
+        } else if (block.type === 'OPT' && block.children) {
+          reconstructScenes(block.children);
+        } else if (block.type === 'BUILD') {
+          if (block.blockInit) reconstructScenes(block.blockInit);
+          if (block.blockStart) reconstructScenes(block.blockStart);
+        } else if (block.type === 'FLIGHT') {
+          if (block.blockInit) reconstructScenes(block.blockInit);
+          if (block.blockStart) reconstructScenes(block.blockStart);
+          if (block.blockEvaluate) reconstructScenes(block.blockEvaluate);
+        } else if (block.type === 'MISSION') {
+          if (block.blocksMission) reconstructScenes(block.blocksMission);
+          if (block.blocksFinish) reconstructScenes(block.blocksFinish);
+        } else if (block.children) {
+          reconstructScenes(block.children);
+        }
+      }
+    };
+    
+    // Ricostruisci le scene dai blocchi correnti
+    const blocksToAnalyze = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
+    if (blocksToAnalyze.length > 0) {
+      reconstructScenes(blocksToAnalyze);
+    }
+  }, [currentScriptBlocks, rootBlocks, clearScenes, showDialogScene, hideDialogScene]); // Dipende dai blocchi e dalle funzioni del context
 
   if (isLoading) {
     return (
@@ -696,10 +636,16 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
         navigationPath={navigationPath}
         scriptNavigationPath={scriptNavigationPath}
         onNavigateToScript={handleNavigateBackToScript}
-        validationErrors={validationErrors.errors}
-        onValidationErrorsClick={() => setShowValidationDetails(true)}
+        validationErrors={Math.max(0, validationErrors.errors - bypassedErrors.size)}
+        validationWarnings={validationErrors.warnings}
+        onValidationErrorsClick={() => setShowValidationDetails('errors')}
+        onValidationWarningsClick={() => setShowValidationDetails('warnings')}
         scriptsButtonRef={scriptsButtonRef}
         missionsButtonRef={missionsButtonRef}
+        onCollapseAll={handleCollapseAll}
+        onExpandAll={handleExpandAll}
+        bypassedErrorsCount={bypassedErrors.size}
+        totalErrors={validationErrors.errors}
         onSaveScript={() => {
           // Aggiorna lo stato corrente nella mappa prima di salvare
           const updatedOpenedScripts = new Map(openedScripts);
@@ -787,6 +733,8 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
                   key={block.id}
                   block={block}
                   invalidBlocks={validationErrors.invalidBlocks}
+                  blockValidationTypes={blockValidationTypes}
+                  allBlocks={currentScriptBlocks}
                   onUpdateBlock={(id, updates) => {
                     setCurrentScriptBlocks(prev => {
                       const updated = updateBlockRecursive(prev, id, updates);
@@ -818,6 +766,9 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
                   currentFocusedBlockId={currentFocusedBlockId}
                   sessionData={extendedSessionData}
                   createDropValidator={createDropValidator}
+                  collapseAllTrigger={collapseAllTrigger}
+                  expandAllTrigger={expandAllTrigger}
+                  globalCollapseState={globalCollapseState}
                 />
               ))}
             </div>
@@ -857,7 +808,10 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
       {showValidationDetails && validationErrors.details && (
         <ValidationErrorsModal
           errors={validationErrors.details}
+          displayType={showValidationDetails}
           onClose={() => setShowValidationDetails(false)}
+          bypassedErrors={bypassedErrors}
+          onToggleBypass={handleToggleBypass}
           onNavigateToBlock={(blockId) => {
             // Cerca il blocco nell'albero e naviga ad esso
             const findAndNavigate = (blocks: IFlowBlock[], targetId: string, path: IFlowBlock[] = []): boolean => {
@@ -920,5 +874,14 @@ export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = ({
       )}
     </div>
     </ErrorBoundary>
+  );
+};
+
+// Export del componente wrappato con SceneProvider
+export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = (props) => {
+  return (
+    <SceneProvider>
+      <VisualFlowEditorInternal {...props} />
+    </SceneProvider>
   );
 };

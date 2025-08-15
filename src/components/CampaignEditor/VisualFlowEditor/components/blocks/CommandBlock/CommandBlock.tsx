@@ -1,12 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { MessageSquare, Clock, ArrowRight, Tag, HelpCircle, ExternalLink } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { MessageSquare, Clock, ArrowRight, Tag, HelpCircle, ExternalLink, User, Users } from 'lucide-react';
 import { BaseBlock } from '../BaseBlock/BaseBlock';
 import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
 import { MultilingualTextEditor } from '../../MultilingualTextEditor';
+import { CharacterSelector } from '../../CharacterSelector';
 import { getBlockClassName } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
 import { useTranslation } from '@/locales';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { SceneDebugButton } from '../../SceneDebugButton';
+import { CharacterAvatar } from '../../CharacterAvatar';
+import { useScene } from '@/contexts/SceneContext';
+import { simulateSceneExecution, getLastModifiedVisibleCharacter } from '@/utils/CampaignEditor/VisualFlowEditor/sceneSimulation';
+import { imagesViewService } from '@/services/CampaignEditor/VariablesSystem/services/ImagesView/imagesViewService';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
+import type { Character } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
 
 interface CommandBlockProps {
   block: IFlowBlock;
@@ -15,8 +22,13 @@ interface CommandBlockProps {
   onDragStart: (e: React.DragEvent) => void;
   sessionData?: any;
   isInvalid?: boolean;
+  validationType?: 'error' | 'warning';
   onGoToLabel?: (labelName: string) => void;
   onNavigateToSubScript?: (scriptName: string, parentBlock: IFlowBlock) => void;
+  allBlocks?: IFlowBlock[];
+  collapseAllTrigger?: number;
+  expandAllTrigger?: number;
+  globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
 }
 
 export const CommandBlock: React.FC<CommandBlockProps> = ({
@@ -26,15 +38,87 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   onDragStart,
   sessionData,
   isInvalid = false,
+  validationType,
   onGoToLabel,
-  onNavigateToSubScript
+  onNavigateToSubScript,
+  allBlocks = [],
+  collapseAllTrigger = 0,
+  expandAllTrigger = 0,
+  globalCollapseState = 'manual'
 }) => {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
-  // Stato per collapse/expand - command blocks default collapsed
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const { getCurrentScene, addCharacter, updateCharacter, lastModifiedCharacter, state, showDialogScene, hideDialogScene } = useScene();
+  // Stato per collapse/expand - rispetta il globalCollapseState all'inizializzazione
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    // Command blocks default collapsed, ma rispetta lo stato globale
+    return globalCollapseState === 'expanded' ? false : true;
+  });
   const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Reagisci ai trigger di collapse/expand all
+  useEffect(() => {
+    if (collapseAllTrigger > 0) {
+      setIsCollapsed(true);
+      setIsManuallyExpanded(false);
+    }
+  }, [collapseAllTrigger]);
+  
+  useEffect(() => {
+    if (expandAllTrigger > 0) {
+      setIsCollapsed(false);
+      setIsManuallyExpanded(true);
+    }
+  }, [expandAllTrigger]);
+  
+  // I characters vengono passati da sessionData, non caricati qui
+  const characters = sessionData?.characters || [];
+  const [selectedCharacterImage, setSelectedCharacterImage] = useState<string | null>(null);
+  const [characterImages, setCharacterImages] = useState<Record<string, string>>({});
+  const [noAvatarImage, setNoAvatarImage] = useState<string | null>(null);
+  
+  // Calcola lo stato simulato della scena fino a questo blocco
+  const simulatedSceneState = useMemo(() => {
+    if (!allBlocks || allBlocks.length === 0) return null;
+    return simulateSceneExecution(allBlocks, block.id, characters);
+  }, [allBlocks, block.id, characters]);
+  
+  // Costruisci la mappa delle immagini dai characters e carica no_avatar per SHOWCHAR/HIDECHAR
+  useEffect(() => {
+    if (block.type === 'SHOWCHAR' || block.type === 'HIDECHAR') {
+      // Costruisci la mappa delle immagini dai dati già presenti
+      const images: Record<string, string> = {};
+      for (const char of characters) {
+        if (char.immaginebase?.binary) {
+          images[char.nomepersonaggio] = `data:image/png;base64,${char.immaginebase.binary}`;
+        } else if (char.listaimmagini?.[0]?.binary) {
+          images[char.nomepersonaggio] = `data:image/png;base64,${char.listaimmagini[0].binary}`;
+        }
+      }
+      setCharacterImages(images);
+      
+      // Carica no_avatar una volta sola
+      imagesViewService.getImageBinary(['no_avatar.png']).then(noAvatarResponse => {
+        if (noAvatarResponse?.data?.[0]?.binary) {
+          setNoAvatarImage(`data:image/png;base64,${noAvatarResponse.data[0].binary}`);
+        }
+      }).catch(console.error);
+    }
+  }, [block.type, characters]);
+  
+  // Aggiorna l'immagine del personaggio selezionato
+  useEffect(() => {
+    if ((block.type === 'SHOWCHAR' || block.type === 'HIDECHAR') && block.parameters?.character) {
+      // Usa l'immagine già caricata dalla mappa
+      setSelectedCharacterImage(characterImages[block.parameters.character] || null);
+    } else {
+      setSelectedCharacterImage(null);
+    }
+  }, [block.type, block.parameters?.character, characterImages]);
+  
+  // NON USARE useEffect per aggiornare la scena - non funziona con componenti separati
+  // La scena deve essere gestita a livello superiore con esecuzione sequenziale
   
   // Auto-collapse se lo spazio è insufficiente (ma non se l'utente ha espanso manualmente)
   useEffect(() => {
@@ -70,7 +154,13 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   const renderParameters = () => {
     switch (block.type) {
       case 'SAY':
-        return (
+      case 'ASK': {
+        // Usa lo stato simulato per trovare l'ultimo personaggio modificato
+        const lastCharacter = simulatedSceneState ? getLastModifiedVisibleCharacter(simulatedSceneState) : null;
+        
+        const isLeftPosition = lastCharacter?.posizione === 'left';
+        
+        const textEditor = (
           <MultilingualTextEditor
             value={typeof block.parameters?.text === 'string' 
               ? { EN: block.parameters.text } 
@@ -78,24 +168,31 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
             onChange={(text) => onUpdate({ 
               parameters: { ...block.parameters, text } 
             })}
-            placeholder={t('visualFlowEditor.command.dialogText')}
-            label=""
+            placeholder={block.type === 'SAY' 
+              ? t('visualFlowEditor.command.dialogText')
+              : t('visualFlowEditor.command.questionText')}
+            label={block.type === 'ASK' ? t('visualFlowEditor.command.questionLabel') : ""}
           />
         );
-      
-      case 'ASK':
+        
         return (
-          <MultilingualTextEditor
-            value={typeof block.parameters?.text === 'string' 
-              ? { EN: block.parameters.text } 
-              : (block.parameters?.text || {})}
-            onChange={(text) => onUpdate({ 
-              parameters: { ...block.parameters, text } 
-            })}
-            placeholder={t('visualFlowEditor.command.questionText')}
-            label={t('visualFlowEditor.command.questionLabel')}
-          />
+          <div className="flex items-start gap-3">
+            {isLeftPosition && (
+              <div className="flex-shrink-0">
+                <CharacterAvatar size="large" character={lastCharacter} />
+              </div>
+            )}
+            <div className="flex-1">
+              {textEditor}
+            </div>
+            {!isLeftPosition && (
+              <div className="flex-shrink-0">
+                <CharacterAvatar size="large" character={lastCharacter} />
+              </div>
+            )}
+          </div>
         );
+      }
       
       case 'DELAY':
         return (
@@ -235,8 +332,244 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
           </div>
         );
       
+      case 'SHOWDLGSCENE':
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {t('visualFlowEditor.blocks.showDlgScene.fullDescription')}
+              </p>
+            </div>
+          </div>
+        );
+      
+      case 'HIDEDLGSCENE':
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {t('visualFlowEditor.blocks.hideDlgScene.fullDescription')}
+              </p>
+            </div>
+          </div>
+        );
+      
+      case 'SHOWCHAR': {
+        return (
+          <div className="flex gap-2" style={{ height: '190px' }}>
+            {/* Character selector - metà sinistra con griglia 5 colonne */}
+            <div className="flex-2">
+              <CharacterSelector
+                value={block.parameters?.character || ''}
+                onChange={(character) => {
+                  onUpdate({ 
+                    parameters: { ...block.parameters, character } 
+                  });
+                }}
+                mode="show"
+                className="h-full"
+                characters={characters}
+                simulatedSceneState={simulatedSceneState}
+              />
+            </div>
+            
+            {/* Position selector - metà destra, compatto */}
+            <div className="flex-1">
+              <div className="rounded p-2 h-full flex flex-col">
+                <div className="text-xs text-gray-400 mb-1 text-center">{t('visualFlowEditor.blocks.showChar.position')}</div>
+                <div className="relative flex-1 flex items-center justify-center">
+                  <div className=" bg-slate-800 border border-slate-600  relative" style={{ width: '120px', height: '120px' }}>
+                    {/* Layout visuale delle posizioni - pulsanti compatti */}
+                    <button
+                      onClick={() => onUpdate({ parameters: { ...block.parameters, position: 'lefttop' } })}
+                      className={`absolute top-1 left-1  w-8 h-8 rounded text-sm font-bold ${
+                        block.parameters?.position === 'lefttop' 
+                          ? 'bg-purple-600 text-white shadow-lg' 
+                          : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+                      } transition-all`}
+                      title="Top-Left"
+                    >
+                      ↖
+                    </button>
+                    <button
+                      onClick={() => onUpdate({ parameters: { ...block.parameters, position: 'top' } })}
+                      className={`absolute top-1 left-1/2 -translate-x-1/2 w-8 h-8 rounded text-sm font-bold ${
+                        block.parameters?.position === 'top' 
+                          ? 'bg-purple-600 text-white shadow-lg' 
+                          : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+                      } transition-all`}
+                      title="Top"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      onClick={() => onUpdate({ parameters: { ...block.parameters, position: 'righttop' } })}
+                      className={`absolute top-1 right-1 w-8 h-8 rounded text-sm font-bold ${
+                        block.parameters?.position === 'righttop' 
+                          ? 'bg-purple-600 text-white shadow-lg' 
+                          : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+                      } transition-all`}
+                      title="Top-Right"
+                    >
+                      ↗
+                    </button>
+                    <button
+                      onClick={() => onUpdate({ parameters: { ...block.parameters, position: 'left' } })}
+                      className={`absolute top-1/2 -translate-y-1/2 left-1 w-8 h-8 rounded text-sm font-bold ${
+                        block.parameters?.position === 'left' 
+                          ? 'bg-purple-600 text-white shadow-lg' 
+                          : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+                      } transition-all`}
+                      title="Left"
+                    >
+                      ←
+                    </button>
+                    <button
+                      onClick={() => onUpdate({ parameters: { ...block.parameters, position: 'right' } })}
+                      className={`absolute top-1/2 -translate-y-1/2 right-1 w-8 h-8 rounded text-sm font-bold ${
+                        block.parameters?.position === 'right' 
+                          ? 'bg-purple-600 text-white shadow-lg' 
+                          : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+                      } transition-all`}
+                      title="Right"
+                    >
+                      →
+                    </button>
+                    <button
+                      onClick={() => onUpdate({ parameters: { ...block.parameters, position: 'leftbottom' } })}
+                      className={`absolute bottom-1 left-1 w-8 h-8 rounded text-sm font-bold ${
+                        block.parameters?.position === 'leftbottom' 
+                          ? 'bg-purple-600 text-white shadow-lg' 
+                          : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+                      } transition-all`}
+                      title="Bottom-Left"
+                    >
+                      ↙
+                    </button>
+                    <button
+                      onClick={() => onUpdate({ parameters: { ...block.parameters, position: 'bottom' } })}
+                      className={`absolute bottom-1 left-1/2 -translate-x-1/2 w-8 h-8 rounded text-sm font-bold ${
+                        block.parameters?.position === 'bottom' 
+                          ? 'bg-purple-600 text-white shadow-lg' 
+                          : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+                      } transition-all`}
+                      title="Bottom"
+                    >
+                      ↓
+                    </button>
+                    <button
+                      onClick={() => onUpdate({ parameters: { ...block.parameters, position: 'rightbottom' } })}
+                      className={`absolute bottom-1 right-1 w-8 h-8 rounded text-sm font-bold ${
+                        block.parameters?.position === 'rightbottom' 
+                          ? 'bg-purple-600 text-white shadow-lg' 
+                          : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+                      } transition-all`}
+                      title="Bottom-Right"
+                    >
+                      ↘
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+      
+      case 'HIDECHAR':
+        return (
+          <div className="flex gap-2" style={{ height: '180px' }}>
+            {/* Character selector - occupa tutto lo spazio disponibile (nessun position selector) */}
+            <CharacterSelector
+              value={block.parameters?.character || ''}
+              onChange={(character) => {
+                onUpdate({ 
+                  parameters: { ...block.parameters, character } 
+                });
+              }}
+              mode="hide"
+              className="h-full w-full"
+              characters={characters}
+              simulatedSceneState={simulatedSceneState}
+            />
+          </div>
+        );
+      
       default:
-        return null;
+        // Gestione generica per tutti i blocchi non implementati
+        // Mostra tutti i parametri dinamicamente
+        const params = block.parameters || {};
+        const paramEntries = Object.entries(params);
+        
+        if (paramEntries.length === 0) {
+          return (
+            <div className="text-xs text-gray-500 italic">
+              No parameters
+            </div>
+          );
+        }
+        
+        return (
+          <div className="space-y-2">
+            {paramEntries.map(([key, value]) => {
+              // Controlla se è un parametro multilingua (ha una struttura { EN: ..., DE: ..., etc })
+              const isMultilingual = typeof value === 'object' && 
+                value !== null && 
+                !Array.isArray(value) &&
+                Object.keys(value).some(k => ['EN', 'DE', 'FR', 'ES', 'PL', 'CS', 'RU'].includes(k));
+              
+              if (isMultilingual) {
+                // Usa MultilingualTextEditor per parametri multilingua
+                return (
+                  <div key={key} className="flex items-center gap-2">
+                    <label className="text-xs text-gray-400 capitalize whitespace-nowrap min-w-[80px]">
+                      {key.replace(/_/g, ' ')}:
+                    </label>
+                    <div className="flex-1">
+                      <MultilingualTextEditor
+                        value={value as any}
+                        onChange={(newValue) => onUpdate({ 
+                          parameters: { ...block.parameters, [key]: newValue } 
+                        })}
+                        placeholder={`${key} value`}
+                      />
+                    </div>
+                  </div>
+                );
+              } else {
+                // Usa input normale per parametri semplici (1 riga)
+                return (
+                  <div key={key} className="flex items-center gap-2">
+                    <label className="text-xs text-gray-400 capitalize whitespace-nowrap min-w-[80px]">
+                      {key.replace(/_/g, ' ')}:
+                    </label>
+                    <input
+                      type="text"
+                      className="flex-1 px-2 py-1 bg-slate-800 text-white rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none"
+                      placeholder={`${key} value`}
+                      value={typeof value === 'object' ? JSON.stringify(value) : String(value || '')}
+                      onChange={(e) => {
+                        let newValue: any = e.target.value;
+                        // Prova a parsare come JSON se sembra JSON
+                        if (e.target.value.trim().startsWith('{') || e.target.value.trim().startsWith('[')) {
+                          try {
+                            newValue = JSON.parse(e.target.value);
+                          } catch {
+                            // Se fallisce, mantieni come stringa
+                          }
+                        }
+                        onUpdate({ 
+                          parameters: { ...block.parameters, [key]: newValue } 
+                        });
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </div>
+                );
+              }
+            })}
+          </div>
+        );
     }
   };
 
@@ -250,6 +583,10 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
       case 'LABEL': return <span className="text-2xl">🏷️</span>;
       case 'SUB_SCRIPT': return <span className="text-2xl">📄</span>;
       case 'EXIT_MENU': return <span className="text-2xl">🚪</span>;
+      case 'SHOWDLGSCENE': return <span className="text-2xl">🗨️</span>;
+      case 'HIDEDLGSCENE': return <span className="text-2xl">🚫</span>;
+      case 'SHOWCHAR': return <span className="text-2xl">👤</span>;
+      case 'HIDECHAR': return <span className="text-2xl">👻</span>;
       default: return <MessageSquare className="w-4 h-4" />;
     }
   };
@@ -337,9 +674,196 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         break;
       case 'EXIT_MENU':
         return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.exitMenu.compact')}</span>;
+      case 'SHOWDLGSCENE':
+        return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.showDlgScene.compact')}</span>;
+      case 'HIDEDLGSCENE':
+        return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.hideDlgScene.compact')}</span>;
+      case 'SHOWCHAR': {
+        if (block.parameters?.character) {
+          // Trova il personaggio che è attualmente nella posizione specificata
+          const position = block.parameters.position || 'left';
+          let charInPosition = null;
+          let currentCharImage = null;
+          
+          if (simulatedSceneState?.currentScene) {
+            // Trova il personaggio visibile nella posizione specificata
+            charInPosition = simulatedSceneState.currentScene.personaggi.find(
+              p => p.posizione === position && p.visible
+            );
+            
+            if (charInPosition && charInPosition.lastImmagine?.binary) {
+              currentCharImage = `data:image/png;base64,${charInPosition.lastImmagine.binary}`;
+            }
+          }
+          
+          return (
+            <div className="flex items-center justify-between gap-2 w-full bg-slate-800/30 rounded px-2 py-1">
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400">{block.parameters!.character}</span>
+                {block.parameters!.position && (
+                  <span className="text-gray-600 text-xs">@{block.parameters!.position}</span>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                {/* Immagine del personaggio attualmente in quella posizione (o no_avatar se vuota) */}
+                <div className="w-10 h-10 rounded overflow-hidden border border-slate-600">
+                  {currentCharImage ? (
+                    <img 
+                      src={currentCharImage}
+                      alt="current"
+                      className="w-full h-full object-cover object-top"
+                      title={`In posizione ${position}: ${charInPosition?.nomepersonaggio}`}
+                    />
+                  ) : noAvatarImage ? (
+                    <img 
+                      src={noAvatarImage}
+                      alt="no avatar"
+                      className="w-full h-full object-cover object-top"
+                      title={`Posizione ${position} vuota`}
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-slate-700 flex items-center justify-center" title={`Posizione ${position} vuota`}>
+                      <span className="text-xs text-gray-500">∅</span>
+                    </div>
+                  )}
+                </div>
+                <span className="text-gray-500">→</span>
+                {/* Immagine del personaggio che verrà mostrato */}
+                <div className="w-10 h-10 rounded overflow-hidden border border-slate-600">
+                  {selectedCharacterImage ? (
+                    <img 
+                      src={selectedCharacterImage}
+                      alt={block.parameters!.character}
+                      className="w-full h-full object-cover object-top"
+                      title={`Mostrerà: ${block.parameters!.character}`}
+                    />
+                  ) : noAvatarImage ? (
+                    <img 
+                      src={noAvatarImage}
+                      alt="no avatar"
+                      className="w-full h-full object-cover object-top"
+                      title="Seleziona un personaggio"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-slate-700 flex items-center justify-center" title="Seleziona un personaggio">
+                      <span className="text-xs text-gray-500">?</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        }
+        break;
+      }
+      case 'HIDECHAR': {
+        if (block.parameters?.character) {
+          return (
+            <div className="flex items-center justify-between gap-2 w-full bg-slate-800/30 rounded px-2 py-1">
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400">{block.parameters!.character}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                {/* Immagine del personaggio che verrà nascosto */}
+                <div className="w-10 h-10 rounded overflow-hidden border border-slate-600">
+                  {selectedCharacterImage ? (
+                    <img 
+                      src={selectedCharacterImage}
+                      alt={block.parameters!.character}
+                      className="w-full h-full object-cover object-top"
+                      title={`Nasconderà: ${block.parameters!.character}`}
+                    />
+                  ) : noAvatarImage ? (
+                    <img 
+                      src={noAvatarImage}
+                      alt="no avatar"
+                      className="w-full h-full object-cover object-top"
+                      title="Seleziona un personaggio"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-slate-700 flex items-center justify-center" title="Seleziona un personaggio">
+                      <span className="text-xs text-gray-500">?</span>
+                    </div>
+                  )}
+                </div>
+                <span className="text-gray-500">→</span>
+                {/* no_avatar per indicare che sarà nascosto */}
+                <div className="w-10 h-10 rounded overflow-hidden border border-slate-600">
+                  {noAvatarImage ? (
+                    <img 
+                      src={noAvatarImage}
+                      alt="hidden"
+                      className="w-full h-full object-cover object-top"
+                      title="Diventerà nascosto"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-slate-700 flex items-center justify-center" title="Diventerà nascosto">
+                      <span className="text-xs text-gray-500">∅</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        }
+        break;
+      }
+      default: {
+        // Gestione generica per blocchi non implementati - mostra un riepilogo compatto dei parametri
+        const params = block.parameters || {};
+        const paramEntries = Object.entries(params);
+        
+        if (paramEntries.length === 0) {
+          return <span className="text-xs text-gray-500 italic">No parameters</span>;
+        }
+        
+        // Mostra solo i primi 2 parametri in modo compatto
+        const displayParams = paramEntries.slice(0, 2);
+        const hasMore = paramEntries.length > 2;
+        
+        return (
+          <div className="flex items-center gap-2 text-xs">
+            {displayParams.map(([key, value], index) => {
+              let displayValue = '';
+              
+              if (typeof value === 'object' && value !== null) {
+                // Per oggetti multilingua, mostra la versione nella lingua corrente o EN
+                if (value[currentLanguage]) {
+                  displayValue = value[currentLanguage];
+                } else if (value['EN']) {
+                  displayValue = value['EN'];
+                } else {
+                  // Per altri oggetti, mostra una versione compatta
+                  displayValue = '{...}';
+                }
+              } else {
+                displayValue = String(value);
+              }
+              
+              // Tronca valori lunghi
+              if (displayValue.length > 20) {
+                displayValue = displayValue.substring(0, 20) + '...';
+              }
+              
+              return (
+                <span key={key} className="text-gray-400">
+                  {index > 0 && <span className="mx-1">•</span>}
+                  <span className="text-gray-500">{key}:</span> {displayValue}
+                </span>
+              );
+            })}
+            {hasMore && <span className="text-gray-500">+{paramEntries.length - 2} more</span>}
+          </div>
+        );
+      }
     }
     return null;
   };
+
+  // Ottieni il personaggio per SAY/ASK
+  const avatarCharacter = (block.type === 'SAY' || block.type === 'ASK') && simulatedSceneState 
+    ? getLastModifiedVisibleCharacter(simulatedSceneState) 
+    : null;
 
   return (
     <div ref={containerRef}>
@@ -361,8 +885,12 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
             setIsCollapsed(true);
           }
         }}
-        className={`${getBlockClassName(block.type, isInvalid)} p-3 mb-2 transition-all hover:shadow-lg`}
+        className={`${getBlockClassName(block.type, isInvalid, validationType)} p-3 mb-2 transition-all hover:shadow-lg`}
         isInvalid={isInvalid}
+        validationType={validationType}
+        extraControls={allBlocks.length > 0 && <SceneDebugButton block={block} allBlocks={allBlocks} characters={characters} />}
+        showAvatar={(block.type === 'SAY' || block.type === 'ASK')}
+        avatarCharacter={avatarCharacter}
       >
         {/* Block parameters - visibili solo se expanded */}
         {renderParameters()}
