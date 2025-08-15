@@ -5,7 +5,7 @@
 export const visualFlowEditorTranslations = {
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
-  'visualFlowEditor.subtitle': 'Kompletní vizuální editor se všemi 14 typy IF',
+  'visualFlowEditor.subtitle': 'Kompletní Vizuální Editor',
   'visualFlowEditor.loading': 'Načítání Visual Flow Editor...',
   'visualFlowEditor.noScriptLoaded': 'Žádný skript nebyl načten',
   
@@ -56,6 +56,10 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.goToBlock': 'Přejít →',
   'visualFlowEditor.validation.goToBlockTitle': 'Přejít na blok',
   'visualFlowEditor.validation.footer': 'Opravte tyto chyby pro zajištění správného fungování skriptu. Bloky s chybami jsou v editoru zvýrazněny červeně.',
+  'visualFlowEditor.validation.addOpponentNoCharacter': 'Blok ADDOPPONENT musí mít vybraného protivníka.',
+  'visualFlowEditor.validation.addOpponentNotInMission': 'ADDOPPONENT by měl být uvnitř bloku MISSION.',
+  'visualFlowEditor.validation.setShipTypeNoType': 'Blok SETSHIPTYPE musí mít vybraný typ lodi.',
+  'visualFlowEditor.validation.setShipTypeNotInMission': 'SETSHIPTYPE by měl být uvnitř bloku MISSION.',
   
   // Delay Block
   'visualFlowEditor.blocks.delay.duration': 'Doba trvání',
@@ -392,6 +396,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.milliseconds': 'Milisekundy (např. 1000 = 1 sekunda)',
   'visualFlowEditor.command.selectLabel': 'Vybrat štítek...',
   'visualFlowEditor.command.labelName': 'Název štítku...',
+  'visualFlowEditor.command.selectScript': 'Vybrat skript...',
+  'visualFlowEditor.command.opponent': 'Postava Protivníka',
+  'visualFlowEditor.command.opponentPlaceholder': 'obchodník, nepřítel, atd.',
+  'visualFlowEditor.command.shipClassI': 'Třída I',
+  'visualFlowEditor.command.shipClassII': 'Třída II',
+  'visualFlowEditor.command.shipClassIII': 'Třída III',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Název skriptu...',

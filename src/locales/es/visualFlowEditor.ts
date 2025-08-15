@@ -5,7 +5,7 @@
 export const visualFlowEditorTranslations = {
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
-  'visualFlowEditor.subtitle': 'Editor visual completo con todos los 14 tipos de IF',
+  'visualFlowEditor.subtitle': 'Editor Visual Completo',
   'visualFlowEditor.loading': 'Cargando Visual Flow Editor...',
   'visualFlowEditor.noScriptLoaded': 'No se ha cargado ningún script',
   
@@ -56,6 +56,10 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.goToBlock': 'Ir →',
   'visualFlowEditor.validation.goToBlockTitle': 'Ir al bloque',
   'visualFlowEditor.validation.footer': 'Corrija estos errores para asegurar el funcionamiento correcto del script. Los bloques con errores están resaltados en rojo en el editor.',
+  'visualFlowEditor.validation.addOpponentNoCharacter': 'El bloque ADDOPPONENT debe tener un personaje seleccionado.',
+  'visualFlowEditor.validation.addOpponentNotInMission': 'ADDOPPONENT debería estar dentro de un bloque MISSION.',
+  'visualFlowEditor.validation.setShipTypeNoType': 'El bloque SETSHIPTYPE debe tener un tipo de nave seleccionado.',
+  'visualFlowEditor.validation.setShipTypeNotInMission': 'SETSHIPTYPE debería estar dentro de un bloque MISSION.',
   
   // Delay Block
   'visualFlowEditor.blocks.delay.duration': 'Duración',
@@ -392,6 +396,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.milliseconds': 'Milisegundos (ej. 1000 = 1 segundo)',
   'visualFlowEditor.command.selectLabel': 'Seleccionar etiqueta...',
   'visualFlowEditor.command.labelName': 'Nombre de etiqueta...',
+  'visualFlowEditor.command.selectScript': 'Seleccionar script...',
+  'visualFlowEditor.command.opponent': 'Personaje Oponente',
+  'visualFlowEditor.command.opponentPlaceholder': 'mercader, enemigo, etc.',
+  'visualFlowEditor.command.shipClassI': 'Clase I',
+  'visualFlowEditor.command.shipClassII': 'Clase II',
+  'visualFlowEditor.command.shipClassIII': 'Clase III',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Nombre del script...',

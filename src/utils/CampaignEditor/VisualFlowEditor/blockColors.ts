@@ -291,6 +291,8 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   'END_MISSION': BlockCategory.MISSION,
   'MISSION_WIN': BlockCategory.MISSION,
   'MISSION_LOSE': BlockCategory.MISSION,
+  'ADDOPPONENT': BlockCategory.MISSION,
+  'SETSHIPTYPE': BlockCategory.MISSION,
   
   // Dialogue
   'SAY': BlockCategory.DIALOGUE,

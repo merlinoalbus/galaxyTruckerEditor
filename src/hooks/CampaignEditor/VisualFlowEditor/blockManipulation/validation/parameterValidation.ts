@@ -385,6 +385,36 @@ export const validateHideCharParameters = (block: any, allBlocks?: IFlowBlock[],
 };
 
 /**
+ * Valida i parametri di un blocco ADDOPPONENT
+ */
+export const validateAddOpponentParameters = (block: any): { valid: boolean; error?: string } => {
+  // Il parametro character è obbligatorio
+  if (!block.parameters?.character || block.parameters.character.trim().length === 0) {
+    return { 
+      valid: false, 
+      error: 'ADDOPPONENT_NO_CHARACTER' 
+    };
+  }
+  
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri di un blocco SETSHIPTYPE
+ */
+export const validateSetShipTypeParameters = (block: any): { valid: boolean; error?: string } => {
+  // Il parametro type è obbligatorio
+  if (!block.parameters?.type || block.parameters.type.trim().length === 0) {
+    return { 
+      valid: false, 
+      error: 'SETSHIPTYPE_NO_TYPE' 
+    };
+  }
+  
+  return { valid: true };
+};
+
+/**
  * Valida i parametri di un blocco RETURN
  * RETURN non ha parametri obbligatori, quindi è sempre valido
  * Il warning per root level dovrebbe essere gestito altrove con accesso al navigationPath
@@ -458,6 +488,10 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return validateHideCharParameters(block, allBlocks, characters);
     case 'CHANGECHAR':
       return validateChangeCharParameters(block, allBlocks, characters);
+    case 'ADDOPPONENT':
+      return validateAddOpponentParameters(block);
+    case 'SETSHIPTYPE':
+      return validateSetShipTypeParameters(block);
     case 'RETURN':
       return validateReturnParameters(block);
     case 'SET':

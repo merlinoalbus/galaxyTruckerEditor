@@ -477,6 +477,10 @@ export type TranslationKey =
   | 'visualFlowEditor.validation.showCharNoCharacter'
   | 'visualFlowEditor.validation.showCharNoPosition'
   | 'visualFlowEditor.validation.hideCharNoCharacter'
+  | 'visualFlowEditor.validation.addOpponentNoCharacter'
+  | 'visualFlowEditor.validation.addOpponentNotInMission'
+  | 'visualFlowEditor.validation.setShipTypeNoType'
+  | 'visualFlowEditor.validation.setShipTypeNotInMission'
   
   // Visual Flow Editor - Error Modal
   | 'visualFlowEditor.errorModal.close'
@@ -657,6 +661,11 @@ export type TranslationKey =
   | 'visualFlowEditor.command.selectLabel'
   | 'visualFlowEditor.command.labelName'
   | 'visualFlowEditor.command.selectScript'
+  | 'visualFlowEditor.command.opponent'
+  | 'visualFlowEditor.command.opponentPlaceholder'
+  | 'visualFlowEditor.command.shipClassI'
+  | 'visualFlowEditor.command.shipClassII'
+  | 'visualFlowEditor.command.shipClassIII'
   
   // Visual Flow Editor - Script Block
   | 'visualFlowEditor.script.scriptName'

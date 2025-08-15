@@ -5,7 +5,7 @@
 export const visualFlowEditorTranslations = {
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
-  'visualFlowEditor.subtitle': 'Editor visuale completo con tutti i 14 tipi di IF',
+  'visualFlowEditor.subtitle': 'Editor Visuale Completo',
   'visualFlowEditor.loading': 'Caricamento Visual Flow Editor...',
   'visualFlowEditor.noScriptLoaded': 'Nessuno script caricato',
   
@@ -302,6 +302,10 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.showCharNoCharacter': 'Il blocco SHOWCHAR deve avere un personaggio selezionato.',
   'visualFlowEditor.validation.showCharNoPosition': 'Il blocco SHOWCHAR deve avere una posizione selezionata.',
   'visualFlowEditor.validation.hideCharNoCharacter': 'Il blocco HIDECHAR deve avere un personaggio selezionato.',
+  'visualFlowEditor.validation.addOpponentNoCharacter': 'Il blocco ADDOPPONENT deve avere un personaggio selezionato.',
+  'visualFlowEditor.validation.addOpponentNotInMission': 'ADDOPPONENT dovrebbe essere dentro un blocco MISSION.',
+  'visualFlowEditor.validation.setShipTypeNoType': 'Il blocco SETSHIPTYPE deve avere una classe di nave selezionata.',
+  'visualFlowEditor.validation.setShipTypeNotInMission': 'SETSHIPTYPE dovrebbe essere dentro un blocco MISSION.',
   'visualFlowEditor.validation.showcharNoScene': 'SHOWCHAR richiede una scena attiva. Aggiungi SHOWDLGSCENE prima di questo blocco.',
   'visualFlowEditor.validation.hidecharNoScene': 'HIDECHAR richiede una scena attiva. Aggiungi SHOWDLGSCENE prima di questo blocco.',
   'visualFlowEditor.validation.hidecharNoVisibleCharacters': 'HIDECHAR non può essere usato: nessun personaggio visibile nella scena.',
@@ -510,6 +514,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.milliseconds': 'Millisecondi (es. 1000 = 1 secondo)',
   'visualFlowEditor.command.selectLabel': 'Seleziona etichetta...',
   'visualFlowEditor.command.labelName': 'Nome etichetta...',
+  'visualFlowEditor.command.selectScript': 'Seleziona script...',
+  'visualFlowEditor.command.opponent': 'Personaggio Avversario',
+  'visualFlowEditor.command.opponentPlaceholder': 'mercante, nemico, ecc.',
+  'visualFlowEditor.command.shipClassI': 'Classe I',
+  'visualFlowEditor.command.shipClassII': 'Classe II',
+  'visualFlowEditor.command.shipClassIII': 'Classe III',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Nome script...',

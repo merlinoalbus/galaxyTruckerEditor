@@ -5,7 +5,7 @@
 export const visualFlowEditorTranslations = {
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
-  'visualFlowEditor.subtitle': 'Vollständiger visueller Editor mit allen 14 IF-Typen',
+  'visualFlowEditor.subtitle': 'Vollständiger Visueller Editor',
   'visualFlowEditor.loading': 'Visual Flow Editor wird geladen...',
   'visualFlowEditor.noScriptLoaded': 'Kein Skript geladen',
   
@@ -56,6 +56,10 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.goToBlock': 'Gehe zu →',
   'visualFlowEditor.validation.goToBlockTitle': 'Gehe zum Block',
   'visualFlowEditor.validation.footer': 'Beheben Sie diese Fehler, um das ordnungsgemäße Funktionieren des Skripts zu gewährleisten. Blöcke mit Fehlern sind im Editor rot hervorgehoben.',
+  'visualFlowEditor.validation.addOpponentNoCharacter': 'ADDOPPONENT-Block muss einen ausgewählten Charakter haben.',
+  'visualFlowEditor.validation.addOpponentNotInMission': 'ADDOPPONENT sollte sich in einem MISSION-Block befinden.',
+  'visualFlowEditor.validation.setShipTypeNoType': 'SETSHIPTYPE-Block muss einen Schiffstyp ausgewählt haben.',
+  'visualFlowEditor.validation.setShipTypeNotInMission': 'SETSHIPTYPE sollte sich in einem MISSION-Block befinden.',
   
   // Delay Block
   'visualFlowEditor.blocks.delay.duration': 'Dauer',
@@ -392,6 +396,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.milliseconds': 'Millisekunden (z.B. 1000 = 1 Sekunde)',
   'visualFlowEditor.command.selectLabel': 'Label auswählen...',
   'visualFlowEditor.command.labelName': 'Labelname...',
+  'visualFlowEditor.command.selectScript': 'Skript auswählen...',
+  'visualFlowEditor.command.opponent': 'Gegner Charakter',
+  'visualFlowEditor.command.opponentPlaceholder': 'Händler, Feind, usw.',
+  'visualFlowEditor.command.shipClassI': 'Klasse I',
+  'visualFlowEditor.command.shipClassII': 'Klasse II',
+  'visualFlowEditor.command.shipClassIII': 'Klasse III',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Skriptname...',

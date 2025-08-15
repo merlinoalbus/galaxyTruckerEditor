@@ -5,7 +5,7 @@
 export const visualFlowEditorTranslations = {
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
-  'visualFlowEditor.subtitle': 'Полный визуальный редактор со всеми 14 типами IF',
+  'visualFlowEditor.subtitle': 'Полный Визуальный Редактор',
   'visualFlowEditor.loading': 'Загрузка Visual Flow Editor...',
   'visualFlowEditor.noScriptLoaded': 'Скрипт не загружен',
   
@@ -56,6 +56,10 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.goToBlock': 'Перейти →',
   'visualFlowEditor.validation.goToBlockTitle': 'Перейти к блоку',
   'visualFlowEditor.validation.footer': 'Исправьте эти ошибки для обеспечения правильной работы скрипта. Блоки с ошибками подсвечены красным в редакторе.',
+  'visualFlowEditor.validation.addOpponentNoCharacter': 'Блок ADDOPPONENT должен иметь выбранного противника.',
+  'visualFlowEditor.validation.addOpponentNotInMission': 'ADDOPPONENT должен быть внутри блока MISSION.',
+  'visualFlowEditor.validation.setShipTypeNoType': 'Блок SETSHIPTYPE должен иметь выбранный тип корабля.',
+  'visualFlowEditor.validation.setShipTypeNotInMission': 'SETSHIPTYPE должен быть внутри блока MISSION.',
   
   // Delay Block
   'visualFlowEditor.blocks.delay.duration': 'Длительность',
@@ -392,6 +396,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.milliseconds': 'Миллисекунды (напр. 1000 = 1 секунда)',
   'visualFlowEditor.command.selectLabel': 'Выбрать метку...',
   'visualFlowEditor.command.labelName': 'Имя метки...',
+  'visualFlowEditor.command.selectScript': 'Выбрать скрипт...',
+  'visualFlowEditor.command.opponent': 'Персонаж Противник',
+  'visualFlowEditor.command.opponentPlaceholder': 'торговец, враг и т.д.',
+  'visualFlowEditor.command.shipClassI': 'Класс I',
+  'visualFlowEditor.command.shipClassII': 'Класс II',
+  'visualFlowEditor.command.shipClassIII': 'Класс III',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Имя скрипта...',

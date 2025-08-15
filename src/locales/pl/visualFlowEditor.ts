@@ -5,7 +5,7 @@
 export const visualFlowEditorTranslations = {
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
-  'visualFlowEditor.subtitle': 'Kompletny wizualny edytor ze wszystkimi 14 typami IF',
+  'visualFlowEditor.subtitle': 'Kompletny Edytor Wizualny',
   'visualFlowEditor.loading': 'Ładowanie Visual Flow Editor...',
   'visualFlowEditor.noScriptLoaded': 'Brak załadowanego skryptu',
   
@@ -56,6 +56,10 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.goToBlock': 'Idź →',
   'visualFlowEditor.validation.goToBlockTitle': 'Idź do bloku',
   'visualFlowEditor.validation.footer': 'Napraw te błędy, aby zapewnić poprawne działanie skryptu. Bloki z błędami są podświetlone na czerwono w edytorze.',
+  'visualFlowEditor.validation.addOpponentNoCharacter': 'Blok ADDOPPONENT musi mieć wybraną postać.',
+  'visualFlowEditor.validation.addOpponentNotInMission': 'ADDOPPONENT powinien być wewnątrz bloku MISSION.',
+  'visualFlowEditor.validation.setShipTypeNoType': 'Blok SETSHIPTYPE musi mieć wybrany typ statku.',
+  'visualFlowEditor.validation.setShipTypeNotInMission': 'SETSHIPTYPE powinien być wewnątrz bloku MISSION.',
   
   // Delay Block
   'visualFlowEditor.blocks.delay.duration': 'Czas trwania',
@@ -392,6 +396,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.milliseconds': 'Milisekundy (np. 1000 = 1 sekunda)',
   'visualFlowEditor.command.selectLabel': 'Wybierz etykietę...',
   'visualFlowEditor.command.labelName': 'Nazwa etykiety...',
+  'visualFlowEditor.command.selectScript': 'Wybierz skrypt...',
+  'visualFlowEditor.command.opponent': 'Postać Przeciwnika',
+  'visualFlowEditor.command.opponentPlaceholder': 'kupiec, wróg, itp.',
+  'visualFlowEditor.command.shipClassI': 'Klasa I',
+  'visualFlowEditor.command.shipClassII': 'Klasa II',
+  'visualFlowEditor.command.shipClassIII': 'Klasa III',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Nazwa skryptu...',

@@ -5,7 +5,7 @@
 export const visualFlowEditorTranslations = {
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
-  'visualFlowEditor.subtitle': 'Complete visual editor with all 14 IF types',
+  'visualFlowEditor.subtitle': 'Complete Visual Editor',
   'visualFlowEditor.loading': 'Loading Visual Flow Editor...',
   'visualFlowEditor.noScriptLoaded': 'No script loaded',
   
@@ -302,6 +302,10 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.showCharNoCharacter': 'SHOWCHAR block must have a character selected.',
   'visualFlowEditor.validation.showCharNoPosition': 'SHOWCHAR block must have a position selected.',
   'visualFlowEditor.validation.hideCharNoCharacter': 'HIDECHAR block must have a character selected.',
+  'visualFlowEditor.validation.addOpponentNoCharacter': 'ADDOPPONENT block must have a character selected.',
+  'visualFlowEditor.validation.addOpponentNotInMission': 'ADDOPPONENT should be inside a MISSION block.',
+  'visualFlowEditor.validation.setShipTypeNoType': 'SETSHIPTYPE block must have a ship type selected.',
+  'visualFlowEditor.validation.setShipTypeNotInMission': 'SETSHIPTYPE should be inside a MISSION block.',
   'visualFlowEditor.validation.showcharNoScene': 'SHOWCHAR requires an active scene. Add SHOWDLGSCENE before this block.',
   'visualFlowEditor.validation.hidecharNoScene': 'HIDECHAR requires an active scene. Add SHOWDLGSCENE before this block.',
   'visualFlowEditor.validation.hidecharNoVisibleCharacters': 'HIDECHAR cannot be used: no visible characters in the scene.',
@@ -503,6 +507,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.selectLabel': 'Select label...',
   'visualFlowEditor.command.labelName': 'Label name...',
   'visualFlowEditor.command.selectScript': 'Select script...',
+  'visualFlowEditor.command.opponent': 'Opponent Character',
+  'visualFlowEditor.command.opponentPlaceholder': 'merchant, enemy, etc.',
+  'visualFlowEditor.command.shipClassI': 'Class I',
+  'visualFlowEditor.command.shipClassII': 'Class II',
+  'visualFlowEditor.command.shipClassIII': 'Class III',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Script name...',

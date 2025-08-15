@@ -2,6 +2,10 @@ SCRIPTS
 
   SCRIPT aaa_pippo
     ShowDlgScene
+    AddOpponent brown
+    SetShipType STI
+    SetShipType STI
+    AddPartToShip
     Announce "prova"
     RETURN
     SET questCompleted
@@ -11,7 +15,6 @@ SCRIPTS
     SayChar catapult_fanatic "prova"
     Say "Giovanni[g(|no)]"
     ChangeChar bartender campaign/bartender-warehouse.png
-    Ask "Say"
     MENU
       OPT "asss"
         SUB_SCRIPT add2RandomOpponentsHard

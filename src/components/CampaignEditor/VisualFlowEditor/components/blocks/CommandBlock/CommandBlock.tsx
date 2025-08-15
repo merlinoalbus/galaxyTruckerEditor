@@ -495,6 +495,67 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
           </div>
         );
       
+      case 'ADDOPPONENT':
+        return (
+          <div style={{ height: '140px' }}>
+            <CharacterSelector
+              value={block.parameters?.character || ''}
+              onChange={(character) => {
+                onUpdate({ 
+                  parameters: { ...block.parameters, character } 
+                });
+              }}
+              mode="show"
+              className="h-full w-full"
+              characters={characters}
+              forceColumns={12}
+            />
+          </div>
+        );
+      
+      case 'SETSHIPTYPE':
+        return (
+          <div className="flex justify-center items-center py-4 gap-[5px]">
+            {['STI', 'STII', 'STIII'].map((shipClass) => {
+              const isSelected = block.parameters?.type === shipClass;
+              const romanNumeral = shipClass.replace('ST', '');
+              const shipImage = `http://localhost:3001/api/file/campaign/campaignMap/ship${romanNumeral}.cacheship.png`;
+              
+              return (
+                <div
+                  key={shipClass}
+                  onClick={() => onUpdate({ 
+                    parameters: { ...block.parameters, type: shipClass } 
+                  })}
+                  className={`cursor-pointer p-3 rounded-lg border-2 transition-all ${
+                    isSelected 
+                      ? 'border-blue-500 bg-blue-900/30 scale-105' 
+                      : 'border-slate-600 bg-slate-800/50 hover:border-slate-500 hover:bg-slate-700/50'
+                  }`}
+                >
+                  <div className="flex flex-col items-center gap-2">
+                    <img 
+                      src={shipImage}
+                      alt={`Class ${romanNumeral}`}
+                      className="w-16 h-16 object-contain"
+                      onError={(e) => {
+                        e.currentTarget.src = 'http://localhost:3001/static/common/unknown.png';
+                      }}
+                    />
+                    <span className={`text-xs font-medium ${
+                      isSelected ? 'text-blue-300' : 'text-slate-400'
+                    }`}>
+                      {romanNumeral === 'I' ? t('visualFlowEditor.command.shipClassI') :
+                       romanNumeral === 'II' ? t('visualFlowEditor.command.shipClassII') :
+                       t('visualFlowEditor.command.shipClassIII')}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        );
+      
       default:
         // Gestione generica per tutti i blocchi non implementati
         // Mostra tutti i parametri dinamicamente
@@ -587,6 +648,8 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
       case 'HIDEDLGSCENE': return <span className="text-2xl">🚫</span>;
       case 'SHOWCHAR': return <span className="text-2xl">👤</span>;
       case 'HIDECHAR': return <span className="text-2xl">👻</span>;
+      case 'ADDOPPONENT': return <span className="text-2xl">🎮</span>;
+      case 'SETSHIPTYPE': return <span className="text-2xl">🚀</span>;
       default: return <MessageSquare className="w-4 h-4" />;
     }
   };
@@ -808,6 +871,27 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         }
         break;
       }
+      case 'ADDOPPONENT': {
+        if (block.parameters?.character) {
+          return (
+            <span className="text-gray-400">
+              🎮 {block.parameters.character}
+            </span>
+          );
+        }
+        return <span className="text-xs text-gray-500 italic">No opponent</span>;
+      }
+      case 'SETSHIPTYPE': {
+        const shipClass = String(block.parameters?.type || 'STI');
+        const romanNumeral = shipClass.replace('ST', '');
+        return (
+          <span className="text-gray-400">
+            {romanNumeral === 'I' ? t('visualFlowEditor.command.shipClassI') :
+             romanNumeral === 'II' ? t('visualFlowEditor.command.shipClassII') :
+             t('visualFlowEditor.command.shipClassIII')}
+          </span>
+        );
+      }
       default: {
         // Gestione generica per blocchi non implementati - mostra un riepilogo compatto dei parametri
         const params = block.parameters || {};
@@ -864,6 +948,24 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   const avatarCharacter = (block.type === 'SAY' || block.type === 'ASK') && simulatedSceneState 
     ? getLastModifiedVisibleCharacter(simulatedSceneState) 
     : null;
+  
+  // Ottieni il personaggio per ADDOPPONENT e adatta la struttura per CharacterAvatar
+  const opponentCharacterRaw = block.type === 'ADDOPPONENT' && block.parameters?.character
+    ? characters.find((c: Character) => c.nomepersonaggio === block.parameters?.character)
+    : null;
+    
+  const opponentCharacter = opponentCharacterRaw ? {
+    nomepersonaggio: opponentCharacterRaw.nomepersonaggio,
+    lastImmagine: opponentCharacterRaw.immaginebase || (opponentCharacterRaw.listaimmagini?.[0] || null)
+  } : null;
+  
+  // Ottieni l'immagine della nave per SETSHIPTYPE
+  const shipType = block.type === 'SETSHIPTYPE' && block.parameters?.type
+    ? String(block.parameters.type)
+    : null;
+  const shipImagePath = shipType 
+    ? `campaign/campaignMap/ship${shipType.replace('ST', '')}.cacheship.png`
+    : null;
 
   return (
     <div ref={containerRef}>
@@ -889,8 +991,16 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         isInvalid={isInvalid}
         validationType={validationType}
         extraControls={allBlocks.length > 0 && <SceneDebugButton block={block} allBlocks={allBlocks} characters={characters} />}
-        showAvatar={(block.type === 'SAY' || block.type === 'ASK')}
-        avatarCharacter={avatarCharacter}
+        showAvatar={(block.type === 'SAY' || block.type === 'ASK' || block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE')}
+        avatarCharacter={
+          block.type === 'ADDOPPONENT' ? opponentCharacter : 
+          block.type === 'SETSHIPTYPE' ? {
+            nomepersonaggio: shipType || 'STI',
+            lastImmagine: shipImagePath ? { nomefile: shipImagePath, percorso: shipImagePath } : null
+          } :
+          avatarCharacter
+        }
+        isShipType={block.type === 'SETSHIPTYPE'}
       >
         {/* Block parameters - visibili solo se expanded */}
         {renderParameters()}
