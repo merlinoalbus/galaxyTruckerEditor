@@ -230,6 +230,30 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.announce.placeholder': 'Inserisci il testo dell\'annuncio...',
   'visualFlowEditor.blocks.announce.textLabel': 'Testo Annuncio',
   
+  // RETURN Block
+  'visualFlowEditor.blocks.return.title': 'Ritorno',
+  'visualFlowEditor.blocks.return.descriptionSubscript': 'Ritorna il controllo allo script genitore',
+  'visualFlowEditor.blocks.return.descriptionRoot': 'Ritorna dallo script corrente (livello radice)',
+  'visualFlowEditor.blocks.return.warningRootLevel': 'Attenzione: Questo RETURN è al livello radice. Uscirà dall\'intero script.',
+  'visualFlowEditor.blocks.return.returnToParent': 'Ritorna allo script genitore',
+  'visualFlowEditor.blocks.return.navigateToParent': 'Naviga allo script genitore',
+  'visualFlowEditor.blocks.return.goBack': 'Torna Indietro',
+  'visualFlowEditor.blocks.return.rootLevel': 'A livello radice',
+  
+  // SET Block
+  'visualFlowEditor.blocks.set.title': 'Imposta',
+  'visualFlowEditor.blocks.set.semaphoreLabel': 'Semaforo',
+  'visualFlowEditor.blocks.set.selectSemaphore': 'Seleziona semaforo da impostare',
+  'visualFlowEditor.blocks.set.description': 'Imposta il semaforo a VERO',
+  'visualFlowEditor.blocks.set.noSemaphore': 'Nessun semaforo selezionato',
+  
+  // RESET Block
+  'visualFlowEditor.blocks.reset.title': 'Reimposta',
+  'visualFlowEditor.blocks.reset.semaphoreLabel': 'Semaforo',
+  'visualFlowEditor.blocks.reset.selectSemaphore': 'Seleziona semaforo da reimpostare',
+  'visualFlowEditor.blocks.reset.description': 'Imposta il semaforo a FALSO',
+  'visualFlowEditor.blocks.reset.noSemaphore': 'Nessun semaforo selezionato',
+  
   // Character Selector
   'visualFlowEditor.blocks.characterSelector.search': 'Cerca personaggi...',
   'visualFlowEditor.blocks.characterSelector.loading': 'Caricamento personaggi...',
@@ -247,6 +271,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.labelNoName': 'Il blocco LABEL deve avere un nome. Imposta il nome dell\'ancora.',
   'visualFlowEditor.validation.subScriptNoName': 'Il blocco SUB_SCRIPT deve avere un nome script. Seleziona uno script da eseguire.',
   'visualFlowEditor.validation.optNoText': 'Il blocco OPT deve avere del testo. Aggiungi almeno il testo in inglese.',
+  'visualFlowEditor.validation.returnAtRootLevel': 'Attenzione: RETURN al livello radice uscirà dall\'intero script.',
+  'visualFlowEditor.validation.setNoSemaphore': 'Il blocco SET deve avere un semaforo selezionato. Scegli un semaforo da impostare.',
+  'visualFlowEditor.validation.resetNoSemaphore': 'Il blocco RESET deve avere un semaforo selezionato. Scegli un semaforo da reimpostare.',
   'visualFlowEditor.validation.consecutiveAskError': '🚫 Due blocchi ASK consecutivi non sono permessi. Inserisci un altro tipo di blocco tra i due ASK.',
   'visualFlowEditor.validation.blockInBuildError': '🚫 Il blocco {blockType} non può essere inserito dentro un blocco BUILD. I blocchi BUILD e FLIGHT non possono essere annidati.',
   'visualFlowEditor.validation.blockInFlightError': '🚫 Il blocco {blockType} non può essere inserito dentro un blocco FLIGHT. I blocchi BUILD e FLIGHT non possono essere annidati.',

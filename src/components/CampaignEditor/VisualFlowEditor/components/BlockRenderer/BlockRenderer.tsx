@@ -10,6 +10,9 @@ import { FlightBlock } from '../blocks/FlightBlock/FlightBlock';
 import { ChangeCharBlock } from '../blocks/ChangeCharBlock/ChangeCharBlock';
 import { SayCharBlock } from '../blocks/SayCharBlock/SayCharBlock';
 import { AnnounceBlock } from '../blocks/AnnounceBlock/AnnounceBlock';
+import { ReturnBlock } from '../blocks/ReturnBlock/ReturnBlock';
+import { SetBlock } from '../blocks/SetBlock/SetBlock';
+import { ResetBlock } from '../blocks/ResetBlock/ResetBlock';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 interface BlockRendererProps {
@@ -309,6 +312,56 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
     return (
       <div data-block-id={block.id}>
         <AnnounceBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+        />
+      </div>
+    );
+  }
+
+  // Render RETURN block
+  if (block.type === 'RETURN') {
+    return (
+      <div data-block-id={block.id}>
+        <ReturnBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          navigationPath={sessionData?.navigationPath}
+          onNavigateBack={sessionData?.onNavigateBack}
+        />
+      </div>
+    );
+  }
+
+  // Render SET block
+  if (block.type === 'SET') {
+    return (
+      <div data-block-id={block.id}>
+        <SetBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+        />
+      </div>
+    );
+  }
+
+  // Render RESET block
+  if (block.type === 'RESET') {
+    return (
+      <div data-block-id={block.id}>
+        <ResetBlock
           block={block}
           onUpdate={updateBlock}
           onRemove={isRootInZoom ? undefined : removeBlock}

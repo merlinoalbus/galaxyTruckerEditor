@@ -15,7 +15,9 @@
       "Bash(npm run build:*)",
       "Bash(npx eslint:*)",
       "Bash(npx tsc:*)",
-      "Bash(timeout 60 npm run build)"
+      "Bash(timeout 60 npm run build)",
+      "Bash(npm run generate:translations:*)",
+      "Bash(restartBE)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",

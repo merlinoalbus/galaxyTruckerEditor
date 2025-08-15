@@ -128,7 +128,7 @@ const createFlatBlockList = (blocks: any[]): any[] => {
  * @param blocks - Array di blocchi da validare
  * @returns Oggetto con numero di errori, blocchi invalidi e dettagli errori
  */
-export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, characters?: any[]): { errors: number; warnings: number; invalidBlocks: string[]; details: any[] } => {
+export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, characters?: any[], navigationPath?: any[]): { errors: number; warnings: number; invalidBlocks: string[]; details: any[] } => {
   let errors = 0;
   let warnings = 0;
   const invalidBlocks: string[] = [];
@@ -155,7 +155,18 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
   const validateRecursive = (blocks: any[], parentBlock?: any, allRootBlocks?: any[], path: string[] = []): void => {
     blocks.forEach((block, index) => {
       // VALIDAZIONE PARAMETRI: Controlla che i blocchi abbiano i parametri obbligatori valorizzati
-      const paramValidation = validateBlockParameters(block, allFlatBlocks, characters);
+      let paramValidation = validateBlockParameters(block, allFlatBlocks, characters);
+      
+      // Gestione speciale per RETURN: controlla se siamo al livello root
+      if (block.type === 'RETURN' && paramValidation.valid) {
+        // Se navigationPath è vuoto o non definito, siamo al livello root
+        if (!navigationPath || navigationPath.length === 0) {
+          paramValidation = { 
+            valid: false,
+            error: 'RETURN_AT_ROOT_LEVEL' 
+          };
+        }
+      }
       if (!paramValidation.valid) {
         // Determina se è un warning o error
         const isWarning = [
@@ -170,7 +181,8 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           'SAY_NO_SCENE',
           'ASK_NO_SCENE',
           'ASK_IF_INVALID_THEN',
-          'ASK_IF_INVALID_ELSE'
+          'ASK_IF_INVALID_ELSE',
+          'RETURN_AT_ROOT_LEVEL'
         ].includes(paramValidation.error || '');
         
         if (isWarning) {
@@ -217,6 +229,26 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
             message = t ? 
               t('visualFlowEditor.validation.optNoText')
               : 'OPT block must have text. Add at least the English text.';
+            break;
+          case 'ANNOUNCE_NO_TEXT':
+            message = t ? 
+              t('visualFlowEditor.validation.announceNoText')
+              : 'ANNOUNCE block must have text. Add at least the English text.';
+            break;
+          case 'SET_NO_SEMAPHORE':
+            message = t ? 
+              t('visualFlowEditor.validation.setNoSemaphore')
+              : 'SET block must have a semaphore selected. Choose a semaphore to set.';
+            break;
+          case 'RESET_NO_SEMAPHORE':
+            message = t ? 
+              t('visualFlowEditor.validation.resetNoSemaphore')
+              : 'RESET block must have a semaphore selected. Choose a semaphore to reset.';
+            break;
+          case 'RETURN_AT_ROOT_LEVEL':
+            message = t ? 
+              t('visualFlowEditor.validation.returnAtRootLevel')
+              : 'Warning: RETURN at root level will exit the entire script.';
             break;
           case 'SHOWCHAR_NO_CHARACTER':
             message = t ?

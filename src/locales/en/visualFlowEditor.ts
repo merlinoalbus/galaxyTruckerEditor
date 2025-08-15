@@ -230,6 +230,30 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.announce.placeholder': 'Enter announcement text...',
   'visualFlowEditor.blocks.announce.textLabel': 'Announcement Text',
   
+  // RETURN Block
+  'visualFlowEditor.blocks.return.title': 'Return',
+  'visualFlowEditor.blocks.return.descriptionSubscript': 'Returns control to the parent script',
+  'visualFlowEditor.blocks.return.descriptionRoot': 'Returns from the current script (root level)',
+  'visualFlowEditor.blocks.return.warningRootLevel': 'Warning: This RETURN is at the root level. It will exit the entire script.',
+  'visualFlowEditor.blocks.return.returnToParent': 'Return to parent script',
+  'visualFlowEditor.blocks.return.navigateToParent': 'Navigate to parent script',
+  'visualFlowEditor.blocks.return.goBack': 'Go Back',
+  'visualFlowEditor.blocks.return.rootLevel': 'At root level',
+  
+  // SET Block
+  'visualFlowEditor.blocks.set.title': 'Set',
+  'visualFlowEditor.blocks.set.semaphoreLabel': 'Semaphore',
+  'visualFlowEditor.blocks.set.selectSemaphore': 'Select semaphore to set',
+  'visualFlowEditor.blocks.set.description': 'Sets the semaphore to TRUE',
+  'visualFlowEditor.blocks.set.noSemaphore': 'No semaphore selected',
+  
+  // RESET Block
+  'visualFlowEditor.blocks.reset.title': 'Reset',
+  'visualFlowEditor.blocks.reset.semaphoreLabel': 'Semaphore',
+  'visualFlowEditor.blocks.reset.selectSemaphore': 'Select semaphore to reset',
+  'visualFlowEditor.blocks.reset.description': 'Sets the semaphore to FALSE',
+  'visualFlowEditor.blocks.reset.noSemaphore': 'No semaphore selected',
+  
   // Character Selector
   'visualFlowEditor.blocks.characterSelector.search': 'Search characters...',
   'visualFlowEditor.blocks.characterSelector.loading': 'Loading characters...',
@@ -247,6 +271,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.labelNoName': 'LABEL block must have a name. Set the anchor name.',
   'visualFlowEditor.validation.optNoText': 'OPT block must have text. Add at least the English text.',
   'visualFlowEditor.validation.subScriptNoName': 'SUB_SCRIPT block must have a script name. Select a script to execute.',
+  'visualFlowEditor.validation.returnAtRootLevel': 'Warning: RETURN at root level will exit the entire script.',
+  'visualFlowEditor.validation.setNoSemaphore': 'SET block must have a semaphore selected. Choose a semaphore to set.',
+  'visualFlowEditor.validation.resetNoSemaphore': 'RESET block must have a semaphore selected. Choose a semaphore to reset.',
   'visualFlowEditor.validation.consecutiveAskError': '🚫 Two consecutive ASK blocks are not allowed. Insert another type of block between the two ASK blocks.',
   'visualFlowEditor.validation.blockInBuildError': '🚫 The {blockType} block cannot be inserted inside a BUILD block. BUILD and FLIGHT blocks cannot be nested.',
   'visualFlowEditor.validation.blockInFlightError': '🚫 The {blockType} block cannot be inserted inside a FLIGHT block. BUILD and FLIGHT blocks cannot be nested.',

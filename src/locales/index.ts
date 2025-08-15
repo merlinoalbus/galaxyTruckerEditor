@@ -457,6 +457,9 @@ export type TranslationKey =
   | 'visualFlowEditor.validation.labelNoName'
   | 'visualFlowEditor.validation.optNoText'
   | 'visualFlowEditor.validation.subScriptNoName'
+  | 'visualFlowEditor.validation.returnAtRootLevel'
+  | 'visualFlowEditor.validation.setNoSemaphore'
+  | 'visualFlowEditor.validation.resetNoSemaphore'
   | 'visualFlowEditor.validation.askAfterMenu'
   | 'visualFlowEditor.validation.menuAfterAsk'
   | 'visualFlowEditor.validation.consecutiveAsk'
@@ -946,6 +949,30 @@ export type TranslationKey =
   | 'visualFlowEditor.blocks.announce.description'
   | 'visualFlowEditor.blocks.announce.placeholder'
   | 'visualFlowEditor.blocks.announce.textLabel'
+  
+  // Visual Flow Editor - RETURN Block
+  | 'visualFlowEditor.blocks.return.title'
+  | 'visualFlowEditor.blocks.return.descriptionSubscript'
+  | 'visualFlowEditor.blocks.return.descriptionRoot'
+  | 'visualFlowEditor.blocks.return.warningRootLevel'
+  | 'visualFlowEditor.blocks.return.returnToParent'
+  | 'visualFlowEditor.blocks.return.navigateToParent'
+  | 'visualFlowEditor.blocks.return.goBack'
+  | 'visualFlowEditor.blocks.return.rootLevel'
+  
+  // Visual Flow Editor - SET Block
+  | 'visualFlowEditor.blocks.set.title'
+  | 'visualFlowEditor.blocks.set.semaphoreLabel'
+  | 'visualFlowEditor.blocks.set.selectSemaphore'
+  | 'visualFlowEditor.blocks.set.description'
+  | 'visualFlowEditor.blocks.set.noSemaphore'
+  
+  // Visual Flow Editor - RESET Block
+  | 'visualFlowEditor.blocks.reset.title'
+  | 'visualFlowEditor.blocks.reset.semaphoreLabel'
+  | 'visualFlowEditor.blocks.reset.selectSemaphore'
+  | 'visualFlowEditor.blocks.reset.description'
+  | 'visualFlowEditor.blocks.reset.noSemaphore'
   
   // Visual Flow Editor - Character Selector
   | 'visualFlowEditor.blocks.characterSelector.search'

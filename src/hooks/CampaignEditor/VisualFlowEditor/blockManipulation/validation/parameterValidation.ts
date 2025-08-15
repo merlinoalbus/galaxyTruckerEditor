@@ -385,6 +385,42 @@ export const validateHideCharParameters = (block: any, allBlocks?: IFlowBlock[],
 };
 
 /**
+ * Valida i parametri di un blocco RETURN
+ * RETURN non ha parametri obbligatori, quindi è sempre valido
+ * Il warning per root level dovrebbe essere gestito altrove con accesso al navigationPath
+ */
+export const validateReturnParameters = (block: any): { valid: boolean; error?: string } => {
+  // RETURN non ha parametri obbligatori
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri di un blocco SET
+ */
+export const validateSetParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.semaphore || block.parameters.semaphore.trim() === '') {
+    return { 
+      valid: false, 
+      error: 'SET_NO_SEMAPHORE' 
+    };
+  }
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri di un blocco RESET
+ */
+export const validateResetParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.semaphore || block.parameters.semaphore.trim() === '') {
+    return { 
+      valid: false, 
+      error: 'RESET_NO_SEMAPHORE' 
+    };
+  }
+  return { valid: true };
+};
+
+/**
  * Valida i parametri di un blocco in base al suo tipo
  */
 export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
@@ -422,6 +458,12 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return validateHideCharParameters(block, allBlocks, characters);
     case 'CHANGECHAR':
       return validateChangeCharParameters(block, allBlocks, characters);
+    case 'RETURN':
+      return validateReturnParameters(block);
+    case 'SET':
+      return validateSetParameters(block);
+    case 'RESET':
+      return validateResetParameters(block);
     // EXIT_MENU, SHOWDLGSCENE, HIDEDLGSCENE non hanno parametri da validare
     default:
       return { valid: true };
