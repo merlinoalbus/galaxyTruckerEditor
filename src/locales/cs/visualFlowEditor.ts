@@ -243,6 +243,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askWithoutMenu': 'Blok ASK musí být následován blokem MENU. Tento ASK je posledním blokem a nemá následující MENU.',
   'visualFlowEditor.validation.goWithoutLabel': 'Blok GO vyžaduje alespoň jeden blok LABEL ve skriptu. Přidejte blok LABEL před použitím GO.',
   
+  
   // Scene Dialog Validation Messages
   'visualFlowEditor.validation.dialogOutsideScene': 'Blok {blockType} lze použít pouze uvnitř dialogové scény. Přidejte blok SHOWDLGSCENE před použitím {blockType}.',
   'visualFlowEditor.validation.characterOutsideScene': 'Blok {blockType} lze použít pouze uvnitř dialogové scény. Přidejte blok SHOWDLGSCENE před použitím {blockType}.',

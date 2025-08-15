@@ -4,26 +4,46 @@ import { useScene } from '@/contexts/SceneContext';
 interface CharacterAvatarProps {
   className?: string;
   size?: 'small' | 'medium' | 'large';
+  character?: { 
+    nomepersonaggio: string; 
+    lastImmagine: {
+      nomefile: string;
+      percorso?: string;
+      binary?: string;
+    } | string | null;
+  } | null;
 }
 
 const NO_AVATAR_PATH = 'http://localhost:3001/api/file/avatars/common/avatar_no_avatar.png';
 
-export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({ className = '', size = 'small' }) => {
+export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({ className = '', size = 'small', character }) => {
   const { getCurrentScene } = useScene();
   const currentScene = getCurrentScene();
   const [hasError, setHasError] = useState(false);
   
-  // Ottieni l'ultimo personaggio attivo dalla scena
-  const lastCharacter = currentScene?.personaggi && currentScene.personaggi.length > 0
+  // Usa il personaggio passato come prop, altrimenti prendi l'ultimo dalla scena
+  const lastCharacter = character || (currentScene?.personaggi && currentScene.personaggi.length > 0
     ? currentScene.personaggi[currentScene.personaggi.length - 1]
-    : null;
+    : null);
   
-  // Determina l'immagine da mostrare - usa l'endpoint /api/file/
+  // Determina l'immagine da mostrare
   let imagePath = NO_AVATAR_PATH;
   
   if (lastCharacter?.lastImmagine && !hasError) {
-    // Se c'è un'immagine del personaggio e non c'è stato errore, usala
-    imagePath = `http://localhost:3001/api/file/${lastCharacter.lastImmagine}`;
+    // Gestisci sia il tipo oggetto (dalla simulazione) che stringa (dal context)
+    if (typeof lastCharacter.lastImmagine === 'object') {
+      // Se ha il binary base64, usalo direttamente
+      if (lastCharacter.lastImmagine.binary) {
+        imagePath = `data:image/png;base64,${lastCharacter.lastImmagine.binary}`;
+      } 
+      // Altrimenti usa il percorso del file
+      else if (lastCharacter.lastImmagine.nomefile) {
+        imagePath = `http://localhost:3001/api/file/${lastCharacter.lastImmagine.percorso || lastCharacter.lastImmagine.nomefile}`;
+      }
+    } else if (typeof lastCharacter.lastImmagine === 'string') {
+      // Compatibilità con il vecchio formato stringa
+      imagePath = `http://localhost:3001/api/file/${lastCharacter.lastImmagine}`;
+    }
   }
   
   // Definisci le dimensioni in base al parametro size

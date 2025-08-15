@@ -4,7 +4,7 @@ interface Character {
   nomepersonaggio: string;
   lastImmagine: string;
   visible: boolean;
-  posizione: 'left' | 'right' | 'center';
+  posizione: 'left' | 'right' | 'top' | 'bottom' | 'lefttop' | 'leftbottom' | 'righttop' | 'rightbottom';
 }
 
 interface Scene {
@@ -15,6 +15,7 @@ interface Scene {
 interface SceneState {
   sceneStack: Scene[];
   isInDialogScene: boolean;
+  lastModifiedCharacter: string | null;
 }
 
 type SceneAction = 
@@ -23,7 +24,8 @@ type SceneAction =
   | { type: 'ADD_CHARACTER'; payload: { character: Character } }
   | { type: 'UPDATE_CHARACTER'; payload: { nomepersonaggio: string; updates: Partial<Character> } }
   | { type: 'REMOVE_CHARACTER'; payload: { nomepersonaggio: string } }
-  | { type: 'CLEAR_SCENES' };
+  | { type: 'CLEAR_SCENES' }
+  | { type: 'SET_LAST_MODIFIED_CHARACTER'; payload: { nomepersonaggio: string | null } };
 
 interface SceneContextType {
   state: SceneState;
@@ -36,11 +38,14 @@ interface SceneContextType {
   getCurrentScene: () => Scene | null;
   isInDialogScene: boolean;
   isValidForDialogCommands: (blockType: string) => boolean;
+  lastModifiedCharacter: string | null;
+  setLastModifiedCharacter: (nomepersonaggio: string | null) => void;
 }
 
 const initialState: SceneState = {
   sceneStack: [],
-  isInDialogScene: false
+  isInDialogScene: false,
+  lastModifiedCharacter: null
 };
 
 function sceneReducer(state: SceneState, action: SceneAction): SceneState {
@@ -100,7 +105,8 @@ function sceneReducer(state: SceneState, action: SceneAction): SceneState {
         
         const newState = {
           ...state,
-          sceneStack: newStack
+          sceneStack: newStack,
+          lastModifiedCharacter: action.payload.character.nomepersonaggio
         };
         
         return newState;
@@ -116,7 +122,8 @@ function sceneReducer(state: SceneState, action: SceneAction): SceneState {
         
         const newState = {
           ...state,
-          sceneStack: newStack
+          sceneStack: newStack,
+          lastModifiedCharacter: action.payload.character.nomepersonaggio
         };
         
         return newState;
@@ -153,7 +160,8 @@ function sceneReducer(state: SceneState, action: SceneAction): SceneState {
       
       return {
         ...state,
-        sceneStack: newStack
+        sceneStack: newStack,
+        lastModifiedCharacter: action.payload.nomepersonaggio
       };
     }
     
@@ -184,6 +192,13 @@ function sceneReducer(state: SceneState, action: SceneAction): SceneState {
     case 'CLEAR_SCENES': {
       const newState = initialState;
       return newState;
+    }
+    
+    case 'SET_LAST_MODIFIED_CHARACTER': {
+      return {
+        ...state,
+        lastModifiedCharacter: action.payload.nomepersonaggio
+      };
     }
     
     default:
@@ -239,6 +254,10 @@ export const SceneProvider: React.FC<SceneProviderProps> = ({ children }) => {
     return state.sceneStack[state.sceneStack.length - 1];
   }, [state.sceneStack]);
 
+  const setLastModifiedCharacter = useCallback((nomepersonaggio: string | null) => {
+    dispatch({ type: 'SET_LAST_MODIFIED_CHARACTER', payload: { nomepersonaggio } });
+  }, []);
+
   // Validazione per comandi che richiedono dialog scene attiva
   const isValidForDialogCommands = useCallback((blockType: string) => {
     const dialogCommands = ['SAY', 'ASK', 'SHOWCHAR', 'HIDECHAR', 'CHANGECHAR', 'SAYCHAR', 'ASKCHAR', 'FOCUSCHAR'];
@@ -267,7 +286,9 @@ export const SceneProvider: React.FC<SceneProviderProps> = ({ children }) => {
     clearScenes,
     getCurrentScene,
     isInDialogScene: state.isInDialogScene,
-    isValidForDialogCommands
+    isValidForDialogCommands,
+    lastModifiedCharacter: state.lastModifiedCharacter,
+    setLastModifiedCharacter
   };
 
   return (

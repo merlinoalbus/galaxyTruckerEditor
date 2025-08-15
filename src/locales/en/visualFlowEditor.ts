@@ -185,6 +185,32 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.hideDlgScene.compact': 'Hide scene',
   'visualFlowEditor.blocks.hideDlgScene.fullDescription': 'Hide Dialog Scene. This command closes the current dialog scene and hides all visible characters. Use this when you want to end a conversation sequence.',
   
+  // SHOWCHAR Block
+  'visualFlowEditor.blocks.showChar.title': 'Show Character',
+  'visualFlowEditor.blocks.showChar.description': 'Shows a character in the scene',
+  'visualFlowEditor.blocks.showChar.selectCharacter': 'Select character to show',
+  'visualFlowEditor.blocks.showChar.position': 'Character position',
+  'visualFlowEditor.blocks.showChar.positions.left': 'Left',
+  'visualFlowEditor.blocks.showChar.positions.right': 'Right',
+  'visualFlowEditor.blocks.showChar.positions.top': 'Top',
+  'visualFlowEditor.blocks.showChar.positions.bottom': 'Bottom',
+  'visualFlowEditor.blocks.showChar.positions.lefttop': 'Top-Left',
+  'visualFlowEditor.blocks.showChar.positions.leftbottom': 'Bottom-Left',
+  'visualFlowEditor.blocks.showChar.positions.righttop': 'Top-Right',
+  'visualFlowEditor.blocks.showChar.positions.rightbottom': 'Bottom-Right',
+  
+  // HIDECHAR Block
+  'visualFlowEditor.blocks.hideChar.title': 'Hide Character',
+  'visualFlowEditor.blocks.hideChar.description': 'Hides a character from the scene',
+  'visualFlowEditor.blocks.hideChar.selectCharacter': 'Select character to hide',
+  
+  // Character Selector
+  'visualFlowEditor.blocks.characterSelector.search': 'Search characters...',
+  'visualFlowEditor.blocks.characterSelector.loading': 'Loading characters...',
+  'visualFlowEditor.blocks.characterSelector.noAvailable': 'No characters available to show',
+  'visualFlowEditor.blocks.characterSelector.noVisible': 'No visible characters to hide',
+  'visualFlowEditor.blocks.characterSelector.selected': 'Selected',
+  
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Validation error',
   'visualFlowEditor.validation.delayNoDuration': 'DELAY block must have a duration value. Set the duration in milliseconds.',
@@ -219,6 +245,17 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.menuFirstBlock': 'The MENU is the first block in the script. It must be preceded by at least one ASK block.',
   'visualFlowEditor.validation.optOnlyInMenu': 'The OPT block can only be inserted inside a MENU block.',
   'visualFlowEditor.validation.onlyOptInMenu': 'The {blockType} block cannot be inserted in a MENU. Only OPT blocks are allowed.',
+  'visualFlowEditor.validation.showCharNoCharacter': 'SHOWCHAR block must have a character selected.',
+  'visualFlowEditor.validation.showCharNoPosition': 'SHOWCHAR block must have a position selected.',
+  'visualFlowEditor.validation.hideCharNoCharacter': 'HIDECHAR block must have a character selected.',
+  'visualFlowEditor.validation.showcharNoScene': 'SHOWCHAR requires an active scene. Add SHOWDLGSCENE before this block.',
+  'visualFlowEditor.validation.hidecharNoScene': 'HIDECHAR requires an active scene. Add SHOWDLGSCENE before this block.',
+  'visualFlowEditor.validation.hidecharNoVisibleCharacters': 'HIDECHAR cannot be used: no visible characters in the scene.',
+  'visualFlowEditor.validation.hidecharCharacterNotVisible': 'The selected character is not visible in the scene.',
+  'visualFlowEditor.validation.sayNoScene': 'SAY requires an active scene. Add SHOWDLGSCENE before this block.',
+  'visualFlowEditor.validation.askNoScene': 'ASK requires an active scene. Add SHOWDLGSCENE before this block.',
+  'visualFlowEditor.validation.askIfInvalidThen': 'After ASK, IF block\'s THEN branch must start with MENU or GO.',
+  'visualFlowEditor.validation.askIfInvalidElse': 'After ASK, IF block\'s ELSE branch must start with MENU or GO.',
   
   // Scene Dialog Validation Messages
   'visualFlowEditor.validation.dialogOutsideScene': '{blockType} block can only be used inside a dialog scene. Add a SHOWDLGSCENE block before using {blockType}.',

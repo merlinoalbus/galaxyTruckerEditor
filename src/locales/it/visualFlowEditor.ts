@@ -185,6 +185,32 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.hideDlgScene.compact': 'Nascondi scena',
   'visualFlowEditor.blocks.hideDlgScene.fullDescription': 'Nasconde Scena Dialogo. Questo comando chiude la scena di dialogo corrente e nasconde tutti i personaggi visibili. Usalo quando vuoi terminare una sequenza di conversazione.',
   
+  // SHOWCHAR Block
+  'visualFlowEditor.blocks.showChar.title': 'Mostra Personaggio',
+  'visualFlowEditor.blocks.showChar.description': 'Mostra un personaggio nella scena',
+  'visualFlowEditor.blocks.showChar.selectCharacter': 'Seleziona personaggio da mostrare',
+  'visualFlowEditor.blocks.showChar.position': 'Posizione personaggio',
+  'visualFlowEditor.blocks.showChar.positions.left': 'Sinistra',
+  'visualFlowEditor.blocks.showChar.positions.right': 'Destra',
+  'visualFlowEditor.blocks.showChar.positions.top': 'Alto',
+  'visualFlowEditor.blocks.showChar.positions.bottom': 'Basso',
+  'visualFlowEditor.blocks.showChar.positions.lefttop': 'Alto-Sinistra',
+  'visualFlowEditor.blocks.showChar.positions.leftbottom': 'Basso-Sinistra',
+  'visualFlowEditor.blocks.showChar.positions.righttop': 'Alto-Destra',
+  'visualFlowEditor.blocks.showChar.positions.rightbottom': 'Basso-Destra',
+  
+  // HIDECHAR Block
+  'visualFlowEditor.blocks.hideChar.title': 'Nascondi Personaggio',
+  'visualFlowEditor.blocks.hideChar.description': 'Nasconde un personaggio dalla scena',
+  'visualFlowEditor.blocks.hideChar.selectCharacter': 'Seleziona personaggio da nascondere',
+  
+  // Character Selector
+  'visualFlowEditor.blocks.characterSelector.search': 'Cerca personaggi...',
+  'visualFlowEditor.blocks.characterSelector.loading': 'Caricamento personaggi...',
+  'visualFlowEditor.blocks.characterSelector.noAvailable': 'Nessun personaggio disponibile da mostrare',
+  'visualFlowEditor.blocks.characterSelector.noVisible': 'Nessun personaggio visibile da nascondere',
+  'visualFlowEditor.blocks.characterSelector.selected': 'Selezionato',
+  
   // Validation Error Messages (existing and new)
   'visualFlowEditor.validation.error': 'Errore di validazione',
   'visualFlowEditor.validation.delayNoDuration': 'Il blocco DELAY deve avere un valore di durata. Imposta la durata in millisecondi.',
@@ -219,6 +245,18 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.menuFirstBlock': 'Il MENU è il primo blocco dello script. Deve essere preceduto da almeno un blocco ASK.',
   'visualFlowEditor.validation.optOnlyInMenu': 'Il blocco OPT può essere inserito solo all\'interno di un blocco MENU.',
   'visualFlowEditor.validation.onlyOptInMenu': 'Il blocco {blockType} non può essere inserito in un MENU. Solo blocchi OPT sono permessi.',
+  'visualFlowEditor.validation.showCharNoCharacter': 'Il blocco SHOWCHAR deve avere un personaggio selezionato.',
+  'visualFlowEditor.validation.showCharNoPosition': 'Il blocco SHOWCHAR deve avere una posizione selezionata.',
+  'visualFlowEditor.validation.hideCharNoCharacter': 'Il blocco HIDECHAR deve avere un personaggio selezionato.',
+  'visualFlowEditor.validation.showcharNoScene': 'SHOWCHAR richiede una scena attiva. Aggiungi SHOWDLGSCENE prima di questo blocco.',
+  'visualFlowEditor.validation.hidecharNoScene': 'HIDECHAR richiede una scena attiva. Aggiungi SHOWDLGSCENE prima di questo blocco.',
+  'visualFlowEditor.validation.hidecharNoVisibleCharacters': 'HIDECHAR non può essere usato: nessun personaggio visibile nella scena.',
+  'visualFlowEditor.validation.hidecharCharacterNotVisible': 'Il personaggio selezionato non è visibile nella scena.',
+  'visualFlowEditor.validation.sayNoScene': 'SAY richiede una scena attiva. Aggiungi SHOWDLGSCENE prima di questo blocco.',
+  'visualFlowEditor.validation.askNoScene': 'ASK richiede una scena attiva. Aggiungi SHOWDLGSCENE prima di questo blocco.',
+  'visualFlowEditor.validation.askIfInvalidThen': 'Dopo ASK, il ramo THEN del blocco IF deve iniziare con MENU o GO.',
+  'visualFlowEditor.validation.askIfInvalidElse': 'Dopo ASK, il ramo ELSE del blocco IF deve iniziare con MENU o GO.',
+  
   'visualFlowEditor.validation.askAfterMenu': 'Il blocco ASK non può seguire direttamente un blocco MENU',
   'visualFlowEditor.validation.menuAfterAsk': 'Il blocco MENU non può seguire direttamente un blocco ASK',
   'visualFlowEditor.validation.consecutiveAsk': 'Due blocchi ASK consecutivi non sono permessi',

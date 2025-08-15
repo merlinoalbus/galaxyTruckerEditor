@@ -470,6 +470,9 @@ export type TranslationKey =
   | 'visualFlowEditor.validation.genericError'
   | 'visualFlowEditor.validation.invalidPosition'
   | 'visualFlowEditor.validation.missingRequired'
+  | 'visualFlowEditor.validation.showCharNoCharacter'
+  | 'visualFlowEditor.validation.showCharNoPosition'
+  | 'visualFlowEditor.validation.hideCharNoCharacter'
   
   // Visual Flow Editor - Error Modal
   | 'visualFlowEditor.errorModal.close'
@@ -902,6 +905,30 @@ export type TranslationKey =
   | 'visualFlowEditor.blocks.hideDlgScene.description'
   | 'visualFlowEditor.blocks.hideDlgScene.compact'
   | 'visualFlowEditor.blocks.hideDlgScene.fullDescription'
+  
+  // Visual Flow Editor - Character Commands
+  | 'visualFlowEditor.blocks.showChar.title'
+  | 'visualFlowEditor.blocks.showChar.description'
+  | 'visualFlowEditor.blocks.showChar.selectCharacter'
+  | 'visualFlowEditor.blocks.showChar.position'
+  | 'visualFlowEditor.blocks.showChar.positions.left'
+  | 'visualFlowEditor.blocks.showChar.positions.right'
+  | 'visualFlowEditor.blocks.showChar.positions.top'
+  | 'visualFlowEditor.blocks.showChar.positions.bottom'
+  | 'visualFlowEditor.blocks.showChar.positions.lefttop'
+  | 'visualFlowEditor.blocks.showChar.positions.leftbottom'
+  | 'visualFlowEditor.blocks.showChar.positions.righttop'
+  | 'visualFlowEditor.blocks.showChar.positions.rightbottom'
+  | 'visualFlowEditor.blocks.hideChar.title'
+  | 'visualFlowEditor.blocks.hideChar.description'
+  | 'visualFlowEditor.blocks.hideChar.selectCharacter'
+  
+  // Visual Flow Editor - Character Selector
+  | 'visualFlowEditor.blocks.characterSelector.search'
+  | 'visualFlowEditor.blocks.characterSelector.loading'
+  | 'visualFlowEditor.blocks.characterSelector.noAvailable'
+  | 'visualFlowEditor.blocks.characterSelector.noVisible'
+  | 'visualFlowEditor.blocks.characterSelector.selected'
   
   // Visual Flow Editor - Tool Descriptions
   | 'visualFlowEditor.tools.delay.description'

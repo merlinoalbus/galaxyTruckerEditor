@@ -128,7 +128,7 @@ const createFlatBlockList = (blocks: any[]): any[] => {
  * @param blocks - Array di blocchi da validare
  * @returns Oggetto con numero di errori, blocchi invalidi e dettagli errori
  */
-export const validateAllBlocks = (blocks: any[], t?: (key: any) => string): { errors: number; invalidBlocks: string[]; details: any[] } => {
+export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, characters?: any[]): { errors: number; invalidBlocks: string[]; details: any[] } => {
   let errors = 0;
   const invalidBlocks: string[] = [];
   const errorDetails: any[] = [];
@@ -154,7 +154,7 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string): { er
   const validateRecursive = (blocks: any[], parentBlock?: any, allRootBlocks?: any[], path: string[] = []): void => {
     blocks.forEach((block, index) => {
       // VALIDAZIONE PARAMETRI: Controlla che i blocchi abbiano i parametri obbligatori valorizzati
-      const paramValidation = validateBlockParameters(block);
+      const paramValidation = validateBlockParameters(block, allFlatBlocks, characters);
       if (!paramValidation.valid) {
         errors++;
         invalidBlocks.push(block.id);
@@ -196,6 +196,61 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string): { er
             message = t ? 
               t('visualFlowEditor.validation.optNoText')
               : 'OPT block must have text. Add at least the English text.';
+            break;
+          case 'SHOWCHAR_NO_CHARACTER':
+            message = t ?
+              t('visualFlowEditor.validation.showcharNoCharacter')
+              : 'SHOWCHAR block must specify which character to show. Select a character from the list.';
+            break;
+          case 'SHOWCHAR_NO_POSITION':
+            message = t ?
+              t('visualFlowEditor.validation.showcharNoPosition')
+              : 'SHOWCHAR block must specify a position for the character.';
+            break;
+          case 'HIDECHAR_NO_CHARACTER':
+            message = t ?
+              t('visualFlowEditor.validation.hidecharNoCharacter')
+              : 'HIDECHAR block must specify which character to hide. Select a character from the list.';
+            break;
+          case 'SHOWCHAR_NO_SCENE':
+            message = t ?
+              t('visualFlowEditor.validation.showcharNoScene')
+              : 'SHOWCHAR requires an active scene. Add SHOWDLGSCENE before this block.';
+            break;
+          case 'HIDECHAR_NO_SCENE':
+            message = t ?
+              t('visualFlowEditor.validation.hidecharNoScene')
+              : 'HIDECHAR requires an active scene. Add SHOWDLGSCENE before this block.';
+            break;
+          case 'HIDECHAR_NO_VISIBLE_CHARACTERS':
+            message = t ?
+              t('visualFlowEditor.validation.hidecharNoVisibleCharacters')
+              : 'HIDECHAR cannot be used: no visible characters in the scene.';
+            break;
+          case 'HIDECHAR_CHARACTER_NOT_VISIBLE':
+            message = t ?
+              t('visualFlowEditor.validation.hidecharCharacterNotVisible')
+              : 'The selected character is not visible in the scene.';
+            break;
+          case 'SAY_NO_SCENE':
+            message = t ?
+              t('visualFlowEditor.validation.sayNoScene')
+              : 'SAY requires an active scene. Add SHOWDLGSCENE before this block.';
+            break;
+          case 'ASK_NO_SCENE':
+            message = t ?
+              t('visualFlowEditor.validation.askNoScene')
+              : 'ASK requires an active scene. Add SHOWDLGSCENE before this block.';
+            break;
+          case 'ASK_IF_INVALID_THEN':
+            message = t ?
+              t('visualFlowEditor.validation.askIfInvalidThen')
+              : 'After ASK, IF block\'s THEN branch must start with MENU or GO.';
+            break;
+          case 'ASK_IF_INVALID_ELSE':
+            message = t ?
+              t('visualFlowEditor.validation.askIfInvalidElse')
+              : 'After ASK, IF block\'s ELSE branch must start with MENU or GO.';
             break;
           default:
             message = t ? 

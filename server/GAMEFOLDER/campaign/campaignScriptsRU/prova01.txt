@@ -2,6 +2,9 @@ SCRIPTS
 
   SCRIPT aaa_pippo
     ShowDlgScene
+    ShowChar bartender right
+    HideChar bartender
+    ShowChar artifact_runner left
     Say "Giovanni[g(|no)]"
     Ask "Say"
     MENU
