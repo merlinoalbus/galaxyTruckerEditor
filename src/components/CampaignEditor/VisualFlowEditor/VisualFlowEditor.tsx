@@ -372,12 +372,22 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
     navigationPath: scriptNavigationPath, // Usa scriptNavigationPath invece di navigationPath
     onNavigateBack: () => {
       // Naviga al livello precedente nel path degli script
-      if (scriptNavigationPath && scriptNavigationPath.length > 0) {
-        const targetLevel = scriptNavigationPath.length - 2; // Naviga al livello precedente
-        handleNavigateBackToScript(targetLevel);
+      if (scriptNavigationPath && scriptNavigationPath.length > 1) {
+        // Trova l'indice del subscript corrente nel navigationPath
+        const subscriptIndex = navigationPath.findIndex(item => item.id.startsWith('subscript-'));
+        
+        if (subscriptIndex > 0) {
+          // Abbiamo un percorso prima del subscript, torna al blocco che contiene il GO
+          // Usa handleZoomOut per navigare al blocco che contiene il comando GO
+          handleZoomOut(subscriptIndex - 1);
+        } else {
+          // Fallback: torna allo script precedente
+          const targetLevel = scriptNavigationPath.length - 2;
+          handleNavigateBackToScript(targetLevel);
+        }
       }
     }
-  }), [sessionData, scriptLabels, goToLabel, availableScripts, handleNavigateToSubScript, scriptNavigationPath, handleNavigateBackToScript]);
+  }), [sessionData, scriptLabels, goToLabel, availableScripts, handleNavigateToSubScript, scriptNavigationPath, handleNavigateBackToScript, navigationPath, handleZoomOut]);
 
   // Carica script se viene passato uno scriptId dal componente chiamante
   useEffect(() => {

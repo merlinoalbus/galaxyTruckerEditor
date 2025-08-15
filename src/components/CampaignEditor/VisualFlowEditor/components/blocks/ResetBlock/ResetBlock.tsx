@@ -5,6 +5,7 @@ import { getBlockClassName } from '@/utils/CampaignEditor/VisualFlowEditor/block
 import { useTranslation } from '@/locales';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSessionData } from '@/hooks/CampaignEditor/VisualFlowEditor/useSessionData';
+import { Circle } from 'lucide-react';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 interface ResetBlockProps {
@@ -98,9 +99,12 @@ export const ResetBlock: React.FC<ResetBlockProps> = ({
             <span className="text-gray-400 text-sm">
               {semaphore}
             </span>
-            <span className="ml-auto px-2 py-0.5 bg-red-600/20 text-red-400 text-xs rounded">
-              FALSE
-            </span>
+            <div className="ml-auto flex items-center gap-1" title="Semaphore: RED">
+              <div className="relative">
+                <Circle className="w-5 h-5 text-red-500 fill-red-900/30 relative" strokeWidth={2} />
+              </div>
+              <span className="text-xs text-red-400 font-semibold">OFF</span>
+            </div>
           </>
         ) : (
           <span className="text-red-400 text-sm">
