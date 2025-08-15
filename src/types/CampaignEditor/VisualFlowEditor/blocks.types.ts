@@ -173,6 +173,7 @@ export interface OpenedScript {
   scriptName: string;
   fileName: string;
   blocks: IFlowBlock[];
+  originalBlocks?: IFlowBlock[]; // Copia immutabile dei blocchi originali per reset
   isModified: boolean;
 }
 
