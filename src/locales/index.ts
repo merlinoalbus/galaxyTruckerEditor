@@ -929,6 +929,15 @@ export type TranslationKey =
   | 'visualFlowEditor.blocks.changeChar.noVisibleCharacters'
   | 'visualFlowEditor.blocks.changeChar.selectCharacterFirst'
   | 'visualFlowEditor.blocks.changeChar.noImagesAvailable'
+  | 'visualFlowEditor.blocks.sayChar.title'
+  | 'visualFlowEditor.blocks.sayChar.description'
+  | 'visualFlowEditor.blocks.sayChar.selectCharacter'
+  | 'visualFlowEditor.blocks.sayChar.selectCharacterPlaceholder'
+  | 'visualFlowEditor.blocks.sayChar.dialogPlaceholder'
+  | 'visualFlowEditor.blocks.sayChar.dialogLabel'
+  | 'visualFlowEditor.blocks.sayChar.noParameters'
+  | 'visualFlowEditor.blocks.sayChar.noText'
+  | 'visualFlowEditor.blocks.sayChar.noCharacter'
   
   // Visual Flow Editor - Character Selector
   | 'visualFlowEditor.blocks.characterSelector.search'

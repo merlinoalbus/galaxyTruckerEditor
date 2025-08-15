@@ -213,6 +213,17 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.changeChar.selectCharacterFirst': 'Select a character first',
   'visualFlowEditor.blocks.changeChar.noImagesAvailable': 'No alternative images available',
   
+  // SAYCHAR Block
+  'visualFlowEditor.blocks.sayChar.title': 'Say Character',
+  'visualFlowEditor.blocks.sayChar.description': 'Shows a character and displays their dialogue',
+  'visualFlowEditor.blocks.sayChar.selectCharacter': 'Select speaking character',
+  'visualFlowEditor.blocks.sayChar.selectCharacterPlaceholder': 'Choose a character...',
+  'visualFlowEditor.blocks.sayChar.dialogPlaceholder': 'Enter character dialogue...',
+  'visualFlowEditor.blocks.sayChar.dialogLabel': 'Character Dialogue',
+  'visualFlowEditor.blocks.sayChar.noParameters': 'No character or text',
+  'visualFlowEditor.blocks.sayChar.noText': 'No text',
+  'visualFlowEditor.blocks.sayChar.noCharacter': 'No character',
+  
   // Character Selector
   'visualFlowEditor.blocks.characterSelector.search': 'Search characters...',
   'visualFlowEditor.blocks.characterSelector.loading': 'Loading characters...',
@@ -267,6 +278,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.changecharNoVisibleCharacters': 'CHANGECHAR cannot be used: no visible characters in the scene.',
   'visualFlowEditor.validation.changecharCharacterNotVisible': 'The selected character is not visible in the scene.',
   'visualFlowEditor.validation.changecharImageNotInList': 'The selected image is not available for this character.',
+  'visualFlowEditor.validation.saycharNoCharacter': 'SAYCHAR block must specify which character is speaking. Select a character from the list.',
+  'visualFlowEditor.validation.saycharNoText': 'SAYCHAR block must have text. Enter the character\'s dialogue.',
+  'visualFlowEditor.validation.saycharNoScene': 'SAYCHAR requires an active scene. Add SHOWDLGSCENE before this block.',
   'visualFlowEditor.validation.sayNoScene': 'SAY requires an active scene. Add SHOWDLGSCENE before this block.',
   'visualFlowEditor.validation.askNoScene': 'ASK requires an active scene. Add SHOWDLGSCENE before this block.',
   'visualFlowEditor.validation.askIfInvalidThen': 'After ASK, IF block\'s THEN branch must start with MENU or GO.',

@@ -169,6 +169,40 @@ export const validateSubScriptParameters = (block: any): { valid: boolean; error
 };
 
 /**
+ * Valida i parametri di un blocco SAYCHAR
+ */
+export const validateSayCharParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
+  // Prima controlla che sia selezionato un personaggio
+  if (!block.parameters?.character || block.parameters.character.trim().length === 0) {
+    return { 
+      valid: false, 
+      error: 'SAYCHAR_NO_CHARACTER' 
+    };
+  }
+  
+  // Poi controlla che ci sia il testo
+  if (!isMultilingualTextValid(block.parameters?.text)) {
+    return { 
+      valid: false, 
+      error: 'SAYCHAR_NO_TEXT' 
+    };
+  }
+  
+  // Se abbiamo il contesto, verifica che siamo in una scena
+  if (allBlocks && block.id) {
+    const sceneState = simulateSceneExecution(allBlocks, block.id, characters);
+    if (!sceneState.isInDialogScene) {
+      return {
+        valid: false,
+        error: 'SAYCHAR_NO_SCENE'
+      };
+    }
+  }
+  
+  return { valid: true };
+};
+
+/**
  * Valida i parametri di un blocco CHANGECHAR
  */
 export const validateChangeCharParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
@@ -344,6 +378,8 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return validateDelayParameters(block);
     case 'SAY':
       return validateSayParameters(block, allBlocks, characters);
+    case 'SAYCHAR':
+      return validateSayCharParameters(block, allBlocks, characters);
     case 'ASK': {
       // Prima valida i parametri di ASK
       const askValidation = validateAskParameters(block, allBlocks, characters);

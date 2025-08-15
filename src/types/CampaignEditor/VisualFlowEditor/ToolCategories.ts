@@ -48,7 +48,7 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
       { id: 'ask', name: 'ASK', icon: '❓', blockType: 'ASK', description: t('visualFlowEditor.tools.ask.description'), implemented: true },
       { id: 'hidedlgscene', name: 'HIDEDLGSCENE', icon: '🚫', blockType: 'HIDEDLGSCENE', description: t('visualFlowEditor.tools.hideDlgScene.description'), implemented: true },
       { id: 'announce', name: 'ANNOUNCE', icon: '📢', blockType: 'ANNOUNCE', description: t('visualFlowEditor.tools.announce.description'), implemented: false },
-      { id: 'saychar', name: 'SAYCHAR', icon: '🗣️', blockType: 'SAYCHAR', description: t('visualFlowEditor.tools.sayChar.description'), implemented: false, inProgress: true },
+      { id: 'saychar', name: 'SAYCHAR', icon: '🗣️', blockType: 'SAYCHAR', description: t('visualFlowEditor.tools.sayChar.description'), implemented: true },
       
       // === GRUPPO PERSONAGGI ===
       { id: 'showchar', name: 'SHOWCHAR', icon: '👤', blockType: 'SHOWCHAR', description: t('visualFlowEditor.tools.showChar.description'), implemented: true },
