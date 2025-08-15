@@ -4,6 +4,8 @@ SCRIPTS
     ShowDlgScene
     Announce "prova"
     RETURN
+    SET questCompleted
+    RESET achievement02
     ShowChar bartender right
     ShowChar ambassador left
     SayChar catapult_fanatic "prova 2"
