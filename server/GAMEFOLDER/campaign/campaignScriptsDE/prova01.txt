@@ -2,8 +2,11 @@ SCRIPTS
 
   SCRIPT aaa_pippo
     ShowDlgScene
+    Announce "prova"
+    RETURN
     ShowChar bartender right
     ShowChar ambassador left
+    SayChar catapult_fanatic "prova"
     Say "Giovanni[g(|no)] [NAME] prova pr[n(1:ova|2:ima|6:ippo)] [NAME][img(achievements\images\at__9_normal.jpg)*3]"
     ChangeChar bartender campaign/bartender-warehouse.png
     Ask "Say"

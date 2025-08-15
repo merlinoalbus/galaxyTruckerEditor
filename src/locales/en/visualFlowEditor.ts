@@ -224,6 +224,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.sayChar.noText': 'No text',
   'visualFlowEditor.blocks.sayChar.noCharacter': 'No character',
   
+  // ANNOUNCE Block
+  'visualFlowEditor.blocks.announce.title': 'Announce',
+  'visualFlowEditor.blocks.announce.description': 'Displays an announcement message without requiring a scene',
+  'visualFlowEditor.blocks.announce.placeholder': 'Enter announcement text...',
+  'visualFlowEditor.blocks.announce.textLabel': 'Announcement Text',
+  
   // Character Selector
   'visualFlowEditor.blocks.characterSelector.search': 'Search characters...',
   'visualFlowEditor.blocks.characterSelector.loading': 'Loading characters...',
@@ -235,6 +241,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.error': 'Validation error',
   'visualFlowEditor.validation.delayNoDuration': 'DELAY block must have a duration value. Set the duration in milliseconds.',
   'visualFlowEditor.validation.sayNoText': 'SAY block must have text. Add at least the English text.',
+  'visualFlowEditor.validation.announceNoText': 'ANNOUNCE block must have text. Add at least the English text.',
   'visualFlowEditor.validation.askNoText': 'ASK block must have text. Add at least the English text.',
   'visualFlowEditor.validation.goNoLabel': 'GO block must have a label selected. Choose a target label.',
   'visualFlowEditor.validation.labelNoName': 'LABEL block must have a name. Set the anchor name.',
@@ -417,6 +424,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.multilingual.copyToAll': 'Copy to all languages',
   'visualFlowEditor.multilingual.copyFromEN': 'Copy from EN',
   'visualFlowEditor.multilingual.languages.en': 'English',
+  'visualFlowEditor.multilingual.languages.it': 'Italian',
   'visualFlowEditor.multilingual.languages.cs': 'Czech',
   'visualFlowEditor.multilingual.languages.de': 'German',
   'visualFlowEditor.multilingual.languages.es': 'Spanish',

@@ -451,6 +451,7 @@ export type TranslationKey =
   | 'visualFlowEditor.validation.goWithoutLabel'
   | 'visualFlowEditor.validation.delayNoDuration'
   | 'visualFlowEditor.validation.sayNoText'
+  | 'visualFlowEditor.validation.announceNoText'
   | 'visualFlowEditor.validation.askNoText'
   | 'visualFlowEditor.validation.goNoLabel'
   | 'visualFlowEditor.validation.labelNoName'
@@ -602,6 +603,7 @@ export type TranslationKey =
   | 'visualFlowEditor.multilingual.copyToAll'
   | 'visualFlowEditor.multilingual.copyFromEN'
   | 'visualFlowEditor.multilingual.languages.en'
+  | 'visualFlowEditor.multilingual.languages.it'
   | 'visualFlowEditor.multilingual.languages.cs'
   | 'visualFlowEditor.multilingual.languages.de'
   | 'visualFlowEditor.multilingual.languages.es'
@@ -938,6 +940,12 @@ export type TranslationKey =
   | 'visualFlowEditor.blocks.sayChar.noParameters'
   | 'visualFlowEditor.blocks.sayChar.noText'
   | 'visualFlowEditor.blocks.sayChar.noCharacter'
+  
+  // Visual Flow Editor - ANNOUNCE Block
+  | 'visualFlowEditor.blocks.announce.title'
+  | 'visualFlowEditor.blocks.announce.description'
+  | 'visualFlowEditor.blocks.announce.placeholder'
+  | 'visualFlowEditor.blocks.announce.textLabel'
   
   // Visual Flow Editor - Character Selector
   | 'visualFlowEditor.blocks.characterSelector.search'
