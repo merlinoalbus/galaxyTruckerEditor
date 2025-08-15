@@ -9,6 +9,7 @@ import { BuildBlock } from '../blocks/BuildBlock/BuildBlock';
 import { FlightBlock } from '../blocks/FlightBlock/FlightBlock';
 import { ChangeCharBlock } from '../blocks/ChangeCharBlock/ChangeCharBlock';
 import { SayCharBlock } from '../blocks/SayCharBlock/SayCharBlock';
+import { AnnounceBlock } from '../blocks/AnnounceBlock/AnnounceBlock';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 interface BlockRendererProps {
@@ -298,6 +299,22 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           isInvalid={isInvalid}
           validationType={validationType}
           allBlocks={allBlocks}
+        />
+      </div>
+    );
+  }
+
+  // Render ANNOUNCE block
+  if (block.type === 'ANNOUNCE') {
+    return (
+      <div data-block-id={block.id}>
+        <AnnounceBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
         />
       </div>
     );

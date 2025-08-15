@@ -64,6 +64,21 @@ export const validateSayParameters = (block: any, allBlocks?: IFlowBlock[], char
 };
 
 /**
+ * Valida i parametri di un blocco ANNOUNCE
+ */
+export const validateAnnounceParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!isMultilingualTextValid(block.parameters?.text)) {
+    return { 
+      valid: false, 
+      error: 'ANNOUNCE_NO_TEXT' 
+    };
+  }
+  
+  // ANNOUNCE non richiede una scena visibile, quindi è sempre valido se ha il testo
+  return { valid: true };
+};
+
+/**
  * Valida i parametri di un blocco ASK
  */
 export const validateAskParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
@@ -378,6 +393,8 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return validateDelayParameters(block);
     case 'SAY':
       return validateSayParameters(block, allBlocks, characters);
+    case 'ANNOUNCE':
+      return validateAnnounceParameters(block);
     case 'SAYCHAR':
       return validateSayCharParameters(block, allBlocks, characters);
     case 'ASK': {

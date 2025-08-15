@@ -224,6 +224,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.sayChar.noText': 'Nessun testo',
   'visualFlowEditor.blocks.sayChar.noCharacter': 'Nessun personaggio',
   
+  // ANNOUNCE Block
+  'visualFlowEditor.blocks.announce.title': 'Annuncio',
+  'visualFlowEditor.blocks.announce.description': 'Visualizza un messaggio di annuncio senza richiedere una scena',
+  'visualFlowEditor.blocks.announce.placeholder': 'Inserisci il testo dell\'annuncio...',
+  'visualFlowEditor.blocks.announce.textLabel': 'Testo Annuncio',
+  
   // Character Selector
   'visualFlowEditor.blocks.characterSelector.search': 'Cerca personaggi...',
   'visualFlowEditor.blocks.characterSelector.loading': 'Caricamento personaggi...',
@@ -235,6 +241,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.error': 'Errore di validazione',
   'visualFlowEditor.validation.delayNoDuration': 'Il blocco DELAY deve avere un valore di durata. Imposta la durata in millisecondi.',
   'visualFlowEditor.validation.sayNoText': 'Il blocco SAY deve avere del testo. Aggiungi almeno il testo in inglese.',
+  'visualFlowEditor.validation.announceNoText': 'Il blocco ANNOUNCE deve avere del testo. Aggiungi almeno il testo in inglese.',
   'visualFlowEditor.validation.askNoText': 'Il blocco ASK deve avere del testo. Aggiungi almeno il testo in inglese.',
   'visualFlowEditor.validation.goNoLabel': 'Il blocco GO deve avere una label selezionata. Scegli una label di destinazione.',
   'visualFlowEditor.validation.labelNoName': 'Il blocco LABEL deve avere un nome. Imposta il nome dell\'ancora.',
@@ -425,6 +432,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.multilingual.copyToAll': 'Copia in tutte le lingue',
   'visualFlowEditor.multilingual.copyFromEN': 'Copia da EN',
   'visualFlowEditor.multilingual.languages.en': 'Inglese',
+  'visualFlowEditor.multilingual.languages.it': 'Italiano',
   'visualFlowEditor.multilingual.languages.cs': 'Ceco',
   'visualFlowEditor.multilingual.languages.de': 'Tedesco',
   'visualFlowEditor.multilingual.languages.es': 'Spagnolo',

@@ -175,6 +175,13 @@ const GENERAL_COMMAND_COLORS: Record<string, BlockColorConfig> = {
     text: 'text-blue-300',
     dragHandle: 'bg-blue-700'
   },
+  'ANNOUNCE': {
+    background: 'bg-amber-950/90',
+    border: 'border-amber-700/80',
+    icon: 'bg-amber-900/80',
+    text: 'text-amber-300',
+    dragHandle: 'bg-amber-700'
+  },
   'CHANGECHAR': {
     background: 'bg-violet-950/90',
     border: 'border-violet-700/80',
@@ -244,13 +251,6 @@ const GENERAL_COMMAND_COLORS: Record<string, BlockColorConfig> = {
     icon: 'bg-amber-900/80',
     text: 'text-amber-300',
     dragHandle: 'bg-amber-700'
-  },
-  'ANNOUNCE': {
-    background: 'bg-blue-900/90',
-    border: 'border-blue-600/80',
-    icon: 'bg-blue-800/80',
-    text: 'text-blue-300',
-    dragHandle: 'bg-blue-600'
   },
   'SAYCHAR': {
     background: 'bg-indigo-900/90',
