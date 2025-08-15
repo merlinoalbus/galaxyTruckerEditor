@@ -477,7 +477,6 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.subScript.description': 'Выполнить подскрипт',
   'visualFlowEditor.tools.exitMenu.description': 'Выйти из меню',
   'visualFlowEditor.tools.say.description': 'Показать диалог',
-  'visualFlowEditor.tools.changeChar.description': 'Изменить персонажа',
   'visualFlowEditor.tools.set.description': 'Установить семафор',
   'visualFlowEditor.tools.ask.description': 'Задать вопрос',
   'visualFlowEditor.tools.hideChar.description': 'Скрыть персонажа',
@@ -564,6 +563,16 @@ export const visualFlowEditorTranslations = {
   // Tool Descriptions - Characters
   'visualFlowEditor.tools.askChar.description': 'Вопрос с персонажем',
   'visualFlowEditor.tools.focusChar.description': 'Сфокусироваться на персонаже',
+  'visualFlowEditor.tools.changeChar.description': 'Изменить изображение персонажа',
+  
+  // CHANGECHAR Block
+  'visualFlowEditor.blocks.changeChar.title': 'Изменить Персонажа',
+  'visualFlowEditor.blocks.changeChar.description': 'Изменяет изображение видимого персонажа',
+  'visualFlowEditor.blocks.changeChar.selectCharacter': 'Выбрать персонажа',
+  'visualFlowEditor.blocks.changeChar.selectNewImage': 'Новое изображение',
+  'visualFlowEditor.blocks.changeChar.noVisibleCharacters': 'Нет видимых персонажей с несколькими изображениями',
+  'visualFlowEditor.blocks.changeChar.selectCharacterFirst': 'Сначала выберите персонажа',
+  'visualFlowEditor.blocks.changeChar.noImagesAvailable': 'Нет доступных альтернативных изображений',
   
   // Tool Descriptions - System
   'visualFlowEditor.tools.setFlightStatusBar.description': 'Установить строку состояния полета',

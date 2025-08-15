@@ -3,9 +3,9 @@ SCRIPTS
   SCRIPT aaa_pippo
     ShowDlgScene
     ShowChar bartender right
-    HideChar bartender
-    ShowChar artifact_runner left
+    ShowChar ambassador left
     Say "Giovanni[g(|no)] [NAME] prova pr[n(1:ova|2:ima|6:ippo)] [NAME][img(achievements\images\at__9_normal.jpg)*3]"
+    ChangeChar bartender campaign/bartender-warehouse.png
     Ask "Say"
     MENU
       OPT "asss"

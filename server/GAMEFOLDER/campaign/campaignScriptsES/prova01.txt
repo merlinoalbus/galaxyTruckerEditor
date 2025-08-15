@@ -3,9 +3,9 @@ SCRIPTS
   SCRIPT aaa_pippo
     ShowDlgScene
     ShowChar bartender right
-    HideChar bartender
-    ShowChar artifact_runner left
+    ShowChar ambassador left
     Say "Giovanni[g(|no)]"
+    ChangeChar bartender campaign/bartender-warehouse.png
     Ask "Say"
     MENU
       OPT "asss"

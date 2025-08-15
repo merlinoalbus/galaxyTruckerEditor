@@ -477,7 +477,6 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.subScript.description': 'Spustit podskript',
   'visualFlowEditor.tools.exitMenu.description': 'Ukončit menu',
   'visualFlowEditor.tools.say.description': 'Zobrazit dialog',
-  'visualFlowEditor.tools.changeChar.description': 'Změnit postavu',
   'visualFlowEditor.tools.set.description': 'Nastavit semafor',
   'visualFlowEditor.tools.ask.description': 'Položit otázku',
   'visualFlowEditor.tools.hideChar.description': 'Skrýt postavu',
@@ -564,6 +563,16 @@ export const visualFlowEditorTranslations = {
   // Tool Descriptions - Characters
   'visualFlowEditor.tools.askChar.description': 'Otázka s postavou',
   'visualFlowEditor.tools.focusChar.description': 'Zaměřit na postavu',
+  'visualFlowEditor.tools.changeChar.description': 'Změnit obrázek postavy',
+  
+  // CHANGECHAR Block
+  'visualFlowEditor.blocks.changeChar.title': 'Změnit Postavu',
+  'visualFlowEditor.blocks.changeChar.description': 'Změní obrázek viditelné postavy',
+  'visualFlowEditor.blocks.changeChar.selectCharacter': 'Vybrat postavu',
+  'visualFlowEditor.blocks.changeChar.selectNewImage': 'Nový obrázek',
+  'visualFlowEditor.blocks.changeChar.noVisibleCharacters': 'Žádné viditelné postavy s více obrázky',
+  'visualFlowEditor.blocks.changeChar.selectCharacterFirst': 'Nejprve vyberte postavu',
+  'visualFlowEditor.blocks.changeChar.noImagesAvailable': 'Žádné alternativní obrázky nejsou k dispozici',
   
   // Tool Descriptions - System
   'visualFlowEditor.tools.setFlightStatusBar.description': 'Nastavit stavový řádek letu',

@@ -922,6 +922,13 @@ export type TranslationKey =
   | 'visualFlowEditor.blocks.hideChar.title'
   | 'visualFlowEditor.blocks.hideChar.description'
   | 'visualFlowEditor.blocks.hideChar.selectCharacter'
+  | 'visualFlowEditor.blocks.changeChar.title'
+  | 'visualFlowEditor.blocks.changeChar.description'
+  | 'visualFlowEditor.blocks.changeChar.selectCharacter'
+  | 'visualFlowEditor.blocks.changeChar.selectNewImage'
+  | 'visualFlowEditor.blocks.changeChar.noVisibleCharacters'
+  | 'visualFlowEditor.blocks.changeChar.selectCharacterFirst'
+  | 'visualFlowEditor.blocks.changeChar.noImagesAvailable'
   
   // Visual Flow Editor - Character Selector
   | 'visualFlowEditor.blocks.characterSelector.search'

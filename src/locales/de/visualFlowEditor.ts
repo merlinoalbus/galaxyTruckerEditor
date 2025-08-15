@@ -477,7 +477,6 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.subScript.description': 'Unterskript ausführen',
   'visualFlowEditor.tools.exitMenu.description': 'Menü verlassen',
   'visualFlowEditor.tools.say.description': 'Dialog anzeigen',
-  'visualFlowEditor.tools.changeChar.description': 'Charakter wechseln',
   'visualFlowEditor.tools.set.description': 'Semaphor setzen',
   'visualFlowEditor.tools.ask.description': 'Frage stellen',
   'visualFlowEditor.tools.hideChar.description': 'Charakter verstecken',
@@ -564,6 +563,16 @@ export const visualFlowEditorTranslations = {
   // Tool Descriptions - Characters
   'visualFlowEditor.tools.askChar.description': 'Frage mit Charakter',
   'visualFlowEditor.tools.focusChar.description': 'Auf Charakter fokussieren',
+  'visualFlowEditor.tools.changeChar.description': 'Charakterbild ändern',
+  
+  // CHANGECHAR Block
+  'visualFlowEditor.blocks.changeChar.title': 'Charakter Ändern',
+  'visualFlowEditor.blocks.changeChar.description': 'Ändert das Bild eines sichtbaren Charakters',
+  'visualFlowEditor.blocks.changeChar.selectCharacter': 'Charakter auswählen',
+  'visualFlowEditor.blocks.changeChar.selectNewImage': 'Neues Bild',
+  'visualFlowEditor.blocks.changeChar.noVisibleCharacters': 'Keine sichtbaren Charaktere mit mehreren Bildern',
+  'visualFlowEditor.blocks.changeChar.selectCharacterFirst': 'Zuerst einen Charakter auswählen',
+  'visualFlowEditor.blocks.changeChar.noImagesAvailable': 'Keine alternativen Bilder verfügbar',
   
   // Tool Descriptions - System
   'visualFlowEditor.tools.setFlightStatusBar.description': 'Flug-Statusleiste setzen',

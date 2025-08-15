@@ -160,6 +160,37 @@ export function simulateSceneExecution(
             lastModifiedCharacter = firstVisible ? firstVisible.nomepersonaggio : null;
           }
         }
+      } else if (block.type === 'CHANGECHAR' && block.parameters?.character && block.parameters?.image) {
+        if (sceneStack.length > 0) {
+          const currentScene = sceneStack[sceneStack.length - 1];
+          const charIndex = currentScene.personaggi.findIndex(
+            p => p.nomepersonaggio === block.parameters!.character && p.visible
+          );
+          if (charIndex >= 0) {
+            // Trova l'immagine selezionata dai dati del personaggio
+            if (charactersData) {
+              const charData = charactersData.find(c => c.nomepersonaggio === block.parameters!.character);
+              if (charData && charData.listaimmagini) {
+                const selectedImage = charData.listaimmagini.find(img => 
+                  img.percorso === block.parameters!.image ||
+                  img.nomefile === block.parameters!.image // fallback per compatibilità
+                );
+                
+                if (selectedImage) {
+                  // Aggiorna la lastImmagine del personaggio
+                  currentScene.personaggi[charIndex].lastImmagine = {
+                    nomefile: selectedImage.nomefile || '',
+                    percorso: selectedImage.percorso,
+                    binary: selectedImage.binary
+                  };
+                  
+                  // Imposta questo personaggio come lastModifiedCharacter
+                  lastModifiedCharacter = block.parameters.character;
+                }
+              }
+            }
+          }
+        }
       }
       
       // Ricorsione per blocchi annidati

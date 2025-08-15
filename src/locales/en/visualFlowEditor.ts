@@ -204,6 +204,15 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.hideChar.description': 'Hides a character from the scene',
   'visualFlowEditor.blocks.hideChar.selectCharacter': 'Select character to hide',
   
+  // CHANGECHAR Block
+  'visualFlowEditor.blocks.changeChar.title': 'Change Character',
+  'visualFlowEditor.blocks.changeChar.description': 'Changes the image of a visible character',
+  'visualFlowEditor.blocks.changeChar.selectCharacter': 'Select character',
+  'visualFlowEditor.blocks.changeChar.selectNewImage': 'New image',
+  'visualFlowEditor.blocks.changeChar.noVisibleCharacters': 'No visible characters with multiple images',
+  'visualFlowEditor.blocks.changeChar.selectCharacterFirst': 'Select a character first',
+  'visualFlowEditor.blocks.changeChar.noImagesAvailable': 'No alternative images available',
+  
   // Character Selector
   'visualFlowEditor.blocks.characterSelector.search': 'Search characters...',
   'visualFlowEditor.blocks.characterSelector.loading': 'Loading characters...',
@@ -252,6 +261,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.hidecharNoScene': 'HIDECHAR requires an active scene. Add SHOWDLGSCENE before this block.',
   'visualFlowEditor.validation.hidecharNoVisibleCharacters': 'HIDECHAR cannot be used: no visible characters in the scene.',
   'visualFlowEditor.validation.hidecharCharacterNotVisible': 'The selected character is not visible in the scene.',
+  'visualFlowEditor.validation.changecharNoCharacter': 'CHANGECHAR block must specify which character to change. Select a character from the list.',
+  'visualFlowEditor.validation.changecharNoImage': 'CHANGECHAR block must specify the new image. Select an image from the list.',
+  'visualFlowEditor.validation.changecharNoScene': 'CHANGECHAR requires an active scene. Add SHOWDLGSCENE before this block.',
+  'visualFlowEditor.validation.changecharNoVisibleCharacters': 'CHANGECHAR cannot be used: no visible characters in the scene.',
+  'visualFlowEditor.validation.changecharCharacterNotVisible': 'The selected character is not visible in the scene.',
+  'visualFlowEditor.validation.changecharImageNotInList': 'The selected image is not available for this character.',
   'visualFlowEditor.validation.sayNoScene': 'SAY requires an active scene. Add SHOWDLGSCENE before this block.',
   'visualFlowEditor.validation.askNoScene': 'ASK requires an active scene. Add SHOWDLGSCENE before this block.',
   'visualFlowEditor.validation.askIfInvalidThen': 'After ASK, IF block\'s THEN branch must start with MENU or GO.',

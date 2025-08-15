@@ -204,6 +204,15 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.hideChar.description': 'Nasconde un personaggio dalla scena',
   'visualFlowEditor.blocks.hideChar.selectCharacter': 'Seleziona personaggio da nascondere',
   
+  // CHANGECHAR Block
+  'visualFlowEditor.blocks.changeChar.title': 'Cambia Personaggio',
+  'visualFlowEditor.blocks.changeChar.description': 'Cambia l\'immagine di un personaggio visibile',
+  'visualFlowEditor.blocks.changeChar.selectCharacter': 'Seleziona personaggio',
+  'visualFlowEditor.blocks.changeChar.selectNewImage': 'Nuova immagine',
+  'visualFlowEditor.blocks.changeChar.noVisibleCharacters': 'Nessun personaggio visibile con immagini multiple',
+  'visualFlowEditor.blocks.changeChar.selectCharacterFirst': 'Seleziona prima un personaggio',
+  'visualFlowEditor.blocks.changeChar.noImagesAvailable': 'Nessuna immagine alternativa disponibile',
+  
   // Character Selector
   'visualFlowEditor.blocks.characterSelector.search': 'Cerca personaggi...',
   'visualFlowEditor.blocks.characterSelector.loading': 'Caricamento personaggi...',
@@ -252,6 +261,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.hidecharNoScene': 'HIDECHAR richiede una scena attiva. Aggiungi SHOWDLGSCENE prima di questo blocco.',
   'visualFlowEditor.validation.hidecharNoVisibleCharacters': 'HIDECHAR non può essere usato: nessun personaggio visibile nella scena.',
   'visualFlowEditor.validation.hidecharCharacterNotVisible': 'Il personaggio selezionato non è visibile nella scena.',
+  'visualFlowEditor.validation.changecharNoCharacter': 'Il blocco CHANGECHAR deve specificare quale personaggio cambiare. Seleziona un personaggio dalla lista.',
+  'visualFlowEditor.validation.changecharNoImage': 'Il blocco CHANGECHAR deve specificare la nuova immagine. Seleziona un\'immagine dalla lista.',
+  'visualFlowEditor.validation.changecharNoScene': 'CHANGECHAR richiede una scena attiva. Aggiungi SHOWDLGSCENE prima di questo blocco.',
+  'visualFlowEditor.validation.changecharNoVisibleCharacters': 'CHANGECHAR non può essere usato: nessun personaggio visibile nella scena.',
+  'visualFlowEditor.validation.changecharCharacterNotVisible': 'Il personaggio selezionato non è visibile nella scena.',
+  'visualFlowEditor.validation.changecharImageNotInList': 'L\'immagine selezionata non è disponibile per questo personaggio.',
   'visualFlowEditor.validation.sayNoScene': 'SAY richiede una scena attiva. Aggiungi SHOWDLGSCENE prima di questo blocco.',
   'visualFlowEditor.validation.askNoScene': 'ASK richiede una scena attiva. Aggiungi SHOWDLGSCENE prima di questo blocco.',
   'visualFlowEditor.validation.askIfInvalidThen': 'Dopo ASK, il ramo THEN del blocco IF deve iniziare con MENU o GO.',

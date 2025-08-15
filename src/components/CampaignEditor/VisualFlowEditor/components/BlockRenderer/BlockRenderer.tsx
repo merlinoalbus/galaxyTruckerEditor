@@ -7,6 +7,7 @@ import { OptBlock } from '../blocks/OptBlock/OptBlock';
 import { MissionBlock } from '../blocks/MissionBlock/MissionBlock';
 import { BuildBlock } from '../blocks/BuildBlock/BuildBlock';
 import { FlightBlock } from '../blocks/FlightBlock/FlightBlock';
+import { ChangeCharBlock } from '../blocks/ChangeCharBlock/ChangeCharBlock';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 interface BlockRendererProps {
@@ -260,6 +261,24 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           isZoomed={isZoomed}
           isInvalid={isInvalid}
           validationType={validationType}
+        />
+      </div>
+    );
+  }
+
+  // Render CHANGECHAR block
+  if (block.type === 'CHANGECHAR') {
+    return (
+      <div data-block-id={block.id}>
+        <ChangeCharBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          sessionData={sessionData}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          allBlocks={allBlocks}
         />
       </div>
     );

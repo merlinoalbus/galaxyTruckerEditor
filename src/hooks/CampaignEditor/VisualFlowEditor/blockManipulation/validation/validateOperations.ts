@@ -163,6 +163,10 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           'HIDECHAR_NO_SCENE', 
           'HIDECHAR_NO_VISIBLE_CHARACTERS',
           'HIDECHAR_CHARACTER_NOT_VISIBLE',
+          'CHANGECHAR_NO_SCENE',
+          'CHANGECHAR_NO_VISIBLE_CHARACTERS',
+          'CHANGECHAR_CHARACTER_NOT_VISIBLE',
+          'CHANGECHAR_IMAGE_NOT_IN_LIST',
           'SAY_NO_SCENE',
           'ASK_NO_SCENE',
           'ASK_IF_INVALID_THEN',
@@ -248,6 +252,36 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
             message = t ?
               t('visualFlowEditor.validation.hidecharCharacterNotVisible')
               : 'The selected character is not visible in the scene.';
+            break;
+          case 'CHANGECHAR_NO_CHARACTER':
+            message = t ?
+              t('visualFlowEditor.validation.changecharNoCharacter')
+              : 'CHANGECHAR block must specify which character to change. Select a character from the list.';
+            break;
+          case 'CHANGECHAR_NO_IMAGE':
+            message = t ?
+              t('visualFlowEditor.validation.changecharNoImage')
+              : 'CHANGECHAR block must specify the new image. Select an image from the list.';
+            break;
+          case 'CHANGECHAR_NO_SCENE':
+            message = t ?
+              t('visualFlowEditor.validation.changecharNoScene')
+              : 'CHANGECHAR requires an active scene. Add SHOWDLGSCENE before this block.';
+            break;
+          case 'CHANGECHAR_NO_VISIBLE_CHARACTERS':
+            message = t ?
+              t('visualFlowEditor.validation.changecharNoVisibleCharacters')
+              : 'CHANGECHAR cannot be used: no visible characters in the scene.';
+            break;
+          case 'CHANGECHAR_CHARACTER_NOT_VISIBLE':
+            message = t ?
+              t('visualFlowEditor.validation.changecharCharacterNotVisible')
+              : 'The selected character is not visible in the scene.';
+            break;
+          case 'CHANGECHAR_IMAGE_NOT_IN_LIST':
+            message = t ?
+              t('visualFlowEditor.validation.changecharImageNotInList')
+              : 'The selected image is not available for this character.';
             break;
           case 'SAY_NO_SCENE':
             message = t ?
