@@ -49,22 +49,41 @@ export type BlockType =
   | 'TEXT' | 'SAY' | 'ASK'
   // Dialog Scene
   | 'SHOWDLGSCENE' | 'HIDEDLGSCENE'
+  // Character Management
+  | 'SHOWCHAR' | 'HIDECHAR' | 'CHANGECHAR' | 'SAYCHAR' | 'ASKCHAR' | 'FOCUSCHAR'
   // Menu/Options
   | 'MENU' | 'OPT' | 'EXIT_MENU' 
   // Flow Control
-  | 'IF' | 'ELSE' | 'GO' | 'LABEL' | 'SUB_SCRIPT'
+  | 'IF' | 'ELSE' | 'GO' | 'LABEL' | 'SUB_SCRIPT' | 'RETURN' | 'ANNOUNCE'
   // Variables/Progress
-  | 'SET_VARIABLE' | 'SET_ACHIEVEMENT' | 'SET_PROGRESS'
+  | 'SET_VARIABLE' | 'SET_ACHIEVEMENT' | 'SET_PROGRESS' | 'SET' | 'SET_TO' | 'ADD' | 'RESET'
+  | 'SETFOCUS' | 'RESETFOCUS' | 'SETFOCUSIFCREDITS'
   // Characters/Ships
-  | 'ADD_OPPONENT' | 'SET_SHIP' | 'SPAWN_SHIP'
+  | 'ADD_OPPONENT' | 'SET_SHIP' | 'SPAWN_SHIP' | 'ADDOPPONENT' | 'SETSHIPTYPE' | 'ADDPARTTOSHIP' 
+  | 'ADDPARTTOASIDESLOT' | 'ADDSHIPPARTS' | 'MODIFYOPPONENTSBUILDSPEED' | 'SETTURNBASED'
   // Cards/Items
   | 'GIVE_CARD' | 'GIVE_PILE'
   // Build/Tutorial
   | 'BUILD' | 'BUILD_TUTORIAL' | 'FLIGHT'
   // System
-  | 'DELAY'
+  | 'DELAY' | 'SAVESTATE' | 'LOADSTATE' | 'QUITCAMPAIGN' | 'SETFLIGHTSTATUSBAR'
   // Mission/Node
-  | 'NEXT_MISSION' | 'NEXT_NODE' | 'SET_NODE_STATUS'
+  | 'NEXT_MISSION' | 'NEXT_NODE' | 'SET_NODE_STATUS' | 'FINISH_MISSION' | 'ACT_MISSION'
+  | 'SETMISSIONASFAILED' | 'SETMISSIONASCOMPLETED' | 'ALLSHIPSGIVEUP' | 'GIVEUPFLIGHT'
+  | 'SETDECKPREPARATIONSCRIPT' | 'SETFLIGHTDECKPREPARATIONSCRIPT' | 'SETADVPILE' 
+  | 'SETSECRETADVPILE' | 'SETSPECCONDITION'
+  // Map and Navigation
+  | 'SHOWPATH' | 'SHOWNODE' | 'HIDEPATH' | 'HIDENODE' | 'HIDEALLPATHS' | 'ADDNODE' | 'SETNODEKNOWN'
+  | 'CENTERMAPBYNODE' | 'CENTERMAPBYPATH' | 'MOVEPLAYERTONODE' | 'SHOWBUTTON' | 'HIDEBUTTON'
+  // Credits
+  | 'ADDCREDITS' | 'SETCREDITS' | 'ADDMISSIONCREDITS' | 'ADDMISSIONCREDITSBYRESULT'
+  | 'SUBOPPONENTCREDITSBYRESULT' | 'ADDOPPONENTSCREDITS'
+  // Achievement
+  | 'SETACHIEVEMENTPROGRESS' | 'SETACHIEVEMENTATTEMPT' | 'UNLOCKACHIEVEMENT'
+  | 'UNLOCKSHIPPLAN' | 'UNLOCKSHUTTLES'
+  // Info and Help
+  | 'ADDINFOWINDOW' | 'SHOWINFOWINDOW' | 'SHOWHELPIMAGE' | 'BUILDINGHELPSCRIPT'
+  | 'FLIGHTHELPSCRIPT' | 'ALIENHELPSCRIPT'
   // Unknown
   | 'UNKNOWN_COMMAND';
 
@@ -75,6 +94,7 @@ export interface BlockParameters {
   achievement?: string;
   shiptype?: string;
   character?: string;
+  position?: 'left' | 'right' | 'top' | 'bottom' | 'lefttop' | 'leftbottom' | 'righttop' | 'rightbottom'; // For SHOWCHAR
   pile?: string;
   card?: string;
   progress?: string;

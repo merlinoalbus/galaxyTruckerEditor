@@ -243,6 +243,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askWithoutMenu': 'ASK-Block muss von einem MENU-Block gefolgt werden. Dieser ASK ist der letzte Block und hat kein folgendes MENU.',
   'visualFlowEditor.validation.goWithoutLabel': 'Der GO-Block erfordert mindestens einen LABEL-Block im Skript. Fügen Sie einen LABEL-Block hinzu, bevor Sie GO verwenden.',
   
+  
   // Scene Dialog Validation Messages
   'visualFlowEditor.validation.dialogOutsideScene': '{blockType}-Block kann nur innerhalb einer Dialogszene verwendet werden. Fügen Sie einen SHOWDLGSCENE-Block hinzu, bevor Sie {blockType} verwenden.',
   'visualFlowEditor.validation.characterOutsideScene': '{blockType}-Block kann nur innerhalb einer Dialogszene verwendet werden. Fügen Sie einen SHOWDLGSCENE-Block hinzu, bevor Sie {blockType} verwenden.',

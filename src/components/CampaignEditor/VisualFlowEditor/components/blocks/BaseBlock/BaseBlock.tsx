@@ -37,6 +37,7 @@ interface BaseBlockProps {
   
   // Mostra avatar per blocchi SAY/ASK
   showAvatar?: boolean;
+  avatarCharacter?: any; // Personaggio da mostrare nell'avatar
 }
 
 /**
@@ -58,7 +59,8 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
   children,
   hideControls = false,
   extraControls,
-  showAvatar = false
+  showAvatar = false,
+  avatarCharacter
 }) => {
   const { t } = useTranslation();
   // Stato interno per collapse se non è controllato dall'esterno
@@ -259,7 +261,7 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
         {/* Avatar per SAY/ASK sempre visibile */}
         {showAvatar && (
           <div className="ml-auto mr-2">
-            <CharacterAvatar />
+            <CharacterAvatar character={avatarCharacter} />
           </div>
         )}
       </div>

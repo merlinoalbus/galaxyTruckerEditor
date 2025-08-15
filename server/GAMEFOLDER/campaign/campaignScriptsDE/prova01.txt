@@ -2,6 +2,9 @@ SCRIPTS
 
   SCRIPT aaa_pippo
     ShowDlgScene
+    ShowChar bartender right
+    HideChar bartender
+    ShowChar artifact_runner left
     Say "Giovanni[g(|no)] [NAME] prova pr[n(1:ova|2:ima|6:ippo)] [NAME][img(achievements\images\at__9_normal.jpg)*3]"
     Ask "Say"
     MENU

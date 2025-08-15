@@ -3,6 +3,9 @@
  * Funzioni per validare che i parametri dei blocchi siano valorizzati correttamente
  */
 
+import { simulateSceneExecution } from '@/utils/CampaignEditor/VisualFlowEditor/sceneSimulation';
+import type { IFlowBlock } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
+
 /**
  * Verifica se un testo multilingua è valorizzato (deve avere almeno EN)
  */
@@ -38,26 +41,90 @@ export const validateDelayParameters = (block: any): { valid: boolean; error?: s
 /**
  * Valida i parametri di un blocco SAY
  */
-export const validateSayParameters = (block: any): { valid: boolean; error?: string } => {
+export const validateSayParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
   if (!isMultilingualTextValid(block.parameters?.text)) {
     return { 
       valid: false, 
       error: 'SAY_NO_TEXT' 
     };
   }
+  
+  // SAY può essere anonimo (senza personaggio) ma deve esserci una scena
+  if (allBlocks && block.id) {
+    const sceneState = simulateSceneExecution(allBlocks, block.id, characters);
+    if (!sceneState.isInDialogScene) {
+      return {
+        valid: false,
+        error: 'SAY_NO_SCENE'
+      };
+    }
+  }
+  
   return { valid: true };
 };
 
 /**
  * Valida i parametri di un blocco ASK
  */
-export const validateAskParameters = (block: any): { valid: boolean; error?: string } => {
+export const validateAskParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
   if (!isMultilingualTextValid(block.parameters?.text)) {
     return { 
       valid: false, 
       error: 'ASK_NO_TEXT' 
     };
   }
+  
+  // ASK può essere anonimo (senza personaggio) ma deve esserci una scena
+  if (allBlocks && block.id) {
+    const sceneState = simulateSceneExecution(allBlocks, block.id, characters);
+    if (!sceneState.isInDialogScene) {
+      return {
+        valid: false,
+        error: 'ASK_NO_SCENE'
+      };
+    }
+  }
+  
+  return { valid: true };
+};
+
+/**
+ * Valida che dopo un ASK ci sia un IF con MENU/GO come primi elementi
+ */
+export const validateAskIfStructure = (askBlock: any, allBlocks: IFlowBlock[]): { valid: boolean; error?: string } => {
+  // Trova il prossimo blocco dopo ASK
+  const askIndex = allBlocks.findIndex(b => b.id === askBlock.id);
+  if (askIndex === -1 || askIndex === allBlocks.length - 1) {
+    return { valid: true }; // Non c'è nulla dopo, è ok
+  }
+  
+  const nextBlock = allBlocks[askIndex + 1];
+  
+  // Se dopo ASK c'è un IF
+  if (nextBlock.type === 'IF') {
+    // Controlla il ramo THEN
+    if (nextBlock.thenBlocks && nextBlock.thenBlocks.length > 0) {
+      const firstThenBlock = nextBlock.thenBlocks[0];
+      if (firstThenBlock.type !== 'MENU' && firstThenBlock.type !== 'GO') {
+        return {
+          valid: false,
+          error: 'ASK_IF_INVALID_THEN'
+        };
+      }
+    }
+    
+    // Controlla il ramo ELSE se esiste
+    if (nextBlock.elseBlocks && nextBlock.elseBlocks.length > 0) {
+      const firstElseBlock = nextBlock.elseBlocks[0];
+      if (firstElseBlock.type !== 'MENU' && firstElseBlock.type !== 'GO') {
+        return {
+          valid: false,
+          error: 'ASK_IF_INVALID_ELSE'
+        };
+      }
+    }
+  }
+  
   return { valid: true };
 };
 
@@ -116,16 +183,107 @@ export const validateOptParameters = (block: any): { valid: boolean; error?: str
 };
 
 /**
+ * Valida i parametri di un blocco SHOWCHAR
+ */
+export const validateShowCharParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
+  // Prima controlla i parametri base
+  if (!block.parameters?.character || block.parameters.character.trim().length === 0) {
+    return { 
+      valid: false, 
+      error: 'SHOWCHAR_NO_CHARACTER' 
+    };
+  }
+  if (!block.parameters?.position) {
+    return { 
+      valid: false, 
+      error: 'SHOWCHAR_NO_POSITION' 
+    };
+  }
+  
+  // Se abbiamo il contesto, verifica che siamo in una scena
+  if (allBlocks && block.id) {
+    const sceneState = simulateSceneExecution(allBlocks, block.id, characters);
+    if (!sceneState.isInDialogScene) {
+      return {
+        valid: false,
+        error: 'SHOWCHAR_NO_SCENE'
+      };
+    }
+  }
+  
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri di un blocco HIDECHAR
+ */
+export const validateHideCharParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
+  // Se abbiamo il contesto, facciamo prima le validazioni di contesto
+  if (allBlocks && block.id) {
+    const sceneState = simulateSceneExecution(allBlocks, block.id, characters);
+    
+    // Verifica che siamo in una scena
+    if (!sceneState.isInDialogScene) {
+      return {
+        valid: false,
+        error: 'HIDECHAR_NO_SCENE'
+      };
+    }
+    
+    // Verifica che ci sia almeno un personaggio visibile nella scena
+    if (sceneState.currentScene) {
+      const visibleCharacters = sceneState.currentScene.personaggi.filter(p => p.visible);
+      if (visibleCharacters.length === 0) {
+        return {
+          valid: false,
+          error: 'HIDECHAR_NO_VISIBLE_CHARACTERS'
+        };
+      }
+      
+      // Se un personaggio è già selezionato, verifica che sia effettivamente visibile
+      if (block.parameters?.character) {
+        const selectedChar = visibleCharacters.find(p => p.nomepersonaggio === block.parameters.character);
+        if (!selectedChar) {
+          return {
+            valid: false,
+            error: 'HIDECHAR_CHARACTER_NOT_VISIBLE'
+          };
+        }
+      }
+    }
+  }
+  
+  // Verifica che sia selezionato un personaggio
+  if (!block.parameters?.character || block.parameters.character.trim().length === 0) {
+    return { 
+      valid: false, 
+      error: 'HIDECHAR_NO_CHARACTER' 
+    };
+  }
+  
+  return { valid: true };
+};
+
+/**
  * Valida i parametri di un blocco in base al suo tipo
  */
-export const validateBlockParameters = (block: any): { valid: boolean; error?: string } => {
+export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
   switch (block.type) {
     case 'DELAY':
       return validateDelayParameters(block);
     case 'SAY':
-      return validateSayParameters(block);
-    case 'ASK':
-      return validateAskParameters(block);
+      return validateSayParameters(block, allBlocks, characters);
+    case 'ASK': {
+      // Prima valida i parametri di ASK
+      const askValidation = validateAskParameters(block, allBlocks, characters);
+      if (!askValidation.valid) return askValidation;
+      
+      // Poi valida la struttura ASK-IF se abbiamo il contesto
+      if (allBlocks) {
+        return validateAskIfStructure(block, allBlocks);
+      }
+      return askValidation;
+    }
     case 'GO':
       return validateGoParameters(block);
     case 'LABEL':
@@ -134,7 +292,11 @@ export const validateBlockParameters = (block: any): { valid: boolean; error?: s
       return validateSubScriptParameters(block);
     case 'OPT':
       return validateOptParameters(block);
-    // EXIT_MENU non ha parametri da validare
+    case 'SHOWCHAR':
+      return validateShowCharParameters(block, allBlocks, characters);
+    case 'HIDECHAR':
+      return validateHideCharParameters(block, allBlocks, characters);
+    // EXIT_MENU, SHOWDLGSCENE, HIDEDLGSCENE non hanno parametri da validare
     default:
       return { valid: true };
   }
