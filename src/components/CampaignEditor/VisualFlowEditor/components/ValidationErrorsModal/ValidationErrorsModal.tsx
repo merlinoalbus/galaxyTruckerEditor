@@ -1,5 +1,5 @@
-import React from 'react';
-import { X, AlertTriangle, ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, AlertTriangle, ChevronRight, ShieldOff, Shield } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from '@/locales';
 
@@ -17,13 +17,17 @@ interface ValidationErrorsModalProps {
   displayType?: 'errors' | 'warnings';
   onClose: () => void;
   onNavigateToBlock?: (blockId: string) => void;
+  bypassedErrors?: Set<string>;
+  onToggleBypass?: (blockId: string) => void;
 }
 
 export const ValidationErrorsModal: React.FC<ValidationErrorsModalProps> = ({ 
   errors, 
   displayType = 'errors',
   onClose,
-  onNavigateToBlock 
+  onNavigateToBlock,
+  bypassedErrors = new Set(),
+  onToggleBypass
 }) => {
   const { t } = useTranslation();
   
@@ -154,19 +158,49 @@ export const ValidationErrorsModal: React.FC<ValidationErrorsModalProps> = ({
                         )}
                       </div>
                       
-                      {/* Navigate button */}
-                      {onNavigateToBlock && (
-                        <button
-                          onClick={() => {
-                            onNavigateToBlock(error.blockId);
-                            onClose();
-                          }}
-                          className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded transition-colors"
-                          title={t('visualFlowEditor.validation.goToBlockTitle')}
-                        >
-                          {t('visualFlowEditor.validation.goToBlock')}
-                        </button>
-                      )}
+                      {/* Action buttons */}
+                      <div className="flex items-center gap-2">
+                        {/* Bypass button - solo per errori, non per warning */}
+                        {displayType === 'errors' && onToggleBypass && (
+                          <button
+                            onClick={() => onToggleBypass(error.blockId)}
+                            className={`px-3 py-1 text-sm rounded transition-colors flex items-center gap-1 ${
+                              bypassedErrors.has(error.blockId)
+                                ? 'bg-orange-600 hover:bg-orange-700 text-white'
+                                : 'bg-slate-700 hover:bg-slate-600 text-gray-300'
+                            }`}
+                            title={bypassedErrors.has(error.blockId) 
+                              ? 'Rimuovi bypass per questo errore' 
+                              : 'Bypass questo errore (salva comunque)'}
+                          >
+                            {bypassedErrors.has(error.blockId) ? (
+                              <>
+                                <ShieldOff className="w-3 h-3" />
+                                <span>Bypassed</span>
+                              </>
+                            ) : (
+                              <>
+                                <Shield className="w-3 h-3" />
+                                <span>Bypass</span>
+                              </>
+                            )}
+                          </button>
+                        )}
+                        
+                        {/* Navigate button */}
+                        {onNavigateToBlock && (
+                          <button
+                            onClick={() => {
+                              onNavigateToBlock(error.blockId);
+                              onClose();
+                            }}
+                            className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded transition-colors"
+                            title={t('visualFlowEditor.validation.goToBlockTitle')}
+                          >
+                            {t('visualFlowEditor.validation.goToBlock')}
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -177,10 +211,16 @@ export const ValidationErrorsModal: React.FC<ValidationErrorsModalProps> = ({
         
         {/* Footer */}
         <div className="p-4 border-t border-slate-700 bg-slate-800/50">
-          <div className="text-sm text-gray-400">
+          <div className="flex items-center justify-between text-sm text-gray-400">
             <p>
               ℹ️ {t('visualFlowEditor.validation.footer')}
             </p>
+            {displayType === 'errors' && bypassedErrors.size > 0 && (
+              <div className="flex items-center gap-2 text-orange-400">
+                <ShieldOff className="w-4 h-4" />
+                <span>{bypassedErrors.size} error{bypassedErrors.size > 1 ? 'i' : 'e'} bypassat{bypassedErrors.size > 1 ? 'i' : 'o'}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -17,6 +17,9 @@ interface ChangeCharBlockProps {
   isInvalid?: boolean;
   validationType?: 'error' | 'warning';
   allBlocks?: IFlowBlock[];
+  collapseAllTrigger?: number;
+  expandAllTrigger?: number;
+  globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
 }
 
 export const ChangeCharBlock: React.FC<ChangeCharBlockProps> = ({
@@ -27,12 +30,32 @@ export const ChangeCharBlock: React.FC<ChangeCharBlockProps> = ({
   sessionData,
   isInvalid = false,
   validationType,
-  allBlocks = []
+  allBlocks = [],
+  collapseAllTrigger = 0,
+  expandAllTrigger = 0,
+  globalCollapseState = 'manual'
 }) => {
   const { t } = useTranslation();
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    return globalCollapseState === 'expanded' ? false : true;
+  });
   const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Reagisci ai trigger di collapse/expand all
+  useEffect(() => {
+    if (collapseAllTrigger > 0) {
+      setIsCollapsed(true);
+      setIsManuallyExpanded(false);
+    }
+  }, [collapseAllTrigger]);
+  
+  useEffect(() => {
+    if (expandAllTrigger > 0) {
+      setIsCollapsed(false);
+      setIsManuallyExpanded(true);
+    }
+  }, [expandAllTrigger]);
   
   // I characters vengono passati da sessionData, wrappati in useMemo per evitare warning
   const characters = useMemo(() => sessionData?.characters || [], [sessionData?.characters]);

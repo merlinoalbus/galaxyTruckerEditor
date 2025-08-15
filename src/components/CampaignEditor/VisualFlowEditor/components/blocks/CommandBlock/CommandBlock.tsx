@@ -26,6 +26,9 @@ interface CommandBlockProps {
   onGoToLabel?: (labelName: string) => void;
   onNavigateToSubScript?: (scriptName: string, parentBlock: IFlowBlock) => void;
   allBlocks?: IFlowBlock[];
+  collapseAllTrigger?: number;
+  expandAllTrigger?: number;
+  globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
 }
 
 export const CommandBlock: React.FC<CommandBlockProps> = ({
@@ -38,15 +41,37 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   validationType,
   onGoToLabel,
   onNavigateToSubScript,
-  allBlocks = []
+  allBlocks = [],
+  collapseAllTrigger = 0,
+  expandAllTrigger = 0,
+  globalCollapseState = 'manual'
 }) => {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
   const { getCurrentScene, addCharacter, updateCharacter, lastModifiedCharacter, state, showDialogScene, hideDialogScene } = useScene();
-  // Stato per collapse/expand - command blocks default collapsed
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  // Stato per collapse/expand - rispetta il globalCollapseState all'inizializzazione
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    // Command blocks default collapsed, ma rispetta lo stato globale
+    return globalCollapseState === 'expanded' ? false : true;
+  });
   const [isManuallyExpanded, setIsManuallyExpanded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Reagisci ai trigger di collapse/expand all
+  useEffect(() => {
+    if (collapseAllTrigger > 0) {
+      setIsCollapsed(true);
+      setIsManuallyExpanded(false);
+    }
+  }, [collapseAllTrigger]);
+  
+  useEffect(() => {
+    if (expandAllTrigger > 0) {
+      setIsCollapsed(false);
+      setIsManuallyExpanded(true);
+    }
+  }, [expandAllTrigger]);
+  
   // I characters vengono passati da sessionData, non caricati qui
   const characters = sessionData?.characters || [];
   const [selectedCharacterImage, setSelectedCharacterImage] = useState<string | null>(null);
@@ -471,7 +496,80 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         );
       
       default:
-        return null;
+        // Gestione generica per tutti i blocchi non implementati
+        // Mostra tutti i parametri dinamicamente
+        const params = block.parameters || {};
+        const paramEntries = Object.entries(params);
+        
+        if (paramEntries.length === 0) {
+          return (
+            <div className="text-xs text-gray-500 italic">
+              No parameters
+            </div>
+          );
+        }
+        
+        return (
+          <div className="space-y-2">
+            {paramEntries.map(([key, value]) => {
+              // Controlla se è un parametro multilingua (ha una struttura { EN: ..., DE: ..., etc })
+              const isMultilingual = typeof value === 'object' && 
+                value !== null && 
+                !Array.isArray(value) &&
+                Object.keys(value).some(k => ['EN', 'DE', 'FR', 'ES', 'PL', 'CS', 'RU'].includes(k));
+              
+              if (isMultilingual) {
+                // Usa MultilingualTextEditor per parametri multilingua
+                return (
+                  <div key={key} className="flex items-center gap-2">
+                    <label className="text-xs text-gray-400 capitalize whitespace-nowrap min-w-[80px]">
+                      {key.replace(/_/g, ' ')}:
+                    </label>
+                    <div className="flex-1">
+                      <MultilingualTextEditor
+                        value={value as any}
+                        onChange={(newValue) => onUpdate({ 
+                          parameters: { ...block.parameters, [key]: newValue } 
+                        })}
+                        placeholder={`${key} value`}
+                      />
+                    </div>
+                  </div>
+                );
+              } else {
+                // Usa input normale per parametri semplici (1 riga)
+                return (
+                  <div key={key} className="flex items-center gap-2">
+                    <label className="text-xs text-gray-400 capitalize whitespace-nowrap min-w-[80px]">
+                      {key.replace(/_/g, ' ')}:
+                    </label>
+                    <input
+                      type="text"
+                      className="flex-1 px-2 py-1 bg-slate-800 text-white rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none"
+                      placeholder={`${key} value`}
+                      value={typeof value === 'object' ? JSON.stringify(value) : String(value || '')}
+                      onChange={(e) => {
+                        let newValue: any = e.target.value;
+                        // Prova a parsare come JSON se sembra JSON
+                        if (e.target.value.trim().startsWith('{') || e.target.value.trim().startsWith('[')) {
+                          try {
+                            newValue = JSON.parse(e.target.value);
+                          } catch {
+                            // Se fallisce, mantieni come stringa
+                          }
+                        }
+                        onUpdate({ 
+                          parameters: { ...block.parameters, [key]: newValue } 
+                        });
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </div>
+                );
+              }
+            })}
+          </div>
+        );
     }
   };
 
@@ -709,6 +807,54 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
           );
         }
         break;
+      }
+      default: {
+        // Gestione generica per blocchi non implementati - mostra un riepilogo compatto dei parametri
+        const params = block.parameters || {};
+        const paramEntries = Object.entries(params);
+        
+        if (paramEntries.length === 0) {
+          return <span className="text-xs text-gray-500 italic">No parameters</span>;
+        }
+        
+        // Mostra solo i primi 2 parametri in modo compatto
+        const displayParams = paramEntries.slice(0, 2);
+        const hasMore = paramEntries.length > 2;
+        
+        return (
+          <div className="flex items-center gap-2 text-xs">
+            {displayParams.map(([key, value], index) => {
+              let displayValue = '';
+              
+              if (typeof value === 'object' && value !== null) {
+                // Per oggetti multilingua, mostra la versione nella lingua corrente o EN
+                if (value[currentLanguage]) {
+                  displayValue = value[currentLanguage];
+                } else if (value['EN']) {
+                  displayValue = value['EN'];
+                } else {
+                  // Per altri oggetti, mostra una versione compatta
+                  displayValue = '{...}';
+                }
+              } else {
+                displayValue = String(value);
+              }
+              
+              // Tronca valori lunghi
+              if (displayValue.length > 20) {
+                displayValue = displayValue.substring(0, 20) + '...';
+              }
+              
+              return (
+                <span key={key} className="text-gray-400">
+                  {index > 0 && <span className="mx-1">•</span>}
+                  <span className="text-gray-500">{key}:</span> {displayValue}
+                </span>
+              );
+            })}
+            {hasMore && <span className="text-gray-500">+{paramEntries.length - 2} more</span>}
+          </div>
+        );
       }
     }
     return null;
