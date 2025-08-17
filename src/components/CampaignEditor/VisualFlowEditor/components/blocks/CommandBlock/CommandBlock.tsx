@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { API_CONFIG } from '@/config/constants';
 import { MessageSquare, Clock, ArrowRight, Tag, HelpCircle, ExternalLink, User, Users } from 'lucide-react';
 import { BaseBlock } from '../BaseBlock/BaseBlock';
 import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
@@ -525,7 +526,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
             {['STI', 'STII', 'STIII'].map((shipClass) => {
               const isSelected = block.parameters?.type === shipClass;
               const romanNumeral = shipClass.replace('ST', '');
-              const shipImage = `http://localhost:3001/api/file/campaign/campaignMap/ship${romanNumeral}.cacheship.png`;
+              const shipImage = `${API_CONFIG.BE_BASE_URL}/api/file/campaign/campaignMap/ship${romanNumeral}.cacheship.png`;
               
               return (
                 <div
@@ -545,7 +546,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
                       alt={`Class ${romanNumeral}`}
                       className="w-16 h-16 object-contain"
                       onError={(e) => {
-                        e.currentTarget.src = 'http://localhost:3001/static/common/unknown.png';
+                        e.currentTarget.src = '${API_CONFIG.BE_BASE_URL}/static/common/unknown.png';
                       }}
                     />
                     <span className={`text-xs font-medium ${

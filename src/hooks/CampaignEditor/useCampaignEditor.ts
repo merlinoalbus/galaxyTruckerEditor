@@ -3,6 +3,7 @@ import { campaignScriptParserService } from '@/services/CampaignEditor/CampaignS
 import { CampaignAnalysis, CampaignScript } from '@/types/CampaignEditor';
 import { MapNode } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { API_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
+import { API_CONFIG } from '@/config/constants';
 
 export const useCampaignEditor = () => {
   const [activeTab, setActiveTab] = useState('map');
@@ -46,7 +47,7 @@ export const useCampaignEditor = () => {
     
     // Auto-save script changes
     try {
-      const response = await fetch(`http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/scripts/saveScript`, {
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}/scripts/saveScript`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -78,7 +79,7 @@ export const useCampaignEditor = () => {
       // Get all modified scripts (this would need to be tracked in state)
       // For now, we'll save the currently selected script if it exists
       if (selectedScript) {
-        const response = await fetch(`http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/scripts/saveScript`, {
+        const response = await fetch(`${API_CONFIG.API_BASE_URL}/scripts/saveScript`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

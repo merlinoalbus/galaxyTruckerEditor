@@ -94,6 +94,13 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.addPartToAsideSlot.noParameters': 'No parameters configured',
   'visualFlowEditor.blocks.addPartToAsideSlot.params': 'Params',
   
+  // ADDSHIPPARTS Block
+  'visualFlowEditor.blocks.addShipParts.partsFileLabel': 'Parts File',
+  'visualFlowEditor.blocks.addShipParts.selectParts': 'Select parts file',
+  'visualFlowEditor.blocks.addShipParts.loading': 'Loading parts...',
+  'visualFlowEditor.blocks.addShipParts.noParts': 'No parts file selected',
+  'visualFlowEditor.blocks.addShipParts.description': 'Load ship parts from YAML file',
+  
   // Metacode System
   'visualFlowEditor.metacode.found': 'Found',
   'visualFlowEditor.metacode.pattern': 'pattern',

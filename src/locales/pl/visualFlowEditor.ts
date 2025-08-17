@@ -97,6 +97,13 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.addPartToAsideSlot.hint': 'alienGun 2 1 2 0',
   'visualFlowEditor.blocks.addPartToAsideSlot.noParameters': 'Brak skonfigurowanych parametrów',
   'visualFlowEditor.blocks.addPartToAsideSlot.params': 'Parametry',
+
+  // ADDSHIPPARTS Block
+  'visualFlowEditor.blocks.addShipParts.partsFileLabel': 'Plik części',
+  'visualFlowEditor.blocks.addShipParts.selectParts': 'Wybierz plik części',
+  'visualFlowEditor.blocks.addShipParts.loading': 'Ładowanie części...',
+  'visualFlowEditor.blocks.addShipParts.noParts': 'Nie wybrano pliku części',
+  'visualFlowEditor.blocks.addShipParts.description': 'Załaduj części statku z pliku YAML',
   
   // Metacode System
   'visualFlowEditor.metacode.found': 'znalezionych metakodów',

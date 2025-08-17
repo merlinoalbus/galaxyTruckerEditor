@@ -39,7 +39,8 @@
       "Bash(do echo \"=== $dir ===\")",
       "Bash(cp:*)",
       "Bash(cat:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",

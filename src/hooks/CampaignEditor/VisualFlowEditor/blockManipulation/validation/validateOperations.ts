@@ -169,8 +169,8 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
       }
       
       // Gestione speciale per ADDOPPONENT e SETSHIPTYPE: controllano se sono dentro MISSION (warning)
-      // E per ADDPARTTOSHIP e ADDPARTTOASIDESLOT: controllano se sono dentro BUILD (warning)
-      if ((block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE' || block.type === 'ADDPARTTOSHIP' || block.type === 'ADDPARTTOASIDESLOT') && paramValidation.valid) {
+      // E per ADDPARTTOSHIP, ADDPARTTOASIDESLOT e ADDSHIPPARTS: controllano se sono dentro BUILD (warning)
+      if ((block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE' || block.type === 'ADDPARTTOSHIP' || block.type === 'ADDPARTTOASIDESLOT' || block.type === 'ADDSHIPPARTS') && paramValidation.valid) {
         // Verifica se siamo dentro un blocco MISSION
         let isInsideMission = false;
         
@@ -190,8 +190,8 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           }
         }
         
-        // Per ADDPARTTOSHIP e ADDPARTTOASIDESLOT verifica se sono dentro BUILD
-        if (block.type === 'ADDPARTTOSHIP' || block.type === 'ADDPARTTOASIDESLOT') {
+        // Per ADDPARTTOSHIP, ADDPARTTOASIDESLOT e ADDSHIPPARTS verifica se sono dentro BUILD
+        if (block.type === 'ADDPARTTOSHIP' || block.type === 'ADDPARTTOASIDESLOT' || block.type === 'ADDSHIPPARTS') {
           // Verifica se siamo dentro un blocco BUILD
           let isInsideBuild = false;
           
@@ -213,9 +213,14 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           
           // Se non è dentro BUILD, genera un warning
           if (!isInsideBuild) {
-            const errorKey = block.type === 'ADDPARTTOSHIP' 
-              ? 'addPartToShipNotInBuild'
-              : 'addPartToAsideSlotNotInBuild';
+            let errorKey = '';
+            if (block.type === 'ADDPARTTOSHIP') {
+              errorKey = 'addPartToShipNotInBuild';
+            } else if (block.type === 'ADDPARTTOASIDESLOT') {
+              errorKey = 'addPartToAsideSlotNotInBuild';
+            } else if (block.type === 'ADDSHIPPARTS') {
+              errorKey = 'addShipPartsNotInBuild';
+            }
             paramValidation = { 
               valid: false,
               error: errorKey
@@ -253,7 +258,8 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           'ADDOPPONENT_NOT_IN_MISSION',
           'SETSHIPTYPE_NOT_IN_MISSION',
           'addPartToShipNotInBuild',
-          'addPartToAsideSlotNotInBuild'
+          'addPartToAsideSlotNotInBuild',
+          'addShipPartsNotInBuild'
         ].includes(paramValidation.error || '');
         
         if (isWarning) {
@@ -445,6 +451,16 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
             message = t ?
               t('visualFlowEditor.validation.addPartToAsideSlotNotInBuild')
               : 'ADDPARTTOASIDESLOT should be inside a BUILD block. Consider moving this block inside a build phase.';
+            break;
+          case 'ADDSHIPPARTS_NO_PARAMS':
+            message = t ?
+              t('visualFlowEditor.validation.addShipPartsNoParams')
+              : 'ADDSHIPPARTS block must have a parts file selected. Select a YAML file from the parts folder.';
+            break;
+          case 'addShipPartsNotInBuild':
+            message = t ?
+              t('visualFlowEditor.validation.addShipPartsNotInBuild')
+              : 'ADDSHIPPARTS should be inside a BUILD block. Consider moving this block inside a build phase.';
             break;
           default:
             message = t ? 

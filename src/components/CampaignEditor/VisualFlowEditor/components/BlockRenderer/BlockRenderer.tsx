@@ -15,6 +15,7 @@ import { SetBlock } from '../blocks/SetBlock/SetBlock';
 import { ResetBlock } from '../blocks/ResetBlock/ResetBlock';
 import { AddPartToShipBlock } from '../blocks/AddPartToShipBlock/AddPartToShipBlock';
 import { AddPartToAsideSlotBlock } from '../blocks/AddPartToAsideSlotBlock/AddPartToAsideSlotBlock';
+import { AddShipPartsBlock } from '../blocks/AddShipPartsBlock/AddShipPartsBlock';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 interface BlockRendererProps {
@@ -483,6 +484,27 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+        />
+      </div>
+    );
+  }
+
+  // Render ADDSHIPPARTS block
+  if (block.type === 'ADDSHIPPARTS') {
+    return (
+      <div data-block-id={block.id}>
+        <AddShipPartsBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );

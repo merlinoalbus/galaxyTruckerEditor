@@ -13,6 +13,56 @@ const { findAllRelatedScripts } = require('../utils/scriptAnalyzer');
 const router = express.Router();
 const logger = getLogger();
 
+// API per ottenere lista file YAML dalla cartella parts
+router.get('/parts', async (req, res) => {
+  try {
+    logger.info('API call: GET /api/missions/parts - Lista file YAML dalla cartella parts');
+    
+    const partsPath = path.join(GAME_ROOT, 'parts');
+    const partFiles = [];
+    
+    if (await fs.pathExists(partsPath)) {
+      try {
+        const files = await fs.readdir(partsPath);
+        const yamlFiles = files.filter(f => f.endsWith('.yaml') || f.endsWith('.yml'));
+        
+        for (const fileName of yamlFiles) {
+          const fileNameWithoutExt = fileName.replace(/\.(yaml|yml)$/, '');
+          const fullPath = `parts/${fileName}`;
+          
+          partFiles.push({
+            id: fullPath,
+            descrizione: fileNameWithoutExt,
+            valore: fullPath
+          });
+        }
+      } catch (error) {
+        logger.warn(`Error scanning parts directory: ${error.message}`);
+      }
+    } else {
+      logger.warn('Parts directory not found');
+    }
+    
+    // Ordina per descrizione
+    partFiles.sort((a, b) => a.descrizione.localeCompare(b.descrizione));
+    
+    logger.info(`Found ${partFiles.length} part files`);
+    
+    res.json({
+      success: true,
+      data: partFiles,
+      count: partFiles.length
+    });
+  } catch (error) {
+    logger.error(`Error retrieving parts: ${error.message}`);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to retrieve parts',
+      message: error.message 
+    });
+  }
+});
+
 // API 8: Lista archi mappa da missions.yaml secondo specifica
 router.get('/routes', async (req, res) => {
   try {
