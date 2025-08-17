@@ -293,6 +293,8 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   'MISSION_LOSE': BlockCategory.MISSION,
   'ADDOPPONENT': BlockCategory.MISSION,
   'SETSHIPTYPE': BlockCategory.MISSION,
+  'ADDPARTTOSHIP': BlockCategory.MISSION,
+  'ADDPARTTOASIDESLOT': BlockCategory.MISSION,
   
   // Dialogue
   'SAY': BlockCategory.DIALOGUE,

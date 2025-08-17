@@ -80,6 +80,20 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.exitMenu.compact': 'Exit menu',
   'visualFlowEditor.blocks.exitMenu.fullDescription': 'Exit from current menu. This command exits the current menu and continues execution.',
   
+  // ADDPARTTOSHIP Block
+  'visualFlowEditor.blocks.addPartToShip.parameters': 'Parameters',
+  'visualFlowEditor.blocks.addPartToShip.placeholder': 'e.g. 1 7 alienEngine 3333 0',
+  'visualFlowEditor.blocks.addPartToShip.hint': '1 7 alienEngine 3333 0',
+  'visualFlowEditor.blocks.addPartToShip.noParameters': 'No parameters configured',
+  'visualFlowEditor.blocks.addPartToShip.params': 'Params',
+  
+  // ADDPARTTOASIDESLOT Block  
+  'visualFlowEditor.blocks.addPartToAsideSlot.parameters': 'Parameters',
+  'visualFlowEditor.blocks.addPartToAsideSlot.placeholder': 'e.g. alienGun 2 1 2 0',
+  'visualFlowEditor.blocks.addPartToAsideSlot.hint': 'alienGun 2 1 2 0',
+  'visualFlowEditor.blocks.addPartToAsideSlot.noParameters': 'No parameters configured',
+  'visualFlowEditor.blocks.addPartToAsideSlot.params': 'Params',
+  
   // Metacode System
   'visualFlowEditor.metacode.found': 'Found',
   'visualFlowEditor.metacode.pattern': 'pattern',
@@ -306,6 +320,10 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.addOpponentNotInMission': 'ADDOPPONENT should be inside a MISSION block.',
   'visualFlowEditor.validation.setShipTypeNoType': 'SETSHIPTYPE block must have a ship type selected.',
   'visualFlowEditor.validation.setShipTypeNotInMission': 'SETSHIPTYPE should be inside a MISSION block.',
+  'visualFlowEditor.validation.addPartToShipNoParams': 'ADDPARTTOSHIP block must have parameters. Specify the part to add.',
+  'visualFlowEditor.validation.addPartToShipNotInBuild': 'ADDPARTTOSHIP should be inside a BUILD block. Consider moving this block inside a build phase.',
+  'visualFlowEditor.validation.addPartToAsideSlotNoParams': 'ADDPARTTOASIDESLOT block must have parameters. Specify the part to add.',
+  'visualFlowEditor.validation.addPartToAsideSlotNotInBuild': 'ADDPARTTOASIDESLOT should be inside a BUILD block. Consider moving this block inside a build phase.',
   'visualFlowEditor.validation.showcharNoScene': 'SHOWCHAR requires an active scene. Add SHOWDLGSCENE before this block.',
   'visualFlowEditor.validation.hidecharNoScene': 'HIDECHAR requires an active scene. Add SHOWDLGSCENE before this block.',
   'visualFlowEditor.validation.hidecharNoVisibleCharacters': 'HIDECHAR cannot be used: no visible characters in the scene.',

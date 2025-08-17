@@ -169,7 +169,8 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
       }
       
       // Gestione speciale per ADDOPPONENT e SETSHIPTYPE: controllano se sono dentro MISSION (warning)
-      if ((block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE') && paramValidation.valid) {
+      // E per ADDPARTTOSHIP e ADDPARTTOASIDESLOT: controllano se sono dentro BUILD (warning)
+      if ((block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE' || block.type === 'ADDPARTTOSHIP' || block.type === 'ADDPARTTOASIDESLOT') && paramValidation.valid) {
         // Verifica se siamo dentro un blocco MISSION
         let isInsideMission = false;
         
@@ -189,15 +190,48 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           }
         }
         
-        // Se non è dentro MISSION, genera un warning
-        if (!isInsideMission) {
-          const errorKey = block.type === 'ADDOPPONENT' 
-            ? 'ADDOPPONENT_NOT_IN_MISSION'
-            : 'SETSHIPTYPE_NOT_IN_MISSION';
-          paramValidation = { 
-            valid: false,
-            error: errorKey
-          };
+        // Per ADDPARTTOSHIP e ADDPARTTOASIDESLOT verifica se sono dentro BUILD
+        if (block.type === 'ADDPARTTOSHIP' || block.type === 'ADDPARTTOASIDESLOT') {
+          // Verifica se siamo dentro un blocco BUILD
+          let isInsideBuild = false;
+          
+          // Controlla il path per vedere se c'è un BUILD
+          if (path && path.length > 0) {
+            isInsideBuild = path.some(p => p.includes('BUILD'));
+          }
+          
+          // Se parentBlock esiste, controlla anche quello
+          if (!isInsideBuild && parentBlock) {
+            let currentParent = parentBlock;
+            while (currentParent && !isInsideBuild) {
+              if (currentParent.type === 'BUILD') {
+                isInsideBuild = true;
+              }
+              currentParent = currentParent.parent;
+            }
+          }
+          
+          // Se non è dentro BUILD, genera un warning
+          if (!isInsideBuild) {
+            const errorKey = block.type === 'ADDPARTTOSHIP' 
+              ? 'addPartToShipNotInBuild'
+              : 'addPartToAsideSlotNotInBuild';
+            paramValidation = { 
+              valid: false,
+              error: errorKey
+            };
+          }
+        } else {
+          // Se non è dentro MISSION (per ADDOPPONENT e SETSHIPTYPE), genera un warning
+          if (!isInsideMission) {
+            const errorKey = block.type === 'ADDOPPONENT' 
+              ? 'ADDOPPONENT_NOT_IN_MISSION'
+              : 'SETSHIPTYPE_NOT_IN_MISSION';
+            paramValidation = { 
+              valid: false,
+              error: errorKey
+            };
+          }
         }
       }
       if (!paramValidation.valid) {
@@ -217,7 +251,9 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           'ASK_IF_INVALID_ELSE',
           'RETURN_AT_ROOT_LEVEL',
           'ADDOPPONENT_NOT_IN_MISSION',
-          'SETSHIPTYPE_NOT_IN_MISSION'
+          'SETSHIPTYPE_NOT_IN_MISSION',
+          'addPartToShipNotInBuild',
+          'addPartToAsideSlotNotInBuild'
         ].includes(paramValidation.error || '');
         
         if (isWarning) {
@@ -389,6 +425,26 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
             message = t ?
               t('visualFlowEditor.validation.setShipTypeNotInMission')
               : 'SETSHIPTYPE should be inside a MISSION block. Consider moving this block inside a mission.';
+            break;
+          case 'ADDPARTTOSHIP_NO_PARAMS':
+            message = t ?
+              t('visualFlowEditor.validation.addPartToShipNoParams')
+              : 'ADDPARTTOSHIP block must have parameters. Specify the part to add.';
+            break;
+          case 'addPartToShipNotInBuild':
+            message = t ?
+              t('visualFlowEditor.validation.addPartToShipNotInBuild')
+              : 'ADDPARTTOSHIP should be inside a BUILD block. Consider moving this block inside a build phase.';
+            break;
+          case 'ADDPARTTOASIDESLOT_NO_PARAMS':
+            message = t ?
+              t('visualFlowEditor.validation.addPartToAsideSlotNoParams')
+              : 'ADDPARTTOASIDESLOT block must have parameters. Specify the part to add.';
+            break;
+          case 'addPartToAsideSlotNotInBuild':
+            message = t ?
+              t('visualFlowEditor.validation.addPartToAsideSlotNotInBuild')
+              : 'ADDPARTTOASIDESLOT should be inside a BUILD block. Consider moving this block inside a build phase.';
             break;
           default:
             message = t ? 

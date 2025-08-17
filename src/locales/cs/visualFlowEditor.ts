@@ -78,6 +78,26 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.subScript.hint': 'Vyberte skript k provedení',
   'visualFlowEditor.blocks.subScript.navigate': 'Přejít na sub-skript',
   
+  // EXIT_MENU Block
+  'visualFlowEditor.blocks.exitMenu.description': 'Opustit aktuální menu',
+  'visualFlowEditor.blocks.exitMenu.info': 'Tento příkaz opustí aktuální menu a pokračuje v provádění',
+  'visualFlowEditor.blocks.exitMenu.compact': 'Opustit menu',
+  'visualFlowEditor.blocks.exitMenu.fullDescription': 'Opustit aktuální menu. Tento příkaz opustí aktuální menu a pokračuje v provádění.',
+  
+  // ADDPARTTOSHIP Block
+  'visualFlowEditor.blocks.addPartToShip.parameters': 'Parametry',
+  'visualFlowEditor.blocks.addPartToShip.placeholder': 'např. 1 7 alienEngine 3333 0',
+  'visualFlowEditor.blocks.addPartToShip.hint': '1 7 alienEngine 3333 0',
+  'visualFlowEditor.blocks.addPartToShip.noParameters': 'Žádné parametry nejsou nakonfigurovány',
+  'visualFlowEditor.blocks.addPartToShip.params': 'Parametry',
+  
+  // ADDPARTTOASIDESLOT Block
+  'visualFlowEditor.blocks.addPartToAsideSlot.parameters': 'Parametry',
+  'visualFlowEditor.blocks.addPartToAsideSlot.placeholder': 'např. alienGun 2 1 2 0',
+  'visualFlowEditor.blocks.addPartToAsideSlot.hint': 'alienGun 2 1 2 0',
+  'visualFlowEditor.blocks.addPartToAsideSlot.noParameters': 'Žádné parametry nejsou nakonfigurovány',
+  'visualFlowEditor.blocks.addPartToAsideSlot.params': 'Parametry',
+  
   // Metacode System
   'visualFlowEditor.metacode.found': 'Nalezeno',
   'visualFlowEditor.metacode.pattern': 'vzor',
