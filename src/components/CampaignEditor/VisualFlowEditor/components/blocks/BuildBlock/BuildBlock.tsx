@@ -24,6 +24,8 @@ interface BuildBlockProps {
   collapseAllTrigger?: number;
   expandAllTrigger?: number;
   globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
+  isCustom?: boolean;
+  availableLanguages?: string[];
 }
 
 export const BuildBlock: React.FC<BuildBlockProps> = ({
@@ -45,7 +47,9 @@ export const BuildBlock: React.FC<BuildBlockProps> = ({
   validationType,
   collapseAllTrigger = 0,
   expandAllTrigger = 0,
-  globalCollapseState = 'manual'
+  globalCollapseState = 'manual',
+  isCustom,
+  availableLanguages
 }) => {
   const { t } = useTranslation();
   const [isCollapsed, setIsCollapsed] = useState(() => {

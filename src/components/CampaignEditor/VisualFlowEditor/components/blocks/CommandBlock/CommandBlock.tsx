@@ -29,6 +29,8 @@ interface CommandBlockProps {
   collapseAllTrigger?: number;
   expandAllTrigger?: number;
   globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
+  isCustom?: boolean;
+  availableLanguages?: string[];
 }
 
 export const CommandBlock: React.FC<CommandBlockProps> = ({
@@ -44,7 +46,9 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   allBlocks = [],
   collapseAllTrigger = 0,
   expandAllTrigger = 0,
-  globalCollapseState = 'manual'
+  globalCollapseState = 'manual',
+  isCustom,
+  availableLanguages
 }) => {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
@@ -171,6 +175,8 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
             placeholder={block.type === 'SAY' 
               ? t('visualFlowEditor.command.dialogText')
               : t('visualFlowEditor.command.questionText')}
+            isCustom={isCustom}
+            availableLanguages={availableLanguages}
             label={block.type === 'ASK' ? t('visualFlowEditor.command.questionLabel') : ""}
           />
         );
@@ -593,6 +599,8 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
                           parameters: { ...block.parameters, [key]: newValue } 
                         })}
                         placeholder={`${key} value`}
+                        isCustom={isCustom}
+                        availableLanguages={availableLanguages}
                       />
                     </div>
                   </div>

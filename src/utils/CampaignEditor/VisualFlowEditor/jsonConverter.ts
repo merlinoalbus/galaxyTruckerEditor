@@ -86,7 +86,7 @@ export const generateMissionJson = (missionBlocks: any[]) => {
   if (!missionBlock) return null;
   
   return {
-    name: missionBlock.missionName,
+    name: missionBlock.name || missionBlock.missionName,
     fileName: missionBlock.fileName,
     blocksMission: convertBlocksToJson(missionBlock.blocksMission || []),
     blocksFinish: convertBlocksToJson(missionBlock.blocksFinish || [])

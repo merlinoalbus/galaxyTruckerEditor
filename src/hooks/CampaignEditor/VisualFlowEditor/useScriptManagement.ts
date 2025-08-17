@@ -4,12 +4,13 @@ import { addUniqueIds, generateBlockId } from '@/utils/CampaignEditor/VisualFlow
 import { cleanupScriptBlocks } from '@/utils/CampaignEditor/VisualFlowEditor/blockCleaner';
 import { generateScriptJson, generateMissionJson, convertBlocksToJson } from '@/utils/CampaignEditor/VisualFlowEditor/jsonConverter';
 import type { IFlowBlock, ValidationResult } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
-import { API_CONSTANTS, UI_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
+import { API_CONSTANTS, UI_CONSTANTS, SUPPORTED_LANGUAGES } from '@/constants/VisualFlowEditor.constants';
 
 export interface NewScriptDialogType {
   isOpen: boolean;
   fileName: string;
   error?: string;
+  scriptType?: 'standard' | 'custom' | 'customMultilingual';  // Tipo di script da creare
 }
 
 interface UseScriptManagementProps {
@@ -42,7 +43,7 @@ export const useScriptManagement = ({
 
   // Handler per nuovo script
   const handleNewScript = useCallback(() => {
-    setNewScriptDialog({ isOpen: true, fileName: '' });
+    setNewScriptDialog({ isOpen: true, fileName: '', scriptType: 'standard' });
   }, []);
 
   // Conferma creazione nuovo script
@@ -64,6 +65,14 @@ export const useScriptManagement = ({
     if (setValidationErrors) setValidationErrors({ errors: 0, invalidBlocks: [] });
     if (setDropError) setDropError(null);
     
+    // Determina isCustom e customPath in base al tipo selezionato
+    const isCustom = newScriptDialog.scriptType !== 'standard';
+    const customPath = isCustom 
+      ? (newScriptDialog.scriptType === 'customMultilingual' 
+          ? `customScripts/EN/${fileName}`  // Path per custom multilingua
+          : `customScripts/${fileName}`)     // Path per custom diretto
+      : null;
+    
     const newScriptBlock: IFlowBlock = {
       id: generateBlockId('SCRIPT'),
       type: 'SCRIPT',
@@ -71,22 +80,32 @@ export const useScriptManagement = ({
       isContainer: true,
       children: [],
       scriptName: scriptName,
-      fileName: fileName
+      fileName: fileName,
+      // Salva i metadati custom direttamente nel blocco
+      isCustom: isCustom,
+      customPath: customPath
     };
     
     setCurrentScriptBlocks([newScriptBlock]);
+    
     setCurrentScript({
       name: scriptName,
       fileName: fileName,
       language: 'EN',
       blocks: [],
       metadata: { blockCount: 1, commandCount: 0, errorCount: 0 },
-      availableLanguages: ['EN', 'IT']
+      availableLanguages: newScriptDialog.scriptType === 'standard'
+        ? [...SUPPORTED_LANGUAGES]  // Tutte le lingue per standard
+        : newScriptDialog.scriptType === 'customMultilingual'
+        ? [...SUPPORTED_LANGUAGES]  // Tutte le lingue per custom multilingua
+        : ['EN'],  // Solo EN per custom non multilingua
+      isCustom: isCustom,
+      customPath: customPath
     });
     
     setNewScriptDialog({ isOpen: false, fileName: '' });
     setShowScriptsList(false);
-  }, [newScriptDialog.fileName, setCurrentScriptBlocks, setShowScriptsList, resetNavigationState, setValidationErrors, setDropError]);
+  }, [newScriptDialog.fileName, newScriptDialog.scriptType, setCurrentScriptBlocks, setShowScriptsList, resetNavigationState, setValidationErrors, setDropError]);
 
   // Conferma creazione nuova mission
   const confirmNewMission = useCallback(() => {
@@ -107,6 +126,14 @@ export const useScriptManagement = ({
     if (setValidationErrors) setValidationErrors({ errors: 0, invalidBlocks: [] });
     if (setDropError) setDropError(null);
     
+    // Determina isCustom e customPath in base al tipo selezionato
+    const isCustom = newScriptDialog.scriptType !== 'standard';
+    const customPath = isCustom 
+      ? (newScriptDialog.scriptType === 'customMultilingual' 
+          ? `customScripts/EN/${fileName}`  // Path per custom multilingua
+          : `customScripts/${fileName}`)     // Path per custom diretto
+      : null;
+    
     const newMissionBlock: IFlowBlock = {
       id: generateBlockId('MISSION'),
       type: 'MISSION',
@@ -115,7 +142,10 @@ export const useScriptManagement = ({
       blocksMission: [],
       blocksFinish: [],
       name: missionName,
-      fileName: fileName
+      fileName: fileName,
+      // Salva i metadati custom direttamente nel blocco
+      isCustom: isCustom,
+      customPath: customPath
     };
     
     setCurrentScriptBlocks([newMissionBlock]);
@@ -125,12 +155,18 @@ export const useScriptManagement = ({
       language: 'EN',
       blocks: [],
       metadata: { blockCount: 1, commandCount: 0, errorCount: 0 },
-      availableLanguages: ['EN', 'IT']
+      availableLanguages: newScriptDialog.scriptType === 'standard'
+        ? [...SUPPORTED_LANGUAGES]  // Tutte le lingue per standard
+        : newScriptDialog.scriptType === 'customMultilingual'
+        ? [...SUPPORTED_LANGUAGES]  // Tutte le lingue per custom multilingua
+        : ['EN'],  // Solo EN per custom non multilingua
+      isCustom: isCustom,
+      customPath: customPath
     });
     
     setNewScriptDialog({ isOpen: false, fileName: '' });
     setShowScriptsList(false);
-  }, [newScriptDialog.fileName, setCurrentScriptBlocks, setShowScriptsList, resetNavigationState, setValidationErrors, setDropError]);
+  }, [newScriptDialog.fileName, newScriptDialog.scriptType, setCurrentScriptBlocks, setShowScriptsList, resetNavigationState, setValidationErrors, setDropError]);
 
   // Carica mission via API
   const loadMission = useCallback(async (missionId: string) => {
@@ -236,7 +272,12 @@ export const useScriptManagement = ({
       
       const result = await response.json();
       if (result.success && result.data) {
-        setCurrentScript(result.data);
+        // Salva tutti i metadati inclusi isCustom e customPath
+        setCurrentScript({
+          ...result.data,
+          isCustom: result.data.isCustom || false,
+          customPath: result.data.customPath || null
+        });
         
         let blocksToLoad = result.data.blocks || [];
         
@@ -346,7 +387,15 @@ export const useScriptManagement = ({
           }
           
           if (scriptJson && !savedScriptNames.has(scriptJson.name)) {
-            scriptsToSave.push(scriptJson);
+            // Aggiungi i metadati custom se esistono
+            const scriptWithMetadata = {
+              ...scriptJson,
+              ...(scriptData.isCustom !== undefined && { isCustom: scriptData.isCustom }),
+              ...(scriptData.customPath !== undefined && { customPath: scriptData.customPath }),
+              // Aggiungi flag per indicare se è multilingua (il backend ne ha bisogno per sapere dove salvare)
+              ...(scriptData.isCustom && scriptData.availableLanguages?.length > 1 && { isMultilingual: true })
+            };
+            scriptsToSave.push(scriptWithMetadata);
             savedScriptNames.add(scriptJson.name);
           }
         }
@@ -357,7 +406,23 @@ export const useScriptManagement = ({
       if (mainBlocks && mainBlocks.length > 0) {
         const mainScriptJson = generateScriptJson(mainBlocks);
         if (mainScriptJson && !savedScriptNames.has(mainScriptJson.name)) {
-          scriptsToSave.push(mainScriptJson);
+          // Estrai i metadati custom dal blocco SCRIPT se esiste
+          const scriptBlock = mainBlocks.find(b => b.type === 'SCRIPT');
+          console.log('[VisualFlowEditor] scriptBlock:', scriptBlock);
+          console.log('[VisualFlowEditor] currentScript:', currentScript);
+          
+          // Aggiungi i metadati custom dal blocco SCRIPT o da currentScript
+          const scriptWithMetadata = {
+            ...mainScriptJson,
+            ...((scriptBlock?.isCustom !== undefined || currentScript?.isCustom !== undefined) && { 
+              isCustom: scriptBlock?.isCustom ?? currentScript?.isCustom 
+            }),
+            ...((scriptBlock?.customPath !== undefined || currentScript?.customPath !== undefined) && { 
+              customPath: scriptBlock?.customPath ?? currentScript?.customPath 
+            })
+          };
+          console.log('[VisualFlowEditor] scriptWithMetadata:', scriptWithMetadata);
+          scriptsToSave.push(scriptWithMetadata);
           savedScriptNames.add(mainScriptJson.name);
         }
       }
@@ -369,6 +434,7 @@ export const useScriptManagement = ({
     }
 
     // Salvataggio di ${scriptsToSave.length} script in corso
+    console.log('[VisualFlowEditor] Scripts being saved:', scriptsToSave);
 
     try {
       const response = await fetch(`http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/scripts/saveScript`, {
@@ -406,7 +472,7 @@ export const useScriptManagement = ({
       }
       return { success: false, error: error instanceof Error ? error.message : String(error) };
     }
-  }, [currentScriptBlocks, rootBlocks]);
+  }, [currentScriptBlocks, rootBlocks, currentScript, setDropError]);
 
   // Salva mission via API
   const saveMission = useCallback(async () => {
@@ -424,11 +490,27 @@ export const useScriptManagement = ({
       return { success: false, error: 'Impossibile generare JSON' };
     }
 
+    // Estrai i metadati custom dal blocco MISSION se esiste
+    const missionBlock = blocksToSave.find(b => b.type === 'MISSION');
+    
+    // Aggiungi i metadati custom se presenti
+    const missionWithMetadata = {
+      ...missionJson,
+      ...((missionBlock?.isCustom !== undefined || currentScript?.isCustom !== undefined) && { 
+        isCustom: missionBlock?.isCustom ?? currentScript?.isCustom 
+      }),
+      ...((missionBlock?.customPath !== undefined || currentScript?.customPath !== undefined) && { 
+        customPath: missionBlock?.customPath ?? currentScript?.customPath 
+      }),
+      // Aggiungi flag per indicare se è multilingua
+      ...(currentScript?.isCustom && currentScript?.availableLanguages?.length > 1 && { isMultilingual: true })
+    };
+
     // L'API si aspetta un array di mission
-    const payload = [missionJson];
+    const payload = [missionWithMetadata];
 
     try {
-      const response = await fetch('http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/missions/saveMission', {
+      const response = await fetch(`http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/missions/saveMission`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -455,7 +537,7 @@ export const useScriptManagement = ({
       }
       return { success: false, error: error instanceof Error ? error.message : String(error) };
     }
-  }, [currentScriptBlocks, rootBlocks]);
+  }, [currentScriptBlocks, rootBlocks, currentScript, setDropError]);
 
   return {
     currentScript,

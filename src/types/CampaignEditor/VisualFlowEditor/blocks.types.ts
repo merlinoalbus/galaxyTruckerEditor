@@ -18,6 +18,8 @@ export interface IFlowBlock {
   fileName?: string;
   language?: string;
   missionType?: string;
+  isCustom?: boolean; // Flag for custom scripts
+  customPath?: string | null; // Path for custom scripts
   blocksMission?: IFlowBlock[]; // Mission blocks for MISSION type
   blocksFinish?: IFlowBlock[]; // Finish blocks for MISSION type
   
@@ -175,6 +177,9 @@ export interface OpenedScript {
   blocks: IFlowBlock[];
   originalBlocks?: IFlowBlock[]; // Copia immutabile dei blocchi originali per reset
   isModified: boolean;
+  isCustom?: boolean;
+  customPath?: string | null;
+  availableLanguages?: string[];
 }
 
 export interface SessionData {

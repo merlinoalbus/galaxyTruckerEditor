@@ -81,16 +81,9 @@ router.get('/variables', async (req, res) => {
   }
 });
 
-// Funzione per scansionare ricorsivamente file campaign
+// Funzione per scansionare ricorsivamente file campaign e customScripts
 async function scanCampaignFiles(resultMap, type) {
-  const campaignPath = path.join(GAME_ROOT, 'campaign');
-  
-  if (!await fs.pathExists(campaignPath)) {
-    logger.warn('Campaign directory not found');
-    return;
-  }
-  
-  // Scansione ricorsiva
+  // Scansione ricorsiva helper
   async function scanDirectory(dirPath, relativePath = '') {
     try {
       const entries = await fs.readdir(dirPath, { withFileTypes: true });
@@ -111,7 +104,19 @@ async function scanCampaignFiles(resultMap, type) {
     }
   }
   
-  await scanDirectory(campaignPath);
+  // 1. Scansiona campaign
+  const campaignPath = path.join(GAME_ROOT, 'campaign');
+  if (await fs.pathExists(campaignPath)) {
+    await scanDirectory(campaignPath);
+  } else {
+    logger.warn('Campaign directory not found');
+  }
+  
+  // 2. Scansiona customScripts (ricorsivamente per sottocartelle lingua)
+  const customScriptsPath = path.join(GAME_ROOT, 'customScripts');
+  if (await fs.pathExists(customScriptsPath)) {
+    await scanDirectory(customScriptsPath, 'customScripts');
+  }
 }
 
 // Parse file per estrarre variabili/semafori/label
@@ -510,7 +515,7 @@ router.get('/', async (req, res) => {
     const languages = SUPPORTED_LANGUAGES;
     const allScriptsData = new Map();
     
-    // 1. Scansiona tutti i file script multilingua
+    // 1. Scansiona tutti i file script multilingua da campaign
     for (const lang of languages) {
       const scriptsPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`);
       
@@ -526,6 +531,45 @@ router.get('/', async (req, res) => {
         } catch (error) {
           logger.warn(`Error scanning scripts for ${lang}: ${error.message}`);
         }
+      }
+    }
+    
+    // 1b. Scansiona anche customScripts (sia multilingua che diretti)
+    const customScriptsPath = path.join(GAME_ROOT, 'customScripts');
+    
+    // Prima scansiona script multilingua in sottocartelle
+    for (const lang of languages) {
+      const langPath = path.join(customScriptsPath, lang);
+      
+      if (await fs.pathExists(langPath)) {
+        try {
+          const files = await fs.readdir(langPath);
+          const txtFiles = files.filter(f => f.endsWith('.txt'));
+          
+          for (const fileName of txtFiles) {
+            const filePath = path.join(langPath, fileName);
+            // Marca come custom script per gestione differenziata
+            await parseScriptFileForAPI10(filePath, fileName, lang, allScriptsData, true);
+          }
+        } catch (error) {
+          logger.warn(`Error scanning custom scripts for ${lang}: ${error.message}`);
+        }
+      }
+    }
+    
+    // Poi scansiona script diretti (non multilingua) nella root di customScripts
+    if (await fs.pathExists(customScriptsPath)) {
+      try {
+        const files = await fs.readdir(customScriptsPath);
+        const txtFiles = files.filter(f => f.endsWith('.txt'));
+        
+        for (const fileName of txtFiles) {
+          const filePath = path.join(customScriptsPath, fileName);
+          // Script diretti sono considerati EN di default e marcati come custom
+          await parseScriptFileForAPI10(filePath, fileName, 'EN', allScriptsData, true);
+        }
+      } catch (error) {
+        logger.warn(`Error scanning direct custom scripts: ${error.message}`);
       }
     }
     
@@ -579,7 +623,9 @@ router.get('/', async (req, res) => {
         variabili_utilizzate: Array.from(scriptData.variabili || []),
         personaggi_utilizzati: Array.from(scriptData.personaggi || []),
         labels_definite: Array.from(scriptData.labels || []),
-        nodi_referenziati: Array.from(scriptData.nodi || [])
+        nodi_referenziati: Array.from(scriptData.nodi || []),
+        isCustom: scriptData.isCustom || false,  // Indica se è uno script custom
+        customPath: scriptData.customPath || null  // Percorso originale se custom
       });
     }
     
@@ -604,7 +650,7 @@ router.get('/', async (req, res) => {
 });
 
 // Parse file script per API 10
-async function parseScriptFileForAPI10(filePath, fileName, language, allScriptsData) {
+async function parseScriptFileForAPI10(filePath, fileName, language, allScriptsData, isCustom = false) {
   try {
     const content = await fs.readFile(filePath, 'utf8');
     const lines = content.split('\n');
@@ -630,7 +676,9 @@ async function parseScriptFileForAPI10(filePath, fileName, language, allScriptsD
             variabili: new Set(),
             personaggi: new Set(),
             labels: new Set(),
-            nodi: new Set()
+            nodi: new Set(),
+            isCustom: isCustom,  // Marca se è uno script custom
+            customPath: isCustom ? filePath : null  // Salva il percorso originale se custom
           });
         }
         
@@ -759,59 +807,81 @@ function buildScriptConnectionGraph(allScriptsData) {
 // Funzione parsing script singola lingua con blocchi completi
 async function parseScriptSingleLanguage(scriptName, language, format) {
   try {
-    // Carica file script per la lingua specifica
-    const scriptPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${language}`);
+    // Cerca prima in campaign scripts
+    let scriptPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${language}`);
+    let searchPaths = [scriptPath];
     
-    if (!await fs.pathExists(scriptPath)) {
-      return null;
+    // Aggiungi percorsi customScripts
+    const customLangPath = path.join(GAME_ROOT, 'customScripts', language);
+    const customRootPath = path.join(GAME_ROOT, 'customScripts');
+    
+    if (await fs.pathExists(customLangPath)) {
+      searchPaths.push(customLangPath);
     }
-    
-    // Cerca file contenente lo script
-    const files = await fs.readdir(scriptPath);
-    const txtFiles = files.filter(f => f.endsWith('.txt'));
+    if (await fs.pathExists(customRootPath)) {
+      searchPaths.push(customRootPath);
+    }
     
     let scriptFound = null;
     let scriptLines = [];
     let fileName = '';
+    let isCustom = false;
+    let customPath = null;
     
-    for (const file of txtFiles) {
-      const filePath = path.join(scriptPath, file);
-      const content = await fs.readFile(filePath, 'utf8');
-      let lines = content.split('\n');
+    // Cerca in tutti i percorsi
+    for (const searchPath of searchPaths) {
+      if (!await fs.pathExists(searchPath)) continue;
       
-      // Rimuovi SCRIPTS all'inizio e END_OF_SCRIPTS alla fine del file
-      if (lines.length > 0 && lines[0].trim() === 'SCRIPTS') {
-        lines = lines.slice(1);
-      }
-      if (lines.length > 0 && lines[lines.length - 1].trim() === 'END_OF_SCRIPTS') {
-        lines = lines.slice(0, -1);
-      }
+      const files = await fs.readdir(searchPath);
+      const txtFiles = files.filter(f => f.endsWith('.txt'));
       
-      let currentScript = null;
-      let scriptStartIndex = -1;
-      let scriptEndIndex = -1;
-      
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
+      for (const file of txtFiles) {
+        const filePath = path.join(searchPath, file);
+        const content = await fs.readFile(filePath, 'utf8');
+        let lines = content.split('\n');
         
-        if (line.startsWith('SCRIPT ')) {
-          currentScript = line.replace('SCRIPT ', '').trim();
-          if (currentScript === scriptName) {
-            scriptStartIndex = i;
-            fileName = file;
+        // Marca se è custom script
+        if (searchPath.includes('customScripts')) {
+          isCustom = true;
+          customPath = filePath;
+        }
+        
+        // Rimuovi SCRIPTS all'inizio e END_OF_SCRIPTS alla fine del file
+        if (lines.length > 0 && lines[0].trim() === 'SCRIPTS') {
+          lines = lines.slice(1);
+        }
+        if (lines.length > 0 && lines[lines.length - 1].trim() === 'END_OF_SCRIPTS') {
+          lines = lines.slice(0, -1);
+        }
+        
+        let currentScript = null;
+        let scriptStartIndex = -1;
+        let scriptEndIndex = -1;
+        
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i].trim();
+          
+          if (line.startsWith('SCRIPT ')) {
+            currentScript = line.replace('SCRIPT ', '').trim();
+            if (currentScript === scriptName) {
+              scriptStartIndex = i;
+              fileName = file;
+            }
+          } else if (line === 'END_OF_SCRIPT' && currentScript === scriptName) {
+            scriptEndIndex = i;
+            break;
           }
-        } else if (line === 'END_OF_SCRIPT' && currentScript === scriptName) {
-          scriptEndIndex = i;
+        }
+        
+        if (scriptStartIndex >= 0 && scriptEndIndex >= 0) {
+          scriptLines = lines.slice(scriptStartIndex, scriptEndIndex + 1);
+          scriptFound = true;
           break;
         }
-      }
+      }  // Chiudi il ciclo for dei file
       
-      if (scriptStartIndex >= 0 && scriptEndIndex >= 0) {
-        scriptLines = lines.slice(scriptStartIndex, scriptEndIndex + 1);
-        scriptFound = true;
-        break;
-      }
-    }
+      if (scriptFound) break;  // Esci dal ciclo dei percorsi se trovato
+    }  // Chiudi il ciclo for dei percorsi
     
     if (!scriptFound) {
       return null;
@@ -823,7 +893,9 @@ async function parseScriptSingleLanguage(scriptName, language, format) {
       fileName: fileName,
       language: language,
       originalCode: scriptLines.join('\n'),
-      lineCount: scriptLines.length
+      lineCount: scriptLines.length,
+      isCustom: isCustom,
+      customPath: customPath
     };
     
     if (format === 'blocks') {
@@ -1425,21 +1497,45 @@ router.post('/saveScript', async (req, res) => {
       // Processa ogni file
       for (const [fileName, fileScripts] of Object.entries(scriptsByFile)) {
         
-        // Verifica se i blocchi contengono dati multilingua
-        const hasMultilingualData = checkForMultilingualData(fileScripts);
+        // Controlla se è uno script custom (viene passato come metadata)
+        const isCustomScript = fileScripts[0]?.isCustom || false;
+        const customPath = fileScripts[0]?.customPath || null;
+        const isMultilingual = fileScripts[0]?.isMultilingual || false;
         
-        if (hasMultilingualData) {
-          // Modalità multilingua - genera un file per ogni lingua
-          const languages = SUPPORTED_LANGUAGES;
-          
-          for (const lang of languages) {
-            const filePath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`, fileName);
-            await processFileForLanguage(filePath, fileScripts, lang, results);
+        // Verifica se i blocchi contengono dati multilingua
+        const hasMultilingualData = isMultilingual || checkForMultilingualData(fileScripts);
+        
+        if (isCustomScript) {
+          // Script custom - determina il percorso corretto
+          if (hasMultilingualData) {
+            // Custom multilingua - salva nelle sottocartelle per lingua
+            const languages = SUPPORTED_LANGUAGES;
+            
+            for (const lang of languages) {
+              // Determina il percorso corretto per custom multilingua
+              const customScriptsPath = path.join(GAME_ROOT, 'customScripts', lang, fileName);
+              await processFileForLanguage(customScriptsPath, fileScripts, lang, results);
+            }
+          } else {
+            // Custom non multilingua - salva direttamente in customScripts
+            const customScriptPath = path.join(GAME_ROOT, 'customScripts', fileName);
+            await processFileForLanguage(customScriptPath, fileScripts, 'EN', results);
           }
         } else {
-          // Modalità singola lingua (default EN)
-          const filePath = path.join(GAME_ROOT, 'campaign', 'campaignScriptsEN', fileName);
-          await processFileForLanguage(filePath, fileScripts, 'EN', results);
+          // Script standard campaign
+          if (hasMultilingualData) {
+            // Modalità multilingua - genera un file per ogni lingua
+            const languages = SUPPORTED_LANGUAGES;
+            
+            for (const lang of languages) {
+              const filePath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`, fileName);
+              await processFileForLanguage(filePath, fileScripts, lang, results);
+            }
+          } else {
+            // Modalità singola lingua (default EN)
+            const filePath = path.join(GAME_ROOT, 'campaign', 'campaignScriptsEN', fileName);
+            await processFileForLanguage(filePath, fileScripts, 'EN', results);
+          }
         }
       }
       

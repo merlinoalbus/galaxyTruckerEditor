@@ -23,6 +23,8 @@ interface MissionBlockProps {
   collapseAllTrigger?: number;
   expandAllTrigger?: number;
   globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
+  isCustom?: boolean;
+  availableLanguages?: string[];
 }
 
 export const MissionBlock: React.FC<MissionBlockProps> = ({
@@ -43,7 +45,9 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
   validationType = 'error',
   collapseAllTrigger = 0,
   expandAllTrigger = 0,
-  globalCollapseState = 'manual'
+  globalCollapseState = 'manual',
+  isCustom,
+  availableLanguages
 }) => {
   const { t } = useTranslation();
   const [isCollapsed, setIsCollapsed] = useState(() => {

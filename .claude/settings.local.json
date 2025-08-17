@@ -20,7 +20,16 @@
       "Bash(restartBE)",
       "Bash(npm start)",
       "Bash(grep:*)",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(curl:*)",
+      "Bash(npm run:*)",
+      "Bash(bash:*)",
+      "Bash(for:*)",
+      "Bash(do if [ -f \"$file\" ])",
+      "Bash(then sed -i \"s/globalCollapseState?: ''collapsed'' | ''expanded'' | ''manual'';$/&\\n  isCustom?: boolean;\\n  availableLanguages?: string[];/\" \"$file\")",
+      "Bash(sed:*)",
+      "Bash(fi)",
+      "Bash(done)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",
