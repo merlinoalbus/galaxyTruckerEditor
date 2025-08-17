@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import type { IFlowBlock, OpenedScript, ScriptContext } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 import { API_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
+import { API_CONFIG } from '@/config/constants';
 
 export interface NavigationPathItem {
   id: string;
@@ -139,7 +140,7 @@ export const useZoomNavigation = ({
       
       if (!scriptData) {
         // Carica lo script via API solo se non è già in cache
-        const response = await fetch(`http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/scripts/${scriptName}?multilingua=true&format=blocks`);
+        const response = await fetch(`${API_CONFIG.API_BASE_URL}/scripts/${scriptName}?multilingua=true&format=blocks`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

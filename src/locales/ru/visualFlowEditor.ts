@@ -97,6 +97,13 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.addPartToAsideSlot.hint': 'alienGun 2 1 2 0',
   'visualFlowEditor.blocks.addPartToAsideSlot.noParameters': 'Параметры не настроены',
   'visualFlowEditor.blocks.addPartToAsideSlot.params': 'Параметры',
+
+  // ADDSHIPPARTS Block
+  'visualFlowEditor.blocks.addShipParts.partsFileLabel': 'Файл деталей',
+  'visualFlowEditor.blocks.addShipParts.selectParts': 'Выберите файл деталей',
+  'visualFlowEditor.blocks.addShipParts.loading': 'Загрузка деталей...',
+  'visualFlowEditor.blocks.addShipParts.noParts': 'Файл деталей не выбран',
+  'visualFlowEditor.blocks.addShipParts.description': 'Загрузить детали корабля из файла YAML',
   
   // Metacode System
   'visualFlowEditor.metacode.found': 'найденных метакодов',

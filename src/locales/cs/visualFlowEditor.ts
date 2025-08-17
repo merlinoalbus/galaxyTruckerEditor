@@ -97,6 +97,13 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.addPartToAsideSlot.hint': 'alienGun 2 1 2 0',
   'visualFlowEditor.blocks.addPartToAsideSlot.noParameters': 'Žádné parametry nejsou nakonfigurovány',
   'visualFlowEditor.blocks.addPartToAsideSlot.params': 'Parametry',
+
+  // ADDSHIPPARTS Block
+  'visualFlowEditor.blocks.addShipParts.partsFileLabel': 'Soubor dílů',
+  'visualFlowEditor.blocks.addShipParts.selectParts': 'Vyberte soubor dílů',
+  'visualFlowEditor.blocks.addShipParts.loading': 'Načítání dílů...',
+  'visualFlowEditor.blocks.addShipParts.noParts': 'Není vybrán soubor dílů',
+  'visualFlowEditor.blocks.addShipParts.description': 'Načíst díly lodi ze souboru YAML',
   
   // Metacode System
   'visualFlowEditor.metacode.found': 'Nalezeno',

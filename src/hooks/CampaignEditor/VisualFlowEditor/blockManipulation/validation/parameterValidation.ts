@@ -477,6 +477,19 @@ export const validateAddPartToAsideSlotParameters = (block: any): { valid: boole
 };
 
 /**
+ * Valida i parametri di un blocco ADDSHIPPARTS
+ */
+export const validateAddShipPartsParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.params || block.parameters.params.trim() === '') {
+    return { 
+      valid: false, 
+      error: 'ADDSHIPPARTS_NO_PARAMS' 
+    };
+  }
+  return { valid: true };
+};
+
+/**
  * Valida i parametri di un blocco in base al suo tipo
  */
 export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
@@ -528,6 +541,8 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return validateAddPartToShipParameters(block);
     case 'ADDPARTTOASIDESLOT':
       return validateAddPartToAsideSlotParameters(block);
+    case 'ADDSHIPPARTS':
+      return validateAddShipPartsParameters(block);
     // EXIT_MENU, SHOWDLGSCENE, HIDEDLGSCENE non hanno parametri da validare
     default:
       return { valid: true };

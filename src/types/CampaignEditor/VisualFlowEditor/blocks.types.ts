@@ -109,6 +109,7 @@ export interface BlockParameters {
   image?: string; // For SHOWCHAR, CHANGECHAR
   status?: string;
   duration?: number | string; // For DELAY command
+  params?: string; // For ADDSHIPPARTS command - path to parts YAML file
   [key: string]: string | number | boolean | Record<string, string> | undefined;
 }
 

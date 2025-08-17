@@ -111,7 +111,7 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
       { id: 'setshiptype', name: 'SETSHIPTYPE', icon: '🚀', blockType: 'SETSHIPTYPE', description: t('visualFlowEditor.tools.setShipType.description'), implemented: true },
       { id: 'addparttoship', name: 'ADDPARTTOSHIP', icon: '🔧', blockType: 'ADDPARTTOSHIP', description: t('visualFlowEditor.tools.addPartToShip.description'), implemented: true },
       { id: 'addparttoasideslot', name: 'ADDPARTTOASIDESLOT', icon: '📦', blockType: 'ADDPARTTOASIDESLOT', description: t('visualFlowEditor.tools.addPartToAsideSlot.description'), implemented: true },
-      { id: 'addshipparts', name: 'ADDSHIPPARTS', icon: '⚙️', blockType: 'ADDSHIPPARTS', description: t('visualFlowEditor.tools.addShipParts.description'), implemented: false, inProgress: true },
+      { id: 'addshipparts', name: 'ADDSHIPPARTS', icon: '⚙️', blockType: 'ADDSHIPPARTS', description: t('visualFlowEditor.tools.addShipParts.description'), implemented: true },
       { id: 'finish_mission', name: 'FINISH_MISSION', icon: '🏁', blockType: 'FINISH_MISSION', description: t('visualFlowEditor.tools.finishMission.description'), implemented: false, inProgress: true },
       { id: 'act_mission', name: 'ACT_MISSION', icon: '🎬', blockType: 'ACT_MISSION', description: t('visualFlowEditor.tools.actMission.description'), implemented: false, inProgress: true },
       { id: 'setdeckpreparationscript', name: 'SETDECKPREPARATIONSCRIPT', icon: '🃏', blockType: 'SETDECKPREPARATIONSCRIPT', description: t('visualFlowEditor.tools.setDeckPreparationScript.description'), implemented: false, inProgress: true },

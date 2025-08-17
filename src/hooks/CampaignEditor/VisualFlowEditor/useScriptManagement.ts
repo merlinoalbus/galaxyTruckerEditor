@@ -5,6 +5,7 @@ import { cleanupScriptBlocks } from '@/utils/CampaignEditor/VisualFlowEditor/blo
 import { generateScriptJson, generateMissionJson, convertBlocksToJson } from '@/utils/CampaignEditor/VisualFlowEditor/jsonConverter';
 import type { IFlowBlock, ValidationResult } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 import { API_CONSTANTS, UI_CONSTANTS, SUPPORTED_LANGUAGES } from '@/constants/VisualFlowEditor.constants';
+import { API_CONFIG } from '@/config/constants';
 
 export interface NewScriptDialogType {
   isOpen: boolean;
@@ -179,7 +180,7 @@ export const useScriptManagement = ({
     if (setDropError) setDropError(null);
     
     try {
-      const response = await fetch(`http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/missions/${missionId}?multilingua=true&format=blocks`);
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}/missions/${missionId}?multilingua=true&format=blocks`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -265,7 +266,7 @@ export const useScriptManagement = ({
     if (setDropError) setDropError(null);
     
     try {
-      const response = await fetch(`http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/scripts/${scriptId}?multilingua=true&format=blocks`);
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}/scripts/${scriptId}?multilingua=true&format=blocks`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -437,7 +438,7 @@ export const useScriptManagement = ({
     console.log('[VisualFlowEditor] Scripts being saved:', scriptsToSave);
 
     try {
-      const response = await fetch(`http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/scripts/saveScript`, {
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}/scripts/saveScript`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -510,7 +511,7 @@ export const useScriptManagement = ({
     const payload = [missionWithMetadata];
 
     try {
-      const response = await fetch(`http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/missions/saveMission`, {
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}/missions/saveMission`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

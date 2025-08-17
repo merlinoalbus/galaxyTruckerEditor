@@ -60,6 +60,11 @@ export const convertBlocksToJson = (blocks: any[]): any[] => {
       jsonBlock.parameters = {
         script: block.parameters.script || ''
       };
+    } else if (block.type === 'ADDSHIPPARTS' && block.parameters) {
+      // ADDSHIPPARTS usa 'params' per il percorso del file YAML
+      jsonBlock.parameters = {
+        params: block.parameters.params || ''
+      };
     } else if (block.isContainer && block.children) {
       jsonBlock.children = convertBlocksToJson(block.children);
     } else if (block.parameters) {

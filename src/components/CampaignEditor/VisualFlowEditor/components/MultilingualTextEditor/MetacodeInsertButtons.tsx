@@ -3,6 +3,7 @@ import { Type, Hash, Image, User, ChevronDown } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/locales';
 import { API_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
+import { API_CONFIG } from '@/config/constants';
 
 interface MetacodeInsertButtonsProps {
   onInsert: (metacode: string) => void;
@@ -25,7 +26,7 @@ const useTop5Metacodes = (language?: string) => {
     const fetchTopMetacodes = async () => {
       try {
         // Chiama l'API con la lingua specifica
-        const response = await fetch(`http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/metacodes/top5/${activeLang}`);
+        const response = await fetch(`${API_CONFIG.API_BASE_URL}/metacodes/top5/${activeLang}`);
         if (response.ok) {
           const result = await response.json();
           setTopMetacodes(result.data);

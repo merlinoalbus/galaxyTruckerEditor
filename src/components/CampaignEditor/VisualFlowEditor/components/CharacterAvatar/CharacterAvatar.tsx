@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API_CONFIG } from '@/config/constants';
 import { useScene } from '@/contexts/SceneContext';
 
 interface CharacterAvatarProps {
@@ -15,8 +16,8 @@ interface CharacterAvatarProps {
   isShipType?: boolean;  // Indica se è per SETSHIPTYPE
 }
 
-const NO_AVATAR_PATH = 'http://localhost:3001/api/file/avatars/common/avatar_no_avatar.png';
-const DEFAULT_SHIP_PATH = 'http://localhost:3001/api/file/ships/glowblue-shipII.png';
+const NO_AVATAR_PATH = '${API_CONFIG.API_BASE_URL}/file/avatars/common/avatar_no_avatar.png';
+const DEFAULT_SHIP_PATH = '${API_CONFIG.API_BASE_URL}/file/ships/glowblue-shipII.png';
 
 export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({ className = '', size = 'small', character, isShipType = false }) => {
   const { getCurrentScene } = useScene();
@@ -40,11 +41,11 @@ export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({ className = ''
       } 
       // Altrimenti usa il percorso del file
       else if (lastCharacter.lastImmagine.nomefile) {
-        imagePath = `http://localhost:3001/api/file/${lastCharacter.lastImmagine.percorso || lastCharacter.lastImmagine.nomefile}`;
+        imagePath = `${API_CONFIG.API_BASE_URL}/file/${lastCharacter.lastImmagine.percorso || lastCharacter.lastImmagine.nomefile}`;
       }
     } else if (typeof lastCharacter.lastImmagine === 'string') {
       // Compatibilità con il vecchio formato stringa
-      imagePath = `http://localhost:3001/api/file/${lastCharacter.lastImmagine}`;
+      imagePath = `${API_CONFIG.API_BASE_URL}/file/${lastCharacter.lastImmagine}`;
     }
   }
   
