@@ -18,6 +18,8 @@ interface ReturnBlockProps {
   collapseAllTrigger?: number;
   expandAllTrigger?: number;
   globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
+  isCustom?: boolean;
+  availableLanguages?: string[];
 }
 
 export const ReturnBlock: React.FC<ReturnBlockProps> = ({
@@ -31,7 +33,9 @@ export const ReturnBlock: React.FC<ReturnBlockProps> = ({
   onNavigateBack,
   collapseAllTrigger = 0,
   expandAllTrigger = 0,
-  globalCollapseState = 'manual'
+  globalCollapseState = 'manual',
+  isCustom,
+  availableLanguages
 }) => {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();

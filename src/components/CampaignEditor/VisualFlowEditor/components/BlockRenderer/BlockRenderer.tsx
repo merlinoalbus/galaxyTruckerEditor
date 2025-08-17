@@ -37,6 +37,8 @@ interface BlockRendererProps {
   collapseAllTrigger?: number;
   expandAllTrigger?: number;
   globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
+  isCustom?: boolean;
+  availableLanguages?: string[];
 }
 
 export const BlockRenderer: React.FC<BlockRendererProps> = ({
@@ -60,7 +62,9 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
   allBlocks = [],
   collapseAllTrigger = 0,
   expandAllTrigger = 0,
-  globalCollapseState = 'manual'
+  globalCollapseState = 'manual',
+  isCustom,
+  availableLanguages
 }) => {
   const updateBlock = useCallback((updates: BlockUpdate) => {
     onUpdateBlock(block.id, updates);
@@ -102,9 +106,11 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
         collapseAllTrigger={collapseAllTrigger}
         expandAllTrigger={expandAllTrigger}
         globalCollapseState={globalCollapseState}
+        isCustom={isCustom}
+        availableLanguages={availableLanguages}
       />
     ));
-  }, [depth, onUpdateBlock, onRemoveBlock, onDragStart, onDragOver, onDrop, onDropAtIndex, isDragActive, onZoomIn, onZoomOut, isZoomed, currentFocusedBlockId, sessionData, createDropValidator, invalidBlocks, blockValidationTypes, allBlocks, collapseAllTrigger, expandAllTrigger, globalCollapseState]);
+  }, [depth, onUpdateBlock, onRemoveBlock, onDragStart, onDragOver, onDrop, onDropAtIndex, isDragActive, onZoomIn, onZoomOut, isZoomed, currentFocusedBlockId, sessionData, createDropValidator, invalidBlocks, blockValidationTypes, allBlocks, collapseAllTrigger, expandAllTrigger, globalCollapseState, isCustom, availableLanguages]);
 
   // Render SCRIPT block
   if (block.type === 'SCRIPT') {
@@ -151,6 +157,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -179,6 +187,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -207,6 +217,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -236,6 +248,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -267,6 +281,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -293,6 +309,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -314,6 +332,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -335,6 +355,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -354,6 +376,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -375,6 +399,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -394,6 +420,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -413,6 +441,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );

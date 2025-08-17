@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, ChevronUp, Copy, CopyCheck, Globe, User, Users } from 'lucide-react';
 import { useTranslation } from '@/locales';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useScriptMetadata } from '@/contexts/ScriptMetadataContext';
 import { TIMEOUT_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
 import { ParsedMetacode, getMetacodeContext } from './metacodeParser';
 import { MetacodeTextarea } from './MetacodeTextarea';
@@ -28,6 +29,8 @@ interface MultilingualTextEditorProps {
   placeholder?: string;
   className?: string;
   label?: string;
+  isCustom?: boolean;
+  availableLanguages?: string[];
 }
 
 export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
@@ -35,11 +38,32 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
   onChange,
   placeholder,
   className = '',
-  label
+  label,
+  isCustom,
+  availableLanguages
 }) => {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
-  const LANGUAGES = getLanguages(t);
+  const scriptMetadata = useScriptMetadata();
+  const allLanguages = getLanguages(t);
+  
+  // Usa i valori dal context se non sono passati come props
+  const effectiveIsCustom = isCustom !== undefined ? isCustom : scriptMetadata.isCustom;
+  const effectiveAvailableLanguages = availableLanguages !== undefined ? availableLanguages : scriptMetadata.availableLanguages;
+  
+  // Determina quali lingue sono disponibili
+  const LANGUAGES = React.useMemo(() => {
+    // Se è custom non multilingua, mostra solo EN
+    if (effectiveIsCustom && effectiveAvailableLanguages && effectiveAvailableLanguages.length === 1) {
+      return allLanguages.filter(lang => lang.code === 'EN');
+    }
+    // Se ci sono lingue disponibili specificate, usa quelle
+    if (effectiveAvailableLanguages && effectiveAvailableLanguages.length > 0) {
+      return allLanguages.filter(lang => effectiveAvailableLanguages.includes(lang.code));
+    }
+    // Altrimenti usa tutte le lingue
+    return allLanguages;
+  }, [allLanguages, effectiveIsCustom, effectiveAvailableLanguages]);
   const finalPlaceholder = placeholder || t('visualFlowEditor.multilingual.defaultPlaceholder');
   const [isExpanded, setIsExpanded] = useState(false);
   const [copiedLang, setCopiedLang] = useState<string | null>(null);

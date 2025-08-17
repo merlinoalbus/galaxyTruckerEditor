@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FileText, Target } from 'lucide-react';
 import type { NewScriptDialogProps } from './NewScriptDialog.types';
 import { useTranslation } from '@/locales';
@@ -11,6 +11,16 @@ export const NewScriptDialog: React.FC<NewScriptDialogProps> = ({
 }) => {
   const { t } = useTranslation();
   const [elementType, setElementType] = useState<'script' | 'mission'>('script');
+  const [scriptType, setScriptType] = useState<'standard' | 'custom' | 'customMultilingual'>(
+    newScriptDialog.scriptType || 'standard'
+  );
+  
+  // Sincronizza scriptType con newScriptDialog quando cambia
+  useEffect(() => {
+    if (newScriptDialog.isOpen && scriptType !== newScriptDialog.scriptType) {
+      setNewScriptDialog(prev => ({ ...prev, scriptType }));
+    }
+  }, [scriptType, newScriptDialog.isOpen, newScriptDialog.scriptType, setNewScriptDialog]);
   
   if (!newScriptDialog.isOpen) return null;
 
@@ -58,6 +68,53 @@ export const NewScriptDialog: React.FC<NewScriptDialogProps> = ({
               </button>
             </div>
           </div>
+
+          {/* Selezione tipo di script/mission */}
+          {(elementType === 'script' || elementType === 'mission') && (
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                {elementType === 'script' ? 'Tipo di Script' : 'Tipo di Mission'}
+              </label>
+              <div className="space-y-2">
+                <label className="flex items-center p-2 rounded-lg border border-slate-600 cursor-pointer hover:bg-slate-700">
+                  <input
+                    type="radio"
+                    className="mr-3"
+                    checked={scriptType === 'standard'}
+                    onChange={() => setScriptType('standard')}
+                  />
+                  <div>
+                    <div className="font-medium">Standard</div>
+                    <div className="text-xs text-gray-400">{elementType === 'script' ? 'Script campagna principale' : 'Mission campagna principale'}</div>
+                  </div>
+                </label>
+                <label className="flex items-center p-2 rounded-lg border border-slate-600 cursor-pointer hover:bg-slate-700">
+                  <input
+                    type="radio"
+                    className="mr-3"
+                    checked={scriptType === 'custom'}
+                    onChange={() => setScriptType('custom')}
+                  />
+                  <div>
+                    <div className="font-medium">Custom</div>
+                    <div className="text-xs text-gray-400">{elementType === 'script' ? 'Script personalizzato (solo inglese)' : 'Mission personalizzata (solo inglese)'}</div>
+                  </div>
+                </label>
+                <label className="flex items-center p-2 rounded-lg border border-slate-600 cursor-pointer hover:bg-slate-700">
+                  <input
+                    type="radio"
+                    className="mr-3"
+                    checked={scriptType === 'customMultilingual'}
+                    onChange={() => setScriptType('customMultilingual')}
+                  />
+                  <div>
+                    <div className="font-medium">Custom Multilingua</div>
+                    <div className="text-xs text-gray-400">{elementType === 'script' ? 'Script personalizzato (tutte le lingue)' : 'Mission personalizzata (tutte le lingue)'}</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          )}
 
           {/* Input nome file */}
           <div>

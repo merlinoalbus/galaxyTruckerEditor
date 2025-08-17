@@ -11,6 +11,7 @@ import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
 import type { IFlowBlock, ValidationResult, ScriptContext, OpenedScript } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 import { TIMEOUT_CONSTANTS, PERFORMANCE_CONSTANTS, UI_CONSTANTS, API_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
 import { SceneProvider, useScene } from '@/contexts/SceneContext';
+import { ScriptMetadataProvider } from '@/contexts/ScriptMetadataContext';
 
 // Import componenti modulari
 import { BlockRenderer } from './components/BlockRenderer/BlockRenderer';
@@ -23,6 +24,7 @@ import { ToolsPanel } from './components/ToolsPanel';
 import { ErrorModal } from './components/ErrorModal/ErrorModal';
 import { ValidationErrorsModal } from './components/ValidationErrorsModal/ValidationErrorsModal';
 import { collectScriptLabels } from '@/hooks/CampaignEditor/VisualFlowEditor/utils/collectScriptLabels';
+import { collectAllBlocks } from '@/utils/CampaignEditor/VisualFlowEditor/collectAllBlocks';
 // Import hooks custom modulari
 import { useBlockManipulation } from '@/hooks/CampaignEditor/VisualFlowEditor/useBlockManipulation';
 import { useDragAndDrop } from '@/hooks/CampaignEditor/VisualFlowEditor/useDragAndDrop';
@@ -669,7 +671,11 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
                 scriptName: mainScriptName,
                 fileName: currentScript?.fileName || 'main.txt',
                 blocks: blocksToSave,
-                isModified: true
+                isModified: true,
+                // Includi i metadati custom dal currentScript
+                isCustom: currentScript?.isCustom,
+                customPath: currentScript?.customPath,
+                availableLanguages: currentScript?.availableLanguages
               });
             } else {
               // Aggiorna i blocchi dello script principale esistente
@@ -677,6 +683,16 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
               if (mainScript) {
                 mainScript.blocks = blocksToSave;
                 mainScript.isModified = true;
+                // Aggiorna anche i metadati custom se presenti
+                if (currentScript?.isCustom !== undefined) {
+                  mainScript.isCustom = currentScript.isCustom;
+                }
+                if (currentScript?.customPath !== undefined) {
+                  mainScript.customPath = currentScript.customPath;
+                }
+                if (currentScript?.availableLanguages !== undefined) {
+                  mainScript.availableLanguages = currentScript.availableLanguages;
+                }
               }
             }
           }
@@ -727,14 +743,18 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
         {/* Canvas area */}
         <div className="flex-1 bg-slate-900 p-8 overflow-auto">
           {currentScriptBlocks.length > 0 ? (
-            <div className="max-w-6xl mx-auto">
-              {currentScriptBlocks.map(block => (
-                <BlockRenderer
+            <ScriptMetadataProvider 
+              isCustom={currentScript?.isCustom} 
+              availableLanguages={currentScript?.availableLanguages}
+            >
+              <div className="max-w-6xl mx-auto">
+                {currentScriptBlocks.map(block => (
+                  <BlockRenderer
                   key={block.id}
                   block={block}
                   invalidBlocks={validationErrors.invalidBlocks}
                   blockValidationTypes={blockValidationTypes}
-                  allBlocks={currentScriptBlocks}
+                  allBlocks={collectAllBlocks(currentScriptBlocks)}
                   onUpdateBlock={(id, updates) => {
                     setCurrentScriptBlocks(prev => {
                       const updated = updateBlockRecursive(prev, id, updates);
@@ -769,9 +789,12 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
                   collapseAllTrigger={collapseAllTrigger}
                   expandAllTrigger={expandAllTrigger}
                   globalCollapseState={globalCollapseState}
+                  isCustom={currentScript?.isCustom}
+                  availableLanguages={currentScript?.availableLanguages}
                 />
-              ))}
-            </div>
+                ))}
+              </div>
+            </ScriptMetadataProvider>
           ) : (
             <div className="flex items-center justify-center h-full">
               <div className="text-center text-gray-500">

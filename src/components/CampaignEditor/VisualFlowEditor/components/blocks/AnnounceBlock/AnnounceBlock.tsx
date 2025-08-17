@@ -16,6 +16,8 @@ interface AnnounceBlockProps {
   collapseAllTrigger?: number;
   expandAllTrigger?: number;
   globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
+  isCustom?: boolean;
+  availableLanguages?: string[];
 }
 
 export const AnnounceBlock: React.FC<AnnounceBlockProps> = ({
@@ -27,7 +29,9 @@ export const AnnounceBlock: React.FC<AnnounceBlockProps> = ({
   validationType,
   collapseAllTrigger = 0,
   expandAllTrigger = 0,
-  globalCollapseState = 'manual'
+  globalCollapseState = 'manual',
+  isCustom,
+  availableLanguages
 }) => {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
@@ -91,6 +95,8 @@ export const AnnounceBlock: React.FC<AnnounceBlockProps> = ({
           })}
           placeholder={t('visualFlowEditor.blocks.announce.placeholder')}
           label={t('visualFlowEditor.blocks.announce.textLabel')}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
