@@ -78,6 +78,26 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.subScript.hint': 'Selecciona el script a ejecutar',
   'visualFlowEditor.blocks.subScript.navigate': 'Navegar al sub-script',
   
+  // EXIT_MENU Block
+  'visualFlowEditor.blocks.exitMenu.description': 'Salir del menú actual',
+  'visualFlowEditor.blocks.exitMenu.info': 'Este comando sale del menú actual y continúa la ejecución',
+  'visualFlowEditor.blocks.exitMenu.compact': 'Salir del menú',
+  'visualFlowEditor.blocks.exitMenu.fullDescription': 'Salir del menú actual. Este comando sale del menú actual y continúa la ejecución.',
+  
+  // ADDPARTTOSHIP Block
+  'visualFlowEditor.blocks.addPartToShip.parameters': 'Parámetros',
+  'visualFlowEditor.blocks.addPartToShip.placeholder': 'ej. 1 7 alienEngine 3333 0',
+  'visualFlowEditor.blocks.addPartToShip.hint': '1 7 alienEngine 3333 0',
+  'visualFlowEditor.blocks.addPartToShip.noParameters': 'Sin parámetros configurados',
+  'visualFlowEditor.blocks.addPartToShip.params': 'Parámetros',
+  
+  // ADDPARTTOASIDESLOT Block
+  'visualFlowEditor.blocks.addPartToAsideSlot.parameters': 'Parámetros',
+  'visualFlowEditor.blocks.addPartToAsideSlot.placeholder': 'ej. alienGun 2 1 2 0',
+  'visualFlowEditor.blocks.addPartToAsideSlot.hint': 'alienGun 2 1 2 0',
+  'visualFlowEditor.blocks.addPartToAsideSlot.noParameters': 'Sin parámetros configurados',
+  'visualFlowEditor.blocks.addPartToAsideSlot.params': 'Parámetros',
+  
   // Metacode System
   'visualFlowEditor.metacode.found': 'metacódigos encontrados',
   'visualFlowEditor.metacode.pattern': 'Patrón de metacódigo detectado',

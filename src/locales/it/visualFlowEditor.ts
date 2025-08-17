@@ -80,6 +80,20 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.exitMenu.compact': 'Esci dal menu',
   'visualFlowEditor.blocks.exitMenu.fullDescription': 'Esci dal menu corrente. Questo comando esce dal menu corrente e continua l\'esecuzione.',
   
+  // ADDPARTTOSHIP Block
+  'visualFlowEditor.blocks.addPartToShip.parameters': 'Parametri',
+  'visualFlowEditor.blocks.addPartToShip.placeholder': 'es. 1 7 alienEngine 3333 0',
+  'visualFlowEditor.blocks.addPartToShip.hint': '1 7 alienEngine 3333 0',
+  'visualFlowEditor.blocks.addPartToShip.noParameters': 'Nessun parametro configurato',
+  'visualFlowEditor.blocks.addPartToShip.params': 'Parametri',
+  
+  // ADDPARTTOASIDESLOT Block
+  'visualFlowEditor.blocks.addPartToAsideSlot.parameters': 'Parametri',
+  'visualFlowEditor.blocks.addPartToAsideSlot.placeholder': 'es. alienGun 2 1 2 0',
+  'visualFlowEditor.blocks.addPartToAsideSlot.hint': 'alienGun 2 1 2 0',
+  'visualFlowEditor.blocks.addPartToAsideSlot.noParameters': 'Nessun parametro configurato',
+  'visualFlowEditor.blocks.addPartToAsideSlot.params': 'Parametri',
+  
   // Metacode System
   'visualFlowEditor.metacode.found': 'Trovati',
   'visualFlowEditor.metacode.pattern': 'pattern',
@@ -306,6 +320,10 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.addOpponentNotInMission': 'ADDOPPONENT dovrebbe essere dentro un blocco MISSION.',
   'visualFlowEditor.validation.setShipTypeNoType': 'Il blocco SETSHIPTYPE deve avere una classe di nave selezionata.',
   'visualFlowEditor.validation.setShipTypeNotInMission': 'SETSHIPTYPE dovrebbe essere dentro un blocco MISSION.',
+  'visualFlowEditor.validation.addPartToShipNoParams': 'Il blocco ADDPARTTOSHIP deve avere parametri. Specifica la parte da aggiungere.',
+  'visualFlowEditor.validation.addPartToShipNotInBuild': 'ADDPARTTOSHIP dovrebbe essere dentro un blocco BUILD. Considera di spostare questo blocco dentro una fase di costruzione.',
+  'visualFlowEditor.validation.addPartToAsideSlotNoParams': 'Il blocco ADDPARTTOASIDESLOT deve avere parametri. Specifica la parte da aggiungere.',
+  'visualFlowEditor.validation.addPartToAsideSlotNotInBuild': 'ADDPARTTOASIDESLOT dovrebbe essere dentro un blocco BUILD. Considera di spostare questo blocco dentro una fase di costruzione.',
   'visualFlowEditor.validation.showcharNoScene': 'SHOWCHAR richiede una scena attiva. Aggiungi SHOWDLGSCENE prima di questo blocco.',
   'visualFlowEditor.validation.hidecharNoScene': 'HIDECHAR richiede una scena attiva. Aggiungi SHOWDLGSCENE prima di questo blocco.',
   'visualFlowEditor.validation.hidecharNoVisibleCharacters': 'HIDECHAR non può essere usato: nessun personaggio visibile nella scena.',

@@ -5,7 +5,8 @@ SCRIPTS
     AddOpponent brown
     SetShipType STI
     SetShipType STI
-    AddPartToShip
+    AddPartToShip 2 8 alienEngine 3333 0 1
+    AddPartToAsideSlot alienGun 2 1 2 0 2
     Announce "prova"
     RETURN
     SET questCompleted

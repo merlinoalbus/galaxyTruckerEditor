@@ -451,6 +451,32 @@ export const validateResetParameters = (block: any): { valid: boolean; error?: s
 };
 
 /**
+ * Valida i parametri di un blocco ADDPARTTOSHIP
+ */
+export const validateAddPartToShipParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.params || block.parameters.params.trim() === '') {
+    return { 
+      valid: false, 
+      error: 'ADDPARTTOSHIP_NO_PARAMS' 
+    };
+  }
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri di un blocco ADDPARTTOASIDESLOT
+ */
+export const validateAddPartToAsideSlotParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.params || block.parameters.params.trim() === '') {
+    return { 
+      valid: false, 
+      error: 'ADDPARTTOASIDESLOT_NO_PARAMS' 
+    };
+  }
+  return { valid: true };
+};
+
+/**
  * Valida i parametri di un blocco in base al suo tipo
  */
 export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
@@ -498,6 +524,10 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return validateSetParameters(block);
     case 'RESET':
       return validateResetParameters(block);
+    case 'ADDPARTTOSHIP':
+      return validateAddPartToShipParameters(block);
+    case 'ADDPARTTOASIDESLOT':
+      return validateAddPartToAsideSlotParameters(block);
     // EXIT_MENU, SHOWDLGSCENE, HIDEDLGSCENE non hanno parametri da validare
     default:
       return { valid: true };
