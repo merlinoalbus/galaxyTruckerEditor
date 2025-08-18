@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 import { useState, useCallback } from 'react';
 import { imagesViewService } from '@/services/CampaignEditor/VariablesSystem/services/ImagesView/imagesViewService';
 import { ImageData, ImageCategory } from '@/types/CampaignEditor/VariablesSystem/types/ImagesView/ImagesView.types';
@@ -52,7 +53,7 @@ export const useImagesView = () => {
       }
       return null;
     } catch (err) {
-      console.error('Failed to load image detail:', err);
+  logger.error('Failed to load image detail:', err);
       return null;
     }
   }, []);

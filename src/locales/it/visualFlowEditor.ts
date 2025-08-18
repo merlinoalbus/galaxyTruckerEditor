@@ -56,6 +56,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.goToBlock': 'Vai →',
   'visualFlowEditor.validation.goToBlockTitle': 'Vai al blocco',
   'visualFlowEditor.validation.footer': 'Correggi questi errori per garantire il corretto funzionamento dello script. I blocchi con errori sono evidenziati in rosso nell\'editor.',
+  'visualFlowEditor.validation.setSpecConditionNoCondition': 'SETSPECCONDITION deve specificare una condizione. Scegline una dalla lista.',
+  'visualFlowEditor.validation.setSpecConditionOutsideContext': 'SETSPECCONDITION dovrebbe essere usato dentro un blocco MISSION, BUILD o FLIGHT. Considera di spostarlo.',
   
   // Delay Block
   'visualFlowEditor.blocks.delay.duration': 'Durata',
@@ -91,6 +93,23 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.addPartToShip.hint': '1 7 alienEngine 3333 0',
   'visualFlowEditor.blocks.addPartToShip.noParameters': 'Nessun parametro configurato',
   'visualFlowEditor.blocks.addPartToShip.params': 'Parametri',
+
+  // SETSPECCONDITION Block
+  'visualFlowEditor.blocks.setSpecCondition.condition': 'Condizione',
+  
+  // SETADVPILE Block
+  'visualFlowEditor.blocks.setAdvPile.parameters': 'Parametri',
+  'visualFlowEditor.blocks.setAdvPile.placeholder': 'es. 1 3',
+  'visualFlowEditor.blocks.setAdvPile.hint': '1 3',
+  'visualFlowEditor.blocks.setAdvPile.noParameters': 'Nessun parametro configurato',
+  'visualFlowEditor.blocks.setAdvPile.params': 'Parametri',
+  
+  // SETSECRETADVPILE Block
+  'visualFlowEditor.blocks.setSecretAdvPile.parameters': 'Parametri',
+  'visualFlowEditor.blocks.setSecretAdvPile.placeholder': 'es. 2 1',
+  'visualFlowEditor.blocks.setSecretAdvPile.hint': '2 1',
+  'visualFlowEditor.blocks.setSecretAdvPile.noParameters': 'Nessun parametro configurato',
+  'visualFlowEditor.blocks.setSecretAdvPile.params': 'Parametri',
   
   // ADDPARTTOASIDESLOT Block
   'visualFlowEditor.blocks.addPartToAsideSlot.parameters': 'Parametri',
@@ -339,6 +358,10 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.addPartToAsideSlotNotInBuild': 'ADDPARTTOASIDESLOT dovrebbe essere dentro un blocco BUILD. Considera di spostare questo blocco dentro una fase di costruzione.',
   'visualFlowEditor.validation.addShipPartsNoParams': 'Il blocco ADDSHIPPARTS deve indicare un file di parti. Seleziona un file YAML da caricare.',
   'visualFlowEditor.validation.addShipPartsNotInBuild': 'ADDSHIPPARTS dovrebbe essere dentro un blocco BUILD. Sposta questo blocco nella fase di build.',
+  'visualFlowEditor.validation.setAdvPileNoParams': 'Il blocco SETADVPILE deve avere parametri. Inserisci due interi separati da spazio, senza virgolette.',
+  'visualFlowEditor.validation.setSecretAdvPileNoParams': 'Il blocco SETSECRETADVPILE deve avere parametri. Inserisci due interi separati da spazio, senza virgolette.',
+  'visualFlowEditor.validation.setAdvPileNotInBuild': 'SETADVPILE dovrebbe essere dentro un blocco BUILD. Sposta questo blocco nella fase di build.',
+  'visualFlowEditor.validation.setSecretAdvPileNotInBuild': 'SETSECRETADVPILE dovrebbe essere dentro un blocco BUILD. Sposta questo blocco nella fase di build.',
   'visualFlowEditor.validation.showcharNoScene': 'SHOWCHAR richiede una scena attiva. Aggiungi SHOWDLGSCENE prima di questo blocco.',
   'visualFlowEditor.validation.hidecharNoScene': 'HIDECHAR richiede una scena attiva. Aggiungi SHOWDLGSCENE prima di questo blocco.',
   'visualFlowEditor.validation.hidecharNoVisibleCharacters': 'HIDECHAR non può essere usato: nessun personaggio visibile nella scena.',
@@ -553,6 +576,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.shipClassI': 'Classe I',
   'visualFlowEditor.command.shipClassII': 'Classe II',
   'visualFlowEditor.command.shipClassIII': 'Classe III',
+  'visualFlowEditor.command.selectCondition': 'Seleziona condizione...',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Nome script...',

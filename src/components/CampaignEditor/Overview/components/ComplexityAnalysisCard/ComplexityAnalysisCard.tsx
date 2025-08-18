@@ -3,7 +3,7 @@
 import React from 'react';
 import { Activity, AlertCircle, TrendingUp } from 'lucide-react';
 import { useTranslation } from '@/locales';
-import type { ScriptComplexity, DependencyChain } from '@/types/CampaignEditor/Overview/Overview.types';
+import type { ScriptComplexity } from '@/types/CampaignEditor/Overview/Overview.types';
 
 interface ComplexityAnalysisCardProps {
   topScripts: ScriptComplexity[];

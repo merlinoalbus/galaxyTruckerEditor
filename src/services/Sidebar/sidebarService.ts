@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 import { API_CONFIG, API_ENDPOINTS } from '@/config/constants';
 
 class SidebarService {
@@ -16,7 +17,7 @@ class SidebarService {
         }
       ];
     } catch (error) {
-      console.error('Error fetching navigation items:', error);
+  logger.error('Error fetching navigation items:', error);
       return [];
     }
   }

@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 import React, { useEffect, useState } from 'react';
 import { Code, Map, Zap, Tag, Users, Database, Image, Trophy } from 'lucide-react';
 import { API_CONFIG, API_ENDPOINTS } from '@/config/constants';
@@ -90,7 +91,7 @@ export const ElementCounters: React.FC<ElementCountersProps> = ({ scriptsCount, 
           achievements: achievementsData.count || 0
         });
       } catch (error) {
-        console.error('Error fetching element counts:', error);
+  logger.error('Error fetching element counts:', error);
       } finally {
         setLoading(false);
       }

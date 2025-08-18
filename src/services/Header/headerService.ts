@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 import { API_CONFIG, API_ENDPOINTS } from '@/config/constants';
 
 class HeaderService {
@@ -9,7 +10,7 @@ class HeaderService {
         role: 'admin'
       };
     } catch (error) {
-      console.error('Error fetching user info:', error);
+  logger.error('Error fetching user info:', error);
       return null;
     }
   }

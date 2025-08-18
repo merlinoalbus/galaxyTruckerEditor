@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Search, Check } from 'lucide-react';
 import { useTranslation } from '@/locales';
 import { Character } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
@@ -28,8 +28,8 @@ export const CharacterSelector: React.FC<CharacterSelectorProps> = ({
   const { getCurrentScene } = useScene();
   const [searchTerm, setSearchTerm] = useState('');
   
-  // Usa sempre i personaggi passati come props
-  const characters = propsCharacters || [];
+  // Usa sempre i personaggi passati come props, mantenendo un riferimento stabile
+  const characters = useMemo(() => propsCharacters ?? [], [propsCharacters]);
   
   // Costruisci la mappa delle immagini dai personaggi
   const characterImages = useMemo(() => {

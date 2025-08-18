@@ -21,11 +21,9 @@ export const CampaignEditor: React.FC = () => {
     activeTab,
     setActiveTab,
     analysis,
-    selectedNode,
     selectedScript,
     isLoading,
     error,
-    handleScriptChange,
     handleSaveAll,
     handleScriptSelect
   } = useCampaignEditor();

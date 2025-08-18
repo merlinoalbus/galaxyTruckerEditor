@@ -1,6 +1,6 @@
 import React, { useState, ReactNode, useRef, useEffect } from 'react';
 import { Trash2, ChevronDown, ChevronUp, GripVertical } from 'lucide-react';
-import { getBlockColors, getBlockIconBackground, getBlockDragHandle } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
+import { getBlockColors } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
 import { useTranslation } from '@/locales';
 import { CharacterAvatar } from '../../CharacterAvatar';
 

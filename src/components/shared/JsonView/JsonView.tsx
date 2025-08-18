@@ -55,8 +55,9 @@ export const JsonView: React.FC<JsonViewProps> = ({
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), TIMEOUT_CONSTANTS.COPY_FEEDBACK_DURATION);
     } catch (error) {
-      console.error(t('visualFlowEditor.jsonView.copyError'), error);
+      // swallow copy errors silently to avoid noisy logs; UI remains unchanged
     }
+  // 't' non è necessario per la funzione di copia (nessun testo localizzato dentro)
   }, [scriptJson, isMinified, allowFormatting, indentSize]);
 
   const handleToggleMinified = useCallback(() => {

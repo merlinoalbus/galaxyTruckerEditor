@@ -1,6 +1,6 @@
+import { logger } from '@/utils/logger';
 import { useState, useCallback } from 'react';
 import type { IFlowBlock, OpenedScript, ScriptContext } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
-import { API_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
 import { API_CONFIG } from '@/config/constants';
 
 export interface NavigationPathItem {
@@ -157,8 +157,7 @@ export const useZoomNavigation = ({
   // Funzione per navigare a un sub-script (definita prima per essere usata in handleZoomIn)
   const handleNavigateToSubScript = useCallback(async (scriptName: string, parentBlock: IFlowBlock) => {
     try {
-      // Salva il path di zoom corrente PRIMA di navigare al sub-script
-      const currentZoomPath = [...navigationPath];
+      // (currentZoomPath rimosso: non utilizzato)
       
       // Controlla se lo script è già stato caricato
       let scriptData = openedScripts.get(scriptName);
@@ -312,7 +311,7 @@ export const useZoomNavigation = ({
         }
       ];
       // Debug opzionale
-  try { if ((window as any).__VFE_NAV_DEBUG__) { console.debug('[NAV] -> enter subscript', { from: navigationPath, to: newNavigationPath }); } } catch {}
+  try { if ((window as any).__VFE_NAV_DEBUG__) { logger.debug('[NAV] -> enter subscript', { from: navigationPath, to: newNavigationPath }); } } catch {}
       setNavigationPath(newNavigationPath);
       setRootBlocks([]);  // Reset rootBlocks per il nuovo contesto
       setCurrentScriptBlocks(blocksToLoad);
@@ -334,10 +333,10 @@ export const useZoomNavigation = ({
       });
       
     } catch (error) {
-      console.error('[useZoomNavigation] Error loading sub-script:', error);
+  logger.error('[useZoomNavigation] Error loading sub-script:', error);
       throw error;
     }
-  }, [currentScriptBlocks, currentScriptContext, openedScripts, rootBlocks, setOpenedScripts, setCurrentScriptContext, currentScript, navigationPath, setCurrentScriptBlocks, getMarkerIndices]);
+  }, [currentScriptBlocks, currentScriptContext, openedScripts, rootBlocks, setOpenedScripts, setCurrentScriptContext, currentScript, navigationPath, setCurrentScriptBlocks]);
 
   const handleZoomIn = useCallback((blockId: string) => {
   // Determina se siamo in un sub-script o in una mission e trova l'ULTIMO marker
@@ -409,7 +408,7 @@ export const useZoomNavigation = ({
       newPath = buildZoomPath(result.path, result.block);
     }
     
-  try { if ((window as any).__VFE_NAV_DEBUG__) { console.debug('[NAV] -> zoom in', { from: navigationPath, to: newPath, blockId }); } } catch {}
+  try { if ((window as any).__VFE_NAV_DEBUG__) { logger.debug('[NAV] -> zoom in', { from: navigationPath, to: newPath, blockId }); } } catch {}
   setNavigationPath(newPath);
     setCurrentFocusedBlock(result.block);
     
@@ -552,7 +551,7 @@ export const useZoomNavigation = ({
         } else {
           newPath = [...navigationPath, { id: markerId, name: targetScript.scriptName, block: scriptData.blocks[0] } as NavigationPathItem];
         }
-        try { if ((window as any).__VFE_NAV_DEBUG__) { console.debug('[NAV] -> back to script', { toScript: targetScript.scriptName, path: newPath }); } } catch {}
+  try { if ((window as any).__VFE_NAV_DEBUG__) { logger.debug('[NAV] -> back to script', { toScript: targetScript.scriptName, path: newPath }); } } catch {}
         setNavigationPath(newPath);
         setRootBlocks(scriptData.blocks);
         setCurrentScriptBlocks(scriptData.blocks);
@@ -566,7 +565,7 @@ export const useZoomNavigation = ({
         setScriptNavigationPath(prev => prev.slice(0, targetIndex + 1));
       }
     }
-  }, [openedScripts, currentScript, scriptNavigationPath, setOpenedScripts, setCurrentScriptContext, setCurrentScriptBlocks]);
+  }, [openedScripts, currentScript, scriptNavigationPath, setOpenedScripts, setCurrentScriptContext, setCurrentScriptBlocks, getMarkerIndices, navigationPath, findBlockInTree]);
 
   const handleZoomOut = useCallback((targetLevel?: number) => {
     
@@ -619,7 +618,7 @@ export const useZoomNavigation = ({
       if (scriptData) {
         // Mantieni tutta la catena fino al marker selezionato (incluso) e conserva eventuale pre-zoom già presente
         const pathUpToMarker = navigationPath.slice(0, targetIndex + 1);
-        try { if ((window as any).__VFE_NAV_DEBUG__) { console.debug('[NAV] -> click marker', { to: pathUpToMarker }); } } catch {}
+  try { if ((window as any).__VFE_NAV_DEBUG__) { logger.debug('[NAV] -> click marker', { to: pathUpToMarker }); } } catch {}
         setNavigationPath(pathUpToMarker);
         setRootBlocks([]);
         setCurrentScriptBlocks(scriptData.blocks);

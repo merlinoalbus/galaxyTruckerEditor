@@ -1,8 +1,4 @@
-import { 
-  ScriptCommand, 
-  ParsedScript, 
-  ScriptBlock 
-} from '@/types/CampaignEditor';
+import { ScriptCommand, ParsedScript } from '@/types/CampaignEditor';
 
 export const scriptParserService = {
   parseScriptContent(content: string, fileName: string, lang: string = 'EN'): ParsedScript[] {

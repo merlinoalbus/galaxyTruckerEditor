@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { API_CONFIG } from '@/config/constants';
-import { MessageSquare, Clock, ArrowRight, Tag, HelpCircle, ExternalLink, User, Users } from 'lucide-react';
+import { MessageSquare, ArrowRight, ExternalLink } from 'lucide-react';
 import { BaseBlock } from '../BaseBlock/BaseBlock';
 import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
 import { MultilingualTextEditor } from '../../MultilingualTextEditor';
@@ -10,7 +10,6 @@ import { useTranslation } from '@/locales';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SceneDebugButton } from '../../SceneDebugButton';
 import { CharacterAvatar } from '../../CharacterAvatar';
-import { useScene } from '@/contexts/SceneContext';
 import { simulateSceneExecution, getLastModifiedVisibleCharacter } from '@/utils/CampaignEditor/VisualFlowEditor/sceneSimulation';
 import { imagesViewService } from '@/services/CampaignEditor/VariablesSystem/services/ImagesView/imagesViewService';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
@@ -55,7 +54,6 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
 }) => {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
-  const { getCurrentScene, addCharacter, updateCharacter, lastModifiedCharacter, state, showDialogScene, hideDialogScene } = useScene();
   // Stato per collapse/expand - rispetta il globalCollapseState all'inizializzazione
   const [isCollapsed, setIsCollapsed] = useState(() => {
     // Command blocks default collapsed, ma rispetta lo stato globale
@@ -79,8 +77,8 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
     }
   }, [expandAllTrigger]);
   
-  // I characters vengono passati da sessionData, non caricati qui
-  const characters = sessionData?.characters || [];
+  // I characters vengono passati da sessionData, non caricati qui (memo per deps stabili)
+  const characters = useMemo(() => sessionData?.characters || [], [sessionData?.characters]);
   const [selectedCharacterImage, setSelectedCharacterImage] = useState<string | null>(null);
   const [characterImages, setCharacterImages] = useState<Record<string, string>>({});
   const [noAvatarImage, setNoAvatarImage] = useState<string | null>(null);
@@ -106,11 +104,11 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
       setCharacterImages(images);
       
       // Carica no_avatar una volta sola
-      imagesViewService.getImageBinary(['no_avatar.png']).then(noAvatarResponse => {
+  imagesViewService.getImageBinary(['no_avatar.png']).then(noAvatarResponse => {
         if (noAvatarResponse?.data?.[0]?.binary) {
           setNoAvatarImage(`data:image/png;base64,${noAvatarResponse.data[0].binary}`);
         }
-      }).catch(console.error);
+  }).catch(() => {});
     }
   }, [block.type, characters]);
   
@@ -157,7 +155,9 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
     return () => {
       resizeObserver.disconnect();
     };
-  }, [isManuallyExpanded]); // Rimuovo isCollapsed dalle dipendenze per evitare loop
+  // Rimuovo isCollapsed dalle dipendenze per evitare loop
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isManuallyExpanded]);
   const renderParameters = () => {
     switch (block.type) {
       case 'SAY':
@@ -627,7 +627,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
                       alt={`Class ${romanNumeral}`}
                       className="w-16 h-16 object-contain"
                       onError={(e) => {
-                        e.currentTarget.src = '${API_CONFIG.BE_BASE_URL}/static/common/unknown.png';
+                        e.currentTarget.src = `${API_CONFIG.BE_BASE_URL}/static/common/unknown.png`;
                       }}
                     />
                     <span className={`text-xs font-medium ${
@@ -643,6 +643,42 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
             })}
           </div>
         );
+
+      case 'SETSPECCONDITION': {
+    // Lista fissa approvata
+    const knownConditions = [
+      'bet',
+      'booze',
+      'explosives',
+      'FinalRace',
+      'ingots',
+      'merchantProtect',
+      'Noone',
+      'OnlyLoser',
+      'OnlyWinner',
+      'peopleDelivery',
+      'pirateEscort',
+      'purplealien',
+      'radioactive',
+      'specTiles',
+      'tilesBet'
+    ];
+        return (
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-slate-400 whitespace-nowrap">
+              {t('visualFlowEditor.blocks.setSpecCondition.condition')}
+            </label>
+            <SelectWithModal
+      type="label"
+              value={block.parameters?.condition || ''}
+              onChange={(value) => onUpdate({ parameters: { ...block.parameters, condition: value } })}
+              placeholder={t('visualFlowEditor.command.selectCondition')}
+              availableItems={knownConditions}
+              className="flex-1"
+            />
+          </div>
+        );
+      }
       
       default:
         // Gestione generica per tutti i blocchi non implementati
@@ -741,6 +777,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
       case 'HIDECHAR': return <span className="text-2xl">👻</span>;
       case 'ADDOPPONENT': return <span className="text-2xl">🎮</span>;
       case 'SETSHIPTYPE': return <span className="text-2xl">🚀</span>;
+  case 'SETSPECCONDITION': return <span className="text-2xl">🧩</span>;
   case 'SETDECKPREPARATIONSCRIPT': return <span className="text-2xl">🃏</span>;
   case 'SETFLIGHTDECKPREPARATIONSCRIPT': return <span className="text-2xl">🛩️</span>;
       default: return <MessageSquare className="w-4 h-4" />;
@@ -1047,6 +1084,12 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
               )}
             </div>
           );
+        }
+        break;
+      }
+      case 'SETSPECCONDITION': {
+        if (block.parameters?.condition) {
+          return <span className="text-gray-400">🧩 {block.parameters.condition}</span>;
         }
         break;
       }

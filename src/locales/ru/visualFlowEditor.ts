@@ -77,6 +77,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.subScript.scriptName': 'Имя скрипта',
   'visualFlowEditor.blocks.subScript.hint': 'Выберите скрипт для выполнения',
   'visualFlowEditor.blocks.subScript.navigate': 'Перейти к подскрипту',
+  // SETSPECCONDITION Block
+  'visualFlowEditor.blocks.setSpecCondition.condition': 'Условие',
   
   // ACT_MISSION Block
   'visualFlowEditor.blocks.actMission.missionName': 'Название миссии',
@@ -278,6 +280,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askMustBeFollowedByMenu': 'Блок ASK должен следоваться блоком MENU. Если ASK внутри IF, MENU может быть в той же ветке или вне IF.',
   'visualFlowEditor.validation.askWithoutMenu': 'Блок ASK должен следоваться блоком MENU. Этот ASK является последним блоком и не имеет следующего MENU.',
   'visualFlowEditor.validation.goWithoutLabel': 'Блок GO требует наличия хотя бы одного блока LABEL в скрипте. Добавьте блок LABEL перед использованием GO.',
+  'visualFlowEditor.validation.setSpecConditionNoCondition': 'Блок SETSPECCONDITION должен иметь выбранное условие.',
+  'visualFlowEditor.validation.setSpecConditionOutsideContext': 'SETSPECCONDITION следует использовать внутри MISSION, BUILD или FLIGHT. Вне этого контекста это только предупреждение.',
   'visualFlowEditor.validation.addPartToShipNotInBuild': 'ADDPARTTOSHIP должен быть внутри блока BUILD. Переместите этот блок в фазу сборки.',
   'visualFlowEditor.validation.addPartToAsideSlotNotInBuild': 'ADDPARTTOASIDESLOT должен быть внутри блока BUILD. Переместите этот блок в фазу сборки.',
   'visualFlowEditor.validation.addShipPartsNoParams': 'Блок ADDSHIPPARTS должен указывать файл деталей. Выберите YAML-файл для загрузки деталей.',
@@ -433,6 +437,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.selectLabel': 'Выбрать метку...',
   'visualFlowEditor.command.labelName': 'Имя метки...',
   'visualFlowEditor.command.selectScript': 'Выбрать скрипт...',
+  'visualFlowEditor.command.selectCondition': 'Выбрать условие...',
   'visualFlowEditor.command.opponent': 'Персонаж Противник',
   'visualFlowEditor.command.opponentPlaceholder': 'торговец, враг и т.д.',
   'visualFlowEditor.command.shipClassI': 'Класс I',

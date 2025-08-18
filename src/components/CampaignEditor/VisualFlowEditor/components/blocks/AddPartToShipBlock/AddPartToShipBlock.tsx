@@ -76,12 +76,26 @@ export const AddPartToShipBlock: React.FC<AddPartToShipBlockProps> = ({
     };
   }, [isManuallyExpanded, isCollapsed]);
   
+  // Base chiave i18n dinamica per supportare blocchi diversi che condividono questo UI
+  const getI18nBaseKey = () => {
+    switch (block.type) {
+      case 'SETADVPILE':
+        return 'visualFlowEditor.blocks.setAdvPile';
+      case 'SETSECRETADVPILE':
+        return 'visualFlowEditor.blocks.setSecretAdvPile';
+      case 'ADDPARTTOSHIP':
+      default:
+        return 'visualFlowEditor.blocks.addPartToShip';
+    }
+  };
+  const i18nBase = getI18nBaseKey();
+  
   const renderParameters = () => {
     return (
       <div className="space-y-3">
         <div>
           <label className="block text-xs text-slate-400 mb-2">
-            {t('visualFlowEditor.blocks.addPartToShip.parameters' as any)}
+            {t(`${i18nBase}.parameters` as any)}
           </label>
           <input
             type="text"
@@ -89,11 +103,11 @@ export const AddPartToShipBlock: React.FC<AddPartToShipBlockProps> = ({
             onChange={(e) => onUpdate({ 
               parameters: { ...block.parameters, params: e.target.value } 
             })}
-            placeholder={t('visualFlowEditor.blocks.addPartToShip.placeholder' as any)}
+            placeholder={t(`${i18nBase}.placeholder` as any)}
             className="w-full bg-slate-700/50 text-white px-3 py-2 rounded text-sm border border-slate-600 focus:border-blue-500 focus:outline-none"
           />
           <div className="mt-1 text-xs text-slate-500">
-            {t('visualFlowEditor.blocks.addPartToShip.hint' as any)}
+            {t(`${i18nBase}.hint` as any)}
           </div>
         </div>
       </div>
@@ -101,7 +115,10 @@ export const AddPartToShipBlock: React.FC<AddPartToShipBlockProps> = ({
   };
   
   const getBlockIcon = () => {
-    return <span className="text-2xl">🔧</span>;
+    let icon = '🔧';
+    if (block.type === 'SETADVPILE') icon = '📚';
+    if (block.type === 'SETSECRETADVPILE') icon = '🔒';
+    return <span className="text-2xl">{icon}</span>;
   };
   
   const getCompactParams = () => {
@@ -110,7 +127,7 @@ export const AddPartToShipBlock: React.FC<AddPartToShipBlockProps> = ({
     if (!params) {
       return (
         <div className="flex items-center gap-2 w-full text-gray-500 italic">
-          <span>{t('visualFlowEditor.blocks.addPartToShip.noParameters' as any)}</span>
+          <span>{t(`${i18nBase}.noParameters` as any)}</span>
         </div>
       );
     }
@@ -119,7 +136,7 @@ export const AddPartToShipBlock: React.FC<AddPartToShipBlockProps> = ({
       <div className="flex items-center justify-between gap-2 w-full bg-slate-800/30 rounded px-2 py-1">
         <div className="flex items-center gap-2 flex-1">
           <span className="text-gray-400">
-            {t('visualFlowEditor.blocks.addPartToShip.params' as any)}:
+            {t(`${i18nBase}.params` as any)}:
           </span>
           <span className="text-gray-300 font-mono text-xs truncate" title={params}>
             {params}

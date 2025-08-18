@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 import { useState, useCallback, useEffect } from 'react';
 import { variablesSystemApiService } from '@/services/CampaignEditor/VariablesSystem/variablesSystemApiService';
 import { gameDataService } from '@/services/CampaignEditor/GameDataService';
@@ -40,7 +41,7 @@ export const useSessionData = () => {
           characters: [] // i personaggi vengono caricati da API e non persistiti su localStorage
         };
       } catch (e) {
-        console.error('Errore nel caricamento dati sessione:', e);
+  logger.error('Errore nel caricamento dati sessione:', e);
       }
     }
     
@@ -103,7 +104,7 @@ export const useSessionData = () => {
   useEffect(() => {
     let isMounted = true;
     const debug = (window as any).__VFE_NAV_DEBUG__;
-    const log = (...args: any[]) => { if (debug) console.log('[SESSION] characters', ...args); };
+  const log = (...args: any[]) => { if (debug) logger.debug('[SESSION] characters', ...args); };
 
     if (_globalSessionCache.characters && _globalSessionCache.characters.length) {
       log('cache hit');
@@ -129,7 +130,7 @@ export const useSessionData = () => {
         }
       })
       .catch(err => {
-        console.error('Errore caricamento personaggi:', err);
+  logger.error('Errore caricamento personaggi:', err);
       });
 
     return () => { isMounted = false; };
@@ -139,7 +140,7 @@ export const useSessionData = () => {
   useEffect(() => {
     let isMounted = true;
     const debug = (window as any).__VFE_NAV_DEBUG__;
-    const log = (...args: any[]) => { if (debug) console.log('[SESSION] missions', ...args); };
+  const log = (...args: any[]) => { if (debug) logger.debug('[SESSION] missions', ...args); };
 
     if (_globalSessionCache.missions && _globalSessionCache.missions.length) {
       log('cache hit');
@@ -165,7 +166,7 @@ export const useSessionData = () => {
         }
       })
       .catch(err => {
-        console.error('Errore caricamento missioni:', err);
+  logger.error('Errore caricamento missioni:', err);
       });
 
     return () => { isMounted = false; };

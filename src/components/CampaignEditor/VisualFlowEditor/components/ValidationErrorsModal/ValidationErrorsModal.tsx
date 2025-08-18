@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { X, AlertTriangle, ChevronRight, ShieldOff, Shield } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from '@/locales';

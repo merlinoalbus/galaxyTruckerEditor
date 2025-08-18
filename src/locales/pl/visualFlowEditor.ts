@@ -77,6 +77,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.subScript.scriptName': 'Nazwa skryptu',
   'visualFlowEditor.blocks.subScript.hint': 'Wybierz skrypt do wykonania',
   'visualFlowEditor.blocks.subScript.navigate': 'Przejdź do podskryptu',
+  // SETSPECCONDITION Block
+  'visualFlowEditor.blocks.setSpecCondition.condition': 'Warunek',
   
   // ACT_MISSION Block
   'visualFlowEditor.blocks.actMission.missionName': 'Nazwa Misji',
@@ -278,6 +280,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askMustBeFollowedByMenu': 'Blok ASK musi być śledzony przez blok MENU. Jeśli ASK jest wewnątrz IF, MENU może być w tej samej gałęzi lub na zewnątrz IF.',
   'visualFlowEditor.validation.askWithoutMenu': 'Blok ASK musi być śledzony przez blok MENU. Ten ASK jest ostatnim blokiem i nie ma następującego MENU.',
   'visualFlowEditor.validation.goWithoutLabel': 'Blok GO wymaga co najmniej jednego bloku LABEL w skrypcie. Dodaj blok LABEL przed użyciem GO.',
+  'visualFlowEditor.validation.setSpecConditionNoCondition': 'Blok SETSPECCONDITION musi mieć wybrany warunek.',
+  'visualFlowEditor.validation.setSpecConditionOutsideContext': 'SETSPECCONDITION powinien być używany w MISSION, BUILD lub FLIGHT. Poza tym kontekstem to tylko ostrzeżenie.',
   'visualFlowEditor.validation.addPartToShipNotInBuild': 'ADDPARTTOSHIP powinien być wewnątrz bloku BUILD. Przenieś ten blok do fazy budowy.',
   'visualFlowEditor.validation.addPartToAsideSlotNotInBuild': 'ADDPARTTOASIDESLOT powinien być wewnątrz bloku BUILD. Przenieś ten blok do fazy budowy.',
   'visualFlowEditor.validation.addShipPartsNoParams': 'Blok ADDSHIPPARTS musi wskazywać plik części. Wybierz plik YAML do załadowania części.',
@@ -433,6 +437,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.selectLabel': 'Wybierz etykietę...',
   'visualFlowEditor.command.labelName': 'Nazwa etykiety...',
   'visualFlowEditor.command.selectScript': 'Wybierz skrypt...',
+  'visualFlowEditor.command.selectCondition': 'Wybierz warunek...',
   'visualFlowEditor.command.opponent': 'Postać Przeciwnika',
   'visualFlowEditor.command.opponentPlaceholder': 'kupiec, wróg, itp.',
   'visualFlowEditor.command.shipClassI': 'Klasa I',

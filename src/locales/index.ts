@@ -421,6 +421,8 @@ export type TranslationKey =
   | 'visualFlowEditor.validation.goToBlockTitle'
   | 'visualFlowEditor.validation.footer'
   | 'visualFlowEditor.validation.error'
+  | 'visualFlowEditor.validation.setSpecConditionNoCondition'
+  | 'visualFlowEditor.validation.setSpecConditionOutsideContext'
   | 'visualFlowEditor.validation.consecutiveAskError'
   | 'visualFlowEditor.validation.blockInBuildError'
   | 'visualFlowEditor.validation.blockInFlightError'
@@ -525,6 +527,7 @@ export type TranslationKey =
   | 'visualFlowEditor.blocks.addShipParts.description'
   | 'visualFlowEditor.blocks.finishMission.description'
   | 'visualFlowEditor.blocks.finishMission.compact'
+  | 'visualFlowEditor.blocks.setSpecCondition.condition'
   
   // Visual Flow Editor - Tools
   | 'visualFlowEditor.tools.title'
@@ -692,6 +695,7 @@ export type TranslationKey =
   | 'visualFlowEditor.command.shipClassI'
   | 'visualFlowEditor.command.shipClassII'
   | 'visualFlowEditor.command.shipClassIII'
+  | 'visualFlowEditor.command.selectCondition'
   
   // Visual Flow Editor - Script Block
   | 'visualFlowEditor.script.scriptName'

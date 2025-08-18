@@ -1,7 +1,7 @@
 import React from 'react';
 import { MapConnectionProps } from '@/types/CampaignEditor/InteractiveMap/types/MapConnection/MapConnection.types';
 import { mapConnectionStyles } from '@/styles/CampaignEditor/InteractiveMap/styles/MapConnection/MapConnection.styles';
-import { API_CONFIG, PATHS, MISSION_CONFIG } from '@/config/constants';
+import { API_CONFIG, MISSION_CONFIG } from '@/config/constants';
 
 export const MapConnection: React.FC<MapConnectionProps> = ({
   connection,
@@ -16,8 +16,8 @@ export const MapConnection: React.FC<MapConnectionProps> = ({
   onMouseLeave
 }) => {
   const hasScripts = relatedScripts.length > 0;
-  const midX = (fromPosition.x + toPosition.x) / 2;
-  const midY = (fromPosition.y + toPosition.y) / 2;
+  // const midX = (fromPosition.x + toPosition.x) / 2;
+  // const midY = (fromPosition.y + toPosition.y) / 2;
   
   // Handle shuttle connections differently
   if (connection.isShuttle) {
@@ -51,11 +51,11 @@ export const MapConnection: React.FC<MapConnectionProps> = ({
 
   // Calculate position on line to avoid overlaps
   const calculateShipPosition = () => {
-    const lineLength = Math.sqrt(
-      Math.pow(toPosition.x - fromPosition.x, 2) + 
-      Math.pow(toPosition.y - fromPosition.y, 2)
-    );
-    
+  // const lineLength = Math.sqrt(
+  //   Math.pow(toPosition.x - fromPosition.x, 2) + 
+  //   Math.pow(toPosition.y - fromPosition.y, 2)
+  // );
+
     // Start at middle of line
     let position = 0.5;
     const minDistance = 60; // Minimum distance from other elements

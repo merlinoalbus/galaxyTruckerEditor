@@ -6,7 +6,7 @@
 import { findBlockBeforeContainer } from '../search';
 import { validateAskInsertion } from './askValidation';
 import { validateContainerNesting } from './containerValidation';
-import { validateMenuInsertion, validateOptInsertion, validateMenuContent, canInsertMenuAfterBlock } from './menuValidation';
+import { validateMenuInsertion, validateOptInsertion, validateMenuContent } from './menuValidation';
 import { blockEndsWithAsk } from './blockValidators';
 import { validateGoInsertion, hasLabelInScript } from './goValidation';
 import { validateBlockParameters } from './parameterValidation';
@@ -183,24 +183,11 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
         }
       }
       
-      // Helper: restituisce il primo testo disponibile in qualsiasi lingua presente in block.parameters.text
-      const getAnyLanguageText = (block: any): string => {
-        if (!block || !block.parameters || !block.parameters.text) return '';
-        const textObj = block.parameters.text;
-        // Se è una stringa semplice, usala
-        if (typeof textObj === 'string') return textObj;
-        // Se è un oggetto con lingue, prendi la prima non vuota
-        for (const key of Object.keys(textObj)) {
-          if (typeof textObj[key] === 'string' && textObj[key].trim().length > 0) {
-            return textObj[key];
-          }
-        }
-        return '';
-      };
+  // (helper rimosso: getAnyLanguageText non utilizzato)
 
     // Gestione speciale per ADDOPPONENT, SETSHIPTYPE (MISSION context) e blocchi di ship parts (BUILD context)
     // Inoltre: SETDECKPREPARATIONSCRIPT e SETFLIGHTDECKPREPARATIONSCRIPT devono stare in MISSION/BUILD/FLIGHT (warning)
-  if ((block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE' || block.type === 'FINISH_MISSION' || block.type === 'ADDPARTTOSHIP' || block.type === 'ADDPARTTOASIDESLOT' || block.type === 'ADDSHIPPARTS' || block.type === 'SETDECKPREPARATIONSCRIPT' || block.type === 'SETFLIGHTDECKPREPARATIONSCRIPT') && paramValidation.valid) {
+  if ((block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE' || block.type === 'FINISH_MISSION' || block.type === 'ADDPARTTOSHIP' || block.type === 'ADDPARTTOASIDESLOT' || block.type === 'ADDSHIPPARTS' || block.type === 'SETADVPILE' || block.type === 'SETSECRETADVPILE' || block.type === 'SETDECKPREPARATIONSCRIPT' || block.type === 'SETFLIGHTDECKPREPARATIONSCRIPT' || block.type === 'SETSPECCONDITION') && paramValidation.valid) {
         // Verifica se siamo dentro un blocco MISSION
         let isInsideMission = false;
         
@@ -221,7 +208,7 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
         }
         
   // Per ADDPARTTOSHIP, ADDPARTTOASIDESLOT e ADDSHIPPARTS verifica se sono dentro BUILD
-  if (block.type === 'ADDPARTTOSHIP' || block.type === 'ADDPARTTOASIDESLOT' || block.type === 'ADDSHIPPARTS') {
+  if (block.type === 'ADDPARTTOSHIP' || block.type === 'ADDPARTTOASIDESLOT' || block.type === 'ADDSHIPPARTS' || block.type === 'SETADVPILE' || block.type === 'SETSECRETADVPILE') {
           // Verifica se siamo dentro un blocco BUILD
           let isInsideBuild = false;
           
@@ -250,6 +237,10 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
               errorKey = 'addPartToAsideSlotNotInBuild';
             } else if (block.type === 'ADDSHIPPARTS') {
               errorKey = 'addShipPartsNotInBuild';
+            } else if (block.type === 'SETADVPILE') {
+              errorKey = 'setAdvPileNotInBuild';
+            } else if (block.type === 'SETSECRETADVPILE') {
+              errorKey = 'setSecretAdvPileNotInBuild';
             }
             // Explicit severity to help downstream consumers decide warning vs error
             paramValidation = { 
@@ -258,7 +249,7 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
               severity: 'warning'
             };
           }
-        } else if (block.type === 'SETDECKPREPARATIONSCRIPT' || block.type === 'SETFLIGHTDECKPREPARATIONSCRIPT') {
+        } else if (block.type === 'SETDECKPREPARATIONSCRIPT' || block.type === 'SETFLIGHTDECKPREPARATIONSCRIPT' || block.type === 'SETSPECCONDITION') {
           // Questi due comandi sono validi solo in MISSION, BUILD o FLIGHT
           let isInAllowedContainer = false;
           // Controlla il path
@@ -278,7 +269,11 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           if (!isInAllowedContainer) {
             paramValidation = {
               valid: false,
-              error: block.type === 'SETDECKPREPARATIONSCRIPT' ? 'SETDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT' : 'SETFLIGHTDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT',
+              error: block.type === 'SETDECKPREPARATIONSCRIPT' 
+                ? 'SETDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT' 
+                : block.type === 'SETFLIGHTDECKPREPARATIONSCRIPT' 
+                  ? 'SETFLIGHTDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT' 
+                  : 'SETSPECCONDITION_OUTSIDE_CONTEXT',
               severity: 'warning'
             };
           }
@@ -321,8 +316,11 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           'addPartToShipNotInBuild',
           'addPartToAsideSlotNotInBuild',
           'addShipPartsNotInBuild',
+          'setAdvPileNotInBuild',
+          'setSecretAdvPileNotInBuild',
           'SETDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT',
-          'SETFLIGHTDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT'
+          'SETFLIGHTDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT',
+          'SETSPECCONDITION_OUTSIDE_CONTEXT'
         ].includes(paramValidation.error || '');
         
         if (isWarning) {
@@ -525,6 +523,26 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
               t('visualFlowEditor.validation.addShipPartsNotInBuild')
               : 'ADDSHIPPARTS should be inside a BUILD block. Consider moving this block inside a build phase.';
             break;
+          case 'SETADVPILE_NO_PARAMS':
+            message = t ?
+              t('visualFlowEditor.validation.setAdvPileNoParams')
+              : 'SETADVPILE block must have parameters. Provide the two-int string, unquoted.';
+            break;
+          case 'SETSECRETADVPILE_NO_PARAMS':
+            message = t ?
+              t('visualFlowEditor.validation.setSecretAdvPileNoParams')
+              : 'SETSECRETADVPILE block must have parameters. Provide the two-int string, unquoted.';
+            break;
+          case 'setAdvPileNotInBuild':
+            message = t ?
+              t('visualFlowEditor.validation.setAdvPileNotInBuild')
+              : 'SETADVPILE should be inside a BUILD block. Consider moving this block inside a build phase.';
+            break;
+          case 'setSecretAdvPileNotInBuild':
+            message = t ?
+              t('visualFlowEditor.validation.setSecretAdvPileNotInBuild')
+              : 'SETSECRETADVPILE should be inside a BUILD block. Consider moving this block inside a build phase.';
+            break;
           case 'finishMissionNotInMission':
             message = t ?
               t('visualFlowEditor.validation.finishMissionNotInMission')
@@ -554,6 +572,16 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
             message = t ?
               t('visualFlowEditor.validation.setFlightDeckPreparationScriptOutsideContext')
               : 'SETFLIGHTDECKPREPARATIONSCRIPT should be inside a MISSION, BUILD or FLIGHT block.';
+            break;
+          case 'SETSPECCONDITION_NO_CONDITION':
+            message = t ?
+              t('visualFlowEditor.validation.setSpecConditionNoCondition')
+              : 'SETSPECCONDITION block must have a condition selected.';
+            break;
+          case 'SETSPECCONDITION_OUTSIDE_CONTEXT':
+            message = t ?
+              t('visualFlowEditor.validation.setSpecConditionOutsideContext')
+              : 'SETSPECCONDITION should be inside a MISSION, BUILD or FLIGHT block.';
             break;
           default:
             message = t ? 
