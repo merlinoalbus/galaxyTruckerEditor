@@ -60,81 +60,65 @@ export const NavigationBreadcrumb: React.FC<NavigationBreadcrumbProps> = ({
   
   // Costruisci il percorso di navigazione unificato
   if (navigationPath.length > 0) {
-    const subscriptIndex = navigationPath.findIndex(item => item.id.startsWith('subscript-'));
-    
-    if (subscriptIndex >= 0) {
-      // Siamo in un sub-script o abbiamo attraversato un sub-script
-      
-      // Aggiungi i livelli di zoom prima del subscript (nello script principale)
-      for (let i = 0; i < subscriptIndex; i++) {
+    // Rileva tutti i marker (mission/sub_script) in ordine
+    const markerIndices: number[] = [];
+    navigationPath.forEach((item, idx) => {
+      if (item.id.startsWith('mission-') || item.id.startsWith('subscript-')) {
+        markerIndices.push(idx);
+      }
+    });
+
+    if (markerIndices.length > 0) {
+      // 1) Zoom prima del primo marker (nello script principale)
+      const firstMarker = markerIndices[0];
+      for (let i = 0; i < firstMarker; i++) {
         const item = navigationPath[i];
-        const itemIndex = i; // Cattura l'indice per la closure
-        // Salta elementi vuoti o Script wrapper
-        if (!item.name || item.name === '' || item.name.startsWith('Script: ')) {
-          continue;
-        }
+        const itemIndex = i;
+        if (!item.name || item.name === '' || item.name.startsWith('Script: ')) continue;
         unifiedPath.push({
           type: 'zoom',
           name: item.name,
           onClick: () => {
-            // Navigazione diretta al livello di zoom nello script principale
-            // Questo deve essere gestito in modo speciale per andare direttamente al blocco giusto
-            if (onNavigateToScript) {
-              // Usa una navigazione combinata: torna allo script principale E vai al blocco specifico
-              onNavigateToScript(-1, itemIndex); // Passa l'indice del blocco target
-            }
+            if (onNavigateToScript) onNavigateToScript(-1, itemIndex);
           },
           isLast: false
         });
       }
       
-      // Aggiungi il sub-script con icona 📄
-      const subscriptItem = navigationPath[subscriptIndex];
-      const subscriptName = subscriptItem.name;
+      // 2) Tutti i marker (mission/subscript) come elementi base, in ordine
+      markerIndices.forEach((markerIdx) => {
+        const targetItem = navigationPath[markerIdx];
+        const isMission = targetItem.id.startsWith('mission-');
+        const label = `${isMission ? '🎯' : '📄'} ${targetItem.name}`;
       unifiedPath.push({
         type: 'script',
-        name: subscriptName,
-        onClick: () => {
-          // SEMPRE naviga al livello del sub-script per tornare alla sua vista root
-          // Questo resetterà qualsiasi zoom all'interno del sub-script
-          onNavigate(subscriptIndex);
-        },
+          name: label,
+          onClick: () => onNavigate(markerIdx),
         isLast: false
       });
-      
-      // Aggiungi i livelli di zoom dopo il subscript (nel sub-script)
-      for (let i = subscriptIndex + 1; i < navigationPath.length; i++) {
+      });
+
+      // 3) Zoom dopo l’ultimo marker (dentro l’ultimo contesto attivo)
+      const lastMarker = markerIndices[markerIndices.length - 1];
+      for (let i = lastMarker + 1; i < navigationPath.length; i++) {
         const item = navigationPath[i];
-        const itemIndex = i; // Cattura l'indice per la closure
+        const itemIndex = i;
         unifiedPath.push({
           type: 'zoom',
           name: item.name,
-          onClick: () => {
-            // Naviga direttamente al livello di zoom nel sub-script
-            if (onNavigate) {
-              onNavigate(itemIndex);
-            }
-          },
+          onClick: () => onNavigate(itemIndex),
           isLast: false
         });
       }
     } else {
-      // Siamo nello script principale, aggiungi solo i livelli di zoom
+      // Nessun marker: zoom puro nello script principale
       navigationPath.forEach((item, index) => {
-        // Salta il primo elemento se è lo script stesso (Script: xxx)
-        if (item.name.startsWith('Script: ')) {
-          return;
-        }
-        const itemIndex = index; // Cattura l'indice per la closure
+        if (item.name.startsWith('Script: ')) return;
+        const itemIndex = index;
         unifiedPath.push({
           type: 'zoom',
           name: item.name,
-          onClick: () => {
-            // Naviga al livello di zoom nello script principale
-            if (onNavigate) {
-              onNavigate(itemIndex);
-            }
-          },
+          onClick: () => onNavigate(itemIndex),
           isLast: false
         });
       });
