@@ -1,8 +1,8 @@
+import { logger } from '@/utils/logger';
 import { useState, useEffect, useRef } from 'react';
 import { campaignScriptParserService } from '@/services/CampaignEditor/CampaignScriptParserService';
 import { CampaignAnalysis, CampaignScript } from '@/types/CampaignEditor';
 import { MapNode } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
-import { API_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
 import { API_CONFIG } from '@/config/constants';
 
 export const useCampaignEditor = () => {
@@ -22,7 +22,7 @@ export const useCampaignEditor = () => {
         const analysisResult = await campaignScriptParserService.loadAndAnalyzeAllScripts();
         setAnalysis(analysisResult);
       } catch (error) {
-        console.error('Error loading campaign data:', error);
+  logger.error('Error loading campaign data:', error);
         setError(error instanceof Error ? error.message : 'Unknown error');
       } finally {
         setIsLoading(false);
@@ -61,10 +61,10 @@ export const useCampaignEditor = () => {
       
       const result = await response.json();
       if (!result.success) {
-        console.error('Failed to save script:', result.error);
+  logger.error('Failed to save script:', result.error);
       }
     } catch (error) {
-      console.error('Error saving script:', error);
+  logger.error('Error saving script:', error);
     }
   };
 
@@ -95,11 +95,11 @@ export const useCampaignEditor = () => {
         if (result.success) {
           // All changes saved successfully
         } else {
-          console.error('Failed to save all changes:', result.error);
+          logger.error('Failed to save all changes:', result.error);
         }
       }
     } catch (error) {
-      console.error('Error saving all changes:', error);
+  logger.error('Error saving all changes:', error);
     }
   };
 

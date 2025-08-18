@@ -77,6 +77,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.subScript.scriptName': 'Nom du script',
   'visualFlowEditor.blocks.subScript.hint': 'Sélectionnez le script à exécuter',
   'visualFlowEditor.blocks.subScript.navigate': 'Naviguer vers le sous-script',
+  // SETSPECCONDITION Block
+  'visualFlowEditor.blocks.setSpecCondition.condition': 'Condition',
   
   // ACT_MISSION Block
   'visualFlowEditor.blocks.actMission.missionName': 'Nom de la Mission',
@@ -278,6 +280,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askMustBeFollowedByMenu': 'Le bloc ASK doit être suivi par un bloc MENU. Si ASK est dans un IF, MENU peut être dans la même branche ou en dehors de l\'IF.',
   'visualFlowEditor.validation.askWithoutMenu': 'Le bloc ASK doit être suivi par un bloc MENU. Ce ASK est le dernier bloc et n\'a pas de MENU suivant.',
   'visualFlowEditor.validation.goWithoutLabel': 'Le bloc GO nécessite au moins un bloc LABEL dans le script. Ajoutez un bloc LABEL avant d\'utiliser GO.',
+  'visualFlowEditor.validation.setSpecConditionNoCondition': 'Le bloc SETSPECCONDITION doit avoir une condition sélectionnée.',
+  'visualFlowEditor.validation.setSpecConditionOutsideContext': 'SETSPECCONDITION doit être utilisé dans MISSION, BUILD ou FLIGHT. En dehors de ce contexte, c\'est seulement un avertissement.',
   'visualFlowEditor.validation.addPartToShipNotInBuild': 'ADDPARTTOSHIP devrait être dans un bloc BUILD. Déplacez ce bloc dans une phase de construction.',
   'visualFlowEditor.validation.addPartToAsideSlotNotInBuild': 'ADDPARTTOASIDESLOT devrait être dans un bloc BUILD. Déplacez ce bloc dans une phase de construction.',
   'visualFlowEditor.validation.addShipPartsNoParams': 'Le bloc ADDSHIPPARTS doit spécifier un fichier de pièces. Sélectionnez un fichier YAML pour charger les pièces.',
@@ -432,6 +436,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.selectLabel': 'Sélectionner une étiquette...',
   'visualFlowEditor.command.labelName': 'Nom de l\'étiquette...',
   'visualFlowEditor.command.selectScript': 'Sélectionner un script...',
+  'visualFlowEditor.command.selectCondition': 'Sélectionner une condition...',
   'visualFlowEditor.command.opponent': 'Personnage Adversaire',
   'visualFlowEditor.command.opponentPlaceholder': 'marchand, ennemi, etc.',
   'visualFlowEditor.command.shipClassI': 'Classe I',

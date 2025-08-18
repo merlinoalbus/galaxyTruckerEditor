@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { X, Image, ChevronDown, Search } from 'lucide-react';
@@ -59,11 +60,11 @@ export const ImageMetacodeModal: React.FC<ImageMetacodeModalProps> = ({
         })
         .catch(err => {
           setImageError(t('visualFlowEditor.metacode.serverConnectionError'));
-          console.error('Failed to load system images:', err);
+          logger.error('Failed to load system images:', err);
         })
         .finally(() => setLoadingImages(false));
     }
-  }, [showImagePicker, systemImages.length]);
+  }, [showImagePicker, systemImages.length, t]);
 
   useEffect(() => {
     if (!isOpen) return; // Non fare nulla se la modale non è aperta

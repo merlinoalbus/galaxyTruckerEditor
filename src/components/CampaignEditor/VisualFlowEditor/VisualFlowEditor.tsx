@@ -8,8 +8,9 @@ import type { VisualFlowEditorProps } from '@/types/CampaignEditor/VisualFlowEdi
 import { useTranslation } from '@/locales';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
+import { logger } from '@/utils/logger';
 import type { IFlowBlock, ValidationResult, ScriptContext, OpenedScript } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
-import { TIMEOUT_CONSTANTS, PERFORMANCE_CONSTANTS, UI_CONSTANTS, API_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
+import { TIMEOUT_CONSTANTS, PERFORMANCE_CONSTANTS, UI_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
 import { API_CONFIG } from '@/config/constants';
 import { SceneProvider, useScene } from '@/contexts/SceneContext';
 import { ScriptMetadataProvider } from '@/contexts/ScriptMetadataContext';
@@ -53,7 +54,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
   const { isLoading } = useVisualFlowEditor(analysis || null);
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
-  const { state: sceneState, showDialogScene, hideDialogScene, clearScenes } = useScene();
+  const { showDialogScene, hideDialogScene, clearScenes } = useScene();
 
   // Script management state
   const [availableScripts, setAvailableScripts] = useState<ScriptItem[]>([]);
@@ -127,7 +128,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
       // Limite di ricorsione per prevenire stack overflow
       const MAX_RECURSION_DEPTH = PERFORMANCE_CONSTANTS.MAX_RECURSION_DEPTH;
       if (depth > MAX_RECURSION_DEPTH) {
-        console.warn(`Maximum recursion depth (${MAX_RECURSION_DEPTH}) reached while searching for label: ${labelName}`);
+  logger.warn(`Maximum recursion depth (${MAX_RECURSION_DEPTH}) reached while searching for label: ${labelName}`);
         return null;
       }
       for (const block of blocks) {
@@ -208,9 +209,9 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
       const element = document.querySelector(`[data-block-id="${result.block.id}"]`);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        // Evidenzia temporaneamente il blocco con safe timeout
+        // Evidenzia temporaneamente il blocco
         element.classList.add(`ring-${UI_CONSTANTS.RING_WIDTH_HIGHLIGHT}`, 'ring-blue-500', `ring-offset-${UI_CONSTANTS.RING_OFFSET}`, 'ring-offset-slate-900');
-        addSafeTimeout(() => {
+        window.setTimeout(() => {
           element.classList.remove(`ring-${UI_CONSTANTS.RING_WIDTH_HIGHLIGHT}`, 'ring-blue-500', `ring-offset-${UI_CONSTANTS.RING_OFFSET}`, 'ring-offset-slate-900');
         }, TIMEOUT_CONSTANTS.HIGHLIGHT_DURATION);
       }
@@ -261,7 +262,6 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
     handleZoomIn,
     handleZoomOut,
     updateRootBlocksIfNeeded,
-    updateBlockInNavigationTree,
     isZoomed,
     resetNavigationState,
     scriptNavigationPath,
@@ -302,14 +302,14 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
           
           // Controllo di sicurezza: assicurati che updated sia valido
           if (!updated || !Array.isArray(updated)) {
-            console.error('[VisualFlowEditor] Invalid block update: result is not an array', { updated });
+            logger.error('[VisualFlowEditor] Invalid block update: result is not an array', { updated });
             setDropError('Errore nell\'aggiornamento dei blocchi: risultato non valido');
             return prev; // Mantieni lo stato precedente se c'è un errore
           }
           
           // Se siamo in modalità zoom, non dovremmo mai avere un array vuoto
           if (updated.length === 0 && isZoomed) {
-            console.warn('[VisualFlowEditor] Attempted to clear blocks while in zoom mode');
+            logger.warn('[VisualFlowEditor] Attempted to clear blocks while in zoom mode');
             return prev;
           }
           
@@ -319,9 +319,9 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
           return updated;
         } catch (error) {
           // Log dettagliato dell'errore per debugging
-          console.error('[VisualFlowEditor] Error updating blocks:', error);
-          console.error('[VisualFlowEditor] Stack trace:', error instanceof Error ? error.stack : 'N/A');
-          console.error('[VisualFlowEditor] Previous state:', prev);
+          logger.error('[VisualFlowEditor] Error updating blocks:', error);
+          logger.error('[VisualFlowEditor] Stack trace:', error instanceof Error ? error.stack : 'N/A');
+          logger.error('[VisualFlowEditor] Previous state:', prev);
           
           // Feedback all'utente per errori recuperabili
           const errorMessage = error instanceof Error ? error.message : 'Errore sconosciuto';
@@ -373,11 +373,11 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
     const newOpenedScripts = new Map<string, OpenedScript>();
     setOpenedScripts(newOpenedScripts);
     setCurrentScriptContext(null);
-    setScriptNavigationPath([]);
+  setScriptNavigationPath([]);
     
     const scriptData = await loadScript(scriptId);
     return scriptData;
-  }, [loadScript, resetNavigationState]);
+  }, [loadScript, resetNavigationState, setScriptNavigationPath]);
 
   // Wrapper per loadMission con reset completo dello stato
   const loadMissionWithReset = useCallback(async (missionId: string) => {
@@ -389,10 +389,10 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
     // IMPORTANTE: Pulisci completamente la memoria degli script aperti
     setOpenedScripts(new Map());
     setCurrentScriptContext(null);
-    setScriptNavigationPath([]);
+  setScriptNavigationPath([]);
     
     return loadMission(missionId);
-  }, [loadMission, resetNavigationState]);
+  }, [loadMission, resetNavigationState, setScriptNavigationPath]);
 
   // Funzione per navigare a una missione specifica - DEVE funzionare ESATTAMENTE come sub_script
   const handleNavigateToMission = useCallback(async (missionName: string, parentBlock: IFlowBlock) => {
@@ -401,14 +401,9 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
       const cleanMissionName = missionName.endsWith('.txt') ? missionName.slice(0, -4) : missionName;
       
       // PRIMA di qualsiasi reset, calcola il nuovo path di navigazione
-      const currentScriptName = currentScript?.name || 'main';
-      const newScriptNavigationPath = [
-        { scriptName: currentScriptName },
-        { scriptName: cleanMissionName, parentBlockId: parentBlock.id }
-      ];
+  // PRIMA di qualsiasi reset, eventuali riferimenti per la navigazione verranno gestiti più avanti
       
-      // Salva il path di zoom corrente PRIMA di navigare alla missione
-      const currentZoomPath = [...navigationPath];
+  // Salva il path di zoom corrente PRIMA di navigare alla missione (non utilizzato direttamente)
       
       // Controlla se la missione è già stata caricata
       let missionData = openedScripts.get(cleanMissionName);
@@ -543,22 +538,8 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
       const sourceBlocks = missionData.originalBlocks || missionData.blocks;
       let blocksToLoad = JSON.parse(JSON.stringify(sourceBlocks));
       
-      // Mantieni i marker esistenti (mission/subscript) e rimuovi solo lo zoom successivo all'ultimo marker,
-      // poi aggiungi il nuovo marker della missione. Se non ci sono marker, mantieni eventuale zoom nello script principale.
-      const markerIndices: number[] = [];
-      currentZoomPath.forEach((item, idx) => {
-        if (item.id.startsWith('mission-') || item.id.startsWith('subscript-')) {
-          markerIndices.push(idx);
-        }
-      });
-  let basePath: typeof currentZoomPath = [];
-      if (markerIndices.length > 0) {
-        const lastMarkerIdx = markerIndices[markerIndices.length - 1];
-        basePath = currentZoomPath.slice(0, lastMarkerIdx + 1);
-      } else {
-        // Nessun marker: mantieni eventuale zoom nello script principale (escludi elementi vuoti e wrapper Script:)
-        basePath = currentZoomPath.filter(item => item.name && !item.name.startsWith('Script:'));
-      }
+  // Mantieni i marker esistenti e aggiungi il nuovo marker della missione.
+  // Nota: non ricalcoliamo basePath perché non utilizzato
       const newNavigationPath = [
         ...preservedPath,
         {
@@ -567,7 +548,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
           block: blocksToLoad[0]
         }
       ];
-      try { if ((window as any).__VFE_NAV_DEBUG__) { console.debug('[NAV] -> enter mission', { from: navigationPath, to: newNavigationPath }); } } catch {}
+  try { if ((window as any).__VFE_NAV_DEBUG__) { logger.debug('[NAV] -> enter mission', { from: navigationPath, to: newNavigationPath }); } } catch {}
       setNavigationPath(newNavigationPath);
       setCurrentScriptBlocks(blocksToLoad);
       
@@ -587,7 +568,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
       });
       
     } catch (error) {
-      console.error('[VisualFlowEditor] Error loading mission:', error);
+  logger.error('[VisualFlowEditor] Error loading mission:', error);
       throw error;
     }
   }, [currentScriptBlocks, currentScriptContext, openedScripts, rootBlocks, setOpenedScripts, setCurrentScriptContext, currentScript, navigationPath, setCurrentScriptBlocks, setScriptNavigationPath, setNavigationPath, setRootBlocks, setValidationErrors, setDropError]);
@@ -747,7 +728,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
     const MAX_CONCURRENT_TIMEOUTS = PERFORMANCE_CONSTANTS.MAX_CONCURRENT_TIMEOUTS;
     
     if (highlightTimeoutsRef.current.size >= MAX_CONCURRENT_TIMEOUTS) {
-      console.warn(`[VisualFlowEditor] Maximum timeout limit reached (${MAX_CONCURRENT_TIMEOUTS}), skipping timeout`);
+  logger.warn(`[VisualFlowEditor] Maximum timeout limit reached (${MAX_CONCURRENT_TIMEOUTS}), skipping timeout`);
       return null;
     }
     
@@ -755,7 +736,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
       try {
         callback();
       } catch (error) {
-        console.error('[VisualFlowEditor] Error in timeout callback:', error);
+  logger.error('[VisualFlowEditor] Error in timeout callback:', error);
         // Notifica l'utente dell'errore nel timeout callback
         const errorMessage = error instanceof Error ? error.message : 'Errore sconosciuto';
         setDropError(`Errore durante l'operazione: ${errorMessage}`);
@@ -770,7 +751,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
     if (highlightTimeoutsRef.current.size > maxActiveTimeouts.current) {
       maxActiveTimeouts.current = highlightTimeoutsRef.current.size;
       if (maxActiveTimeouts.current > PERFORMANCE_CONSTANTS.HIGH_TIMEOUT_WARNING) {
-        console.warn(`[VisualFlowEditor] High timeout count detected: ${maxActiveTimeouts.current}`);
+  logger.warn(`[VisualFlowEditor] High timeout count detected: ${maxActiveTimeouts.current}`);
       }
     }
     
@@ -800,15 +781,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
     debounceTimeoutRef.current = setTimeout(() => {
       const blocksToValidate = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
       if (blocksToValidate.length > 0) {
-        let validationResult;
-        if (blocksToValidate.length > PERFORMANCE_CONSTANTS.LARGE_SCRIPT_THRESHOLD) {
-          const startTime = performance.now();
-          validationResult = validateAllBlocks(blocksToValidate, navigationPath);
-          const endTime = performance.now();
-          // Performance monitoring: ${blocksToValidate.length} blocks validated in ${(endTime - startTime).toFixed(2)}ms
-        } else {
-          validationResult = validateAllBlocks(blocksToValidate, navigationPath);
-        }
+        const validationResult = validateAllBlocks(blocksToValidate, navigationPath);
         setValidationErrors(validationResult);
         
         // Popola la mappa dei tipi di validazione
@@ -834,7 +807,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
         clearTimeout(debounceTimeoutRef.current);
       }
     };
-  }, [currentScriptBlocks, rootBlocks, currentLanguage]); // validateAllBlocks rimosso per evitare loop
+  }, [currentScriptBlocks, rootBlocks, currentLanguage, validateAllBlocks, navigationPath]);
   
   // Cleanup al unmount del componente
   useEffect(() => {

@@ -10,7 +10,6 @@ import { simulateSceneExecution } from '@/utils/CampaignEditor/VisualFlowEditor/
 import { imagesViewService } from '@/services/CampaignEditor/VariablesSystem/services/ImagesView/imagesViewService';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 import type { Character } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
-import type { SupportedLanguage } from '@/contexts/LanguageContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SayCharBlockProps {
@@ -92,7 +91,7 @@ export const SayCharBlock: React.FC<SayCharBlockProps> = ({
       if (noAvatarResponse?.data?.[0]?.binary) {
         setNoAvatarImage(`data:image/png;base64,${noAvatarResponse.data[0].binary}`);
       }
-    }).catch(console.error);
+    }).catch(() => {});
   }, []);
   
   // Aggiorna l'immagine del personaggio selezionato

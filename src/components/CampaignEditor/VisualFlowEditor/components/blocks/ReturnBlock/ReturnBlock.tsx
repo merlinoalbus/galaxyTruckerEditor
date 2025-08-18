@@ -3,7 +3,6 @@ import { BaseBlock } from '../BaseBlock/BaseBlock';
 import { ArrowLeft } from 'lucide-react';
 import { getBlockClassName } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
 import { useTranslation } from '@/locales';
-import { useLanguage } from '@/contexts/LanguageContext';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 interface ReturnBlockProps {
@@ -38,7 +37,6 @@ export const ReturnBlock: React.FC<ReturnBlockProps> = ({
   availableLanguages
 }) => {
   const { t } = useTranslation();
-  const { currentLanguage } = useLanguage();
   const [isCollapsed, setIsCollapsed] = useState(() => {
     return globalCollapseState === 'expanded' ? false : true;
   });

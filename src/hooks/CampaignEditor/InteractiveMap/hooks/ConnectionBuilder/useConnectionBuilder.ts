@@ -24,7 +24,7 @@ export const useConnectionBuilder = () => {
     
     // Build connections from all routes in missions
     routeMap.forEach((routeMissions, routeKey) => {
-      const [node1, node2] = routeKey.split('-');
+      // const [node1, node2] = routeKey.split('-'); // not used
       
       // Use the first mission to determine direction
       const firstMission = routeMissions[0];

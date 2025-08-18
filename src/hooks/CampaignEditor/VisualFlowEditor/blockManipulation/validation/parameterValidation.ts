@@ -490,6 +490,32 @@ export const validateAddShipPartsParameters = (block: any): { valid: boolean; er
 };
 
 /**
+ * Valida i parametri di un blocco SETADVPILE
+ */
+export const validateSetAdvPileParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.params || block.parameters.params.trim() === '') {
+    return {
+      valid: false,
+      error: 'SETADVPILE_NO_PARAMS'
+    };
+  }
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri di un blocco SETSECRETADVPILE
+ */
+export const validateSetSecretAdvPileParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.params || block.parameters.params.trim() === '') {
+    return {
+      valid: false,
+      error: 'SETSECRETADVPILE_NO_PARAMS'
+    };
+  }
+  return { valid: true };
+};
+
+/**
  * Valida i parametri di un blocco ACT_MISSION
  */
 export const validateActMissionParameters = (block: any): { valid: boolean; error?: string } => {
@@ -497,6 +523,19 @@ export const validateActMissionParameters = (block: any): { valid: boolean; erro
     return { 
       valid: false, 
       error: 'ACT_MISSION_NO_MISSION' 
+    };
+  }
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri di un blocco SETSPECCONDITION
+ */
+export const validateSetSpecConditionParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.condition || String(block.parameters.condition).trim() === '') {
+    return {
+      valid: false,
+      error: 'SETSPECCONDITION_NO_CONDITION'
     };
   }
   return { valid: true };
@@ -556,6 +595,10 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return validateAddPartToAsideSlotParameters(block);
     case 'ADDSHIPPARTS':
       return validateAddShipPartsParameters(block);
+    case 'SETADVPILE':
+      return validateSetAdvPileParameters(block);
+    case 'SETSECRETADVPILE':
+      return validateSetSecretAdvPileParameters(block);
     case 'ACT_MISSION':
       return validateActMissionParameters(block);
     case 'SETDECKPREPARATIONSCRIPT':
@@ -566,6 +609,8 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return (!block.parameters?.script || String(block.parameters.script).trim() === '')
         ? { valid: false, error: 'SETFLIGHTDECKPREPARATIONSCRIPT_NO_SCRIPT' }
         : { valid: true };
+    case 'SETSPECCONDITION':
+      return validateSetSpecConditionParameters(block);
     // EXIT_MENU, SHOWDLGSCENE, HIDEDLGSCENE non hanno parametri da validare
     default:
       return { valid: true };

@@ -3,7 +3,7 @@ import { BaseBlock } from '../BaseBlock/BaseBlock';
 import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
 import { getBlockClassName } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
 import { useTranslation } from '@/locales';
-import { useLanguage } from '@/contexts/LanguageContext';
+// import { useLanguage } from '@/contexts/LanguageContext';
 import { useSessionData } from '@/hooks/CampaignEditor/VisualFlowEditor/useSessionData';
 import { Circle } from 'lucide-react';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
@@ -36,7 +36,6 @@ export const SetBlock: React.FC<SetBlockProps> = ({
   availableLanguages
 }) => {
   const { t } = useTranslation();
-  const { currentLanguage } = useLanguage();
   const [isCollapsed, setIsCollapsed] = useState(() => {
     return globalCollapseState === 'expanded' ? false : true;
   });

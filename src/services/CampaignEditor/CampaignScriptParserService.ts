@@ -1,9 +1,5 @@
-import { 
-  ScriptCommand, 
-  ParsedScript, 
-  ScriptBlock, 
-  CampaignAnalysis 
-} from '@/types/CampaignEditor';
+import { logger } from '@/utils/logger';
+import { ParsedScript, CampaignAnalysis } from '@/types/CampaignEditor';
 import { scriptLoaderService } from './CampaignScriptParserService/scriptLoaderService';
 import { scriptParserService } from './CampaignScriptParserService/scriptParserService';
 import { scriptAnalysisService } from './CampaignScriptParserService/scriptAnalysisService';
@@ -50,7 +46,7 @@ export const campaignScriptParserService: CampaignScriptParserService = {
       const missions = new Set<string>();
       const labels = new Set<string>();
       const nodeScriptMap = new Map<string, string[]>();
-      const flowStructure = new Map<string, ScriptBlock[]>();
+  const flowStructure = new Map<string, any[]>();
 
       // Process scripts from backend - API returns data array directly
       const scriptsArray = parsedData.data || [];
@@ -129,7 +125,7 @@ export const campaignScriptParserService: CampaignScriptParserService = {
       } as any;
       
     } catch (error) {
-      console.error('Error loading and analyzing scripts:', error);
+  logger.error('Error loading and analyzing scripts:', error);
       return this.getEmptyAnalysis();
     }
   },

@@ -1,8 +1,8 @@
+import { logger } from '@/utils/logger';
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, Star } from 'lucide-react';
 import type { MissionsListProps, MissionItem } from './MissionsList.types';
 import { useTranslation } from '@/locales';
-import { API_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
 import { API_CONFIG } from '@/config/constants';
 
 export const MissionsList: React.FC<MissionsListProps> = ({
@@ -24,7 +24,7 @@ export const MissionsList: React.FC<MissionsListProps> = ({
     if (showMissionsList && missions.length === 0) {
       fetchMissions();
     }
-  }, [showMissionsList]);
+  }, [showMissionsList, missions.length]);
 
   // Calcola posizione contestuale al pulsante
   useEffect(() => {
@@ -75,7 +75,7 @@ export const MissionsList: React.FC<MissionsListProps> = ({
         setFilteredMissions(result.data);
       }
     } catch (error) {
-      console.error('Errore nel caricamento delle missions:', error);
+  logger.error('Errore nel caricamento delle missions:', error);
     } finally {
       setIsLoading(false);
     }

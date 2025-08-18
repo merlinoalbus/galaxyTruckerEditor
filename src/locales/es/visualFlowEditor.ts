@@ -56,6 +56,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.goToBlock': 'Ir →',
   'visualFlowEditor.validation.goToBlockTitle': 'Ir al bloque',
   'visualFlowEditor.validation.footer': 'Corrija estos errores para asegurar el funcionamiento correcto del script. Los bloques con errores están resaltados en rojo en el editor.',
+  'visualFlowEditor.validation.setSpecConditionNoCondition': 'SETSPECCONDITION debe especificar una condición. Elija una de la lista.',
+  'visualFlowEditor.validation.setSpecConditionOutsideContext': 'SETSPECCONDITION debería usarse dentro de un bloque MISSION, BUILD o FLIGHT. Considere moverlo.',
   'visualFlowEditor.validation.addOpponentNoCharacter': 'El bloque ADDOPPONENT debe tener un personaje seleccionado.',
   'visualFlowEditor.validation.addOpponentNotInMission': 'ADDOPPONENT debería estar dentro de un bloque MISSION.',
   'visualFlowEditor.validation.setShipTypeNoType': 'El bloque SETSHIPTYPE debe tener un tipo de nave seleccionado.',
@@ -95,6 +97,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.addPartToShip.hint': '1 7 alienEngine 3333 0',
   'visualFlowEditor.blocks.addPartToShip.noParameters': 'Sin parámetros configurados',
   'visualFlowEditor.blocks.addPartToShip.params': 'Parámetros',
+  // SETSPECCONDITION Block
+  'visualFlowEditor.blocks.setSpecCondition.condition': 'Condición',
   
   // ADDPARTTOASIDESLOT Block
   'visualFlowEditor.blocks.addPartToAsideSlot.parameters': 'Parámetros',
@@ -439,6 +443,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.shipClassI': 'Clase I',
   'visualFlowEditor.command.shipClassII': 'Clase II',
   'visualFlowEditor.command.shipClassIII': 'Clase III',
+  'visualFlowEditor.command.selectCondition': 'Seleccionar condición...',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Nombre del script...',

@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 import { BlockType } from './BlockTypes';
 
 export interface Tool {
@@ -28,7 +29,7 @@ export const getToolCategories = (t: any): ToolCategory[] => {
     }
     return TOOL_CATEGORIES_DEFINITION(t);
   } catch (error) {
-    console.error('Error loading tool categories:', error);
+  logger.error('Error loading tool categories:', error);
     // Fallback senza traduzioni
     return [];
   }
@@ -93,7 +94,7 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
       { id: 'addnode', name: 'ADDNODE', icon: '➕', blockType: 'ADDNODE', description: t('visualFlowEditor.tools.addNode.description'), implemented: false },
       { id: 'setnodeknown', name: 'SETNODEKNOWN', icon: '✔️', blockType: 'SETNODEKNOWN', description: t('visualFlowEditor.tools.setNodeKnown.description'), implemented: false },
       { id: 'showpath', name: 'SHOWPATH', icon: '🛤️', blockType: 'SHOWPATH', description: t('visualFlowEditor.tools.showPath.description'), implemented: false },
-      { id: 'hidepath', name: 'HIDEPATH', icon: '🚧', blockType: 'HIDEPATH', description: t('visualFlowEditor.tools.hidePath.description'), implemented: false },
+  { id: 'setspeccondition', name: 'SETSPECCONDITION', icon: '🧩', blockType: 'SETSPECCONDITION', description: t('visualFlowEditor.tools.setSpecCondition.description'), implemented: true },
       { id: 'hideallpaths', name: 'HIDEALLPATHS', icon: '🚫', blockType: 'HIDEALLPATHS', description: t('visualFlowEditor.tools.hideAllPaths.description'), implemented: false },
       { id: 'showbutton', name: 'SHOWBUTTON', icon: '🔘', blockType: 'SHOWBUTTON', description: t('visualFlowEditor.tools.showButton.description'), implemented: false },
       { id: 'hidebutton', name: 'HIDEBUTTON', icon: '⭕', blockType: 'HIDEBUTTON', description: t('visualFlowEditor.tools.hideButton.description'), implemented: false },
@@ -115,9 +116,9 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
   { id: 'act_mission', name: 'ACT_MISSION', icon: '🎬', blockType: 'ACT_MISSION', description: t('visualFlowEditor.tools.actMission.description'), implemented: true },
   { id: 'setdeckpreparationscript', name: 'SETDECKPREPARATIONSCRIPT', icon: '🃏', blockType: 'SETDECKPREPARATIONSCRIPT', description: t('visualFlowEditor.tools.setDeckPreparationScript.description'), implemented: true },
   { id: 'setflightdeckpreparationscript', name: 'SETFLIGHTDECKPREPARATIONSCRIPT', icon: '🛩️', blockType: 'SETFLIGHTDECKPREPARATIONSCRIPT', description: t('visualFlowEditor.tools.setFlightDeckPreparationScript.description'), implemented: true },
-      { id: 'setadvpile', name: 'SETADVPILE', icon: '📚', blockType: 'SETADVPILE', description: t('visualFlowEditor.tools.setAdvPile.description'), implemented: false, inProgress: true },
-      { id: 'setsecretadvpile', name: 'SETSECRETADVPILE', icon: '🔒', blockType: 'SETSECRETADVPILE', description: t('visualFlowEditor.tools.setSecretAdvPile.description'), implemented: false, inProgress: true },
-      { id: 'setspeccondition', name: 'SETSPECCONDITION', icon: '⚙️', blockType: 'SETSPECCONDITION', description: t('visualFlowEditor.tools.setSpecCondition.description'), implemented: false, inProgress: true },
+  { id: 'setadvpile', name: 'SETADVPILE', icon: '📚', blockType: 'SETADVPILE', description: t('visualFlowEditor.tools.setAdvPile.description'), implemented: true },
+  { id: 'setsecretadvpile', name: 'SETSECRETADVPILE', icon: '🔒', blockType: 'SETSECRETADVPILE', description: t('visualFlowEditor.tools.setSecretAdvPile.description'), implemented: true },
+  { id: 'setspeccondition', name: 'SETSPECCONDITION', icon: '🧩', blockType: 'SETSPECCONDITION', description: t('visualFlowEditor.tools.setSpecCondition.description'), implemented: true },
       { id: 'modifyopponentsbuildspeed', name: 'MODIFYOPPONENTSBUILDSPEED', icon: '⚡', blockType: 'MODIFYOPPONENTSBUILDSPEED', description: t('visualFlowEditor.tools.modifyOpponentsBuildSpeed.description'), implemented: false, inProgress: true },
       { id: 'setturnbased', name: 'SETTURNBASED', icon: '♟️', blockType: 'SETTURNBASED', description: t('visualFlowEditor.tools.setTurnBased.description'), implemented: false, inProgress: true },
       { id: 'setmissionasfailed', name: 'SETMISSIONASFAILED', icon: '❌', blockType: 'SETMISSIONASFAILED', description: t('visualFlowEditor.tools.setMissionAsFailed.description'), implemented: false, inProgress: true },

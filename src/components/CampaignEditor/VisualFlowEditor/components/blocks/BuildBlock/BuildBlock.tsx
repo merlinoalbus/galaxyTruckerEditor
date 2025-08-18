@@ -91,14 +91,13 @@ export const BuildBlock: React.FC<BuildBlockProps> = ({
     
     checkSpace();
     const resizeObserver = new ResizeObserver(checkSpace);
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
+    const el = containerRef.current;
+    if (el) {
+      resizeObserver.observe(el);
     }
     
     return () => {
-      if (containerRef.current) {
-        resizeObserver.disconnect();
-      }
+      resizeObserver.disconnect();
     };
   }, [isCollapsed, isManuallyExpanded]);
 

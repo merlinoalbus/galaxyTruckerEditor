@@ -1,5 +1,5 @@
 // Servizio per comunicazione con il backend reale
-import { Mission, DeckScript, ValidationError } from '@/types/GameTypes';
+import { Mission, DeckScript } from '@/types/GameTypes';
 import { FileParser } from '@/utils/FileParser';
 import { API_CONFIG } from '@/config/constants';
 

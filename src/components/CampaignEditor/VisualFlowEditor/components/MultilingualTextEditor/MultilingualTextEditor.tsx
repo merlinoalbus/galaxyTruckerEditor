@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Copy, CopyCheck, Globe, User, Users } from 'lucide-react';
+import { ChevronDown, ChevronUp, Copy, CopyCheck, Globe, Users } from 'lucide-react';
 import { useTranslation } from '@/locales';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useScriptMetadata } from '@/contexts/ScriptMetadataContext';
@@ -55,7 +55,6 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
   const LANGUAGES = React.useMemo(() => {
     // Se è custom non multilingua, mostra solo EN
     if (effectiveIsCustom && effectiveAvailableLanguages && effectiveAvailableLanguages.length === 1) {
-      return allLanguages.filter(lang => lang.code === 'EN');
     }
     // Se ci sono lingue disponibili specificate, usa quelle
     if (effectiveAvailableLanguages && effectiveAvailableLanguages.length > 0) {
@@ -81,8 +80,6 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
   const [cursorPosition, setCursorPosition] = useState<number>(0);
   const [pendingFocusLoss, setPendingFocusLoss] = useState(false);
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number } | null>(null);
-  const [triggerElement, setTriggerElement] = useState<HTMLElement | null>(null);
-  const [triggerPosition, setTriggerPosition] = useState<DOMRect | null>(null);
   const focusTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Inizializza i valori per tutte le lingue
@@ -92,7 +89,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
       normalized[lang.code] = value[lang.code] || '';
     });
     return normalized;
-  }, [value]);
+  }, [value, LANGUAGES]);
   
   // Determina quale lingua mostrare quando collassato
   const getCollapsedLanguage = () => {
@@ -241,8 +238,6 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
         <div className="flex items-center gap-3">
         {/* Interruttore Genere */}
         <div className="flex items-center gap-1">
-          <User className="w-3 h-3 text-gray-400" />
-          <div className="flex rounded overflow-hidden">
             <button
               type="button"
               onClick={() => setGenderState('male')}
@@ -349,8 +344,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
               </button>
             </div>
           </div>
-        </div>
-        </div>
+  </div>
         
         {/* Pulsanti inserimento metacodici */}
         <MetacodeInsertButtons
@@ -369,7 +363,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
         />
       </div>
       
-      <div className="p-2">
+  <div className="p-2">
         {!isExpanded ? (
           // Visualizzazione compatta - mostra lingua selezionata
           <div className="flex items-center gap-2">
@@ -494,8 +488,6 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
         onClose={() => {
           setActiveModalType(null);
           setSelectedMetacode(null);
-          setTriggerElement(null);
-          setTriggerPosition(null);
           setMousePosition(null);
         }}
         metacode={selectedMetacode}
@@ -509,8 +501,6 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
         onClose={() => {
           setActiveModalType(null);
           setSelectedMetacode(null);
-          setTriggerElement(null);
-          setTriggerPosition(null);
           setMousePosition(null);
         }}
         metacode={selectedMetacode}
@@ -524,8 +514,6 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
         onClose={() => {
           setActiveModalType(null);
           setSelectedMetacode(null);
-          setTriggerElement(null);
-          setTriggerPosition(null);
           setMousePosition(null);
         }}
         metacode={selectedMetacode}

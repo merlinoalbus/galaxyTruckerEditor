@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Type, Hash, Image, User, ChevronDown } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/locales';
-import { API_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
 import { API_CONFIG } from '@/config/constants';
 
 interface MetacodeInsertButtonsProps {

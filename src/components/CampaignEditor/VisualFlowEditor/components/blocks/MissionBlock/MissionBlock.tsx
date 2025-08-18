@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Target, Flag, ChevronDown, ChevronUp } from 'lucide-react';
 import { AnchorPoint } from '../../AnchorPoint/AnchorPoint';
-import { InlineZoomControls } from '../../ZoomControls';
 import { useTranslation } from '@/locales';
 
 interface MissionBlockProps {

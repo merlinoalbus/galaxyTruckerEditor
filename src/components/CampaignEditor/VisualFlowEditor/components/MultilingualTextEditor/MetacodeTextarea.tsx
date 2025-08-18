@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { parseMetacodes, processText, ParsedMetacode, resolveMetacode } from './metacodeParser';
+import { parseMetacodes, ParsedMetacode, resolveMetacode } from './metacodeParser';
 import { useTranslation } from '@/locales';
 
 interface MetacodeTextareaProps {

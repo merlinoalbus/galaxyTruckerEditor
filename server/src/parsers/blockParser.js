@@ -183,7 +183,7 @@ const COMMAND_CATALOG = {
   'SETMISSIONASCOMPLETED': { params: [], pattern: /^SetMissionAsCompleted$/ },
   'ALLSHIPSGIVEUP': { params: [], pattern: /^AllShipsGiveUp$/ },
   'GIVEUPFLIGHT': { params: [], pattern: /^GiveUpFlight$/ },
-  'SETSPECCONDITION': { params: ['condition'], pattern: /^SetSpecCondition\s+"?(\w+)"?$/ },
+  'SETSPECCONDITION': { params: ['condition:string'], pattern: /^SetSpecCondition\s+"?(\w+)"?$/ },
   
   // STATO
   'SAVESTATE': { params: [], pattern: /^SAVESTATE$/i },
@@ -1512,7 +1512,10 @@ function serializeCommand(element, targetLanguage = 'EN') {
           const noQuoteParams = ['achievement', 'shiptype', 'pile', 'progress', 'node', 'image', 'script'];
           const needQuoteParams = ['path', 'file']; // Parametri che necessitano sempre virgolette
           
-          if ((paramType === 'string' && !noQuoteParams.includes(paramName)) || needQuoteParams.includes(paramName)) {
+          // Eccezione: per SetDeckPreparationScript e SetFlightDeckPreparationScript, il parametro 'script' deve SEMPRE essere tra virgolette
+          if ((element.type === 'SETDECKPREPARATIONSCRIPT' || element.type === 'SETFLIGHTDECKPREPARATIONSCRIPT') && paramName === 'script') {
+            parts.push(`"${paramValue}"`);
+          } else if ((paramType === 'string' && !noQuoteParams.includes(paramName)) || needQuoteParams.includes(paramName)) {
             parts.push(`"${paramValue}"`);
           } else {
             parts.push(paramValue);

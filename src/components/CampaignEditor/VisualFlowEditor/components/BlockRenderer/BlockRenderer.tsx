@@ -511,6 +511,44 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
     );
   }
 
+  // Render SETADVPILE block (same UI pattern as ADDPARTTOSHIP: single 'params' string)
+  if (block.type === 'SETADVPILE') {
+    return (
+      <div data-block-id={block.id}>
+        <AddPartToShipBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+        />
+      </div>
+    );
+  }
+
+  // Render SETSECRETADVPILE block (same UI pattern as ADDPARTTOSHIP)
+  if (block.type === 'SETSECRETADVPILE') {
+    return (
+      <div data-block-id={block.id}>
+        <AddPartToShipBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+        />
+      </div>
+    );
+  }
+
   // Render FINISH_MISSION block
   if (block.type === 'FINISH_MISSION') {
     return (

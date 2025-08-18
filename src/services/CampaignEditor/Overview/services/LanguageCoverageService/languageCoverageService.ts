@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 // Language Coverage Service - Analisi copertura traduzioni
 
 import type { CampaignAnalysis, ParsedScript, ScriptCommand } from '@/types/CampaignEditor';
@@ -19,7 +20,7 @@ export const languageCoverageService = {
     
     // Debug: log prima analisi
     if (totalScripts === 0) {
-      console.warn('No scripts found in analysis');
+  logger.warn('No scripts found in analysis');
       return [];
     }
     

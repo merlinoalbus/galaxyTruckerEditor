@@ -33,11 +33,7 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
   const {
     nodes,
     connections,
-    scripts,
     viewport,
-    selectedNode,
-    selectedConnection,
-    hoveredElement,
     isLoading,
     error,
     scriptSelectorOpen,
@@ -47,7 +43,6 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
     handleScriptSelect,
     handleMissionSelectInternal,
     handleScriptSelectorClose,
-    setHoveredElement,
     setViewport
   } = useInteractiveMap(onScriptSelect);
 

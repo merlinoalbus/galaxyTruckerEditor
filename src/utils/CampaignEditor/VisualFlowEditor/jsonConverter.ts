@@ -70,6 +70,11 @@ export const convertBlocksToJson = (blocks: any[]): any[] => {
       jsonBlock.parameters = {
         script: block.parameters.script || ''
       };
+    } else if ((block.type === 'SETADVPILE' || block.type === 'SETSECRETADVPILE') && block.parameters) {
+      // Entrambi usano un singolo parametro 'params' (stringa con due interi), senza virgolette lato serialize
+      jsonBlock.parameters = {
+        params: block.parameters.params || ''
+      };
     } else if (block.isContainer && block.children) {
       jsonBlock.children = convertBlocksToJson(block.children);
     } else if (block.parameters) {

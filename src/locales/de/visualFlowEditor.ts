@@ -77,6 +77,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.subScript.scriptName': 'Skriptname',
   'visualFlowEditor.blocks.subScript.hint': 'Wählen Sie das auszuführende Skript',
   'visualFlowEditor.blocks.subScript.navigate': 'Zum Unterskript navigieren',
+  // SETSPECCONDITION Block
+  'visualFlowEditor.blocks.setSpecCondition.condition': 'Bedingung',
   
   // ACT_MISSION Block
   'visualFlowEditor.blocks.actMission.missionName': 'Missionsname',
@@ -268,6 +270,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.menuWithoutAsk': 'MENU muss von einem ASK-Block vorausgegangen werden',
   'visualFlowEditor.validation.optOutsideMenu': 'OPT kann nur in einen MENU-Block eingefügt werden',
   'visualFlowEditor.validation.genericError': 'Allgemeiner Validierungsfehler',
+  'visualFlowEditor.validation.setSpecConditionNoCondition': 'Der SETSPECCONDITION-Block muss eine Bedingung ausgewählt haben.',
+  'visualFlowEditor.validation.setSpecConditionOutsideContext': 'SETSPECCONDITION sollte innerhalb von MISSION, BUILD oder FLIGHT verwendet werden. Außerhalb dieses Kontexts ist es nur eine Empfehlung (Warnung).',
   'visualFlowEditor.validation.buildInsideContainer': 'BUILD-Block kann nicht in einem anderen Container-Block verschachtelt werden',
   'visualFlowEditor.validation.flightInsideContainer': 'FLIGHT-Block kann nicht in einem anderen Container-Block verschachtelt werden',
   'visualFlowEditor.validation.invalidPosition': 'Ungültige Position für diesen Block',
@@ -433,6 +437,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.selectLabel': 'Label auswählen...',
   'visualFlowEditor.command.labelName': 'Labelname...',
   'visualFlowEditor.command.selectScript': 'Skript auswählen...',
+  'visualFlowEditor.command.selectCondition': 'Bedingung auswählen...',
   'visualFlowEditor.command.opponent': 'Gegner Charakter',
   'visualFlowEditor.command.opponentPlaceholder': 'Händler, Feind, usw.',
   'visualFlowEditor.command.shipClassI': 'Klasse I',

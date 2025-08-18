@@ -77,6 +77,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.subScript.scriptName': 'Název skriptu',
   'visualFlowEditor.blocks.subScript.hint': 'Vyberte skript k provedení',
   'visualFlowEditor.blocks.subScript.navigate': 'Přejít na sub-skript',
+  // SETSPECCONDITION Block
+  'visualFlowEditor.blocks.setSpecCondition.condition': 'Podmínka',
   
   // ACT_MISSION Block
   'visualFlowEditor.blocks.actMission.missionName': 'Název Mise',
@@ -278,6 +280,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askMustBeFollowedByMenu': 'Blok ASK musí být následován blokem MENU. Pokud je ASK uvnitř IF, MENU může být ve stejné větvi nebo mimo IF.',
   'visualFlowEditor.validation.askWithoutMenu': 'Blok ASK musí být následován blokem MENU. Tento ASK je posledním blokem a nemá následující MENU.',
   'visualFlowEditor.validation.goWithoutLabel': 'Blok GO vyžaduje alespoň jeden blok LABEL ve skriptu. Přidejte blok LABEL před použitím GO.',
+  'visualFlowEditor.validation.setSpecConditionNoCondition': 'Blok SETSPECCONDITION musí mít vybranou podmínku.',
+  'visualFlowEditor.validation.setSpecConditionOutsideContext': 'SETSPECCONDITION by měl být použit uvnitř MISSION, BUILD nebo FLIGHT. Mimo tento kontext je to pouze doporučení (varování).',
   
   
   // Scene Dialog Validation Messages
@@ -429,6 +433,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.selectLabel': 'Vybrat štítek...',
   'visualFlowEditor.command.labelName': 'Název štítku...',
   'visualFlowEditor.command.selectScript': 'Vybrat skript...',
+  'visualFlowEditor.command.selectCondition': 'Vybrat podmínku...',
   'visualFlowEditor.command.opponent': 'Postava Protivníka',
   'visualFlowEditor.command.opponentPlaceholder': 'obchodník, nepřítel, atd.',
   'visualFlowEditor.command.shipClassI': 'Třída I',

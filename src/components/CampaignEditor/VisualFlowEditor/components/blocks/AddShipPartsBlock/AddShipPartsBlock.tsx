@@ -1,10 +1,9 @@
+import { logger } from '@/utils/logger';
 import React, { useState, useEffect, useRef } from 'react';
 import { BaseBlock } from '../BaseBlock/BaseBlock';
 import { getBlockClassName } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
 import { useTranslation } from '@/locales';
-import { Package } from 'lucide-react';
 import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
-import { API_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
 import { API_CONFIG } from '@/config/constants';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
@@ -64,7 +63,7 @@ export const AddShipPartsBlock: React.FC<AddShipPartsBlockProps> = ({
           setPartOptions(data.data);
         }
       } catch (error) {
-        console.error('Error loading parts:', error);
+  logger.error('Error loading parts:', error);
       } finally {
         setIsLoadingParts(false);
       }
@@ -169,7 +168,7 @@ export const AddShipPartsBlock: React.FC<AddShipPartsBlockProps> = ({
       if (v === null || v === undefined) return '';
       let s = String(v).trim();
       // Remove surrounding double quotes if present
-      s = s.replace(/^\"|\"$/g, '');
+  s = s.replace(/^"|"$/g, '');
       return s;
     };
 
@@ -194,15 +193,15 @@ export const AddShipPartsBlock: React.FC<AddShipPartsBlockProps> = ({
       return null;
     };
 
-    const matched = findMatch();
-    let displayValue = normalized;
-    if (matched) displayValue = matched.valore || normalized;
+  const matched = findMatch();
+  let displayValue = normalized;
+  if (matched) displayValue = matched.valore || normalized;
 
     // Fallback: if still empty, show localized 'noParts'
     const hasValue = !!displayValue;
 
     // For compactness show only filename without path and extension
-    const pretty = (v: string) => {
+  const pretty = (v: string) => {
       if (!v) return v;
       const last = v.split('/').pop() || v;
       return last.replace(/\.(yaml|yml)$/i, '');
@@ -212,7 +211,7 @@ export const AddShipPartsBlock: React.FC<AddShipPartsBlockProps> = ({
       <div className="flex items-center gap-2 w-full">
         {hasValue ? (
           <span className="text-gray-400 text-sm truncate" title={displayValue}>
-            {`"${displayValue}"`}
+            {`"${pretty(displayValue)}"`}
           </span>
         ) : (
           <span className="text-red-400 text-sm">
