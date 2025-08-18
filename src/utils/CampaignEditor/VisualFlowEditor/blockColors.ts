@@ -297,6 +297,8 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   'ADDPARTTOSHIP': BlockCategory.MISSION,
   'ADDPARTTOASIDESLOT': BlockCategory.MISSION,
   'ADDSHIPPARTS': BlockCategory.MISSION,
+  'SETDECKPREPARATIONSCRIPT': BlockCategory.MISSION,
+  'SETFLIGHTDECKPREPARATIONSCRIPT': BlockCategory.MISSION,
   
   // Dialogue
   'SAY': BlockCategory.DIALOGUE,

@@ -14,6 +14,16 @@ interface SessionData {
 
 const STORAGE_KEY = 'visualFlowEditor_sessionData';
 
+// Cache a livello di modulo per evitare ricarichi ripetuti durante la stessa sessione di editor
+type GlobalSessionCache = {
+  missions?: string[];
+  characters?: Character[];
+  loadMissionsPromise?: Promise<string[]>;
+  loadCharactersPromise?: Promise<Character[]>;
+};
+
+const _globalSessionCache: GlobalSessionCache = {};
+
 // Hook per gestire i dati di sessione (variabili, semafori, labels, etc.)
 export const useSessionData = () => {
   // Inizializza con dati di esempio e da localStorage se disponibili
@@ -23,11 +33,11 @@ export const useSessionData = () => {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        // Resetta sempre le missioni e i personaggi per forzare il caricamento da API
+        // Mantieni i dati di base dai precedenti utilizzi (escludendo payload pesanti che gestiamo a runtime)
         return {
           ...parsed,
-          missions: [], // Forza il caricamento da API
-          characters: [] // Forza il caricamento da API
+          missions: Array.isArray(parsed.missions) ? parsed.missions : [],
+          characters: [] // i personaggi vengono caricati da API e non persistiti su localStorage
         };
       } catch (e) {
         console.error('Errore nel caricamento dati sessione:', e);
@@ -89,36 +99,76 @@ export const useSessionData = () => {
     };
   });
 
-  // Carica i personaggi all'avvio
+  // Carica i personaggi all'avvio (una sola volta per sessione tramite cache globale)
   useEffect(() => {
-    variablesSystemApiService.loadAllData()
-      .then(data => {
-        setSessionData(prev => ({
-          ...prev,
-          characters: data.characters || []
-        }));
+    let isMounted = true;
+    const debug = (window as any).__VFE_NAV_DEBUG__;
+    const log = (...args: any[]) => { if (debug) console.log('[SESSION] characters', ...args); };
+
+    if (_globalSessionCache.characters && _globalSessionCache.characters.length) {
+      log('cache hit');
+      setSessionData(prev => ({ ...prev, characters: _globalSessionCache.characters! }));
+      return () => { isMounted = false; };
+    }
+
+    if (!_globalSessionCache.loadCharactersPromise) {
+      log('fetch start');
+      _globalSessionCache.loadCharactersPromise = variablesSystemApiService
+        .loadAllData()
+        .then(data => (data.characters || []) as Character[]);
+    } else {
+      log('await in-flight');
+    }
+
+    _globalSessionCache.loadCharactersPromise
+      .then(chars => {
+        _globalSessionCache.characters = chars;
+        if (isMounted) {
+          log('fetch done', chars?.length);
+          setSessionData(prev => ({ ...prev, characters: chars }));
+        }
       })
       .catch(err => {
         console.error('Errore caricamento personaggi:', err);
       });
+
+    return () => { isMounted = false; };
   }, []); // Esegui solo una volta all'avvio
 
-  // Carica le missioni all'avvio
+  // Carica le missioni all'avvio (una sola volta per sessione tramite cache globale)
   useEffect(() => {
-    console.log('Caricamento missioni da API...');
-    gameDataService.getMissions()
-      .then(missions => {
-        console.log('Missioni caricate da API:', missions);
-        const missionNames = missions.map(mission => mission.name.replace('.txt', ''));
-        console.log('Nomi missioni estratti:', missionNames);
-        setSessionData(prev => ({
-          ...prev,
-          missions: missionNames
-        }));
+    let isMounted = true;
+    const debug = (window as any).__VFE_NAV_DEBUG__;
+    const log = (...args: any[]) => { if (debug) console.log('[SESSION] missions', ...args); };
+
+    if (_globalSessionCache.missions && _globalSessionCache.missions.length) {
+      log('cache hit');
+      setSessionData(prev => ({ ...prev, missions: _globalSessionCache.missions! }));
+      return () => { isMounted = false; };
+    }
+
+    if (!_globalSessionCache.loadMissionsPromise) {
+      log('fetch start');
+      _globalSessionCache.loadMissionsPromise = gameDataService
+        .getMissions()
+        .then(missions => missions.map(m => m.name.replace('.txt', '')));
+    } else {
+      log('await in-flight');
+    }
+
+    _globalSessionCache.loadMissionsPromise
+      .then(missionNames => {
+        _globalSessionCache.missions = missionNames;
+        if (isMounted) {
+          log('fetch done', missionNames?.length);
+          setSessionData(prev => ({ ...prev, missions: missionNames }));
+        }
       })
       .catch(err => {
         console.error('Errore caricamento missioni:', err);
       });
+
+    return () => { isMounted = false; };
   }, []); // Esegui solo una volta all'avvio
 
   // Salva in localStorage quando cambiano i dati (escludi characters e missions per evitare dati pesanti/obsoleti)

@@ -170,12 +170,13 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
               {/* Render mission blocks */}
               {block.blocksMission && block.blocksMission.length > 0 ? (
                 block.blocksMission.map((child: any, index: number) => (
-                  <React.Fragment key={child.id || index}>
+                  <React.Fragment key={`${child.id ?? 'mission'}-${index}`}>
                     {renderChildren([child])}
                     <AnchorPoint
                       onDragOver={onDragOver}
                       onDrop={(e) => onDropAtIndexMission(e, index + 1)}
                       label=""
+                      key={`mission-anchor-${index}`}
                     />
                   </React.Fragment>
                 ))
@@ -208,12 +209,13 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
               {/* Render finish blocks */}
               {block.blocksFinish && block.blocksFinish.length > 0 ? (
                 block.blocksFinish.map((child: any, index: number) => (
-                  <React.Fragment key={child.id || index}>
+                  <React.Fragment key={`${child.id ?? 'finish'}-${index}`}>
                     {renderChildren([child])}
                     <AnchorPoint
                       onDragOver={onDragOver}
                       onDrop={(e) => onDropAtIndexFinish(e, index + 1)}
                       label=""
+                      key={`finish-anchor-${index}`}
                     />
                   </React.Fragment>
                 ))
