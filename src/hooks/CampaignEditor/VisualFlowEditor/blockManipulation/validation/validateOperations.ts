@@ -155,7 +155,22 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
   const validateRecursive = (blocks: any[], parentBlock?: any, allRootBlocks?: any[], path: string[] = []): void => {
     blocks.forEach((block, index) => {
       // VALIDAZIONE PARAMETRI: Controlla che i blocchi abbiano i parametri obbligatori valorizzati
-      let paramValidation = validateBlockParameters(block, allFlatBlocks, characters);
+  let paramValidation = validateBlockParameters(block, allFlatBlocks, characters) as { valid: boolean; error?: string; severity?: string };
+
+      // Helper: estrai il primo testo disponibile da un oggetto di testi multilingue
+      const extractFirstText = (textObj: any): string | null => {
+        if (!textObj) return null;
+        if (typeof textObj === 'string') return textObj;
+        try {
+          for (const key of Object.keys(textObj)) {
+            const v = textObj[key];
+            if (v && typeof v === 'string' && v.trim() !== '') return v;
+          }
+        } catch (e) {
+          return null;
+        }
+        return null;
+      };
       
       // Gestione speciale per RETURN: controlla se siamo al livello root
       if (block.type === 'RETURN' && paramValidation.valid) {
@@ -168,9 +183,24 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
         }
       }
       
-      // Gestione speciale per ADDOPPONENT e SETSHIPTYPE: controllano se sono dentro MISSION (warning)
-      // E per ADDPARTTOSHIP, ADDPARTTOASIDESLOT e ADDSHIPPARTS: controllano se sono dentro BUILD (warning)
-      if ((block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE' || block.type === 'ADDPARTTOSHIP' || block.type === 'ADDPARTTOASIDESLOT' || block.type === 'ADDSHIPPARTS') && paramValidation.valid) {
+      // Helper: restituisce il primo testo disponibile in qualsiasi lingua presente in block.parameters.text
+      const getAnyLanguageText = (block: any): string => {
+        if (!block || !block.parameters || !block.parameters.text) return '';
+        const textObj = block.parameters.text;
+        // Se è una stringa semplice, usala
+        if (typeof textObj === 'string') return textObj;
+        // Se è un oggetto con lingue, prendi la prima non vuota
+        for (const key of Object.keys(textObj)) {
+          if (typeof textObj[key] === 'string' && textObj[key].trim().length > 0) {
+            return textObj[key];
+          }
+        }
+        return '';
+      };
+
+      // Gestione speciale per ADDOPPONENT, SETSHIPTYPE e FINISH_MISSION: controllano se sono dentro MISSION (warning)
+  // E per ADDPARTTOSHIP, ADDPARTTOASIDESLOT e ADDSHIPPARTS: controllano se sono dentro BUILD (warning)
+  if ((block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE' || block.type === 'FINISH_MISSION' || block.type === 'ADDPARTTOSHIP' || block.type === 'ADDPARTTOASIDESLOT' || block.type === 'ADDSHIPPARTS') && paramValidation.valid) {
         // Verifica se siamo dentro un blocco MISSION
         let isInsideMission = false;
         
@@ -221,20 +251,26 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
             } else if (block.type === 'ADDSHIPPARTS') {
               errorKey = 'addShipPartsNotInBuild';
             }
+            // Explicit severity to help downstream consumers decide warning vs error
             paramValidation = { 
               valid: false,
-              error: errorKey
+              error: errorKey,
+              severity: 'warning'
             };
           }
         } else {
-          // Se non è dentro MISSION (per ADDOPPONENT e SETSHIPTYPE), genera un warning
+      // Se non è dentro MISSION (per ADDOPPONENT, SETSHIPTYPE e FINISH_MISSION), genera un warning
           if (!isInsideMission) {
-            const errorKey = block.type === 'ADDOPPONENT' 
-              ? 'ADDOPPONENT_NOT_IN_MISSION'
-              : 'SETSHIPTYPE_NOT_IN_MISSION';
+            let errorKey = '';
+            if (block.type === 'ADDOPPONENT') errorKey = 'ADDOPPONENT_NOT_IN_MISSION';
+            else if (block.type === 'SETSHIPTYPE') errorKey = 'SETSHIPTYPE_NOT_IN_MISSION';
+        else if (block.type === 'FINISH_MISSION') errorKey = 'finishMissionNotInMission';
+
+            // Mark these contextual problems as warnings explicitly
             paramValidation = { 
               valid: false,
-              error: errorKey
+              error: errorKey,
+              severity: 'warning'
             };
           }
         }
@@ -257,6 +293,7 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           'RETURN_AT_ROOT_LEVEL',
           'ADDOPPONENT_NOT_IN_MISSION',
           'SETSHIPTYPE_NOT_IN_MISSION',
+          'finishMissionNotInMission',
           'addPartToShipNotInBuild',
           'addPartToAsideSlotNotInBuild',
           'addShipPartsNotInBuild'
@@ -462,6 +499,16 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
               t('visualFlowEditor.validation.addShipPartsNotInBuild')
               : 'ADDSHIPPARTS should be inside a BUILD block. Consider moving this block inside a build phase.';
             break;
+          case 'finishMissionNotInMission':
+            message = t ?
+              t('visualFlowEditor.validation.finishMissionNotInMission')
+              : 'FINISH_MISSION should be inside a MISSION block.';
+            break;
+          case 'ACT_MISSION_NO_MISSION':
+            message = t ?
+              t('visualFlowEditor.validation.actMissionNoMission')
+              : 'ACT_MISSION block must have a mission selected. Choose a mission to activate.';
+            break;
           default:
             message = t ? 
               t('visualFlowEditor.validation.error')
@@ -470,6 +517,7 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
         
         // isWarning è già definito sopra, lo riutilizzo
         
+        // ... costruzione di message già avvenuta sopra
         errorDetails.push({
           blockId: block.id,
           blockType: block.type,
@@ -484,14 +532,15 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
         warnings++; // Warning, non error
         invalidBlocks.push(block.id);
         const prevAsk = blocks[index - 1];
+        // usa il primo testo disponibile in qualsiasi lingua
+        const firstAskText = extractFirstText(prevAsk.parameters?.text) || (t ? t('visualFlowEditor.validation.noText') : 'no text');
         errorDetails.push({
           blockId: block.id,
           blockType: block.type,
           errorType: 'CONSECUTIVE_ASK',
           message: t ? 
-            t('visualFlowEditor.validation.consecutiveAskDetailed')
-              .replace('{firstAsk}', prevAsk.parameters?.text?.EN || t('visualFlowEditor.validation.noText'))
-            : `Two consecutive ASK blocks are not allowed. The first ASK (${prevAsk.parameters?.text?.EN || 'no text'}) is followed directly by this ASK. Insert a SAY, MENU or other command between the two ASK blocks.`,
+            t('visualFlowEditor.validation.consecutiveAskDetailed').replace('{firstAsk}', firstAskText)
+            : `Two consecutive ASK blocks are not allowed. The first ASK (${firstAskText}) is followed directly by this ASK. Insert a SAY, MENU or other command between the two ASK blocks.`,
           path: [...path],
           relatedBlockId: prevAsk.id,
           type: 'warning' // Warning - non bloccante per integrità strutturale

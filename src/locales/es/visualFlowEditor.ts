@@ -78,6 +78,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.subScript.hint': 'Selecciona el script a ejecutar',
   'visualFlowEditor.blocks.subScript.navigate': 'Navegar al sub-script',
   
+  // ACT_MISSION Block
+  'visualFlowEditor.blocks.actMission.missionName': 'Nombre de la Misión',
+  'visualFlowEditor.blocks.actMission.hint': 'Selecciona la misión a activar',
+  'visualFlowEditor.blocks.actMission.navigate': 'Navegar a la misión',
+  
   // EXIT_MENU Block
   'visualFlowEditor.blocks.exitMenu.description': 'Salir del menú actual',
   'visualFlowEditor.blocks.exitMenu.info': 'Este comando sale del menú actual y continúa la ejecución',
@@ -273,12 +278,17 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askMustBeFollowedByMenu': 'El bloque ASK debe ser seguido por un bloque MENU. Si ASK está dentro de un IF, MENU puede estar en la misma rama o fuera del IF.',
   'visualFlowEditor.validation.askWithoutMenu': 'El bloque ASK debe ser seguido por un bloque MENU. Este ASK es el último bloque y no tiene un MENU siguiente.',
   'visualFlowEditor.validation.goWithoutLabel': 'El bloque GO requiere al menos un bloque LABEL en el script. Añade un bloque LABEL antes de usar GO.',
+  'visualFlowEditor.validation.addPartToShipNotInBuild': 'ADDPARTTOSHIP debería estar dentro de un bloque BUILD. Mueva este bloque dentro de una fase de construcción.',
+  'visualFlowEditor.validation.addPartToAsideSlotNotInBuild': 'ADDPARTTOASIDESLOT debería estar dentro de un bloque BUILD. Mueva este bloque dentro de una fase de construcción.',
+  'visualFlowEditor.validation.addShipPartsNoParams': 'El bloque ADDSHIPPARTS debe especificar un archivo de partes. Seleccione un archivo YAML para cargar las partes.',
+  'visualFlowEditor.validation.addShipPartsNotInBuild': 'ADDSHIPPARTS debería estar dentro de un bloque BUILD. Mueva este bloque dentro de una fase de construcción.',
   
   
   // Scene Dialog Validation Messages
   'visualFlowEditor.validation.dialogOutsideScene': 'El bloque {blockType} solo puede usarse dentro de una escena de diálogo. Añade un bloque SHOWDLGSCENE antes de usar {blockType}.',
   'visualFlowEditor.validation.characterOutsideScene': 'El bloque {blockType} solo puede usarse dentro de una escena de diálogo. Añade un bloque SHOWDLGSCENE antes de usar {blockType}.',
   'visualFlowEditor.validation.hideSceneWithoutShow': 'El bloque HIDEDLGSCENE solo puede usarse cuando hay una escena de diálogo activa. Añade un bloque SHOWDLGSCENE antes de usar HIDEDLGSCENE.',
+  'visualFlowEditor.validation.actMissionNoMission': 'El bloque ACT_MISSION debe tener una misión seleccionada. Elige una misión para activar.',
   
   // Error Modal
   'visualFlowEditor.errorModal.close': 'Cerrar',
@@ -566,6 +576,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.setMissionAsCompleted.description': 'Marcar misión como completada',
   'visualFlowEditor.tools.allShipsGiveUp.description': 'Todas las naves se rinden',
   'visualFlowEditor.tools.giveUpFlight.description': 'Rendirse en vuelo',
+  'visualFlowEditor.blocks.finishMission.description': 'Finaliza la misión actual y continúa con el flujo posterior a la misión.',
+  'visualFlowEditor.blocks.finishMission.compact': 'Finalizar misión',
   
   // Tool Descriptions - Variables
   'visualFlowEditor.tools.setTo.description': 'Establecer valor de variable',

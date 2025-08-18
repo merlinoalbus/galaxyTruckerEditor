@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { Search, Plus, X, Check, Variable, Flag, Tag, FileCode, ChevronDown } from 'lucide-react';
+import { Search, Plus, X, Check, Variable, Flag, Tag, FileCode, ChevronDown, Package } from 'lucide-react';
 import { useTranslation } from '@/locales';
 
 interface SelectWithModalProps {
-  type: 'variable' | 'semaphore' | 'label' | 'script' | 'mission';
+  type: 'variable' | 'semaphore' | 'label' | 'script' | 'mission' | 'parts';
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -124,6 +124,7 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
       case 'label': return <Tag className="w-3 h-3" />;
       case 'script':
       case 'mission': return <FileCode className="w-3 h-3" />;
+      case 'parts': return <Package className="w-3 h-3" />;
       default: return null;
     }
   };

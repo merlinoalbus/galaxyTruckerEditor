@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { variablesSystemApiService } from '@/services/CampaignEditor/VariablesSystem/variablesSystemApiService';
+import { gameDataService } from '@/services/CampaignEditor/GameDataService';
 import type { Character } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
 
 interface SessionData {
@@ -21,7 +22,13 @@ export const useSessionData = () => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       try {
-        return JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        // Resetta sempre le missioni e i personaggi per forzare il caricamento da API
+        return {
+          ...parsed,
+          missions: [], // Forza il caricamento da API
+          characters: [] // Forza il caricamento da API
+        };
       } catch (e) {
         console.error('Errore nel caricamento dati sessione:', e);
       }
@@ -78,18 +85,7 @@ export const useSessionData = () => {
         'cutscene_intro.txt',
         'cutscene_ending.txt'
       ],
-      missions: [
-        'Tutorial',
-        'Mission_01_FirstSteps',
-        'Mission_02_TheJourney',
-        'Mission_03_BossFight',
-        'Mission_04_SecretArea',
-        'Mission_05_FinalBattle',
-        'SideQuest_01',
-        'SideQuest_02',
-        'BonusMission_01',
-        'ChallengeMission_01'
-      ]
+      missions: [] // Verranno caricate dall'API
     };
   });
 
@@ -107,9 +103,27 @@ export const useSessionData = () => {
       });
   }, []); // Esegui solo una volta all'avvio
 
-  // Salva in localStorage quando cambiano i dati (escludi characters per evitare dati pesanti)
+  // Carica le missioni all'avvio
   useEffect(() => {
-    const { characters, ...dataToStore } = sessionData;
+    console.log('Caricamento missioni da API...');
+    gameDataService.getMissions()
+      .then(missions => {
+        console.log('Missioni caricate da API:', missions);
+        const missionNames = missions.map(mission => mission.name.replace('.txt', ''));
+        console.log('Nomi missioni estratti:', missionNames);
+        setSessionData(prev => ({
+          ...prev,
+          missions: missionNames
+        }));
+      })
+      .catch(err => {
+        console.error('Errore caricamento missioni:', err);
+      });
+  }, []); // Esegui solo una volta all'avvio
+
+  // Salva in localStorage quando cambiano i dati (escludi characters e missions per evitare dati pesanti/obsoleti)
+  useEffect(() => {
+    const { characters, missions, ...dataToStore } = sessionData;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToStore));
   }, [sessionData]);
 

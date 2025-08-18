@@ -74,6 +74,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.subScript.hint': 'Seleziona lo script da eseguire',
   'visualFlowEditor.blocks.subScript.navigate': 'Naviga al sub-script',
   
+  // ACT_MISSION Block
+  'visualFlowEditor.blocks.actMission.missionName': 'Nome Mission',
+  'visualFlowEditor.blocks.actMission.hint': 'Seleziona la mission da attivare',
+  'visualFlowEditor.blocks.actMission.navigate': 'Naviga alla mission',
+  
   // EXIT_MENU Block
   'visualFlowEditor.blocks.exitMenu.description': 'Esci dal menu corrente',
   'visualFlowEditor.blocks.exitMenu.info': 'Questo comando esce dal menu corrente e continua l\'esecuzione',
@@ -291,6 +296,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.goNoLabel': 'Il blocco GO deve avere una label selezionata. Scegli una label di destinazione.',
   'visualFlowEditor.validation.labelNoName': 'Il blocco LABEL deve avere un nome. Imposta il nome dell\'ancora.',
   'visualFlowEditor.validation.subScriptNoName': 'Il blocco SUB_SCRIPT deve avere un nome script. Seleziona uno script da eseguire.',
+  'visualFlowEditor.validation.actMissionNoMission': 'Il blocco ACT_MISSION deve avere una mission selezionata. Scegli una mission da attivare.',
   'visualFlowEditor.validation.optNoText': 'Il blocco OPT deve avere del testo. Aggiungi almeno il testo in inglese.',
   'visualFlowEditor.validation.returnAtRootLevel': 'Attenzione: RETURN al livello radice uscirà dall\'intero script.',
   'visualFlowEditor.validation.setNoSemaphore': 'Il blocco SET deve avere un semaforo selezionato. Scegli un semaforo da impostare.',
@@ -331,6 +337,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.addPartToShipNotInBuild': 'ADDPARTTOSHIP dovrebbe essere dentro un blocco BUILD. Considera di spostare questo blocco dentro una fase di costruzione.',
   'visualFlowEditor.validation.addPartToAsideSlotNoParams': 'Il blocco ADDPARTTOASIDESLOT deve avere parametri. Specifica la parte da aggiungere.',
   'visualFlowEditor.validation.addPartToAsideSlotNotInBuild': 'ADDPARTTOASIDESLOT dovrebbe essere dentro un blocco BUILD. Considera di spostare questo blocco dentro una fase di costruzione.',
+  'visualFlowEditor.validation.addShipPartsNoParams': 'Il blocco ADDSHIPPARTS deve indicare un file di parti. Seleziona un file YAML da caricare.',
+  'visualFlowEditor.validation.addShipPartsNotInBuild': 'ADDSHIPPARTS dovrebbe essere dentro un blocco BUILD. Sposta questo blocco nella fase di build.',
   'visualFlowEditor.validation.showcharNoScene': 'SHOWCHAR richiede una scena attiva. Aggiungi SHOWDLGSCENE prima di questo blocco.',
   'visualFlowEditor.validation.hidecharNoScene': 'HIDECHAR richiede una scena attiva. Aggiungi SHOWDLGSCENE prima di questo blocco.',
   'visualFlowEditor.validation.hidecharNoVisibleCharacters': 'HIDECHAR non può essere usato: nessun personaggio visibile nella scena.',
@@ -670,7 +678,6 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.addPartToShip.description': 'Aggiunge parte a nave',
   'visualFlowEditor.tools.addPartToAsideSlot.description': 'Aggiunge parte ad aside',
   'visualFlowEditor.tools.addShipParts.description': 'Aggiunge parti multiple',
-  'visualFlowEditor.tools.finishMission.description': 'Termina missione',
   'visualFlowEditor.tools.actMission.description': 'Attiva missione',
   'visualFlowEditor.tools.setDeckPreparationScript.description': 'Imposta script deck',
   'visualFlowEditor.tools.setFlightDeckPreparationScript.description': 'Imposta script deck volo',

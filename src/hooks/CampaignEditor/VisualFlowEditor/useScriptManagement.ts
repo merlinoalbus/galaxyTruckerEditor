@@ -238,6 +238,7 @@ export const useScriptManagement = ({
           blocksMission: blocksMission,
           blocksFinish: blocksFinish,
           name: result.data.name,
+          missionName: result.data.name, // Aggiungi anche missionName per compatibilità con MissionBlock
           fileName: result.data.fileName,
           children: [] // MISSION usa blocksMission/blocksFinish, non children
         };

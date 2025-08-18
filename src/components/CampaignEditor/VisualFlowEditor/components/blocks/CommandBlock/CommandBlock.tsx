@@ -26,6 +26,7 @@ interface CommandBlockProps {
   validationType?: 'error' | 'warning';
   onGoToLabel?: (labelName: string) => void;
   onNavigateToSubScript?: (scriptName: string, parentBlock: IFlowBlock) => void;
+  onNavigateToMission?: (missionName: string, parentBlock: IFlowBlock) => void;
   allBlocks?: IFlowBlock[];
   collapseAllTrigger?: number;
   expandAllTrigger?: number;
@@ -44,6 +45,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   validationType,
   onGoToLabel,
   onNavigateToSubScript,
+  onNavigateToMission,
   allBlocks = [],
   collapseAllTrigger = 0,
   expandAllTrigger = 0,
@@ -295,7 +297,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
           </div>
         );
       
-      case 'SUB_SCRIPT':
+  case 'SUB_SCRIPT':
         return (
           <div className="flex items-center gap-2">
             <label className="text-xs text-slate-400 whitespace-nowrap">
@@ -308,7 +310,11 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
                 parameters: { ...block.parameters, script: value } 
               })}
               placeholder={t('visualFlowEditor.command.selectScript')}
-              availableItems={sessionData?.availableScripts?.map((s: any) => s.name) || []}
+              availableItems={(sessionData?.availableScripts?.map((s: any) => s.name) || []).filter((name: string) => {
+                const norm = (name || '').replace(/\.txt$/i, '');
+                const current = (sessionData?.currentScriptName || '').replace(/\.txt$/i, '');
+                return name && norm !== current;
+              })}
               onAddItem={undefined} // Non permettere aggiunta di nuovi script
               className="flex-1"
             />
@@ -322,6 +328,43 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
               disabled={!block.parameters?.script}
               className="p-1 hover:bg-slate-700 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               title={t('visualFlowEditor.blocks.subScript.navigate')}
+            >
+              <ArrowRight className="w-4 h-4 text-blue-400" />
+            </button>
+          </div>
+        );
+      
+  case 'ACT_MISSION':
+        return (
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-slate-400 whitespace-nowrap">
+              {t('visualFlowEditor.blocks.actMission.missionName')}:
+            </label>
+            <SelectWithModal
+              type="mission"
+              value={block.parameters?.mission || ''}
+              onChange={(value) => onUpdate({ 
+                parameters: { ...block.parameters, mission: value } 
+              })}
+              placeholder={t('visualFlowEditor.select.selectMission')}
+              availableItems={(sessionData?.missions || []).filter((name: string) => {
+                const norm = (name || '').replace(/\.txt$/i, '');
+                const current = (sessionData?.currentMissionName || '').replace(/\.txt$/i, '');
+                return name && norm !== current;
+              })}
+              onAddItem={undefined} // Non permettere aggiunta di nuove mission
+              className="flex-1"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                if (block.parameters?.mission && onNavigateToMission) {
+                  onNavigateToMission(block.parameters.mission, block);
+                }
+              }}
+              disabled={!block.parameters?.mission}
+              className="p-1 hover:bg-slate-700 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title={t('visualFlowEditor.blocks.actMission.navigate')}
             >
               <ArrowRight className="w-4 h-4 text-blue-400" />
             </button>
@@ -652,6 +695,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
       case 'GO': return <span className="text-2xl">➡️</span>;
       case 'LABEL': return <span className="text-2xl">🏷️</span>;
       case 'SUB_SCRIPT': return <span className="text-2xl">📄</span>;
+      case 'ACT_MISSION': return <span className="text-2xl">🎬</span>;
       case 'EXIT_MENU': return <span className="text-2xl">🚪</span>;
       case 'SHOWDLGSCENE': return <span className="text-2xl">🗨️</span>;
       case 'HIDEDLGSCENE': return <span className="text-2xl">🚫</span>;
@@ -742,6 +786,27 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
       case 'SUB_SCRIPT':
         if (block.parameters?.script) {
           return <span>📄 {block.parameters.script}</span>;
+        }
+        break;
+      case 'ACT_MISSION':
+        if (block.parameters?.mission) {
+          return (
+            <div className="flex items-center gap-2">
+              <span>🎬 {block.parameters.mission}</span>
+              {onNavigateToMission && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (block.parameters?.mission) onNavigateToMission(block.parameters.mission, block);
+                  }}
+                  className="p-1 bg-slate-700 hover:bg-slate-600 rounded text-white transition-colors"
+                  title={t('visualFlowEditor.blocks.actMission.navigate')}
+                >
+                  <ExternalLink className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+          );
         }
         break;
       case 'EXIT_MENU':

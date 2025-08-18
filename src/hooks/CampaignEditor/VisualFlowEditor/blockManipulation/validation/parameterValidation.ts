@@ -490,6 +490,19 @@ export const validateAddShipPartsParameters = (block: any): { valid: boolean; er
 };
 
 /**
+ * Valida i parametri di un blocco ACT_MISSION
+ */
+export const validateActMissionParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.mission || block.parameters.mission.trim() === '') {
+    return { 
+      valid: false, 
+      error: 'ACT_MISSION_NO_MISSION' 
+    };
+  }
+  return { valid: true };
+};
+
+/**
  * Valida i parametri di un blocco in base al suo tipo
  */
 export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
@@ -543,6 +556,8 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return validateAddPartToAsideSlotParameters(block);
     case 'ADDSHIPPARTS':
       return validateAddShipPartsParameters(block);
+    case 'ACT_MISSION':
+      return validateActMissionParameters(block);
     // EXIT_MENU, SHOWDLGSCENE, HIDEDLGSCENE non hanno parametri da validare
     default:
       return { valid: true };

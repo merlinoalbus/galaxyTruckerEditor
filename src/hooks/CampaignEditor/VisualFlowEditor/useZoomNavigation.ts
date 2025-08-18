@@ -103,6 +103,20 @@ export const useZoomNavigation = ({
         const result = findBlockInTree(block.blocksFinish, blockId, [...path, block]);
         if (result) return result;
       }
+
+      // Cerca nelle sezioni di BUILD/FLIGHT
+      if (block.blockInit) {
+        const result = findBlockInTree(block.blockInit, blockId, [...path, block]);
+        if (result) return result;
+      }
+      if (block.blockStart) {
+        const result = findBlockInTree(block.blockStart, blockId, [...path, block]);
+        if (result) return result;
+      }
+      if (block.blockEvaluate) {
+        const result = findBlockInTree(block.blockEvaluate, blockId, [...path, block]);
+        if (result) return result;
+      }
     }
     return null;
   }, []);
@@ -317,12 +331,18 @@ export const useZoomNavigation = ({
   }, [currentScriptBlocks, currentScriptContext, openedScripts, rootBlocks, setOpenedScripts, setCurrentScriptContext, currentScript, navigationPath, setCurrentScriptBlocks]);
 
   const handleZoomIn = useCallback((blockId: string) => {
-    // Determina se siamo in un sub-script controllando il navigationPath
-    const isInSubScript = navigationPath.some(item => item.id.startsWith('subscript-'));
+    // Determina se siamo in un sub-script o in una mission controllando il navigationPath
     const subscriptIndex = navigationPath.findIndex(item => item.id.startsWith('subscript-'));
+    const missionIndex = navigationPath.findIndex(item => item.id.startsWith('mission-'));
+    const hasSubscript = subscriptIndex >= 0;
+    const hasMission = missionIndex >= 0;
+    const isInContext = hasSubscript || hasMission;
+    const markerIndex = hasSubscript && hasMission
+      ? Math.max(subscriptIndex, missionIndex)
+      : (hasSubscript ? subscriptIndex : missionIndex);
     
-    // Se è il primo zoom, salva i blocchi attuali come root
-    if (navigationPath.length === 0 || (isInSubScript && subscriptIndex === navigationPath.length - 1)) {
+    // Se è il primo zoom o siamo appena entrati in subscript/mission, salva i blocchi attuali come root
+  if (navigationPath.length === 0 || (isInContext && markerIndex === navigationPath.length - 1)) {
       setRootBlocks([...currentScriptBlocks]);
     }
     
@@ -345,24 +365,27 @@ export const useZoomNavigation = ({
       return;
     }
     
-    // Verifica che sia un container
-    const isContainer = result.block.isContainer || 
-                       result.block.type === 'IF' || 
-                       result.block.type === 'MENU' || 
-                       result.block.type === 'OPT' ||
-                       result.block.type === 'SCRIPT' ||
-                       result.block.type === 'SUB_SCRIPT' ||
-                       result.block.type === 'MISSION';
+  // Verifica che sia un container: basato su presenza di sotto-array noti o flag
+  const rb = result.block;
+  const isContainer = rb.isContainer ||
+            (Array.isArray(rb.children) && rb.children.length >= 0) ||
+            (Array.isArray(rb.thenBlocks) && rb.thenBlocks.length >= 0) ||
+            (Array.isArray(rb.elseBlocks) && rb.elseBlocks.length >= 0) ||
+            (Array.isArray(rb.blocksMission) && rb.blocksMission.length >= 0) ||
+            (Array.isArray(rb.blocksFinish) && rb.blocksFinish.length >= 0) ||
+            (Array.isArray(rb.blockInit) && rb.blockInit.length >= 0) ||
+            (Array.isArray(rb.blockStart) && rb.blockStart.length >= 0) ||
+            (Array.isArray(rb.blockEvaluate) && rb.blockEvaluate.length >= 0);
     
     if (!isContainer) {
       return;
     }
     
     // Costruisci il path di zoom escludendo blocchi SCRIPT wrapper
-    const buildZoomPath = (path: any[], targetBlock: any) => {
+  const buildZoomPath = (path: any[], targetBlock: any) => {
       const fullPath = [...path, targetBlock];
       return fullPath
-        .filter(block => block.type !== 'SCRIPT') // Escludi i wrapper SCRIPT
+    .filter(block => block.type !== 'SCRIPT' && block.type !== 'MISSION') // Escludi SCRIPT e MISSION (marker già presente)
         .map(block => ({
           id: block.id,
           name: getBlockDisplayName(block),
@@ -372,11 +395,11 @@ export const useZoomNavigation = ({
     };
     
     let newPath;
-    if (isInSubScript) {
-      // Mantieni tutto fino al sub-script incluso, poi aggiungi il nuovo percorso
-      const basePathUntilSubscript = navigationPath.slice(0, subscriptIndex + 1);
+    if (isInContext) {
+      // Mantieni tutto fino al marker (sub-script o mission) incluso, poi aggiungi il nuovo percorso
+      const basePathUntilMarker = navigationPath.slice(0, markerIndex + 1);
       const zoomPath = buildZoomPath(result.path, result.block);
-      newPath = [...basePathUntilSubscript, ...zoomPath];
+      newPath = [...basePathUntilMarker, ...zoomPath];
     } else {
       // Siamo nello script principale, costruisci il path normale
       newPath = buildZoomPath(result.path, result.block);
@@ -394,7 +417,7 @@ export const useZoomNavigation = ({
   const handleNavigateBackToScript = useCallback((targetIndex: number, zoomToBlockIndex?: number) => {
     // Rimuovi dalla memoria tutti gli script dopo il target
     const scriptsToRemove: string[] = [];
-    if (targetIndex < 0) {
+  if (targetIndex < 0) {
       // Tornando allo script principale
       scriptNavigationPath.forEach(item => {
         if (item.scriptName !== currentScript?.name) {
@@ -436,18 +459,22 @@ export const useZoomNavigation = ({
         
         // Se è specificato zoomToBlockIndex, vai direttamente a quel livello di zoom
         if (zoomToBlockIndex !== undefined && zoomToBlockIndex >= 0) {
-          // Trova l'indice del subscript nel path
+          // Trova il marker (subscript o mission) nel path
           const subscriptIdx = navigationPath.findIndex(item => item.id.startsWith('subscript-'));
+          const missionIdx = navigationPath.findIndex(item => item.id.startsWith('mission-'));
+          const hasSub = subscriptIdx >= 0;
+          const hasMis = missionIdx >= 0;
+          const markerIdx = hasSub && hasMis ? Math.min(subscriptIdx, missionIdx) : (hasSub ? subscriptIdx : missionIdx);
           
-          // Prendi il path fino al subscript (escluso)
-          const pathBeforeSubscript = subscriptIdx > 0 ? navigationPath.slice(0, subscriptIdx) : [];
+          // Prendi il path fino al marker (escluso)
+          const pathBeforeMarker = markerIdx > 0 ? navigationPath.slice(0, markerIdx) : [];
           
           // Se abbiamo un path valido e l'indice richiesto esiste
-          if (pathBeforeSubscript.length > zoomToBlockIndex) {
-            const targetBlock = pathBeforeSubscript[zoomToBlockIndex];
+          if (pathBeforeMarker.length > zoomToBlockIndex) {
+            const targetBlock = pathBeforeMarker[zoomToBlockIndex];
             
             // Imposta il path fino al blocco target
-            const newPath = pathBeforeSubscript.slice(0, zoomToBlockIndex + 1);
+            const newPath = pathBeforeMarker.slice(0, zoomToBlockIndex + 1);
             setNavigationPath(newPath);
             
             // Cerca il blocco aggiornato nello script principale
@@ -528,20 +555,29 @@ export const useZoomNavigation = ({
       return;
     }
     
-    // Determina se siamo in un sub-script
+    // Determina se siamo in un sub-script o in una mission
     const subscriptIndex = navigationPath.findIndex(item => item.id.startsWith('subscript-'));
-    const isInSubScript = subscriptIndex >= 0;
+    const missionIndex = navigationPath.findIndex(item => item.id.startsWith('mission-'));
+    const hasSubscript = subscriptIndex >= 0;
+    const hasMission = missionIndex >= 0;
+    const isInContext = hasSubscript || hasMission;
+    const firstMarkerIndex = hasSubscript && hasMission
+      ? Math.min(subscriptIndex, missionIndex)
+      : (hasSubscript ? subscriptIndex : missionIndex);
+    const lastMarkerIndex = hasSubscript && hasMission
+      ? Math.max(subscriptIndex, missionIndex)
+      : (hasSubscript ? subscriptIndex : missionIndex);
     
     let targetIndex = targetLevel !== undefined ? targetLevel : navigationPath.length - 2;
     
     if (targetIndex < 0) {
-      // Torna alla vista root dello script corrente
-      if (isInSubScript) {
-        // Se siamo in un sub-script, mantieni solo il marker del sub-script
-        setNavigationPath([navigationPath[subscriptIndex]]);
-        // Carica i blocchi completi del sub-script
-        const subscriptName = navigationPath[subscriptIndex].name;  // Il nome è già pulito nel path
-        const scriptData = openedScripts.get(subscriptName);
+      // Torna alla vista root del contesto corrente (sub-script o mission) oppure script principale
+      if (isInContext) {
+        // Mantieni solo il marker del contesto attivo (ultimo marker)
+        setNavigationPath([navigationPath[lastMarkerIndex]]);
+        // Carica i blocchi completi del contesto
+        const contextName = navigationPath[lastMarkerIndex].name;  // Il nome è già pulito nel path
+        const scriptData = openedScripts.get(contextName);
         if (scriptData) {
           setRootBlocks([]);
           setCurrentScriptBlocks(scriptData.blocks);
@@ -560,28 +596,27 @@ export const useZoomNavigation = ({
           setCurrentScriptBlocks(rootBlocks);
         }
       }
-    } else if (targetIndex === subscriptIndex && isInSubScript) {
-      // Caso speciale: cliccato esattamente sul sub-script nel breadcrumb
-      // Mostra SEMPRE la vista root del sub-script
-      const targetItem = navigationPath[subscriptIndex];
-      // Usa il nome dall'item, non processare l'id
-      const subscriptName = targetItem.name;
+    } else if (isInContext && (targetIndex === firstMarkerIndex || targetIndex === lastMarkerIndex)) {
+      // Caso speciale: cliccato esattamente sul marker (sub-script/mission) nel breadcrumb
+      // Mostra SEMPRE la vista root del contesto
+      const targetItem = navigationPath[targetIndex];
+      const contextName = targetItem.name;
       
-      const scriptData = openedScripts.get(subscriptName);
+      const scriptData = openedScripts.get(contextName);
       
       if (scriptData) {
-        // Mantieni tutto il percorso fino al sub-script
-        const pathUpToSubscript = navigationPath.slice(0, targetIndex + 1);
-        setNavigationPath(pathUpToSubscript); // Mantieni il percorso completo fino al sub-script
+        // Mantieni tutto il percorso fino al marker
+        const pathUpToMarker = navigationPath.slice(0, targetIndex + 1);
+        setNavigationPath(pathUpToMarker);
         setRootBlocks([]);
         setCurrentScriptBlocks(scriptData.blocks);
         setCurrentFocusedBlock(null);
         
         // Assicurati che il contesto sia corretto
-        if (!currentScriptContext || currentScriptContext.scriptName !== subscriptName) {
+        if (!currentScriptContext || currentScriptContext.scriptName !== contextName) {
           setCurrentScriptContext({
-            scriptName: subscriptName,
-            isSubScript: true
+            scriptName: contextName,
+            isSubScript: targetItem.id.startsWith('subscript-')
           });
         }
       }
@@ -590,16 +625,16 @@ export const useZoomNavigation = ({
       const newPath = navigationPath.slice(0, targetIndex + 1);
       const targetItem = newPath[newPath.length - 1];
       
-      // Controlla se stiamo tornando a un punto PRIMA del subscript
-      if (isInSubScript && targetIndex < subscriptIndex) {
+      // Controlla se stiamo tornando a un punto PRIMA del marker (subscript/mission)
+      if (isInContext && targetIndex < firstMarkerIndex) {
         
         // Dobbiamo tornare allo script principale al livello di zoom specificato
         // Prima salva lo stato del subscript corrente se necessario
-        const currentSubScriptName = navigationPath[subscriptIndex].name;
-        const currentSubScriptData = openedScripts.get(currentSubScriptName);
-        if (currentSubScriptData) {
-          currentSubScriptData.blocks = currentScriptBlocks;
-          currentSubScriptData.isModified = true;
+        const currentContextName = navigationPath[lastMarkerIndex].name;
+        const currentContextData = openedScripts.get(currentContextName);
+        if (currentContextData) {
+          currentContextData.blocks = currentScriptBlocks;
+          currentContextData.isModified = true;
         }
         
         // Torna allo script principale
@@ -631,24 +666,23 @@ export const useZoomNavigation = ({
         return;
       }
       
-      // Se il target è il sub-script stesso (non dovrebbe mai arrivare qui ora)
-      if (targetItem.id.startsWith('subscript-')) {
-        // Usa il nome dall'item invece di processare l'id
-        const subscriptName = targetItem.name;
-        const scriptData = openedScripts.get(subscriptName);
+      // Se il target è il marker (sub-script o mission)
+      if (targetItem.id.startsWith('subscript-') || targetItem.id.startsWith('mission-')) {
+        const contextName = targetItem.name;
+        const scriptData = openedScripts.get(contextName);
         
         if (scriptData) {
-          // Reset completo alla vista root del sub-script
-          setNavigationPath([targetItem]); // Mantieni solo il marker del sub-script
+          // Reset completo alla vista root del contesto
+          setNavigationPath([targetItem]); // Mantieni solo il marker
           setRootBlocks([]);
           setCurrentScriptBlocks(scriptData.blocks);
           setCurrentFocusedBlock(null);
           
           // Assicurati che il contesto sia corretto
-          if (!currentScriptContext || currentScriptContext.scriptName !== subscriptName) {
+          if (!currentScriptContext || currentScriptContext.scriptName !== contextName) {
             setCurrentScriptContext({
-              scriptName: subscriptName,
-              isSubScript: true
+              scriptName: contextName,
+              isSubScript: targetItem.id.startsWith('subscript-')
             });
           }
         }

@@ -11,7 +11,7 @@ export interface BlockColorConfig {
   dragHandle: string;
 }
 
-// Categorie principali di blocchi
+// Categorie principali   'ACT_MISSION': BlockCategory.MISSION, blocchi
 export enum BlockCategory {
   CONTROL_FLOW = 'CONTROL_FLOW',      // IF, MENU, OPT, etc.
   MISSION = 'MISSION',                 // MISSION, BUILD, FLIGHT
@@ -155,11 +155,11 @@ const GENERAL_COMMAND_COLORS: Record<string, BlockColorConfig> = {
     dragHandle: 'bg-fuchsia-700'
   },
   'SUB_SCRIPT': {
-    background: 'bg-purple-950/90',
-    border: 'border-purple-700/80',
-    icon: 'bg-purple-900/80',
-    text: 'text-purple-300',
-    dragHandle: 'bg-purple-700'
+  background: 'bg-rose-950/90',
+  border: 'border-rose-700/80',
+  icon: 'bg-rose-900/80',
+  text: 'text-rose-300',
+  dragHandle: 'bg-rose-700'
   },
   'EXIT_MENU': {
     background: 'bg-stone-950/90',
@@ -288,6 +288,7 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   'MISSION': BlockCategory.MISSION,
   'BUILD': BlockCategory.MISSION,
   'FLIGHT': BlockCategory.MISSION,
+  'ACT_MISSION': BlockCategory.MISSION,
   'END_MISSION': BlockCategory.MISSION,
   'MISSION_WIN': BlockCategory.MISSION,
   'MISSION_LOSE': BlockCategory.MISSION,
