@@ -78,6 +78,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.subScript.hint': 'Выберите скрипт для выполнения',
   'visualFlowEditor.blocks.subScript.navigate': 'Перейти к подскрипту',
   
+  // ACT_MISSION Block
+  'visualFlowEditor.blocks.actMission.missionName': 'Название миссии',
+  'visualFlowEditor.blocks.actMission.hint': 'Выберите миссию для активации',
+  'visualFlowEditor.blocks.actMission.navigate': 'Перейти к миссии',
+  
   // EXIT_MENU Block
   'visualFlowEditor.blocks.exitMenu.description': 'Выйти из текущего меню',
   'visualFlowEditor.blocks.exitMenu.info': 'Эта команда выходит из текущего меню и продолжает выполнение',
@@ -273,6 +278,10 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askMustBeFollowedByMenu': 'Блок ASK должен следоваться блоком MENU. Если ASK внутри IF, MENU может быть в той же ветке или вне IF.',
   'visualFlowEditor.validation.askWithoutMenu': 'Блок ASK должен следоваться блоком MENU. Этот ASK является последним блоком и не имеет следующего MENU.',
   'visualFlowEditor.validation.goWithoutLabel': 'Блок GO требует наличия хотя бы одного блока LABEL в скрипте. Добавьте блок LABEL перед использованием GO.',
+  'visualFlowEditor.validation.addPartToShipNotInBuild': 'ADDPARTTOSHIP должен быть внутри блока BUILD. Переместите этот блок в фазу сборки.',
+  'visualFlowEditor.validation.addPartToAsideSlotNotInBuild': 'ADDPARTTOASIDESLOT должен быть внутри блока BUILD. Переместите этот блок в фазу сборки.',
+  'visualFlowEditor.validation.addShipPartsNoParams': 'Блок ADDSHIPPARTS должен указывать файл деталей. Выберите YAML-файл для загрузки деталей.',
+  'visualFlowEditor.validation.addShipPartsNotInBuild': 'ADDSHIPPARTS должен быть внутри блока BUILD. Переместите этот блок в фазу сборки.',
   
   
   // Scene Dialog Validation Messages
@@ -566,6 +575,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.setMissionAsCompleted.description': 'Отметить миссию как завершенную',
   'visualFlowEditor.tools.allShipsGiveUp.description': 'Все корабли сдаются',
   'visualFlowEditor.tools.giveUpFlight.description': 'Сдать полет',
+  'visualFlowEditor.blocks.finishMission.description': 'Завершает текущую миссию и переходит к постмиссионному потоку.',
+  'visualFlowEditor.blocks.finishMission.compact': 'Завершить миссию',
   
   // Tool Descriptions - Variables
   'visualFlowEditor.tools.setTo.description': 'Установить значение переменной',

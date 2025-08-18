@@ -15,6 +15,7 @@ export interface IFlowBlock {
   // Script block specific
   name?: string;
   scriptName?: string; // Script name for SCRIPT blocks
+  missionName?: string; // Mission name for MISSION blocks
   fileName?: string;
   language?: string;
   missionType?: string;
@@ -170,6 +171,7 @@ export interface ScriptContext {
   scriptName: string;
   isSubScript: boolean;
   parentBlockId?: string;
+  isMission?: boolean;
 }
 
 export interface OpenedScript {

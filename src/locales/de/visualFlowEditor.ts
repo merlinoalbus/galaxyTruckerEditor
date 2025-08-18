@@ -78,6 +78,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.subScript.hint': 'Wählen Sie das auszuführende Skript',
   'visualFlowEditor.blocks.subScript.navigate': 'Zum Unterskript navigieren',
   
+  // ACT_MISSION Block
+  'visualFlowEditor.blocks.actMission.missionName': 'Missionsname',
+  'visualFlowEditor.blocks.actMission.hint': 'Wählen Sie die zu aktivierende Mission',
+  'visualFlowEditor.blocks.actMission.navigate': 'Zur Mission navigieren',
+  
   // EXIT_MENU Block
   'visualFlowEditor.blocks.exitMenu.description': 'Menü verlassen',
   'visualFlowEditor.blocks.exitMenu.info': 'Dieser Befehl verlässt das aktuelle Menü und setzt die Ausführung fort',
@@ -273,6 +278,10 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askMustBeFollowedByMenu': 'ASK-Block muss von einem MENU-Block gefolgt werden. Wenn ASK innerhalb eines IF ist, kann MENU im selben Zweig oder außerhalb des IF sein.',
   'visualFlowEditor.validation.askWithoutMenu': 'ASK-Block muss von einem MENU-Block gefolgt werden. Dieser ASK ist der letzte Block und hat kein folgendes MENU.',
   'visualFlowEditor.validation.goWithoutLabel': 'Der GO-Block erfordert mindestens einen LABEL-Block im Skript. Fügen Sie einen LABEL-Block hinzu, bevor Sie GO verwenden.',
+  'visualFlowEditor.validation.addPartToShipNotInBuild': 'ADDPARTTOSHIP sollte sich in einem BUILD-Block befinden. Verschieben Sie diesen Block in eine Bauphase.',
+  'visualFlowEditor.validation.addPartToAsideSlotNotInBuild': 'ADDPARTTOASIDESLOT sollte sich in einem BUILD-Block befinden. Verschieben Sie diesen Block in eine Bauphase.',
+  'visualFlowEditor.validation.addShipPartsNoParams': 'Der ADDSHIPPARTS-Block muss eine Teile-Datei angeben. Wählen Sie eine YAML-Datei zum Laden der Teile aus.',
+  'visualFlowEditor.validation.addShipPartsNotInBuild': 'ADDSHIPPARTS sollte sich in einem BUILD-Block befinden. Verschieben Sie diesen Block in eine Bauphase.',
   
   
   // Scene Dialog Validation Messages
@@ -566,6 +575,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.setMissionAsCompleted.description': 'Mission als abgeschlossen markieren',
   'visualFlowEditor.tools.allShipsGiveUp.description': 'Alle Schiffe geben auf',
   'visualFlowEditor.tools.giveUpFlight.description': 'Flug aufgeben',
+  'visualFlowEditor.blocks.finishMission.description': 'Beendet die aktuelle Mission und fährt mit dem Nach-Missionsfluss fort.',
+  'visualFlowEditor.blocks.finishMission.compact': 'Mission beenden',
   
   // Tool Descriptions - Variables
   'visualFlowEditor.tools.setTo.description': 'Variablenwert setzen',

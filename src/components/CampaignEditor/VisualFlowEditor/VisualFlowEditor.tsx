@@ -10,6 +10,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
 import type { IFlowBlock, ValidationResult, ScriptContext, OpenedScript } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 import { TIMEOUT_CONSTANTS, PERFORMANCE_CONSTANTS, UI_CONSTANTS, API_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
+import { API_CONFIG } from '@/config/constants';
 import { SceneProvider, useScene } from '@/contexts/SceneContext';
 import { ScriptMetadataProvider } from '@/contexts/ScriptMetadataContext';
 
@@ -393,18 +394,258 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
     return loadMission(missionId);
   }, [loadMission, resetNavigationState]);
 
+  // Funzione per navigare a una missione specifica - DEVE funzionare ESATTAMENTE come sub_script
+  const handleNavigateToMission = useCallback(async (missionName: string, parentBlock: IFlowBlock) => {
+    try {
+      // Il backend si aspetta il nome della missione senza .txt
+      const cleanMissionName = missionName.endsWith('.txt') ? missionName.slice(0, -4) : missionName;
+      
+      // PRIMA di qualsiasi reset, calcola il nuovo path di navigazione
+      const currentScriptName = currentScript?.name || 'main';
+      const newScriptNavigationPath = [
+        { scriptName: currentScriptName },
+        { scriptName: cleanMissionName, parentBlockId: parentBlock.id }
+      ];
+      
+      // Salva il path di zoom corrente PRIMA di navigare alla missione
+      const currentZoomPath = [...navigationPath];
+      
+      // Controlla se la missione è già stata caricata
+      let missionData = openedScripts.get(cleanMissionName);
+      
+      if (!missionData) {
+        // Carica la missione via API solo se non è già in cache
+        const response = await fetch(`${API_CONFIG.API_BASE_URL}/missions/${cleanMissionName}?multilingua=true&format=blocks`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        if (result.success && result.data) {
+          // Importa le funzioni necessarie per pulire e aggiungere ID
+          const { addUniqueIds } = await import('@/utils/CampaignEditor/VisualFlowEditor/blockIdManager');
+          const { cleanupScriptBlocks } = await import('@/utils/CampaignEditor/VisualFlowEditor/blockCleaner');
+          
+          // Processa blocksMission e blocksFinish
+          let blocksMission = result.data.blocksMission ? result.data.blocksMission : [];
+          let blocksFinish = result.data.blocksFinish ? result.data.blocksFinish : [];
+          
+          blocksMission = cleanupScriptBlocks(blocksMission);
+          blocksMission = addUniqueIds(blocksMission);
+          blocksFinish = cleanupScriptBlocks(blocksFinish);
+          blocksFinish = addUniqueIds(blocksFinish);
+          
+          // Crea il blocco MISSION principale con tipizzazione corretta
+          const missionBlock: IFlowBlock = {
+            id: `mission-${cleanMissionName}`,
+            type: 'MISSION' as const,
+            isContainer: true,
+            blocksMission: blocksMission,
+            blocksFinish: blocksFinish,
+            name: result.data.name,
+            missionName: result.data.name,
+            fileName: result.data.fileName
+          };
+          
+          const blocksToLoad = [missionBlock];
+          
+          // Salva la missione nella mappa degli script aperti
+          missionData = {
+            scriptName: cleanMissionName,
+            fileName: result.data.fileName || cleanMissionName,
+            blocks: blocksToLoad,
+            originalBlocks: JSON.parse(JSON.stringify(blocksToLoad)),
+            isModified: false
+          };
+          const updatedScripts = new Map(openedScripts);
+          updatedScripts.set(cleanMissionName, missionData);
+          
+          // Salva lo stato corrente dello script USANDO LA MAPPA GIÀ AGGIORNATA
+          const blocksToSave = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
+          
+          if (currentScriptContext && (currentScriptContext.isSubScript || currentScriptContext.isMission)) {
+            // Salva i blocchi correnti del sub-script o missione
+            const current = updatedScripts.get(currentScriptContext.scriptName);
+            if (current) {
+              current.blocks = blocksToSave;
+              current.isModified = true;
+            }
+          } else {
+            // Salva lo script principale
+            const scriptNameToSave = currentScriptContext?.scriptName || currentScript?.name || 'main';
+            
+            if (updatedScripts.has(scriptNameToSave)) {
+              const existing = updatedScripts.get(scriptNameToSave)!;
+              existing.blocks = blocksToSave;
+              existing.isModified = true;
+            } else {
+              updatedScripts.set(scriptNameToSave, {
+                scriptName: scriptNameToSave,
+                fileName: currentScript?.fileName || scriptNameToSave + '.txt',
+                blocks: blocksToSave,
+                isModified: true
+              });
+            }
+          }
+          
+          // Salva la mappa aggiornata
+          setOpenedScripts(updatedScripts);
+        } else {
+          throw new Error('Nessun dato ricevuto dal server');
+        }
+      } else {
+        // Missione già caricata, salva comunque lo stato corrente
+        const blocksToSave = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
+        const updatedScripts = new Map(openedScripts);
+        
+        if (currentScriptContext && (currentScriptContext.isSubScript || currentScriptContext.isMission)) {
+          const current = updatedScripts.get(currentScriptContext.scriptName);
+          if (current) {
+            current.blocks = blocksToSave;
+            current.isModified = true;
+          }
+        } else {
+          const scriptNameToSave = currentScriptContext?.scriptName || currentScript?.name || 'main';
+          
+          if (updatedScripts.has(scriptNameToSave)) {
+            const existing = updatedScripts.get(scriptNameToSave)!;
+            existing.blocks = blocksToSave;
+            existing.isModified = true;
+          } else {
+            updatedScripts.set(scriptNameToSave, {
+              scriptName: scriptNameToSave,
+              fileName: currentScript?.fileName || scriptNameToSave + '.txt',
+              blocks: blocksToSave,
+              isModified: true
+            });
+          }
+        }
+        
+        setOpenedScripts(updatedScripts);
+      }
+      
+      // Reset solo degli stati di validazione ed errori, NON del path di navigazione
+      setValidationErrors({ errors: 0, invalidBlocks: [] });
+      setDropError(null);
+      
+      // Reset manuale solo di navigationPath e rootBlocks, NON di scriptNavigationPath
+      setNavigationPath([]);
+      setRootBlocks([]);
+      
+      // Imposta il nuovo contesto della missione
+      setCurrentScriptContext({
+        scriptName: cleanMissionName,
+        isSubScript: false, // Le missioni sono script di primo livello
+        isMission: true
+      });
+      
+      // Usa i blocchi della missione - ora missionData è garantito non essere undefined
+      const sourceBlocks = missionData.originalBlocks || missionData.blocks;
+      let blocksToLoad = JSON.parse(JSON.stringify(sourceBlocks));
+      
+      // Mantieni il path di zoom dello script corrente e aggiungi la missione
+      const cleanCurrentPath = currentZoomPath.filter(item => 
+        !item.name.startsWith('Script:') && 
+        item.name !== '' && 
+        !item.id.startsWith('mission-') // Rimuovi eventuali missioni precedenti
+      );
+      const newNavigationPath = [
+        ...cleanCurrentPath, // Mantieni tutto il percorso di zoom nello script corrente
+        {
+          id: `mission-${cleanMissionName}`,
+          name: cleanMissionName, // Solo il nome, senza prefisso
+          block: blocksToLoad[0]
+        }
+      ];
+      setNavigationPath(newNavigationPath);
+      setCurrentScriptBlocks(blocksToLoad);
+      
+      // ALLA FINE imposta il path di navigazione script calcolato all'inizio
+      setScriptNavigationPath(newScriptNavigationPath);
+      
+    } catch (error) {
+      console.error('[VisualFlowEditor] Error loading mission:', error);
+      throw error;
+    }
+  }, [currentScriptBlocks, currentScriptContext, openedScripts, rootBlocks, setOpenedScripts, setCurrentScriptContext, currentScript, navigationPath, setCurrentScriptBlocks, setScriptNavigationPath, setNavigationPath, setRootBlocks, setValidationErrors, setDropError]);
+
+  // Wrapper per handleZoomIn che gestisce anche ACT_MISSION
+  const handleZoomInWithMissionSupport = useCallback((blockId: string) => {
+    // Prima cerca il blocco per vedere se è ACT_MISSION
+    const searchIn = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
+    
+    // Funzione helper per trovare un blocco per ID
+    const findBlockById = (blocks: any[], targetId: string): any => {
+      for (const block of blocks) {
+        if (block.id === targetId) {
+          return block;
+        }
+        
+        // Cerca ricorsivamente
+        if (block.children) {
+          const found = findBlockById(block.children, targetId);
+          if (found) return found;
+        }
+        if (block.thenBlocks) {
+          const found = findBlockById(block.thenBlocks, targetId);
+          if (found) return found;
+        }
+        if (block.elseBlocks) {
+          const found = findBlockById(block.elseBlocks, targetId);
+          if (found) return found;
+        }
+        if (block.blocksMission) {
+          const found = findBlockById(block.blocksMission, targetId);
+          if (found) return found;
+        }
+        if (block.blocksFinish) {
+          const found = findBlockById(block.blocksFinish, targetId);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+    
+    const targetBlock = findBlockById(searchIn, blockId);
+    
+    // Se il blocco è ACT_MISSION, naviga alla missione invece di fare zoom
+    if (targetBlock && targetBlock.type === 'ACT_MISSION') {
+      const missionName = targetBlock.parameters?.missionName || targetBlock.missionName;
+      if (missionName) {
+        handleNavigateToMission(missionName, targetBlock);
+        return;
+      }
+    }
+    
+    // Altrimenti, usa la logica normale di zoom
+    handleZoomIn(blockId);
+  }, [rootBlocks, currentScriptBlocks, handleNavigateToMission, handleZoomIn]);
+
   // Le funzioni handleNavigateToSubScript e handleNavigateBackToScript sono ora gestite dall'hook useZoomNavigation
   // Rimangono solo come wrapper per mantenere compatibilità
 
   // Estendi sessionData con le label dello script, availableScripts e la funzione di navigazione
-  const extendedSessionData = React.useMemo(() => ({
-    ...sessionData,
-    scriptLabels,
-    goToLabel,
-    availableScripts,
-    onNavigateToSubScript: handleNavigateToSubScript,
-    navigationPath: scriptNavigationPath, // Usa scriptNavigationPath invece di navigationPath
-    onNavigateBack: () => {
+  const extendedSessionData = React.useMemo(() => {
+    // Calcola nome script corrente (main o sub/mission) e nome mission corrente se in contesto missione
+    const currentScriptNameComputed = currentScriptContext?.scriptName || currentScript?.name || 'main';
+    let currentMissionNameComputed: string | undefined;
+    if (currentScriptContext?.isMission) {
+      currentMissionNameComputed = currentScriptContext.scriptName;
+    } else if (currentScriptBlocks?.[0]?.type === 'MISSION') {
+      currentMissionNameComputed = (currentScriptBlocks?.[0] as any)?.missionName || (currentScriptBlocks?.[0] as any)?.name;
+    }
+
+    return ({
+      ...sessionData,
+      scriptLabels,
+      goToLabel,
+      availableScripts,
+      currentScriptName: currentScriptNameComputed,
+      currentMissionName: currentMissionNameComputed,
+      onNavigateToSubScript: handleNavigateToSubScript,
+      onNavigateToMission: handleNavigateToMission,
+      navigationPath: scriptNavigationPath, // Usa scriptNavigationPath invece di navigationPath
+      onNavigateBack: () => {
       // Naviga al livello precedente nel path degli script
       if (scriptNavigationPath && scriptNavigationPath.length > 1) {
         // Trova l'indice del subscript corrente nel navigationPath
@@ -420,8 +661,23 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
           handleNavigateBackToScript(targetLevel);
         }
       }
-    }
-  }), [sessionData, scriptLabels, goToLabel, availableScripts, handleNavigateToSubScript, scriptNavigationPath, handleNavigateBackToScript, navigationPath, handleZoomOut]);
+      }
+    });
+  }, [
+    sessionData,
+    scriptLabels,
+    goToLabel,
+    availableScripts,
+    handleNavigateToSubScript,
+    handleNavigateToMission,
+    scriptNavigationPath,
+    handleNavigateBackToScript,
+    navigationPath,
+    handleZoomOut,
+    currentScriptContext,
+    currentScript?.name,
+    currentScriptBlocks
+  ]);
 
   // Carica script se viene passato uno scriptId dal componente chiamante
   useEffect(() => {
@@ -780,7 +1036,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
                   onDrop={handleDrop}
                   onDropAtIndex={handleDropAtIndex}
                   isDragActive={!!draggedBlock || !!draggedTool}
-                  onZoomIn={handleZoomIn}
+                  onZoomIn={handleZoomInWithMissionSupport}
                   onZoomOut={() => handleZoomOut()}
                   isZoomed={isZoomed}
                   currentFocusedBlockId={currentFocusedBlockId}
@@ -843,7 +1099,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
                   // Se il blocco è in un container zoomato, prima esci dallo zoom
                   if (isZoomed && path.length > 0) {
                     // Naviga al container che contiene il blocco
-                    handleZoomIn(path[path.length - 1].id);
+                    handleZoomInWithMissionSupport(path[path.length - 1].id);
                   }
                   // Scrolla al blocco dopo un breve delay per permettere il rendering con safe timeout
                   addSafeTimeout(() => {

@@ -16,6 +16,7 @@ import { ResetBlock } from '../blocks/ResetBlock/ResetBlock';
 import { AddPartToShipBlock } from '../blocks/AddPartToShipBlock/AddPartToShipBlock';
 import { AddPartToAsideSlotBlock } from '../blocks/AddPartToAsideSlotBlock/AddPartToAsideSlotBlock';
 import { AddShipPartsBlock } from '../blocks/AddShipPartsBlock/AddShipPartsBlock';
+import { FinishMissionBlock } from '../blocks/FinishMissionBlock/FinishMissionBlock';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 interface BlockRendererProps {
@@ -510,6 +511,27 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
     );
   }
 
+  // Render FINISH_MISSION block
+  if (block.type === 'FINISH_MISSION') {
+    return (
+      <div data-block-id={block.id}>
+        <FinishMissionBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
+        />
+      </div>
+    );
+  }
+
   // Render command blocks (SAY, DELAY, GO, LABEL, ASK)
   return (
     <div data-block-id={block.id}>
@@ -523,6 +545,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
         validationType={validationType}
         onGoToLabel={sessionData?.goToLabel}
         onNavigateToSubScript={sessionData?.onNavigateToSubScript}
+        onNavigateToMission={sessionData?.onNavigateToMission}
         allBlocks={allBlocks}
         collapseAllTrigger={collapseAllTrigger}
         expandAllTrigger={expandAllTrigger}

@@ -69,11 +69,26 @@ class GameDataService {
   // Missioni
   async getMissions(): Promise<FileMetadata[]> {
     const response = await this.request<{
-      category: string;
-      path: string;
-      files: FileMetadata[];
+      success: boolean;
+      data: Array<{
+        nomemission: string;
+        nomefile: string;
+        numero_blocchi: number;
+        numero_comandi: number;
+        stellato: boolean;
+        languages: string[];
+        bottoni_collegati: number;
+      }>;
     }>('/missions');
-    return response.files;
+    
+    // Trasforma il formato del backend nel formato atteso
+    return response.data.map(mission => ({
+      name: mission.nomemission,
+      path: mission.nomefile,
+      size: mission.numero_comandi, // Usa il numero di comandi come size
+      modified: new Date().toISOString(), // Non abbiamo questa info dal backend
+      created: new Date().toISOString() // Non abbiamo questa info dal backend
+    }));
   }
 
   async getMission(filename: string): Promise<{

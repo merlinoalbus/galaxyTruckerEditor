@@ -84,18 +84,18 @@ export const NavigationBreadcrumb: React.FC<NavigationBreadcrumbProps> = ({
           isLast: false
         });
       }
-      
+
       // 2) Tutti i marker (mission/subscript) come elementi base, in ordine
       markerIndices.forEach((markerIdx) => {
         const targetItem = navigationPath[markerIdx];
         const isMission = targetItem.id.startsWith('mission-');
         const label = `${isMission ? '🎯' : '📄'} ${targetItem.name}`;
-      unifiedPath.push({
-        type: 'script',
+        unifiedPath.push({
+          type: 'script',
           name: label,
           onClick: () => onNavigate(markerIdx),
-        isLast: false
-      });
+          isLast: false
+        });
       });
 
       // 3) Zoom dopo l’ultimo marker (dentro l’ultimo contesto attivo)
@@ -157,7 +157,7 @@ export const NavigationBreadcrumb: React.FC<NavigationBreadcrumbProps> = ({
                 `}
                 disabled={item.isLast}
               >
-                {item.type === 'script' && '📄 '}
+                {item.type === 'script' && ' '}
                 {item.name}
               </button>
             </>

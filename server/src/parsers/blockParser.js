@@ -196,7 +196,7 @@ const COMMAND_CATALOG = {
   'ADDPARTTOASIDESLOT': { params: ['params:complex'], pattern: /^AddPartToAsideSlot\s+(.+)$/i, example: 'alienGun 2 1 2 0' },
   'SETADVPILE': { params: ['params:complex'], pattern: /^SetAdvPile\s+(.+)$/i, example: '1 3' },
   'SETSECRETADVPILE': { params: ['params:complex'], pattern: /^SetSecretAdvPile\s+(.+)$/i, example: '2 1' },
-  'ADDSHIPPARTS': { params: ['params:complex'], pattern: /^AddShipParts\s+(.+)$/i, example: 'parts/allParts.yaml' },
+  'ADDSHIPPARTS': { params: ['params:string'], pattern: /^AddShipParts\s+(.+)$/i, example: 'parts/allParts.yaml' },
   'SHOWHELPIMAGE': { params: ['params:complex'], pattern: /^SHOWHELPIMAGE\s+(.+)$/i, example: '40 50 70 campaign/tutorial-purple.png' }
 };
 

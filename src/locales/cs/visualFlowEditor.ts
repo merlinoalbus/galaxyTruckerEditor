@@ -78,6 +78,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.subScript.hint': 'Vyberte skript k provedení',
   'visualFlowEditor.blocks.subScript.navigate': 'Přejít na sub-skript',
   
+  // ACT_MISSION Block
+  'visualFlowEditor.blocks.actMission.missionName': 'Název Mise',
+  'visualFlowEditor.blocks.actMission.hint': 'Vyberte misi k aktivaci',
+  'visualFlowEditor.blocks.actMission.navigate': 'Přejít na misi',
+  
   // EXIT_MENU Block
   'visualFlowEditor.blocks.exitMenu.description': 'Opustit aktuální menu',
   'visualFlowEditor.blocks.exitMenu.info': 'Tento příkaz opustí aktuální menu a pokračuje v provádění',
@@ -553,7 +558,6 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.addPartToShip.description': 'Přidat část k lodi',
   'visualFlowEditor.tools.addPartToAsideSlot.description': 'Přidat část do bočního slotu',
   'visualFlowEditor.tools.addShipParts.description': 'Přidat více částí',
-  'visualFlowEditor.tools.finishMission.description': 'Dokončit misi',
   'visualFlowEditor.tools.actMission.description': 'Aktivovat misi',
   'visualFlowEditor.tools.setDeckPreparationScript.description': 'Nastavit skript balíčku',
   'visualFlowEditor.tools.setFlightDeckPreparationScript.description': 'Nastavit skript letového balíčku',

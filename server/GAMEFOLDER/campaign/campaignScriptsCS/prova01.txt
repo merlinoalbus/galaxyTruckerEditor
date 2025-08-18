@@ -2,30 +2,11 @@ SCRIPTS
 
   SCRIPT aaa_pippo
     ShowDlgScene
-    AddOpponent brown
-    SetShipType STI
-    SetShipType STI
-    AddPartToShip 2 8 alienEngine 3333 0 1
-    AddPartToAsideSlot alienGun 2 1 2 0 2
-    Announce "prova"
-    RETURN
-    SET questCompleted
-    RESET achievement02
-    ShowChar bartender right
-    ShowChar ambassador left
-    SayChar catapult_fanatic "prova"
-    Say "Giovanni[g(|no)] [NAME] prova"
-    ChangeChar bartender campaign/bartender-warehouse.png
-    MENU
-      OPT "asss"
-        SUB_SCRIPT add2RandomOpponentsHard
-      END_OF_OPT
-    END_OF_MENU
-    Delay 100
-    Say "[NAME][NAME][NAME]"
-    Ask "whats?"
+    Ask "prova"
     MENU
       OPT "check"
+        SUB_SCRIPT add1RandomOpponentsEasy
+        ACT_MISSION adv1easy4p
         EXIT_MENU
       END_OF_OPT
     END_OF_MENU

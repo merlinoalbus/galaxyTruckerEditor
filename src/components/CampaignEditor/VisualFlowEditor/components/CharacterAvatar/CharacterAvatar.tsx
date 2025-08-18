@@ -16,8 +16,8 @@ interface CharacterAvatarProps {
   isShipType?: boolean;  // Indica se è per SETSHIPTYPE
 }
 
-const NO_AVATAR_PATH = '${API_CONFIG.API_BASE_URL}/file/avatars/common/avatar_no_avatar.png';
-const DEFAULT_SHIP_PATH = '${API_CONFIG.API_BASE_URL}/file/ships/glowblue-shipII.png';
+const NO_AVATAR_PATH = `${API_CONFIG.API_BASE_URL}/file/avatars/common/avatar_no_avatar.png`;
+const DEFAULT_SHIP_PATH = `${API_CONFIG.API_BASE_URL}/file/ships/glowblue-shipII.png`;
 
 export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({ className = '', size = 'small', character, isShipType = false }) => {
   const { getCurrentScene } = useScene();

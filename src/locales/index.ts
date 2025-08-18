@@ -457,6 +457,7 @@ export type TranslationKey =
   | 'visualFlowEditor.validation.labelNoName'
   | 'visualFlowEditor.validation.optNoText'
   | 'visualFlowEditor.validation.subScriptNoName'
+  | 'visualFlowEditor.validation.actMissionNoMission'
   | 'visualFlowEditor.validation.returnAtRootLevel'
   | 'visualFlowEditor.validation.setNoSemaphore'
   | 'visualFlowEditor.validation.resetNoSemaphore'
@@ -481,6 +482,11 @@ export type TranslationKey =
   | 'visualFlowEditor.validation.addOpponentNotInMission'
   | 'visualFlowEditor.validation.setShipTypeNoType'
   | 'visualFlowEditor.validation.setShipTypeNotInMission'
+  | 'visualFlowEditor.validation.addPartToShipNotInBuild'
+  | 'visualFlowEditor.validation.addPartToAsideSlotNotInBuild'
+  | 'visualFlowEditor.validation.addShipPartsNotInBuild'
+  | 'visualFlowEditor.validation.addShipPartsNoParams'
+  | 'visualFlowEditor.validation.finishMissionNotInMission'
   
   // Visual Flow Editor - Error Modal
   | 'visualFlowEditor.errorModal.close'
@@ -495,6 +501,9 @@ export type TranslationKey =
   | 'visualFlowEditor.blocks.subScript.scriptName'
   | 'visualFlowEditor.blocks.subScript.hint'
   | 'visualFlowEditor.blocks.subScript.navigate'
+  | 'visualFlowEditor.blocks.actMission.missionName'
+  | 'visualFlowEditor.blocks.actMission.hint'
+  | 'visualFlowEditor.blocks.actMission.navigate'
   | 'visualFlowEditor.blocks.exitMenu.description'
   | 'visualFlowEditor.blocks.exitMenu.info'
   | 'visualFlowEditor.blocks.exitMenu.compact'
@@ -514,6 +523,8 @@ export type TranslationKey =
   | 'visualFlowEditor.blocks.addShipParts.loading'
   | 'visualFlowEditor.blocks.addShipParts.noParts'
   | 'visualFlowEditor.blocks.addShipParts.description'
+  | 'visualFlowEditor.blocks.finishMission.description'
+  | 'visualFlowEditor.blocks.finishMission.compact'
   
   // Visual Flow Editor - Tools
   | 'visualFlowEditor.tools.title'
