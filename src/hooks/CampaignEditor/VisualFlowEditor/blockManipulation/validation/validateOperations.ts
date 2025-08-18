@@ -198,9 +198,9 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
         return '';
       };
 
-      // Gestione speciale per ADDOPPONENT, SETSHIPTYPE e FINISH_MISSION: controllano se sono dentro MISSION (warning)
-  // E per ADDPARTTOSHIP, ADDPARTTOASIDESLOT e ADDSHIPPARTS: controllano se sono dentro BUILD (warning)
-  if ((block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE' || block.type === 'FINISH_MISSION' || block.type === 'ADDPARTTOSHIP' || block.type === 'ADDPARTTOASIDESLOT' || block.type === 'ADDSHIPPARTS') && paramValidation.valid) {
+    // Gestione speciale per ADDOPPONENT, SETSHIPTYPE (MISSION context) e blocchi di ship parts (BUILD context)
+    // Inoltre: SETDECKPREPARATIONSCRIPT e SETFLIGHTDECKPREPARATIONSCRIPT devono stare in MISSION/BUILD/FLIGHT (warning)
+  if ((block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE' || block.type === 'FINISH_MISSION' || block.type === 'ADDPARTTOSHIP' || block.type === 'ADDPARTTOASIDESLOT' || block.type === 'ADDSHIPPARTS' || block.type === 'SETDECKPREPARATIONSCRIPT' || block.type === 'SETFLIGHTDECKPREPARATIONSCRIPT') && paramValidation.valid) {
         // Verifica se siamo dentro un blocco MISSION
         let isInsideMission = false;
         
@@ -220,8 +220,8 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           }
         }
         
-        // Per ADDPARTTOSHIP, ADDPARTTOASIDESLOT e ADDSHIPPARTS verifica se sono dentro BUILD
-        if (block.type === 'ADDPARTTOSHIP' || block.type === 'ADDPARTTOASIDESLOT' || block.type === 'ADDSHIPPARTS') {
+  // Per ADDPARTTOSHIP, ADDPARTTOASIDESLOT e ADDSHIPPARTS verifica se sono dentro BUILD
+  if (block.type === 'ADDPARTTOSHIP' || block.type === 'ADDPARTTOASIDESLOT' || block.type === 'ADDSHIPPARTS') {
           // Verifica se siamo dentro un blocco BUILD
           let isInsideBuild = false;
           
@@ -258,6 +258,30 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
               severity: 'warning'
             };
           }
+        } else if (block.type === 'SETDECKPREPARATIONSCRIPT' || block.type === 'SETFLIGHTDECKPREPARATIONSCRIPT') {
+          // Questi due comandi sono validi solo in MISSION, BUILD o FLIGHT
+          let isInAllowedContainer = false;
+          // Controlla il path
+          if (path && path.length > 0) {
+            isInAllowedContainer = path.some(p => p.includes('MISSION') || p.includes('BUILD') || p.includes('FLIGHT'));
+          }
+          // Controlla i parent
+          if (!isInAllowedContainer && parentBlock) {
+            let currentParent = parentBlock;
+            while (currentParent && !isInAllowedContainer) {
+              if (currentParent.type === 'MISSION' || currentParent.type === 'BUILD' || currentParent.type === 'FLIGHT') {
+                isInAllowedContainer = true;
+              }
+              currentParent = currentParent.parent;
+            }
+          }
+          if (!isInAllowedContainer) {
+            paramValidation = {
+              valid: false,
+              error: block.type === 'SETDECKPREPARATIONSCRIPT' ? 'SETDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT' : 'SETFLIGHTDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT',
+              severity: 'warning'
+            };
+          }
         } else {
       // Se non è dentro MISSION (per ADDOPPONENT, SETSHIPTYPE e FINISH_MISSION), genera un warning
           if (!isInsideMission) {
@@ -277,7 +301,7 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
       }
       if (!paramValidation.valid) {
         // Determina se è un warning o error
-        const isWarning = [
+  const isWarning = [
           'SHOWCHAR_NO_SCENE',
           'HIDECHAR_NO_SCENE', 
           'HIDECHAR_NO_VISIBLE_CHARACTERS',
@@ -296,7 +320,9 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           'finishMissionNotInMission',
           'addPartToShipNotInBuild',
           'addPartToAsideSlotNotInBuild',
-          'addShipPartsNotInBuild'
+          'addShipPartsNotInBuild',
+          'SETDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT',
+          'SETFLIGHTDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT'
         ].includes(paramValidation.error || '');
         
         if (isWarning) {
@@ -508,6 +534,26 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
             message = t ?
               t('visualFlowEditor.validation.actMissionNoMission')
               : 'ACT_MISSION block must have a mission selected. Choose a mission to activate.';
+            break;
+          case 'SETDECKPREPARATIONSCRIPT_NO_SCRIPT':
+            message = t ?
+              t('visualFlowEditor.validation.setDeckPreparationScriptNoScript')
+              : 'SETDECKPREPARATIONSCRIPT block must have a script selected.';
+            break;
+          case 'SETFLIGHTDECKPREPARATIONSCRIPT_NO_SCRIPT':
+            message = t ?
+              t('visualFlowEditor.validation.setFlightDeckPreparationScriptNoScript')
+              : 'SETFLIGHTDECKPREPARATIONSCRIPT block must have a script selected.';
+            break;
+          case 'SETDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT':
+            message = t ?
+              t('visualFlowEditor.validation.setDeckPreparationScriptOutsideContext')
+              : 'SETDECKPREPARATIONSCRIPT should be inside a MISSION, BUILD or FLIGHT block.';
+            break;
+          case 'SETFLIGHTDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT':
+            message = t ?
+              t('visualFlowEditor.validation.setFlightDeckPreparationScriptOutsideContext')
+              : 'SETFLIGHTDECKPREPARATIONSCRIPT should be inside a MISSION, BUILD or FLIGHT block.';
             break;
           default:
             message = t ? 

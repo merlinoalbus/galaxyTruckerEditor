@@ -172,12 +172,14 @@ export const BuildBlock: React.FC<BuildBlockProps> = ({
                     label=""
                   />
                   {block.blockInit.map((child: any, index: number) => (
-                    <React.Fragment key={child.id || index}>
+                    <React.Fragment key={`${child.id ?? 'init'}-${index}`}>
                       {renderChildren([child])}
                       <AnchorPoint
                         onDrop={(e) => onDropInitAtIndex(e, index + 1)}
                         onDragOver={onDragOver}
                         label=""
+                        // key per stabilità DOM degli anchor generati in lista
+                        key={`init-anchor-${index}`}
                       />
                     </React.Fragment>
                   ))}
@@ -211,12 +213,13 @@ export const BuildBlock: React.FC<BuildBlockProps> = ({
                     label=""
                   />
                   {block.blockStart.map((child: any, index: number) => (
-                    <React.Fragment key={child.id || index}>
+                    <React.Fragment key={`${child.id ?? 'start'}-${index}`}>
                       {renderChildren([child])}
                       <AnchorPoint
                         onDrop={(e) => onDropStartAtIndex(e, index + 1)}
                         onDragOver={onDragOver}
                         label=""
+                        key={`start-anchor-${index}`}
                       />
                     </React.Fragment>
                   ))}

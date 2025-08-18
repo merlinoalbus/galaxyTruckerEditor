@@ -297,6 +297,44 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
           </div>
         );
       
+      case 'SETDECKPREPARATIONSCRIPT':
+      case 'SETFLIGHTDECKPREPARATIONSCRIPT':
+        return (
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-slate-400 whitespace-nowrap">
+              {t('visualFlowEditor.blocks.subScript.scriptName')}:
+            </label>
+            <SelectWithModal
+              type="script"
+              value={block.parameters?.script || ''}
+              onChange={(value) => onUpdate({ 
+                parameters: { ...block.parameters, script: value } 
+              })}
+              placeholder={t('visualFlowEditor.command.selectScript')}
+              availableItems={(sessionData?.availableScripts?.map((s: any) => s.name) || []).filter((name: string) => {
+                const norm = (name || '').replace(/\.txt$/i, '');
+                const current = (sessionData?.currentScriptName || '').replace(/\.txt$/i, '');
+                return name && norm !== current;
+              })}
+              onAddItem={undefined}
+              className="flex-1"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                if (block.parameters?.script && onNavigateToSubScript) {
+                  onNavigateToSubScript(block.parameters.script, block);
+                }
+              }}
+              disabled={!block.parameters?.script}
+              className="p-1 hover:bg-slate-700 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title={t('visualFlowEditor.blocks.subScript.navigate')}
+            >
+              <ArrowRight className="w-4 h-4 text-blue-400" />
+            </button>
+          </div>
+        );
+      
   case 'SUB_SCRIPT':
         return (
           <div className="flex items-center gap-2">
@@ -703,6 +741,8 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
       case 'HIDECHAR': return <span className="text-2xl">👻</span>;
       case 'ADDOPPONENT': return <span className="text-2xl">🎮</span>;
       case 'SETSHIPTYPE': return <span className="text-2xl">🚀</span>;
+  case 'SETDECKPREPARATIONSCRIPT': return <span className="text-2xl">🃏</span>;
+  case 'SETFLIGHTDECKPREPARATIONSCRIPT': return <span className="text-2xl">🛩️</span>;
       default: return <MessageSquare className="w-4 h-4" />;
     }
   };
@@ -965,6 +1005,50 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
              t('visualFlowEditor.command.shipClassIII')}
           </span>
         );
+      }
+      case 'SETDECKPREPARATIONSCRIPT': {
+        if (block.parameters?.script) {
+          return (
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400">🃏 {block.parameters.script}</span>
+              {onNavigateToSubScript && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (block.parameters?.script) onNavigateToSubScript(block.parameters.script, block);
+                  }}
+                  className="p-1 bg-slate-700 hover:bg-slate-600 rounded text-white transition-colors"
+                  title={t('visualFlowEditor.blocks.subScript.navigate')}
+                >
+                  <ExternalLink className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+          );
+        }
+        break;
+      }
+      case 'SETFLIGHTDECKPREPARATIONSCRIPT': {
+        if (block.parameters?.script) {
+          return (
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400">🛩️ {block.parameters.script}</span>
+              {onNavigateToSubScript && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (block.parameters?.script) onNavigateToSubScript(block.parameters.script, block);
+                  }}
+                  className="p-1 bg-slate-700 hover:bg-slate-600 rounded text-white transition-colors"
+                  title={t('visualFlowEditor.blocks.subScript.navigate')}
+                >
+                  <ExternalLink className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+          );
+        }
+        break;
       }
       default: {
         // Gestione generica per blocchi non implementati - mostra un riepilogo compatto dei parametri

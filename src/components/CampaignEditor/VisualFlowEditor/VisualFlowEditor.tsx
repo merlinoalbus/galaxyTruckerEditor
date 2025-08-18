@@ -528,9 +528,9 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
       setValidationErrors({ errors: 0, invalidBlocks: [] });
       setDropError(null);
       
-      // Reset manuale solo di navigationPath e rootBlocks, NON di scriptNavigationPath
-      setNavigationPath([]);
-      setRootBlocks([]);
+  // Non azzerare il breadcrumb: preserva l'attuale path (solo elementi con nome)
+  const preservedPath = navigationPath.filter(i => i.name);
+  setRootBlocks([]);
       
       // Imposta il nuovo contesto della missione
       setCurrentScriptContext({
@@ -543,25 +543,48 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
       const sourceBlocks = missionData.originalBlocks || missionData.blocks;
       let blocksToLoad = JSON.parse(JSON.stringify(sourceBlocks));
       
-      // Mantieni il path di zoom dello script corrente e aggiungi la missione
-      const cleanCurrentPath = currentZoomPath.filter(item => 
-        !item.name.startsWith('Script:') && 
-        item.name !== '' && 
-        !item.id.startsWith('mission-') // Rimuovi eventuali missioni precedenti
-      );
+      // Mantieni i marker esistenti (mission/subscript) e rimuovi solo lo zoom successivo all'ultimo marker,
+      // poi aggiungi il nuovo marker della missione. Se non ci sono marker, mantieni eventuale zoom nello script principale.
+      const markerIndices: number[] = [];
+      currentZoomPath.forEach((item, idx) => {
+        if (item.id.startsWith('mission-') || item.id.startsWith('subscript-')) {
+          markerIndices.push(idx);
+        }
+      });
+  let basePath: typeof currentZoomPath = [];
+      if (markerIndices.length > 0) {
+        const lastMarkerIdx = markerIndices[markerIndices.length - 1];
+        basePath = currentZoomPath.slice(0, lastMarkerIdx + 1);
+      } else {
+        // Nessun marker: mantieni eventuale zoom nello script principale (escludi elementi vuoti e wrapper Script:)
+        basePath = currentZoomPath.filter(item => item.name && !item.name.startsWith('Script:'));
+      }
       const newNavigationPath = [
-        ...cleanCurrentPath, // Mantieni tutto il percorso di zoom nello script corrente
+        ...preservedPath,
         {
           id: `mission-${cleanMissionName}`,
-          name: cleanMissionName, // Solo il nome, senza prefisso
+          name: cleanMissionName,
           block: blocksToLoad[0]
         }
       ];
+      try { if ((window as any).__VFE_NAV_DEBUG__) { console.debug('[NAV] -> enter mission', { from: navigationPath, to: newNavigationPath }); } } catch {}
       setNavigationPath(newNavigationPath);
       setCurrentScriptBlocks(blocksToLoad);
       
-      // ALLA FINE imposta il path di navigazione script calcolato all'inizio
-      setScriptNavigationPath(newScriptNavigationPath);
+      // Aggiorna anche lo scriptNavigationPath mantenendo la catena, come per i subscript
+      setScriptNavigationPath(prev => {
+        if (prev.length === 0) {
+          const main = currentScript?.name || 'main';
+          return [
+            { scriptName: main },
+            { scriptName: cleanMissionName, parentBlockId: parentBlock.id }
+          ];
+        }
+        return [
+          ...prev,
+          { scriptName: cleanMissionName, parentBlockId: parentBlock.id }
+        ];
+      });
       
     } catch (error) {
       console.error('[VisualFlowEditor] Error loading mission:', error);

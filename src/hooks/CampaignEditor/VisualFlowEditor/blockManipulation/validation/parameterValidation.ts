@@ -558,6 +558,14 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return validateAddShipPartsParameters(block);
     case 'ACT_MISSION':
       return validateActMissionParameters(block);
+    case 'SETDECKPREPARATIONSCRIPT':
+      return (!block.parameters?.script || String(block.parameters.script).trim() === '')
+        ? { valid: false, error: 'SETDECKPREPARATIONSCRIPT_NO_SCRIPT' }
+        : { valid: true };
+    case 'SETFLIGHTDECKPREPARATIONSCRIPT':
+      return (!block.parameters?.script || String(block.parameters.script).trim() === '')
+        ? { valid: false, error: 'SETFLIGHTDECKPREPARATIONSCRIPT_NO_SCRIPT' }
+        : { valid: true };
     // EXIT_MENU, SHOWDLGSCENE, HIDEDLGSCENE non hanno parametri da validare
     default:
       return { valid: true };

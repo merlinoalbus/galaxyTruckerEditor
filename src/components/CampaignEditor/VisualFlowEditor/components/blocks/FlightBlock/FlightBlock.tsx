@@ -180,12 +180,13 @@ export const FlightBlock: React.FC<FlightBlockProps> = ({
                     label=""
                   />
                   {block.blockInit.map((child: any, index: number) => (
-                    <React.Fragment key={child.id || index}>
+                    <React.Fragment key={`${child.id ?? 'init'}-${index}`}>
                       {renderChildren([child])}
                       <AnchorPoint
                         onDrop={(e) => onDropInitAtIndex(e, index + 1)}
                         onDragOver={onDragOver}
                         label=""
+                        key={`flight-init-anchor-${index}`}
                       />
                     </React.Fragment>
                   ))}
@@ -219,12 +220,13 @@ export const FlightBlock: React.FC<FlightBlockProps> = ({
                     label=""
                   />
                   {block.blockStart.map((child: any, index: number) => (
-                    <React.Fragment key={child.id || index}>
+                    <React.Fragment key={`${child.id ?? 'start'}-${index}`}>
                       {renderChildren([child])}
                       <AnchorPoint
                         onDrop={(e) => onDropStartAtIndex(e, index + 1)}
                         onDragOver={onDragOver}
                         label=""
+                        key={`flight-start-anchor-${index}`}
                       />
                     </React.Fragment>
                   ))}
@@ -258,12 +260,13 @@ export const FlightBlock: React.FC<FlightBlockProps> = ({
                     label=""
                   />
                   {block.blockEvaluate.map((child: any, index: number) => (
-                    <React.Fragment key={child.id || index}>
+                    <React.Fragment key={`${child.id ?? 'evaluate'}-${index}`}>
                       {renderChildren([child])}
                       <AnchorPoint
                         onDrop={(e) => onDropEvaluateAtIndex(e, index + 1)}
                         onDragOver={onDragOver}
                         label=""
+                        key={`flight-eval-anchor-${index}`}
                       />
                     </React.Fragment>
                   ))}

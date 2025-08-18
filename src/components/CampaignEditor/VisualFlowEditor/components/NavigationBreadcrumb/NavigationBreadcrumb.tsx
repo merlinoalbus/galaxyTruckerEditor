@@ -85,8 +85,9 @@ export const NavigationBreadcrumb: React.FC<NavigationBreadcrumbProps> = ({
         });
       }
 
-      // 2) Tutti i marker (mission/subscript) come elementi base, in ordine
-      markerIndices.forEach((markerIdx) => {
+      // 2) Per ogni marker, mostra il marker e l'eventuale zoom tra questo marker e il successivo
+      for (let m = 0; m < markerIndices.length; m++) {
+        const markerIdx = markerIndices[m];
         const targetItem = navigationPath[markerIdx];
         const isMission = targetItem.id.startsWith('mission-');
         const label = `${isMission ? '🎯' : '📄'} ${targetItem.name}`;
@@ -96,19 +97,18 @@ export const NavigationBreadcrumb: React.FC<NavigationBreadcrumbProps> = ({
           onClick: () => onNavigate(markerIdx),
           isLast: false
         });
-      });
 
-      // 3) Zoom dopo l’ultimo marker (dentro l’ultimo contesto attivo)
-      const lastMarker = markerIndices[markerIndices.length - 1];
-      for (let i = lastMarker + 1; i < navigationPath.length; i++) {
-        const item = navigationPath[i];
-        const itemIndex = i;
-        unifiedPath.push({
-          type: 'zoom',
-          name: item.name,
-          onClick: () => onNavigate(itemIndex),
-          isLast: false
-        });
+        const nextMarkerIdx = m < markerIndices.length - 1 ? markerIndices[m + 1] : navigationPath.length;
+        for (let i = markerIdx + 1; i < nextMarkerIdx; i++) {
+          const item = navigationPath[i];
+          const itemIndex = i;
+          unifiedPath.push({
+            type: 'zoom',
+            name: item.name,
+            onClick: () => onNavigate(itemIndex),
+            isLast: false
+          });
+        }
       }
     } else {
       // Nessun marker: zoom puro nello script principale
