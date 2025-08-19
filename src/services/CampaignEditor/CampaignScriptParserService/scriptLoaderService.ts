@@ -1,5 +1,6 @@
-import { ParsedScript } from '@/types/CampaignEditor';
+// (rimosso ParsedScript import non utilizzato)
 import { API_CONFIG, API_ENDPOINTS } from '@/config/constants';
+import { logger } from '@/utils/logger';
 
 // Cache per evitare richieste duplicate
 const fileCache = new Map<string, string | null>();
@@ -24,7 +25,7 @@ export const scriptLoaderService = {
       });
       
       if (!response.ok) {
-        console.error('Failed to load scripts list:', response.status);
+        logger.error('Failed to load scripts list:', response.status);
         fileCache.set(cacheKey, null);
         return null;
       }
@@ -36,7 +37,7 @@ export const scriptLoaderService = {
       // Scripts loaded successfully
       return data;
     } catch (error) {
-      console.error('Error loading scripts:', error);
+      logger.error('Error loading scripts:', error);
       fileCache.set(cacheKey, null);
       return null;
     }
@@ -105,7 +106,7 @@ export const scriptLoaderService = {
   },
 
   async loadAllScriptFiles(): Promise<{ [key: string]: string }> {
-    console.warn('loadAllScriptFiles is deprecated. Use loadParsedScripts() instead.');
+    logger.warn('loadAllScriptFiles is deprecated. Use loadParsedScripts() instead.');
     
     // Per compatibilità, usa la nuova API /scripts e converte il formato
     const scriptsData = await this.loadParsedScripts();

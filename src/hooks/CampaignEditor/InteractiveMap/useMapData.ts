@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 import { useState, useCallback } from 'react';
 import { MapNode, MapConnection, CampaignScript, MapViewport } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { interactiveMapService } from '@/services/CampaignEditor/InteractiveMap/interactiveMapService';
@@ -62,7 +63,7 @@ export const useMapData = (
       }
 
     } catch (err) {
-      console.error('Error loading map data:', err);
+  logger.error('Error loading map data:', err);
       setError(err instanceof Error ? err.message : 'Failed to load map data');
     } finally {
       setIsLoading(false);

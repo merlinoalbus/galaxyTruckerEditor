@@ -385,6 +385,36 @@ export const validateHideCharParameters = (block: any, allBlocks?: IFlowBlock[],
 };
 
 /**
+ * Valida i parametri di un blocco ADDOPPONENT
+ */
+export const validateAddOpponentParameters = (block: any): { valid: boolean; error?: string } => {
+  // Il parametro character è obbligatorio
+  if (!block.parameters?.character || block.parameters.character.trim().length === 0) {
+    return { 
+      valid: false, 
+      error: 'ADDOPPONENT_NO_CHARACTER' 
+    };
+  }
+  
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri di un blocco SETSHIPTYPE
+ */
+export const validateSetShipTypeParameters = (block: any): { valid: boolean; error?: string } => {
+  // Il parametro type è obbligatorio
+  if (!block.parameters?.type || block.parameters.type.trim().length === 0) {
+    return { 
+      valid: false, 
+      error: 'SETSHIPTYPE_NO_TYPE' 
+    };
+  }
+  
+  return { valid: true };
+};
+
+/**
  * Valida i parametri di un blocco RETURN
  * RETURN non ha parametri obbligatori, quindi è sempre valido
  * Il warning per root level dovrebbe essere gestito altrove con accesso al navigationPath
@@ -416,6 +446,112 @@ export const validateResetParameters = (block: any): { valid: boolean; error?: s
       valid: false, 
       error: 'RESET_NO_SEMAPHORE' 
     };
+  }
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri di un blocco ADDPARTTOSHIP
+ */
+export const validateAddPartToShipParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.params || block.parameters.params.trim() === '') {
+    return { 
+      valid: false, 
+      error: 'ADDPARTTOSHIP_NO_PARAMS' 
+    };
+  }
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri di un blocco ADDPARTTOASIDESLOT
+ */
+export const validateAddPartToAsideSlotParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.params || block.parameters.params.trim() === '') {
+    return { 
+      valid: false, 
+      error: 'ADDPARTTOASIDESLOT_NO_PARAMS' 
+    };
+  }
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri di un blocco ADDSHIPPARTS
+ */
+export const validateAddShipPartsParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.params || block.parameters.params.trim() === '') {
+    return { 
+      valid: false, 
+      error: 'ADDSHIPPARTS_NO_PARAMS' 
+    };
+  }
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri di un blocco SETADVPILE
+ */
+export const validateSetAdvPileParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.params || block.parameters.params.trim() === '') {
+    return {
+      valid: false,
+      error: 'SETADVPILE_NO_PARAMS'
+    };
+  }
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri di un blocco SETSECRETADVPILE
+ */
+export const validateSetSecretAdvPileParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.params || block.parameters.params.trim() === '') {
+    return {
+      valid: false,
+      error: 'SETSECRETADVPILE_NO_PARAMS'
+    };
+  }
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri di un blocco ACT_MISSION
+ */
+export const validateActMissionParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.mission || block.parameters.mission.trim() === '') {
+    return { 
+      valid: false, 
+      error: 'ACT_MISSION_NO_MISSION' 
+    };
+  }
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri di un blocco SETSPECCONDITION
+ */
+export const validateSetSpecConditionParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.condition || String(block.parameters.condition).trim() === '') {
+    return {
+      valid: false,
+      error: 'SETSPECCONDITION_NO_CONDITION'
+    };
+  }
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri di un blocco MODIFYOPPONENTSBUILDSPEED
+ */
+export const validateModifyOpponentsBuildSpeedParameters = (block: any): { valid: boolean; error?: string } => {
+  const value = block.parameters?.percentage;
+  if (value === undefined || value === null || value === '') {
+    return { valid: false, error: 'MODIFYOPPONENTSBUILDSPEED_NO_PERCENTAGE' };
+  }
+  const num = Number(value);
+  if (Number.isNaN(num) || num < 1 || num > 200) {
+    return { valid: false, error: 'MODIFYOPPONENTSBUILDSPEED_OUT_OF_RANGE' };
   }
   return { valid: true };
 };
@@ -458,12 +594,40 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return validateHideCharParameters(block, allBlocks, characters);
     case 'CHANGECHAR':
       return validateChangeCharParameters(block, allBlocks, characters);
+    case 'ADDOPPONENT':
+      return validateAddOpponentParameters(block);
+    case 'SETSHIPTYPE':
+      return validateSetShipTypeParameters(block);
     case 'RETURN':
       return validateReturnParameters(block);
     case 'SET':
       return validateSetParameters(block);
     case 'RESET':
       return validateResetParameters(block);
+    case 'ADDPARTTOSHIP':
+      return validateAddPartToShipParameters(block);
+    case 'ADDPARTTOASIDESLOT':
+      return validateAddPartToAsideSlotParameters(block);
+    case 'ADDSHIPPARTS':
+      return validateAddShipPartsParameters(block);
+    case 'SETADVPILE':
+      return validateSetAdvPileParameters(block);
+    case 'SETSECRETADVPILE':
+      return validateSetSecretAdvPileParameters(block);
+    case 'ACT_MISSION':
+      return validateActMissionParameters(block);
+    case 'SETDECKPREPARATIONSCRIPT':
+      return (!block.parameters?.script || String(block.parameters.script).trim() === '')
+        ? { valid: false, error: 'SETDECKPREPARATIONSCRIPT_NO_SCRIPT' }
+        : { valid: true };
+    case 'SETFLIGHTDECKPREPARATIONSCRIPT':
+      return (!block.parameters?.script || String(block.parameters.script).trim() === '')
+        ? { valid: false, error: 'SETFLIGHTDECKPREPARATIONSCRIPT_NO_SCRIPT' }
+        : { valid: true };
+    case 'SETSPECCONDITION':
+      return validateSetSpecConditionParameters(block);
+    case 'MODIFYOPPONENTSBUILDSPEED':
+      return validateModifyOpponentsBuildSpeedParameters(block);
     // EXIT_MENU, SHOWDLGSCENE, HIDEDLGSCENE non hanno parametri da validare
     default:
       return { valid: true };

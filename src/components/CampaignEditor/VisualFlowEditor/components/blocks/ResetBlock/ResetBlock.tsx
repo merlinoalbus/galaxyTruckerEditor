@@ -3,7 +3,6 @@ import { BaseBlock } from '../BaseBlock/BaseBlock';
 import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
 import { getBlockClassName } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
 import { useTranslation } from '@/locales';
-import { useLanguage } from '@/contexts/LanguageContext';
 import { useSessionData } from '@/hooks/CampaignEditor/VisualFlowEditor/useSessionData';
 import { Circle } from 'lucide-react';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
@@ -18,6 +17,8 @@ interface ResetBlockProps {
   collapseAllTrigger?: number;
   expandAllTrigger?: number;
   globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
+  isCustom?: boolean;
+  availableLanguages?: string[];
 }
 
 export const ResetBlock: React.FC<ResetBlockProps> = ({
@@ -29,10 +30,11 @@ export const ResetBlock: React.FC<ResetBlockProps> = ({
   validationType,
   collapseAllTrigger = 0,
   expandAllTrigger = 0,
-  globalCollapseState = 'manual'
+  globalCollapseState = 'manual',
+  isCustom,
+  availableLanguages
 }) => {
   const { t } = useTranslation();
-  const { currentLanguage } = useLanguage();
   const [isCollapsed, setIsCollapsed] = useState(() => {
     return globalCollapseState === 'expanded' ? false : true;
   });

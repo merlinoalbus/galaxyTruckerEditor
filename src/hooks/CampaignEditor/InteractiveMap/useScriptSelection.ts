@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { MapNode, MapConnection, CampaignScript, Mission } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
+import { CampaignScript, Mission } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 
 export interface UseScriptSelectionReturn {
   scriptSelectorOpen: boolean;

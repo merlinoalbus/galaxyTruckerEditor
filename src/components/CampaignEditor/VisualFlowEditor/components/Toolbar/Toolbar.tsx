@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 import React from 'react';
 import { Code2, List, Plus, FileText, Save, Maximize2, Minimize2, AlertCircle, Target, ChevronsDown, ChevronsUp } from 'lucide-react';
 import { visualFlowEditorStyles } from '@/styles/CampaignEditor/VisualFlowEditor/VisualFlowEditor.styles';
@@ -83,7 +84,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     try {
       const result = await onSaveScript();
       if (!result.success) {
-        console.error(t('visualFlowEditor.toolbar.saveError'), result.error);
+  logger.error(t('visualFlowEditor.toolbar.saveError'), result.error);
       }
     } finally {
       setIsSaving(false);

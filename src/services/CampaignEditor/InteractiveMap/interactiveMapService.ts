@@ -1,5 +1,6 @@
+import { logger } from '@/utils/logger';
 import { MapNode, MapConnection, CampaignScript, Mission } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
-import { ScriptCommand } from '@/types/CampaignEditor/CampaignEditor.types';
+// (rimosso ScriptCommand import non utilizzato)
 import { API_CONFIG, API_ENDPOINTS } from '@/config/constants';
 
 class InteractiveMapService {
@@ -19,7 +20,7 @@ class InteractiveMapService {
       
       return [];
     } catch (error) {
-      console.error('Error loading nodes:', error);
+  logger.error('Error loading nodes:', error);
       throw error;
     }
   }
@@ -40,7 +41,7 @@ class InteractiveMapService {
       
       return [];
     } catch (error) {
-      console.error('Error loading missions:', error);
+  logger.error('Error loading missions:', error);
       return [];
     }
   }
@@ -70,7 +71,7 @@ class InteractiveMapService {
       
       return [];
     } catch (error) {
-      console.error('Error loading all scripts:', error);
+  logger.error('Error loading all scripts:', error);
       return [];
     }
   }
@@ -78,7 +79,7 @@ class InteractiveMapService {
   // Deprecato: La business logic è stata spostata in useConnectionBuilder hook
   // Questo metodo rimane solo per compatibilità backward ma non dovrebbe essere utilizzato
   async buildConnections(nodes: MapNode[], missions: Mission[]): Promise<MapConnection[]> {
-    console.warn('interactiveMapService.buildConnections is deprecated. Use useConnectionBuilder hook instead.');
+  logger.warn('interactiveMapService.buildConnections is deprecated. Use useConnectionBuilder hook instead.');
     return [];
   }
 
@@ -156,7 +157,7 @@ class InteractiveMapService {
       const data = await response.json();
       return data.success && data.data ? data.data : [];
     } catch (error) {
-      console.error('Error loading variables:', error);
+  logger.error('Error loading variables:', error);
       return [];
     }
   }
@@ -171,7 +172,7 @@ class InteractiveMapService {
       const data = await response.json();
       return data.success && data.data ? data.data : [];
     } catch (error) {
-      console.error('Error loading characters:', error);
+  logger.error('Error loading characters:', error);
       return [];
     }
   }
@@ -186,7 +187,7 @@ class InteractiveMapService {
       const data = await response.json();
       return data.success && data.data ? data.data : [];
     } catch (error) {
-      console.error('Error loading buttons:', error);
+  logger.error('Error loading buttons:', error);
       return [];
     }
   }
@@ -201,7 +202,7 @@ class InteractiveMapService {
       const data = await response.json();
       return data.success && data.data ? data.data : [];
     } catch (error) {
-      console.error('Error loading semaphores:', error);
+  logger.error('Error loading semaphores:', error);
       return [];
     }
   }
@@ -216,7 +217,7 @@ class InteractiveMapService {
       const data = await response.json();
       return data.success && data.data ? data.data : [];
     } catch (error) {
-      console.error('Error loading labels:', error);
+  logger.error('Error loading labels:', error);
       return [];
     }
   }
@@ -241,7 +242,7 @@ class InteractiveMapService {
       const data = await response.json();
       return data.success && data.data ? data.data : [];
     } catch (error) {
-      console.error('Error loading images:', error);
+  logger.error('Error loading images:', error);
       return [];
     }
   }

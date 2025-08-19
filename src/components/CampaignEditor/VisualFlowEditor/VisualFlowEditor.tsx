@@ -8,9 +8,12 @@ import type { VisualFlowEditorProps } from '@/types/CampaignEditor/VisualFlowEdi
 import { useTranslation } from '@/locales';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
+import { logger } from '@/utils/logger';
 import type { IFlowBlock, ValidationResult, ScriptContext, OpenedScript } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
-import { TIMEOUT_CONSTANTS, PERFORMANCE_CONSTANTS, UI_CONSTANTS, API_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
+import { TIMEOUT_CONSTANTS, PERFORMANCE_CONSTANTS, UI_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
+import { API_CONFIG } from '@/config/constants';
 import { SceneProvider, useScene } from '@/contexts/SceneContext';
+import { ScriptMetadataProvider } from '@/contexts/ScriptMetadataContext';
 
 // Import componenti modulari
 import { BlockRenderer } from './components/BlockRenderer/BlockRenderer';
@@ -23,6 +26,7 @@ import { ToolsPanel } from './components/ToolsPanel';
 import { ErrorModal } from './components/ErrorModal/ErrorModal';
 import { ValidationErrorsModal } from './components/ValidationErrorsModal/ValidationErrorsModal';
 import { collectScriptLabels } from '@/hooks/CampaignEditor/VisualFlowEditor/utils/collectScriptLabels';
+import { collectAllBlocks } from '@/utils/CampaignEditor/VisualFlowEditor/collectAllBlocks';
 // Import hooks custom modulari
 import { useBlockManipulation } from '@/hooks/CampaignEditor/VisualFlowEditor/useBlockManipulation';
 import { useDragAndDrop } from '@/hooks/CampaignEditor/VisualFlowEditor/useDragAndDrop';
@@ -50,7 +54,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
   const { isLoading } = useVisualFlowEditor(analysis || null);
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
-  const { state: sceneState, showDialogScene, hideDialogScene, clearScenes } = useScene();
+  const { showDialogScene, hideDialogScene, clearScenes } = useScene();
 
   // Script management state
   const [availableScripts, setAvailableScripts] = useState<ScriptItem[]>([]);
@@ -124,7 +128,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
       // Limite di ricorsione per prevenire stack overflow
       const MAX_RECURSION_DEPTH = PERFORMANCE_CONSTANTS.MAX_RECURSION_DEPTH;
       if (depth > MAX_RECURSION_DEPTH) {
-        console.warn(`Maximum recursion depth (${MAX_RECURSION_DEPTH}) reached while searching for label: ${labelName}`);
+  logger.warn(`Maximum recursion depth (${MAX_RECURSION_DEPTH}) reached while searching for label: ${labelName}`);
         return null;
       }
       for (const block of blocks) {
@@ -205,9 +209,9 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
       const element = document.querySelector(`[data-block-id="${result.block.id}"]`);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        // Evidenzia temporaneamente il blocco con safe timeout
+        // Evidenzia temporaneamente il blocco
         element.classList.add(`ring-${UI_CONSTANTS.RING_WIDTH_HIGHLIGHT}`, 'ring-blue-500', `ring-offset-${UI_CONSTANTS.RING_OFFSET}`, 'ring-offset-slate-900');
-        addSafeTimeout(() => {
+        window.setTimeout(() => {
           element.classList.remove(`ring-${UI_CONSTANTS.RING_WIDTH_HIGHLIGHT}`, 'ring-blue-500', `ring-offset-${UI_CONSTANTS.RING_OFFSET}`, 'ring-offset-slate-900');
         }, TIMEOUT_CONSTANTS.HIGHLIGHT_DURATION);
       }
@@ -258,7 +262,6 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
     handleZoomIn,
     handleZoomOut,
     updateRootBlocksIfNeeded,
-    updateBlockInNavigationTree,
     isZoomed,
     resetNavigationState,
     scriptNavigationPath,
@@ -299,14 +302,14 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
           
           // Controllo di sicurezza: assicurati che updated sia valido
           if (!updated || !Array.isArray(updated)) {
-            console.error('[VisualFlowEditor] Invalid block update: result is not an array', { updated });
+            logger.error('[VisualFlowEditor] Invalid block update: result is not an array', { updated });
             setDropError('Errore nell\'aggiornamento dei blocchi: risultato non valido');
             return prev; // Mantieni lo stato precedente se c'è un errore
           }
           
           // Se siamo in modalità zoom, non dovremmo mai avere un array vuoto
           if (updated.length === 0 && isZoomed) {
-            console.warn('[VisualFlowEditor] Attempted to clear blocks while in zoom mode');
+            logger.warn('[VisualFlowEditor] Attempted to clear blocks while in zoom mode');
             return prev;
           }
           
@@ -316,9 +319,9 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
           return updated;
         } catch (error) {
           // Log dettagliato dell'errore per debugging
-          console.error('[VisualFlowEditor] Error updating blocks:', error);
-          console.error('[VisualFlowEditor] Stack trace:', error instanceof Error ? error.stack : 'N/A');
-          console.error('[VisualFlowEditor] Previous state:', prev);
+          logger.error('[VisualFlowEditor] Error updating blocks:', error);
+          logger.error('[VisualFlowEditor] Stack trace:', error instanceof Error ? error.stack : 'N/A');
+          logger.error('[VisualFlowEditor] Previous state:', prev);
           
           // Feedback all'utente per errori recuperabili
           const errorMessage = error instanceof Error ? error.message : 'Errore sconosciuto';
@@ -370,11 +373,11 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
     const newOpenedScripts = new Map<string, OpenedScript>();
     setOpenedScripts(newOpenedScripts);
     setCurrentScriptContext(null);
-    setScriptNavigationPath([]);
+  setScriptNavigationPath([]);
     
     const scriptData = await loadScript(scriptId);
     return scriptData;
-  }, [loadScript, resetNavigationState]);
+  }, [loadScript, resetNavigationState, setScriptNavigationPath]);
 
   // Wrapper per loadMission con reset completo dello stato
   const loadMissionWithReset = useCallback(async (missionId: string) => {
@@ -386,23 +389,267 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
     // IMPORTANTE: Pulisci completamente la memoria degli script aperti
     setOpenedScripts(new Map());
     setCurrentScriptContext(null);
-    setScriptNavigationPath([]);
+  setScriptNavigationPath([]);
     
     return loadMission(missionId);
-  }, [loadMission, resetNavigationState]);
+  }, [loadMission, resetNavigationState, setScriptNavigationPath]);
+
+  // Funzione per navigare a una missione specifica - DEVE funzionare ESATTAMENTE come sub_script
+  const handleNavigateToMission = useCallback(async (missionName: string, parentBlock: IFlowBlock) => {
+    try {
+      // Il backend si aspetta il nome della missione senza .txt
+      const cleanMissionName = missionName.endsWith('.txt') ? missionName.slice(0, -4) : missionName;
+      
+      // PRIMA di qualsiasi reset, calcola il nuovo path di navigazione
+  // PRIMA di qualsiasi reset, eventuali riferimenti per la navigazione verranno gestiti più avanti
+      
+  // Salva il path di zoom corrente PRIMA di navigare alla missione (non utilizzato direttamente)
+      
+      // Controlla se la missione è già stata caricata
+      let missionData = openedScripts.get(cleanMissionName);
+      
+      if (!missionData) {
+        // Carica la missione via API solo se non è già in cache
+        const response = await fetch(`${API_CONFIG.API_BASE_URL}/missions/${cleanMissionName}?multilingua=true&format=blocks`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        if (result.success && result.data) {
+          // Importa le funzioni necessarie per pulire e aggiungere ID
+          const { addUniqueIds } = await import('@/utils/CampaignEditor/VisualFlowEditor/blockIdManager');
+          const { cleanupScriptBlocks } = await import('@/utils/CampaignEditor/VisualFlowEditor/blockCleaner');
+          
+          // Processa blocksMission e blocksFinish
+          let blocksMission = result.data.blocksMission ? result.data.blocksMission : [];
+          let blocksFinish = result.data.blocksFinish ? result.data.blocksFinish : [];
+          
+          blocksMission = cleanupScriptBlocks(blocksMission);
+          blocksMission = addUniqueIds(blocksMission);
+          blocksFinish = cleanupScriptBlocks(blocksFinish);
+          blocksFinish = addUniqueIds(blocksFinish);
+          
+          // Crea il blocco MISSION principale con tipizzazione corretta
+          const missionBlock: IFlowBlock = {
+            id: `mission-${cleanMissionName}`,
+            type: 'MISSION' as const,
+            isContainer: true,
+            blocksMission: blocksMission,
+            blocksFinish: blocksFinish,
+            name: result.data.name,
+            missionName: result.data.name,
+            fileName: result.data.fileName
+          };
+          
+          const blocksToLoad = [missionBlock];
+          
+          // Salva la missione nella mappa degli script aperti
+          missionData = {
+            scriptName: cleanMissionName,
+            fileName: result.data.fileName || cleanMissionName,
+            blocks: blocksToLoad,
+            originalBlocks: JSON.parse(JSON.stringify(blocksToLoad)),
+            isModified: false
+          };
+          const updatedScripts = new Map(openedScripts);
+          updatedScripts.set(cleanMissionName, missionData);
+          
+          // Salva lo stato corrente dello script USANDO LA MAPPA GIÀ AGGIORNATA
+          const blocksToSave = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
+          
+          if (currentScriptContext && (currentScriptContext.isSubScript || currentScriptContext.isMission)) {
+            // Salva i blocchi correnti del sub-script o missione
+            const current = updatedScripts.get(currentScriptContext.scriptName);
+            if (current) {
+              current.blocks = blocksToSave;
+              current.isModified = true;
+            }
+          } else {
+            // Salva lo script principale
+            const scriptNameToSave = currentScriptContext?.scriptName || currentScript?.name || 'main';
+            
+            if (updatedScripts.has(scriptNameToSave)) {
+              const existing = updatedScripts.get(scriptNameToSave)!;
+              existing.blocks = blocksToSave;
+              existing.isModified = true;
+            } else {
+              updatedScripts.set(scriptNameToSave, {
+                scriptName: scriptNameToSave,
+                fileName: currentScript?.fileName || scriptNameToSave + '.txt',
+                blocks: blocksToSave,
+                isModified: true
+              });
+            }
+          }
+          
+          // Salva la mappa aggiornata
+          setOpenedScripts(updatedScripts);
+        } else {
+          throw new Error('Nessun dato ricevuto dal server');
+        }
+      } else {
+        // Missione già caricata, salva comunque lo stato corrente
+        const blocksToSave = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
+        const updatedScripts = new Map(openedScripts);
+        
+        if (currentScriptContext && (currentScriptContext.isSubScript || currentScriptContext.isMission)) {
+          const current = updatedScripts.get(currentScriptContext.scriptName);
+          if (current) {
+            current.blocks = blocksToSave;
+            current.isModified = true;
+          }
+        } else {
+          const scriptNameToSave = currentScriptContext?.scriptName || currentScript?.name || 'main';
+          
+          if (updatedScripts.has(scriptNameToSave)) {
+            const existing = updatedScripts.get(scriptNameToSave)!;
+            existing.blocks = blocksToSave;
+            existing.isModified = true;
+          } else {
+            updatedScripts.set(scriptNameToSave, {
+              scriptName: scriptNameToSave,
+              fileName: currentScript?.fileName || scriptNameToSave + '.txt',
+              blocks: blocksToSave,
+              isModified: true
+            });
+          }
+        }
+        
+        setOpenedScripts(updatedScripts);
+      }
+      
+      // Reset solo degli stati di validazione ed errori, NON del path di navigazione
+      setValidationErrors({ errors: 0, invalidBlocks: [] });
+      setDropError(null);
+      
+  // Non azzerare il breadcrumb: preserva l'attuale path (solo elementi con nome)
+  const preservedPath = navigationPath.filter(i => i.name);
+  setRootBlocks([]);
+      
+      // Imposta il nuovo contesto della missione
+      setCurrentScriptContext({
+        scriptName: cleanMissionName,
+        isSubScript: false, // Le missioni sono script di primo livello
+        isMission: true
+      });
+      
+      // Usa i blocchi della missione - ora missionData è garantito non essere undefined
+      const sourceBlocks = missionData.originalBlocks || missionData.blocks;
+      let blocksToLoad = JSON.parse(JSON.stringify(sourceBlocks));
+      
+  // Mantieni i marker esistenti e aggiungi il nuovo marker della missione.
+  // Nota: non ricalcoliamo basePath perché non utilizzato
+      const newNavigationPath = [
+        ...preservedPath,
+        {
+          id: `mission-${cleanMissionName}`,
+          name: cleanMissionName,
+          block: blocksToLoad[0]
+        }
+      ];
+  try { if ((window as any).__VFE_NAV_DEBUG__) { logger.debug('[NAV] -> enter mission', { from: navigationPath, to: newNavigationPath }); } } catch {}
+      setNavigationPath(newNavigationPath);
+      setCurrentScriptBlocks(blocksToLoad);
+      
+      // Aggiorna anche lo scriptNavigationPath mantenendo la catena, come per i subscript
+      setScriptNavigationPath(prev => {
+        if (prev.length === 0) {
+          const main = currentScript?.name || 'main';
+          return [
+            { scriptName: main },
+            { scriptName: cleanMissionName, parentBlockId: parentBlock.id }
+          ];
+        }
+        return [
+          ...prev,
+          { scriptName: cleanMissionName, parentBlockId: parentBlock.id }
+        ];
+      });
+      
+    } catch (error) {
+  logger.error('[VisualFlowEditor] Error loading mission:', error);
+      throw error;
+    }
+  }, [currentScriptBlocks, currentScriptContext, openedScripts, rootBlocks, setOpenedScripts, setCurrentScriptContext, currentScript, navigationPath, setCurrentScriptBlocks, setScriptNavigationPath, setNavigationPath, setRootBlocks, setValidationErrors, setDropError]);
+
+  // Wrapper per handleZoomIn che gestisce anche ACT_MISSION
+  const handleZoomInWithMissionSupport = useCallback((blockId: string) => {
+    // Prima cerca il blocco per vedere se è ACT_MISSION
+    const searchIn = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
+    
+    // Funzione helper per trovare un blocco per ID
+    const findBlockById = (blocks: any[], targetId: string): any => {
+      for (const block of blocks) {
+        if (block.id === targetId) {
+          return block;
+        }
+        
+        // Cerca ricorsivamente
+        if (block.children) {
+          const found = findBlockById(block.children, targetId);
+          if (found) return found;
+        }
+        if (block.thenBlocks) {
+          const found = findBlockById(block.thenBlocks, targetId);
+          if (found) return found;
+        }
+        if (block.elseBlocks) {
+          const found = findBlockById(block.elseBlocks, targetId);
+          if (found) return found;
+        }
+        if (block.blocksMission) {
+          const found = findBlockById(block.blocksMission, targetId);
+          if (found) return found;
+        }
+        if (block.blocksFinish) {
+          const found = findBlockById(block.blocksFinish, targetId);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+    
+    const targetBlock = findBlockById(searchIn, blockId);
+    
+    // Se il blocco è ACT_MISSION, naviga alla missione invece di fare zoom
+    if (targetBlock && targetBlock.type === 'ACT_MISSION') {
+      const missionName = targetBlock.parameters?.missionName || targetBlock.missionName;
+      if (missionName) {
+        handleNavigateToMission(missionName, targetBlock);
+        return;
+      }
+    }
+    
+    // Altrimenti, usa la logica normale di zoom
+    handleZoomIn(blockId);
+  }, [rootBlocks, currentScriptBlocks, handleNavigateToMission, handleZoomIn]);
 
   // Le funzioni handleNavigateToSubScript e handleNavigateBackToScript sono ora gestite dall'hook useZoomNavigation
   // Rimangono solo come wrapper per mantenere compatibilità
 
   // Estendi sessionData con le label dello script, availableScripts e la funzione di navigazione
-  const extendedSessionData = React.useMemo(() => ({
-    ...sessionData,
-    scriptLabels,
-    goToLabel,
-    availableScripts,
-    onNavigateToSubScript: handleNavigateToSubScript,
-    navigationPath: scriptNavigationPath, // Usa scriptNavigationPath invece di navigationPath
-    onNavigateBack: () => {
+  const extendedSessionData = React.useMemo(() => {
+    // Calcola nome script corrente (main o sub/mission) e nome mission corrente se in contesto missione
+    const currentScriptNameComputed = currentScriptContext?.scriptName || currentScript?.name || 'main';
+    let currentMissionNameComputed: string | undefined;
+    if (currentScriptContext?.isMission) {
+      currentMissionNameComputed = currentScriptContext.scriptName;
+    } else if (currentScriptBlocks?.[0]?.type === 'MISSION') {
+      currentMissionNameComputed = (currentScriptBlocks?.[0] as any)?.missionName || (currentScriptBlocks?.[0] as any)?.name;
+    }
+
+    return ({
+      ...sessionData,
+      scriptLabels,
+      goToLabel,
+      availableScripts,
+      currentScriptName: currentScriptNameComputed,
+      currentMissionName: currentMissionNameComputed,
+      onNavigateToSubScript: handleNavigateToSubScript,
+      onNavigateToMission: handleNavigateToMission,
+      navigationPath: scriptNavigationPath, // Usa scriptNavigationPath invece di navigationPath
+      onNavigateBack: () => {
       // Naviga al livello precedente nel path degli script
       if (scriptNavigationPath && scriptNavigationPath.length > 1) {
         // Trova l'indice del subscript corrente nel navigationPath
@@ -418,8 +665,23 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
           handleNavigateBackToScript(targetLevel);
         }
       }
-    }
-  }), [sessionData, scriptLabels, goToLabel, availableScripts, handleNavigateToSubScript, scriptNavigationPath, handleNavigateBackToScript, navigationPath, handleZoomOut]);
+      }
+    });
+  }, [
+    sessionData,
+    scriptLabels,
+    goToLabel,
+    availableScripts,
+    handleNavigateToSubScript,
+    handleNavigateToMission,
+    scriptNavigationPath,
+    handleNavigateBackToScript,
+    navigationPath,
+    handleZoomOut,
+    currentScriptContext,
+    currentScript?.name,
+    currentScriptBlocks
+  ]);
 
   // Carica script se viene passato uno scriptId dal componente chiamante
   useEffect(() => {
@@ -466,7 +728,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
     const MAX_CONCURRENT_TIMEOUTS = PERFORMANCE_CONSTANTS.MAX_CONCURRENT_TIMEOUTS;
     
     if (highlightTimeoutsRef.current.size >= MAX_CONCURRENT_TIMEOUTS) {
-      console.warn(`[VisualFlowEditor] Maximum timeout limit reached (${MAX_CONCURRENT_TIMEOUTS}), skipping timeout`);
+  logger.warn(`[VisualFlowEditor] Maximum timeout limit reached (${MAX_CONCURRENT_TIMEOUTS}), skipping timeout`);
       return null;
     }
     
@@ -474,7 +736,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
       try {
         callback();
       } catch (error) {
-        console.error('[VisualFlowEditor] Error in timeout callback:', error);
+  logger.error('[VisualFlowEditor] Error in timeout callback:', error);
         // Notifica l'utente dell'errore nel timeout callback
         const errorMessage = error instanceof Error ? error.message : 'Errore sconosciuto';
         setDropError(`Errore durante l'operazione: ${errorMessage}`);
@@ -489,7 +751,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
     if (highlightTimeoutsRef.current.size > maxActiveTimeouts.current) {
       maxActiveTimeouts.current = highlightTimeoutsRef.current.size;
       if (maxActiveTimeouts.current > PERFORMANCE_CONSTANTS.HIGH_TIMEOUT_WARNING) {
-        console.warn(`[VisualFlowEditor] High timeout count detected: ${maxActiveTimeouts.current}`);
+  logger.warn(`[VisualFlowEditor] High timeout count detected: ${maxActiveTimeouts.current}`);
       }
     }
     
@@ -519,15 +781,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
     debounceTimeoutRef.current = setTimeout(() => {
       const blocksToValidate = rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks;
       if (blocksToValidate.length > 0) {
-        let validationResult;
-        if (blocksToValidate.length > PERFORMANCE_CONSTANTS.LARGE_SCRIPT_THRESHOLD) {
-          const startTime = performance.now();
-          validationResult = validateAllBlocks(blocksToValidate, navigationPath);
-          const endTime = performance.now();
-          // Performance monitoring: ${blocksToValidate.length} blocks validated in ${(endTime - startTime).toFixed(2)}ms
-        } else {
-          validationResult = validateAllBlocks(blocksToValidate, navigationPath);
-        }
+        const validationResult = validateAllBlocks(blocksToValidate, navigationPath);
         setValidationErrors(validationResult);
         
         // Popola la mappa dei tipi di validazione
@@ -553,7 +807,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
         clearTimeout(debounceTimeoutRef.current);
       }
     };
-  }, [currentScriptBlocks, rootBlocks, currentLanguage]); // validateAllBlocks rimosso per evitare loop
+  }, [currentScriptBlocks, rootBlocks, currentLanguage, validateAllBlocks, navigationPath]);
   
   // Cleanup al unmount del componente
   useEffect(() => {
@@ -669,7 +923,11 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
                 scriptName: mainScriptName,
                 fileName: currentScript?.fileName || 'main.txt',
                 blocks: blocksToSave,
-                isModified: true
+                isModified: true,
+                // Includi i metadati custom dal currentScript
+                isCustom: currentScript?.isCustom,
+                customPath: currentScript?.customPath,
+                availableLanguages: currentScript?.availableLanguages
               });
             } else {
               // Aggiorna i blocchi dello script principale esistente
@@ -677,6 +935,16 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
               if (mainScript) {
                 mainScript.blocks = blocksToSave;
                 mainScript.isModified = true;
+                // Aggiorna anche i metadati custom se presenti
+                if (currentScript?.isCustom !== undefined) {
+                  mainScript.isCustom = currentScript.isCustom;
+                }
+                if (currentScript?.customPath !== undefined) {
+                  mainScript.customPath = currentScript.customPath;
+                }
+                if (currentScript?.availableLanguages !== undefined) {
+                  mainScript.availableLanguages = currentScript.availableLanguages;
+                }
               }
             }
           }
@@ -727,14 +995,18 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
         {/* Canvas area */}
         <div className="flex-1 bg-slate-900 p-8 overflow-auto">
           {currentScriptBlocks.length > 0 ? (
-            <div className="max-w-6xl mx-auto">
-              {currentScriptBlocks.map(block => (
-                <BlockRenderer
+            <ScriptMetadataProvider 
+              isCustom={currentScript?.isCustom} 
+              availableLanguages={currentScript?.availableLanguages}
+            >
+              <div className="max-w-6xl mx-auto">
+                {currentScriptBlocks.map(block => (
+                  <BlockRenderer
                   key={block.id}
                   block={block}
                   invalidBlocks={validationErrors.invalidBlocks}
                   blockValidationTypes={blockValidationTypes}
-                  allBlocks={currentScriptBlocks}
+                  allBlocks={collectAllBlocks(currentScriptBlocks)}
                   onUpdateBlock={(id, updates) => {
                     setCurrentScriptBlocks(prev => {
                       const updated = updateBlockRecursive(prev, id, updates);
@@ -760,7 +1032,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
                   onDrop={handleDrop}
                   onDropAtIndex={handleDropAtIndex}
                   isDragActive={!!draggedBlock || !!draggedTool}
-                  onZoomIn={handleZoomIn}
+                  onZoomIn={handleZoomInWithMissionSupport}
                   onZoomOut={() => handleZoomOut()}
                   isZoomed={isZoomed}
                   currentFocusedBlockId={currentFocusedBlockId}
@@ -769,9 +1041,12 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
                   collapseAllTrigger={collapseAllTrigger}
                   expandAllTrigger={expandAllTrigger}
                   globalCollapseState={globalCollapseState}
+                  isCustom={currentScript?.isCustom}
+                  availableLanguages={currentScript?.availableLanguages}
                 />
-              ))}
-            </div>
+                ))}
+              </div>
+            </ScriptMetadataProvider>
           ) : (
             <div className="flex items-center justify-center h-full">
               <div className="text-center text-gray-500">
@@ -820,7 +1095,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
                   // Se il blocco è in un container zoomato, prima esci dallo zoom
                   if (isZoomed && path.length > 0) {
                     // Naviga al container che contiene il blocco
-                    handleZoomIn(path[path.length - 1].id);
+                    handleZoomInWithMissionSupport(path[path.length - 1].id);
                   }
                   // Scrolla al blocco dopo un breve delay per permettere il rendering con safe timeout
                   addSafeTimeout(() => {

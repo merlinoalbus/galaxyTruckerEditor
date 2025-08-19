@@ -5,7 +5,7 @@
 export const visualFlowEditorTranslations = {
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
-  'visualFlowEditor.subtitle': 'Éditeur visuel complet avec tous les 14 types d\'IF',
+  'visualFlowEditor.subtitle': 'Éditeur Visuel Complet',
   'visualFlowEditor.loading': 'Chargement du Visual Flow Editor...',
   'visualFlowEditor.noScriptLoaded': 'Aucun script chargé',
   
@@ -56,6 +56,13 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.goToBlock': 'Aller →',
   'visualFlowEditor.validation.goToBlockTitle': 'Aller au bloc',
   'visualFlowEditor.validation.footer': 'Corrigez ces erreurs pour assurer le bon fonctionnement du script. Les blocs avec des erreurs sont surlignés en rouge dans l\'éditeur.',
+  'visualFlowEditor.validation.modifyOpponentsBuildSpeedNoPercentage': 'Le bloc MODIFYOPPONENTSBUILDSPEED doit avoir une valeur en pourcentage (1-200).',
+  'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutOfRange': 'Le pourcentage de MODIFYOPPONENTSBUILDSPEED doit être compris entre 1 et 200.',
+  'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutsideContext': 'MODIFYOPPONENTSBUILDSPEED devrait être utilisé dans un bloc MISSION, BUILD ou FLIGHT.',
+  'visualFlowEditor.validation.addOpponentNoCharacter': 'Le bloc ADDOPPONENT doit avoir un personnage sélectionné.',
+  'visualFlowEditor.validation.addOpponentNotInMission': 'ADDOPPONENT devrait être dans un bloc MISSION.',
+  'visualFlowEditor.validation.setShipTypeNoType': 'Le bloc SETSHIPTYPE doit avoir un type de vaisseau sélectionné.',
+  'visualFlowEditor.validation.setShipTypeNotInMission': 'SETSHIPTYPE devrait être dans un bloc MISSION.',
   
   // Delay Block
   'visualFlowEditor.blocks.delay.duration': 'Durée',
@@ -73,6 +80,40 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.subScript.scriptName': 'Nom du script',
   'visualFlowEditor.blocks.subScript.hint': 'Sélectionnez le script à exécuter',
   'visualFlowEditor.blocks.subScript.navigate': 'Naviguer vers le sous-script',
+  // SETSPECCONDITION Block
+  'visualFlowEditor.blocks.setSpecCondition.condition': 'Condition',
+  
+  // ACT_MISSION Block
+  'visualFlowEditor.blocks.actMission.missionName': 'Nom de la Mission',
+  'visualFlowEditor.blocks.actMission.hint': 'Sélectionnez la mission à activer',
+  'visualFlowEditor.blocks.actMission.navigate': 'Naviguer vers la mission',
+  
+  // EXIT_MENU Block
+  'visualFlowEditor.blocks.exitMenu.description': 'Quitter le menu actuel',
+  'visualFlowEditor.blocks.exitMenu.info': 'Cette commande quitte le menu actuel et continue l\'exécution',
+  'visualFlowEditor.blocks.exitMenu.compact': 'Quitter le menu',
+  'visualFlowEditor.blocks.exitMenu.fullDescription': 'Quitter le menu actuel. Cette commande quitte le menu actuel et continue l\'exécution.',
+  
+  // ADDPARTTOSHIP Block
+  'visualFlowEditor.blocks.addPartToShip.parameters': 'Paramètres',
+  'visualFlowEditor.blocks.addPartToShip.placeholder': 'ex. 1 7 alienEngine 3333 0',
+  'visualFlowEditor.blocks.addPartToShip.hint': '1 7 alienEngine 3333 0',
+  'visualFlowEditor.blocks.addPartToShip.noParameters': 'Aucun paramètre configuré',
+  'visualFlowEditor.blocks.addPartToShip.params': 'Paramètres',
+  
+  // ADDPARTTOASIDESLOT Block
+  'visualFlowEditor.blocks.addPartToAsideSlot.parameters': 'Paramètres',
+  'visualFlowEditor.blocks.addPartToAsideSlot.placeholder': 'ex. alienGun 2 1 2 0',
+  'visualFlowEditor.blocks.addPartToAsideSlot.hint': 'alienGun 2 1 2 0',
+  'visualFlowEditor.blocks.addPartToAsideSlot.noParameters': 'Aucun paramètre configuré',
+  'visualFlowEditor.blocks.addPartToAsideSlot.params': 'Paramètres',
+
+  // ADDSHIPPARTS Block
+  'visualFlowEditor.blocks.addShipParts.partsFileLabel': 'Fichier de pièces',
+  'visualFlowEditor.blocks.addShipParts.selectParts': 'Sélectionner le fichier de pièces',
+  'visualFlowEditor.blocks.addShipParts.loading': 'Chargement des pièces...',
+  'visualFlowEditor.blocks.addShipParts.noParts': 'Aucun fichier de pièces sélectionné',
+  'visualFlowEditor.blocks.addShipParts.description': 'Charger les pièces du vaisseau depuis un fichier YAML',
   
   // Metacode System
   'visualFlowEditor.metacode.found': 'métacodes trouvés',
@@ -242,6 +283,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askMustBeFollowedByMenu': 'Le bloc ASK doit être suivi par un bloc MENU. Si ASK est dans un IF, MENU peut être dans la même branche ou en dehors de l\'IF.',
   'visualFlowEditor.validation.askWithoutMenu': 'Le bloc ASK doit être suivi par un bloc MENU. Ce ASK est le dernier bloc et n\'a pas de MENU suivant.',
   'visualFlowEditor.validation.goWithoutLabel': 'Le bloc GO nécessite au moins un bloc LABEL dans le script. Ajoutez un bloc LABEL avant d\'utiliser GO.',
+  'visualFlowEditor.validation.setSpecConditionNoCondition': 'Le bloc SETSPECCONDITION doit avoir une condition sélectionnée.',
+  'visualFlowEditor.validation.setSpecConditionOutsideContext': 'SETSPECCONDITION doit être utilisé dans MISSION, BUILD ou FLIGHT. En dehors de ce contexte, c\'est seulement un avertissement.',
+  'visualFlowEditor.validation.addPartToShipNotInBuild': 'ADDPARTTOSHIP devrait être dans un bloc BUILD. Déplacez ce bloc dans une phase de construction.',
+  'visualFlowEditor.validation.addPartToAsideSlotNotInBuild': 'ADDPARTTOASIDESLOT devrait être dans un bloc BUILD. Déplacez ce bloc dans une phase de construction.',
+  'visualFlowEditor.validation.addShipPartsNoParams': 'Le bloc ADDSHIPPARTS doit spécifier un fichier de pièces. Sélectionnez un fichier YAML pour charger les pièces.',
+  'visualFlowEditor.validation.addShipPartsNotInBuild': 'ADDSHIPPARTS devrait être dans un bloc BUILD. Déplacez ce bloc dans une phase de construction.',
   
   // Scene Dialog Validation Messages
   'visualFlowEditor.validation.dialogOutsideScene': 'Le bloc {blockType} ne peut être utilisé qu\'à l\'intérieur d\'une scène de dialogue. Ajoutez un bloc SHOWDLGSCENE avant d\'utiliser {blockType}.',
@@ -341,6 +388,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.multilingual.copyToAll': 'Copier vers toutes les langues',
   'visualFlowEditor.multilingual.copyFromEN': 'Copier depuis EN',
   'visualFlowEditor.multilingual.languages.en': 'Anglais',
+  'visualFlowEditor.multilingual.languages.it': 'Italien',
   'visualFlowEditor.multilingual.languages.cs': 'Tchèque',
   'visualFlowEditor.multilingual.languages.de': 'Allemand',
   'visualFlowEditor.multilingual.languages.es': 'Espagnol',
@@ -391,6 +439,13 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.milliseconds': 'Millisecondes (ex. 1000 = 1 seconde)',
   'visualFlowEditor.command.selectLabel': 'Sélectionner une étiquette...',
   'visualFlowEditor.command.labelName': 'Nom de l\'étiquette...',
+  'visualFlowEditor.command.selectScript': 'Sélectionner un script...',
+  'visualFlowEditor.command.selectCondition': 'Sélectionner une condition...',
+  'visualFlowEditor.command.opponent': 'Personnage Adversaire',
+  'visualFlowEditor.command.opponentPlaceholder': 'marchand, ennemi, etc.',
+  'visualFlowEditor.command.shipClassI': 'Classe I',
+  'visualFlowEditor.command.shipClassII': 'Classe II',
+  'visualFlowEditor.command.shipClassIII': 'Classe III',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Nom du script...',
@@ -513,16 +568,15 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.addOpponent.description': 'Ajouter un adversaire',
   'visualFlowEditor.tools.setShipType.description': 'Définir le type de vaisseau',
   'visualFlowEditor.tools.addPartToShip.description': 'Ajouter une pièce au vaisseau',
+  'visualFlowEditor.tools.modifyOpponentsBuildSpeed.description': 'Modifier la vitesse de construction des adversaires',
   'visualFlowEditor.tools.addPartToAsideSlot.description': 'Ajouter une pièce au slot latéral',
   'visualFlowEditor.tools.addShipParts.description': 'Ajouter plusieurs pièces',
-  'visualFlowEditor.tools.finishMission.description': 'Terminer la mission',
   'visualFlowEditor.tools.actMission.description': 'Activer la mission',
   'visualFlowEditor.tools.setDeckPreparationScript.description': 'Définir le script de préparation',
   'visualFlowEditor.tools.setFlightDeckPreparationScript.description': 'Définir le script de préparation de vol',
   'visualFlowEditor.tools.setAdvPile.description': 'Définir la pile d\'aventure',
   'visualFlowEditor.tools.setSecretAdvPile.description': 'Définir la pile secrète',
   'visualFlowEditor.tools.setSpecCondition.description': 'Définir une condition spéciale',
-  'visualFlowEditor.tools.modifyOpponentsBuildSpeed.description': 'Modifier la vitesse de construction',
   'visualFlowEditor.tools.setTurnBased.description': 'Définir le mode au tour par tour',
   'visualFlowEditor.tools.setMissionAsFailed.description': 'Marquer la mission comme échouée',
   'visualFlowEditor.tools.setMissionAsCompleted.description': 'Marquer la mission comme terminée',
@@ -562,7 +616,7 @@ export const visualFlowEditorTranslations = {
   // Tool Descriptions - Characters
   'visualFlowEditor.tools.askChar.description': 'Question avec personnage',
   'visualFlowEditor.tools.focusChar.description': 'Se concentrer sur le personnage',
-  'visualFlowEditor.tools.changeChar.description': 'Changer l\'image du personnage',
+  'visualFlowEditor.tools.changeChar.description': 'Changer le personnage',
   
   // CHANGECHAR Block
   'visualFlowEditor.blocks.changeChar.title': 'Changer Personnage',
@@ -609,4 +663,146 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.metacode.plural': 'Pluriel',
   'visualFlowEditor.metacode.singularExample': 'singulier (ex. point)',
   'visualFlowEditor.metacode.pluralExample': 'pluriel (ex. points)',
+  
+  // Blocks
+  'visualFlowEditor.blocks.modifyOpponentsBuildSpeed.percentage': 'Vitesse Construction %',
+
+  // Mission Commands (sans paramètres)
+  'visualFlowEditor.blocks.setTurnBased.compact': 'Activer le mode tour par tour',
+  'visualFlowEditor.blocks.setTurnBased.fullDescription': 'Définit la mission pour s\'exécuter en mode tour par tour. Cela affecte la manière dont les actions sont traitées pendant la mission.',
+  'visualFlowEditor.blocks.setMissionAsFailed.compact': 'Marquer mission échouée',
+  'visualFlowEditor.blocks.setMissionAsFailed.fullDescription': 'Marque immédiatement la mission actuelle comme ÉCHOUÉE. À utiliser lorsque les conditions d\'échec sont remplies.',
+  'visualFlowEditor.blocks.setMissionAsCompleted.compact': 'Marquer mission réussie',
+  'visualFlowEditor.blocks.setMissionAsCompleted.fullDescription': 'Marque immédiatement la mission actuelle comme TERMINÉE. À utiliser lorsque les conditions de succès sont remplies.',
+  'visualFlowEditor.blocks.allShipsGiveUp.compact': 'Tous les vaisseaux se rendent',
+  'visualFlowEditor.blocks.allShipsGiveUp.fullDescription': 'Force tous les vaisseaux à se rendre. Utile pour terminer les engagements ou passer à des états post-combat.',
+  'visualFlowEditor.blocks.giveUpFlight.compact': 'Abandonner le vol',
+  'visualFlowEditor.blocks.giveUpFlight.fullDescription': 'Abandonne la phase de vol actuelle et sort du vol actif.',
+
+  // SETADVPILE
+  'visualFlowEditor.blocks.setAdvPile.parameters': 'Paramètres',
+  'visualFlowEditor.blocks.setAdvPile.placeholder': 'ex. 1 3',
+  'visualFlowEditor.blocks.setAdvPile.hint': '1 3',
+  'visualFlowEditor.blocks.setAdvPile.noParameters': 'Aucun paramètre configuré',
+  'visualFlowEditor.blocks.setAdvPile.params': 'Paramètres',
+
+  // SETSECRETADVPILE
+  'visualFlowEditor.blocks.setSecretAdvPile.parameters': 'Paramètres',
+  'visualFlowEditor.blocks.setSecretAdvPile.placeholder': 'ex. 2 1',
+  'visualFlowEditor.blocks.setSecretAdvPile.hint': '2 1',
+  'visualFlowEditor.blocks.setSecretAdvPile.noParameters': 'Aucun paramètre configuré',
+  'visualFlowEditor.blocks.setSecretAdvPile.params': 'Paramètres',
+
+  // SHOWCHAR
+  'visualFlowEditor.blocks.showChar.title': 'Afficher Personnage',
+  'visualFlowEditor.blocks.showChar.description': 'Affiche un personnage dans la scène',
+  'visualFlowEditor.blocks.showChar.selectCharacter': 'Sélectionnez le personnage à afficher',
+  'visualFlowEditor.blocks.showChar.position': 'Position du personnage',
+  'visualFlowEditor.blocks.showChar.positions.left': 'Gauche',
+  'visualFlowEditor.blocks.showChar.positions.right': 'Droite',
+  'visualFlowEditor.blocks.showChar.positions.top': 'Haut',
+  'visualFlowEditor.blocks.showChar.positions.bottom': 'Bas',
+  'visualFlowEditor.blocks.showChar.positions.lefttop': 'Haut-Gauche',
+  'visualFlowEditor.blocks.showChar.positions.leftbottom': 'Bas-Gauche',
+  'visualFlowEditor.blocks.showChar.positions.righttop': 'Haut-Droite',
+  'visualFlowEditor.blocks.showChar.positions.rightbottom': 'Bas-Droite',
+
+  // HIDECHAR
+  'visualFlowEditor.blocks.hideChar.title': 'Masquer Personnage',
+  'visualFlowEditor.blocks.hideChar.description': 'Masque un personnage de la scène',
+  'visualFlowEditor.blocks.hideChar.selectCharacter': 'Sélectionnez le personnage à masquer',
+
+  // SAYCHAR
+  'visualFlowEditor.blocks.sayChar.title': 'Parole Personnage',
+  'visualFlowEditor.blocks.sayChar.description': 'Affiche un personnage et montre son dialogue',
+  'visualFlowEditor.blocks.sayChar.selectCharacter': 'Sélectionnez le personnage qui parle',
+  'visualFlowEditor.blocks.sayChar.selectCharacterPlaceholder': 'Choisissez un personnage...',
+  'visualFlowEditor.blocks.sayChar.dialogPlaceholder': 'Entrez le dialogue du personnage...',
+  'visualFlowEditor.blocks.sayChar.dialogLabel': 'Dialogue du personnage',
+  'visualFlowEditor.blocks.sayChar.noParameters': 'Aucun personnage ou texte',
+  'visualFlowEditor.blocks.sayChar.noText': 'Aucun texte',
+  'visualFlowEditor.blocks.sayChar.noCharacter': 'Aucun personnage',
+
+  // ANNOUNCE
+  'visualFlowEditor.blocks.announce.title': 'Annonce',
+  'visualFlowEditor.blocks.announce.description': 'Affiche un message d\'annonce sans nécessiter de scène',
+  'visualFlowEditor.blocks.announce.placeholder': 'Entrez le texte de l\'annonce...',
+  'visualFlowEditor.blocks.announce.textLabel': 'Texte de l\'annonce',
+
+  // RETURN
+  'visualFlowEditor.blocks.return.title': 'Retour',
+  'visualFlowEditor.blocks.return.descriptionSubscript': 'Rend le contrôle au script parent',
+  'visualFlowEditor.blocks.return.descriptionRoot': 'Retourne depuis le script actuel (niveau racine)',
+  'visualFlowEditor.blocks.return.warningRootLevel': 'Attention : Ce RETURN est au niveau racine. Il quittera l\'ensemble du script.',
+  'visualFlowEditor.blocks.return.returnToParent': 'Retour au script parent',
+  'visualFlowEditor.blocks.return.navigateToParent': 'Aller au script parent',
+  'visualFlowEditor.blocks.return.goBack': 'Retour',
+  'visualFlowEditor.blocks.return.rootLevel': 'Au niveau racine',
+
+  // SET
+  'visualFlowEditor.blocks.set.title': 'Set',
+  'visualFlowEditor.blocks.set.semaphoreLabel': 'Sémaphore',
+  'visualFlowEditor.blocks.set.selectSemaphore': 'Sélectionnez le sémaphore à activer',
+  'visualFlowEditor.blocks.set.description': 'Met le sémaphore à TRUE',
+  'visualFlowEditor.blocks.set.noSemaphore': 'Aucun sémaphore sélectionné',
+
+  // RESET
+  'visualFlowEditor.blocks.reset.title': 'Reset',
+  'visualFlowEditor.blocks.reset.semaphoreLabel': 'Sémaphore',
+  'visualFlowEditor.blocks.reset.selectSemaphore': 'Sélectionnez le sémaphore à réinitialiser',
+  'visualFlowEditor.blocks.reset.description': 'Met le sémaphore à FALSE',
+  'visualFlowEditor.blocks.reset.noSemaphore': 'Aucun sémaphore sélectionné',
+
+  // Character Selector
+  'visualFlowEditor.blocks.characterSelector.search': 'Rechercher des personnages...',
+  'visualFlowEditor.blocks.characterSelector.loading': 'Chargement des personnages...',
+  'visualFlowEditor.blocks.characterSelector.noAvailable': 'Aucun personnage disponible à afficher',
+  'visualFlowEditor.blocks.characterSelector.noVisible': 'Aucun personnage visible à masquer',
+  'visualFlowEditor.blocks.characterSelector.selected': 'Sélectionné',
+
+  // Validations ajoutées
+  'visualFlowEditor.validation.announceNoText': 'Le bloc ANNOUNCE doit avoir du texte. Ajoutez au moins le texte en anglais.',
+  'visualFlowEditor.validation.optNoText': 'Le bloc OPT doit avoir du texte. Ajoutez au moins le texte en anglais.',
+  'visualFlowEditor.validation.subScriptNoName': 'Le bloc SUB_SCRIPT doit avoir un nom de script. Sélectionnez un script à exécuter.',
+  'visualFlowEditor.validation.actMissionNoMission': 'Le bloc ACT_MISSION doit avoir une mission sélectionnée. Choisissez une mission à activer.',
+  'visualFlowEditor.validation.setDeckPreparationScriptNoScript': 'Le bloc SETDECKPREPARATIONSCRIPT doit avoir un script sélectionné. Choisissez un script.',
+  'visualFlowEditor.validation.setFlightDeckPreparationScriptNoScript': 'Le bloc SETFLIGHTDECKPREPARATIONSCRIPT doit avoir un script sélectionné. Choisissez un script.',
+  'visualFlowEditor.validation.returnAtRootLevel': 'Attention : RETURN au niveau racine quittera l\'ensemble du script.',
+  'visualFlowEditor.validation.setNoSemaphore': 'Le bloc SET doit avoir un sémaphore sélectionné. Choisissez un sémaphore à activer.',
+  'visualFlowEditor.validation.resetNoSemaphore': 'Le bloc RESET doit avoir un sémaphore sélectionné. Choisissez un sémaphore à réinitialiser.',
+  'visualFlowEditor.validation.exitMenuOutsideOptError': '🚫 Le bloc EXIT_MENU ne peut être inséré qu\'à l\'intérieur d\'un bloc OPT.',
+  'visualFlowEditor.validation.exitMenuOnlyInOpt': 'Le bloc EXIT_MENU ne peut être inséré qu\'à l\'intérieur d\'un bloc OPT.',
+  'visualFlowEditor.validation.showCharNoCharacter': 'Le bloc SHOWCHAR doit avoir un personnage sélectionné.',
+  'visualFlowEditor.validation.showCharNoPosition': 'Le bloc SHOWCHAR doit avoir une position sélectionnée.',
+  'visualFlowEditor.validation.hideCharNoCharacter': 'Le bloc HIDECHAR doit avoir un personnage sélectionné.',
+  'visualFlowEditor.validation.addPartToShipNoParams': 'Le bloc ADDPARTTOSHIP doit avoir des paramètres. Spécifiez la pièce à ajouter.',
+  'visualFlowEditor.validation.addPartToAsideSlotNoParams': 'Le bloc ADDPARTTOASIDESLOT doit avoir des paramètres. Spécifiez la pièce à ajouter.',
+  'visualFlowEditor.validation.setAdvPileNoParams': 'Le bloc SETADVPILE doit avoir des paramètres. Fournissez deux entiers séparés par un espace, sans guillemets.',
+  'visualFlowEditor.validation.setSecretAdvPileNoParams': 'Le bloc SETSECRETADVPILE doit avoir des paramètres. Fournissez deux entiers séparés par un espace, sans guillemets.',
+  'visualFlowEditor.validation.setAdvPileNotInBuild': 'SETADVPILE devrait être dans un bloc BUILD. Déplacez ce bloc dans une phase de construction.',
+  'visualFlowEditor.validation.setSecretAdvPileNotInBuild': 'SETSECRETADVPILE devrait être dans un bloc BUILD. Déplacez ce bloc dans une phase de construction.',
+  'visualFlowEditor.validation.setDeckPreparationScriptOutsideContext': 'SETDECKPREPARATIONSCRIPT devrait être dans un bloc MISSION, BUILD ou FLIGHT. Envisagez de déplacer ce bloc dans un de ces conteneurs.',
+  'visualFlowEditor.validation.setFlightDeckPreparationScriptOutsideContext': 'SETFLIGHTDECKPREPARATIONSCRIPT devrait être dans un bloc MISSION, BUILD ou FLIGHT. Envisagez de déplacer ce bloc dans un de ces conteneurs.',
+  'visualFlowEditor.validation.setTurnBasedOutsideContext': 'SETTURNBASED devrait être dans un bloc MISSION, BUILD ou FLIGHT. Envisagez de déplacer ce bloc dans un de ces conteneurs.',
+  'visualFlowEditor.validation.setMissionAsFailedOutsideContext': 'SETMISSIONASFAILED devrait être dans un bloc MISSION, BUILD ou FLIGHT. Envisagez de déplacer ce bloc dans un de ces conteneurs.',
+  'visualFlowEditor.validation.setMissionAsCompletedOutsideContext': 'SETMISSIONASCOMPLETED devrait être dans un bloc MISSION, BUILD ou FLIGHT. Envisagez de déplacer ce bloc dans un de ces conteneurs.',
+  'visualFlowEditor.validation.allShipsGiveUpOutsideContext': 'ALLSHIPSGIVEUP devrait être dans un bloc MISSION, BUILD ou FLIGHT. Envisagez de déplacer ce bloc dans un de ces conteneurs.',
+  'visualFlowEditor.validation.giveUpFlightOutsideContext': 'GIVEUPFLIGHT devrait être dans un bloc MISSION, BUILD ou FLIGHT. Envisagez de déplacer ce bloc dans un de ces conteneurs.',
+  'visualFlowEditor.validation.showcharNoScene': 'SHOWCHAR nécessite une scène active. Ajoutez SHOWDLGSCENE avant ce bloc.',
+  'visualFlowEditor.validation.hidecharNoScene': 'HIDECHAR nécessite une scène active. Ajoutez SHOWDLGSCENE avant ce bloc.',
+  'visualFlowEditor.validation.hidecharNoVisibleCharacters': 'HIDECHAR ne peut pas être utilisé : aucun personnage visible dans la scène.',
+  'visualFlowEditor.validation.hidecharCharacterNotVisible': 'Le personnage sélectionné n\'est pas visible dans la scène.',
+  'visualFlowEditor.validation.changecharNoCharacter': 'Le bloc CHANGECHAR doit préciser quel personnage changer. Sélectionnez un personnage dans la liste.',
+  'visualFlowEditor.validation.changecharNoImage': 'Le bloc CHANGECHAR doit préciser la nouvelle image. Sélectionnez une image dans la liste.',
+  'visualFlowEditor.validation.changecharNoScene': 'CHANGECHAR nécessite une scène active. Ajoutez SHOWDLGSCENE avant ce bloc.',
+  'visualFlowEditor.validation.changecharNoVisibleCharacters': 'CHANGECHAR ne peut pas être utilisé : aucun personnage visible dans la scène.',
+  'visualFlowEditor.validation.changecharCharacterNotVisible': 'Le personnage sélectionné n\'est pas visible dans la scène.',
+  'visualFlowEditor.validation.changecharImageNotInList': 'L\'image sélectionnée n\'est pas disponible pour ce personnage.',
+  'visualFlowEditor.validation.saycharNoCharacter': 'Le bloc SAYCHAR doit préciser quel personnage parle. Sélectionnez un personnage dans la liste.',
+  'visualFlowEditor.validation.saycharNoText': 'Le bloc SAYCHAR doit avoir du texte. Entrez le dialogue du personnage.',
+  'visualFlowEditor.validation.saycharNoScene': 'SAYCHAR nécessite une scène active. Ajoutez SHOWDLGSCENE avant ce bloc.',
+  'visualFlowEditor.validation.sayNoScene': 'SAY nécessite une scène active. Ajoutez SHOWDLGSCENE avant ce bloc.',
+  'visualFlowEditor.validation.askNoScene': 'ASK nécessite une scène active. Ajoutez SHOWDLGSCENE avant ce bloc.',
+  'visualFlowEditor.validation.askIfInvalidThen': 'Après ASK, la branche THEN du bloc IF doit commencer par MENU ou GO.',
+  'visualFlowEditor.validation.askIfInvalidElse': 'Après ASK, la branche ELSE du bloc IF doit commencer par MENU ou GO.',
 } as const;

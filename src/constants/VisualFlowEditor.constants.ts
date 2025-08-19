@@ -3,6 +3,9 @@
  * Centralized location for all magic numbers used in VisualFlowEditor
  */
 
+// Supported languages for Galaxy Trucker
+export const SUPPORTED_LANGUAGES = ['EN', 'IT', 'DE', 'ES', 'FR', 'PL', 'CS', 'RU'] as const;
+
 // Timeout and debouncing constants
 export const TIMEOUT_CONSTANTS = {
   HIGHLIGHT_DURATION: 2000, // ms - Duration for block highlighting

@@ -20,6 +20,8 @@ interface MenuBlockProps {
   collapseAllTrigger?: number;
   expandAllTrigger?: number;
   globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
+  isCustom?: boolean;
+  availableLanguages?: string[];
 }
 
 export const MenuBlock: React.FC<MenuBlockProps> = ({
@@ -38,7 +40,9 @@ export const MenuBlock: React.FC<MenuBlockProps> = ({
   validationType,
   collapseAllTrigger = 0,
   expandAllTrigger = 0,
-  globalCollapseState = 'manual'
+  globalCollapseState = 'manual',
+  isCustom,
+  availableLanguages
 }) => {
   const { t } = useTranslation();
   // Stato per collapse/expand - rispetta il globalCollapseState all'inizializzazione

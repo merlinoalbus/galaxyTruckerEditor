@@ -1,6 +1,7 @@
 // Utility functions for serving images from the Galaxy Trucker game directory
+import { API_CONFIG } from '@/config/constants';
 
-const SERVER_URL = 'http://localhost:3001';
+const SERVER_URL = API_CONFIG.BE_BASE_URL;
 
 export const getImageUrl = (imagePath: string): string => {
   if (!imagePath) return '';

@@ -60,6 +60,21 @@ export const convertBlocksToJson = (blocks: any[]): any[] => {
       jsonBlock.parameters = {
         script: block.parameters.script || ''
       };
+    } else if (block.type === 'ADDSHIPPARTS' && block.parameters) {
+      // ADDSHIPPARTS usa 'params' per il percorso del file YAML
+      jsonBlock.parameters = {
+        params: block.parameters.params || ''
+      };
+    } else if ((block.type === 'SETDECKPREPARATIONSCRIPT' || block.type === 'SETFLIGHTDECKPREPARATIONSCRIPT') && block.parameters) {
+      // Entrambi usano un singolo parametro 'script' come SUB_SCRIPT
+      jsonBlock.parameters = {
+        script: block.parameters.script || ''
+      };
+    } else if ((block.type === 'SETADVPILE' || block.type === 'SETSECRETADVPILE') && block.parameters) {
+      // Entrambi usano un singolo parametro 'params' (stringa con due interi), senza virgolette lato serialize
+      jsonBlock.parameters = {
+        params: block.parameters.params || ''
+      };
     } else if (block.isContainer && block.children) {
       jsonBlock.children = convertBlocksToJson(block.children);
     } else if (block.parameters) {
@@ -86,7 +101,7 @@ export const generateMissionJson = (missionBlocks: any[]) => {
   if (!missionBlock) return null;
   
   return {
-    name: missionBlock.missionName,
+    name: missionBlock.name || missionBlock.missionName,
     fileName: missionBlock.fileName,
     blocksMission: convertBlocksToJson(missionBlock.blocksMission || []),
     blocksFinish: convertBlocksToJson(missionBlock.blocksFinish || [])

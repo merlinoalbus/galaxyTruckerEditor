@@ -1,6 +1,6 @@
 import React, { useState, ReactNode, useRef, useEffect } from 'react';
 import { Trash2, ChevronDown, ChevronUp, GripVertical } from 'lucide-react';
-import { getBlockColors, getBlockIconBackground, getBlockDragHandle } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
+import { getBlockColors } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
 import { useTranslation } from '@/locales';
 import { CharacterAvatar } from '../../CharacterAvatar';
 
@@ -39,6 +39,7 @@ interface BaseBlockProps {
   // Mostra avatar per blocchi SAY/ASK
   showAvatar?: boolean;
   avatarCharacter?: any; // Personaggio da mostrare nell'avatar
+  isShipType?: boolean; // Indica se l'avatar è per SETSHIPTYPE
 }
 
 /**
@@ -62,7 +63,8 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
   hideControls = false,
   extraControls,
   showAvatar = false,
-  avatarCharacter
+  avatarCharacter,
+  isShipType = false
 }) => {
   const { t } = useTranslation();
   // Stato interno per collapse se non è controllato dall'esterno
@@ -81,53 +83,58 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
     }
   };
 
-  // Controlla overflow progressivo
+  // Controlla overflow progressivo senza entrare in loop di aggiornamento
+  const showCompactParamsRef = useRef(showCompactParams);
+  const showElementCountRef = useRef(showElementCount);
   useEffect(() => {
-    if (!isCollapsed || !headerRef.current) {
-      setShowCompactParams(true);
-      setShowElementCount(true);
+    showCompactParamsRef.current = showCompactParams;
+  }, [showCompactParams]);
+  useEffect(() => {
+    showElementCountRef.current = showElementCount;
+  }, [showElementCount]);
+
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!isCollapsed || !header) {
+      if (!showCompactParamsRef.current) setShowCompactParams(true);
+      if (!showElementCountRef.current) setShowElementCount(true);
       return;
     }
 
     const checkOverflow = () => {
-      const header = headerRef.current;
-      if (!header) return;
-      
-      const containerWidth = header.clientWidth;
-      const contentWidth = header.scrollWidth;
-      
-      // Se c'è overflow
+      const h = headerRef.current;
+      if (!h) return;
+      const containerWidth = h.clientWidth;
+      const contentWidth = h.scrollWidth;
+
       if (contentWidth > containerWidth) {
-        // Prima nascondi i parametri compatti
-        if (showCompactParams) {
+        if (showCompactParamsRef.current) {
+          showCompactParamsRef.current = false;
           setShowCompactParams(false);
           return;
         }
-        // Poi nascondi il conteggio elementi
-        if (showElementCount) {
+        if (showElementCountRef.current) {
+          showElementCountRef.current = false;
           setShowElementCount(false);
           return;
         }
       } else {
-        // Se non c'è overflow, mostra tutto progressivamente
-        if (!showElementCount) {
+        if (!showElementCountRef.current) {
+          showElementCountRef.current = true;
           setShowElementCount(true);
-        } else if (!showCompactParams) {
+        } else if (!showCompactParamsRef.current) {
+          showCompactParamsRef.current = true;
           setShowCompactParams(true);
         }
       }
     };
 
+    // Esegui un primo controllo e attiva observer
     checkOverflow();
     const resizeObserver = new ResizeObserver(checkOverflow);
-    if (headerRef.current) {
-      resizeObserver.observe(headerRef.current);
-    }
-    
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [isCollapsed, compactParams, showCompactParams, showElementCount]);
+    resizeObserver.observe(header);
+    return () => resizeObserver.disconnect();
+  }, [isCollapsed, compactParams]);
 
   // Calcola il padding in base allo stato collapsed
   const paddingClass = isCollapsed ? 'p-2' : 'p-4';
@@ -275,7 +282,7 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
         {/* Avatar per SAY/ASK sempre visibile */}
         {showAvatar && (
           <div className="ml-auto mr-2">
-            <CharacterAvatar character={avatarCharacter} />
+            <CharacterAvatar character={avatarCharacter} isShipType={isShipType} />
           </div>
         )}
       </div>

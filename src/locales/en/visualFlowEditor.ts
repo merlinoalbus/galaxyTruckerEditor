@@ -5,7 +5,7 @@
 export const visualFlowEditorTranslations = {
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
-  'visualFlowEditor.subtitle': 'Complete visual editor with all 14 IF types',
+  'visualFlowEditor.subtitle': 'Complete Visual Editor',
   'visualFlowEditor.loading': 'Loading Visual Flow Editor...',
   'visualFlowEditor.noScriptLoaded': 'No script loaded',
   
@@ -56,6 +56,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.goToBlock': 'Go →',
   'visualFlowEditor.validation.goToBlockTitle': 'Go to block',
   'visualFlowEditor.validation.footer': 'Fix these errors to ensure the script works correctly. Blocks with errors are highlighted in red in the editor.',
+  'visualFlowEditor.validation.setSpecConditionNoCondition': 'SETSPECCONDITION must specify a condition. Choose one from the list.',
+  'visualFlowEditor.validation.setSpecConditionOutsideContext': 'SETSPECCONDITION should be used inside a MISSION, BUILD or FLIGHT block. Consider moving it.',
+  'visualFlowEditor.validation.modifyOpponentsBuildSpeedNoPercentage': 'MODIFYOPPONENTSBUILDSPEED must have a percentage value (1-200).',
+  'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutOfRange': 'MODIFYOPPONENTSBUILDSPEED percentage must be between 1 and 200.',
+  'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutsideContext': 'MODIFYOPPONENTSBUILDSPEED should be inside a MISSION, BUILD or FLIGHT block.',
   
   // Delay Block
   'visualFlowEditor.blocks.delay.duration': 'Duration',
@@ -74,11 +79,66 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.subScript.hint': 'Select the script to execute',
   'visualFlowEditor.blocks.subScript.navigate': 'Navigate to sub-script',
   
+  // ACT_MISSION Block
+  'visualFlowEditor.blocks.actMission.missionName': 'Mission Name',
+  'visualFlowEditor.blocks.actMission.hint': 'Select the mission to activate',
+  'visualFlowEditor.blocks.actMission.navigate': 'Navigate to mission',
+  
   // EXIT_MENU Block
   'visualFlowEditor.blocks.exitMenu.description': 'Exit from current menu',
   'visualFlowEditor.blocks.exitMenu.info': 'This command exits the current menu and continues execution',
   'visualFlowEditor.blocks.exitMenu.compact': 'Exit menu',
   'visualFlowEditor.blocks.exitMenu.fullDescription': 'Exit from current menu. This command exits the current menu and continues execution.',
+
+  // Mission Commands (parameterless)
+  'visualFlowEditor.blocks.setTurnBased.compact': 'Set turn-based mode',
+  'visualFlowEditor.blocks.setTurnBased.fullDescription': 'Set the mission to run in turn-based mode. This affects how actions are processed during the mission.',
+  'visualFlowEditor.blocks.setMissionAsFailed.compact': 'Mark mission failed',
+  'visualFlowEditor.blocks.setMissionAsFailed.fullDescription': 'Immediately mark the current mission as FAILED. Use this when mission failure conditions are met.',
+  'visualFlowEditor.blocks.setMissionAsCompleted.compact': 'Mark mission completed',
+  'visualFlowEditor.blocks.setMissionAsCompleted.fullDescription': 'Immediately mark the current mission as COMPLETED. Use this when mission success conditions are met.',
+  'visualFlowEditor.blocks.allShipsGiveUp.compact': 'All ships surrender',
+  'visualFlowEditor.blocks.allShipsGiveUp.fullDescription': 'Force all ships to surrender. Useful to end engagements or transition to post-combat states.',
+  'visualFlowEditor.blocks.giveUpFlight.compact': 'Surrender flight',
+  'visualFlowEditor.blocks.giveUpFlight.fullDescription': 'Give up the current flight phase, transitioning out of active flight.',
+  
+  // ADDPARTTOSHIP Block
+  'visualFlowEditor.blocks.addPartToShip.parameters': 'Parameters',
+  'visualFlowEditor.blocks.addPartToShip.placeholder': 'e.g. 1 7 alienEngine 3333 0',
+  'visualFlowEditor.blocks.addPartToShip.hint': '1 7 alienEngine 3333 0',
+  'visualFlowEditor.blocks.addPartToShip.noParameters': 'No parameters configured',
+  'visualFlowEditor.blocks.addPartToShip.params': 'Params',
+
+  // SETSPECCONDITION Block
+  'visualFlowEditor.blocks.setSpecCondition.condition': 'Condition',
+  
+  // SETADVPILE Block
+  'visualFlowEditor.blocks.setAdvPile.parameters': 'Parameters',
+  'visualFlowEditor.blocks.setAdvPile.placeholder': 'e.g. 1 3',
+  'visualFlowEditor.blocks.setAdvPile.hint': '1 3',
+  'visualFlowEditor.blocks.setAdvPile.noParameters': 'No parameters configured',
+  'visualFlowEditor.blocks.setAdvPile.params': 'Params',
+  
+  // SETSECRETADVPILE Block
+  'visualFlowEditor.blocks.setSecretAdvPile.parameters': 'Parameters',
+  'visualFlowEditor.blocks.setSecretAdvPile.placeholder': 'e.g. 2 1',
+  'visualFlowEditor.blocks.setSecretAdvPile.hint': '2 1',
+  'visualFlowEditor.blocks.setSecretAdvPile.noParameters': 'No parameters configured',
+  'visualFlowEditor.blocks.setSecretAdvPile.params': 'Params',
+  
+  // ADDPARTTOASIDESLOT Block  
+  'visualFlowEditor.blocks.addPartToAsideSlot.parameters': 'Parameters',
+  'visualFlowEditor.blocks.addPartToAsideSlot.placeholder': 'e.g. alienGun 2 1 2 0',
+  'visualFlowEditor.blocks.addPartToAsideSlot.hint': 'alienGun 2 1 2 0',
+  'visualFlowEditor.blocks.addPartToAsideSlot.noParameters': 'No parameters configured',
+  'visualFlowEditor.blocks.addPartToAsideSlot.params': 'Params',
+  
+  // ADDSHIPPARTS Block
+  'visualFlowEditor.blocks.addShipParts.partsFileLabel': 'Parts File',
+  'visualFlowEditor.blocks.addShipParts.selectParts': 'Select parts file',
+  'visualFlowEditor.blocks.addShipParts.loading': 'Loading parts...',
+  'visualFlowEditor.blocks.addShipParts.noParts': 'No parts file selected',
+  'visualFlowEditor.blocks.addShipParts.description': 'Load ship parts from YAML file',
   
   // Metacode System
   'visualFlowEditor.metacode.found': 'Found',
@@ -271,6 +331,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.labelNoName': 'LABEL block must have a name. Set the anchor name.',
   'visualFlowEditor.validation.optNoText': 'OPT block must have text. Add at least the English text.',
   'visualFlowEditor.validation.subScriptNoName': 'SUB_SCRIPT block must have a script name. Select a script to execute.',
+  'visualFlowEditor.validation.actMissionNoMission': 'ACT_MISSION block must have a mission selected. Choose a mission to activate.',
+  'visualFlowEditor.validation.setDeckPreparationScriptNoScript': 'SETDECKPREPARATIONSCRIPT block must have a script selected. Choose a script.',
+  'visualFlowEditor.validation.setFlightDeckPreparationScriptNoScript': 'SETFLIGHTDECKPREPARATIONSCRIPT block must have a script selected. Choose a script.',
   'visualFlowEditor.validation.returnAtRootLevel': 'Warning: RETURN at root level will exit the entire script.',
   'visualFlowEditor.validation.setNoSemaphore': 'SET block must have a semaphore selected. Choose a semaphore to set.',
   'visualFlowEditor.validation.resetNoSemaphore': 'RESET block must have a semaphore selected. Choose a semaphore to reset.',
@@ -302,6 +365,27 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.showCharNoCharacter': 'SHOWCHAR block must have a character selected.',
   'visualFlowEditor.validation.showCharNoPosition': 'SHOWCHAR block must have a position selected.',
   'visualFlowEditor.validation.hideCharNoCharacter': 'HIDECHAR block must have a character selected.',
+  'visualFlowEditor.validation.addOpponentNoCharacter': 'ADDOPPONENT block must have a character selected.',
+  'visualFlowEditor.validation.addOpponentNotInMission': 'ADDOPPONENT should be inside a MISSION block.',
+  'visualFlowEditor.validation.setShipTypeNoType': 'SETSHIPTYPE block must have a ship type selected.',
+  'visualFlowEditor.validation.setShipTypeNotInMission': 'SETSHIPTYPE should be inside a MISSION block.',
+  'visualFlowEditor.validation.addPartToShipNoParams': 'ADDPARTTOSHIP block must have parameters. Specify the part to add.',
+  'visualFlowEditor.validation.addPartToShipNotInBuild': 'ADDPARTTOSHIP should be inside a BUILD block. Consider moving this block inside a build phase.',
+  'visualFlowEditor.validation.addPartToAsideSlotNoParams': 'ADDPARTTOASIDESLOT block must have parameters. Specify the part to add.',
+  'visualFlowEditor.validation.addPartToAsideSlotNotInBuild': 'ADDPARTTOASIDESLOT should be inside a BUILD block. Consider moving this block inside a build phase.',
+  'visualFlowEditor.validation.addShipPartsNoParams': 'ADDSHIPPARTS block must specify a parts file. Select a YAML file to load parts.',
+  'visualFlowEditor.validation.addShipPartsNotInBuild': 'ADDSHIPPARTS should be inside a BUILD block. Consider moving this block inside a build phase.',
+  'visualFlowEditor.validation.setAdvPileNoParams': 'SETADVPILE block must have parameters. Provide two integers separated by a space, unquoted.',
+  'visualFlowEditor.validation.setSecretAdvPileNoParams': 'SETSECRETADVPILE block must have parameters. Provide two integers separated by a space, unquoted.',
+  'visualFlowEditor.validation.setAdvPileNotInBuild': 'SETADVPILE should be inside a BUILD block. Consider moving this block inside a build phase.',
+  'visualFlowEditor.validation.setSecretAdvPileNotInBuild': 'SETSECRETADVPILE should be inside a BUILD block. Consider moving this block inside a build phase.',
+  'visualFlowEditor.validation.setDeckPreparationScriptOutsideContext': 'SETDECKPREPARATIONSCRIPT should be inside a MISSION, BUILD or FLIGHT block. Consider moving this block into one of these containers.',
+  'visualFlowEditor.validation.setFlightDeckPreparationScriptOutsideContext': 'SETFLIGHTDECKPREPARATIONSCRIPT should be inside a MISSION, BUILD or FLIGHT block. Consider moving this block into one of these containers.',
+  'visualFlowEditor.validation.setTurnBasedOutsideContext': 'SETTURNBASED should be inside a MISSION, BUILD or FLIGHT block. Consider moving this block into one of these containers.',
+  'visualFlowEditor.validation.setMissionAsFailedOutsideContext': 'SETMISSIONASFAILED should be inside a MISSION, BUILD or FLIGHT block. Consider moving this block into one of these containers.',
+  'visualFlowEditor.validation.setMissionAsCompletedOutsideContext': 'SETMISSIONASCOMPLETED should be inside a MISSION, BUILD or FLIGHT block. Consider moving this block into one of these containers.',
+  'visualFlowEditor.validation.allShipsGiveUpOutsideContext': 'ALLSHIPSGIVEUP should be inside a MISSION, BUILD or FLIGHT block. Consider moving this block into one of these containers.',
+  'visualFlowEditor.validation.giveUpFlightOutsideContext': 'GIVEUPFLIGHT should be inside a MISSION, BUILD or FLIGHT block. Consider moving this block into one of these containers.',
   'visualFlowEditor.validation.showcharNoScene': 'SHOWCHAR requires an active scene. Add SHOWDLGSCENE before this block.',
   'visualFlowEditor.validation.hidecharNoScene': 'HIDECHAR requires an active scene. Add SHOWDLGSCENE before this block.',
   'visualFlowEditor.validation.hidecharNoVisibleCharacters': 'HIDECHAR cannot be used: no visible characters in the scene.',
@@ -503,6 +587,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.selectLabel': 'Select label...',
   'visualFlowEditor.command.labelName': 'Label name...',
   'visualFlowEditor.command.selectScript': 'Select script...',
+  'visualFlowEditor.command.opponent': 'Opponent Character',
+  'visualFlowEditor.command.opponentPlaceholder': 'merchant, enemy, etc.',
+  'visualFlowEditor.command.shipClassI': 'Class I',
+  'visualFlowEditor.command.shipClassII': 'Class II',
+  'visualFlowEditor.command.shipClassIII': 'Class III',
+  'visualFlowEditor.command.selectCondition': 'Select condition...',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Script name...',
@@ -626,16 +716,15 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.addOpponent.description': 'Add opponent',
   'visualFlowEditor.tools.setShipType.description': 'Set ship type',
   'visualFlowEditor.tools.addPartToShip.description': 'Add part to ship',
+  'visualFlowEditor.tools.modifyOpponentsBuildSpeed.description': 'Modify opponents build speed',
   'visualFlowEditor.tools.addPartToAsideSlot.description': 'Add part to aside slot',
   'visualFlowEditor.tools.addShipParts.description': 'Add multiple parts',
-  'visualFlowEditor.tools.finishMission.description': 'Finish mission',
   'visualFlowEditor.tools.actMission.description': 'Activate mission',
   'visualFlowEditor.tools.setDeckPreparationScript.description': 'Set deck script',
   'visualFlowEditor.tools.setFlightDeckPreparationScript.description': 'Set flight deck script',
   'visualFlowEditor.tools.setAdvPile.description': 'Set adventure pile',
   'visualFlowEditor.tools.setSecretAdvPile.description': 'Set secret pile',
   'visualFlowEditor.tools.setSpecCondition.description': 'Set special condition',
-  'visualFlowEditor.tools.modifyOpponentsBuildSpeed.description': 'Modify build speed',
   'visualFlowEditor.tools.setTurnBased.description': 'Set turn mode',
   'visualFlowEditor.tools.setMissionAsFailed.description': 'Mark mission failed',
   'visualFlowEditor.tools.setMissionAsCompleted.description': 'Mark mission completed',
@@ -712,4 +801,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.metacode.plural': 'Plural',
   'visualFlowEditor.metacode.singularExample': 'singular (e.g. point)',
   'visualFlowEditor.metacode.pluralExample': 'plural (e.g. points)',
+  
+  // Blocks
+  'visualFlowEditor.blocks.modifyOpponentsBuildSpeed.percentage': 'Build Speed %',
 } as const;

@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 import { useState, useEffect } from 'react';
 import { Achievement } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
 import { achievementsViewService } from '@/services/CampaignEditor/VariablesSystem/services/AchievementsView/achievementsViewService';
@@ -48,7 +49,7 @@ export const useAchievementsView = (achievements: Achievement[]) => {
         const imageData = await achievementsViewService.loadAchievementImages(imagePaths);
         setImageCache(prev => ({ ...prev, ...imageData }));
       } catch (error) {
-        console.error('Error loading achievement images:', error);
+  logger.error('Error loading achievement images:', error);
       }
     };
 

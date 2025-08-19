@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 import { API_CONFIG, API_ENDPOINTS } from '@/config/constants';
 import { 
   Semaforo, 
@@ -18,7 +19,7 @@ export class VariablesSystemApiService {
       const result = await response.json();
       return result.data || [];
     } catch (error) {
-      console.error(`Error fetching ${endpoint}:`, error);
+  logger.error(`Error fetching ${endpoint}:`, error);
       throw error;
     }
   }
@@ -67,7 +68,7 @@ export class VariablesSystemApiService {
         achievements
       };
     } catch (error) {
-      console.error('Error loading all data:', error);
+  logger.error('Error loading all data:', error);
       throw error;
     }
   }

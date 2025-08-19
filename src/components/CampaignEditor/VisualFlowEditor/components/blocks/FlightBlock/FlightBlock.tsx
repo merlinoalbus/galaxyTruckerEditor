@@ -26,6 +26,8 @@ interface FlightBlockProps {
   collapseAllTrigger?: number;
   expandAllTrigger?: number;
   globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
+  isCustom?: boolean;
+  availableLanguages?: string[];
 }
 
 export const FlightBlock: React.FC<FlightBlockProps> = ({
@@ -49,7 +51,9 @@ export const FlightBlock: React.FC<FlightBlockProps> = ({
   validationType,
   collapseAllTrigger = 0,
   expandAllTrigger = 0,
-  globalCollapseState = 'manual'
+  globalCollapseState = 'manual',
+  isCustom,
+  availableLanguages
 }) => {
   const { t } = useTranslation();
   const [isCollapsed, setIsCollapsed] = useState(() => {
@@ -91,14 +95,13 @@ export const FlightBlock: React.FC<FlightBlockProps> = ({
     
     checkSpace();
     const resizeObserver = new ResizeObserver(checkSpace);
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
+    const el = containerRef.current;
+    if (el) {
+      resizeObserver.observe(el);
     }
     
     return () => {
-      if (containerRef.current) {
-        resizeObserver.disconnect();
-      }
+      resizeObserver.disconnect();
     };
   }, [isCollapsed, isManuallyExpanded]);
 
@@ -146,7 +149,7 @@ export const FlightBlock: React.FC<FlightBlockProps> = ({
     <div ref={containerRef}>
       <ContainerBlock
         blockType="FLIGHT"
-        blockIcon={<span>✈️</span>}
+        blockIcon={<span>🛫</span>}
         compactParams={getCompactParams()}
         onRemove={onRemove}
         onDragStart={onDragStart}
@@ -176,12 +179,13 @@ export const FlightBlock: React.FC<FlightBlockProps> = ({
                     label=""
                   />
                   {block.blockInit.map((child: any, index: number) => (
-                    <React.Fragment key={child.id || index}>
+                    <React.Fragment key={`${child.id ?? 'init'}-${index}`}>
                       {renderChildren([child])}
                       <AnchorPoint
                         onDrop={(e) => onDropInitAtIndex(e, index + 1)}
                         onDragOver={onDragOver}
                         label=""
+                        key={`flight-init-anchor-${index}`}
                       />
                     </React.Fragment>
                   ))}
@@ -215,12 +219,13 @@ export const FlightBlock: React.FC<FlightBlockProps> = ({
                     label=""
                   />
                   {block.blockStart.map((child: any, index: number) => (
-                    <React.Fragment key={child.id || index}>
+                    <React.Fragment key={`${child.id ?? 'start'}-${index}`}>
                       {renderChildren([child])}
                       <AnchorPoint
                         onDrop={(e) => onDropStartAtIndex(e, index + 1)}
                         onDragOver={onDragOver}
                         label=""
+                        key={`flight-start-anchor-${index}`}
                       />
                     </React.Fragment>
                   ))}
@@ -254,12 +259,13 @@ export const FlightBlock: React.FC<FlightBlockProps> = ({
                     label=""
                   />
                   {block.blockEvaluate.map((child: any, index: number) => (
-                    <React.Fragment key={child.id || index}>
+                    <React.Fragment key={`${child.id ?? 'evaluate'}-${index}`}>
                       {renderChildren([child])}
                       <AnchorPoint
                         onDrop={(e) => onDropEvaluateAtIndex(e, index + 1)}
                         onDragOver={onDragOver}
                         label=""
+                        key={`flight-eval-anchor-${index}`}
                       />
                     </React.Fragment>
                   ))}

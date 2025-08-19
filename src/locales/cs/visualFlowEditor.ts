@@ -5,7 +5,7 @@
 export const visualFlowEditorTranslations = {
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
-  'visualFlowEditor.subtitle': 'Kompletní vizuální editor se všemi 14 typy IF',
+  'visualFlowEditor.subtitle': 'Kompletní Vizuální Editor',
   'visualFlowEditor.loading': 'Načítání Visual Flow Editor...',
   'visualFlowEditor.noScriptLoaded': 'Žádný skript nebyl načten',
   
@@ -56,6 +56,10 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.goToBlock': 'Přejít →',
   'visualFlowEditor.validation.goToBlockTitle': 'Přejít na blok',
   'visualFlowEditor.validation.footer': 'Opravte tyto chyby pro zajištění správného fungování skriptu. Bloky s chybami jsou v editoru zvýrazněny červeně.',
+  'visualFlowEditor.validation.addOpponentNoCharacter': 'Blok ADDOPPONENT musí mít vybraného protivníka.',
+  'visualFlowEditor.validation.addOpponentNotInMission': 'ADDOPPONENT by měl být uvnitř bloku MISSION.',
+  'visualFlowEditor.validation.setShipTypeNoType': 'Blok SETSHIPTYPE musí mít vybraný typ lodi.',
+  'visualFlowEditor.validation.setShipTypeNotInMission': 'SETSHIPTYPE by měl být uvnitř bloku MISSION.',
   
   // Delay Block
   'visualFlowEditor.blocks.delay.duration': 'Doba trvání',
@@ -73,6 +77,136 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.subScript.scriptName': 'Název skriptu',
   'visualFlowEditor.blocks.subScript.hint': 'Vyberte skript k provedení',
   'visualFlowEditor.blocks.subScript.navigate': 'Přejít na sub-skript',
+  // SETSPECCONDITION Block
+  'visualFlowEditor.blocks.setSpecCondition.condition': 'Podmínka',
+  
+  // ACT_MISSION Block
+  'visualFlowEditor.blocks.actMission.missionName': 'Název Mise',
+  'visualFlowEditor.blocks.actMission.hint': 'Vyberte misi k aktivaci',
+  'visualFlowEditor.blocks.actMission.navigate': 'Přejít na misi',
+  
+  // SHOWCHAR Block
+  'visualFlowEditor.blocks.showChar.title': 'Zobrazit Postavu',
+  'visualFlowEditor.blocks.showChar.description': 'Zobrazí postavu ve scéně',
+  'visualFlowEditor.blocks.showChar.selectCharacter': 'Vyberte postavu k zobrazení',
+  'visualFlowEditor.blocks.showChar.position': 'Pozice postavy',
+  'visualFlowEditor.blocks.showChar.positions.left': 'Vlevo',
+  'visualFlowEditor.blocks.showChar.positions.right': 'Vpravo',
+  'visualFlowEditor.blocks.showChar.positions.top': 'Nahoře',
+  'visualFlowEditor.blocks.showChar.positions.bottom': 'Dole',
+  'visualFlowEditor.blocks.showChar.positions.lefttop': 'Vlevo nahoře',
+  'visualFlowEditor.blocks.showChar.positions.leftbottom': 'Vlevo dole',
+  'visualFlowEditor.blocks.showChar.positions.righttop': 'Vpravo nahoře',
+  'visualFlowEditor.blocks.showChar.positions.rightbottom': 'Vpravo dole',
+  
+  // HIDECHAR Block
+  'visualFlowEditor.blocks.hideChar.title': 'Skrýt Postavu',
+  'visualFlowEditor.blocks.hideChar.description': 'Skryje postavu ze scény',
+  'visualFlowEditor.blocks.hideChar.selectCharacter': 'Vyberte postavu ke skrytí',
+  
+  // SAYCHAR Block
+  'visualFlowEditor.blocks.sayChar.title': 'Řekni Postava',
+  'visualFlowEditor.blocks.sayChar.description': 'Zobrazí postavu a její dialog',
+  'visualFlowEditor.blocks.sayChar.selectCharacter': 'Vyberte mluvící postavu',
+  'visualFlowEditor.blocks.sayChar.selectCharacterPlaceholder': 'Zvolte postavu...',
+  'visualFlowEditor.blocks.sayChar.dialogPlaceholder': 'Zadejte dialog postavy...',
+  'visualFlowEditor.blocks.sayChar.dialogLabel': 'Dialog postavy',
+  'visualFlowEditor.blocks.sayChar.noParameters': 'Žádná postava nebo text',
+  'visualFlowEditor.blocks.sayChar.noText': 'Bez textu',
+  'visualFlowEditor.blocks.sayChar.noCharacter': 'Bez postavy',
+  
+  // EXIT_MENU Block
+  'visualFlowEditor.blocks.exitMenu.description': 'Opustit aktuální menu',
+  'visualFlowEditor.blocks.exitMenu.info': 'Tento příkaz opustí aktuální menu a pokračuje v provádění',
+  'visualFlowEditor.blocks.exitMenu.compact': 'Opustit menu',
+  'visualFlowEditor.blocks.exitMenu.fullDescription': 'Opustit aktuální menu. Tento příkaz opustí aktuální menu a pokračuje v provádění.',
+  
+  // ANNOUNCE Block
+  'visualFlowEditor.blocks.announce.title': 'Oznámení',
+  'visualFlowEditor.blocks.announce.description': 'Zobrazí oznamovací zprávu bez nutnosti scény',
+  'visualFlowEditor.blocks.announce.placeholder': 'Zadejte text oznámení...',
+  'visualFlowEditor.blocks.announce.textLabel': 'Text oznámení',
+  
+  // RETURN Block
+  'visualFlowEditor.blocks.return.title': 'Návrat',
+  'visualFlowEditor.blocks.return.descriptionSubscript': 'Vrátí řízení nadřazenému skriptu',
+  'visualFlowEditor.blocks.return.descriptionRoot': 'Vrátí se z aktuálního skriptu (kořenová úroveň)',
+  'visualFlowEditor.blocks.return.warningRootLevel': 'Upozornění: Tento RETURN je na kořenové úrovni. Ukončí celý skript.',
+  'visualFlowEditor.blocks.return.returnToParent': 'Vrátit se k nadřazenému skriptu',
+  'visualFlowEditor.blocks.return.navigateToParent': 'Přejít na nadřazený skript',
+  'visualFlowEditor.blocks.return.goBack': 'Zpět',
+  'visualFlowEditor.blocks.return.rootLevel': 'Na kořenové úrovni',
+  
+  // SET Block
+  'visualFlowEditor.blocks.set.title': 'Set',
+  'visualFlowEditor.blocks.set.semaphoreLabel': 'Semafor',
+  'visualFlowEditor.blocks.set.selectSemaphore': 'Vyberte semafor k nastavení',
+  'visualFlowEditor.blocks.set.description': 'Nastaví semafor na TRUE',
+  'visualFlowEditor.blocks.set.noSemaphore': 'Není vybrán žádný semafor',
+  
+  // RESET Block
+  'visualFlowEditor.blocks.reset.title': 'Reset',
+  'visualFlowEditor.blocks.reset.semaphoreLabel': 'Semafor',
+  'visualFlowEditor.blocks.reset.selectSemaphore': 'Vyberte semafor k resetu',
+  'visualFlowEditor.blocks.reset.description': 'Nastaví semafor na FALSE',
+  'visualFlowEditor.blocks.reset.noSemaphore': 'Není vybrán žádný semafor',
+  
+  // Character Selector
+  'visualFlowEditor.blocks.characterSelector.search': 'Hledat postavy...',
+  'visualFlowEditor.blocks.characterSelector.loading': 'Načítání postav...',
+  'visualFlowEditor.blocks.characterSelector.noAvailable': 'Žádné dostupné postavy k zobrazení',
+  'visualFlowEditor.blocks.characterSelector.noVisible': 'Žádné viditelné postavy ke skrytí',
+  'visualFlowEditor.blocks.characterSelector.selected': 'Vybráno',
+
+  // Mission Commands (parameterless)
+  'visualFlowEditor.blocks.setTurnBased.compact': 'Nastavit tahový režim',
+  'visualFlowEditor.blocks.setTurnBased.fullDescription': 'Nastaví misi do tahového režimu. Ovlivňuje způsob zpracování akcí během mise.',
+  'visualFlowEditor.blocks.setMissionAsFailed.compact': 'Označit misi jako neúspěšnou',
+  'visualFlowEditor.blocks.setMissionAsFailed.fullDescription': 'Okamžitě označí aktuální misi jako NEÚSPĚŠNOU. Použijte, když jsou splněny podmínky neúspěchu.',
+  'visualFlowEditor.blocks.setMissionAsCompleted.compact': 'Označit misi jako dokončenou',
+  'visualFlowEditor.blocks.setMissionAsCompleted.fullDescription': 'Okamžitě označí aktuální misi jako DOKONČENOU. Použijte, když jsou splněny podmínky úspěchu.',
+  'visualFlowEditor.blocks.allShipsGiveUp.compact': 'Všechny lodě se vzdávají',
+  'visualFlowEditor.blocks.allShipsGiveUp.fullDescription': 'Přinutí všechny lodě vzdát se. Užitečné pro ukončení střetnutí nebo přechod do stavu po boji.',
+  'visualFlowEditor.blocks.giveUpFlight.compact': 'Vzdát let',
+  'visualFlowEditor.blocks.giveUpFlight.fullDescription': 'Vzdát aktuální letovou fázi a přejít z aktivního letu.',
+  
+  // ADDPARTTOSHIP Block
+  'visualFlowEditor.blocks.addPartToShip.parameters': 'Parametry',
+  'visualFlowEditor.blocks.addPartToShip.placeholder': 'např. 1 7 alienEngine 3333 0',
+  'visualFlowEditor.blocks.addPartToShip.hint': '1 7 alienEngine 3333 0',
+  'visualFlowEditor.blocks.addPartToShip.noParameters': 'Žádné parametry nejsou nakonfigurovány',
+  'visualFlowEditor.blocks.addPartToShip.params': 'Parametry',
+  
+  // SETADVPILE Block
+  'visualFlowEditor.blocks.setAdvPile.parameters': 'Parametry',
+  'visualFlowEditor.blocks.setAdvPile.placeholder': 'např. 1 3',
+  'visualFlowEditor.blocks.setAdvPile.hint': '1 3',
+  'visualFlowEditor.blocks.setAdvPile.noParameters': 'Žádné parametry nejsou nakonfigurovány',
+  'visualFlowEditor.blocks.setAdvPile.params': 'Parametry',
+  
+  // SETSECRETADVPILE Block
+  'visualFlowEditor.blocks.setSecretAdvPile.parameters': 'Parametry',
+  'visualFlowEditor.blocks.setSecretAdvPile.placeholder': 'např. 2 1',
+  'visualFlowEditor.blocks.setSecretAdvPile.hint': '2 1',
+  'visualFlowEditor.blocks.setSecretAdvPile.noParameters': 'Žádné parametry nejsou nakonfigurovány',
+  'visualFlowEditor.blocks.setSecretAdvPile.params': 'Parametry',
+  
+  // MODIFYOPPONENTSBUILDSPEED Block
+  'visualFlowEditor.blocks.modifyOpponentsBuildSpeed.percentage': 'Rychlost Stavby %',
+  
+  // ADDPARTTOASIDESLOT Block
+  'visualFlowEditor.blocks.addPartToAsideSlot.parameters': 'Parametry',
+  'visualFlowEditor.blocks.addPartToAsideSlot.placeholder': 'např. alienGun 2 1 2 0',
+  'visualFlowEditor.blocks.addPartToAsideSlot.hint': 'alienGun 2 1 2 0',
+  'visualFlowEditor.blocks.addPartToAsideSlot.noParameters': 'Žádné parametry nejsou nakonfigurovány',
+  'visualFlowEditor.blocks.addPartToAsideSlot.params': 'Parametry',
+
+  // ADDSHIPPARTS Block
+  'visualFlowEditor.blocks.addShipParts.partsFileLabel': 'Soubor dílů',
+  'visualFlowEditor.blocks.addShipParts.selectParts': 'Vyberte soubor dílů',
+  'visualFlowEditor.blocks.addShipParts.loading': 'Načítání dílů...',
+  'visualFlowEditor.blocks.addShipParts.noParts': 'Není vybrán soubor dílů',
+  'visualFlowEditor.blocks.addShipParts.description': 'Načíst díly lodi ze souboru YAML',
   
   // Metacode System
   'visualFlowEditor.metacode.found': 'Nalezeno',
@@ -186,12 +320,58 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askNoText': 'Blok ASK musí mít text. Přidejte alespoň anglický text.',
   'visualFlowEditor.validation.goNoLabel': 'Blok GO musí mít vybraný štítek. Vyberte cílový štítek.',
   'visualFlowEditor.validation.labelNoName': 'Blok LABEL musí mít název. Nastavte název kotvy.',
+  'visualFlowEditor.validation.announceNoText': 'Blok ANNOUNCE musí mít text. Přidejte alespoň anglický text.',
+  'visualFlowEditor.validation.optNoText': 'Blok OPT musí mít text. Přidejte alespoň anglický text.',
+  'visualFlowEditor.validation.subScriptNoName': 'Blok SUB_SCRIPT musí mít název skriptu. Vyberte skript k provedení.',
+  'visualFlowEditor.validation.actMissionNoMission': 'Blok ACT_MISSION musí mít vybranou misi. Vyberte misi k aktivaci.',
+  'visualFlowEditor.validation.setDeckPreparationScriptNoScript': 'Blok SETDECKPREPARATIONSCRIPT musí mít vybraný skript. Vyberte skript.',
+  'visualFlowEditor.validation.setFlightDeckPreparationScriptNoScript': 'Blok SETFLIGHTDECKPREPARATIONSCRIPT musí mít vybraný skript. Vyberte skript.',
+  'visualFlowEditor.validation.returnAtRootLevel': 'Upozornění: RETURN na kořenové úrovni ukončí celý skript.',
+  'visualFlowEditor.validation.setNoSemaphore': 'Blok SET musí mít vybraný semafor. Vyberte semafor k nastavení.',
+  'visualFlowEditor.validation.resetNoSemaphore': 'Blok RESET musí mít vybraný semafor. Vyberte semafor k resetování.',
   'visualFlowEditor.validation.consecutiveAskError': '🚫 Dva po sobě jdoucí bloky ASK nejsou povoleny. Vložte jiný typ bloku mezi dva ASK bloky.',
   'visualFlowEditor.validation.blockInBuildError': '🚫 Blok {blockType} nelze vložit do bloku BUILD. Bloky BUILD a FLIGHT nemohou být vnořené.',
   'visualFlowEditor.validation.blockInFlightError': '🚫 Blok {blockType} nelze vložit do bloku FLIGHT. Bloky BUILD a FLIGHT nemohou být vnořené.',
   'visualFlowEditor.validation.menuWithoutAskError': '🚫 Blok MENU musí být předcházen blokem ASK pro správné fungování.',
   'visualFlowEditor.validation.optOutsideMenuError': '🚫 Blok OPT lze vložit pouze do bloku MENU.',
   'visualFlowEditor.validation.onlyOptInMenuError': '🚫 Do MENU lze vložit pouze bloky OPT. Blok {blockType} není povolen.',
+  'visualFlowEditor.validation.showCharNoCharacter': 'Blok SHOWCHAR musí mít vybranou postavu.',
+  'visualFlowEditor.validation.showCharNoPosition': 'Blok SHOWCHAR musí mít vybranou pozici.',
+  'visualFlowEditor.validation.hideCharNoCharacter': 'Blok HIDECHAR musí mít vybranou postavu.',
+  'visualFlowEditor.validation.addPartToShipNoParams': 'Blok ADDPARTTOSHIP musí mít parametry. Zadejte část k přidání.',
+  'visualFlowEditor.validation.addPartToShipNotInBuild': 'ADDPARTTOSHIP by měl být uvnitř bloku BUILD. Zvažte přesun do fáze stavby.',
+  'visualFlowEditor.validation.addPartToAsideSlotNoParams': 'Blok ADDPARTTOASIDESLOT musí mít parametry. Zadejte část k přidání.',
+  'visualFlowEditor.validation.addPartToAsideSlotNotInBuild': 'ADDPARTTOASIDESLOT by měl být uvnitř bloku BUILD. Zvažte přesun do fáze stavby.',
+  'visualFlowEditor.validation.addShipPartsNoParams': 'Blok ADDSHIPPARTS musí specifikovat soubor dílů. Vyberte YAML soubor.',
+  'visualFlowEditor.validation.addShipPartsNotInBuild': 'ADDSHIPPARTS by měl být uvnitř bloku BUILD. Zvažte přesun do fáze stavby.',
+  'visualFlowEditor.validation.setAdvPileNoParams': 'Blok SETADVPILE musí mít parametry. Uveďte dvě celá čísla oddělená mezerou bez uvozovek.',
+  'visualFlowEditor.validation.setSecretAdvPileNoParams': 'Blok SETSECRETADVPILE musí mít parametry. Uveďte dvě celá čísla oddělená mezerou bez uvozovek.',
+  'visualFlowEditor.validation.setAdvPileNotInBuild': 'SETADVPILE by měl být uvnitř bloku BUILD. Zvažte přesun do fáze stavby.',
+  'visualFlowEditor.validation.setSecretAdvPileNotInBuild': 'SETSECRETADVPILE by měl být uvnitř bloku BUILD. Zvažte přesun do fáze stavby.',
+  'visualFlowEditor.validation.setDeckPreparationScriptOutsideContext': 'SETDECKPREPARATIONSCRIPT by měl být uvnitř bloku MISSION, BUILD nebo FLIGHT. Zvažte přesun do některého z těchto kontejnerů.',
+  'visualFlowEditor.validation.setFlightDeckPreparationScriptOutsideContext': 'SETFLIGHTDECKPREPARATIONSCRIPT by měl být uvnitř bloku MISSION, BUILD nebo FLIGHT. Zvažte přesun do některého z těchto kontejnerů.',
+  'visualFlowEditor.validation.setTurnBasedOutsideContext': 'SETTURNBASED by měl být uvnitř bloku MISSION, BUILD nebo FLIGHT. Zvažte přesun do některého z těchto kontejnerů.',
+  'visualFlowEditor.validation.setMissionAsFailedOutsideContext': 'SETMISSIONASFAILED by měl být uvnitř bloku MISSION, BUILD nebo FLIGHT. Zvažte přesun do některého z těchto kontejnerů.',
+  'visualFlowEditor.validation.setMissionAsCompletedOutsideContext': 'SETMISSIONASCOMPLETED by měl být uvnitř bloku MISSION, BUILD nebo FLIGHT. Zvažte přesun do některého z těchto kontejnerů.',
+  'visualFlowEditor.validation.allShipsGiveUpOutsideContext': 'ALLSHIPSGIVEUP by měl být uvnitř bloku MISSION, BUILD nebo FLIGHT. Zvažte přesun do některého z těchto kontejnerů.',
+  'visualFlowEditor.validation.giveUpFlightOutsideContext': 'GIVEUPFLIGHT by měl být uvnitř bloku MISSION, BUILD nebo FLIGHT. Zvažte přesun do některého z těchto kontejnerů.',
+  'visualFlowEditor.validation.showcharNoScene': 'SHOWCHAR vyžaduje aktivní scénu. Přidejte SHOWDLGSCENE před tento blok.',
+  'visualFlowEditor.validation.hidecharNoScene': 'HIDECHAR vyžaduje aktivní scénu. Přidejte SHOWDLGSCENE před tento blok.',
+  'visualFlowEditor.validation.hidecharNoVisibleCharacters': 'HIDECHAR nelze použít: ve scéně nejsou žádné viditelné postavy.',
+  'visualFlowEditor.validation.hidecharCharacterNotVisible': 'Vybraná postava není ve scéně viditelná.',
+  'visualFlowEditor.validation.changecharNoCharacter': 'Blok CHANGECHAR musí specifikovat, kterou postavu změnit. Vyberte postavu ze seznamu.',
+  'visualFlowEditor.validation.changecharNoImage': 'Blok CHANGECHAR musí specifikovat nový obrázek. Vyberte obrázek ze seznamu.',
+  'visualFlowEditor.validation.changecharNoScene': 'CHANGECHAR vyžaduje aktivní scénu. Přidejte SHOWDLGSCENE před tento blok.',
+  'visualFlowEditor.validation.changecharNoVisibleCharacters': 'CHANGECHAR nelze použít: ve scéně nejsou žádné viditelné postavy.',
+  'visualFlowEditor.validation.changecharCharacterNotVisible': 'Vybraná postava není ve scéně viditelná.',
+  'visualFlowEditor.validation.changecharImageNotInList': 'Vybraný obrázek není pro tuto postavu dostupný.',
+  'visualFlowEditor.validation.saycharNoCharacter': 'Blok SAYCHAR musí specifikovat, která postava mluví. Vyberte postavu ze seznamu.',
+  'visualFlowEditor.validation.saycharNoText': 'Blok SAYCHAR musí mít text. Zadejte dialog postavy.',
+  'visualFlowEditor.validation.saycharNoScene': 'SAYCHAR vyžaduje aktivní scénu. Přidejte SHOWDLGSCENE před tento blok.',
+  'visualFlowEditor.validation.sayNoScene': 'SAY vyžaduje aktivní scénu. Přidejte SHOWDLGSCENE před tento blok.',
+  'visualFlowEditor.validation.askNoScene': 'ASK vyžaduje aktivní scénu. Přidejte SHOWDLGSCENE před tento blok.',
+  'visualFlowEditor.validation.askIfInvalidThen': 'Po ASK musí větev THEN bloku IF začínat MENU nebo GO.',
+  'visualFlowEditor.validation.askIfInvalidElse': 'Po ASK musí větev ELSE bloku IF začínat MENU nebo GO.',
   'visualFlowEditor.validation.consecutiveAskDetailed': '💡 Dva po sobě jdoucí bloky ASK nejsou povoleny. První ASK ({firstAsk}) je přímo následován tímto ASK. Vložte blok SAY, MENU nebo jiný příkaz mezi dva ASK bloky pro jejich oddělení.',
   'visualFlowEditor.validation.blockInBuildDetailed': '💡 Blok {blockType} je uvnitř oblasti "{area}" bloku BUILD. Bloky BUILD a FLIGHT nemohou být vnořené. Přesuňte tento blok mimo BUILD nebo použijte jiné typy bloků.',
   'visualFlowEditor.validation.blockInFlightDetailed': '💡 Blok {blockType} je uvnitř oblasti "{area}" bloku FLIGHT. Bloky BUILD a FLIGHT nemohou být vnořené. Přesuňte tento blok mimo FLIGHT.',
@@ -209,6 +389,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.menuFirstBlock': 'MENU je první blok ve skriptu. Musí být předcházen alespoň jedním blokem ASK.',
   'visualFlowEditor.validation.optOnlyInMenu': 'Blok OPT lze vložit pouze do bloku MENU.',
   'visualFlowEditor.validation.onlyOptInMenu': 'Blok {blockType} nelze vložit do MENU. Jsou povoleny pouze bloky OPT.',
+  'visualFlowEditor.validation.exitMenuOutsideOptError': '🚫 Blok EXIT_MENU lze vložit pouze do bloku OPT.',
+  'visualFlowEditor.validation.exitMenuOnlyInOpt': 'Blok EXIT_MENU lze vložit pouze do bloku OPT.',
   'visualFlowEditor.addBlock': 'Přidat blok',
   'visualFlowEditor.deleteBlock': 'Smazat blok',
   'visualFlowEditor.moveUp': 'Posunout nahoru',
@@ -242,6 +424,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askMustBeFollowedByMenu': 'Blok ASK musí být následován blokem MENU. Pokud je ASK uvnitř IF, MENU může být ve stejné větvi nebo mimo IF.',
   'visualFlowEditor.validation.askWithoutMenu': 'Blok ASK musí být následován blokem MENU. Tento ASK je posledním blokem a nemá následující MENU.',
   'visualFlowEditor.validation.goWithoutLabel': 'Blok GO vyžaduje alespoň jeden blok LABEL ve skriptu. Přidejte blok LABEL před použitím GO.',
+  'visualFlowEditor.validation.setSpecConditionNoCondition': 'Blok SETSPECCONDITION musí mít vybranou podmínku.',
+  'visualFlowEditor.validation.setSpecConditionOutsideContext': 'SETSPECCONDITION by měl být použit uvnitř MISSION, BUILD nebo FLIGHT. Mimo tento kontext je to pouze doporučení (varování).',
+  'visualFlowEditor.validation.modifyOpponentsBuildSpeedNoPercentage': 'Blok MODIFYOPPONENTSBUILDSPEED musí mít procentní hodnotu (1–200).',
+  'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutOfRange': 'Procento MODIFYOPPONENTSBUILDSPEED musí být mezi 1 a 200.',
+  'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutsideContext': 'MODIFYOPPONENTSBUILDSPEED by měl být uvnitř bloku MISSION, BUILD nebo FLIGHT.',
   
   
   // Scene Dialog Validation Messages
@@ -341,6 +528,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.multilingual.collapse': 'Sbalit',
   'visualFlowEditor.multilingual.copyToAll': 'Kopírovat do všech jazyků',
   'visualFlowEditor.multilingual.copyFromEN': 'Kopírovat z EN',
+  'visualFlowEditor.multilingual.languages.it': 'Italština',
   'visualFlowEditor.multilingual.languages.en': 'Angličtina',
   'visualFlowEditor.multilingual.languages.cs': 'Čeština',
   'visualFlowEditor.multilingual.languages.de': 'Němčina',
@@ -392,6 +580,13 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.milliseconds': 'Milisekundy (např. 1000 = 1 sekunda)',
   'visualFlowEditor.command.selectLabel': 'Vybrat štítek...',
   'visualFlowEditor.command.labelName': 'Název štítku...',
+  'visualFlowEditor.command.selectScript': 'Vybrat skript...',
+  'visualFlowEditor.command.selectCondition': 'Vybrat podmínku...',
+  'visualFlowEditor.command.opponent': 'Postava Protivníka',
+  'visualFlowEditor.command.opponentPlaceholder': 'obchodník, nepřítel, atd.',
+  'visualFlowEditor.command.shipClassI': 'Třída I',
+  'visualFlowEditor.command.shipClassII': 'Třída II',
+  'visualFlowEditor.command.shipClassIII': 'Třída III',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Název skriptu...',
@@ -514,16 +709,15 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.addOpponent.description': 'Přidat protivníka',
   'visualFlowEditor.tools.setShipType.description': 'Nastavit typ lodi',
   'visualFlowEditor.tools.addPartToShip.description': 'Přidat část k lodi',
+  'visualFlowEditor.tools.modifyOpponentsBuildSpeed.description': 'Upravit rychlost stavby protivníků',
   'visualFlowEditor.tools.addPartToAsideSlot.description': 'Přidat část do bočního slotu',
   'visualFlowEditor.tools.addShipParts.description': 'Přidat více částí',
-  'visualFlowEditor.tools.finishMission.description': 'Dokončit misi',
   'visualFlowEditor.tools.actMission.description': 'Aktivovat misi',
   'visualFlowEditor.tools.setDeckPreparationScript.description': 'Nastavit skript balíčku',
   'visualFlowEditor.tools.setFlightDeckPreparationScript.description': 'Nastavit skript letového balíčku',
   'visualFlowEditor.tools.setAdvPile.description': 'Nastavit dobrodružnou hromadu',
   'visualFlowEditor.tools.setSecretAdvPile.description': 'Nastavit tajnou hromadu',
   'visualFlowEditor.tools.setSpecCondition.description': 'Nastavit speciální podmínku',
-  'visualFlowEditor.tools.modifyOpponentsBuildSpeed.description': 'Upravit rychlost stavby',
   'visualFlowEditor.tools.setTurnBased.description': 'Nastavit tahový režim',
   'visualFlowEditor.tools.setMissionAsFailed.description': 'Označit misi jako neúspěšnou',
   'visualFlowEditor.tools.setMissionAsCompleted.description': 'Označit misi jako dokončenou',

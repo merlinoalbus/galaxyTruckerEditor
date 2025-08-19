@@ -5,7 +5,7 @@
 export const visualFlowEditorTranslations = {
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
-  'visualFlowEditor.subtitle': 'Полный визуальный редактор со всеми 14 типами IF',
+  'visualFlowEditor.subtitle': 'Полный Визуальный Редактор',
   'visualFlowEditor.loading': 'Загрузка Visual Flow Editor...',
   'visualFlowEditor.noScriptLoaded': 'Скрипт не загружен',
   
@@ -56,6 +56,10 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.goToBlock': 'Перейти →',
   'visualFlowEditor.validation.goToBlockTitle': 'Перейти к блоку',
   'visualFlowEditor.validation.footer': 'Исправьте эти ошибки для обеспечения правильной работы скрипта. Блоки с ошибками подсвечены красным в редакторе.',
+  'visualFlowEditor.validation.addOpponentNoCharacter': 'Блок ADDOPPONENT должен иметь выбранного противника.',
+  'visualFlowEditor.validation.addOpponentNotInMission': 'ADDOPPONENT должен быть внутри блока MISSION.',
+  'visualFlowEditor.validation.setShipTypeNoType': 'Блок SETSHIPTYPE должен иметь выбранный тип корабля.',
+  'visualFlowEditor.validation.setShipTypeNotInMission': 'SETSHIPTYPE должен быть внутри блока MISSION.',
   
   // Delay Block
   'visualFlowEditor.blocks.delay.duration': 'Длительность',
@@ -73,6 +77,43 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.subScript.scriptName': 'Имя скрипта',
   'visualFlowEditor.blocks.subScript.hint': 'Выберите скрипт для выполнения',
   'visualFlowEditor.blocks.subScript.navigate': 'Перейти к подскрипту',
+  // SETSPECCONDITION Block
+  'visualFlowEditor.blocks.setSpecCondition.condition': 'Условие',
+  
+  // ACT_MISSION Block
+  'visualFlowEditor.blocks.actMission.missionName': 'Название миссии',
+  'visualFlowEditor.blocks.actMission.hint': 'Выберите миссию для активации',
+  'visualFlowEditor.blocks.actMission.navigate': 'Перейти к миссии',
+  
+  // EXIT_MENU Block
+  'visualFlowEditor.blocks.exitMenu.description': 'Выйти из текущего меню',
+  'visualFlowEditor.blocks.exitMenu.info': 'Эта команда выходит из текущего меню и продолжает выполнение',
+  'visualFlowEditor.blocks.exitMenu.compact': 'Выйти из меню',
+  'visualFlowEditor.blocks.exitMenu.fullDescription': 'Выйти из текущего меню. Эта команда выходит из текущего меню и продолжает выполнение.',
+  
+  // ADDPARTTOSHIP Block
+  'visualFlowEditor.blocks.addPartToShip.parameters': 'Параметры',
+  'visualFlowEditor.blocks.addPartToShip.placeholder': 'напр. 1 7 alienEngine 3333 0',
+  'visualFlowEditor.blocks.addPartToShip.hint': '1 7 alienEngine 3333 0',
+  'visualFlowEditor.blocks.addPartToShip.noParameters': 'Параметры не настроены',
+  'visualFlowEditor.blocks.addPartToShip.params': 'Параметры',
+  
+  // MODIFYOPPONENTSBUILDSPEED Block
+  'visualFlowEditor.blocks.modifyOpponentsBuildSpeed.percentage': 'Скорость Строительства %',
+  
+  // ADDPARTTOASIDESLOT Block
+  'visualFlowEditor.blocks.addPartToAsideSlot.parameters': 'Параметры',
+  'visualFlowEditor.blocks.addPartToAsideSlot.placeholder': 'напр. alienGun 2 1 2 0',
+  'visualFlowEditor.blocks.addPartToAsideSlot.hint': 'alienGun 2 1 2 0',
+  'visualFlowEditor.blocks.addPartToAsideSlot.noParameters': 'Параметры не настроены',
+  'visualFlowEditor.blocks.addPartToAsideSlot.params': 'Параметры',
+
+  // ADDSHIPPARTS Block
+  'visualFlowEditor.blocks.addShipParts.partsFileLabel': 'Файл деталей',
+  'visualFlowEditor.blocks.addShipParts.selectParts': 'Выберите файл деталей',
+  'visualFlowEditor.blocks.addShipParts.loading': 'Загрузка деталей...',
+  'visualFlowEditor.blocks.addShipParts.noParts': 'Файл деталей не выбран',
+  'visualFlowEditor.blocks.addShipParts.description': 'Загрузить детали корабля из файла YAML',
   
   // Metacode System
   'visualFlowEditor.metacode.found': 'найденных метакодов',
@@ -242,6 +283,15 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askMustBeFollowedByMenu': 'Блок ASK должен следоваться блоком MENU. Если ASK внутри IF, MENU может быть в той же ветке или вне IF.',
   'visualFlowEditor.validation.askWithoutMenu': 'Блок ASK должен следоваться блоком MENU. Этот ASK является последним блоком и не имеет следующего MENU.',
   'visualFlowEditor.validation.goWithoutLabel': 'Блок GO требует наличия хотя бы одного блока LABEL в скрипте. Добавьте блок LABEL перед использованием GO.',
+  'visualFlowEditor.validation.setSpecConditionNoCondition': 'Блок SETSPECCONDITION должен иметь выбранное условие.',
+  'visualFlowEditor.validation.setSpecConditionOutsideContext': 'SETSPECCONDITION следует использовать внутри MISSION, BUILD или FLIGHT. Вне этого контекста это только предупреждение.',
+  'visualFlowEditor.validation.modifyOpponentsBuildSpeedNoPercentage': 'Блок MODIFYOPPONENTSBUILDSPEED должен иметь процентное значение (1–200).',
+  'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutOfRange': 'Процент MODIFYOPPONENTSBUILDSPEED должен быть между 1 и 200.',
+  'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutsideContext': 'MODIFYOPPONENTSBUILDSPEED следует использовать внутри блока MISSION, BUILD или FLIGHT.',
+  'visualFlowEditor.validation.addPartToShipNotInBuild': 'ADDPARTTOSHIP должен быть внутри блока BUILD. Переместите этот блок в фазу сборки.',
+  'visualFlowEditor.validation.addPartToAsideSlotNotInBuild': 'ADDPARTTOASIDESLOT должен быть внутри блока BUILD. Переместите этот блок в фазу сборки.',
+  'visualFlowEditor.validation.addShipPartsNoParams': 'Блок ADDSHIPPARTS должен указывать файл деталей. Выберите YAML-файл для загрузки деталей.',
+  'visualFlowEditor.validation.addShipPartsNotInBuild': 'ADDSHIPPARTS должен быть внутри блока BUILD. Переместите этот блок в фазу сборки.',
   
   
   // Scene Dialog Validation Messages
@@ -392,6 +442,13 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.milliseconds': 'Миллисекунды (напр. 1000 = 1 секунда)',
   'visualFlowEditor.command.selectLabel': 'Выбрать метку...',
   'visualFlowEditor.command.labelName': 'Имя метки...',
+  'visualFlowEditor.command.selectScript': 'Выбрать скрипт...',
+  'visualFlowEditor.command.selectCondition': 'Выбрать условие...',
+  'visualFlowEditor.command.opponent': 'Персонаж Противник',
+  'visualFlowEditor.command.opponentPlaceholder': 'торговец, враг и т.д.',
+  'visualFlowEditor.command.shipClassI': 'Класс I',
+  'visualFlowEditor.command.shipClassII': 'Класс II',
+  'visualFlowEditor.command.shipClassIII': 'Класс III',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Имя скрипта...',
@@ -514,21 +571,21 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.addOpponent.description': 'Добавить противника',
   'visualFlowEditor.tools.setShipType.description': 'Установить тип корабля',
   'visualFlowEditor.tools.addPartToShip.description': 'Добавить деталь к кораблю',
+  'visualFlowEditor.tools.modifyOpponentsBuildSpeed.description': 'Изменить скорость строительства противников',
   'visualFlowEditor.tools.addPartToAsideSlot.description': 'Добавить деталь в боковой слот',
   'visualFlowEditor.tools.addShipParts.description': 'Добавить несколько деталей',
-  'visualFlowEditor.tools.finishMission.description': 'Завершить миссию',
   'visualFlowEditor.tools.actMission.description': 'Активировать миссию',
   'visualFlowEditor.tools.setDeckPreparationScript.description': 'Установить скрипт подготовки',
   'visualFlowEditor.tools.setFlightDeckPreparationScript.description': 'Установить скрипт подготовки полета',
   'visualFlowEditor.tools.setAdvPile.description': 'Установить стопку приключений',
   'visualFlowEditor.tools.setSecretAdvPile.description': 'Установить секретную стопку',
   'visualFlowEditor.tools.setSpecCondition.description': 'Установить специальное условие',
-  'visualFlowEditor.tools.modifyOpponentsBuildSpeed.description': 'Изменить скорость постройки',
   'visualFlowEditor.tools.setTurnBased.description': 'Установить пошаговый режим',
   'visualFlowEditor.tools.setMissionAsFailed.description': 'Отметить миссию как провалившуюся',
   'visualFlowEditor.tools.setMissionAsCompleted.description': 'Отметить миссию как завершенную',
   'visualFlowEditor.tools.allShipsGiveUp.description': 'Все корабли сдаются',
   'visualFlowEditor.tools.giveUpFlight.description': 'Сдать полет',
+  
   
   // Tool Descriptions - Variables
   'visualFlowEditor.tools.setTo.description': 'Установить значение переменной',
@@ -610,4 +667,146 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.metacode.plural': 'Множественное число',
   'visualFlowEditor.metacode.singularExample': 'единственное (напр. очко)',
   'visualFlowEditor.metacode.pluralExample': 'множественное (напр. очки)',
+
+  // Mission Commands (parameterless)
+  'visualFlowEditor.blocks.setTurnBased.compact': 'Включить пошаговый режим',
+  'visualFlowEditor.blocks.setTurnBased.fullDescription': 'Установить выполнение миссии в пошаговом режиме. Влияет на обработку действий во время миссии.',
+  'visualFlowEditor.blocks.setMissionAsFailed.compact': 'Пометить миссию как проваленную',
+  'visualFlowEditor.blocks.setMissionAsFailed.fullDescription': 'Немедленно пометить текущую миссию как ПРОВАЛЕННУЮ. Используйте при выполнении условий провала.',
+  'visualFlowEditor.blocks.setMissionAsCompleted.compact': 'Пометить миссию как завершенную',
+  'visualFlowEditor.blocks.setMissionAsCompleted.fullDescription': 'Немедленно пометить текущую миссию как ЗАВЕРШЕННУЮ. Используйте при выполнении условий успеха.',
+  'visualFlowEditor.blocks.allShipsGiveUp.compact': 'Все корабли сдаются',
+  'visualFlowEditor.blocks.allShipsGiveUp.fullDescription': 'Заставить все корабли сдаться. Полезно для завершения столкновений или перехода к постбоевым состояниям.',
+  'visualFlowEditor.blocks.giveUpFlight.compact': 'Сдать полет',
+  'visualFlowEditor.blocks.giveUpFlight.fullDescription': 'Прекратить текущую фазу полета, завершив активный полет.',
+
+  // SHOWCHAR Block
+  'visualFlowEditor.blocks.showChar.title': 'Показать Персонажа',
+  'visualFlowEditor.blocks.showChar.description': 'Показывает персонажа в сцене',
+  'visualFlowEditor.blocks.showChar.selectCharacter': 'Выберите персонажа для показа',
+  'visualFlowEditor.blocks.showChar.position': 'Позиция персонажа',
+  'visualFlowEditor.blocks.showChar.positions.left': 'Слева',
+  'visualFlowEditor.blocks.showChar.positions.right': 'Справа',
+  'visualFlowEditor.blocks.showChar.positions.top': 'Сверху',
+  'visualFlowEditor.blocks.showChar.positions.bottom': 'Снизу',
+  'visualFlowEditor.blocks.showChar.positions.lefttop': 'Слева-Сверху',
+  'visualFlowEditor.blocks.showChar.positions.leftbottom': 'Слева-Снизу',
+  'visualFlowEditor.blocks.showChar.positions.righttop': 'Справа-Сверху',
+  'visualFlowEditor.blocks.showChar.positions.rightbottom': 'Справа-Снизу',
+
+  // HIDECHAR Block
+  'visualFlowEditor.blocks.hideChar.title': 'Скрыть Персонажа',
+  'visualFlowEditor.blocks.hideChar.description': 'Скрывает персонажа из сцены',
+  'visualFlowEditor.blocks.hideChar.selectCharacter': 'Выберите персонажа для скрытия',
+
+  // SAYCHAR Block
+  'visualFlowEditor.blocks.sayChar.title': 'Речь Персонажа',
+  'visualFlowEditor.blocks.sayChar.description': 'Показывает персонажа и отображает его реплику',
+  'visualFlowEditor.blocks.sayChar.selectCharacter': 'Выберите говорящего персонажа',
+  'visualFlowEditor.blocks.sayChar.selectCharacterPlaceholder': 'Выберите персонажа...',
+  'visualFlowEditor.blocks.sayChar.dialogPlaceholder': 'Введите реплику персонажа...',
+  'visualFlowEditor.blocks.sayChar.dialogLabel': 'Реплика персонажа',
+  'visualFlowEditor.blocks.sayChar.noParameters': 'Нет персонажа или текста',
+  'visualFlowEditor.blocks.sayChar.noText': 'Нет текста',
+  'visualFlowEditor.blocks.sayChar.noCharacter': 'Нет персонажа',
+
+  // ANNOUNCE Block
+  'visualFlowEditor.blocks.announce.title': 'Объявление',
+  'visualFlowEditor.blocks.announce.description': 'Показывает сообщение-объявление без необходимости сцены',
+  'visualFlowEditor.blocks.announce.placeholder': 'Введите текст объявления...',
+  'visualFlowEditor.blocks.announce.textLabel': 'Текст объявления',
+
+  // RETURN Block
+  'visualFlowEditor.blocks.return.title': 'Возврат',
+  'visualFlowEditor.blocks.return.descriptionSubscript': 'Возвращает управление родительскому скрипту',
+  'visualFlowEditor.blocks.return.descriptionRoot': 'Возвращает из текущего скрипта (корневой уровень)',
+  'visualFlowEditor.blocks.return.warningRootLevel': 'Внимание: Этот RETURN находится на корневом уровне. Он завершит весь скрипт.',
+  'visualFlowEditor.blocks.return.returnToParent': 'Вернуться к родительскому скрипту',
+  'visualFlowEditor.blocks.return.navigateToParent': 'Перейти к родительскому скрипту',
+  'visualFlowEditor.blocks.return.goBack': 'Назад',
+  'visualFlowEditor.blocks.return.rootLevel': 'На корневом уровне',
+
+  // SET Block
+  'visualFlowEditor.blocks.set.title': 'Установить',
+  'visualFlowEditor.blocks.set.semaphoreLabel': 'Семафор',
+  'visualFlowEditor.blocks.set.selectSemaphore': 'Выберите семафор для установки',
+  'visualFlowEditor.blocks.set.description': 'Устанавливает семафор в TRUE',
+  'visualFlowEditor.blocks.set.noSemaphore': 'Семафор не выбран',
+
+  // RESET Block
+  'visualFlowEditor.blocks.reset.title': 'Сброс',
+  'visualFlowEditor.blocks.reset.semaphoreLabel': 'Семафор',
+  'visualFlowEditor.blocks.reset.selectSemaphore': 'Выберите семафор для сброса',
+  'visualFlowEditor.blocks.reset.description': 'Устанавливает семафор в FALSE',
+  'visualFlowEditor.blocks.reset.noSemaphore': 'Семафор не выбран',
+
+  // Character Selector
+  'visualFlowEditor.blocks.characterSelector.search': 'Поиск персонажей...',
+  'visualFlowEditor.blocks.characterSelector.loading': 'Загрузка персонажей...',
+  'visualFlowEditor.blocks.characterSelector.noAvailable': 'Нет доступных персонажей для показа',
+  'visualFlowEditor.blocks.characterSelector.noVisible': 'Нет видимых персонажей для скрытия',
+  'visualFlowEditor.blocks.characterSelector.selected': 'Выбрано',
+
+  // SETADVPILE Block
+  'visualFlowEditor.blocks.setAdvPile.parameters': 'Параметры',
+  'visualFlowEditor.blocks.setAdvPile.placeholder': 'напр. 1 3',
+  'visualFlowEditor.blocks.setAdvPile.hint': '1 3',
+  'visualFlowEditor.blocks.setAdvPile.noParameters': 'Параметры не настроены',
+  'visualFlowEditor.blocks.setAdvPile.params': 'Параметры',
+
+  // SETSECRETADVPILE Block
+  'visualFlowEditor.blocks.setSecretAdvPile.parameters': 'Параметры',
+  'visualFlowEditor.blocks.setSecretAdvPile.placeholder': 'напр. 2 1',
+  'visualFlowEditor.blocks.setSecretAdvPile.hint': '2 1',
+  'visualFlowEditor.blocks.setSecretAdvPile.noParameters': 'Параметры не настроены',
+  'visualFlowEditor.blocks.setSecretAdvPile.params': 'Параметры',
+
+  // Additional Validation Messages
+  'visualFlowEditor.validation.announceNoText': 'Блок ANNOUNCE должен иметь текст. Добавьте хотя бы английский текст.',
+  'visualFlowEditor.validation.optNoText': 'Блок OPT должен иметь текст. Добавьте хотя бы английский текст.',
+  'visualFlowEditor.validation.subScriptNoName': 'Блок SUB_SCRIPT должен иметь имя скрипта. Выберите скрипт для выполнения.',
+  'visualFlowEditor.validation.actMissionNoMission': 'Блок ACT_MISSION должен иметь выбранную миссию. Выберите миссию для активации.',
+  'visualFlowEditor.validation.setDeckPreparationScriptNoScript': 'Блок SETDECKPREPARATIONSCRIPT должен иметь выбранный скрипт. Выберите скрипт.',
+  'visualFlowEditor.validation.setFlightDeckPreparationScriptNoScript': 'Блок SETFLIGHTDECKPREPARATIONSCRIPT должен иметь выбранный скрипт. Выберите скрипт.',
+  'visualFlowEditor.validation.returnAtRootLevel': 'Внимание: RETURN на корневом уровне завершит выполнение всего скрипта.',
+  'visualFlowEditor.validation.setNoSemaphore': 'Блок SET должен иметь выбранный семафор. Выберите семафор для установки.',
+  'visualFlowEditor.validation.resetNoSemaphore': 'Блок RESET должен иметь выбранный семафор. Выберите семафор для сброса.',
+  'visualFlowEditor.validation.exitMenuOutsideOptError': '🚫 Блок EXIT_MENU можно вставлять только внутри блока OPT.',
+  'visualFlowEditor.validation.exitMenuOnlyInOpt': 'Блок EXIT_MENU можно вставлять только внутри блока OPT.',
+  'visualFlowEditor.validation.addPartToShipNoParams': 'Блок ADDPARTTOSHIP должен иметь параметры. Укажите деталь для добавления.',
+  'visualFlowEditor.validation.addPartToAsideSlotNoParams': 'Блок ADDPARTTOASIDESLOT должен иметь параметры. Укажите деталь для добавления.',
+  'visualFlowEditor.validation.setAdvPileNoParams': 'Блок SETADVPILE должен иметь параметры. Укажите два целых числа, разделенные пробелом, без кавычек.',
+  'visualFlowEditor.validation.setSecretAdvPileNoParams': 'Блок SETSECRETADVPILE должен иметь параметры. Укажите два целых числа, разделенные пробелом, без кавычек.',
+  'visualFlowEditor.validation.setAdvPileNotInBuild': 'SETADVPILE следует использовать внутри блока BUILD. Переместите этот блок в фазу сборки.',
+  'visualFlowEditor.validation.setSecretAdvPileNotInBuild': 'SETSECRETADVPILE следует использовать внутри блока BUILD. Переместите этот блок в фазу сборки.',
+  'visualFlowEditor.validation.setDeckPreparationScriptOutsideContext': 'SETDECKPREPARATIONSCRIPT следует использовать внутри блока MISSION, BUILD или FLIGHT. Переместите этот блок внутрь одного из этих контейнеров.',
+  'visualFlowEditor.validation.setFlightDeckPreparationScriptOutsideContext': 'SETFLIGHTDECKPREPARATIONSCRIPT следует использовать внутри блока MISSION, BUILD или FLIGHT. Переместите этот блок внутрь одного из этих контейнеров.',
+  'visualFlowEditor.validation.setTurnBasedOutsideContext': 'SETTURNBASED следует использовать внутри блока MISSION, BUILD или FLIGHT. Переместите этот блок внутрь одного из этих контейнеров.',
+  'visualFlowEditor.validation.setMissionAsFailedOutsideContext': 'SETMISSIONASFAILED следует использовать внутри блока MISSION, BUILD или FLIGHT. Переместите этот блок внутрь одного из этих контейнеров.',
+  'visualFlowEditor.validation.setMissionAsCompletedOutsideContext': 'SETMISSIONASCOMPLETED следует использовать внутри блока MISSION, BUILD или FLIGHT. Переместите этот блок внутрь одного из этих контейнеров.',
+  'visualFlowEditor.validation.allShipsGiveUpOutsideContext': 'ALLSHIPSGIVEUP следует использовать внутри блока MISSION, BUILD или FLIGHT. Переместите этот блок внутрь одного из этих контейнеров.',
+  'visualFlowEditor.validation.giveUpFlightOutsideContext': 'GIVEUPFLIGHT следует использовать внутри блока MISSION, BUILD или FLIGHT. Переместите этот блок внутрь одного из этих контейнеров.',
+  'visualFlowEditor.validation.showCharNoCharacter': 'Блок SHOWCHAR должен иметь выбранного персонажа.',
+  'visualFlowEditor.validation.showCharNoPosition': 'Блок SHOWCHAR должен иметь выбранную позицию.',
+  'visualFlowEditor.validation.hideCharNoCharacter': 'Блок HIDECHAR должен иметь выбранного персонажа.',
+  'visualFlowEditor.validation.showcharNoScene': 'SHOWCHAR требует активной сцены. Добавьте SHOWDLGSCENE перед этим блоком.',
+  'visualFlowEditor.validation.hidecharNoScene': 'HIDECHAR требует активной сцены. Добавьте SHOWDLGSCENE перед этим блоком.',
+  'visualFlowEditor.validation.hidecharNoVisibleCharacters': 'HIDECHAR нельзя использовать: в сцене нет видимых персонажей.',
+  'visualFlowEditor.validation.hidecharCharacterNotVisible': 'Выбранный персонаж не видим в сцене.',
+  'visualFlowEditor.validation.changecharNoCharacter': 'Блок CHANGECHAR должен указать, какого персонажа менять. Выберите персонажа из списка.',
+  'visualFlowEditor.validation.changecharNoImage': 'Блок CHANGECHAR должен указать новое изображение. Выберите изображение из списка.',
+  'visualFlowEditor.validation.changecharNoScene': 'CHANGECHAR требует активной сцены. Добавьте SHOWDLGSCENE перед этим блоком.',
+  'visualFlowEditor.validation.changecharNoVisibleCharacters': 'CHANGECHAR нельзя использовать: в сцене нет видимых персонажей.',
+  'visualFlowEditor.validation.changecharCharacterNotVisible': 'Выбранный персонаж не видим в сцене.',
+  'visualFlowEditor.validation.changecharImageNotInList': 'Выбранное изображение недоступно для этого персонажа.',
+  'visualFlowEditor.validation.saycharNoCharacter': 'Блок SAYCHAR должен указать, какой персонаж говорит. Выберите персонажа из списка.',
+  'visualFlowEditor.validation.saycharNoText': 'Блок SAYCHAR должен иметь текст. Введите реплику персонажа.',
+  'visualFlowEditor.validation.saycharNoScene': 'SAYCHAR требует активной сцены. Добавьте SHOWDLGSCENE перед этим блоком.',
+  'visualFlowEditor.validation.sayNoScene': 'SAY требует активной сцены. Добавьте SHOWDLGSCENE перед этим блоком.',
+  'visualFlowEditor.validation.askNoScene': 'ASK требует активной сцены. Добавьте SHOWDLGSCENE перед этим блоком.',
+  'visualFlowEditor.validation.askIfInvalidThen': 'После ASK ветка THEN блока IF должна начинаться с MENU или GO.',
+  'visualFlowEditor.validation.askIfInvalidElse': 'После ASK ветка ELSE блока IF должна начинаться с MENU или GO.',
+
+  // Multilingual - add missing language
+  'visualFlowEditor.multilingual.languages.it': 'Итальянский',
 } as const;

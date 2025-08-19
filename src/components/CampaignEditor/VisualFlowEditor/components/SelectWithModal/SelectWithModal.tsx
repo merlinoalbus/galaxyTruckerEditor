@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { Search, Plus, X, Check, Variable, Flag, Tag, FileCode, ChevronDown } from 'lucide-react';
+import { Search, Plus, X, Check, Variable, Flag, Tag, FileCode, ChevronDown, Package } from 'lucide-react';
 import { useTranslation } from '@/locales';
 
 interface SelectWithModalProps {
-  type: 'variable' | 'semaphore' | 'label' | 'script' | 'mission';
+  type: 'variable' | 'semaphore' | 'label' | 'script' | 'mission' | 'parts';
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -42,7 +42,7 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
   }, [searchTerm, availableItems]);
 
   // Calcola la posizione del dropdown
-  const calculateDropdownPosition = () => {
+  const calculateDropdownPosition = useCallback(() => {
     if (!buttonRef.current) return;
     
     const dropdownWidth = 280;
@@ -84,7 +84,7 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
     left = Math.max(10, left);
     
     setDropdownPosition({ top, left });
-  };
+  }, [filteredItems.length, onAddItem]);
 
 
   // Calcola la posizione quando il dropdown si apre
@@ -95,7 +95,7 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
         calculateDropdownPosition();
       }, 0);
     }
-  }, [isModalOpen]);
+  }, [isModalOpen, calculateDropdownPosition]);
 
   // Chiudi il dropdown quando si clicca fuori
   useEffect(() => {
@@ -124,6 +124,7 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
       case 'label': return <Tag className="w-3 h-3" />;
       case 'script':
       case 'mission': return <FileCode className="w-3 h-3" />;
+      case 'parts': return <Package className="w-3 h-3" />;
       default: return null;
     }
   };
@@ -169,7 +170,7 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
   return (
     <>
       {/* Input field con icona */}
-      <div className={`relative ${className}`}>
+  <div className={`relative ${className}`} title={getModalTitle()}>
         <button
           ref={buttonRef}
           type="button"

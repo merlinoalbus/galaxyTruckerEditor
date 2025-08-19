@@ -10,7 +10,6 @@ import { simulateSceneExecution } from '@/utils/CampaignEditor/VisualFlowEditor/
 import { imagesViewService } from '@/services/CampaignEditor/VariablesSystem/services/ImagesView/imagesViewService';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 import type { Character } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
-import type { SupportedLanguage } from '@/contexts/LanguageContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SayCharBlockProps {
@@ -25,6 +24,8 @@ interface SayCharBlockProps {
   collapseAllTrigger?: number;
   expandAllTrigger?: number;
   globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
+  isCustom?: boolean;
+  availableLanguages?: string[];
 }
 
 export const SayCharBlock: React.FC<SayCharBlockProps> = ({
@@ -38,7 +39,9 @@ export const SayCharBlock: React.FC<SayCharBlockProps> = ({
   allBlocks = [],
   collapseAllTrigger = 0,
   expandAllTrigger = 0,
-  globalCollapseState = 'manual'
+  globalCollapseState = 'manual',
+  isCustom,
+  availableLanguages
 }) => {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
@@ -88,7 +91,7 @@ export const SayCharBlock: React.FC<SayCharBlockProps> = ({
       if (noAvatarResponse?.data?.[0]?.binary) {
         setNoAvatarImage(`data:image/png;base64,${noAvatarResponse.data[0].binary}`);
       }
-    }).catch(console.error);
+    }).catch(() => {});
   }, []);
   
   // Aggiorna l'immagine del personaggio selezionato
@@ -178,6 +181,8 @@ export const SayCharBlock: React.FC<SayCharBlockProps> = ({
               })}
               placeholder={t('visualFlowEditor.blocks.sayChar.dialogPlaceholder')}
               label={t('visualFlowEditor.blocks.sayChar.dialogLabel')}
+              isCustom={isCustom}
+              availableLanguages={availableLanguages}
             />
           </div>
         </div>

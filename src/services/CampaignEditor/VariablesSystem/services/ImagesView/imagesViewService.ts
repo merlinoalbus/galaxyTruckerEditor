@@ -1,8 +1,9 @@
+import { logger } from '@/utils/logger';
 import { ImagesApiResponse, ImageBinaryResponse } from '@/types/CampaignEditor/VariablesSystem/types/ImagesView/ImagesView.types';
 import { IMAGE_CONSTANTS } from '@/constants/Overview.constants';
-import { API_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
+import { API_CONFIG } from '@/config/constants';
 
-const API_BASE_URL = `http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api`;
+const API_BASE_URL = `${API_CONFIG.API_BASE_URL}`;
 
 class ImagesViewService {
   async getImages(includeThumbnail: boolean = true, thumbnailSize: number = IMAGE_CONSTANTS.DEFAULT_THUMBNAIL_SIZE): Promise<ImagesApiResponse> {
@@ -27,7 +28,7 @@ class ImagesViewService {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error('Error fetching images:', error);
+  logger.error('Error fetching images:', error);
       throw error;
     }
   }
@@ -49,7 +50,7 @@ class ImagesViewService {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error('Error fetching image binary:', error);
+  logger.error('Error fetching image binary:', error);
       throw error;
     }
   }
@@ -67,7 +68,7 @@ class ImagesViewService {
       const blob = await response.blob();
       return blob;
     } catch (error) {
-      console.error('Error fetching image file:', error);
+  logger.error('Error fetching image file:', error);
       throw error;
     }
   }

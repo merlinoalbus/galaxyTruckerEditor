@@ -15,9 +15,12 @@ export interface IFlowBlock {
   // Script block specific
   name?: string;
   scriptName?: string; // Script name for SCRIPT blocks
+  missionName?: string; // Mission name for MISSION blocks
   fileName?: string;
   language?: string;
   missionType?: string;
+  isCustom?: boolean; // Flag for custom scripts
+  customPath?: string | null; // Path for custom scripts
   blocksMission?: IFlowBlock[]; // Mission blocks for MISSION type
   blocksFinish?: IFlowBlock[]; // Finish blocks for MISSION type
   
@@ -107,6 +110,7 @@ export interface BlockParameters {
   image?: string; // For SHOWCHAR, CHANGECHAR
   status?: string;
   duration?: number | string; // For DELAY command
+  params?: string; // For ADDSHIPPARTS command - path to parts YAML file
   [key: string]: string | number | boolean | Record<string, string> | undefined;
 }
 
@@ -167,6 +171,7 @@ export interface ScriptContext {
   scriptName: string;
   isSubScript: boolean;
   parentBlockId?: string;
+  isMission?: boolean;
 }
 
 export interface OpenedScript {
@@ -175,6 +180,9 @@ export interface OpenedScript {
   blocks: IFlowBlock[];
   originalBlocks?: IFlowBlock[]; // Copia immutabile dei blocchi originali per reset
   isModified: boolean;
+  isCustom?: boolean;
+  customPath?: string | null;
+  availableLanguages?: string[];
 }
 
 export interface SessionData {

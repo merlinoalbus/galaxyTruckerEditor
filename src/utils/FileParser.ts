@@ -1,5 +1,5 @@
 import * as yaml from 'js-yaml';
-import { Mission, DeckScript, DeckCommand, ShipPart, AdventureCard, ValidationError, FlightEvaluation, InfoBoard } from '../types/GameTypes';
+import { Mission, DeckScript, DeckCommand, ValidationError, FlightEvaluation, InfoBoard } from '../types/GameTypes';
 
 export class FileParser {
   
@@ -35,10 +35,7 @@ export class FileParser {
 
   // Serializza una missione in YAML
   static serializeMissionYAML(mission: Mission): string {
-    const yamlData: Partial<Mission> = {
-      name: mission.name,
-      missionID: mission.missionID
-    };
+  // yamlData non utilizzato: costruzione YAML avviene manualmente
 
     // Aggiungi commenti descrittivi
     let yamlString = `name: "${mission.name}"                    # id of mission name string - localized \n`;
