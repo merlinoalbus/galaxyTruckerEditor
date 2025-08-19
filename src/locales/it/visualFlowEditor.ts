@@ -58,6 +58,13 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.footer': 'Correggi questi errori per garantire il corretto funzionamento dello script. I blocchi con errori sono evidenziati in rosso nell\'editor.',
   'visualFlowEditor.validation.setSpecConditionNoCondition': 'SETSPECCONDITION deve specificare una condizione. Scegline una dalla lista.',
   'visualFlowEditor.validation.setSpecConditionOutsideContext': 'SETSPECCONDITION dovrebbe essere usato dentro un blocco MISSION, BUILD o FLIGHT. Considera di spostarlo.',
+  'visualFlowEditor.validation.setDeckPreparationScriptNoScript': 'Il blocco SETDECKPREPARATIONSCRIPT deve avere uno script selezionato. Scegli uno script.',
+  'visualFlowEditor.validation.setFlightDeckPreparationScriptNoScript': 'Il blocco SETFLIGHTDECKPREPARATIONSCRIPT deve avere uno script selezionato. Scegli uno script.',
+  'visualFlowEditor.validation.setDeckPreparationScriptOutsideContext': 'SETDECKPREPARATIONSCRIPT dovrebbe essere dentro un blocco MISSION, BUILD o FLIGHT. Considera di spostare questo blocco in uno di questi contenitori.',
+  'visualFlowEditor.validation.setFlightDeckPreparationScriptOutsideContext': 'SETFLIGHTDECKPREPARATIONSCRIPT dovrebbe essere dentro un blocco MISSION, BUILD o FLIGHT. Considera di spostare questo blocco in uno di questi contenitori.',
+  'visualFlowEditor.validation.modifyOpponentsBuildSpeedNoPercentage': 'Il blocco MODIFYOPPONENTSBUILDSPEED deve avere un valore percentuale (1-200).',
+  'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutOfRange': 'La percentuale di MODIFYOPPONENTSBUILDSPEED deve essere tra 1 e 200.',
+  'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutsideContext': 'MODIFYOPPONENTSBUILDSPEED dovrebbe essere dentro un blocco MISSION, BUILD o FLIGHT.',
   
   // Delay Block
   'visualFlowEditor.blocks.delay.duration': 'Durata',
@@ -86,6 +93,18 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.exitMenu.info': 'Questo comando esce dal menu corrente e continua l\'esecuzione',
   'visualFlowEditor.blocks.exitMenu.compact': 'Esci dal menu',
   'visualFlowEditor.blocks.exitMenu.fullDescription': 'Esci dal menu corrente. Questo comando esce dal menu corrente e continua l\'esecuzione.',
+
+  // Comandi Missione (senza parametri)
+  'visualFlowEditor.blocks.setTurnBased.compact': 'Imposta modalità a turni',
+  'visualFlowEditor.blocks.setTurnBased.fullDescription': 'Imposta la missione in modalità a turni. Influisce su come le azioni vengono processate durante la missione.',
+  'visualFlowEditor.blocks.setMissionAsFailed.compact': 'Segna missione fallita',
+  'visualFlowEditor.blocks.setMissionAsFailed.fullDescription': 'Segna immediatamente la missione corrente come FALLITA. Usa questo comando quando sono soddisfatte le condizioni di fallimento.',
+  'visualFlowEditor.blocks.setMissionAsCompleted.compact': 'Segna missione completata',
+  'visualFlowEditor.blocks.setMissionAsCompleted.fullDescription': 'Segna immediatamente la missione corrente come COMPLETATA. Usa questo comando quando sono soddisfatte le condizioni di successo.',
+  'visualFlowEditor.blocks.allShipsGiveUp.compact': 'Resa generale navi',
+  'visualFlowEditor.blocks.allShipsGiveUp.fullDescription': 'Forza la resa di tutte le navi. Utile per terminare scontri o passare a stati post-combattimento.',
+  'visualFlowEditor.blocks.giveUpFlight.compact': 'Arrendi volo',
+  'visualFlowEditor.blocks.giveUpFlight.fullDescription': 'Arrende l\'attuale fase di volo, uscendo dal volo attivo.',
   
   // ADDPARTTOSHIP Block
   'visualFlowEditor.blocks.addPartToShip.parameters': 'Parametri',
@@ -124,6 +143,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.addShipParts.loading': 'Caricamento parti...',
   'visualFlowEditor.blocks.addShipParts.noParts': 'Nessun file parti selezionato',
   'visualFlowEditor.blocks.addShipParts.description': 'Carica parti nave da file YAML',
+  'visualFlowEditor.blocks.modifyOpponentsBuildSpeed.percentage': 'Velocità costruzione avversari (%)',
   
   // Metacode System
   'visualFlowEditor.metacode.found': 'Trovati',
@@ -362,6 +382,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.setSecretAdvPileNoParams': 'Il blocco SETSECRETADVPILE deve avere parametri. Inserisci due interi separati da spazio, senza virgolette.',
   'visualFlowEditor.validation.setAdvPileNotInBuild': 'SETADVPILE dovrebbe essere dentro un blocco BUILD. Sposta questo blocco nella fase di build.',
   'visualFlowEditor.validation.setSecretAdvPileNotInBuild': 'SETSECRETADVPILE dovrebbe essere dentro un blocco BUILD. Sposta questo blocco nella fase di build.',
+  'visualFlowEditor.validation.setTurnBasedOutsideContext': 'SETTURNBASED dovrebbe essere dentro un blocco MISSION, BUILD o FLIGHT. Sposta questo blocco in uno di questi contenitori.',
+  'visualFlowEditor.validation.setMissionAsFailedOutsideContext': 'SETMISSIONASFAILED dovrebbe essere dentro un blocco MISSION, BUILD o FLIGHT. Sposta questo blocco in uno di questi contenitori.',
+  'visualFlowEditor.validation.setMissionAsCompletedOutsideContext': 'SETMISSIONASCOMPLETED dovrebbe essere dentro un blocco MISSION, BUILD o FLIGHT. Sposta questo blocco in uno di questi contenitori.',
+  'visualFlowEditor.validation.allShipsGiveUpOutsideContext': 'ALLSHIPSGIVEUP dovrebbe essere dentro un blocco MISSION, BUILD o FLIGHT. Sposta questo blocco in uno di questi contenitori.',
+  'visualFlowEditor.validation.giveUpFlightOutsideContext': 'GIVEUPFLIGHT dovrebbe essere dentro un blocco MISSION, BUILD o FLIGHT. Sposta questo blocco in uno di questi contenitori.',
   'visualFlowEditor.validation.showcharNoScene': 'SHOWCHAR richiede una scena attiva. Aggiungi SHOWDLGSCENE prima di questo blocco.',
   'visualFlowEditor.validation.hidecharNoScene': 'HIDECHAR richiede una scena attiva. Aggiungi SHOWDLGSCENE prima di questo blocco.',
   'visualFlowEditor.validation.hidecharNoVisibleCharacters': 'HIDECHAR non può essere usato: nessun personaggio visibile nella scena.',

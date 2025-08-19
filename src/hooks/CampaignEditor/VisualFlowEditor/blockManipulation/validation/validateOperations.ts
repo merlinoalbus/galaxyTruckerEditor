@@ -187,7 +187,7 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
 
     // Gestione speciale per ADDOPPONENT, SETSHIPTYPE (MISSION context) e blocchi di ship parts (BUILD context)
     // Inoltre: SETDECKPREPARATIONSCRIPT e SETFLIGHTDECKPREPARATIONSCRIPT devono stare in MISSION/BUILD/FLIGHT (warning)
-  if ((block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE' || block.type === 'FINISH_MISSION' || block.type === 'ADDPARTTOSHIP' || block.type === 'ADDPARTTOASIDESLOT' || block.type === 'ADDSHIPPARTS' || block.type === 'SETADVPILE' || block.type === 'SETSECRETADVPILE' || block.type === 'SETDECKPREPARATIONSCRIPT' || block.type === 'SETFLIGHTDECKPREPARATIONSCRIPT' || block.type === 'SETSPECCONDITION') && paramValidation.valid) {
+  if ((block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE' || block.type === 'FINISH_MISSION' || block.type === 'ADDPARTTOSHIP' || block.type === 'ADDPARTTOASIDESLOT' || block.type === 'ADDSHIPPARTS' || block.type === 'SETADVPILE' || block.type === 'SETSECRETADVPILE' || block.type === 'SETDECKPREPARATIONSCRIPT' || block.type === 'SETFLIGHTDECKPREPARATIONSCRIPT' || block.type === 'SETSPECCONDITION' || block.type === 'SETTURNBASED' || block.type === 'SETMISSIONASFAILED' || block.type === 'SETMISSIONASCOMPLETED' || block.type === 'ALLSHIPSGIVEUP' || block.type === 'GIVEUPFLIGHT' || block.type === 'MODIFYOPPONENTSBUILDSPEED') && paramValidation.valid) {
         // Verifica se siamo dentro un blocco MISSION
         let isInsideMission = false;
         
@@ -249,7 +249,7 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
               severity: 'warning'
             };
           }
-        } else if (block.type === 'SETDECKPREPARATIONSCRIPT' || block.type === 'SETFLIGHTDECKPREPARATIONSCRIPT' || block.type === 'SETSPECCONDITION') {
+  } else if (block.type === 'SETDECKPREPARATIONSCRIPT' || block.type === 'SETFLIGHTDECKPREPARATIONSCRIPT' || block.type === 'SETSPECCONDITION' || block.type === 'SETTURNBASED' || block.type === 'SETMISSIONASFAILED' || block.type === 'SETMISSIONASCOMPLETED' || block.type === 'ALLSHIPSGIVEUP' || block.type === 'GIVEUPFLIGHT' || block.type === 'MODIFYOPPONENTSBUILDSPEED') {
           // Questi due comandi sono validi solo in MISSION, BUILD o FLIGHT
           let isInAllowedContainer = false;
           // Controlla il path
@@ -267,13 +267,39 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
             }
           }
           if (!isInAllowedContainer) {
+            let errorKey = '';
+            switch (block.type) {
+              case 'SETDECKPREPARATIONSCRIPT':
+                errorKey = 'SETDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT';
+                break;
+              case 'SETFLIGHTDECKPREPARATIONSCRIPT':
+                errorKey = 'SETFLIGHTDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT';
+                break;
+              case 'SETSPECCONDITION':
+                errorKey = 'SETSPECCONDITION_OUTSIDE_CONTEXT';
+                break;
+              case 'SETTURNBASED':
+                errorKey = 'SETTURNBASED_OUTSIDE_CONTEXT';
+                break;
+              case 'SETMISSIONASFAILED':
+                errorKey = 'SETMISSIONASFAILED_OUTSIDE_CONTEXT';
+                break;
+              case 'SETMISSIONASCOMPLETED':
+                errorKey = 'SETMISSIONASCOMPLETED_OUTSIDE_CONTEXT';
+                break;
+              case 'ALLSHIPSGIVEUP':
+                errorKey = 'ALLSHIPSGIVEUP_OUTSIDE_CONTEXT';
+                break;
+              case 'GIVEUPFLIGHT':
+                errorKey = 'GIVEUPFLIGHT_OUTSIDE_CONTEXT';
+                break;
+              case 'MODIFYOPPONENTSBUILDSPEED':
+                errorKey = 'MODIFYOPPONENTSBUILDSPEED_OUTSIDE_CONTEXT';
+                break;
+            }
             paramValidation = {
               valid: false,
-              error: block.type === 'SETDECKPREPARATIONSCRIPT' 
-                ? 'SETDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT' 
-                : block.type === 'SETFLIGHTDECKPREPARATIONSCRIPT' 
-                  ? 'SETFLIGHTDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT' 
-                  : 'SETSPECCONDITION_OUTSIDE_CONTEXT',
+              error: errorKey,
               severity: 'warning'
             };
           }
@@ -320,7 +346,13 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           'setSecretAdvPileNotInBuild',
           'SETDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT',
           'SETFLIGHTDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT',
-          'SETSPECCONDITION_OUTSIDE_CONTEXT'
+          'SETSPECCONDITION_OUTSIDE_CONTEXT',
+          'SETTURNBASED_OUTSIDE_CONTEXT',
+          'SETMISSIONASFAILED_OUTSIDE_CONTEXT',
+          'SETMISSIONASCOMPLETED_OUTSIDE_CONTEXT',
+          'ALLSHIPSGIVEUP_OUTSIDE_CONTEXT',
+          'GIVEUPFLIGHT_OUTSIDE_CONTEXT',
+          'MODIFYOPPONENTSBUILDSPEED_OUTSIDE_CONTEXT'
         ].includes(paramValidation.error || '');
         
         if (isWarning) {
@@ -572,6 +604,46 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
             message = t ?
               t('visualFlowEditor.validation.setFlightDeckPreparationScriptOutsideContext')
               : 'SETFLIGHTDECKPREPARATIONSCRIPT should be inside a MISSION, BUILD or FLIGHT block.';
+            break;
+          case 'SETTURNBASED_OUTSIDE_CONTEXT':
+            message = t ?
+              t('visualFlowEditor.validation.setTurnBasedOutsideContext')
+              : 'SETTURNBASED should be inside a MISSION, BUILD or FLIGHT block.';
+            break;
+          case 'SETMISSIONASFAILED_OUTSIDE_CONTEXT':
+            message = t ?
+              t('visualFlowEditor.validation.setMissionAsFailedOutsideContext')
+              : 'SETMISSIONASFAILED should be inside a MISSION, BUILD or FLIGHT block.';
+            break;
+          case 'SETMISSIONASCOMPLETED_OUTSIDE_CONTEXT':
+            message = t ?
+              t('visualFlowEditor.validation.setMissionAsCompletedOutsideContext')
+              : 'SETMISSIONASCOMPLETED should be inside a MISSION, BUILD or FLIGHT block.';
+            break;
+          case 'ALLSHIPSGIVEUP_OUTSIDE_CONTEXT':
+            message = t ?
+              t('visualFlowEditor.validation.allShipsGiveUpOutsideContext')
+              : 'ALLSHIPSGIVEUP should be inside a MISSION, BUILD or FLIGHT block.';
+            break;
+          case 'GIVEUPFLIGHT_OUTSIDE_CONTEXT':
+            message = t ?
+              t('visualFlowEditor.validation.giveUpFlightOutsideContext')
+              : 'GIVEUPFLIGHT should be inside a MISSION, BUILD or FLIGHT block.';
+            break;
+          case 'MODIFYOPPONENTSBUILDSPEED_NO_PERCENTAGE':
+            message = t ?
+              t('visualFlowEditor.validation.modifyOpponentsBuildSpeedNoPercentage')
+              : 'MODIFYOPPONENTSBUILDSPEED block must have a percentage value (1-200).';
+            break;
+          case 'MODIFYOPPONENTSBUILDSPEED_OUT_OF_RANGE':
+            message = t ?
+              t('visualFlowEditor.validation.modifyOpponentsBuildSpeedOutOfRange')
+              : 'MODIFYOPPONENTSBUILDSPEED percentage must be between 1 and 200.';
+            break;
+          case 'MODIFYOPPONENTSBUILDSPEED_OUTSIDE_CONTEXT':
+            message = t ?
+              t('visualFlowEditor.validation.modifyOpponentsBuildSpeedOutsideContext')
+              : 'MODIFYOPPONENTSBUILDSPEED should be inside a MISSION, BUILD or FLIGHT block.';
             break;
           case 'SETSPECCONDITION_NO_CONDITION':
             message = t ?
