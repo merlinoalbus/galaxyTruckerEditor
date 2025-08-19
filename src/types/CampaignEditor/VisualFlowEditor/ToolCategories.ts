@@ -94,10 +94,12 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
   { id: 'addnode', name: 'ADDNODE', icon: '🆕', blockType: 'ADDNODE', description: t('visualFlowEditor.tools.addNode.description'), implemented: false },
   { id: 'setnodeknown', name: 'SETNODEKNOWN', icon: '🔎', blockType: 'SETNODEKNOWN', description: t('visualFlowEditor.tools.setNodeKnown.description'), implemented: false },
   { id: 'showpath', name: 'SHOWPATH', icon: '🛤️', blockType: 'SHOWPATH', description: t('visualFlowEditor.tools.showPath.description'), implemented: false },
+  { id: 'hidepath', name: 'HIDEPATH', icon: '🛑', blockType: 'HIDEPATH', description: t('visualFlowEditor.tools.hidePath.description'), implemented: false },
       { id: 'hideallpaths', name: 'HIDEALLPATHS', icon: '⛔', blockType: 'HIDEALLPATHS', description: t('visualFlowEditor.tools.hideAllPaths.description'), implemented: false },
   { id: 'hidebutton', name: 'HIDEBUTTON', icon: '🙈', blockType: 'HIDEBUTTON', description: t('visualFlowEditor.tools.hideButton.description'), implemented: false },
     { id: 'showbutton', name: 'SHOWBUTTON', icon: '🔘', blockType: 'SHOWBUTTON', description: t('visualFlowEditor.tools.showButton.description'), implemented: false },
   { id: 'centermapbypath', name: 'CENTERMAPBYPATH', icon: '🧭', blockType: 'CENTERMAPBYPATH', description: t('visualFlowEditor.tools.centerMapByPath.description'), implemented: false },
+  { id: 'centermapbynode', name: 'CENTERMAPBYNODE', icon: '📡', blockType: 'CENTERMAPBYNODE', description: t('visualFlowEditor.tools.centerMapByNode.description'), implemented: false },
       { id: 'moveplayertonode', name: 'MOVEPLAYERTONODE', icon: '🚶', blockType: 'MOVEPLAYERTONODE', description: t('visualFlowEditor.tools.movePlayerToNode.description'), implemented: false }
     ]
   },
