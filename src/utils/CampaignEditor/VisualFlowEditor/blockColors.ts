@@ -339,6 +339,13 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   'MAP_LOCK': BlockCategory.MAP,
   'MAP_SHOW': BlockCategory.MAP,
   'MAP_HIDE': BlockCategory.MAP,
+  // Specific map commands used in editor
+  'SHOWNODE': BlockCategory.MAP,
+  'HIDENODE': BlockCategory.MAP,
+  'ADDNODE': BlockCategory.MAP,
+  'SETNODEKNOWN': BlockCategory.MAP,
+  'CENTERMAPBYNODE': BlockCategory.MAP,
+  'MOVEPLAYERTONODE': BlockCategory.MAP,
   
   // Game State
   'SAVE': BlockCategory.GAME_STATE,

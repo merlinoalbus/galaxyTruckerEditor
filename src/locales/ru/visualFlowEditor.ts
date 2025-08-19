@@ -45,6 +45,21 @@ export const visualFlowEditorTranslations = {
   
   // Missions List
   'visualFlowEditor.missionsList.loadingMissions': 'Загрузка миссий...',
+  // Map blocks (flat keys)
+  'visualFlowEditor.blocks.nodeSelector.search': 'Поиск узлов...',
+  'visualFlowEditor.blocks.nodeSelector.none': 'Нет',
+  'visualFlowEditor.validation.SHOWNODE_NO_NODE': 'Требуется узел. Пожалуйста, выберите узел.',
+  'visualFlowEditor.validation.HIDENODE_NO_NODE': 'Требуется узел. Пожалуйста, выберите узел.',
+  'visualFlowEditor.validation.ADDNODE_NO_NODE': 'Требуется узел. Пожалуйста, выберите узел.',
+  'visualFlowEditor.validation.SETNODEKNOWN_NO_NODE': 'Требуется узел. Пожалуйста, выберите узел.',
+  'visualFlowEditor.validation.CENTERMAPBYNODE_NO_NODE': 'Требуется узел. Пожалуйста, выберите узел.',
+  'visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE': 'Требуется узел. Пожалуйста, выберите узел.',
+  'visualFlowEditor.blocks.map.compact.show': 'Показать',
+  'visualFlowEditor.blocks.map.compact.hide': 'Скрыть',
+  'visualFlowEditor.blocks.map.compact.add': 'Добавить',
+  'visualFlowEditor.blocks.map.compact.known': 'Известный',
+  'visualFlowEditor.blocks.map.compact.center': 'Центрировать',
+  'visualFlowEditor.blocks.map.compact.move': 'Переместить',
   
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Ошибки валидации',

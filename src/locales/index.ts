@@ -410,6 +410,16 @@ export type TranslationKey =
   | 'visualFlowEditor.scriptsList.noScriptsAvailable'
   | 'visualFlowEditor.missionsList.loadingMissions'
   
+  // Visual Flow Editor - Map Blocks (Node Selector & Compact labels)
+  | 'visualFlowEditor.blocks.nodeSelector.search'
+  | 'visualFlowEditor.blocks.nodeSelector.none'
+  | 'visualFlowEditor.blocks.map.compact.show'
+  | 'visualFlowEditor.blocks.map.compact.hide'
+  | 'visualFlowEditor.blocks.map.compact.add'
+  | 'visualFlowEditor.blocks.map.compact.known'
+  | 'visualFlowEditor.blocks.map.compact.center'
+  | 'visualFlowEditor.blocks.map.compact.move'
+  
   // Visual Flow Editor - Validation
   | 'visualFlowEditor.validation.title'
   | 'visualFlowEditor.validation.close'
@@ -499,6 +509,12 @@ export type TranslationKey =
   | 'visualFlowEditor.validation.modifyOpponentsBuildSpeedNoPercentage'
   | 'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutOfRange'
   | 'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutsideContext'
+  | 'visualFlowEditor.validation.SHOWNODE_NO_NODE'
+  | 'visualFlowEditor.validation.HIDENODE_NO_NODE'
+  | 'visualFlowEditor.validation.ADDNODE_NO_NODE'
+  | 'visualFlowEditor.validation.SETNODEKNOWN_NO_NODE'
+  | 'visualFlowEditor.validation.CENTERMAPBYNODE_NO_NODE'
+  | 'visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE'
   
   // Visual Flow Editor - Error Modal
   | 'visualFlowEditor.errorModal.close'

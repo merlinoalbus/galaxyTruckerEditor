@@ -45,6 +45,21 @@ export const visualFlowEditorTranslations = {
   
   // Missions List
   'visualFlowEditor.missionsList.loadingMissions': 'Ładowanie misji...',
+  // Map blocks (flat keys)
+  'visualFlowEditor.blocks.nodeSelector.search': 'Szukaj węzłów...',
+  'visualFlowEditor.blocks.nodeSelector.none': 'Brak',
+  'visualFlowEditor.validation.SHOWNODE_NO_NODE': 'Wymagany jest węzeł. Proszę wybrać węzeł.',
+  'visualFlowEditor.validation.HIDENODE_NO_NODE': 'Wymagany jest węzeł. Proszę wybrać węzeł.',
+  'visualFlowEditor.validation.ADDNODE_NO_NODE': 'Wymagany jest węzeł. Proszę wybrać węzeł.',
+  'visualFlowEditor.validation.SETNODEKNOWN_NO_NODE': 'Wymagany jest węzeł. Proszę wybrać węzeł.',
+  'visualFlowEditor.validation.CENTERMAPBYNODE_NO_NODE': 'Wymagany jest węzeł. Proszę wybrać węzeł.',
+  'visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE': 'Wymagany jest węzeł. Proszę wybrać węzeł.',
+  'visualFlowEditor.blocks.map.compact.show': 'Pokaż',
+  'visualFlowEditor.blocks.map.compact.hide': 'Ukryj',
+  'visualFlowEditor.blocks.map.compact.add': 'Dodaj',
+  'visualFlowEditor.blocks.map.compact.known': 'Znany',
+  'visualFlowEditor.blocks.map.compact.center': 'Wyśrodkuj',
+  'visualFlowEditor.blocks.map.compact.move': 'Przenieś',
   
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Błędy walidacji',

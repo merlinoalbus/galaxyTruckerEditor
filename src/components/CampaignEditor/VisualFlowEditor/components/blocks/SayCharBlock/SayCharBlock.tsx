@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import Emoji from '@/components/Emoji/Emoji';
 import { BaseBlock } from '../BaseBlock/BaseBlock';
 import { MultilingualTextEditor } from '../../MultilingualTextEditor';
 import { CharacterSelector } from '../../CharacterSelector/CharacterSelector';
@@ -191,7 +192,7 @@ export const SayCharBlock: React.FC<SayCharBlockProps> = ({
   };
   
   const getBlockIcon = () => {
-    return <span className="text-2xl">🗣️</span>;
+  return <Emoji text="🗣️" className="text-2xl leading-none inline-block align-middle" />;
   };
   
   // Genera i parametri compatti per la visualizzazione collapsed

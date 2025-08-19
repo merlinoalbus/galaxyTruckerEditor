@@ -19,7 +19,7 @@ describe('Toolbar <-> Block icon parity', () => {
 
   it('SHOWDLGSCENE and HIDEDLGSCENE icons match toolbar', () => {
     // Toolbar expectations
-    expect(expected['SHOWDLGSCENE']).toBe('🗨️');
+  expect(expected['SHOWDLGSCENE']).toBe('🗨️');
     expect(expected['HIDEDLGSCENE']).toBe('🫥');
 
     // Verify actual block icon mapping in CommandBlock.tsx
@@ -28,10 +28,16 @@ describe('Toolbar <-> Block icon parity', () => {
       '../components/CampaignEditor/VisualFlowEditor/components/blocks/CommandBlock/CommandBlock.tsx'
     );
     const src = fs.readFileSync(cmdFile, 'utf8');
-    const showMatch = src.match(/case 'SHOWDLGSCENE':\s*return <span[^>]*>(.*?)<\/span>;/);
-    const hideMatch = src.match(/case 'HIDEDLGSCENE':\s*return <span[^>]*>(.*?)<\/span>;/);
-    expect(showMatch && showMatch[1]).toBe('🗨️');
-    expect(hideMatch && hideMatch[1]).toBe('🫥');
+  // Support both legacy <span> and new <Emoji text="..." /> patterns
+  const showSpan = src.match(/case 'SHOWDLGSCENE':[\s\S]*?return <span[^>]*>(.*?)<\/span>;/);
+  const hideSpan = src.match(/case 'HIDEDLGSCENE':[\s\S]*?return <span[^>]*>(.*?)<\/span>;/);
+  const showEmoji = src.match(/case 'SHOWDLGSCENE':[\s\S]*?return <Emoji\s+text=\"([^\"]+)\"/);
+  const hideEmoji = src.match(/case 'HIDEDLGSCENE':[\s\S]*?return <Emoji\s+text=\"([^\"]+)\"/);
+  const showIcon = (showEmoji && showEmoji[1]) || (showSpan && showSpan[1]);
+  const hideIcon = (hideEmoji && hideEmoji[1]) || (hideSpan && hideSpan[1]);
+  const stripVS = (s: string | null | undefined) => (s || '').normalize('NFC').replace(/\uFE0F/g, '');
+  expect(stripVS(showIcon || undefined)).toBe(stripVS(expected['SHOWDLGSCENE']));
+  expect(stripVS(hideIcon || undefined)).toBe(stripVS(expected['HIDEDLGSCENE']));
   });
 
   it('MOBS, EXIT_MENU, SET/RESET, MENU/OPT icons are consistent with toolbar definitions', () => {

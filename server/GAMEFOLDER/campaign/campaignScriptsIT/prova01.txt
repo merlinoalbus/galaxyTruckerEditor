@@ -2,12 +2,13 @@ SCRIPTS
 
   SCRIPT aaa_pippo
     ShowDlgScene
-    Ask "prova"
-    ModifyOpponentsBuildSpeed 152
-    MENU
-      OPT "check"
-      END_OF_OPT
-    END_OF_MENU
+    Say "prova"
+    ShowNode cyanHome
+    HideNode club
+    AddNode lab
+    MovePlayerToNode mine2
+    CenterMapByNode club
+    SetNodeKnown bar
     HideDlgScene
   END_OF_SCRIPT
 

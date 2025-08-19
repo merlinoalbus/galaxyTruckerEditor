@@ -45,6 +45,21 @@ export const visualFlowEditorTranslations = {
   
   // Missions List
   'visualFlowEditor.missionsList.loadingMissions': 'Načítání misí...',
+  // Map blocks (flat keys)
+  'visualFlowEditor.blocks.nodeSelector.search': 'Hledat uzly...',
+  'visualFlowEditor.blocks.nodeSelector.none': 'Žádný',
+  'visualFlowEditor.validation.SHOWNODE_NO_NODE': 'Uzel je povinný. Vyberte prosím uzel.',
+  'visualFlowEditor.validation.HIDENODE_NO_NODE': 'Uzel je povinný. Vyberte prosím uzel.',
+  'visualFlowEditor.validation.ADDNODE_NO_NODE': 'Uzel je povinný. Vyberte prosím uzel.',
+  'visualFlowEditor.validation.SETNODEKNOWN_NO_NODE': 'Uzel je povinný. Vyberte prosím uzel.',
+  'visualFlowEditor.validation.CENTERMAPBYNODE_NO_NODE': 'Uzel je povinný. Vyberte prosím uzel.',
+  'visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE': 'Uzel je povinný. Vyberte prosím uzel.',
+  'visualFlowEditor.blocks.map.compact.show': 'Zobrazit',
+  'visualFlowEditor.blocks.map.compact.hide': 'Skrýt',
+  'visualFlowEditor.blocks.map.compact.add': 'Přidat',
+  'visualFlowEditor.blocks.map.compact.known': 'Známý',
+  'visualFlowEditor.blocks.map.compact.center': 'Centrovat',
+  'visualFlowEditor.blocks.map.compact.move': 'Přesunout',
   
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Chyby validace',

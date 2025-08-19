@@ -40,6 +40,7 @@ interface BaseBlockProps {
   showAvatar?: boolean;
   avatarCharacter?: any; // Personaggio da mostrare nell'avatar
   isShipType?: boolean; // Indica se l'avatar è per SETSHIPTYPE
+  isNodeType?: boolean; // Indica se l'avatar è per comandi mappa (nodo)
 }
 
 /**
@@ -64,7 +65,8 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
   extraControls,
   showAvatar = false,
   avatarCharacter,
-  isShipType = false
+  isShipType = false,
+  isNodeType = false
 }) => {
   const { t } = useTranslation();
   // Stato interno per collapse se non è controllato dall'esterno
@@ -282,7 +284,7 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
         {/* Avatar per SAY/ASK sempre visibile */}
         {showAvatar && (
           <div className="ml-auto mr-2">
-            <CharacterAvatar character={avatarCharacter} isShipType={isShipType} />
+            <CharacterAvatar character={avatarCharacter} isShipType={isShipType} isNodeType={isNodeType} />
           </div>
         )}
       </div>

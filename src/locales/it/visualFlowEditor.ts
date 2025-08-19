@@ -9,6 +9,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.loading': 'Caricamento Visual Flow Editor...',
   'visualFlowEditor.noScriptLoaded': 'Nessuno script caricato',
   
+  
   // Toolbar
   'visualFlowEditor.toolbar.scripts': 'Scripts',
   'visualFlowEditor.toolbar.missions': 'Missions',
@@ -65,6 +66,21 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.modifyOpponentsBuildSpeedNoPercentage': 'Il blocco MODIFYOPPONENTSBUILDSPEED deve avere un valore percentuale (1-200).',
   'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutOfRange': 'La percentuale di MODIFYOPPONENTSBUILDSPEED deve essere tra 1 e 200.',
   'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutsideContext': 'MODIFYOPPONENTSBUILDSPEED dovrebbe essere dentro un blocco MISSION, BUILD o FLIGHT.',
+  // Map blocks (flat keys)
+  'visualFlowEditor.blocks.nodeSelector.search': 'Cerca nodo...',
+  'visualFlowEditor.blocks.nodeSelector.none': 'Nessuno',
+  'visualFlowEditor.validation.SHOWNODE_NO_NODE': 'Nodo obbligatorio. Seleziona un nodo.',
+  'visualFlowEditor.validation.HIDENODE_NO_NODE': 'Nodo obbligatorio. Seleziona un nodo.',
+  'visualFlowEditor.validation.ADDNODE_NO_NODE': 'Nodo obbligatorio. Seleziona un nodo.',
+  'visualFlowEditor.validation.SETNODEKNOWN_NO_NODE': 'Nodo obbligatorio. Seleziona un nodo.',
+  'visualFlowEditor.validation.CENTERMAPBYNODE_NO_NODE': 'Nodo obbligatorio. Seleziona un nodo.',
+  'visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE': 'Nodo obbligatorio. Seleziona un nodo.',
+  'visualFlowEditor.blocks.map.compact.show': 'Mostra',
+  'visualFlowEditor.blocks.map.compact.hide': 'Nascondi',
+  'visualFlowEditor.blocks.map.compact.add': 'Aggiungi',
+  'visualFlowEditor.blocks.map.compact.known': 'Conosciuto',
+  'visualFlowEditor.blocks.map.compact.center': 'Centra',
+  'visualFlowEditor.blocks.map.compact.move': 'Muovi',
   
   // Delay Block
   'visualFlowEditor.blocks.delay.duration': 'Durata',
