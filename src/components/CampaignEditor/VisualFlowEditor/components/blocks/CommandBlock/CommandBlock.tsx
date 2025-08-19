@@ -12,6 +12,7 @@ import { SceneDebugButton } from '../../SceneDebugButton';
 import { CharacterAvatar } from '../../CharacterAvatar';
 import { simulateSceneExecution, getLastModifiedVisibleCharacter } from '@/utils/CampaignEditor/VisualFlowEditor/sceneSimulation';
 import { imagesViewService } from '@/services/CampaignEditor/VariablesSystem/services/ImagesView/imagesViewService';
+import { PercentageInput } from '../../PercentageInput';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 import type { Character } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
 
@@ -419,6 +420,56 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
             </div>
           </div>
         );
+      case 'SETTURNBASED':
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {t('visualFlowEditor.blocks.setTurnBased.fullDescription')}
+              </p>
+            </div>
+          </div>
+        );
+      case 'SETMISSIONASFAILED':
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {t('visualFlowEditor.blocks.setMissionAsFailed.fullDescription')}
+              </p>
+            </div>
+          </div>
+        );
+      case 'SETMISSIONASCOMPLETED':
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {t('visualFlowEditor.blocks.setMissionAsCompleted.fullDescription')}
+              </p>
+            </div>
+          </div>
+        );
+      case 'ALLSHIPSGIVEUP':
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {t('visualFlowEditor.blocks.allShipsGiveUp.fullDescription')}
+              </p>
+            </div>
+          </div>
+        );
+      case 'GIVEUPFLIGHT':
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {t('visualFlowEditor.blocks.giveUpFlight.fullDescription')}
+              </p>
+            </div>
+          </div>
+        );
       
       case 'SHOWDLGSCENE':
         return (
@@ -680,6 +731,26 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         );
       }
       
+      case 'MODIFYOPPONENTSBUILDSPEED':
+        return (
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-slate-400 whitespace-nowrap">
+              {t('visualFlowEditor.blocks.modifyOpponentsBuildSpeed.percentage')}
+            </label>
+            <PercentageInput
+              value={typeof block.parameters?.percentage === 'number' ? block.parameters.percentage : undefined}
+              onChange={(value) => onUpdate({ 
+                parameters: { ...block.parameters, percentage: value } 
+              })}
+              min={1}
+              max={200}
+              placeholder="60"
+              className="flex-1"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        );
+      
       default:
         // Gestione generica per tutti i blocchi non implementati
         // Mostra tutti i parametri dinamicamente
@@ -770,16 +841,22 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
       case 'LABEL': return <span className="text-2xl">🏷️</span>;
       case 'SUB_SCRIPT': return <span className="text-2xl">📄</span>;
       case 'ACT_MISSION': return <span className="text-2xl">🎬</span>;
-      case 'EXIT_MENU': return <span className="text-2xl">🚪</span>;
+          case 'EXIT_MENU': return <span className="text-2xl">🚪</span>;
       case 'SHOWDLGSCENE': return <span className="text-2xl">🗨️</span>;
       case 'HIDEDLGSCENE': return <span className="text-2xl">🚫</span>;
       case 'SHOWCHAR': return <span className="text-2xl">👤</span>;
       case 'HIDECHAR': return <span className="text-2xl">👻</span>;
       case 'ADDOPPONENT': return <span className="text-2xl">🎮</span>;
       case 'SETSHIPTYPE': return <span className="text-2xl">🚀</span>;
+      case 'MODIFYOPPONENTSBUILDSPEED': return <span className="text-2xl">⚡</span>;
   case 'SETSPECCONDITION': return <span className="text-2xl">🧩</span>;
   case 'SETDECKPREPARATIONSCRIPT': return <span className="text-2xl">🃏</span>;
   case 'SETFLIGHTDECKPREPARATIONSCRIPT': return <span className="text-2xl">🛩️</span>;
+  case 'SETTURNBASED': return <span className="text-2xl">⏲️</span>;
+  case 'SETMISSIONASFAILED': return <span className="text-2xl">🚨</span>;
+  case 'SETMISSIONASCOMPLETED': return <span className="text-2xl">✅</span>;
+  case 'ALLSHIPSGIVEUP': return <span className="text-2xl">🛎️</span>;
+  case 'GIVEUPFLIGHT': return <span className="text-2xl">👋</span>;
       default: return <MessageSquare className="w-4 h-4" />;
     }
   };
@@ -888,6 +965,16 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         break;
       case 'EXIT_MENU':
         return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.exitMenu.compact')}</span>;
+      case 'SETTURNBASED':
+        return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.setTurnBased.compact')}</span>;
+      case 'SETMISSIONASFAILED':
+        return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.setMissionAsFailed.compact')}</span>;
+      case 'SETMISSIONASCOMPLETED':
+        return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.setMissionAsCompleted.compact')}</span>;
+      case 'ALLSHIPSGIVEUP':
+        return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.allShipsGiveUp.compact')}</span>;
+      case 'GIVEUPFLIGHT':
+        return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.giveUpFlight.compact')}</span>;
       case 'SHOWDLGSCENE':
         return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.showDlgScene.compact')}</span>;
       case 'HIDEDLGSCENE':
@@ -1092,6 +1179,12 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
           return <span className="text-gray-400">🧩 {block.parameters.condition}</span>;
         }
         break;
+      }
+      case 'MODIFYOPPONENTSBUILDSPEED': {
+        if (block.parameters?.percentage) {
+          return <span className="text-gray-400">⚡ {String(block.parameters.percentage)}%</span>;
+        }
+        return <span className="text-xs text-gray-500 italic">No percentage</span>;
       }
       default: {
         // Gestione generica per blocchi non implementati - mostra un riepilogo compatto dei parametri

@@ -542,6 +542,21 @@ export const validateSetSpecConditionParameters = (block: any): { valid: boolean
 };
 
 /**
+ * Valida i parametri di un blocco MODIFYOPPONENTSBUILDSPEED
+ */
+export const validateModifyOpponentsBuildSpeedParameters = (block: any): { valid: boolean; error?: string } => {
+  const value = block.parameters?.percentage;
+  if (value === undefined || value === null || value === '') {
+    return { valid: false, error: 'MODIFYOPPONENTSBUILDSPEED_NO_PERCENTAGE' };
+  }
+  const num = Number(value);
+  if (Number.isNaN(num) || num < 1 || num > 200) {
+    return { valid: false, error: 'MODIFYOPPONENTSBUILDSPEED_OUT_OF_RANGE' };
+  }
+  return { valid: true };
+};
+
+/**
  * Valida i parametri di un blocco in base al suo tipo
  */
 export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
@@ -611,6 +626,8 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
         : { valid: true };
     case 'SETSPECCONDITION':
       return validateSetSpecConditionParameters(block);
+    case 'MODIFYOPPONENTSBUILDSPEED':
+      return validateModifyOpponentsBuildSpeedParameters(block);
     // EXIT_MENU, SHOWDLGSCENE, HIDEDLGSCENE non hanno parametri da validare
     default:
       return { valid: true };

@@ -3,15 +3,9 @@ SCRIPTS
   SCRIPT aaa_pippo
     ShowDlgScene
     Ask "prova"
+    ModifyOpponentsBuildSpeed 152
     MENU
       OPT "check"
-        SetDeckPreparationScript "add1RandomOpponentsHard"
-        SetFlightDeckPreparationScript "add2RandomOpponentsMedium"
-        SetAdvPile 2 3
-        SetSecretAdvPile 1 3
-        SUB_SCRIPT add1RandomOpponentsEasy
-        ACT_MISSION adv1easy4p
-        EXIT_MENU
       END_OF_OPT
     END_OF_MENU
     HideDlgScene

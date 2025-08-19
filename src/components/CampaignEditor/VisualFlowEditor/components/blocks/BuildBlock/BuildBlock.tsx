@@ -139,7 +139,7 @@ export const BuildBlock: React.FC<BuildBlockProps> = ({
     <div ref={containerRef}>
       <ContainerBlock
         blockType="BUILD"
-        blockIcon={<span>🔨</span>}
+        blockIcon={<span>🏗️</span>}
         compactParams={getCompactParams()}
         onRemove={onRemove}
         onDragStart={onDragStart}

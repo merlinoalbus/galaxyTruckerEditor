@@ -58,6 +58,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.footer': 'Fix these errors to ensure the script works correctly. Blocks with errors are highlighted in red in the editor.',
   'visualFlowEditor.validation.setSpecConditionNoCondition': 'SETSPECCONDITION must specify a condition. Choose one from the list.',
   'visualFlowEditor.validation.setSpecConditionOutsideContext': 'SETSPECCONDITION should be used inside a MISSION, BUILD or FLIGHT block. Consider moving it.',
+  'visualFlowEditor.validation.modifyOpponentsBuildSpeedNoPercentage': 'MODIFYOPPONENTSBUILDSPEED must have a percentage value (1-200).',
+  'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutOfRange': 'MODIFYOPPONENTSBUILDSPEED percentage must be between 1 and 200.',
+  'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutsideContext': 'MODIFYOPPONENTSBUILDSPEED should be inside a MISSION, BUILD or FLIGHT block.',
   
   // Delay Block
   'visualFlowEditor.blocks.delay.duration': 'Duration',
@@ -86,6 +89,18 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.exitMenu.info': 'This command exits the current menu and continues execution',
   'visualFlowEditor.blocks.exitMenu.compact': 'Exit menu',
   'visualFlowEditor.blocks.exitMenu.fullDescription': 'Exit from current menu. This command exits the current menu and continues execution.',
+
+  // Mission Commands (parameterless)
+  'visualFlowEditor.blocks.setTurnBased.compact': 'Set turn-based mode',
+  'visualFlowEditor.blocks.setTurnBased.fullDescription': 'Set the mission to run in turn-based mode. This affects how actions are processed during the mission.',
+  'visualFlowEditor.blocks.setMissionAsFailed.compact': 'Mark mission failed',
+  'visualFlowEditor.blocks.setMissionAsFailed.fullDescription': 'Immediately mark the current mission as FAILED. Use this when mission failure conditions are met.',
+  'visualFlowEditor.blocks.setMissionAsCompleted.compact': 'Mark mission completed',
+  'visualFlowEditor.blocks.setMissionAsCompleted.fullDescription': 'Immediately mark the current mission as COMPLETED. Use this when mission success conditions are met.',
+  'visualFlowEditor.blocks.allShipsGiveUp.compact': 'All ships surrender',
+  'visualFlowEditor.blocks.allShipsGiveUp.fullDescription': 'Force all ships to surrender. Useful to end engagements or transition to post-combat states.',
+  'visualFlowEditor.blocks.giveUpFlight.compact': 'Surrender flight',
+  'visualFlowEditor.blocks.giveUpFlight.fullDescription': 'Give up the current flight phase, transitioning out of active flight.',
   
   // ADDPARTTOSHIP Block
   'visualFlowEditor.blocks.addPartToShip.parameters': 'Parameters',
@@ -366,6 +381,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.setSecretAdvPileNotInBuild': 'SETSECRETADVPILE should be inside a BUILD block. Consider moving this block inside a build phase.',
   'visualFlowEditor.validation.setDeckPreparationScriptOutsideContext': 'SETDECKPREPARATIONSCRIPT should be inside a MISSION, BUILD or FLIGHT block. Consider moving this block into one of these containers.',
   'visualFlowEditor.validation.setFlightDeckPreparationScriptOutsideContext': 'SETFLIGHTDECKPREPARATIONSCRIPT should be inside a MISSION, BUILD or FLIGHT block. Consider moving this block into one of these containers.',
+  'visualFlowEditor.validation.setTurnBasedOutsideContext': 'SETTURNBASED should be inside a MISSION, BUILD or FLIGHT block. Consider moving this block into one of these containers.',
+  'visualFlowEditor.validation.setMissionAsFailedOutsideContext': 'SETMISSIONASFAILED should be inside a MISSION, BUILD or FLIGHT block. Consider moving this block into one of these containers.',
+  'visualFlowEditor.validation.setMissionAsCompletedOutsideContext': 'SETMISSIONASCOMPLETED should be inside a MISSION, BUILD or FLIGHT block. Consider moving this block into one of these containers.',
+  'visualFlowEditor.validation.allShipsGiveUpOutsideContext': 'ALLSHIPSGIVEUP should be inside a MISSION, BUILD or FLIGHT block. Consider moving this block into one of these containers.',
+  'visualFlowEditor.validation.giveUpFlightOutsideContext': 'GIVEUPFLIGHT should be inside a MISSION, BUILD or FLIGHT block. Consider moving this block into one of these containers.',
   'visualFlowEditor.validation.showcharNoScene': 'SHOWCHAR requires an active scene. Add SHOWDLGSCENE before this block.',
   'visualFlowEditor.validation.hidecharNoScene': 'HIDECHAR requires an active scene. Add SHOWDLGSCENE before this block.',
   'visualFlowEditor.validation.hidecharNoVisibleCharacters': 'HIDECHAR cannot be used: no visible characters in the scene.',
@@ -696,6 +716,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.addOpponent.description': 'Add opponent',
   'visualFlowEditor.tools.setShipType.description': 'Set ship type',
   'visualFlowEditor.tools.addPartToShip.description': 'Add part to ship',
+  'visualFlowEditor.tools.modifyOpponentsBuildSpeed.description': 'Modify opponents build speed',
   'visualFlowEditor.tools.addPartToAsideSlot.description': 'Add part to aside slot',
   'visualFlowEditor.tools.addShipParts.description': 'Add multiple parts',
   'visualFlowEditor.tools.actMission.description': 'Activate mission',
@@ -704,7 +725,6 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.setAdvPile.description': 'Set adventure pile',
   'visualFlowEditor.tools.setSecretAdvPile.description': 'Set secret pile',
   'visualFlowEditor.tools.setSpecCondition.description': 'Set special condition',
-  'visualFlowEditor.tools.modifyOpponentsBuildSpeed.description': 'Modify build speed',
   'visualFlowEditor.tools.setTurnBased.description': 'Set turn mode',
   'visualFlowEditor.tools.setMissionAsFailed.description': 'Mark mission failed',
   'visualFlowEditor.tools.setMissionAsCompleted.description': 'Mark mission completed',
@@ -781,4 +801,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.metacode.plural': 'Plural',
   'visualFlowEditor.metacode.singularExample': 'singular (e.g. point)',
   'visualFlowEditor.metacode.pluralExample': 'plural (e.g. points)',
+  
+  // Blocks
+  'visualFlowEditor.blocks.modifyOpponentsBuildSpeed.percentage': 'Build Speed %',
 } as const;

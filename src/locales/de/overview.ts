@@ -45,8 +45,7 @@ export const overviewTranslations = {
   'overview.score': 'Bewertung',
   'overview.others': 'andere',
   'overview.cycles': 'Zyklen',
-  'overview.cmd': 'Befehle',
-  'overview.var': 'Variablen',
+  
   
   // Quality Issues Card
   'overview.codeQuality': 'Codequalität',

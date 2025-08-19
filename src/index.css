@@ -29,6 +29,30 @@
     @apply bg-gt-secondary border border-slate-600 text-white px-3 py-2 rounded-lg focus:outline-none focus:border-gt-accent;
   }
   
+  /* Custom Slider Styles */
+  .slider-thumb::-webkit-slider-thumb {
+    appearance: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #3b82f6;
+    cursor: pointer;
+    border: 2px solid #1e293b;
+  }
+  
+  .slider-thumb::-webkit-slider-thumb:hover {
+    background: #2563eb;
+  }
+  
+  .slider-thumb::-moz-range-thumb {
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #3b82f6;
+    cursor: pointer;
+    border: 2px solid #1e293b;
+  }
+  
   .card {
     @apply bg-gt-primary border border-slate-700 rounded-lg p-4 shadow-lg;
   }

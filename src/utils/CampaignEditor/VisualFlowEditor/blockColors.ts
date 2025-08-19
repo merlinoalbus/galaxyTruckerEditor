@@ -302,6 +302,13 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   'SETADVPILE': BlockCategory.MISSION,
   'SETSECRETADVPILE': BlockCategory.MISSION,
   'SETSPECCONDITION': BlockCategory.MISSION,
+  // Mission parameterless commands
+  'SETTURNBASED': BlockCategory.MISSION,
+  'SETMISSIONASFAILED': BlockCategory.MISSION,
+  'SETMISSIONASCOMPLETED': BlockCategory.MISSION,
+  'ALLSHIPSGIVEUP': BlockCategory.MISSION,
+  'GIVEUPFLIGHT': BlockCategory.MISSION,
+  'MODIFYOPPONENTSBUILDSPEED': BlockCategory.MISSION,
   
   // Dialogue
   'SAY': BlockCategory.DIALOGUE,

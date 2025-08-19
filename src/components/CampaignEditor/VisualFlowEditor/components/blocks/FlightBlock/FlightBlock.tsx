@@ -149,7 +149,7 @@ export const FlightBlock: React.FC<FlightBlockProps> = ({
     <div ref={containerRef}>
       <ContainerBlock
         blockType="FLIGHT"
-        blockIcon={<span>✈️</span>}
+        blockIcon={<span>🛫</span>}
         compactParams={getCompactParams()}
         onRemove={onRemove}
         onDragStart={onDragStart}

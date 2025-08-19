@@ -24,7 +24,8 @@ import {
   Users,          // SOCIAL
   TrendingUp,     // ANALYTICS
   Settings,       // CONFIG
-  Database        // DATA
+  Database,       // DATA
+  Zap             // MODIFYOPPONENTSBUILDSPEED
 } from 'lucide-react';
 
 export const BLOCK_ICONS = {
@@ -68,7 +69,10 @@ export const BLOCK_ICONS = {
   SOCIAL: <Users className="w-4 h-4" />,
   ANALYTICS: <TrendingUp className="w-4 h-4" />,
   CONFIG: <Settings className="w-4 h-4" />,
-  DATA: <Database className="w-4 h-4" />
+  DATA: <Database className="w-4 h-4" />,
+  
+  // Mission blocks
+  MODIFYOPPONENTSBUILDSPEED: <Zap className="w-4 h-4" />
 };
 
 export const getBlockIcon = (type: string): React.ReactNode => {

@@ -489,6 +489,16 @@ export type TranslationKey =
   | 'visualFlowEditor.validation.addShipPartsNotInBuild'
   | 'visualFlowEditor.validation.addShipPartsNoParams'
   | 'visualFlowEditor.validation.finishMissionNotInMission'
+  | 'visualFlowEditor.validation.setDeckPreparationScriptOutsideContext'
+  | 'visualFlowEditor.validation.setFlightDeckPreparationScriptOutsideContext'
+  | 'visualFlowEditor.validation.setTurnBasedOutsideContext'
+  | 'visualFlowEditor.validation.setMissionAsFailedOutsideContext'
+  | 'visualFlowEditor.validation.setMissionAsCompletedOutsideContext'
+  | 'visualFlowEditor.validation.allShipsGiveUpOutsideContext'
+  | 'visualFlowEditor.validation.giveUpFlightOutsideContext'
+  | 'visualFlowEditor.validation.modifyOpponentsBuildSpeedNoPercentage'
+  | 'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutOfRange'
+  | 'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutsideContext'
   
   // Visual Flow Editor - Error Modal
   | 'visualFlowEditor.errorModal.close'
@@ -510,6 +520,17 @@ export type TranslationKey =
   | 'visualFlowEditor.blocks.exitMenu.info'
   | 'visualFlowEditor.blocks.exitMenu.compact'
   | 'visualFlowEditor.blocks.exitMenu.fullDescription'
+  // Mission parameterless blocks
+  | 'visualFlowEditor.blocks.setTurnBased.compact'
+  | 'visualFlowEditor.blocks.setTurnBased.fullDescription'
+  | 'visualFlowEditor.blocks.setMissionAsFailed.compact'
+  | 'visualFlowEditor.blocks.setMissionAsFailed.fullDescription'
+  | 'visualFlowEditor.blocks.setMissionAsCompleted.compact'
+  | 'visualFlowEditor.blocks.setMissionAsCompleted.fullDescription'
+  | 'visualFlowEditor.blocks.allShipsGiveUp.compact'
+  | 'visualFlowEditor.blocks.allShipsGiveUp.fullDescription'
+  | 'visualFlowEditor.blocks.giveUpFlight.compact'
+  | 'visualFlowEditor.blocks.giveUpFlight.fullDescription'
   | 'visualFlowEditor.blocks.addPartToShip.parameters'
   | 'visualFlowEditor.blocks.addPartToShip.placeholder'
   | 'visualFlowEditor.blocks.addPartToShip.hint'
@@ -528,6 +549,7 @@ export type TranslationKey =
   | 'visualFlowEditor.blocks.finishMission.description'
   | 'visualFlowEditor.blocks.finishMission.compact'
   | 'visualFlowEditor.blocks.setSpecCondition.condition'
+  | 'visualFlowEditor.blocks.modifyOpponentsBuildSpeed.percentage'
   
   // Visual Flow Editor - Tools
   | 'visualFlowEditor.tools.title'
@@ -1135,16 +1157,18 @@ function mergeLanguageModules(modules: any) {
   };
 }
 
-// Reconstruct translations structure for backward compatibility
+// Reconstruct translations structure without filling from EN: strict parity required
+const enBase = mergeLanguageModules(enModules) as Record<string, string>;
+
 export const translations: Translations = {
-  EN: mergeLanguageModules(enModules),
-  IT: mergeLanguageModules(itModules),
-  CS: mergeLanguageModules(csModules),
-  DE: mergeLanguageModules(deModules),
-  ES: mergeLanguageModules(esModules),
-  FR: mergeLanguageModules(frModules),
-  PL: mergeLanguageModules(plModules),
-  RU: mergeLanguageModules(ruModules),
+  EN: enBase as any,
+  IT: mergeLanguageModules(itModules) as any,
+  CS: mergeLanguageModules(csModules) as any,
+  DE: mergeLanguageModules(deModules) as any,
+  ES: mergeLanguageModules(esModules) as any,
+  FR: mergeLanguageModules(frModules) as any,
+  PL: mergeLanguageModules(plModules) as any,
+  RU: mergeLanguageModules(ruModules) as any,
 } as Translations;
 
 // Custom hook for translations - maintains exact same functionality
