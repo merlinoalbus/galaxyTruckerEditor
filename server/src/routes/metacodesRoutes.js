@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs').promises;
 const path = require('path');
+const { getLogger } = require('../utils/logger');
+const logger = getLogger();
 
 // Constants
 const REGEX_CONSTANTS = {
@@ -65,7 +67,7 @@ const sanitizeContent = (content) => {
   // Limit content size to prevent memory issues (10MB)
   const MAX_CONTENT_SIZE = CACHE_CONSTANTS.MAX_CONTENT_SIZE;
   if (content.length > MAX_CONTENT_SIZE) {
-    console.warn('Content exceeds maximum size, truncating');
+  logger.warn('Content exceeds maximum size, truncating');
     return content.substring(0, MAX_CONTENT_SIZE);
   }
   return content;
@@ -114,13 +116,13 @@ const safeRegexExec = (pattern, string, maxIterations = REGEX_CONSTANTS.MAX_ITER
       
       // Check iteration limit
       if (iterations >= maxIterations) {
-        console.warn(`Regex execution stopped: max iterations (${maxIterations}) reached`);
+  logger.warn(`Regex execution stopped: max iterations (${maxIterations}) reached`);
         break;
       }
       
       // Check timeout
       if (Date.now() - startTime > timeout) {
-        console.warn(`Regex execution stopped: timeout (${timeout}ms) reached`);
+  logger.warn(`Regex execution stopped: timeout (${timeout}ms) reached`);
         break;
       }
       
@@ -130,7 +132,7 @@ const safeRegexExec = (pattern, string, maxIterations = REGEX_CONSTANTS.MAX_ITER
       }
     }
   } catch (error) {
-    console.error('Safe regex exec error:', error);
+  logger.error('Safe regex exec error:', error);
   }
   
   return results;
@@ -190,7 +192,7 @@ async function analyzeMetacodesUsage() {
           const filePath = path.join(customScriptsPath, sanitizedFile);
           // Security: Validate file path is within allowed directory
           if (!isPathSafe(filePath, baseGameFolder)) {
-            console.warn(`Skipping unsafe file path: ${sanitizedFile}`);
+            logger.warn(`Skipping unsafe file path: ${sanitizedFile}`);
             continue;
           }
           const rawContent = await fs.readFile(filePath, 'utf8');
@@ -200,7 +202,7 @@ async function analyzeMetacodesUsage() {
             analyzeContent(content, metacodesByLang[lang]);
           });
         } catch (err) {
-          console.error(`Error reading custom script file ${file}:`, err);
+          logger.error(`Error reading custom script file ${file}: ${err.message}`);
         }
       }
     }
@@ -224,13 +226,13 @@ async function analyzeMetacodesUsage() {
               // Analizza contenuto specifico per questa lingua
               analyzeContent(content, metacodesByLang[lang]);
             } catch (err) {
-              console.error(`Error reading ${lang} script file ${file}:`, err);
+              logger.error(`Error reading ${lang} script file ${file}: ${err.message}`);
             }
           }
         }
       } catch (err) {
         // La cartella della lingua potrebbe non esistere ancora
-        console.debug(`Language folder ${lang} not found or empty`);
+        logger.debug(`Language folder ${lang} not found or empty`);
       }
     }
 
@@ -247,7 +249,7 @@ async function analyzeMetacodesUsage() {
           // Safe regex match with timeout protection
           langMatch = sanitizedFileName.match(/_([A-Z]{2,3})\.yaml$/);
         } catch (error) {
-          console.warn('Regex timeout in language extraction:', error);
+          logger.warn('Regex timeout in language extraction:', error);
           langMatch = null;
         }
         if (langMatch) {
@@ -262,14 +264,14 @@ async function analyzeMetacodesUsage() {
               const content = sanitizeContent(rawContent);
               analyzeContent(content, metacodesByLang[lang]);
             } catch (err) {
-              console.error(`Error reading localization file ${file}:`, err);
+              logger.error(`Error reading localization file ${file}: ${err.message}`);
             }
           }
         }
       }
     }
   } catch (error) {
-    console.error('Error analyzing metacodes:', error);
+    logger.error('Error analyzing metacodes:', error);
   }
 
   // Formatta i risultati per ogni lingua
@@ -320,7 +322,7 @@ function analyzeContent(content, metacodesCount) {
     const nameMatches = safeRegexExec(namePattern, content, REGEX_CONSTANTS.NAME_ITERATIONS, REGEX_CONSTANTS.NAME_TIMEOUT);
     metacodesCount.name['[NAME]'] += nameMatches.length;
   } catch (error) {
-    console.error('Error in analyzeContent regex processing:', error);
+    logger.error('Error in analyzeContent regex processing:', error);
   }
 }
 
@@ -357,7 +359,7 @@ function formatTop5Metacodes(metacodesCount) {
     try {
       match = code.match(/\[g\(([^|]*)\|([^|]*)(?:\|([^)]*))?\)\]/);
     } catch (error) {
-      console.warn('Regex timeout in gender formatting:', error);
+      logger.warn('Regex timeout in gender formatting:', error);
     }
     const label = match ? `${match[1] || '∅'}/${match[2] || '∅'}${match[3] ? '/' + match[3] : ''}` : code;
     return { code, label, usage };
@@ -374,7 +376,7 @@ function formatTop5Metacodes(metacodesCount) {
     try {
       parts = code.match(/\d+:[^|)]+/g) || [];
     } catch (error) {
-      console.warn('Regex timeout in number formatting:', error);
+      logger.warn('Regex timeout in number formatting:', error);
     }
     const label = parts.slice(0, 2).join('/');
     return { code, label, usage };
@@ -390,7 +392,7 @@ function formatTop5Metacodes(metacodesCount) {
     try {
       match = code.match(/\[img\(([^)]+)\)\*(\d+)\]/);
     } catch (error) {
-      console.warn('Regex timeout in image formatting:', error);
+      logger.warn('Regex timeout in image formatting:', error);
     }
     const path = match ? match[1] : 'unknown';
     const label = path.split('/').pop()?.split('.')[0] || 'img';
@@ -429,7 +431,7 @@ router.post('/refresh', async (req, res) => {
       timestamp: new Date(cacheTimestamp).toISOString()
     });
   } catch (error) {
-    console.error('Error refreshing metacodes cache:', error);
+  logger.error('Error refreshing metacodes cache:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to refresh cache',
@@ -493,7 +495,7 @@ router.get('/top5/:lang?', async (req, res) => {
       });
     }
   } catch (error) {
-    console.error('Error getting top5 metacodes:', error);
+    logger.error('Error getting top5 metacodes:', error);
     
     // In caso di errore, ritorna liste vuote - nessun default
     res.json({

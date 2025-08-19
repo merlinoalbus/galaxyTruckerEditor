@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 import { API_CONFIG } from '@/config/constants';
 
 class AchievementsViewService {
@@ -26,7 +27,7 @@ class AchievementsViewService {
       
       return imageCache;
     } catch (error) {
-      console.error('Error in achievementsViewService:', error);
+  logger.error('Error in achievementsViewService:', error);
       throw error;
     }
   }

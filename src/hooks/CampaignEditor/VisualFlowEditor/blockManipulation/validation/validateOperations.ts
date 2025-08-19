@@ -6,7 +6,7 @@
 import { findBlockBeforeContainer } from '../search';
 import { validateAskInsertion } from './askValidation';
 import { validateContainerNesting } from './containerValidation';
-import { validateMenuInsertion, validateOptInsertion, validateMenuContent, canInsertMenuAfterBlock } from './menuValidation';
+import { validateMenuInsertion, validateOptInsertion, validateMenuContent } from './menuValidation';
 import { blockEndsWithAsk } from './blockValidators';
 import { validateGoInsertion, hasLabelInScript } from './goValidation';
 import { validateBlockParameters } from './parameterValidation';
@@ -155,7 +155,22 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
   const validateRecursive = (blocks: any[], parentBlock?: any, allRootBlocks?: any[], path: string[] = []): void => {
     blocks.forEach((block, index) => {
       // VALIDAZIONE PARAMETRI: Controlla che i blocchi abbiano i parametri obbligatori valorizzati
-      let paramValidation = validateBlockParameters(block, allFlatBlocks, characters);
+  let paramValidation = validateBlockParameters(block, allFlatBlocks, characters) as { valid: boolean; error?: string; severity?: string };
+
+      // Helper: estrai il primo testo disponibile da un oggetto di testi multilingue
+      const extractFirstText = (textObj: any): string | null => {
+        if (!textObj) return null;
+        if (typeof textObj === 'string') return textObj;
+        try {
+          for (const key of Object.keys(textObj)) {
+            const v = textObj[key];
+            if (v && typeof v === 'string' && v.trim() !== '') return v;
+          }
+        } catch (e) {
+          return null;
+        }
+        return null;
+      };
       
       // Gestione speciale per RETURN: controlla se siamo al livello root
       if (block.type === 'RETURN' && paramValidation.valid) {
@@ -167,9 +182,147 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           };
         }
       }
+      
+  // (helper rimosso: getAnyLanguageText non utilizzato)
+
+    // Gestione speciale per ADDOPPONENT, SETSHIPTYPE (MISSION context) e blocchi di ship parts (BUILD context)
+    // Inoltre: SETDECKPREPARATIONSCRIPT e SETFLIGHTDECKPREPARATIONSCRIPT devono stare in MISSION/BUILD/FLIGHT (warning)
+  if ((block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE' || block.type === 'FINISH_MISSION' || block.type === 'ADDPARTTOSHIP' || block.type === 'ADDPARTTOASIDESLOT' || block.type === 'ADDSHIPPARTS' || block.type === 'SETADVPILE' || block.type === 'SETSECRETADVPILE' || block.type === 'SETDECKPREPARATIONSCRIPT' || block.type === 'SETFLIGHTDECKPREPARATIONSCRIPT' || block.type === 'SETSPECCONDITION' || block.type === 'SETTURNBASED' || block.type === 'SETMISSIONASFAILED' || block.type === 'SETMISSIONASCOMPLETED' || block.type === 'ALLSHIPSGIVEUP' || block.type === 'GIVEUPFLIGHT' || block.type === 'MODIFYOPPONENTSBUILDSPEED') && paramValidation.valid) {
+        // Verifica se siamo dentro un blocco MISSION
+        let isInsideMission = false;
+        
+        // Controlla il path per vedere se c'è un MISSION
+        if (path && path.length > 0) {
+          isInsideMission = path.some(p => p.includes('MISSION'));
+        }
+        
+        // Se parentBlock esiste, controlla anche quello
+        if (!isInsideMission && parentBlock) {
+          let currentParent = parentBlock;
+          while (currentParent && !isInsideMission) {
+            if (currentParent.type === 'MISSION') {
+              isInsideMission = true;
+            }
+            currentParent = currentParent.parent;
+          }
+        }
+        
+  // Per ADDPARTTOSHIP, ADDPARTTOASIDESLOT e ADDSHIPPARTS verifica se sono dentro BUILD
+  if (block.type === 'ADDPARTTOSHIP' || block.type === 'ADDPARTTOASIDESLOT' || block.type === 'ADDSHIPPARTS' || block.type === 'SETADVPILE' || block.type === 'SETSECRETADVPILE') {
+          // Verifica se siamo dentro un blocco BUILD
+          let isInsideBuild = false;
+          
+          // Controlla il path per vedere se c'è un BUILD
+          if (path && path.length > 0) {
+            isInsideBuild = path.some(p => p.includes('BUILD'));
+          }
+          
+          // Se parentBlock esiste, controlla anche quello
+          if (!isInsideBuild && parentBlock) {
+            let currentParent = parentBlock;
+            while (currentParent && !isInsideBuild) {
+              if (currentParent.type === 'BUILD') {
+                isInsideBuild = true;
+              }
+              currentParent = currentParent.parent;
+            }
+          }
+          
+          // Se non è dentro BUILD, genera un warning
+          if (!isInsideBuild) {
+            let errorKey = '';
+            if (block.type === 'ADDPARTTOSHIP') {
+              errorKey = 'addPartToShipNotInBuild';
+            } else if (block.type === 'ADDPARTTOASIDESLOT') {
+              errorKey = 'addPartToAsideSlotNotInBuild';
+            } else if (block.type === 'ADDSHIPPARTS') {
+              errorKey = 'addShipPartsNotInBuild';
+            } else if (block.type === 'SETADVPILE') {
+              errorKey = 'setAdvPileNotInBuild';
+            } else if (block.type === 'SETSECRETADVPILE') {
+              errorKey = 'setSecretAdvPileNotInBuild';
+            }
+            // Explicit severity to help downstream consumers decide warning vs error
+            paramValidation = { 
+              valid: false,
+              error: errorKey,
+              severity: 'warning'
+            };
+          }
+  } else if (block.type === 'SETDECKPREPARATIONSCRIPT' || block.type === 'SETFLIGHTDECKPREPARATIONSCRIPT' || block.type === 'SETSPECCONDITION' || block.type === 'SETTURNBASED' || block.type === 'SETMISSIONASFAILED' || block.type === 'SETMISSIONASCOMPLETED' || block.type === 'ALLSHIPSGIVEUP' || block.type === 'GIVEUPFLIGHT' || block.type === 'MODIFYOPPONENTSBUILDSPEED') {
+          // Questi due comandi sono validi solo in MISSION, BUILD o FLIGHT
+          let isInAllowedContainer = false;
+          // Controlla il path
+          if (path && path.length > 0) {
+            isInAllowedContainer = path.some(p => p.includes('MISSION') || p.includes('BUILD') || p.includes('FLIGHT'));
+          }
+          // Controlla i parent
+          if (!isInAllowedContainer && parentBlock) {
+            let currentParent = parentBlock;
+            while (currentParent && !isInAllowedContainer) {
+              if (currentParent.type === 'MISSION' || currentParent.type === 'BUILD' || currentParent.type === 'FLIGHT') {
+                isInAllowedContainer = true;
+              }
+              currentParent = currentParent.parent;
+            }
+          }
+          if (!isInAllowedContainer) {
+            let errorKey = '';
+            switch (block.type) {
+              case 'SETDECKPREPARATIONSCRIPT':
+                errorKey = 'SETDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT';
+                break;
+              case 'SETFLIGHTDECKPREPARATIONSCRIPT':
+                errorKey = 'SETFLIGHTDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT';
+                break;
+              case 'SETSPECCONDITION':
+                errorKey = 'SETSPECCONDITION_OUTSIDE_CONTEXT';
+                break;
+              case 'SETTURNBASED':
+                errorKey = 'SETTURNBASED_OUTSIDE_CONTEXT';
+                break;
+              case 'SETMISSIONASFAILED':
+                errorKey = 'SETMISSIONASFAILED_OUTSIDE_CONTEXT';
+                break;
+              case 'SETMISSIONASCOMPLETED':
+                errorKey = 'SETMISSIONASCOMPLETED_OUTSIDE_CONTEXT';
+                break;
+              case 'ALLSHIPSGIVEUP':
+                errorKey = 'ALLSHIPSGIVEUP_OUTSIDE_CONTEXT';
+                break;
+              case 'GIVEUPFLIGHT':
+                errorKey = 'GIVEUPFLIGHT_OUTSIDE_CONTEXT';
+                break;
+              case 'MODIFYOPPONENTSBUILDSPEED':
+                errorKey = 'MODIFYOPPONENTSBUILDSPEED_OUTSIDE_CONTEXT';
+                break;
+            }
+            paramValidation = {
+              valid: false,
+              error: errorKey,
+              severity: 'warning'
+            };
+          }
+        } else {
+      // Se non è dentro MISSION (per ADDOPPONENT, SETSHIPTYPE e FINISH_MISSION), genera un warning
+          if (!isInsideMission) {
+            let errorKey = '';
+            if (block.type === 'ADDOPPONENT') errorKey = 'ADDOPPONENT_NOT_IN_MISSION';
+            else if (block.type === 'SETSHIPTYPE') errorKey = 'SETSHIPTYPE_NOT_IN_MISSION';
+        else if (block.type === 'FINISH_MISSION') errorKey = 'finishMissionNotInMission';
+
+            // Mark these contextual problems as warnings explicitly
+            paramValidation = { 
+              valid: false,
+              error: errorKey,
+              severity: 'warning'
+            };
+          }
+        }
+      }
       if (!paramValidation.valid) {
         // Determina se è un warning o error
-        const isWarning = [
+  const isWarning = [
           'SHOWCHAR_NO_SCENE',
           'HIDECHAR_NO_SCENE', 
           'HIDECHAR_NO_VISIBLE_CHARACTERS',
@@ -182,7 +335,24 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           'ASK_NO_SCENE',
           'ASK_IF_INVALID_THEN',
           'ASK_IF_INVALID_ELSE',
-          'RETURN_AT_ROOT_LEVEL'
+          'RETURN_AT_ROOT_LEVEL',
+          'ADDOPPONENT_NOT_IN_MISSION',
+          'SETSHIPTYPE_NOT_IN_MISSION',
+          'finishMissionNotInMission',
+          'addPartToShipNotInBuild',
+          'addPartToAsideSlotNotInBuild',
+          'addShipPartsNotInBuild',
+          'setAdvPileNotInBuild',
+          'setSecretAdvPileNotInBuild',
+          'SETDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT',
+          'SETFLIGHTDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT',
+          'SETSPECCONDITION_OUTSIDE_CONTEXT',
+          'SETTURNBASED_OUTSIDE_CONTEXT',
+          'SETMISSIONASFAILED_OUTSIDE_CONTEXT',
+          'SETMISSIONASCOMPLETED_OUTSIDE_CONTEXT',
+          'ALLSHIPSGIVEUP_OUTSIDE_CONTEXT',
+          'GIVEUPFLIGHT_OUTSIDE_CONTEXT',
+          'MODIFYOPPONENTSBUILDSPEED_OUTSIDE_CONTEXT'
         ].includes(paramValidation.error || '');
         
         if (isWarning) {
@@ -335,6 +505,156 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
               t('visualFlowEditor.validation.askIfInvalidElse')
               : 'After ASK, IF block\'s ELSE branch must start with MENU or GO.';
             break;
+          case 'ADDOPPONENT_NO_CHARACTER':
+            message = t ?
+              t('visualFlowEditor.validation.addOpponentNoCharacter')
+              : 'ADDOPPONENT block must have a character selected. Choose an opponent character.';
+            break;
+          case 'ADDOPPONENT_NOT_IN_MISSION':
+            message = t ?
+              t('visualFlowEditor.validation.addOpponentNotInMission')
+              : 'ADDOPPONENT should be inside a MISSION block. Consider moving this block inside a mission.';
+            break;
+          case 'SETSHIPTYPE_NO_TYPE':
+            message = t ?
+              t('visualFlowEditor.validation.setShipTypeNoType')
+              : 'SETSHIPTYPE block must have a ship type selected. Choose a ship class (STI, STII, or STIII).';
+            break;
+          case 'SETSHIPTYPE_NOT_IN_MISSION':
+            message = t ?
+              t('visualFlowEditor.validation.setShipTypeNotInMission')
+              : 'SETSHIPTYPE should be inside a MISSION block. Consider moving this block inside a mission.';
+            break;
+          case 'ADDPARTTOSHIP_NO_PARAMS':
+            message = t ?
+              t('visualFlowEditor.validation.addPartToShipNoParams')
+              : 'ADDPARTTOSHIP block must have parameters. Specify the part to add.';
+            break;
+          case 'addPartToShipNotInBuild':
+            message = t ?
+              t('visualFlowEditor.validation.addPartToShipNotInBuild')
+              : 'ADDPARTTOSHIP should be inside a BUILD block. Consider moving this block inside a build phase.';
+            break;
+          case 'ADDPARTTOASIDESLOT_NO_PARAMS':
+            message = t ?
+              t('visualFlowEditor.validation.addPartToAsideSlotNoParams')
+              : 'ADDPARTTOASIDESLOT block must have parameters. Specify the part to add.';
+            break;
+          case 'addPartToAsideSlotNotInBuild':
+            message = t ?
+              t('visualFlowEditor.validation.addPartToAsideSlotNotInBuild')
+              : 'ADDPARTTOASIDESLOT should be inside a BUILD block. Consider moving this block inside a build phase.';
+            break;
+          case 'ADDSHIPPARTS_NO_PARAMS':
+            message = t ?
+              t('visualFlowEditor.validation.addShipPartsNoParams')
+              : 'ADDSHIPPARTS block must have a parts file selected. Select a YAML file from the parts folder.';
+            break;
+          case 'addShipPartsNotInBuild':
+            message = t ?
+              t('visualFlowEditor.validation.addShipPartsNotInBuild')
+              : 'ADDSHIPPARTS should be inside a BUILD block. Consider moving this block inside a build phase.';
+            break;
+          case 'SETADVPILE_NO_PARAMS':
+            message = t ?
+              t('visualFlowEditor.validation.setAdvPileNoParams')
+              : 'SETADVPILE block must have parameters. Provide the two-int string, unquoted.';
+            break;
+          case 'SETSECRETADVPILE_NO_PARAMS':
+            message = t ?
+              t('visualFlowEditor.validation.setSecretAdvPileNoParams')
+              : 'SETSECRETADVPILE block must have parameters. Provide the two-int string, unquoted.';
+            break;
+          case 'setAdvPileNotInBuild':
+            message = t ?
+              t('visualFlowEditor.validation.setAdvPileNotInBuild')
+              : 'SETADVPILE should be inside a BUILD block. Consider moving this block inside a build phase.';
+            break;
+          case 'setSecretAdvPileNotInBuild':
+            message = t ?
+              t('visualFlowEditor.validation.setSecretAdvPileNotInBuild')
+              : 'SETSECRETADVPILE should be inside a BUILD block. Consider moving this block inside a build phase.';
+            break;
+          case 'finishMissionNotInMission':
+            message = t ?
+              t('visualFlowEditor.validation.finishMissionNotInMission')
+              : 'FINISH_MISSION should be inside a MISSION block.';
+            break;
+          case 'ACT_MISSION_NO_MISSION':
+            message = t ?
+              t('visualFlowEditor.validation.actMissionNoMission')
+              : 'ACT_MISSION block must have a mission selected. Choose a mission to activate.';
+            break;
+          case 'SETDECKPREPARATIONSCRIPT_NO_SCRIPT':
+            message = t ?
+              t('visualFlowEditor.validation.setDeckPreparationScriptNoScript')
+              : 'SETDECKPREPARATIONSCRIPT block must have a script selected.';
+            break;
+          case 'SETFLIGHTDECKPREPARATIONSCRIPT_NO_SCRIPT':
+            message = t ?
+              t('visualFlowEditor.validation.setFlightDeckPreparationScriptNoScript')
+              : 'SETFLIGHTDECKPREPARATIONSCRIPT block must have a script selected.';
+            break;
+          case 'SETDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT':
+            message = t ?
+              t('visualFlowEditor.validation.setDeckPreparationScriptOutsideContext')
+              : 'SETDECKPREPARATIONSCRIPT should be inside a MISSION, BUILD or FLIGHT block.';
+            break;
+          case 'SETFLIGHTDECKPREPARATIONSCRIPT_OUTSIDE_CONTEXT':
+            message = t ?
+              t('visualFlowEditor.validation.setFlightDeckPreparationScriptOutsideContext')
+              : 'SETFLIGHTDECKPREPARATIONSCRIPT should be inside a MISSION, BUILD or FLIGHT block.';
+            break;
+          case 'SETTURNBASED_OUTSIDE_CONTEXT':
+            message = t ?
+              t('visualFlowEditor.validation.setTurnBasedOutsideContext')
+              : 'SETTURNBASED should be inside a MISSION, BUILD or FLIGHT block.';
+            break;
+          case 'SETMISSIONASFAILED_OUTSIDE_CONTEXT':
+            message = t ?
+              t('visualFlowEditor.validation.setMissionAsFailedOutsideContext')
+              : 'SETMISSIONASFAILED should be inside a MISSION, BUILD or FLIGHT block.';
+            break;
+          case 'SETMISSIONASCOMPLETED_OUTSIDE_CONTEXT':
+            message = t ?
+              t('visualFlowEditor.validation.setMissionAsCompletedOutsideContext')
+              : 'SETMISSIONASCOMPLETED should be inside a MISSION, BUILD or FLIGHT block.';
+            break;
+          case 'ALLSHIPSGIVEUP_OUTSIDE_CONTEXT':
+            message = t ?
+              t('visualFlowEditor.validation.allShipsGiveUpOutsideContext')
+              : 'ALLSHIPSGIVEUP should be inside a MISSION, BUILD or FLIGHT block.';
+            break;
+          case 'GIVEUPFLIGHT_OUTSIDE_CONTEXT':
+            message = t ?
+              t('visualFlowEditor.validation.giveUpFlightOutsideContext')
+              : 'GIVEUPFLIGHT should be inside a MISSION, BUILD or FLIGHT block.';
+            break;
+          case 'MODIFYOPPONENTSBUILDSPEED_NO_PERCENTAGE':
+            message = t ?
+              t('visualFlowEditor.validation.modifyOpponentsBuildSpeedNoPercentage')
+              : 'MODIFYOPPONENTSBUILDSPEED block must have a percentage value (1-200).';
+            break;
+          case 'MODIFYOPPONENTSBUILDSPEED_OUT_OF_RANGE':
+            message = t ?
+              t('visualFlowEditor.validation.modifyOpponentsBuildSpeedOutOfRange')
+              : 'MODIFYOPPONENTSBUILDSPEED percentage must be between 1 and 200.';
+            break;
+          case 'MODIFYOPPONENTSBUILDSPEED_OUTSIDE_CONTEXT':
+            message = t ?
+              t('visualFlowEditor.validation.modifyOpponentsBuildSpeedOutsideContext')
+              : 'MODIFYOPPONENTSBUILDSPEED should be inside a MISSION, BUILD or FLIGHT block.';
+            break;
+          case 'SETSPECCONDITION_NO_CONDITION':
+            message = t ?
+              t('visualFlowEditor.validation.setSpecConditionNoCondition')
+              : 'SETSPECCONDITION block must have a condition selected.';
+            break;
+          case 'SETSPECCONDITION_OUTSIDE_CONTEXT':
+            message = t ?
+              t('visualFlowEditor.validation.setSpecConditionOutsideContext')
+              : 'SETSPECCONDITION should be inside a MISSION, BUILD or FLIGHT block.';
+            break;
           default:
             message = t ? 
               t('visualFlowEditor.validation.error')
@@ -343,6 +663,7 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
         
         // isWarning è già definito sopra, lo riutilizzo
         
+        // ... costruzione di message già avvenuta sopra
         errorDetails.push({
           blockId: block.id,
           blockType: block.type,
@@ -357,14 +678,15 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
         warnings++; // Warning, non error
         invalidBlocks.push(block.id);
         const prevAsk = blocks[index - 1];
+        // usa il primo testo disponibile in qualsiasi lingua
+        const firstAskText = extractFirstText(prevAsk.parameters?.text) || (t ? t('visualFlowEditor.validation.noText') : 'no text');
         errorDetails.push({
           blockId: block.id,
           blockType: block.type,
           errorType: 'CONSECUTIVE_ASK',
           message: t ? 
-            t('visualFlowEditor.validation.consecutiveAskDetailed')
-              .replace('{firstAsk}', prevAsk.parameters?.text?.EN || t('visualFlowEditor.validation.noText'))
-            : `Two consecutive ASK blocks are not allowed. The first ASK (${prevAsk.parameters?.text?.EN || 'no text'}) is followed directly by this ASK. Insert a SAY, MENU or other command between the two ASK blocks.`,
+            t('visualFlowEditor.validation.consecutiveAskDetailed').replace('{firstAsk}', firstAskText)
+            : `Two consecutive ASK blocks are not allowed. The first ASK (${firstAskText}) is followed directly by this ASK. Insert a SAY, MENU or other command between the two ASK blocks.`,
           path: [...path],
           relatedBlockId: prevAsk.id,
           type: 'warning' // Warning - non bloccante per integrità strutturale

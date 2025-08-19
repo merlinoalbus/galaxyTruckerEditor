@@ -4,6 +4,7 @@ export interface NewScriptDialog {
   isOpen: boolean;
   fileName: string;
   error?: string;
+  scriptType?: 'standard' | 'custom' | 'customMultilingual';
 }
 
 export interface NewScriptDialogProps {

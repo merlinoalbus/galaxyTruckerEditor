@@ -145,6 +145,11 @@ export const useDragAndDrop = ({
       if (blockType === 'SAY') {
         newBlock.parameters.text = { EN: '' };
       }
+
+      // Default specifico per MODIFYOPPONENTSBUILDSPEED
+      if (blockType === 'MODIFYOPPONENTSBUILDSPEED') {
+        newBlock.parameters.percentage = 60;
+      }
     }
     
     return newBlock;

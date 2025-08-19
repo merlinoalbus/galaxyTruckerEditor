@@ -4,7 +4,7 @@ import { MapCanvasProps } from '@/types/CampaignEditor/InteractiveMap/types/MapC
 import { MapNode as MapNodeType, MapConnection as MapConnectionType } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { useMapCanvas } from '@/hooks/CampaignEditor/InteractiveMap/hooks/MapCanvas/useMapCanvas';
 import { mapCanvasStyles } from '@/styles/CampaignEditor/InteractiveMap/styles/MapCanvas/MapCanvas.styles';
-import { API_CONFIG, PATHS } from '@/config/constants';
+import { API_CONFIG } from '@/config/constants';
 
 import { MapNode } from '../MapNode/MapNode';
 import { MapConnection } from '../MapConnection/MapConnection';
@@ -39,10 +39,12 @@ export const MapCanvas: React.FC<MapCanvasProps> = ({
 
   const handleCanvasMouseDown = (event: React.MouseEvent) => {
     // Only handle canvas drag if click is not on a node or connection
-    if ((event.target as SVGElement).tagName === 'svg' || 
-        (event.target as SVGElement).tagName === 'rect' ||
-        (event.target as SVGElement).tagName === 'image' && 
-        !(event.target as SVGElement).closest('g[onClick]')) {
+    if (
+      (event.target as SVGElement).tagName === 'svg' ||
+      (event.target as SVGElement).tagName === 'rect' ||
+      ((event.target as SVGElement).tagName === 'image' &&
+        !(event.target as SVGElement).closest('g[onClick]'))
+    ) {
       handleMouseDown(event);
     }
   };

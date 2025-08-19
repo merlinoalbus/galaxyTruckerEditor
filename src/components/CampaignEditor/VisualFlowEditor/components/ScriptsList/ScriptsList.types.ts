@@ -19,6 +19,8 @@ export interface ScriptData {
     errorCount: number;
   };
   availableLanguages: string[];
+  isCustom?: boolean;  // Indica se è uno script custom
+  customPath?: string | null;  // Percorso originale se custom
 }
 
 

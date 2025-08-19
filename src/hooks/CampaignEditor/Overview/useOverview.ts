@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 // Overview Hook - Business logic principale
 
 import { useMemo, useState, useCallback } from 'react';
@@ -15,7 +16,7 @@ export const useOverview = (analysis: CampaignAnalysis | null) => {
     try {
       return overviewService.generateStatistics(analysis);
     } catch (error) {
-      console.error('Error generating overview statistics:', error);
+  logger.error('Error generating overview statistics:', error);
       return null;
     }
   }, [analysis]);

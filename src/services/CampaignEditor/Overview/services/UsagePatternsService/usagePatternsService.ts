@@ -151,8 +151,7 @@ export const usagePatternsService = {
     
     return Array.from(semUsage.entries())
       .map(([name, usage]) => {
-        const totalChecks = usage.ifCount + usage.ifNotCount;
-        const totalSets = usage.setCount + usage.resetCount;
+  const totalChecks = usage.ifCount + usage.ifNotCount;
         
         let mostCommonState: 'set' | 'reset' | 'balanced';
         if (usage.setCount > usage.resetCount * 2) mostCommonState = 'set';

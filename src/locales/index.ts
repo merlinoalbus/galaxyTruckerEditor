@@ -421,6 +421,8 @@ export type TranslationKey =
   | 'visualFlowEditor.validation.goToBlockTitle'
   | 'visualFlowEditor.validation.footer'
   | 'visualFlowEditor.validation.error'
+  | 'visualFlowEditor.validation.setSpecConditionNoCondition'
+  | 'visualFlowEditor.validation.setSpecConditionOutsideContext'
   | 'visualFlowEditor.validation.consecutiveAskError'
   | 'visualFlowEditor.validation.blockInBuildError'
   | 'visualFlowEditor.validation.blockInFlightError'
@@ -457,6 +459,7 @@ export type TranslationKey =
   | 'visualFlowEditor.validation.labelNoName'
   | 'visualFlowEditor.validation.optNoText'
   | 'visualFlowEditor.validation.subScriptNoName'
+  | 'visualFlowEditor.validation.actMissionNoMission'
   | 'visualFlowEditor.validation.returnAtRootLevel'
   | 'visualFlowEditor.validation.setNoSemaphore'
   | 'visualFlowEditor.validation.resetNoSemaphore'
@@ -477,6 +480,25 @@ export type TranslationKey =
   | 'visualFlowEditor.validation.showCharNoCharacter'
   | 'visualFlowEditor.validation.showCharNoPosition'
   | 'visualFlowEditor.validation.hideCharNoCharacter'
+  | 'visualFlowEditor.validation.addOpponentNoCharacter'
+  | 'visualFlowEditor.validation.addOpponentNotInMission'
+  | 'visualFlowEditor.validation.setShipTypeNoType'
+  | 'visualFlowEditor.validation.setShipTypeNotInMission'
+  | 'visualFlowEditor.validation.addPartToShipNotInBuild'
+  | 'visualFlowEditor.validation.addPartToAsideSlotNotInBuild'
+  | 'visualFlowEditor.validation.addShipPartsNotInBuild'
+  | 'visualFlowEditor.validation.addShipPartsNoParams'
+  | 'visualFlowEditor.validation.finishMissionNotInMission'
+  | 'visualFlowEditor.validation.setDeckPreparationScriptOutsideContext'
+  | 'visualFlowEditor.validation.setFlightDeckPreparationScriptOutsideContext'
+  | 'visualFlowEditor.validation.setTurnBasedOutsideContext'
+  | 'visualFlowEditor.validation.setMissionAsFailedOutsideContext'
+  | 'visualFlowEditor.validation.setMissionAsCompletedOutsideContext'
+  | 'visualFlowEditor.validation.allShipsGiveUpOutsideContext'
+  | 'visualFlowEditor.validation.giveUpFlightOutsideContext'
+  | 'visualFlowEditor.validation.modifyOpponentsBuildSpeedNoPercentage'
+  | 'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutOfRange'
+  | 'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutsideContext'
   
   // Visual Flow Editor - Error Modal
   | 'visualFlowEditor.errorModal.close'
@@ -491,10 +513,43 @@ export type TranslationKey =
   | 'visualFlowEditor.blocks.subScript.scriptName'
   | 'visualFlowEditor.blocks.subScript.hint'
   | 'visualFlowEditor.blocks.subScript.navigate'
+  | 'visualFlowEditor.blocks.actMission.missionName'
+  | 'visualFlowEditor.blocks.actMission.hint'
+  | 'visualFlowEditor.blocks.actMission.navigate'
   | 'visualFlowEditor.blocks.exitMenu.description'
   | 'visualFlowEditor.blocks.exitMenu.info'
   | 'visualFlowEditor.blocks.exitMenu.compact'
   | 'visualFlowEditor.blocks.exitMenu.fullDescription'
+  // Mission parameterless blocks
+  | 'visualFlowEditor.blocks.setTurnBased.compact'
+  | 'visualFlowEditor.blocks.setTurnBased.fullDescription'
+  | 'visualFlowEditor.blocks.setMissionAsFailed.compact'
+  | 'visualFlowEditor.blocks.setMissionAsFailed.fullDescription'
+  | 'visualFlowEditor.blocks.setMissionAsCompleted.compact'
+  | 'visualFlowEditor.blocks.setMissionAsCompleted.fullDescription'
+  | 'visualFlowEditor.blocks.allShipsGiveUp.compact'
+  | 'visualFlowEditor.blocks.allShipsGiveUp.fullDescription'
+  | 'visualFlowEditor.blocks.giveUpFlight.compact'
+  | 'visualFlowEditor.blocks.giveUpFlight.fullDescription'
+  | 'visualFlowEditor.blocks.addPartToShip.parameters'
+  | 'visualFlowEditor.blocks.addPartToShip.placeholder'
+  | 'visualFlowEditor.blocks.addPartToShip.hint'
+  | 'visualFlowEditor.blocks.addPartToShip.noParameters'
+  | 'visualFlowEditor.blocks.addPartToShip.params'
+  | 'visualFlowEditor.blocks.addPartToAsideSlot.parameters'
+  | 'visualFlowEditor.blocks.addPartToAsideSlot.placeholder'
+  | 'visualFlowEditor.blocks.addPartToAsideSlot.hint'
+  | 'visualFlowEditor.blocks.addPartToAsideSlot.noParameters'
+  | 'visualFlowEditor.blocks.addPartToAsideSlot.params'
+  | 'visualFlowEditor.blocks.addShipParts.partsFileLabel'
+  | 'visualFlowEditor.blocks.addShipParts.selectParts'
+  | 'visualFlowEditor.blocks.addShipParts.loading'
+  | 'visualFlowEditor.blocks.addShipParts.noParts'
+  | 'visualFlowEditor.blocks.addShipParts.description'
+  | 'visualFlowEditor.blocks.finishMission.description'
+  | 'visualFlowEditor.blocks.finishMission.compact'
+  | 'visualFlowEditor.blocks.setSpecCondition.condition'
+  | 'visualFlowEditor.blocks.modifyOpponentsBuildSpeed.percentage'
   
   // Visual Flow Editor - Tools
   | 'visualFlowEditor.tools.title'
@@ -657,6 +712,12 @@ export type TranslationKey =
   | 'visualFlowEditor.command.selectLabel'
   | 'visualFlowEditor.command.labelName'
   | 'visualFlowEditor.command.selectScript'
+  | 'visualFlowEditor.command.opponent'
+  | 'visualFlowEditor.command.opponentPlaceholder'
+  | 'visualFlowEditor.command.shipClassI'
+  | 'visualFlowEditor.command.shipClassII'
+  | 'visualFlowEditor.command.shipClassIII'
+  | 'visualFlowEditor.command.selectCondition'
   
   // Visual Flow Editor - Script Block
   | 'visualFlowEditor.script.scriptName'
@@ -1096,16 +1157,18 @@ function mergeLanguageModules(modules: any) {
   };
 }
 
-// Reconstruct translations structure for backward compatibility
+// Reconstruct translations structure without filling from EN: strict parity required
+const enBase = mergeLanguageModules(enModules) as Record<string, string>;
+
 export const translations: Translations = {
-  EN: mergeLanguageModules(enModules),
-  IT: mergeLanguageModules(itModules),
-  CS: mergeLanguageModules(csModules),
-  DE: mergeLanguageModules(deModules),
-  ES: mergeLanguageModules(esModules),
-  FR: mergeLanguageModules(frModules),
-  PL: mergeLanguageModules(plModules),
-  RU: mergeLanguageModules(ruModules),
+  EN: enBase as any,
+  IT: mergeLanguageModules(itModules) as any,
+  CS: mergeLanguageModules(csModules) as any,
+  DE: mergeLanguageModules(deModules) as any,
+  ES: mergeLanguageModules(esModules) as any,
+  FR: mergeLanguageModules(frModules) as any,
+  PL: mergeLanguageModules(plModules) as any,
+  RU: mergeLanguageModules(ruModules) as any,
 } as Translations;
 
 // Custom hook for translations - maintains exact same functionality

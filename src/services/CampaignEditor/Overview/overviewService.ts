@@ -1,6 +1,6 @@
 // Overview Service - Coordinatore services
 
-import type { CampaignAnalysis, ParsedScript } from '@/types/CampaignEditor';
+import type { CampaignAnalysis } from '@/types/CampaignEditor';
 import type { 
   OverviewStatistics,
   QualityIssue,

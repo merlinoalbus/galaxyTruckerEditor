@@ -183,7 +183,7 @@ const COMMAND_CATALOG = {
   'SETMISSIONASCOMPLETED': { params: [], pattern: /^SetMissionAsCompleted$/ },
   'ALLSHIPSGIVEUP': { params: [], pattern: /^AllShipsGiveUp$/ },
   'GIVEUPFLIGHT': { params: [], pattern: /^GiveUpFlight$/ },
-  'SETSPECCONDITION': { params: ['condition'], pattern: /^SetSpecCondition\s+"?(\w+)"?$/ },
+  'SETSPECCONDITION': { params: ['condition:string'], pattern: /^SetSpecCondition\s+"?(\w+)"?$/ },
   
   // STATO
   'SAVESTATE': { params: [], pattern: /^SAVESTATE$/i },
@@ -196,7 +196,7 @@ const COMMAND_CATALOG = {
   'ADDPARTTOASIDESLOT': { params: ['params:complex'], pattern: /^AddPartToAsideSlot\s+(.+)$/i, example: 'alienGun 2 1 2 0' },
   'SETADVPILE': { params: ['params:complex'], pattern: /^SetAdvPile\s+(.+)$/i, example: '1 3' },
   'SETSECRETADVPILE': { params: ['params:complex'], pattern: /^SetSecretAdvPile\s+(.+)$/i, example: '2 1' },
-  'ADDSHIPPARTS': { params: ['params:complex'], pattern: /^AddShipParts\s+(.+)$/i, example: 'parts/allParts.yaml' },
+  'ADDSHIPPARTS': { params: ['params:string'], pattern: /^AddShipParts\s+(.+)$/i, example: 'parts/allParts.yaml' },
   'SHOWHELPIMAGE': { params: ['params:complex'], pattern: /^SHOWHELPIMAGE\s+(.+)$/i, example: '40 50 70 campaign/tutorial-purple.png' }
 };
 
@@ -1512,7 +1512,10 @@ function serializeCommand(element, targetLanguage = 'EN') {
           const noQuoteParams = ['achievement', 'shiptype', 'pile', 'progress', 'node', 'image', 'script'];
           const needQuoteParams = ['path', 'file']; // Parametri che necessitano sempre virgolette
           
-          if ((paramType === 'string' && !noQuoteParams.includes(paramName)) || needQuoteParams.includes(paramName)) {
+          // Eccezione: per SetDeckPreparationScript e SetFlightDeckPreparationScript, il parametro 'script' deve SEMPRE essere tra virgolette
+          if ((element.type === 'SETDECKPREPARATIONSCRIPT' || element.type === 'SETFLIGHTDECKPREPARATIONSCRIPT') && paramName === 'script') {
+            parts.push(`"${paramValue}"`);
+          } else if ((paramType === 'string' && !noQuoteParams.includes(paramName)) || needQuoteParams.includes(paramName)) {
             parts.push(`"${paramValue}"`);
           } else {
             parts.push(paramValue);

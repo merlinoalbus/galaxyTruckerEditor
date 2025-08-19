@@ -45,8 +45,7 @@ export const overviewTranslations = {
   'overview.score': 'Skóre',
   'overview.others': 'ostatní',
   'overview.cycles': 'cykly',
-  'overview.cmd': 'příkazy',
-  'overview.var': 'proměnné',
+  
   
   // Quality Issues Card
   'overview.codeQuality': 'Kvalita kódu',

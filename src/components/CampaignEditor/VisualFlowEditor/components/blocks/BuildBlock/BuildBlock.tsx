@@ -24,6 +24,8 @@ interface BuildBlockProps {
   collapseAllTrigger?: number;
   expandAllTrigger?: number;
   globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
+  isCustom?: boolean;
+  availableLanguages?: string[];
 }
 
 export const BuildBlock: React.FC<BuildBlockProps> = ({
@@ -45,7 +47,9 @@ export const BuildBlock: React.FC<BuildBlockProps> = ({
   validationType,
   collapseAllTrigger = 0,
   expandAllTrigger = 0,
-  globalCollapseState = 'manual'
+  globalCollapseState = 'manual',
+  isCustom,
+  availableLanguages
 }) => {
   const { t } = useTranslation();
   const [isCollapsed, setIsCollapsed] = useState(() => {
@@ -87,14 +91,13 @@ export const BuildBlock: React.FC<BuildBlockProps> = ({
     
     checkSpace();
     const resizeObserver = new ResizeObserver(checkSpace);
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
+    const el = containerRef.current;
+    if (el) {
+      resizeObserver.observe(el);
     }
     
     return () => {
-      if (containerRef.current) {
-        resizeObserver.disconnect();
-      }
+      resizeObserver.disconnect();
     };
   }, [isCollapsed, isManuallyExpanded]);
 
@@ -136,7 +139,7 @@ export const BuildBlock: React.FC<BuildBlockProps> = ({
     <div ref={containerRef}>
       <ContainerBlock
         blockType="BUILD"
-        blockIcon={<span>🔨</span>}
+        blockIcon={<span>🏗️</span>}
         compactParams={getCompactParams()}
         onRemove={onRemove}
         onDragStart={onDragStart}
@@ -168,12 +171,14 @@ export const BuildBlock: React.FC<BuildBlockProps> = ({
                     label=""
                   />
                   {block.blockInit.map((child: any, index: number) => (
-                    <React.Fragment key={child.id || index}>
+                    <React.Fragment key={`${child.id ?? 'init'}-${index}`}>
                       {renderChildren([child])}
                       <AnchorPoint
                         onDrop={(e) => onDropInitAtIndex(e, index + 1)}
                         onDragOver={onDragOver}
                         label=""
+                        // key per stabilità DOM degli anchor generati in lista
+                        key={`init-anchor-${index}`}
                       />
                     </React.Fragment>
                   ))}
@@ -207,12 +212,13 @@ export const BuildBlock: React.FC<BuildBlockProps> = ({
                     label=""
                   />
                   {block.blockStart.map((child: any, index: number) => (
-                    <React.Fragment key={child.id || index}>
+                    <React.Fragment key={`${child.id ?? 'start'}-${index}`}>
                       {renderChildren([child])}
                       <AnchorPoint
                         onDrop={(e) => onDropStartAtIndex(e, index + 1)}
                         onDragOver={onDragOver}
                         label=""
+                        key={`start-anchor-${index}`}
                       />
                     </React.Fragment>
                   ))}

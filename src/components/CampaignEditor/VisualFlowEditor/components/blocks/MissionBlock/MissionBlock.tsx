@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Target, Flag, ChevronDown, ChevronUp } from 'lucide-react';
 import { AnchorPoint } from '../../AnchorPoint/AnchorPoint';
-import { InlineZoomControls } from '../../ZoomControls';
 import { useTranslation } from '@/locales';
 
 interface MissionBlockProps {
@@ -23,6 +22,8 @@ interface MissionBlockProps {
   collapseAllTrigger?: number;
   expandAllTrigger?: number;
   globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
+  isCustom?: boolean;
+  availableLanguages?: string[];
 }
 
 export const MissionBlock: React.FC<MissionBlockProps> = ({
@@ -43,7 +44,9 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
   validationType = 'error',
   collapseAllTrigger = 0,
   expandAllTrigger = 0,
-  globalCollapseState = 'manual'
+  globalCollapseState = 'manual',
+  isCustom,
+  availableLanguages
 }) => {
   const { t } = useTranslation();
   const [isCollapsed, setIsCollapsed] = useState(() => {
@@ -166,12 +169,13 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
               {/* Render mission blocks */}
               {block.blocksMission && block.blocksMission.length > 0 ? (
                 block.blocksMission.map((child: any, index: number) => (
-                  <React.Fragment key={child.id || index}>
+                  <React.Fragment key={`${child.id ?? 'mission'}-${index}`}>
                     {renderChildren([child])}
                     <AnchorPoint
                       onDragOver={onDragOver}
                       onDrop={(e) => onDropAtIndexMission(e, index + 1)}
                       label=""
+                      key={`mission-anchor-${index}`}
                     />
                   </React.Fragment>
                 ))
@@ -204,12 +208,13 @@ export const MissionBlock: React.FC<MissionBlockProps> = ({
               {/* Render finish blocks */}
               {block.blocksFinish && block.blocksFinish.length > 0 ? (
                 block.blocksFinish.map((child: any, index: number) => (
-                  <React.Fragment key={child.id || index}>
+                  <React.Fragment key={`${child.id ?? 'finish'}-${index}`}>
                     {renderChildren([child])}
                     <AnchorPoint
                       onDragOver={onDragOver}
                       onDrop={(e) => onDropAtIndexFinish(e, index + 1)}
                       label=""
+                      key={`finish-anchor-${index}`}
                     />
                   </React.Fragment>
                 ))

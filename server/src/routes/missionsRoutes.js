@@ -13,6 +13,56 @@ const { findAllRelatedScripts } = require('../utils/scriptAnalyzer');
 const router = express.Router();
 const logger = getLogger();
 
+// API per ottenere lista file YAML dalla cartella parts
+router.get('/parts', async (req, res) => {
+  try {
+    logger.info('API call: GET /api/missions/parts - Lista file YAML dalla cartella parts');
+    
+    const partsPath = path.join(GAME_ROOT, 'parts');
+    const partFiles = [];
+    
+    if (await fs.pathExists(partsPath)) {
+      try {
+        const files = await fs.readdir(partsPath);
+        const yamlFiles = files.filter(f => f.endsWith('.yaml') || f.endsWith('.yml'));
+        
+        for (const fileName of yamlFiles) {
+          const fileNameWithoutExt = fileName.replace(/\.(yaml|yml)$/, '');
+          const fullPath = `parts/${fileName}`;
+          
+          partFiles.push({
+            id: fullPath,
+            descrizione: fileNameWithoutExt,
+            valore: fullPath
+          });
+        }
+      } catch (error) {
+        logger.warn(`Error scanning parts directory: ${error.message}`);
+      }
+    } else {
+      logger.warn('Parts directory not found');
+    }
+    
+    // Ordina per descrizione
+    partFiles.sort((a, b) => a.descrizione.localeCompare(b.descrizione));
+    
+    logger.info(`Found ${partFiles.length} part files`);
+    
+    res.json({
+      success: true,
+      data: partFiles,
+      count: partFiles.length
+    });
+  } catch (error) {
+    logger.error(`Error retrieving parts: ${error.message}`);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to retrieve parts',
+      message: error.message 
+    });
+  }
+});
+
 // API 8: Lista archi mappa da missions.yaml secondo specifica
 router.get('/routes', async (req, res) => {
   try {
@@ -285,7 +335,7 @@ router.get('/', async (req, res) => {
     const languages = SUPPORTED_LANGUAGES;
     const allMissionsData = new Map();
     
-    // 1. Scansiona tutti i file mission multilingua
+    // 1. Scansiona tutti i file mission multilingua da campaign
     for (const lang of languages) {
       const missionsPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`);
       
@@ -301,6 +351,46 @@ router.get('/', async (req, res) => {
         } catch (error) {
           logger.warn(`Error scanning missions for ${lang}: ${error.message}`);
         }
+      }
+    }
+    
+    // 1b. Scansiona anche customScripts per missions custom
+    const customScriptsPath = path.join(GAME_ROOT, 'customScripts');
+    
+    // Prima scansiona missions multilingua in sottocartelle
+    for (const lang of languages) {
+      const langPath = path.join(customScriptsPath, lang);
+      if (await fs.pathExists(langPath)) {
+        try {
+          const files = await fs.readdir(langPath);
+          const txtFiles = files.filter(f => f.endsWith('.txt'));
+          
+          for (const fileName of txtFiles) {
+            const filePath = path.join(langPath, fileName);
+            await parseMissionFileForAPI12(filePath, fileName, lang, allMissionsData, true);
+          }
+        } catch (error) {
+          logger.warn(`Error scanning custom missions for ${lang}: ${error.message}`);
+        }
+      }
+    }
+    
+    // Poi scansiona missions dirette in customScripts root
+    if (await fs.pathExists(customScriptsPath)) {
+      try {
+        const files = await fs.readdir(customScriptsPath);
+        const txtFiles = files.filter(f => f.endsWith('.txt') && f !== 'README.txt');
+        
+        for (const fileName of txtFiles) {
+          const filePath = path.join(customScriptsPath, fileName);
+          // Verifica che non sia una directory
+          const stat = await fs.stat(filePath);
+          if (stat.isFile()) {
+            await parseMissionFileForAPI12(filePath, fileName, 'EN', allMissionsData, true);
+          }
+        }
+      } catch (error) {
+        logger.warn(`Error scanning custom missions root: ${error.message}`);
       }
     }
     
@@ -354,7 +444,9 @@ router.get('/', async (req, res) => {
         variabili_utilizzate: Array.from(missionData.variabili || []),
         personaggi_utilizzati: Array.from(missionData.personaggi || []),
         labels_definite: Array.from(missionData.labels || []),
-        nodi_referenziati: Array.from(missionData.nodi || [])
+        nodi_referenziati: Array.from(missionData.nodi || []),
+        isCustom: missionData.isCustom || false,
+        customPath: missionData.customPath || null
       });
     }
     
@@ -444,11 +536,11 @@ router.post('/saveMission', async (req, res) => {
     }
     
     const mission = missions[0];
-    const { name, fileName, blocksMission, blocksFinish, availableLanguages, multilingualMerged } = mission;
+    const { name, fileName, blocksMission, blocksFinish, availableLanguages, multilingualMerged, isCustom, customPath, isMultilingual: isMultilingualFlag } = mission;
     const requestedLang = req.query.lang;
     
     // Determina se salvare multilingua o singola lingua
-    const isMultilingual = multilingualMerged === true || availableLanguages?.length > 1;
+    const isMultilingual = isMultilingualFlag || multilingualMerged === true || availableLanguages?.length > 1;
     const languages = isMultilingual && !requestedLang ? (availableLanguages || SUPPORTED_LANGUAGES) : [requestedLang || 'EN'];
     
     logger.info(`API call: POST /api/missions/saveMission - ${name} (${fileName}) - ${isMultilingual ? 'multilingual' : 'single language'}`);
@@ -478,8 +570,20 @@ router.post('/saveMission', async (req, res) => {
         // Serializza solo la mission (senza SCRIPTS wrapper) per la lingua corrente
         const missionContent = serializeElement(missionBlock, lang);
         
-        // Percorso del file da salvare
-        const missionPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`, fileName);
+        // Percorso del file da salvare - gestisci custom missions
+        let missionPath;
+        if (isCustom) {
+          if (isMultilingual) {
+            // Custom multilingua - salva in customScripts/[LANG]/
+            missionPath = path.join(GAME_ROOT, 'customScripts', lang, fileName);
+          } else {
+            // Custom non multilingua - salva in customScripts/
+            missionPath = path.join(GAME_ROOT, 'customScripts', fileName);
+          }
+        } else {
+          // Mission standard campaign
+          missionPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`, fileName);
+        }
         
         // Assicurati che la directory esista
         await fs.ensureDir(path.dirname(missionPath));
@@ -691,7 +795,7 @@ router.post('/:missionName/save', async (req, res) => {
 });
 
 // Parse file mission per API 12
-async function parseMissionFileForAPI12(filePath, fileName, language, allMissionsData) {
+async function parseMissionFileForAPI12(filePath, fileName, language, allMissionsData, isCustom = false) {
   try {
     const content = await fs.readFile(filePath, 'utf8');
     const lines = content.split('\n');
@@ -717,7 +821,9 @@ async function parseMissionFileForAPI12(filePath, fileName, language, allMission
             variabili: new Set(),
             personaggi: new Set(),
             labels: new Set(),
-            nodi: new Set()
+            nodi: new Set(),
+            isCustom: isCustom,
+            customPath: isCustom ? filePath : null
           });
         }
         

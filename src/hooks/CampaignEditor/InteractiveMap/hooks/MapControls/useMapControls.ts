@@ -1,8 +1,6 @@
 import { useCallback } from 'react';
-import React from 'react';
-import { ZoomIn, ZoomOut, Home, RotateCcw, Move } from 'lucide-react';
 import { MapViewport } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
-import { ControlButton } from '@/types/CampaignEditor/InteractiveMap/types/MapControls/MapControls.types';
+// import { ControlButton } from '@/types/CampaignEditor/InteractiveMap/types/MapControls/MapControls.types';
 
 export interface UseMapControlsReturn {
   zoomIn: () => void;

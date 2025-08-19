@@ -13,6 +13,10 @@ import { AnnounceBlock } from '../blocks/AnnounceBlock/AnnounceBlock';
 import { ReturnBlock } from '../blocks/ReturnBlock/ReturnBlock';
 import { SetBlock } from '../blocks/SetBlock/SetBlock';
 import { ResetBlock } from '../blocks/ResetBlock/ResetBlock';
+import { AddPartToShipBlock } from '../blocks/AddPartToShipBlock/AddPartToShipBlock';
+import { AddPartToAsideSlotBlock } from '../blocks/AddPartToAsideSlotBlock/AddPartToAsideSlotBlock';
+import { AddShipPartsBlock } from '../blocks/AddShipPartsBlock/AddShipPartsBlock';
+import { FinishMissionBlock } from '../blocks/FinishMissionBlock/FinishMissionBlock';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 interface BlockRendererProps {
@@ -37,6 +41,8 @@ interface BlockRendererProps {
   collapseAllTrigger?: number;
   expandAllTrigger?: number;
   globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
+  isCustom?: boolean;
+  availableLanguages?: string[];
 }
 
 export const BlockRenderer: React.FC<BlockRendererProps> = ({
@@ -60,7 +66,9 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
   allBlocks = [],
   collapseAllTrigger = 0,
   expandAllTrigger = 0,
-  globalCollapseState = 'manual'
+  globalCollapseState = 'manual',
+  isCustom,
+  availableLanguages
 }) => {
   const updateBlock = useCallback((updates: BlockUpdate) => {
     onUpdateBlock(block.id, updates);
@@ -102,9 +110,11 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
         collapseAllTrigger={collapseAllTrigger}
         expandAllTrigger={expandAllTrigger}
         globalCollapseState={globalCollapseState}
+        isCustom={isCustom}
+        availableLanguages={availableLanguages}
       />
     ));
-  }, [depth, onUpdateBlock, onRemoveBlock, onDragStart, onDragOver, onDrop, onDropAtIndex, isDragActive, onZoomIn, onZoomOut, isZoomed, currentFocusedBlockId, sessionData, createDropValidator, invalidBlocks, blockValidationTypes, allBlocks, collapseAllTrigger, expandAllTrigger, globalCollapseState]);
+  }, [depth, onUpdateBlock, onRemoveBlock, onDragStart, onDragOver, onDrop, onDropAtIndex, isDragActive, onZoomIn, onZoomOut, isZoomed, currentFocusedBlockId, sessionData, createDropValidator, invalidBlocks, blockValidationTypes, allBlocks, collapseAllTrigger, expandAllTrigger, globalCollapseState, isCustom, availableLanguages]);
 
   // Render SCRIPT block
   if (block.type === 'SCRIPT') {
@@ -151,6 +161,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -179,6 +191,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -207,6 +221,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -236,6 +252,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -267,6 +285,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -293,6 +313,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -314,6 +336,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -335,6 +359,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -354,6 +380,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -375,6 +403,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -394,6 +424,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -413,6 +445,126 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
+        />
+      </div>
+    );
+  }
+
+  // Render ADDPARTTOSHIP block
+  if (block.type === 'ADDPARTTOSHIP') {
+    return (
+      <div data-block-id={block.id}>
+        <AddPartToShipBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+        />
+      </div>
+    );
+  }
+
+  // Render ADDPARTTOASIDESLOT block
+  if (block.type === 'ADDPARTTOASIDESLOT') {
+    return (
+      <div data-block-id={block.id}>
+        <AddPartToAsideSlotBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+        />
+      </div>
+    );
+  }
+
+  // Render ADDSHIPPARTS block
+  if (block.type === 'ADDSHIPPARTS') {
+    return (
+      <div data-block-id={block.id}>
+        <AddShipPartsBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
+        />
+      </div>
+    );
+  }
+
+  // Render SETADVPILE block (same UI pattern as ADDPARTTOSHIP: single 'params' string)
+  if (block.type === 'SETADVPILE') {
+    return (
+      <div data-block-id={block.id}>
+        <AddPartToShipBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+        />
+      </div>
+    );
+  }
+
+  // Render SETSECRETADVPILE block (same UI pattern as ADDPARTTOSHIP)
+  if (block.type === 'SETSECRETADVPILE') {
+    return (
+      <div data-block-id={block.id}>
+        <AddPartToShipBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+        />
+      </div>
+    );
+  }
+
+  // Render FINISH_MISSION block
+  if (block.type === 'FINISH_MISSION') {
+    return (
+      <div data-block-id={block.id}>
+        <FinishMissionBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );
@@ -431,6 +583,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
         validationType={validationType}
         onGoToLabel={sessionData?.goToLabel}
         onNavigateToSubScript={sessionData?.onNavigateToSubScript}
+        onNavigateToMission={sessionData?.onNavigateToMission}
         allBlocks={allBlocks}
         collapseAllTrigger={collapseAllTrigger}
         expandAllTrigger={expandAllTrigger}

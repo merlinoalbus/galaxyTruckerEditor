@@ -24,7 +24,6 @@ export const ScriptSelector: React.FC<ScriptSelectorProps> = ({
     searchTerm,
     filteredScripts,
     setSearchTerm,
-    getScriptPreview,
     isStartScript
   } = useScriptSelector(scripts, startScripts);
 

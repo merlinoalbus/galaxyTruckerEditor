@@ -1,8 +1,9 @@
+import { logger } from '@/utils/logger';
 import { useState, useEffect, useRef } from 'react';
 import { campaignScriptParserService } from '@/services/CampaignEditor/CampaignScriptParserService';
 import { CampaignAnalysis, CampaignScript } from '@/types/CampaignEditor';
 import { MapNode } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
-import { API_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
+import { API_CONFIG } from '@/config/constants';
 
 export const useCampaignEditor = () => {
   const [activeTab, setActiveTab] = useState('map');
@@ -21,7 +22,7 @@ export const useCampaignEditor = () => {
         const analysisResult = await campaignScriptParserService.loadAndAnalyzeAllScripts();
         setAnalysis(analysisResult);
       } catch (error) {
-        console.error('Error loading campaign data:', error);
+  logger.error('Error loading campaign data:', error);
         setError(error instanceof Error ? error.message : 'Unknown error');
       } finally {
         setIsLoading(false);
@@ -46,7 +47,7 @@ export const useCampaignEditor = () => {
     
     // Auto-save script changes
     try {
-      const response = await fetch(`http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/scripts/saveScript`, {
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}/scripts/saveScript`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -60,10 +61,10 @@ export const useCampaignEditor = () => {
       
       const result = await response.json();
       if (!result.success) {
-        console.error('Failed to save script:', result.error);
+  logger.error('Failed to save script:', result.error);
       }
     } catch (error) {
-      console.error('Error saving script:', error);
+  logger.error('Error saving script:', error);
     }
   };
 
@@ -78,7 +79,7 @@ export const useCampaignEditor = () => {
       // Get all modified scripts (this would need to be tracked in state)
       // For now, we'll save the currently selected script if it exists
       if (selectedScript) {
-        const response = await fetch(`http://localhost:${API_CONSTANTS.DEFAULT_PORT}/api/scripts/saveScript`, {
+        const response = await fetch(`${API_CONFIG.API_BASE_URL}/scripts/saveScript`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -94,11 +95,11 @@ export const useCampaignEditor = () => {
         if (result.success) {
           // All changes saved successfully
         } else {
-          console.error('Failed to save all changes:', result.error);
+          logger.error('Failed to save all changes:', result.error);
         }
       }
     } catch (error) {
-      console.error('Error saving all changes:', error);
+  logger.error('Error saving all changes:', error);
     }
   };
 

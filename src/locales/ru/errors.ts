@@ -1,10 +1,9 @@
 /**
  * Error messages translations for Russian
+ * Extras removed to keep strict parity with EN baseline.
  */
 
 export const errorTranslations = {
-  'error.loadingData': 'Ошибка при загрузке данных',
-  'error.savingData': 'Ошибка при сохранении данных',
-  'error.networkError': 'Ошибка сети',
-  'error.unexpectedError': 'Неожиданная ошибка',
+	'common.error': 'Ошибка',
+	'variablesSystem.errorLoading': 'Ошибка загрузки',
 } as const;

@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 import { SupportedLanguage } from '@/contexts/LanguageContext';
 
 class LanguageSelectorService {
@@ -7,7 +8,7 @@ class LanguageSelectorService {
     try {
       localStorage.setItem(this.LANGUAGE_KEY, language);
     } catch (error) {
-      console.error('Error saving language preference:', error);
+  logger.error('Error saving language preference:', error);
     }
   }
 
@@ -16,7 +17,7 @@ class LanguageSelectorService {
       const saved = localStorage.getItem(this.LANGUAGE_KEY);
       return saved as SupportedLanguage | null;
     } catch (error) {
-      console.error('Error getting language preference:', error);
+  logger.error('Error getting language preference:', error);
       return null;
     }
   }
@@ -25,7 +26,7 @@ class LanguageSelectorService {
     try {
       localStorage.removeItem(this.LANGUAGE_KEY);
     } catch (error) {
-      console.error('Error clearing language preference:', error);
+  logger.error('Error clearing language preference:', error);
     }
   }
 }

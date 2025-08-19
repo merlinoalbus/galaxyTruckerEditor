@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { MessageSquare, Clock, ArrowRight, Tag, HelpCircle, ExternalLink, User, Users } from 'lucide-react';
+import { API_CONFIG } from '@/config/constants';
+import { MessageSquare, ArrowRight, ExternalLink } from 'lucide-react';
 import { BaseBlock } from '../BaseBlock/BaseBlock';
 import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
 import { MultilingualTextEditor } from '../../MultilingualTextEditor';
@@ -9,9 +10,9 @@ import { useTranslation } from '@/locales';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SceneDebugButton } from '../../SceneDebugButton';
 import { CharacterAvatar } from '../../CharacterAvatar';
-import { useScene } from '@/contexts/SceneContext';
 import { simulateSceneExecution, getLastModifiedVisibleCharacter } from '@/utils/CampaignEditor/VisualFlowEditor/sceneSimulation';
 import { imagesViewService } from '@/services/CampaignEditor/VariablesSystem/services/ImagesView/imagesViewService';
+import { PercentageInput } from '../../PercentageInput';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 import type { Character } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
 
@@ -25,10 +26,13 @@ interface CommandBlockProps {
   validationType?: 'error' | 'warning';
   onGoToLabel?: (labelName: string) => void;
   onNavigateToSubScript?: (scriptName: string, parentBlock: IFlowBlock) => void;
+  onNavigateToMission?: (missionName: string, parentBlock: IFlowBlock) => void;
   allBlocks?: IFlowBlock[];
   collapseAllTrigger?: number;
   expandAllTrigger?: number;
   globalCollapseState?: 'collapsed' | 'expanded' | 'manual';
+  isCustom?: boolean;
+  availableLanguages?: string[];
 }
 
 export const CommandBlock: React.FC<CommandBlockProps> = ({
@@ -41,14 +45,16 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   validationType,
   onGoToLabel,
   onNavigateToSubScript,
+  onNavigateToMission,
   allBlocks = [],
   collapseAllTrigger = 0,
   expandAllTrigger = 0,
-  globalCollapseState = 'manual'
+  globalCollapseState = 'manual',
+  isCustom,
+  availableLanguages
 }) => {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
-  const { getCurrentScene, addCharacter, updateCharacter, lastModifiedCharacter, state, showDialogScene, hideDialogScene } = useScene();
   // Stato per collapse/expand - rispetta il globalCollapseState all'inizializzazione
   const [isCollapsed, setIsCollapsed] = useState(() => {
     // Command blocks default collapsed, ma rispetta lo stato globale
@@ -72,8 +78,8 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
     }
   }, [expandAllTrigger]);
   
-  // I characters vengono passati da sessionData, non caricati qui
-  const characters = sessionData?.characters || [];
+  // I characters vengono passati da sessionData, non caricati qui (memo per deps stabili)
+  const characters = useMemo(() => sessionData?.characters || [], [sessionData?.characters]);
   const [selectedCharacterImage, setSelectedCharacterImage] = useState<string | null>(null);
   const [characterImages, setCharacterImages] = useState<Record<string, string>>({});
   const [noAvatarImage, setNoAvatarImage] = useState<string | null>(null);
@@ -99,11 +105,11 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
       setCharacterImages(images);
       
       // Carica no_avatar una volta sola
-      imagesViewService.getImageBinary(['no_avatar.png']).then(noAvatarResponse => {
+  imagesViewService.getImageBinary(['no_avatar.png']).then(noAvatarResponse => {
         if (noAvatarResponse?.data?.[0]?.binary) {
           setNoAvatarImage(`data:image/png;base64,${noAvatarResponse.data[0].binary}`);
         }
-      }).catch(console.error);
+  }).catch(() => {});
     }
   }, [block.type, characters]);
   
@@ -150,7 +156,9 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
     return () => {
       resizeObserver.disconnect();
     };
-  }, [isManuallyExpanded]); // Rimuovo isCollapsed dalle dipendenze per evitare loop
+  // Rimuovo isCollapsed dalle dipendenze per evitare loop
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isManuallyExpanded]);
   const renderParameters = () => {
     switch (block.type) {
       case 'SAY':
@@ -171,6 +179,8 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
             placeholder={block.type === 'SAY' 
               ? t('visualFlowEditor.command.dialogText')
               : t('visualFlowEditor.command.questionText')}
+            isCustom={isCustom}
+            availableLanguages={availableLanguages}
             label={block.type === 'ASK' ? t('visualFlowEditor.command.questionLabel') : ""}
           />
         );
@@ -288,7 +298,8 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
           </div>
         );
       
-      case 'SUB_SCRIPT':
+      case 'SETDECKPREPARATIONSCRIPT':
+      case 'SETFLIGHTDECKPREPARATIONSCRIPT':
         return (
           <div className="flex items-center gap-2">
             <label className="text-xs text-slate-400 whitespace-nowrap">
@@ -301,7 +312,48 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
                 parameters: { ...block.parameters, script: value } 
               })}
               placeholder={t('visualFlowEditor.command.selectScript')}
-              availableItems={sessionData?.availableScripts?.map((s: any) => s.name) || []}
+              availableItems={(sessionData?.availableScripts?.map((s: any) => s.name) || []).filter((name: string) => {
+                const norm = (name || '').replace(/\.txt$/i, '');
+                const current = (sessionData?.currentScriptName || '').replace(/\.txt$/i, '');
+                return name && norm !== current;
+              })}
+              onAddItem={undefined}
+              className="flex-1"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                if (block.parameters?.script && onNavigateToSubScript) {
+                  onNavigateToSubScript(block.parameters.script, block);
+                }
+              }}
+              disabled={!block.parameters?.script}
+              className="p-1 hover:bg-slate-700 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title={t('visualFlowEditor.blocks.subScript.navigate')}
+            >
+              <ArrowRight className="w-4 h-4 text-blue-400" />
+            </button>
+          </div>
+        );
+      
+  case 'SUB_SCRIPT':
+        return (
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-slate-400 whitespace-nowrap">
+              {t('visualFlowEditor.blocks.subScript.scriptName')}:
+            </label>
+            <SelectWithModal
+              type="script"
+              value={block.parameters?.script || ''}
+              onChange={(value) => onUpdate({ 
+                parameters: { ...block.parameters, script: value } 
+              })}
+              placeholder={t('visualFlowEditor.command.selectScript')}
+              availableItems={(sessionData?.availableScripts?.map((s: any) => s.name) || []).filter((name: string) => {
+                const norm = (name || '').replace(/\.txt$/i, '');
+                const current = (sessionData?.currentScriptName || '').replace(/\.txt$/i, '');
+                return name && norm !== current;
+              })}
               onAddItem={undefined} // Non permettere aggiunta di nuovi script
               className="flex-1"
             />
@@ -321,12 +373,99 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
           </div>
         );
       
+  case 'ACT_MISSION':
+        return (
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-slate-400 whitespace-nowrap">
+              {t('visualFlowEditor.blocks.actMission.missionName')}:
+            </label>
+            <SelectWithModal
+              type="mission"
+              value={block.parameters?.mission || ''}
+              onChange={(value) => onUpdate({ 
+                parameters: { ...block.parameters, mission: value } 
+              })}
+              placeholder={t('visualFlowEditor.select.selectMission')}
+              availableItems={(sessionData?.missions || []).filter((name: string) => {
+                const norm = (name || '').replace(/\.txt$/i, '');
+                const current = (sessionData?.currentMissionName || '').replace(/\.txt$/i, '');
+                return name && norm !== current;
+              })}
+              onAddItem={undefined} // Non permettere aggiunta di nuove mission
+              className="flex-1"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                if (block.parameters?.mission && onNavigateToMission) {
+                  onNavigateToMission(block.parameters.mission, block);
+                }
+              }}
+              disabled={!block.parameters?.mission}
+              className="p-1 hover:bg-slate-700 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title={t('visualFlowEditor.blocks.actMission.navigate')}
+            >
+              <ArrowRight className="w-4 h-4 text-blue-400" />
+            </button>
+          </div>
+        );
+      
       case 'EXIT_MENU':
         return (
           <div className="space-y-2">
             <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
               <p className="text-xs text-gray-300 leading-relaxed">
                 {t('visualFlowEditor.blocks.exitMenu.fullDescription')}
+              </p>
+            </div>
+          </div>
+        );
+      case 'SETTURNBASED':
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {t('visualFlowEditor.blocks.setTurnBased.fullDescription')}
+              </p>
+            </div>
+          </div>
+        );
+      case 'SETMISSIONASFAILED':
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {t('visualFlowEditor.blocks.setMissionAsFailed.fullDescription')}
+              </p>
+            </div>
+          </div>
+        );
+      case 'SETMISSIONASCOMPLETED':
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {t('visualFlowEditor.blocks.setMissionAsCompleted.fullDescription')}
+              </p>
+            </div>
+          </div>
+        );
+      case 'ALLSHIPSGIVEUP':
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {t('visualFlowEditor.blocks.allShipsGiveUp.fullDescription')}
+              </p>
+            </div>
+          </div>
+        );
+      case 'GIVEUPFLIGHT':
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {t('visualFlowEditor.blocks.giveUpFlight.fullDescription')}
               </p>
             </div>
           </div>
@@ -495,6 +634,123 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
           </div>
         );
       
+      case 'ADDOPPONENT':
+        return (
+          <div style={{ height: '140px' }}>
+            <CharacterSelector
+              value={block.parameters?.character || ''}
+              onChange={(character) => {
+                onUpdate({ 
+                  parameters: { ...block.parameters, character } 
+                });
+              }}
+              mode="show"
+              className="h-full w-full"
+              characters={characters}
+              forceColumns={12}
+            />
+          </div>
+        );
+      
+      case 'SETSHIPTYPE':
+        return (
+          <div className="flex justify-center items-center py-4 gap-[5px]">
+            {['STI', 'STII', 'STIII'].map((shipClass) => {
+              const isSelected = block.parameters?.type === shipClass;
+              const romanNumeral = shipClass.replace('ST', '');
+              const shipImage = `${API_CONFIG.BE_BASE_URL}/api/file/campaign/campaignMap/ship${romanNumeral}.cacheship.png`;
+              
+              return (
+                <div
+                  key={shipClass}
+                  onClick={() => onUpdate({ 
+                    parameters: { ...block.parameters, type: shipClass } 
+                  })}
+                  className={`cursor-pointer p-3 rounded-lg border-2 transition-all ${
+                    isSelected 
+                      ? 'border-blue-500 bg-blue-900/30 scale-105' 
+                      : 'border-slate-600 bg-slate-800/50 hover:border-slate-500 hover:bg-slate-700/50'
+                  }`}
+                >
+                  <div className="flex flex-col items-center gap-2">
+                    <img 
+                      src={shipImage}
+                      alt={`Class ${romanNumeral}`}
+                      className="w-16 h-16 object-contain"
+                      onError={(e) => {
+                        e.currentTarget.src = `${API_CONFIG.BE_BASE_URL}/static/common/unknown.png`;
+                      }}
+                    />
+                    <span className={`text-xs font-medium ${
+                      isSelected ? 'text-blue-300' : 'text-slate-400'
+                    }`}>
+                      {romanNumeral === 'I' ? t('visualFlowEditor.command.shipClassI') :
+                       romanNumeral === 'II' ? t('visualFlowEditor.command.shipClassII') :
+                       t('visualFlowEditor.command.shipClassIII')}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        );
+
+      case 'SETSPECCONDITION': {
+    // Lista fissa approvata
+    const knownConditions = [
+      'bet',
+      'booze',
+      'explosives',
+      'FinalRace',
+      'ingots',
+      'merchantProtect',
+      'Noone',
+      'OnlyLoser',
+      'OnlyWinner',
+      'peopleDelivery',
+      'pirateEscort',
+      'purplealien',
+      'radioactive',
+      'specTiles',
+      'tilesBet'
+    ];
+        return (
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-slate-400 whitespace-nowrap">
+              {t('visualFlowEditor.blocks.setSpecCondition.condition')}
+            </label>
+            <SelectWithModal
+      type="label"
+              value={block.parameters?.condition || ''}
+              onChange={(value) => onUpdate({ parameters: { ...block.parameters, condition: value } })}
+              placeholder={t('visualFlowEditor.command.selectCondition')}
+              availableItems={knownConditions}
+              className="flex-1"
+            />
+          </div>
+        );
+      }
+      
+      case 'MODIFYOPPONENTSBUILDSPEED':
+        return (
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-slate-400 whitespace-nowrap">
+              {t('visualFlowEditor.blocks.modifyOpponentsBuildSpeed.percentage')}
+            </label>
+            <PercentageInput
+              value={typeof block.parameters?.percentage === 'number' ? block.parameters.percentage : undefined}
+              onChange={(value) => onUpdate({ 
+                parameters: { ...block.parameters, percentage: value } 
+              })}
+              min={1}
+              max={200}
+              placeholder="60"
+              className="flex-1"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        );
+      
       default:
         // Gestione generica per tutti i blocchi non implementati
         // Mostra tutti i parametri dinamicamente
@@ -532,6 +788,8 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
                           parameters: { ...block.parameters, [key]: newValue } 
                         })}
                         placeholder={`${key} value`}
+                        isCustom={isCustom}
+                        availableLanguages={availableLanguages}
                       />
                     </div>
                   </div>
@@ -582,11 +840,23 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
       case 'GO': return <span className="text-2xl">➡️</span>;
       case 'LABEL': return <span className="text-2xl">🏷️</span>;
       case 'SUB_SCRIPT': return <span className="text-2xl">📄</span>;
-      case 'EXIT_MENU': return <span className="text-2xl">🚪</span>;
-      case 'SHOWDLGSCENE': return <span className="text-2xl">🗨️</span>;
-      case 'HIDEDLGSCENE': return <span className="text-2xl">🚫</span>;
+      case 'ACT_MISSION': return <span className="text-2xl">🎬</span>;
+          case 'EXIT_MENU': return <span className="text-2xl">🚪</span>;
+  case 'SHOWDLGSCENE': return <span className="text-2xl">🗨️</span>;
+  case 'HIDEDLGSCENE': return <span className="text-2xl">🫥</span>;
       case 'SHOWCHAR': return <span className="text-2xl">👤</span>;
       case 'HIDECHAR': return <span className="text-2xl">👻</span>;
+      case 'ADDOPPONENT': return <span className="text-2xl">🎮</span>;
+      case 'SETSHIPTYPE': return <span className="text-2xl">🚀</span>;
+      case 'MODIFYOPPONENTSBUILDSPEED': return <span className="text-2xl">⚡</span>;
+  case 'SETSPECCONDITION': return <span className="text-2xl">🧩</span>;
+  case 'SETDECKPREPARATIONSCRIPT': return <span className="text-2xl">🃏</span>;
+  case 'SETFLIGHTDECKPREPARATIONSCRIPT': return <span className="text-2xl">🛩️</span>;
+  case 'SETTURNBASED': return <span className="text-2xl">⏲️</span>;
+  case 'SETMISSIONASFAILED': return <span className="text-2xl">🚨</span>;
+  case 'SETMISSIONASCOMPLETED': return <span className="text-2xl">✅</span>;
+  case 'ALLSHIPSGIVEUP': return <span className="text-2xl">🛎️</span>;
+  case 'GIVEUPFLIGHT': return <span className="text-2xl">👋</span>;
       default: return <MessageSquare className="w-4 h-4" />;
     }
   };
@@ -672,8 +942,39 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
           return <span>📄 {block.parameters.script}</span>;
         }
         break;
+      case 'ACT_MISSION':
+        if (block.parameters?.mission) {
+          return (
+            <div className="flex items-center gap-2">
+              <span>🎬 {block.parameters.mission}</span>
+              {onNavigateToMission && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (block.parameters?.mission) onNavigateToMission(block.parameters.mission, block);
+                  }}
+                  className="p-1 bg-slate-700 hover:bg-slate-600 rounded text-white transition-colors"
+                  title={t('visualFlowEditor.blocks.actMission.navigate')}
+                >
+                  <ExternalLink className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+          );
+        }
+        break;
       case 'EXIT_MENU':
         return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.exitMenu.compact')}</span>;
+      case 'SETTURNBASED':
+        return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.setTurnBased.compact')}</span>;
+      case 'SETMISSIONASFAILED':
+        return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.setMissionAsFailed.compact')}</span>;
+      case 'SETMISSIONASCOMPLETED':
+        return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.setMissionAsCompleted.compact')}</span>;
+      case 'ALLSHIPSGIVEUP':
+        return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.allShipsGiveUp.compact')}</span>;
+      case 'GIVEUPFLIGHT':
+        return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.giveUpFlight.compact')}</span>;
       case 'SHOWDLGSCENE':
         return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.showDlgScene.compact')}</span>;
       case 'HIDEDLGSCENE':
@@ -808,6 +1109,83 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         }
         break;
       }
+      case 'ADDOPPONENT': {
+        if (block.parameters?.character) {
+          return (
+            <span className="text-gray-400">
+              🎮 {block.parameters.character}
+            </span>
+          );
+        }
+        return <span className="text-xs text-gray-500 italic">No opponent</span>;
+      }
+      case 'SETSHIPTYPE': {
+        const shipClass = String(block.parameters?.type || 'STI');
+        const romanNumeral = shipClass.replace('ST', '');
+        return (
+          <span className="text-gray-400">
+            {romanNumeral === 'I' ? t('visualFlowEditor.command.shipClassI') :
+             romanNumeral === 'II' ? t('visualFlowEditor.command.shipClassII') :
+             t('visualFlowEditor.command.shipClassIII')}
+          </span>
+        );
+      }
+      case 'SETDECKPREPARATIONSCRIPT': {
+        if (block.parameters?.script) {
+          return (
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400">🃏 {block.parameters.script}</span>
+              {onNavigateToSubScript && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (block.parameters?.script) onNavigateToSubScript(block.parameters.script, block);
+                  }}
+                  className="p-1 bg-slate-700 hover:bg-slate-600 rounded text-white transition-colors"
+                  title={t('visualFlowEditor.blocks.subScript.navigate')}
+                >
+                  <ExternalLink className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+          );
+        }
+        break;
+      }
+      case 'SETFLIGHTDECKPREPARATIONSCRIPT': {
+        if (block.parameters?.script) {
+          return (
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400">🛩️ {block.parameters.script}</span>
+              {onNavigateToSubScript && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (block.parameters?.script) onNavigateToSubScript(block.parameters.script, block);
+                  }}
+                  className="p-1 bg-slate-700 hover:bg-slate-600 rounded text-white transition-colors"
+                  title={t('visualFlowEditor.blocks.subScript.navigate')}
+                >
+                  <ExternalLink className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+          );
+        }
+        break;
+      }
+      case 'SETSPECCONDITION': {
+        if (block.parameters?.condition) {
+          return <span className="text-gray-400">🧩 {block.parameters.condition}</span>;
+        }
+        break;
+      }
+      case 'MODIFYOPPONENTSBUILDSPEED': {
+        if (block.parameters?.percentage) {
+          return <span className="text-gray-400">⚡ {String(block.parameters.percentage)}%</span>;
+        }
+        return <span className="text-xs text-gray-500 italic">No percentage</span>;
+      }
       default: {
         // Gestione generica per blocchi non implementati - mostra un riepilogo compatto dei parametri
         const params = block.parameters || {};
@@ -864,6 +1242,24 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   const avatarCharacter = (block.type === 'SAY' || block.type === 'ASK') && simulatedSceneState 
     ? getLastModifiedVisibleCharacter(simulatedSceneState) 
     : null;
+  
+  // Ottieni il personaggio per ADDOPPONENT e adatta la struttura per CharacterAvatar
+  const opponentCharacterRaw = block.type === 'ADDOPPONENT' && block.parameters?.character
+    ? characters.find((c: Character) => c.nomepersonaggio === block.parameters?.character)
+    : null;
+    
+  const opponentCharacter = opponentCharacterRaw ? {
+    nomepersonaggio: opponentCharacterRaw.nomepersonaggio,
+    lastImmagine: opponentCharacterRaw.immaginebase || (opponentCharacterRaw.listaimmagini?.[0] || null)
+  } : null;
+  
+  // Ottieni l'immagine della nave per SETSHIPTYPE
+  const shipType = block.type === 'SETSHIPTYPE' && block.parameters?.type
+    ? String(block.parameters.type)
+    : null;
+  const shipImagePath = shipType 
+    ? `campaign/campaignMap/ship${shipType.replace('ST', '')}.cacheship.png`
+    : null;
 
   return (
     <div ref={containerRef}>
@@ -889,8 +1285,16 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         isInvalid={isInvalid}
         validationType={validationType}
         extraControls={allBlocks.length > 0 && <SceneDebugButton block={block} allBlocks={allBlocks} characters={characters} />}
-        showAvatar={(block.type === 'SAY' || block.type === 'ASK')}
-        avatarCharacter={avatarCharacter}
+        showAvatar={(block.type === 'SAY' || block.type === 'ASK' || block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE')}
+        avatarCharacter={
+          block.type === 'ADDOPPONENT' ? opponentCharacter : 
+          block.type === 'SETSHIPTYPE' ? {
+            nomepersonaggio: shipType || 'STI',
+            lastImmagine: shipImagePath ? { nomefile: shipImagePath, percorso: shipImagePath } : null
+          } :
+          avatarCharacter
+        }
+        isShipType={block.type === 'SETSHIPTYPE'}
       >
         {/* Block parameters - visibili solo se expanded */}
         {renderParameters()}
