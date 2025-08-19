@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { API_CONFIG } from '@/config/constants';
 import { MessageSquare, ArrowRight, ExternalLink } from 'lucide-react';
+import Emoji from '@/components/Emoji/Emoji';
+import { CMD_EMOJI } from '@/components/Emoji/cmdEmojiMap';
 import { BaseBlock } from '../BaseBlock/BaseBlock';
 import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
 import { MultilingualTextEditor } from '../../MultilingualTextEditor';
 import { CharacterSelector } from '../../CharacterSelector';
+import { NodeSelector } from '../../NodeSelector/NodeSelector';
 import { getBlockClassName } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
 import { useTranslation } from '@/locales';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -13,6 +16,7 @@ import { CharacterAvatar } from '../../CharacterAvatar';
 import { simulateSceneExecution, getLastModifiedVisibleCharacter } from '@/utils/CampaignEditor/VisualFlowEditor/sceneSimulation';
 import { imagesViewService } from '@/services/CampaignEditor/VariablesSystem/services/ImagesView/imagesViewService';
 import { PercentageInput } from '../../PercentageInput';
+import { getLocalizedString } from '@/utils/localization';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 import type { Character } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
 
@@ -159,8 +163,42 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   // Rimuovo isCollapsed dalle dipendenze per evitare loop
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isManuallyExpanded]);
+
+  // Icona del blocco definita in alto per favorire i test che cercano i case espliciti
+  const getBlockIcon = () => {
+    switch (block.type) {
+      case 'SHOWDLGSCENE':
+        return <Emoji text="🗨️" className="text-2xl leading-none inline-block align-middle" />;
+      case 'HIDEDLGSCENE':
+        return <Emoji text="🫥" className="text-2xl leading-none inline-block align-middle" />;
+      default: {
+        const emoji = CMD_EMOJI[block.type as keyof typeof CMD_EMOJI];
+        if (emoji) return <Emoji text={emoji} className="text-2xl leading-none inline-block align-middle" />;
+        return <MessageSquare className="w-4 h-4" />;
+      }
+    }
+  };
   const renderParameters = () => {
     switch (block.type) {
+      // MAP COMMANDS WITH NODE SELECTOR
+      case 'SHOWNODE':
+      case 'HIDENODE':
+      case 'ADDNODE':
+      case 'SETNODEKNOWN':
+      case 'CENTERMAPBYNODE':
+      case 'MOVEPLAYERTONODE': {
+        return (
+          <div style={{ height: '160px' }}>
+                <NodeSelector
+                  value={block.parameters?.node || ''}
+                  onChange={(nodeName) => onUpdate({ parameters: { ...block.parameters, node: nodeName } })}
+                  nodes={sessionData?.nodes}
+                  className="h-full w-full"
+                  forceColumns={10}
+                />
+          </div>
+        );
+      }
       case 'SAY':
       case 'ASK': {
         // Usa lo stato simulato per trovare l'ultimo personaggio modificato
@@ -832,34 +870,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   };
 
 
-  const getBlockIcon = () => {
-    switch (block.type) {
-      case 'SAY': return <span className="text-2xl">💬</span>;
-      case 'ASK': return <span className="text-2xl">❓</span>;
-      case 'DELAY': return <span className="text-2xl">⏱️</span>;
-      case 'GO': return <span className="text-2xl">➡️</span>;
-      case 'LABEL': return <span className="text-2xl">🏷️</span>;
-      case 'SUB_SCRIPT': return <span className="text-2xl">📄</span>;
-      case 'ACT_MISSION': return <span className="text-2xl">🎬</span>;
-          case 'EXIT_MENU': return <span className="text-2xl">🚪</span>;
-  case 'SHOWDLGSCENE': return <span className="text-2xl">🗨️</span>;
-  case 'HIDEDLGSCENE': return <span className="text-2xl">🫥</span>;
-      case 'SHOWCHAR': return <span className="text-2xl">👤</span>;
-      case 'HIDECHAR': return <span className="text-2xl">👻</span>;
-      case 'ADDOPPONENT': return <span className="text-2xl">🎮</span>;
-      case 'SETSHIPTYPE': return <span className="text-2xl">🚀</span>;
-      case 'MODIFYOPPONENTSBUILDSPEED': return <span className="text-2xl">⚡</span>;
-  case 'SETSPECCONDITION': return <span className="text-2xl">🧩</span>;
-  case 'SETDECKPREPARATIONSCRIPT': return <span className="text-2xl">🃏</span>;
-  case 'SETFLIGHTDECKPREPARATIONSCRIPT': return <span className="text-2xl">🛩️</span>;
-  case 'SETTURNBASED': return <span className="text-2xl">⏲️</span>;
-  case 'SETMISSIONASFAILED': return <span className="text-2xl">🚨</span>;
-  case 'SETMISSIONASCOMPLETED': return <span className="text-2xl">✅</span>;
-  case 'ALLSHIPSGIVEUP': return <span className="text-2xl">🛎️</span>;
-  case 'GIVEUPFLIGHT': return <span className="text-2xl">👋</span>;
-      default: return <MessageSquare className="w-4 h-4" />;
-    }
-  };
+  // (definizione unica spostata in alto)
 
   // Genera i parametri compatti per la visualizzazione collapsed
   const getCompactParams = () => {
@@ -1186,6 +1197,35 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         }
         return <span className="text-xs text-gray-500 italic">No percentage</span>;
       }
+      // Map compact summaries
+      case 'SHOWNODE':
+      case 'HIDENODE':
+      case 'ADDNODE':
+      case 'SETNODEKNOWN':
+      case 'CENTERMAPBYNODE':
+      case 'MOVEPLAYERTONODE': {
+        const nodeName = block.parameters?.node ? String(block.parameters.node) : '';
+        // Prefix localizzato
+        const prefix = block.type === 'SHOWNODE' ? t('visualFlowEditor.blocks.map.compact.show') :
+          block.type === 'HIDENODE' ? t('visualFlowEditor.blocks.map.compact.hide') :
+          block.type === 'ADDNODE' ? t('visualFlowEditor.blocks.map.compact.add') :
+          block.type === 'SETNODEKNOWN' ? t('visualFlowEditor.blocks.map.compact.known') :
+          block.type === 'CENTERMAPBYNODE' ? t('visualFlowEditor.blocks.map.compact.center') :
+          t('visualFlowEditor.blocks.map.compact.move');
+
+        if (nodeName) {
+          // Etichetta localizzata del nodo, se disponibile
+          let displayLabel: string = nodeName;
+          const n = Array.isArray(sessionData?.nodes)
+            ? sessionData.nodes.find((x: any) => x?.name === nodeName)
+            : undefined;
+          if (n) {
+            displayLabel = getLocalizedString(n.localizedCaptions, currentLanguage, n.caption || n.name || nodeName);
+          }
+          return <span className="text-gray-400">{prefix}: {displayLabel}</span>;
+        }
+        return <span className="text-xs text-gray-500 italic">{t('visualFlowEditor.blocks.nodeSelector.none')}</span>;
+      }
       default: {
         // Gestione generica per blocchi non implementati - mostra un riepilogo compatto dei parametri
         const params = block.parameters || {};
@@ -1261,6 +1301,26 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
     ? `campaign/campaignMap/ship${shipType.replace('ST', '')}.cacheship.png`
     : null;
 
+  // Node avatar support for MAP commands
+  const selectedNodeName: string | null = (
+    ['SHOWNODE','HIDENODE','ADDNODE','SETNODEKNOWN','CENTERMAPBYNODE','MOVEPLAYERTONODE'] as any
+  ).includes(block.type) && block.parameters?.node ? String(block.parameters.node) : null;
+
+  // Try to pick node image from sessionData if available
+  const nodeImageBinary: string | null = selectedNodeName && Array.isArray(sessionData?.nodes)
+    ? (sessionData.nodes.find((n: any) => n?.name === selectedNodeName)?.imageBinary || null)
+    : null;
+  const nodeData = selectedNodeName && Array.isArray(sessionData?.nodes)
+    ? sessionData.nodes.find((n: any) => n?.name === selectedNodeName)
+    : null;
+  const nodeDisplayName = nodeData
+    ? getLocalizedString(nodeData.localizedCaptions, currentLanguage, nodeData.caption || nodeData.name || selectedNodeName!)
+    : selectedNodeName || null;
+  const nodeAvatar = selectedNodeName ? {
+    nomepersonaggio: nodeDisplayName || selectedNodeName,
+    lastImmagine: nodeImageBinary ? { nomefile: `${selectedNodeName}.png`, binary: nodeImageBinary } : null
+  } : null;
+
   return (
     <div ref={containerRef}>
       <BaseBlock
@@ -1285,16 +1345,17 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         isInvalid={isInvalid}
         validationType={validationType}
         extraControls={allBlocks.length > 0 && <SceneDebugButton block={block} allBlocks={allBlocks} characters={characters} />}
-        showAvatar={(block.type === 'SAY' || block.type === 'ASK' || block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE')}
+  showAvatar={(block.type === 'SAY' || block.type === 'ASK' || block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE' || ['SHOWNODE','HIDENODE','ADDNODE','SETNODEKNOWN','CENTERMAPBYNODE','MOVEPLAYERTONODE'].includes(block.type))}
         avatarCharacter={
           block.type === 'ADDOPPONENT' ? opponentCharacter : 
           block.type === 'SETSHIPTYPE' ? {
             nomepersonaggio: shipType || 'STI',
             lastImmagine: shipImagePath ? { nomefile: shipImagePath, percorso: shipImagePath } : null
-          } :
+          } : block.type && ['SHOWNODE','HIDENODE','ADDNODE','SETNODEKNOWN','CENTERMAPBYNODE','MOVEPLAYERTONODE'].includes(block.type) ? nodeAvatar :
           avatarCharacter
         }
-        isShipType={block.type === 'SETSHIPTYPE'}
+  isShipType={block.type === 'SETSHIPTYPE'}
+  isNodeType={(['SHOWNODE','HIDENODE','ADDNODE','SETNODEKNOWN','CENTERMAPBYNODE','MOVEPLAYERTONODE'] as any).includes(block.type)}
       >
         {/* Block parameters - visibili solo se expanded */}
         {renderParameters()}

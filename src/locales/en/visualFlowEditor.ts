@@ -45,6 +45,21 @@ export const visualFlowEditorTranslations = {
   
   // Missions List
   'visualFlowEditor.missionsList.loadingMissions': 'Loading missions...',
+  // Map blocks (flat keys)
+  'visualFlowEditor.blocks.nodeSelector.search': 'Search node...',
+  'visualFlowEditor.blocks.nodeSelector.none': 'None',
+  'visualFlowEditor.validation.SHOWNODE_NO_NODE': 'Node is required. Please select a node.',
+  'visualFlowEditor.validation.HIDENODE_NO_NODE': 'Node is required. Please select a node.',
+  'visualFlowEditor.validation.ADDNODE_NO_NODE': 'Node is required. Please select a node.',
+  'visualFlowEditor.validation.SETNODEKNOWN_NO_NODE': 'Node is required. Please select a node.',
+  'visualFlowEditor.validation.CENTERMAPBYNODE_NO_NODE': 'Node is required. Please select a node.',
+  'visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE': 'Node is required. Please select a node.',
+  'visualFlowEditor.blocks.map.compact.show': 'Show',
+  'visualFlowEditor.blocks.map.compact.hide': 'Hide',
+  'visualFlowEditor.blocks.map.compact.add': 'Add',
+  'visualFlowEditor.blocks.map.compact.known': 'Known',
+  'visualFlowEditor.blocks.map.compact.center': 'Center',
+  'visualFlowEditor.blocks.map.compact.move': 'Move',
   
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Validation Errors',

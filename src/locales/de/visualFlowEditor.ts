@@ -45,6 +45,21 @@ export const visualFlowEditorTranslations = {
   
   // Missions List
   'visualFlowEditor.missionsList.loadingMissions': 'Missionen werden geladen...',
+  // Map blocks (flat keys)
+  'visualFlowEditor.blocks.nodeSelector.search': 'Knoten suchen...',
+  'visualFlowEditor.blocks.nodeSelector.none': 'Keiner',
+  'visualFlowEditor.validation.SHOWNODE_NO_NODE': 'Knoten erforderlich. Bitte wählen Sie einen Knoten.',
+  'visualFlowEditor.validation.HIDENODE_NO_NODE': 'Knoten erforderlich. Bitte wählen Sie einen Knoten.',
+  'visualFlowEditor.validation.ADDNODE_NO_NODE': 'Knoten erforderlich. Bitte wählen Sie einen Knoten.',
+  'visualFlowEditor.validation.SETNODEKNOWN_NO_NODE': 'Knoten erforderlich. Bitte wählen Sie einen Knoten.',
+  'visualFlowEditor.validation.CENTERMAPBYNODE_NO_NODE': 'Knoten erforderlich. Bitte wählen Sie einen Knoten.',
+  'visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE': 'Knoten erforderlich. Bitte wählen Sie einen Knoten.',
+  'visualFlowEditor.blocks.map.compact.show': 'Anzeigen',
+  'visualFlowEditor.blocks.map.compact.hide': 'Ausblenden',
+  'visualFlowEditor.blocks.map.compact.add': 'Hinzufügen',
+  'visualFlowEditor.blocks.map.compact.known': 'Bekannt',
+  'visualFlowEditor.blocks.map.compact.center': 'Zentrieren',
+  'visualFlowEditor.blocks.map.compact.move': 'Bewegen',
   
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Validierungsfehler',

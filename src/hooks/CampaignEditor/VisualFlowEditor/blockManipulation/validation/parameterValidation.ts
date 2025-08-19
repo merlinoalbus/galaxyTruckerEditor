@@ -628,6 +628,16 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return validateSetSpecConditionParameters(block);
     case 'MODIFYOPPONENTSBUILDSPEED':
       return validateModifyOpponentsBuildSpeedParameters(block);
+    // Map commands: require node
+    case 'SHOWNODE':
+    case 'HIDENODE':
+    case 'ADDNODE':
+    case 'SETNODEKNOWN':
+    case 'CENTERMAPBYNODE':
+    case 'MOVEPLAYERTONODE':
+      return (!block.parameters?.node || String(block.parameters.node).trim() === '')
+        ? { valid: false, error: `${block.type}_NO_NODE` }
+        : { valid: true };
     // EXIT_MENU, SHOWDLGSCENE, HIDEDLGSCENE non hanno parametri da validare
     default:
       return { valid: true };

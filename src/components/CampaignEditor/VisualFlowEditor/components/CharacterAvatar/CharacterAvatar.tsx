@@ -14,12 +14,14 @@ interface CharacterAvatarProps {
     } | string | null;
   } | null;
   isShipType?: boolean;  // Indica se è per SETSHIPTYPE
+  isNodeType?: boolean;  // Indica se l'avatar rappresenta un nodo mappa
 }
 
-const NO_AVATAR_PATH = `${API_CONFIG.API_BASE_URL}/file/avatars/common/avatar_no_avatar.png`;
 const DEFAULT_SHIP_PATH = `${API_CONFIG.API_BASE_URL}/file/ships/glowblue-shipII.png`;
+const METEOR_SMALL_PATH = `${API_CONFIG.ASSETS_BASE_URL}/meteor_small.png`;
+const NO_AVATAR_PATH = `${API_CONFIG.API_BASE_URL}/file/avatars/common/avatar_no_avatar.png`;
 
-export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({ className = '', size = 'small', character, isShipType = false }) => {
+export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({ className = '', size = 'small', character, isShipType = false, isNodeType = false }) => {
   const { getCurrentScene } = useScene();
   const currentScene = getCurrentScene();
   const [hasError, setHasError] = useState(false);
@@ -29,8 +31,11 @@ export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({ className = ''
     ? currentScene.personaggi[currentScene.personaggi.length - 1]
     : null);
   
-  // Determina l'immagine da mostrare - usa fallback diverso per SETSHIPTYPE
-  let imagePath = isShipType ? DEFAULT_SHIP_PATH : NO_AVATAR_PATH;
+  // Determina l'immagine da mostrare:
+  // - Ship: nave di default
+  // - Node: meteor_small
+  // - Character (default): avatar_no_avatar
+  let imagePath = isShipType ? DEFAULT_SHIP_PATH : (isNodeType ? METEOR_SMALL_PATH : NO_AVATAR_PATH);
   
   if (lastCharacter?.lastImmagine && !hasError) {
     // Gestisci sia il tipo oggetto (dalla simulazione) che stringa (dal context)
@@ -41,7 +46,7 @@ export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({ className = ''
       } 
       // Altrimenti usa il percorso del file
       else if (lastCharacter.lastImmagine.nomefile) {
-        imagePath = `${API_CONFIG.API_BASE_URL}/file/${lastCharacter.lastImmagine.percorso || lastCharacter.lastImmagine.nomefile}`;
+  imagePath = `${API_CONFIG.API_BASE_URL}/file/${lastCharacter.lastImmagine.percorso || lastCharacter.lastImmagine.nomefile}`;
       }
     } else if (typeof lastCharacter.lastImmagine === 'string') {
       // Compatibilità con il vecchio formato stringa
@@ -64,12 +69,38 @@ export const CharacterAvatar: React.FC<CharacterAvatarProps> = ({ className = ''
           alt={lastCharacter?.nomepersonaggio || 'No character'}
           className="w-auto h-full object-contain"
           onError={(e) => {
-            // Evita loop infinito - setta hasError solo se non stiamo già mostrando il fallback
-            const currentSrc = (e.target as HTMLImageElement).src;
-            const fallbackPath = isShipType ? DEFAULT_SHIP_PATH : NO_AVATAR_PATH;
-            if (!currentSrc.includes('avatar_no_avatar.png') && !currentSrc.includes('glowblue-shipII.png')) {
+            // Evita loop infinito: se fallisce l'immagine specifica, prova fallback nave (se ship) e poi meteor_small
+            const imgEl = e.target as HTMLImageElement;
+            const currentSrc = imgEl.src;
+            const isShipFallback = currentSrc.includes('glowblue-shipII.png');
+            const isMeteorFallback = currentSrc.includes('meteor_small');
+            const isNoAvatarFallback = currentSrc.includes('avatar_no_avatar');
+
+            if (isShipType) {
+              // Per ship: prima prova immagine nave di default, poi no_avatar
+              if (!isShipFallback) {
+                setHasError(true);
+                imgEl.src = DEFAULT_SHIP_PATH;
+              } else if (!isNoAvatarFallback) {
+                setHasError(true);
+                imgEl.src = NO_AVATAR_PATH;
+              }
+              return;
+            }
+
+            if (isNodeType) {
+              // Per nodi: fallback a meteor_small
+              if (!isMeteorFallback) {
+                setHasError(true);
+                imgEl.src = METEOR_SMALL_PATH;
+              }
+              return;
+            }
+
+            // Per personaggi: fallback a no_avatar
+            if (!isNoAvatarFallback) {
               setHasError(true);
-              (e.target as HTMLImageElement).src = fallbackPath;
+              imgEl.src = NO_AVATAR_PATH;
             }
           }}
         />

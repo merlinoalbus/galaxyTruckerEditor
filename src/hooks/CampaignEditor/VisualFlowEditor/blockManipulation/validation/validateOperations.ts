@@ -365,6 +365,36 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
         // Genera messaggio specifico in base al tipo di errore
         let message = '';
         switch (paramValidation.error) {
+          case 'SHOWNODE_NO_NODE':
+            message = t ?
+              t('visualFlowEditor.validation.SHOWNODE_NO_NODE')
+              : 'Select a node.';
+            break;
+          case 'HIDENODE_NO_NODE':
+            message = t ?
+              t('visualFlowEditor.validation.HIDENODE_NO_NODE')
+              : 'Select a node.';
+            break;
+          case 'ADDNODE_NO_NODE':
+            message = t ?
+              t('visualFlowEditor.validation.ADDNODE_NO_NODE')
+              : 'Select a node.';
+            break;
+          case 'SETNODEKNOWN_NO_NODE':
+            message = t ?
+              t('visualFlowEditor.validation.SETNODEKNOWN_NO_NODE')
+              : 'Select a node.';
+            break;
+          case 'CENTERMAPBYNODE_NO_NODE':
+            message = t ?
+              t('visualFlowEditor.validation.CENTERMAPBYNODE_NO_NODE')
+              : 'Select a node.';
+            break;
+          case 'MOVEPLAYERTONODE_NO_NODE':
+            message = t ?
+              t('visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE')
+              : 'Select a node.';
+            break;
           case 'DELAY_NO_DURATION':
             message = t ? 
               t('visualFlowEditor.validation.delayNoDuration')

@@ -2,6 +2,13 @@ SCRIPTS
 
   SCRIPT aaa_pippo
     ShowDlgScene
+    Say "Prova"
+    ShowNode cyanHome
+    HideNode club
+    AddNode lab
+    MovePlayerToNode mine2
+    CenterMapByNode club
+    SetNodeKnown bar
     HideDlgScene
   END_OF_SCRIPT
 

@@ -45,6 +45,21 @@ export const visualFlowEditorTranslations = {
   
   // Missions List
   'visualFlowEditor.missionsList.loadingMissions': 'Chargement des missions...',
+  // Map blocks (flat keys)
+  'visualFlowEditor.blocks.nodeSelector.search': 'Rechercher un nœud...',
+  'visualFlowEditor.blocks.nodeSelector.none': 'Aucun',
+  'visualFlowEditor.validation.SHOWNODE_NO_NODE': 'Nœud requis. Sélectionnez un nœud.',
+  'visualFlowEditor.validation.HIDENODE_NO_NODE': 'Nœud requis. Sélectionnez un nœud.',
+  'visualFlowEditor.validation.ADDNODE_NO_NODE': 'Nœud requis. Sélectionnez un nœud.',
+  'visualFlowEditor.validation.SETNODEKNOWN_NO_NODE': 'Nœud requis. Sélectionnez un nœud.',
+  'visualFlowEditor.validation.CENTERMAPBYNODE_NO_NODE': 'Nœud requis. Sélectionnez un nœud.',
+  'visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE': 'Nœud requis. Sélectionnez un nœud.',
+  'visualFlowEditor.blocks.map.compact.show': 'Afficher',
+  'visualFlowEditor.blocks.map.compact.hide': 'Masquer',
+  'visualFlowEditor.blocks.map.compact.add': 'Ajouter',
+  'visualFlowEditor.blocks.map.compact.known': 'Connu',
+  'visualFlowEditor.blocks.map.compact.center': 'Centrer',
+  'visualFlowEditor.blocks.map.compact.move': 'Déplacer',
   
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Erreurs de validation',

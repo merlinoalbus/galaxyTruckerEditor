@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronDown, ChevronRight, Search } from 'lucide-react';
 import { getToolCategories, Tool, ToolCategory } from '@/types/CampaignEditor/VisualFlowEditor/ToolCategories';
+import Emoji from '@/components/Emoji/Emoji';
 import { useTranslation } from '@/locales';
 
 interface ToolsPanelProps {
@@ -89,8 +90,8 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({ onToolDragStart }) => {
         title=""
       >
         {/* Icona principale - solo icona nel pulsante */}
-        <div className="text-xl text-center select-none">
-          {tool.icon}
+        <div className="text-xl text-center select-none leading-none">
+          <Emoji text={tool.icon} />
         </div>
       </div>
     );
