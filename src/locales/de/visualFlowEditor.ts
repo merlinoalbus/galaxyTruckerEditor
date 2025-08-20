@@ -60,6 +60,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.map.compact.known': 'Bekannt',
   'visualFlowEditor.blocks.map.compact.center': 'Zentrieren',
   'visualFlowEditor.blocks.map.compact.move': 'Bewegen',
+  'visualFlowEditor.blocks.map.compact.showButton': 'Zeigen',
+  'visualFlowEditor.blocks.map.compact.hideButton': 'Verbergen',
   
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Validierungsfehler',
@@ -80,8 +82,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.CENTERMAPBYPATH_NO_ROUTE': 'Route is required. Please select a route.',
   'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE1': 'HIDEALLPATHS requires node1. Please select the first node or choose "None".',
   'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE2': 'HIDEALLPATHS requires node2. Please select the second node or choose "None".',
+  'visualFlowEditor.validation.SHOWBUTTON_NO_BUTTON': 'Taste erforderlich. Bitte wählen Sie eine Taste aus.',
+  'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Taste erforderlich. Bitte wählen Sie eine Taste aus.',
   'visualFlowEditor.blocks.map.node1': 'Abfahrtsort',
   'visualFlowEditor.blocks.map.node2': 'Ankunftsort',
+  'visualFlowEditor.blocks.map.route': 'Route',
+  'visualFlowEditor.blocks.map.button': 'Taste',
   'visualFlowEditor.blocks.hideAllPaths.summary': 'Wege verbergen',
   'visualFlowEditor.blocks.hideAllPaths.from': 'Von',
   'visualFlowEditor.blocks.hideAllPaths.to': 'Nach',
@@ -611,6 +617,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.shipClassI': 'Klasse I',
   'visualFlowEditor.command.shipClassII': 'Klasse II',
   'visualFlowEditor.command.shipClassIII': 'Klasse III',
+  'visualFlowEditor.command.selectRoute': 'Route auswählen...',
+  'visualFlowEditor.command.selectButton': 'Taste auswählen...',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Skriptname...',

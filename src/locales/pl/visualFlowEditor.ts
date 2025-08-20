@@ -64,6 +64,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE2': 'HIDEALLPATHS requires node2. Please select the second node or choose "None".',
   'visualFlowEditor.blocks.map.node1': 'Miejsce Wyjazdu',
   'visualFlowEditor.blocks.map.node2': 'Miejsce Przybycia',
+  'visualFlowEditor.blocks.map.route': 'Trasa',
   'visualFlowEditor.blocks.map.button': 'Przycisk',
   'visualFlowEditor.blocks.hideAllPaths.summary': 'Ukryj ścieżki',
   'visualFlowEditor.blocks.hideAllPaths.from': 'Z',
