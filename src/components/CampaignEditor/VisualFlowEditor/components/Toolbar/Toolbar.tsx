@@ -6,7 +6,6 @@ import { NavigationBreadcrumb } from '../NavigationBreadcrumb';
 import { NavigationPathItem } from '@/hooks/CampaignEditor/VisualFlowEditor/useZoomNavigation';
 import { useTranslation } from '@/locales';
 import type { ScriptData } from '../ScriptsList/ScriptsList.types';
-import { renderToolIcon } from '@/types/CampaignEditor/VisualFlowEditor/ToolCategories';
 
 interface ToolbarProps {
   isFlowFullscreen: boolean;
@@ -229,7 +228,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               }
               disabled={validationErrors > 0 || isSaving}
             >
-              {renderToolIcon('Save')}
+              <Save className="w-4 h-4" />
               {isSaving ? t('visualFlowEditor.toolbar.saving') : t('visualFlowEditor.toolbar.save')}
               {bypassedErrorsCount > 0 && !isSaving && (
                 <span className="text-xs bg-orange-800/50 px-1 rounded">

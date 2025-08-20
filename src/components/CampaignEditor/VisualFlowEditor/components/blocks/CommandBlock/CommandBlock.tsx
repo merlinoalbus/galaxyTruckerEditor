@@ -298,7 +298,9 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         }
         // MAP COMMANDS WITH BUTTON SELECTOR
         case 'SHOWBUTTON':
-        case 'HIDEBUTTON': {
+        case 'HIDEBUTTON':
+        case 'SETFOCUS':
+        case 'RESETFOCUS': {
           const items = getButtonsForSelect();
           
           return (
@@ -1392,11 +1394,27 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         return <span className="text-xs text-gray-500 italic">{(t as any)('visualFlowEditor.blocks.hideAllPaths.selectLocations')}</span>;
       }
       case 'SHOWBUTTON':
-      case 'HIDEBUTTON': {
+      case 'HIDEBUTTON':
+      case 'SETFOCUS':
+      case 'RESETFOCUS': {
         const buttonId = block.parameters?.button ? String(block.parameters.button) : '';
-        const prefix = block.type === 'SHOWBUTTON' 
-          ? (t as any)('visualFlowEditor.blocks.map.compact.showButton') 
-          : (t as any)('visualFlowEditor.blocks.map.compact.hideButton');
+        let prefix;
+        switch (block.type) {
+          case 'SHOWBUTTON':
+            prefix = (t as any)('visualFlowEditor.blocks.map.compact.showButton');
+            break;
+          case 'HIDEBUTTON':
+            prefix = (t as any)('visualFlowEditor.blocks.map.compact.hideButton');
+            break;
+          case 'SETFOCUS':
+            prefix = (t as any)('visualFlowEditor.blocks.map.compact.setFocus');
+            break;
+          case 'RESETFOCUS':
+            prefix = (t as any)('visualFlowEditor.blocks.map.compact.resetFocus');
+            break;
+          default:
+            prefix = block.type;
+        }
 
         if (buttonId) {
           // Trova il pulsante corrispondente e recupera la label localizzata

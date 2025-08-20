@@ -83,6 +83,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.HIDENODE_NO_NODE': 'Nodo obbligatorio. Seleziona un nodo.',
   'visualFlowEditor.validation.SHOWBUTTON_NO_BUTTON': 'Bottone obbligatorio. Seleziona un bottone.',
   'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Bottone obbligatorio. Seleziona un bottone.',
+  'visualFlowEditor.validation.SETFOCUS_NO_BUTTON': 'Bottone obbligatorio. Seleziona un bottone.',
+  'visualFlowEditor.validation.RESETFOCUS_NO_BUTTON': 'Bottone obbligatorio. Seleziona un bottone.',
   'visualFlowEditor.validation.ADDNODE_NO_NODE': 'Nodo obbligatorio. Seleziona un nodo.',
   'visualFlowEditor.validation.SETNODEKNOWN_NO_NODE': 'Nodo obbligatorio. Seleziona un nodo.',
   'visualFlowEditor.validation.CENTERMAPBYNODE_NO_NODE': 'Nodo obbligatorio. Seleziona un nodo.',
@@ -101,6 +103,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.map.compact.move': 'Muovi',
   'visualFlowEditor.blocks.map.compact.showButton': 'Mostra',
   'visualFlowEditor.blocks.map.compact.hideButton': 'Nascondi',
+  'visualFlowEditor.blocks.map.compact.setFocus': 'Focalizza',
+  'visualFlowEditor.blocks.map.compact.resetFocus': 'Reset Focus',
   
   // Delay Block
   'visualFlowEditor.blocks.delay.duration': 'Durata',
@@ -376,6 +380,10 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.returnAtRootLevel': 'Attenzione: RETURN al livello radice uscirà dall\'intero script.',
   'visualFlowEditor.validation.setNoSemaphore': 'Il blocco SET deve avere un semaforo selezionato. Scegli un semaforo da impostare.',
   'visualFlowEditor.validation.resetNoSemaphore': 'Il blocco RESET deve avere un semaforo selezionato. Scegli un semaforo da reimpostare.',
+  'visualFlowEditor.validation.setToNoVariable': 'Il blocco SET_TO deve avere una variabile selezionata. Scegli una variabile da impostare.',
+  'visualFlowEditor.validation.setToNoValue': 'Il blocco SET_TO deve avere un valore specificato. Inserisci un valore numerico.',
+  'visualFlowEditor.validation.addNoVariable': 'Il blocco ADD deve avere una variabile selezionata. Scegli una variabile da modificare.',
+  'visualFlowEditor.validation.addNoValue': 'Il blocco ADD deve avere un valore specificato. Inserisci un valore numerico da aggiungere.',
   'visualFlowEditor.validation.consecutiveAskError': '🚫 Due blocchi ASK consecutivi non sono permessi. Inserisci un altro tipo di blocco tra i due ASK.',
   'visualFlowEditor.validation.blockInBuildError': '🚫 Il blocco {blockType} non può essere inserito dentro un blocco BUILD. I blocchi BUILD e FLIGHT non possono essere annidati.',
   'visualFlowEditor.validation.blockInFlightError': '🚫 Il blocco {blockType} non può essere inserito dentro un blocco FLIGHT. I blocchi BUILD e FLIGHT non possono essere annidati.',
@@ -632,6 +640,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.selectLabel': 'Seleziona etichetta...',
   'visualFlowEditor.command.labelName': 'Nome etichetta...',
   'visualFlowEditor.command.selectScript': 'Seleziona script...',
+  'visualFlowEditor.command.selectVariable': 'Seleziona variabile...',
   'visualFlowEditor.command.opponent': 'Personaggio Avversario',
   'visualFlowEditor.command.opponentPlaceholder': 'mercante, nemico, ecc.',
   'visualFlowEditor.command.shipClassI': 'Classe I',
@@ -782,6 +791,23 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.setFocus.description': 'Imposta focus',
   'visualFlowEditor.tools.resetFocus.description': 'Resetta focus',
   'visualFlowEditor.tools.setFocusIfCredits.description': 'Focus condizionale',
+  
+  // Command labels
+  'visualFlowEditor.command.variableLabel': 'Variabile:',
+  
+  // SET_TO Block
+  'visualFlowEditor.blocks.setTo.variableLabel': 'Variabile',
+  'visualFlowEditor.blocks.setTo.valueLabel': 'Valore',
+  'visualFlowEditor.blocks.setTo.valuePlaceholder': 'Inserisci valore numerico...',
+  'visualFlowEditor.blocks.setTo.description': 'Imposta una variabile al valore specificato',
+  'visualFlowEditor.blocks.setTo.noVariable': 'Nessuna variabile selezionata',
+  
+  // ADD Block
+  'visualFlowEditor.blocks.add.variableLabel': 'Variabile',
+  'visualFlowEditor.blocks.add.valueLabel': 'Valore da aggiungere',
+  'visualFlowEditor.blocks.add.valuePlaceholder': 'Inserisci valore numerico...',
+  'visualFlowEditor.blocks.add.description': 'Aggiunge un valore alla variabile specificata',
+  'visualFlowEditor.blocks.add.noVariable': 'Nessuna variabile selezionata',
   
   // Tool Descriptions - Info
   'visualFlowEditor.tools.addInfoWindow.description': 'Aggiunge finestra info',
