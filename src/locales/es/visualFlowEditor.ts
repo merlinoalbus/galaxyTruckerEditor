@@ -59,8 +59,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.CENTERMAPBYPATH_NO_ROUTE': 'Route is required. Please select a route.',
   'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE1': 'HIDEALLPATHS requires node1. Please select the first node or choose "None".',
   'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE2': 'HIDEALLPATHS requires node2. Please select the second node or choose "None".',
+  'visualFlowEditor.validation.SHOWBUTTON_NO_BUTTON': 'Se requiere botón. Por favor selecciona un botón.',
+  'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Se requiere botón. Por favor selecciona un botón.',
   'visualFlowEditor.blocks.map.node1': 'Lugar de Salida',
   'visualFlowEditor.blocks.map.node2': 'Lugar de Llegada',
+  'visualFlowEditor.blocks.map.route': 'Ruta',
+  'visualFlowEditor.blocks.map.button': 'Botón',
   'visualFlowEditor.blocks.hideAllPaths.summary': 'Ocultar rutas',
   'visualFlowEditor.blocks.hideAllPaths.from': 'Desde',
   'visualFlowEditor.blocks.hideAllPaths.to': 'Hacia',
@@ -71,6 +75,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.map.compact.known': 'Conocido',
   'visualFlowEditor.blocks.map.compact.center': 'Centrar',
   'visualFlowEditor.blocks.map.compact.move': 'Mover',
+  'visualFlowEditor.blocks.map.compact.showButton': 'Mostrar',
+  'visualFlowEditor.blocks.map.compact.hideButton': 'Ocultar',
   
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Errores de Validación',
@@ -609,6 +615,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.shipClassI': 'Clase I',
   'visualFlowEditor.command.shipClassII': 'Clase II',
   'visualFlowEditor.command.shipClassIII': 'Clase III',
+  'visualFlowEditor.command.selectRoute': 'Seleccionar ruta...',
+  'visualFlowEditor.command.selectButton': 'Seleccionar botón...',
   'visualFlowEditor.command.selectCondition': 'Seleccionar condición...',
   
   // ScriptBlock
