@@ -435,6 +435,16 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
               t('visualFlowEditor.validation.RESETFOCUS_NO_BUTTON')
               : 'Select a button.';
             break;
+          case 'SETFOCUSIFCREDITS_NO_BUTTON':
+            message = t ?
+              t('visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_BUTTON')
+              : 'Select a button.';
+            break;
+          case 'SETFOCUSIFCREDITS_NO_CREDITS':
+            message = t ?
+              t('visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_CREDITS')
+              : 'Set minimum credits required.';
+            break;
           case 'MOVEPLAYERTONODE_NO_NODE':
             message = t ?
               t('visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE')

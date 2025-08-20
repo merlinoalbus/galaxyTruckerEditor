@@ -63,6 +63,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Требуется кнопка. Пожалуйста, выберите кнопку.',
   'visualFlowEditor.validation.SETFOCUS_NO_BUTTON': 'Требуется кнопка. Пожалуйста, выберите кнопку.',
   'visualFlowEditor.validation.RESETFOCUS_NO_BUTTON': 'Требуется кнопка. Пожалуйста, выберите кнопку.',
+  'visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_BUTTON': 'Требуется кнопка. Пожалуйста, выберите кнопку.',
+  'visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_CREDITS': 'Требуются кредиты. Пожалуйста, укажите минимальное значение кредитов.',
   'visualFlowEditor.blocks.map.node1': 'Место Отправления',
   'visualFlowEditor.blocks.map.node2': 'Место Прибытия',
   'visualFlowEditor.blocks.map.route': 'Маршрут',

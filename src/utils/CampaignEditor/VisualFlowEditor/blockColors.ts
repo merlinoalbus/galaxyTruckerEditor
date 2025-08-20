@@ -333,6 +333,7 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   'DIV': BlockCategory.VARIABLES,
   'RANDOM': BlockCategory.VARIABLES,
   'CLEAR': BlockCategory.VARIABLES,
+  'SETFOCUSIFCREDITS': BlockCategory.VARIABLES,
   
   // Map
   'MAP_TRAVEL': BlockCategory.MAP,

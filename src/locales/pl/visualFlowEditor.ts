@@ -58,6 +58,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Przycisk jest wymagany. Proszę wybrać przycisk.',
   'visualFlowEditor.validation.SETFOCUS_NO_BUTTON': 'Przycisk jest wymagany. Proszę wybrać przycisk.',
   'visualFlowEditor.validation.RESETFOCUS_NO_BUTTON': 'Przycisk jest wymagany. Proszę wybrać przycisk.',
+  'visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_BUTTON': 'Przycisk jest wymagany. Proszę wybrać przycisk.',
+  'visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_CREDITS': 'Kredyty są wymagane. Proszę określić minimalną wartość kredytów.',
   // Newly added validation messages for map route/node commands
   'visualFlowEditor.validation.SHOWPATH_NO_ROUTE': 'Route is required. Please select a route.',
   'visualFlowEditor.validation.HIDEPATH_NO_ROUTE': 'Route is required. Please select a route.',

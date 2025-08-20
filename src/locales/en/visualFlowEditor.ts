@@ -73,6 +73,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Button is required. Please select a button.',
   'visualFlowEditor.validation.SETFOCUS_NO_BUTTON': 'Button is required. Please select a button.',
   'visualFlowEditor.validation.RESETFOCUS_NO_BUTTON': 'Button is required. Please select a button.',
+  'visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_BUTTON': 'Button is required. Please select a button.',
+  'visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_CREDITS': 'Credits are required. Please specify the minimum credits value.',
   'visualFlowEditor.blocks.map.compact.show': 'Show',
   'visualFlowEditor.blocks.map.compact.hide': 'Hide',
   'visualFlowEditor.blocks.map.compact.add': 'Add',

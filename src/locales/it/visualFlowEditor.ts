@@ -85,6 +85,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Bottone obbligatorio. Seleziona un bottone.',
   'visualFlowEditor.validation.SETFOCUS_NO_BUTTON': 'Bottone obbligatorio. Seleziona un bottone.',
   'visualFlowEditor.validation.RESETFOCUS_NO_BUTTON': 'Bottone obbligatorio. Seleziona un bottone.',
+  'visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_BUTTON': 'Bottone obbligatorio. Seleziona un bottone.',
+  'visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_CREDITS': 'Crediti obbligatori. Specifica il valore minimo dei crediti.',
   'visualFlowEditor.validation.ADDNODE_NO_NODE': 'Nodo obbligatorio. Seleziona un nodo.',
   'visualFlowEditor.validation.SETNODEKNOWN_NO_NODE': 'Nodo obbligatorio. Seleziona un nodo.',
   'visualFlowEditor.validation.CENTERMAPBYNODE_NO_NODE': 'Nodo obbligatorio. Seleziona un nodo.',

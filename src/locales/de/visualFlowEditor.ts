@@ -88,6 +88,8 @@ const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Taste erforderlich. Bitte wählen Sie eine Taste aus.',
   'visualFlowEditor.validation.SETFOCUS_NO_BUTTON': 'Taste erforderlich. Bitte wählen Sie eine Taste aus.',
   'visualFlowEditor.validation.RESETFOCUS_NO_BUTTON': 'Taste erforderlich. Bitte wählen Sie eine Taste aus.',
+  'visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_BUTTON': 'Taste erforderlich. Bitte wählen Sie eine Taste aus.',
+  'visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_CREDITS': 'Kredite erforderlich. Bitte geben Sie den Mindestwert für Kredite an.',
   'visualFlowEditor.blocks.map.node1': 'Abfahrtsort',
   'visualFlowEditor.blocks.map.node2': 'Ankunftsort',
   'visualFlowEditor.blocks.map.route': 'Route',

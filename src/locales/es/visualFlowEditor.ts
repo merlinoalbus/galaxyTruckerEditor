@@ -63,6 +63,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Se requiere botón. Por favor selecciona un botón.',
   'visualFlowEditor.validation.SETFOCUS_NO_BUTTON': 'Se requiere botón. Por favor selecciona un botón.',
   'visualFlowEditor.validation.RESETFOCUS_NO_BUTTON': 'Se requiere botón. Por favor selecciona un botón.',
+  'visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_BUTTON': 'Se requiere botón. Por favor selecciona un botón.',
+  'visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_CREDITS': 'Se requieren créditos. Por favor especifica el valor mínimo de créditos.',
   'visualFlowEditor.blocks.map.node1': 'Lugar de Salida',
   'visualFlowEditor.blocks.map.node2': 'Lugar de Llegada',
   'visualFlowEditor.blocks.map.route': 'Ruta',
