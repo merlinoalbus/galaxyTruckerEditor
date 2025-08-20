@@ -21,6 +21,7 @@ import type { Mission } from '@/types/CampaignEditor/InteractiveMap/InteractiveM
 import { PercentageInput } from '../../PercentageInput';
 import { useButtonsList } from '@/hooks/CampaignEditor/VisualFlowEditor/useButtonsList';
 import { getLocalizedString } from '@/utils/localization';
+import { ImageSelector } from '../../ImageSelector/ImageSelector';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 import type { Character } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
 
@@ -368,6 +369,42 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
             </div>
           );
         }
+      case 'ADDINFOWINDOW':
+      case 'SHOWINFOWINDOW': {
+        return (
+          <div className="flex gap-2" style={{ height: '190px' }}>
+            <div className="flex-1">
+              <ImageSelector
+                value={block.parameters?.image || ''}
+                onChange={(image) => {
+                  onUpdate({ 
+                    parameters: { ...block.parameters, image } 
+                  });
+                }}
+                className="h-full"
+              />
+            </div>
+          </div>
+        );
+      }
+      case 'SHOWHELPIMAGE': {
+        // Campo con label e esempio valorizzazione, validazione gestita dal sistema standard
+        return (
+          <div className="flex flex-col gap-2">
+            <label className="text-xs text-slate-400">
+              Parametri immagine (esempio: "40 50 70 campaign/tutorial-purple.png")
+            </label>
+            <input
+              type="text"
+              className="w-full p-2 bg-slate-800 text-white rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none"
+              placeholder="40 50 70 campaign/tutorial-purple.png"
+              value={block.parameters?.params || ''}
+              onChange={e => onUpdate({ parameters: { ...block.parameters, params: e.target.value } })}
+              onClick={e => e.stopPropagation()}
+            />
+          </div>
+        );
+      }
       case 'SAY':
       case 'ASK': {
         // Usa lo stato simulato per trovare l'ultimo personaggio modificato
@@ -1494,6 +1531,33 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
           );
         }
         return <span className="text-xs text-gray-500 italic">Bottone e crediti non impostati</span>;
+      }
+      case 'ADDINFOWINDOW':
+      case 'SHOWINFOWINDOW': {
+        if (block.parameters?.image) {
+          return (
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400">🖼️ {String(block.parameters.image)}</span>
+            </div>
+          );
+        }
+        return <span className="text-xs text-gray-500 italic">No image selected</span>;
+      }
+      case 'SHOWHELPIMAGE': {
+        const emoji = '🖼️';
+        const paramsValue = block.parameters?.params || '';
+        if (paramsValue.trim()) {
+          return (
+            <span className="text-gray-400" title={(t as any)('visualFlowEditor.blocks.showHelpImage.description')}>
+              {emoji} {paramsValue}
+            </span>
+          );
+        }
+        return (
+          <span className="text-xs text-gray-500 italic">
+            {(t as any)('visualFlowEditor.blocks.showHelpImage.noParameters') || 'Nessun parametro'}
+          </span>
+        );
       }
       default: {
         // Gestione generica per blocchi non implementati - mostra un riepilogo compatto dei parametri

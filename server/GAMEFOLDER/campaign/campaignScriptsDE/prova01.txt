@@ -6,6 +6,7 @@ SCRIPTS
     ADD questProgress 22
     SetFocus bclub
     ResetFocus bpirate1
+    ShowHelpImage 32 4334 sfdfs
     Say "prova"
     HideDlgScene
   END_OF_SCRIPT

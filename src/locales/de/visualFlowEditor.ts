@@ -409,6 +409,9 @@ const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askNoScene': 'ASK erfordert eine aktive Szene. Fügen Sie vor diesem Block SHOWDLGSCENE hinzu.',
   'visualFlowEditor.validation.askIfInvalidThen': 'Nach ASK muss der THEN-Zweig des IF-Blocks mit MENU oder GO beginnen.',
   'visualFlowEditor.validation.askIfInvalidElse': 'Nach ASK muss der ELSE-Zweig des IF-Blocks mit MENU oder GO beginnen.',
+  // Info-Blöcke
+  'visualFlowEditor.validation.ADDINFOWINDOW_NO_IMAGE': 'Der Block ADDINFOWINDOW muss ein Bild ausgewählt haben. Wählen Sie ein Bild aus.',
+  'visualFlowEditor.validation.SHOWINFOWINDOW_NO_IMAGE': 'Der Block SHOWINFOWINDOW muss ein Bild ausgewählt haben. Wählen Sie ein Bild aus.',
   'visualFlowEditor.validation.consecutiveAskDetailed': '💡 Zwei aufeinanderfolgende ASK-Blöcke sind nicht erlaubt. Das erste ASK ({firstAsk}) wird direkt von diesem ASK gefolgt. Fügen Sie einen SAY-, MENU- oder anderen Befehlsblock zwischen die beiden ASK-Blöcke ein, um sie zu trennen.',
   'visualFlowEditor.validation.blockInBuildDetailed': '💡 Der {blockType}-Block befindet sich im Bereich "{area}" eines BUILD-Blocks. BUILD- und FLIGHT-Blöcke können nicht verschachtelt werden. Verschieben Sie diesen Block aus dem BUILD oder verwenden Sie andere Blocktypen.',
   'visualFlowEditor.validation.blockInFlightDetailed': '💡 Der {blockType}-Block befindet sich im Bereich "{area}" eines FLIGHT-Blocks. BUILD- und FLIGHT-Blöcke können nicht verschachtelt werden. Verschieben Sie diesen Block aus dem FLIGHT.',

@@ -1,10 +1,23 @@
+
+import { simulateSceneExecution } from '@/utils/CampaignEditor/VisualFlowEditor/sceneSimulation';
+import type { IFlowBlock } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
+
+/**
+ * Valida i parametri di un blocco SHOWHELPIMAGE
+ */
+export const validateShowHelpImageParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.params || block.parameters.params.trim() === '') {
+    return {
+      valid: false,
+      error: 'SHOWHELPIMAGE_NO_PARAMS'
+    };
+  }
+  return { valid: true };
+};
 /**
  * Parameter Validation Module
  * Funzioni per validare che i parametri dei blocchi siano valorizzati correttamente
  */
-
-import { simulateSceneExecution } from '@/utils/CampaignEditor/VisualFlowEditor/sceneSimulation';
-import type { IFlowBlock } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 /**
  * Verifica se un testo multilingua è valorizzato (deve avere almeno EN)
@@ -599,6 +612,14 @@ export const validateModifyOpponentsBuildSpeedParameters = (block: any): { valid
  */
 export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
   switch (block.type) {
+    case 'ADDINFOWINDOW':
+    case 'SHOWINFOWINDOW': {
+      // Richiedono sempre un parametro image valorizzato
+      if (!block.parameters?.image || String(block.parameters.image).trim() === '') {
+        return { valid: false, error: `${block.type}_NO_IMAGE` };
+      }
+      return { valid: true };
+    }
     case 'DELAY':
       return validateDelayParameters(block);
     case 'SAY':
@@ -656,6 +677,8 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return validateSetAdvPileParameters(block);
     case 'SETSECRETADVPILE':
       return validateSetSecretAdvPileParameters(block);
+    case 'SHOWHELPIMAGE':
+      return validateShowHelpImageParameters(block);
     case 'ACT_MISSION':
       return validateActMissionParameters(block);
     case 'SETDECKPREPARATIONSCRIPT':

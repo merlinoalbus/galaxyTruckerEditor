@@ -7,6 +7,7 @@ import { useFullscreen } from '@/contexts/FullscreenContext';
 
 import { InteractiveMap } from './InteractiveMap/InteractiveMap';
 import { VisualFlowEditor } from './VisualFlowEditor/VisualFlowEditor';
+import { ImagesProvider } from '@/contexts/ImagesContext';
 import { VariablesSystem } from './VariablesSystem/VariablesSystem';
 import { Overview } from './Overview/Overview';
 import { ElementCounters } from './components/Header/components/ElementCounters/ElementCounters';
@@ -147,15 +148,17 @@ export const CampaignEditor: React.FC = () => {
         )}
 
         {activeTab === 'flow' && (
-          <VisualFlowEditor 
-            analysis={analysis}
-            selectedScript={selectedScript?.nomescript || null}
-            onScriptSelect={(scriptName: string) => {
-              // Qui dovremmo trovare lo script completo per nome
-              // Per ora passiamo solo il nome
-              handleScriptSelect(scriptName as any);
-            }}
-          />
+          <ImagesProvider>
+            <VisualFlowEditor 
+              analysis={analysis}
+              selectedScript={selectedScript?.nomescript || null}
+              onScriptSelect={(scriptName: string) => {
+                // Qui dovremmo trovare lo script completo per nome
+                // Per ora passiamo solo il nome
+                handleScriptSelect(scriptName as any);
+              }}
+            />
+          </ImagesProvider>
         )}
 
         {activeTab === 'variables' && (

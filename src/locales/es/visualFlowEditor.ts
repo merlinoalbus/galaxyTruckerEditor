@@ -459,6 +459,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askNoScene': 'ASK requiere una escena activa. Añade SHOWDLGSCENE antes de este bloque.',
   'visualFlowEditor.validation.askIfInvalidThen': 'Después de ASK, la rama THEN del bloque IF debe comenzar con MENU o GO.',
   'visualFlowEditor.validation.askIfInvalidElse': 'Después de ASK, la rama ELSE del bloque IF debe comenzar con MENU o GO.',
+  // Bloques de Información
+  'visualFlowEditor.validation.ADDINFOWINDOW_NO_IMAGE': 'El bloque ADDINFOWINDOW debe tener una imagen seleccionada. Elige una imagen.',
+  'visualFlowEditor.validation.SHOWINFOWINDOW_NO_IMAGE': 'El bloque SHOWINFOWINDOW debe tener una imagen seleccionada. Elige una imagen.',
   'visualFlowEditor.validation.addPartToShipNotInBuild': 'ADDPARTTOSHIP debería estar dentro de un bloque BUILD. Mueva este bloque dentro de una fase de construcción.',
   'visualFlowEditor.validation.addPartToAsideSlotNotInBuild': 'ADDPARTTOASIDESLOT debería estar dentro de un bloque BUILD. Mueva este bloque dentro de una fase de construcción.',
   'visualFlowEditor.validation.addShipPartsNoParams': 'El bloque ADDSHIPPARTS debe especificar un archivo de partes. Seleccione un archivo YAML para cargar las partes.',

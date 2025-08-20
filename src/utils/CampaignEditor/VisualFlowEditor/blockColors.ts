@@ -22,11 +22,19 @@ export enum BlockCategory {
   GAME_STATE = 'GAME_STATE',          // SAVE, LOAD, etc.
   MULTIMEDIA = 'MULTIMEDIA',           // PLAY, STOP, VIDEO, etc.
   TIME = 'TIME',                      // DELAY, WAIT, etc.
+  INFO_HELP = 'INFO_HELP',            // Info & Help blocks
   UTILITY = 'UTILITY'                 // Altri comandi
 }
 
 // Colori per categoria
 const CATEGORY_COLORS: Record<BlockCategory, BlockColorConfig> = {
+  [BlockCategory.INFO_HELP]: {
+    background: 'bg-[#8B2C3A]/90', // Watermelon Extra Dark
+    border: 'border-[#8B2C3A]/80',
+    icon: 'bg-[#8B2C3A]/80',
+    text: 'text-[#8B2C3A]',
+    dragHandle: 'bg-[#8B2C3A]'
+  },
   [BlockCategory.CONTROL_FLOW]: {
     background: 'bg-slate-950/90',
     border: 'border-slate-700/80',
@@ -147,6 +155,9 @@ const GENERAL_COMMAND_COLORS: Record<string, BlockColorConfig> = {
     text: 'text-yellow-300',
     dragHandle: 'bg-yellow-700'
   },
+  'ADDINFOWINDOW': CATEGORY_COLORS[BlockCategory.INFO_HELP],
+  'SHOWINFOWINDOW': CATEGORY_COLORS[BlockCategory.INFO_HELP],
+  'SHOWHELPIMAGE': CATEGORY_COLORS[BlockCategory.INFO_HELP],
   'GO': {
     background: 'bg-fuchsia-950/90',
     border: 'border-fuchsia-700/80',
@@ -377,6 +388,9 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   // Time
   'DELAY': BlockCategory.TIME,
   'WAIT': BlockCategory.TIME,
+  // Info
+  'ADDINFOWINDOW': BlockCategory.INFO_HELP,
+  'SHOWINFOWINDOW': BlockCategory.INFO_HELP,
   'TIMER_START': BlockCategory.TIME,
   'TIMER_STOP': BlockCategory.TIME,
   

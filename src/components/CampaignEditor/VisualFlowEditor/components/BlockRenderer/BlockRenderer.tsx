@@ -596,6 +596,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
     );
   }
 
+
   // Render SETSECRETADVPILE block (same UI pattern as ADDPARTTOSHIP)
   if (block.type === 'SETSECRETADVPILE') {
     return (
@@ -610,6 +611,32 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           collapseAllTrigger={collapseAllTrigger}
           expandAllTrigger={expandAllTrigger}
           globalCollapseState={globalCollapseState}
+        />
+      </div>
+    );
+  }
+
+  // Render SHOWHELPIMAGE block come CommandBlock (come tutti i blocchi comando)
+  if (block.type === 'SHOWHELPIMAGE') {
+    return (
+      <div data-block-id={block.id}>
+        <CommandBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          sessionData={sessionData}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          onGoToLabel={sessionData?.goToLabel}
+          onNavigateToSubScript={sessionData?.onNavigateToSubScript}
+          onNavigateToMission={sessionData?.onNavigateToMission}
+          allBlocks={allBlocks}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
         />
       </div>
     );

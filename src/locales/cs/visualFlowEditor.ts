@@ -410,6 +410,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askNoScene': 'ASK vyžaduje aktivní scénu. Přidejte SHOWDLGSCENE před tento blok.',
   'visualFlowEditor.validation.askIfInvalidThen': 'Po ASK musí větev THEN bloku IF začínat MENU nebo GO.',
   'visualFlowEditor.validation.askIfInvalidElse': 'Po ASK musí větev ELSE bloku IF začínat MENU nebo GO.',
+  // Bloky Info
+  'visualFlowEditor.validation.ADDINFOWINDOW_NO_IMAGE': 'Blok ADDINFOWINDOW musí mít vybraný obrázek. Vyberte obrázek.',
+  'visualFlowEditor.validation.SHOWINFOWINDOW_NO_IMAGE': 'Blok SHOWINFOWINDOW musí mít vybraný obrázek. Vyberte obrázek.',
   'visualFlowEditor.validation.consecutiveAskDetailed': '💡 Dva po sobě jdoucí bloky ASK nejsou povoleny. První ASK ({firstAsk}) je přímo následován tímto ASK. Vložte blok SAY, MENU nebo jiný příkaz mezi dva ASK bloky pro jejich oddělení.',
   'visualFlowEditor.validation.blockInBuildDetailed': '💡 Blok {blockType} je uvnitř oblasti "{area}" bloku BUILD. Bloky BUILD a FLIGHT nemohou být vnořené. Přesuňte tento blok mimo BUILD nebo použijte jiné typy bloků.',
   'visualFlowEditor.validation.blockInFlightDetailed': '💡 Blok {blockType} je uvnitř oblasti "{area}" bloku FLIGHT. Bloky BUILD a FLIGHT nemohou být vnořené. Přesuňte tento blok mimo FLIGHT.',

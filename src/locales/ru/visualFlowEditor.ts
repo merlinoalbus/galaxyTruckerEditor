@@ -265,6 +265,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askNoText': 'Блок ASK должен иметь текст. Добавьте хотя бы английский текст.',
   'visualFlowEditor.validation.goNoLabel': 'Блок GO должен иметь выбранную метку. Выберите целевую метку.',
   'visualFlowEditor.validation.labelNoName': 'Блок LABEL должен иметь имя. Установите имя якоря.',
+  'visualFlowEditor.validation.ADDINFOWINDOW_NO_IMAGE': 'Блок ADDINFOWINDOW должен иметь выбранное изображение. Выберите изображение.',
+  'visualFlowEditor.validation.SHOWINFOWINDOW_NO_IMAGE': 'Блок SHOWINFOWINDOW должен иметь выбранное изображение. Выберите изображение.',
   'visualFlowEditor.validation.consecutiveAskError': '🚫 Два последовательных блока ASK не разрешены. Вставьте другой тип блока между двумя блоками ASK.',
   'visualFlowEditor.validation.blockInBuildError': '🚫 Блок {blockType} не может быть вставлен внутри блока BUILD. Блоки BUILD и FLIGHT не могут быть вложенными.',
   'visualFlowEditor.validation.blockInFlightError': '🚫 Блок {blockType} не может быть вставлен внутри блока FLIGHT. Блоки BUILD и FLIGHT не могут быть вложенными.',
