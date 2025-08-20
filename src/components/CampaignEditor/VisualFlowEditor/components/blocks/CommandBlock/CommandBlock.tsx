@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { API_CONFIG } from '@/config/constants';
 import { MessageSquare, ArrowRight, ExternalLink } from 'lucide-react';
 import Emoji from '@/components/Emoji/Emoji';
+import { StackedEmoji } from '@/components/Emoji/StackedEmoji';
 import { CMD_EMOJI } from '@/components/Emoji/cmdEmojiMap';
 import { BaseBlock } from '../BaseBlock/BaseBlock';
 import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
@@ -15,6 +16,8 @@ import { SceneDebugButton } from '../../SceneDebugButton';
 import { CharacterAvatar } from '../../CharacterAvatar';
 import { simulateSceneExecution, getLastModifiedVisibleCharacter } from '@/utils/CampaignEditor/VisualFlowEditor/sceneSimulation';
 import { imagesViewService } from '@/services/CampaignEditor/VariablesSystem/services/ImagesView/imagesViewService';
+import { interactiveMapService } from '@/services/CampaignEditor/InteractiveMap/interactiveMapService';
+import type { Mission } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { PercentageInput } from '../../PercentageInput';
 import { getLocalizedString } from '@/utils/localization';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
@@ -84,6 +87,8 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   
   // I characters vengono passati da sessionData, non caricati qui (memo per deps stabili)
   const characters = useMemo(() => sessionData?.characters || [], [sessionData?.characters]);
+  // Missions (used as routes list) - load once when needed
+  const [missionsList, setMissionsList] = useState<Mission[] | null>(null);
   const [selectedCharacterImage, setSelectedCharacterImage] = useState<string | null>(null);
   const [characterImages, setCharacterImages] = useState<Record<string, string>>({});
   const [noAvatarImage, setNoAvatarImage] = useState<string | null>(null);
@@ -126,6 +131,19 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
       setSelectedCharacterImage(null);
     }
   }, [block.type, block.parameters?.character, characterImages]);
+
+  // Load missions (routes) lazily for route-based commands
+  useEffect(() => {
+    let mounted = true;
+    if (['SHOWPATH', 'HIDEPATH', 'CENTERMAPBYPATH'].includes(block.type) && !missionsList) {
+      interactiveMapService.loadMissions().then((m) => {
+        if (mounted) setMissionsList(m || []);
+      }).catch(() => {
+        if (mounted) setMissionsList([]);
+      });
+    }
+    return () => { mounted = false; };
+  }, [block.type, missionsList]);
   
   // NON USARE useEffect per aggiornare la scena - non funziona con componenti separati
   // La scena deve essere gestita a livello superiore con esecuzione sequenziale
@@ -173,7 +191,14 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         return <Emoji text="🫥" className="text-2xl leading-none inline-block align-middle" />;
       default: {
         const emoji = CMD_EMOJI[block.type as keyof typeof CMD_EMOJI];
-        if (emoji) return <Emoji text={emoji} className="text-2xl leading-none inline-block align-middle" />;
+        if (emoji) {
+          // Estrae solo i caratteri emoji (Unicode property Emoji)
+          const emojiArr = Array.from(emoji).filter(e => /\p{Emoji}/u.test(e));
+          if (emojiArr.length > 1) {
+            return <StackedEmoji emojis={emojiArr} size={20} className="inline-block align-middle" />;
+          }
+          return <Emoji text={emoji} className="text-2xl leading-none inline-block align-middle" />;
+        }
         return <MessageSquare className="w-4 h-4" />;
       }
     }
@@ -198,7 +223,75 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
                 />
           </div>
         );
-      }
+        }
+        // MAP COMMANDS WITH ROUTE SELECTOR
+        case 'SHOWPATH':
+        case 'HIDEPATH':
+        case 'CENTERMAPBYPATH': {
+          // Build items as structured {key,label} using missionsList (route key = mission.name)
+          const items = (missionsList || []).map(m => ({ key: m.name, label: getLocalizedString(m.localizedCaptions || {}, currentLanguage, m.name) }));
+          return (
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-slate-400 whitespace-nowrap">
+                {(t as any)('visualFlowEditor.blocks.map.route')}:
+              </label>
+              <SelectWithModal
+                type="mission"
+                value={String(block.parameters?.route || '')}
+                onChange={(value) => onUpdate({ parameters: { ...block.parameters, route: value } })}
+                placeholder={(t as any)('visualFlowEditor.command.selectRoute')}
+                availableItems={items}
+                onAddItem={undefined}
+                className="flex-1"
+              />
+            </div>
+          );
+        }
+        case 'HIDEALLPATHS': {
+          // Two NodeSelectors side-by-side with mutual exclusion and None option
+          return (
+            <div className="flex gap-2">
+              <div className="w-1/2">
+                <label className="text-xs text-slate-400">{(t as any)('visualFlowEditor.blocks.map.node1')}</label>
+                <NodeSelector
+                  value={String(block.parameters?.node1 || '')}
+                  onChange={(nodeName) => {
+                    // If selecting same as node2, clear node2 to enforce mutual exclusion
+                    const node2 = block.parameters?.node2 || '';
+                    const updates: any = { ...block.parameters, node1: nodeName };
+                    if (nodeName && nodeName === node2) {
+                      updates.node2 = '';
+                    }
+                    // If 'None' (empty string), remove the parameter
+                    if (!nodeName) delete updates.node1;
+                    onUpdate({ parameters: updates });
+                  }}
+                  nodes={sessionData?.nodes}
+                  excludeNodes={block.parameters?.node2 ? [String(block.parameters.node2)] : []}
+                  className="h-48"
+                />
+              </div>
+              <div className="w-1/2">
+                <label className="text-xs text-slate-400">{(t as any)('visualFlowEditor.blocks.map.node2')}</label>
+                <NodeSelector
+                  value={String(block.parameters?.node2 || '')}
+                  onChange={(nodeName) => {
+                    const node1 = block.parameters?.node1 || '';
+                    const updates: any = { ...block.parameters, node2: nodeName };
+                    if (nodeName && nodeName === node1) {
+                      updates.node1 = '';
+                    }
+                    if (!nodeName) delete updates.node2;
+                    onUpdate({ parameters: updates });
+                  }}
+                  nodes={sessionData?.nodes}
+                  excludeNodes={block.parameters?.node1 ? [String(block.parameters.node1)] : []}
+                  className="h-48"
+                />
+              </div>
+            </div>
+          );
+        }
       case 'SAY':
       case 'ASK': {
         // Usa lo stato simulato per trovare l'ultimo personaggio modificato
@@ -1226,6 +1319,74 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         }
         return <span className="text-xs text-gray-500 italic">{t('visualFlowEditor.blocks.nodeSelector.none')}</span>;
       }
+      case 'SHOWPATH':
+      case 'HIDEPATH':
+      case 'CENTERMAPBYPATH': {
+        const routeKey = block.parameters?.route ? String(block.parameters.route) : '';
+        const prefix = block.type === 'SHOWPATH' ? t('visualFlowEditor.blocks.map.compact.show') :
+          block.type === 'HIDEPATH' ? t('visualFlowEditor.blocks.map.compact.hide') :
+          t('visualFlowEditor.blocks.map.compact.center');
+
+        if (routeKey && missionsList) {
+          const mission = missionsList.find(m => m.name === routeKey);
+          const displayLabel = mission 
+            ? getLocalizedString(mission.localizedCaptions || {}, currentLanguage, mission.name)
+            : routeKey;
+          return <span className="text-gray-400">{prefix}: {displayLabel}</span>;
+        }
+        return <span className="text-xs text-gray-500 italic">{(t as any)('visualFlowEditor.command.selectRoute')}</span>;
+      }
+      case 'HIDEALLPATHS': {
+        const node1 = block.parameters?.node1 ? String(block.parameters.node1) : '';
+        const node2 = block.parameters?.node2 ? String(block.parameters.node2) : '';
+        
+        if (!node1 && !node2) {
+          return <span className="text-xs text-gray-500 italic">No locations selected</span>;
+        }
+        
+        const getNodeLabel = (nodeName: string) => {
+          if (!nodeName) return '';
+          const n = Array.isArray(sessionData?.nodes) 
+            ? sessionData.nodes.find((x: any) => x?.name === nodeName) 
+            : undefined;
+          return n ? getLocalizedString(n.localizedCaptions, currentLanguage, n.caption || n.name || nodeName) : nodeName;
+        };
+        
+        const label1 = getNodeLabel(node1);
+        const label2 = getNodeLabel(node2);
+        
+        if (label1 && label2) {
+          return <span className="text-gray-400">{(t as any)('visualFlowEditor.blocks.hideAllPaths.summary')}: {label1} → {label2}</span>;
+        } else if (label1) {
+          return <span className="text-gray-400">{(t as any)('visualFlowEditor.blocks.hideAllPaths.from')}: {label1}</span>;
+        } else if (label2) {
+          return <span className="text-gray-400">{(t as any)('visualFlowEditor.blocks.hideAllPaths.to')}: {label2}</span>;
+        }
+        
+        return <span className="text-xs text-gray-500 italic">{(t as any)('visualFlowEditor.blocks.hideAllPaths.selectLocations')}</span>;
+      }
+      // Map compact summaries - ROUTE based
+      case 'SHOWPATH':
+      case 'HIDEPATH':
+      case 'CENTERMAPBYPATH': {
+        const routeKey = block.parameters?.route ? String(block.parameters.route) : '';
+        const prefix = block.type === 'SHOWPATH'
+          ? t('visualFlowEditor.blocks.map.compact.show')
+          : block.type === 'HIDEPATH'
+          ? t('visualFlowEditor.blocks.map.compact.hide')
+          : t('visualFlowEditor.blocks.map.compact.center');
+
+        if (routeKey) {
+          // Prova a localizzare l'etichetta della route dalle missions
+          let displayLabel: string = routeKey;
+          const mission = (missionsList || []).find((m: any) => m?.name === routeKey);
+          if (mission) {
+            displayLabel = getLocalizedString(mission.localizedCaptions || {}, currentLanguage, mission.name || routeKey);
+          }
+          return <span className="text-gray-400">{prefix}: {displayLabel}</span>;
+        }
+  return <span className="text-xs text-gray-500 italic">{(t as any)('visualFlowEditor.validation.SHOWPATH_NO_ROUTE')}</span>;
+      }
       default: {
         // Gestione generica per blocchi non implementati - mostra un riepilogo compatto dei parametri
         const params = block.parameters || {};
@@ -1321,6 +1482,32 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
     lastImmagine: nodeImageBinary ? { nomefile: `${selectedNodeName}.png`, binary: nodeImageBinary } : null
   } : null;
 
+  // Per HIDEALLPATHS - prepara gli avatar dei due nodi selezionati
+  const hideAllPathsAvatars = useMemo(() => {
+    if (block.type !== 'HIDEALLPATHS') return null;
+    
+    const node1Name = block.parameters?.node1;
+    const node2Name = block.parameters?.node2;
+    
+    const getNodeAvatar = (nodeName: string | undefined) => {
+      if (!nodeName || typeof nodeName !== 'string' || !sessionData?.nodes) return null;
+      
+      const node = sessionData.nodes.find((n: any) => n.nome === nodeName || n.name === nodeName);
+      if (!node) return null;
+      
+      return {
+        nomepersonaggio: node.displayName || node.localizedCaptions?.IT || node.caption || nodeName,
+        lastImmagine: node.imageBinary ? { nomefile: `${nodeName}.png`, binary: node.imageBinary } : 
+                     node.immagine?.binary ? { nomefile: `${nodeName}.png`, binary: node.immagine.binary } : null
+      };
+    };
+
+    return {
+      node1: getNodeAvatar(String(node1Name || '')),
+      node2: getNodeAvatar(String(node2Name || ''))
+    };
+  }, [block.type, block.parameters?.node1, block.parameters?.node2, sessionData?.nodes]);
+
   return (
     <div ref={containerRef}>
       <BaseBlock
@@ -1345,8 +1532,9 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         isInvalid={isInvalid}
         validationType={validationType}
         extraControls={allBlocks.length > 0 && <SceneDebugButton block={block} allBlocks={allBlocks} characters={characters} />}
-  showAvatar={(block.type === 'SAY' || block.type === 'ASK' || block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE' || ['SHOWNODE','HIDENODE','ADDNODE','SETNODEKNOWN','CENTERMAPBYNODE','MOVEPLAYERTONODE'].includes(block.type))}
+  showAvatar={(block.type === 'SAY' || block.type === 'ASK' || block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE' || block.type === 'HIDEALLPATHS' || ['SHOWNODE','HIDENODE','ADDNODE','SETNODEKNOWN','CENTERMAPBYNODE','MOVEPLAYERTONODE'].includes(block.type))}
         avatarCharacter={
+          block.type === 'HIDEALLPATHS' ? hideAllPathsAvatars :
           block.type === 'ADDOPPONENT' ? opponentCharacter : 
           block.type === 'SETSHIPTYPE' ? {
             nomepersonaggio: shipType || 'STI',

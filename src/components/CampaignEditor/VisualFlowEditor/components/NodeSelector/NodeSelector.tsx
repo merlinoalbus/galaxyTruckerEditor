@@ -11,6 +11,7 @@ interface NodeSelectorProps {
   className?: string;
   nodes?: MapNode[]; // opzionale: se non passato, li carica via servizio
   forceColumns?: number;
+  excludeNodes?: string[]; // nodi da escludere/nascondere dalla lista
 }
 
 export const NodeSelector: React.FC<NodeSelectorProps> = ({
@@ -18,7 +19,8 @@ export const NodeSelector: React.FC<NodeSelectorProps> = ({
   onChange,
   className = '',
   nodes: propsNodes,
-  forceColumns
+  forceColumns,
+  excludeNodes = []
 }) => {
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
@@ -33,14 +35,16 @@ export const NodeSelector: React.FC<NodeSelectorProps> = ({
   }, [propsNodes]);
 
   const filteredNodes = useMemo(() => {
-    if (!searchTerm) return nodes;
+    let nodesToFilter = nodes.filter(n => !excludeNodes.includes(n.name));
+    
+    if (!searchTerm) return nodesToFilter;
     const term = searchTerm.toLowerCase();
-    return nodes.filter(n => {
+    return nodesToFilter.filter(n => {
       const name = (n.name || '').toLowerCase();
       const caption = (n.localizedCaptions?.EN || n.caption || '').toLowerCase();
       return name.includes(term) || caption.includes(term);
     });
-  }, [nodes, searchTerm]);
+  }, [nodes, searchTerm, excludeNodes]);
 
   const getNodeImage = (node: MapNode): string | null => {
     if (node.imageBinary) return `data:image/png;base64,${node.imageBinary}`;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronDown, ChevronRight, Search } from 'lucide-react';
-import { getToolCategories, Tool, ToolCategory } from '@/types/CampaignEditor/VisualFlowEditor/ToolCategories';
+import { getToolCategories, Tool, ToolCategory, renderToolIcon } from '@/types/CampaignEditor/VisualFlowEditor/ToolCategories';
 import Emoji from '@/components/Emoji/Emoji';
 import { useTranslation } from '@/locales';
 
@@ -91,7 +91,7 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({ onToolDragStart }) => {
       >
         {/* Icona principale - solo icona nel pulsante */}
         <div className="text-xl text-center select-none leading-none">
-          <Emoji text={tool.icon} />
+          {renderToolIcon(tool.icon, 24)}
         </div>
       </div>
     );
@@ -118,7 +118,7 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({ onToolDragStart }) => {
           <span className="text-sm">
             {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
           </span>
-          <span className="text-lg">{category.icon}</span>
+          <span className="text-lg">{renderToolIcon(category.icon, 18)}</span>
           <span className="text-sm flex-1">{category.name}</span>
           <span className="text-xs text-gray-400">
             {activeCount}/{filteredTools.length}

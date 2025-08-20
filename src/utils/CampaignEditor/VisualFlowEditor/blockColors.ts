@@ -346,6 +346,11 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   'SETNODEKNOWN': BlockCategory.MAP,
   'CENTERMAPBYNODE': BlockCategory.MAP,
   'MOVEPLAYERTONODE': BlockCategory.MAP,
+  // New map route/path commands
+  'SHOWPATH': BlockCategory.MAP,
+  'HIDEPATH': BlockCategory.MAP,
+  'CENTERMAPBYPATH': BlockCategory.MAP,
+  'HIDEALLPATHS': BlockCategory.MAP,
   
   // Game State
   'SAVE': BlockCategory.GAME_STATE,

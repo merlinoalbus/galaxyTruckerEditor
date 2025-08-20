@@ -284,7 +284,20 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
         {/* Avatar per SAY/ASK sempre visibile */}
         {showAvatar && (
           <div className="ml-auto mr-2">
-            <CharacterAvatar character={avatarCharacter} isShipType={isShipType} isNodeType={isNodeType} />
+            {/* Gestione speciale per HIDEALLPATHS con due avatar e freccia + X */}
+            {avatarCharacter && typeof avatarCharacter === 'object' && 'node1' in avatarCharacter && 'node2' in avatarCharacter ? (
+              <div className="flex items-center gap-2">
+                <CharacterAvatar character={(avatarCharacter as any).node1} isNodeType={true} size="small" />
+                {/* Freccia con X sovrapposta */}
+                <div className="relative flex items-center justify-center w-6 h-6">
+                  <div className="text-sm">➡️</div>
+                  <div className="absolute top-0 right-0 text-red-500 text-xs">❌</div>
+                </div>
+                <CharacterAvatar character={(avatarCharacter as any).node2} isNodeType={true} size="small" />
+              </div>
+            ) : (
+              <CharacterAvatar character={avatarCharacter} isShipType={isShipType} isNodeType={isNodeType} />
+            )}
           </div>
         )}
       </div>

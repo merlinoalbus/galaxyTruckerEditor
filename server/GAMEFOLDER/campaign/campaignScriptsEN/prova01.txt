@@ -2,7 +2,9 @@ SCRIPTS
 
   SCRIPT aaa_pippo
     ShowDlgScene
-    Say "Prova"
+    ShowPath R1-3a
+    HidePath R1-2b
+    HideAllPaths bar cyanHome
     ShowNode cyanHome
     HideNode club
     AddNode lab

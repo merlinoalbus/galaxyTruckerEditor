@@ -75,6 +75,17 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.addOpponentNotInMission': 'ADDOPPONENT by měl být uvnitř bloku MISSION.',
   'visualFlowEditor.validation.setShipTypeNoType': 'Blok SETSHIPTYPE musí mít vybraný typ lodi.',
   'visualFlowEditor.validation.setShipTypeNotInMission': 'SETSHIPTYPE by měl být uvnitř bloku MISSION.',
+  'visualFlowEditor.validation.SHOWPATH_NO_ROUTE': 'Route is required. Please select a route.',
+  'visualFlowEditor.validation.HIDEPATH_NO_ROUTE': 'Route is required. Please select a route.',
+  'visualFlowEditor.validation.CENTERMAPBYPATH_NO_ROUTE': 'Route is required. Please select a route.',
+  'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE1': 'HIDEALLPATHS requires node1. Please select the first node or choose "None".',
+  'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE2': 'HIDEALLPATHS requires node2. Please select the second node or choose "None".',
+  'visualFlowEditor.blocks.map.node1': 'Místo Odjezdu',
+  'visualFlowEditor.blocks.map.node2': 'Místo Příjezdu',
+  'visualFlowEditor.blocks.hideAllPaths.summary': 'Skrýt cesty',
+  'visualFlowEditor.blocks.hideAllPaths.from': 'Z',
+  'visualFlowEditor.blocks.hideAllPaths.to': 'Do',
+  'visualFlowEditor.blocks.hideAllPaths.selectLocations': 'Vyberte místa',
   
   // Delay Block
   'visualFlowEditor.blocks.delay.duration': 'Doba trvání',

@@ -638,6 +638,23 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return (!block.parameters?.node || String(block.parameters.node).trim() === '')
         ? { valid: false, error: `${block.type}_NO_NODE` }
         : { valid: true };
+    // Path (route) based map commands: require route parameter
+    case 'SHOWPATH':
+    case 'HIDEPATH':
+    case 'CENTERMAPBYPATH':
+      return (!block.parameters?.route || String(block.parameters.route).trim() === '')
+        ? { valid: false, error: `${block.type}_NO_ROUTE` }
+        : { valid: true };
+    // Hide all paths requires two nodes (node1 and node2)
+    case 'HIDEALLPATHS': {
+      if (!block.parameters?.node1 || String(block.parameters.node1).trim() === '') {
+        return { valid: false, error: 'HIDEALLPATHS_NO_NODE1' };
+      }
+      if (!block.parameters?.node2 || String(block.parameters.node2).trim() === '') {
+        return { valid: false, error: 'HIDEALLPATHS_NO_NODE2' };
+      }
+      return { valid: true };
+    }
     // EXIT_MENU, SHOWDLGSCENE, HIDEDLGSCENE non hanno parametri da validare
     default:
       return { valid: true };
