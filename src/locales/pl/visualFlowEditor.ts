@@ -54,6 +54,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.SETNODEKNOWN_NO_NODE': 'Wymagany jest węzeł. Proszę wybrać węzeł.',
   'visualFlowEditor.validation.CENTERMAPBYNODE_NO_NODE': 'Wymagany jest węzeł. Proszę wybrać węzeł.',
   'visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE': 'Wymagany jest węzeł. Proszę wybrać węzeł.',
+  'visualFlowEditor.validation.SHOWBUTTON_NO_BUTTON': 'Przycisk jest wymagany. Proszę wybrać przycisk.',
+  'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Przycisk jest wymagany. Proszę wybrać przycisk.',
   // Newly added validation messages for map route/node commands
   'visualFlowEditor.validation.SHOWPATH_NO_ROUTE': 'Route is required. Please select a route.',
   'visualFlowEditor.validation.HIDEPATH_NO_ROUTE': 'Route is required. Please select a route.',
@@ -62,6 +64,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE2': 'HIDEALLPATHS requires node2. Please select the second node or choose "None".',
   'visualFlowEditor.blocks.map.node1': 'Miejsce Wyjazdu',
   'visualFlowEditor.blocks.map.node2': 'Miejsce Przybycia',
+  'visualFlowEditor.blocks.map.button': 'Przycisk',
   'visualFlowEditor.blocks.hideAllPaths.summary': 'Ukryj ścieżki',
   'visualFlowEditor.blocks.hideAllPaths.from': 'Z',
   'visualFlowEditor.blocks.hideAllPaths.to': 'Do',
@@ -72,6 +75,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.map.compact.known': 'Znany',
   'visualFlowEditor.blocks.map.compact.center': 'Wyśrodkuj',
   'visualFlowEditor.blocks.map.compact.move': 'Przenieś',
+  'visualFlowEditor.blocks.map.compact.showButton': 'Pokaż',
+  'visualFlowEditor.blocks.map.compact.hideButton': 'Ukryj',
   
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Błędy walidacji',
@@ -611,6 +616,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.shipClassI': 'Klasa I',
   'visualFlowEditor.command.shipClassII': 'Klasa II',
   'visualFlowEditor.command.shipClassIII': 'Klasa III',
+  'visualFlowEditor.command.selectRoute': 'Wybierz trasę...',
+  'visualFlowEditor.command.selectButton': 'Wybierz przycisk...',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Nazwa skryptu...',

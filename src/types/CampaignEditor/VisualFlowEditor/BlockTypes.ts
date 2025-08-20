@@ -150,6 +150,20 @@ export interface LabelBlock extends CommandBlock {
   };
 }
 
+export interface ShowButtonBlock extends CommandBlock {
+  type: 'SHOWBUTTON';
+  parameters: {
+    button: string;
+  };
+}
+
+export interface HideButtonBlock extends CommandBlock {
+  type: 'HIDEBUTTON';
+  parameters: {
+    button: string;
+  };
+}
+
 // Strumenti disponibili nella barra laterale
 export interface ToolItem {
   id: string;

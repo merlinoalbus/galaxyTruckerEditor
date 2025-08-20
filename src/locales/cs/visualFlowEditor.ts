@@ -54,12 +54,16 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.SETNODEKNOWN_NO_NODE': 'Uzel je povinný. Vyberte prosím uzel.',
   'visualFlowEditor.validation.CENTERMAPBYNODE_NO_NODE': 'Uzel je povinný. Vyberte prosím uzel.',
   'visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE': 'Uzel je povinný. Vyberte prosím uzel.',
+  'visualFlowEditor.validation.SHOWBUTTON_NO_BUTTON': 'Tlačítko je povinné. Vyberte prosím tlačítko.',
+  'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Tlačítko je povinné. Vyberte prosím tlačítko.',
   'visualFlowEditor.blocks.map.compact.show': 'Zobrazit',
   'visualFlowEditor.blocks.map.compact.hide': 'Skrýt',
   'visualFlowEditor.blocks.map.compact.add': 'Přidat',
   'visualFlowEditor.blocks.map.compact.known': 'Známý',
   'visualFlowEditor.blocks.map.compact.center': 'Centrovat',
   'visualFlowEditor.blocks.map.compact.move': 'Přesunout',
+  'visualFlowEditor.blocks.map.compact.showButton': 'Zobrazit',
+  'visualFlowEditor.blocks.map.compact.hideButton': 'Skrýt',
   
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Chyby validace',
@@ -82,6 +86,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE2': 'HIDEALLPATHS requires node2. Please select the second node or choose "None".',
   'visualFlowEditor.blocks.map.node1': 'Místo Odjezdu',
   'visualFlowEditor.blocks.map.node2': 'Místo Příjezdu',
+  'visualFlowEditor.blocks.map.button': 'Tlačítko',
   'visualFlowEditor.blocks.hideAllPaths.summary': 'Skrýt cesty',
   'visualFlowEditor.blocks.hideAllPaths.from': 'Z',
   'visualFlowEditor.blocks.hideAllPaths.to': 'Do',
@@ -599,6 +604,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.block.dragToMove': 'Přetáhněte pro přesunutí',
   
   // CommandBlock
+  // Command placeholders
+  'visualFlowEditor.command.selectRoute': 'Vybrat trasu',
+  'visualFlowEditor.command.selectButton': 'Vybrat tlačítko',
   'visualFlowEditor.command.dialogText': 'Text dialogu',
   'visualFlowEditor.command.dialogLabel': 'Dialog',
   'visualFlowEditor.command.questionText': 'Text otázky',

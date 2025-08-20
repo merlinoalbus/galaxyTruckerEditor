@@ -415,6 +415,16 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
               t('visualFlowEditor.validation.HIDEALLPATHS_NO_NODE2')
               : 'Select the second node.';
             break;
+          case 'SHOWBUTTON_NO_BUTTON':
+            message = t ?
+              t('visualFlowEditor.validation.SHOWBUTTON_NO_BUTTON')
+              : 'Select a button.';
+            break;
+          case 'HIDEBUTTON_NO_BUTTON':
+            message = t ?
+              t('visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON')
+              : 'Select a button.';
+            break;
           case 'MOVEPLAYERTONODE_NO_NODE':
             message = t ?
               t('visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE')
