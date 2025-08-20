@@ -59,6 +59,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.CENTERMAPBYPATH_NO_ROUTE': 'Route is required. Please select a route.',
   'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE1': 'HIDEALLPATHS requires node1. Please select the first node or choose "None".',
   'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE2': 'HIDEALLPATHS requires node2. Please select the second node or choose "None".',
+  'visualFlowEditor.validation.SHOWBUTTON_NO_BUTTON': 'Требуется кнопка. Пожалуйста, выберите кнопку.',
+  'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Требуется кнопка. Пожалуйста, выберите кнопку.',
   'visualFlowEditor.blocks.map.node1': 'Место Отправления',
   'visualFlowEditor.blocks.map.node2': 'Место Прибытия',
   'visualFlowEditor.blocks.hideAllPaths.summary': 'Скрыть пути',
@@ -71,6 +73,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.map.compact.known': 'Известный',
   'visualFlowEditor.blocks.map.compact.center': 'Центрировать',
   'visualFlowEditor.blocks.map.compact.move': 'Переместить',
+  'visualFlowEditor.blocks.map.compact.showButton': 'Показать',
+  'visualFlowEditor.blocks.map.compact.hideButton': 'Скрыть',
   
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Ошибки валидации',
@@ -245,6 +249,14 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.hideDlgScene.compact': 'Скрыть сцену',
   'visualFlowEditor.blocks.showDlgScene.fullDescription': 'Показать Сцену Диалога. Эта команда открывает сцену диалога, где могут быть показаны персонажи и могут происходить разговоры. Используйте ее перед SAY, ASK или командами, связанными с персонажами.',
   'visualFlowEditor.blocks.hideDlgScene.fullDescription': 'Скрыть Сцену Диалога. Эта команда закрывает текущую сцену диалога и скрывает всех видимых персонажей. Используйте ее, когда хотите завершить последовательность разговоров.',
+  
+  // Button Commands
+  'visualFlowEditor.blocks.showButton.title': 'Показать Кнопку',
+  'visualFlowEditor.blocks.showButton.description': 'Показывает кнопку в интерфейсе',
+  'visualFlowEditor.blocks.showButton.compact': 'Показать кнопку',
+  'visualFlowEditor.blocks.hideButton.title': 'Скрыть Кнопку',
+  'visualFlowEditor.blocks.hideButton.description': 'Скрывает кнопку из интерфейса',
+  'visualFlowEditor.blocks.hideButton.compact': 'Скрыть кнопку',
   
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Ошибка валидации',
@@ -434,11 +446,13 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.select.labelName': 'Имя метки',
   'visualFlowEditor.select.scriptName': 'Имя скрипта...',
   'visualFlowEditor.select.missionName': 'Имя миссии...',
+  'visualFlowEditor.select.buttonLabel': 'Кнопка',
   'visualFlowEditor.select.selectVariable': 'Выбрать переменную',
   'visualFlowEditor.select.selectSemaphore': 'Выбрать семафор',
   'visualFlowEditor.select.selectLabel': 'Выбрать метку',
   'visualFlowEditor.select.selectScript': 'Выбрать скрипт',
   'visualFlowEditor.select.selectMission': 'Выбрать миссию',
+  'visualFlowEditor.select.selectButton': 'Выбрать кнопку',
   'visualFlowEditor.select.select': 'Выбрать',
   'visualFlowEditor.select.selectPlaceholder': 'Выбрать...',
   'visualFlowEditor.select.variableType': 'переменная',
@@ -446,6 +460,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.select.labelType': 'метка',
   'visualFlowEditor.select.scriptType': 'скрипт',
   'visualFlowEditor.select.missionType': 'миссия',
+  'visualFlowEditor.select.buttonType': 'кнопка',
   'visualFlowEditor.select.alreadyExists': '{type} уже существует!',
   'visualFlowEditor.select.nothingFound': 'Не найдено {type}',
   'visualFlowEditor.select.nothingAvailable': 'Нет доступных {type}',
@@ -475,6 +490,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.shipClassI': 'Класс I',
   'visualFlowEditor.command.shipClassII': 'Класс II',
   'visualFlowEditor.command.shipClassIII': 'Класс III',
+  'visualFlowEditor.command.selectRoute': 'Выбрать маршрут...',
+  'visualFlowEditor.command.selectButton': 'Выбрать кнопку...',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Имя скрипта...',

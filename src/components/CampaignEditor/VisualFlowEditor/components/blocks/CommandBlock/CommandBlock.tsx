@@ -19,6 +19,7 @@ import { imagesViewService } from '@/services/CampaignEditor/VariablesSystem/ser
 import { interactiveMapService } from '@/services/CampaignEditor/InteractiveMap/interactiveMapService';
 import type { Mission } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { PercentageInput } from '../../PercentageInput';
+import { useButtonsList } from '@/hooks/CampaignEditor/VisualFlowEditor/useButtonsList';
 import { getLocalizedString } from '@/utils/localization';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 import type { Character } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
@@ -92,6 +93,9 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   const [selectedCharacterImage, setSelectedCharacterImage] = useState<string | null>(null);
   const [characterImages, setCharacterImages] = useState<Record<string, string>>({});
   const [noAvatarImage, setNoAvatarImage] = useState<string | null>(null);
+  
+  // Load buttons list for SHOWBUTTON/HIDEBUTTON commands
+  const { buttons, isLoading: buttonsLoading, error: buttonsError, getButtonsForSelect } = useButtonsList();
   
   // Calcola lo stato simulato della scena fino a questo blocco
   const simulatedSceneState = useMemo(() => {
@@ -289,6 +293,28 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
                   className="h-48"
                 />
               </div>
+            </div>
+          );
+        }
+        // MAP COMMANDS WITH BUTTON SELECTOR
+        case 'SHOWBUTTON':
+        case 'HIDEBUTTON': {
+          const items = getButtonsForSelect();
+          
+          return (
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-slate-400 whitespace-nowrap">
+                {(t as any)('visualFlowEditor.blocks.map.button')}:
+              </label>
+              <SelectWithModal
+                type="parts"
+                value={String(block.parameters?.button || '')}
+                onChange={(value) => onUpdate({ parameters: { ...block.parameters, button: value } })}
+                placeholder={(t as any)('visualFlowEditor.command.selectButton')}
+                availableItems={items}
+                onAddItem={undefined}
+                className="flex-1"
+              />
             </div>
           );
         }
@@ -1365,27 +1391,23 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         
         return <span className="text-xs text-gray-500 italic">{(t as any)('visualFlowEditor.blocks.hideAllPaths.selectLocations')}</span>;
       }
-      // Map compact summaries - ROUTE based
-      case 'SHOWPATH':
-      case 'HIDEPATH':
-      case 'CENTERMAPBYPATH': {
-        const routeKey = block.parameters?.route ? String(block.parameters.route) : '';
-        const prefix = block.type === 'SHOWPATH'
-          ? t('visualFlowEditor.blocks.map.compact.show')
-          : block.type === 'HIDEPATH'
-          ? t('visualFlowEditor.blocks.map.compact.hide')
-          : t('visualFlowEditor.blocks.map.compact.center');
+      case 'SHOWBUTTON':
+      case 'HIDEBUTTON': {
+        const buttonId = block.parameters?.button ? String(block.parameters.button) : '';
+        const prefix = block.type === 'SHOWBUTTON' 
+          ? (t as any)('visualFlowEditor.blocks.map.compact.showButton') 
+          : (t as any)('visualFlowEditor.blocks.map.compact.hideButton');
 
-        if (routeKey) {
-          // Prova a localizzare l'etichetta della route dalle missions
-          let displayLabel: string = routeKey;
-          const mission = (missionsList || []).find((m: any) => m?.name === routeKey);
-          if (mission) {
-            displayLabel = getLocalizedString(mission.localizedCaptions || {}, currentLanguage, mission.name || routeKey);
-          }
-          return <span className="text-gray-400">{prefix}: {displayLabel}</span>;
+        if (buttonId) {
+          // Trova il pulsante corrispondente e recupera la label localizzata
+          const button = buttons.find(b => b.id === buttonId);
+          const buttonLabel = button 
+            ? (button.localizedLabels[currentLanguage] || button.localizedLabels['EN'] || button.id)
+            : buttonId;
+          
+          return <span className="text-gray-400">{prefix}: {buttonLabel}</span>;
         }
-  return <span className="text-xs text-gray-500 italic">{(t as any)('visualFlowEditor.validation.SHOWPATH_NO_ROUTE')}</span>;
+        return <span className="text-xs text-gray-500 italic">{(t as any)('visualFlowEditor.command.selectButton')}</span>;
       }
       default: {
         // Gestione generica per blocchi non implementati - mostra un riepilogo compatto dei parametri

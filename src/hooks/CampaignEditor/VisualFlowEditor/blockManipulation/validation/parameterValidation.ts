@@ -655,6 +655,12 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       }
       return { valid: true };
     }
+    // Button based commands: require button parameter
+    case 'SHOWBUTTON':
+    case 'HIDEBUTTON':
+      return (!block.parameters?.button || String(block.parameters.button).trim() === '')
+        ? { valid: false, error: `${block.type}_NO_BUTTON` }
+        : { valid: true };
     // EXIT_MENU, SHOWDLGSCENE, HIDEDLGSCENE non hanno parametri da validare
     default:
       return { valid: true };

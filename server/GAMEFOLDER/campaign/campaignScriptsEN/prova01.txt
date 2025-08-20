@@ -2,15 +2,12 @@ SCRIPTS
 
   SCRIPT aaa_pippo
     ShowDlgScene
-    ShowPath R1-3a
-    HidePath R1-2b
-    HideAllPaths bar cyanHome
-    ShowNode cyanHome
-    HideNode club
-    AddNode lab
-    MovePlayerToNode mine2
-    CenterMapByNode club
-    SetNodeKnown bar
+    HideButton bmine2
+    HideAllPaths club forge
+    HidePath R1-2a
+    HideButton bclub
+    ShowButton bcyan
+    Say "prova"
     HideDlgScene
   END_OF_SCRIPT
 

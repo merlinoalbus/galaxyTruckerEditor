@@ -122,8 +122,8 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
     { id: 'showpath', name: 'SHOWPATH', icon: CMD_EMOJI['SHOWPATH'], blockType: 'SHOWPATH', description: t('visualFlowEditor.tools.showPath.description'), implemented: true },
   { id: 'hidepath', name: 'HIDEPATH', icon: CMD_EMOJI['HIDEPATH'], blockType: 'HIDEPATH', description: t('visualFlowEditor.tools.hidePath.description'), implemented: true },
       { id: 'hideallpaths', name: 'HIDEALLPATHS', icon: CMD_EMOJI['HIDEALLPATHS'], blockType: 'HIDEALLPATHS', description: t('visualFlowEditor.tools.hideAllPaths.description'), implemented: true },
-  { id: 'hidebutton', name: 'HIDEBUTTON', icon: CMD_EMOJI['HIDEBUTTON'], blockType: 'HIDEBUTTON', description: t('visualFlowEditor.tools.hideButton.description'), implemented: false, inProgress: true },
-    { id: 'showbutton', name: 'SHOWBUTTON', icon: CMD_EMOJI['SHOWBUTTON'], blockType: 'SHOWBUTTON', description: t('visualFlowEditor.tools.showButton.description'), implemented: false, inProgress: true },
+  { id: 'hidebutton', name: 'HIDEBUTTON', icon: CMD_EMOJI['HIDEBUTTON'], blockType: 'HIDEBUTTON', description: t('visualFlowEditor.tools.hideButton.description'), implemented: true },
+    { id: 'showbutton', name: 'SHOWBUTTON', icon: CMD_EMOJI['SHOWBUTTON'], blockType: 'SHOWBUTTON', description: t('visualFlowEditor.tools.showButton.description'), implemented: true },
     { id: 'centermapbypath', name: 'CENTERMAPBYPATH', icon: CMD_EMOJI['CENTERMAPBYPATH'], blockType: 'CENTERMAPBYPATH', description: t('visualFlowEditor.tools.centerMapByPath.description'), implemented: true },
   { id: 'centermapbynode', name: 'CENTERMAPBYNODE', icon: CMD_EMOJI['CENTERMAPBYNODE'], blockType: 'CENTERMAPBYNODE', description: t('visualFlowEditor.tools.centerMapByNode.description'), implemented: true },
       { id: 'moveplayertonode', name: 'MOVEPLAYERTONODE', icon: CMD_EMOJI['MOVEPLAYERTONODE'], blockType: 'MOVEPLAYERTONODE', description: t('visualFlowEditor.tools.movePlayerToNode.description'), implemented: true }

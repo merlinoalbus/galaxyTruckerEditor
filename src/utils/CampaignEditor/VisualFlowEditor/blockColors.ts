@@ -351,6 +351,9 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   'HIDEPATH': BlockCategory.MAP,
   'CENTERMAPBYPATH': BlockCategory.MAP,
   'HIDEALLPATHS': BlockCategory.MAP,
+  // Map button commands
+  'SHOWBUTTON': BlockCategory.MAP,
+  'HIDEBUTTON': BlockCategory.MAP,
   
   // Game State
   'SAVE': BlockCategory.GAME_STATE,

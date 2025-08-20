@@ -60,6 +60,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.map.compact.known': 'Connu',
   'visualFlowEditor.blocks.map.compact.center': 'Centrer',
   'visualFlowEditor.blocks.map.compact.move': 'Déplacer',
+  'visualFlowEditor.blocks.map.compact.showButton': 'Afficher',
+  'visualFlowEditor.blocks.map.compact.hideButton': 'Masquer',
   
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Erreurs de validation',
@@ -71,6 +73,8 @@ export const visualFlowEditorTranslations = {
     'visualFlowEditor.validation.CENTERMAPBYPATH_NO_ROUTE': 'Route is required. Please select a route.',
     'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE1': 'HIDEALLPATHS requires node1. Please select the first node or choose "None".',
     'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE2': 'HIDEALLPATHS requires node2. Please select the second node or choose "None".',
+    'visualFlowEditor.validation.SHOWBUTTON_NO_BUTTON': 'Bouton requis. Veuillez sélectionner un bouton.',
+    'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Bouton requis. Veuillez sélectionner un bouton.',
   'visualFlowEditor.blocks.map.node1': 'Lieu de Départ',
   'visualFlowEditor.blocks.map.node2': 'Lieu d\'Arrivée',
   'visualFlowEditor.blocks.hideAllPaths.summary': 'Masquer chemins',
@@ -245,6 +249,14 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.hideDlgScene.compact': 'Masquer scène',
   'visualFlowEditor.blocks.showDlgScene.fullDescription': 'Afficher Scène de Dialogue. Cette commande ouvre une scène de dialogue où les personnages peuvent être affichés et les conversations peuvent avoir lieu. Utilisez-la avant SAY, ASK ou les commandes liées aux personnages.',
   'visualFlowEditor.blocks.hideDlgScene.fullDescription': 'Masquer Scène de Dialogue. Cette commande ferme la scène de dialogue actuelle et cache tous les personnages visibles. Utilisez-la lorsque vous voulez terminer une séquence de conversation.',
+  
+  // Button Commands
+  'visualFlowEditor.blocks.showButton.title': 'Afficher Bouton',
+  'visualFlowEditor.blocks.showButton.description': 'Affiche un bouton dans l\'interface',
+  'visualFlowEditor.blocks.showButton.compact': 'Afficher bouton',
+  'visualFlowEditor.blocks.hideButton.title': 'Masquer Bouton',
+  'visualFlowEditor.blocks.hideButton.description': 'Masque un bouton de l\'interface',
+  'visualFlowEditor.blocks.hideButton.compact': 'Masquer bouton',
   
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Erreur de validation',
@@ -431,11 +443,13 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.select.labelName': 'Nom d\'étiquette',
   'visualFlowEditor.select.scriptName': 'Nom du script...',
   'visualFlowEditor.select.missionName': 'Nom de la mission...',
+  'visualFlowEditor.select.buttonLabel': 'Bouton',
   'visualFlowEditor.select.selectVariable': 'Sélectionner une variable',
   'visualFlowEditor.select.selectSemaphore': 'Sélectionner un sémaphore',
   'visualFlowEditor.select.selectLabel': 'Sélectionner une étiquette',
   'visualFlowEditor.select.selectScript': 'Sélectionner un script',
   'visualFlowEditor.select.selectMission': 'Sélectionner une mission',
+  'visualFlowEditor.select.selectButton': 'Sélectionner un bouton',
   'visualFlowEditor.select.select': 'Sélectionner',
   'visualFlowEditor.select.selectPlaceholder': 'Sélectionner...',
   'visualFlowEditor.select.variableType': 'variable',
@@ -443,6 +457,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.select.labelType': 'étiquette',
   'visualFlowEditor.select.scriptType': 'script',
   'visualFlowEditor.select.missionType': 'mission',
+  'visualFlowEditor.select.buttonType': 'bouton',
   'visualFlowEditor.select.alreadyExists': '{type} existe déjà !',
   'visualFlowEditor.select.nothingFound': 'Aucun {type} trouvé',
   'visualFlowEditor.select.nothingAvailable': 'Aucun {type} disponible',
@@ -472,6 +487,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.shipClassI': 'Classe I',
   'visualFlowEditor.command.shipClassII': 'Classe II',
   'visualFlowEditor.command.shipClassIII': 'Classe III',
+  'visualFlowEditor.command.selectRoute': 'Sélectionner une route...',
+  'visualFlowEditor.command.selectButton': 'Sélectionner un bouton...',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Nom du script...',
