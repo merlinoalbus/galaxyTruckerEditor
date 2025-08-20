@@ -465,6 +465,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askNoScene': 'ASK wymaga aktywnej sceny. Dodaj SHOWDLGSCENE przed tym blokiem.',
   'visualFlowEditor.validation.askIfInvalidThen': 'Po ASK gałąź THEN bloku IF musi zaczynać się od MENU lub GO.',
   'visualFlowEditor.validation.askIfInvalidElse': 'Po ASK gałąź ELSE bloku IF musi zaczynać się od MENU lub GO.',
+  'visualFlowEditor.validation.ADDINFOWINDOW_NO_IMAGE': 'Blok ADDINFOWINDOW musi mieć wybrany obraz. Wybierz obraz.',
+  'visualFlowEditor.validation.SHOWINFOWINDOW_NO_IMAGE': 'Blok SHOWINFOWINDOW musi mieć wybrany obraz. Wybierz obraz.',
   
   
   // Scene Dialog Validation Messages

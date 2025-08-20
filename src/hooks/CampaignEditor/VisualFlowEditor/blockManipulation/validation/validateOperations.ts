@@ -365,6 +365,16 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
         // Genera messaggio specifico in base al tipo di errore
         let message = '';
         switch (paramValidation.error) {
+          case 'ADDINFOWINDOW_NO_IMAGE':
+            message = t ?
+              t('visualFlowEditor.validation.ADDINFOWINDOW_NO_IMAGE')
+              : 'ADDINFOWINDOW requires an image. Please select one.';
+            break;
+          case 'SHOWINFOWINDOW_NO_IMAGE':
+            message = t ?
+              t('visualFlowEditor.validation.SHOWINFOWINDOW_NO_IMAGE')
+              : 'SHOWINFOWINDOW requires an image. Please select one.';
+            break;
           case 'SHOWNODE_NO_NODE':
             message = t ?
               t('visualFlowEditor.validation.SHOWNODE_NO_NODE')

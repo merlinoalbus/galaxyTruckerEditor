@@ -845,6 +845,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askNoScene': 'ASK nécessite une scène active. Ajoutez SHOWDLGSCENE avant ce bloc.',
   'visualFlowEditor.validation.askIfInvalidThen': 'Après ASK, la branche THEN du bloc IF doit commencer par MENU ou GO.',
   'visualFlowEditor.validation.askIfInvalidElse': 'Après ASK, la branche ELSE du bloc IF doit commencer par MENU ou GO.',
+  // Blocs Info
+  'visualFlowEditor.validation.ADDINFOWINDOW_NO_IMAGE': 'Le bloc ADDINFOWINDOW doit avoir une image sélectionnée. Choisissez une image.',
+  'visualFlowEditor.validation.SHOWINFOWINDOW_NO_IMAGE': 'Le bloc SHOWINFOWINDOW doit avoir une image sélectionnée. Choisissez une image.',
   
   // Variable Commands
   'visualFlowEditor.command.selectVariable': 'Sélectionner variable...',

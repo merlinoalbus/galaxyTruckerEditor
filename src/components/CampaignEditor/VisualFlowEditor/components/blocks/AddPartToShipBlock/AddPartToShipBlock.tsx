@@ -83,6 +83,8 @@ export const AddPartToShipBlock: React.FC<AddPartToShipBlockProps> = ({
         return 'visualFlowEditor.blocks.setAdvPile';
       case 'SETSECRETADVPILE':
         return 'visualFlowEditor.blocks.setSecretAdvPile';
+      case 'SHOWHELPIMAGE':
+        return 'visualFlowEditor.blocks.showHelpImage';
       case 'ADDPARTTOSHIP':
       default:
         return 'visualFlowEditor.blocks.addPartToShip';
@@ -118,6 +120,7 @@ export const AddPartToShipBlock: React.FC<AddPartToShipBlockProps> = ({
     let icon = '🔧';
     if (block.type === 'SETADVPILE') icon = '📚';
     if (block.type === 'SETSECRETADVPILE') icon = '🔒';
+    if (block.type === 'SHOWHELPIMAGE') icon = '💡';
     return <span className="text-2xl">{icon}</span>;
   };
   
@@ -157,7 +160,11 @@ export const AddPartToShipBlock: React.FC<AddPartToShipBlockProps> = ({
           setIsCollapsed(!isCollapsed);
           setIsManuallyExpanded(!isCollapsed);
         }}
-        className={getBlockClassName(block.type, isInvalid, validationType)}
+        className={
+          block.type === 'SHOWHELPIMAGE'
+            ? getBlockClassName('SHOWINFOWINDOW', isInvalid, validationType) // Usa il colore Info/Help
+            : getBlockClassName(block.type, isInvalid, validationType)
+        }
         isCollapsed={isCollapsed}
         isInvalid={isInvalid}
         validationType={validationType}

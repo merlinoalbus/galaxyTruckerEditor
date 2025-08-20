@@ -447,6 +447,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askNoScene': 'ASK requires an active scene. Add SHOWDLGSCENE before this block.',
   'visualFlowEditor.validation.askIfInvalidThen': 'After ASK, IF block\'s THEN branch must start with MENU or GO.',
   'visualFlowEditor.validation.askIfInvalidElse': 'After ASK, IF block\'s ELSE branch must start with MENU or GO.',
+  // Info blocks
+  'visualFlowEditor.validation.ADDINFOWINDOW_NO_IMAGE': 'ADDINFOWINDOW block must have an image selected. Choose an image.',
+  'visualFlowEditor.validation.SHOWINFOWINDOW_NO_IMAGE': 'SHOWINFOWINDOW block must have an image selected. Choose an image.',
   
   // Scene Dialog Validation Messages
   'visualFlowEditor.validation.dialogOutsideScene': '{blockType} block can only be used inside a dialog scene. Add a SHOWDLGSCENE block before using {blockType}.',

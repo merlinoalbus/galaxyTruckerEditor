@@ -1,3 +1,4 @@
+  // SHOWHELPIMAGE Block
 /**
  * Visual Flow Editor translations for Italian
  */
@@ -165,12 +166,20 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.setAdvPile.noParameters': 'Nessun parametro configurato',
   'visualFlowEditor.blocks.setAdvPile.params': 'Parametri',
   
+
   // SETSECRETADVPILE Block
   'visualFlowEditor.blocks.setSecretAdvPile.parameters': 'Parametri',
   'visualFlowEditor.blocks.setSecretAdvPile.placeholder': 'es. 2 1',
   'visualFlowEditor.blocks.setSecretAdvPile.hint': '2 1',
   'visualFlowEditor.blocks.setSecretAdvPile.noParameters': 'Nessun parametro configurato',
   'visualFlowEditor.blocks.setSecretAdvPile.params': 'Parametri',
+
+  // SHOWHELPIMAGE Block
+  'visualFlowEditor.blocks.showHelpImage.parameters': 'Testo',
+  'visualFlowEditor.blocks.showHelpImage.placeholder': 'Inserisci testo o percorso immagine...',
+  'visualFlowEditor.blocks.showHelpImage.hint': 'Testo o percorso di un’immagine di aiuto',
+  'visualFlowEditor.blocks.showHelpImage.noParameters': 'Nessun testo configurato',
+  'visualFlowEditor.blocks.showHelpImage.params': 'Testo',
   
   // ADDPARTTOASIDESLOT Block
   'visualFlowEditor.blocks.addPartToAsideSlot.parameters': 'Parametri',
@@ -450,6 +459,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askNoScene': 'ASK richiede una scena attiva. Aggiungi SHOWDLGSCENE prima di questo blocco.',
   'visualFlowEditor.validation.askIfInvalidThen': 'Dopo ASK, il ramo THEN del blocco IF deve iniziare con MENU o GO.',
   'visualFlowEditor.validation.askIfInvalidElse': 'Dopo ASK, il ramo ELSE del blocco IF deve iniziare con MENU o GO.',
+  // Blocchi Info
+  'visualFlowEditor.validation.ADDINFOWINDOW_NO_IMAGE': 'Il blocco ADDINFOWINDOW deve avere un\'immagine selezionata. Scegli un\'immagine.',
+  'visualFlowEditor.validation.SHOWINFOWINDOW_NO_IMAGE': 'Il blocco SHOWINFOWINDOW deve avere un\'immagine selezionata. Scegli un\'immagine.',
   
   'visualFlowEditor.validation.askAfterMenu': 'Il blocco ASK non può seguire direttamente un blocco MENU',
   'visualFlowEditor.validation.menuAfterAsk': 'Il blocco MENU non può seguire direttamente un blocco ASK',
