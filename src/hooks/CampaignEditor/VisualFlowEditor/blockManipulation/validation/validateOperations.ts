@@ -425,6 +425,16 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
               t('visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON')
               : 'Select a button.';
             break;
+          case 'SETFOCUS_NO_BUTTON':
+            message = t ?
+              t('visualFlowEditor.validation.SETFOCUS_NO_BUTTON')
+              : 'Select a button.';
+            break;
+          case 'RESETFOCUS_NO_BUTTON':
+            message = t ?
+              t('visualFlowEditor.validation.RESETFOCUS_NO_BUTTON')
+              : 'Select a button.';
+            break;
           case 'MOVEPLAYERTONODE_NO_NODE':
             message = t ?
               t('visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE')
@@ -479,6 +489,26 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
             message = t ? 
               t('visualFlowEditor.validation.resetNoSemaphore')
               : 'RESET block must have a semaphore selected. Choose a semaphore to reset.';
+            break;
+          case 'SET_TO_NO_VARIABLE':
+            message = t ?
+              t('visualFlowEditor.validation.setToNoVariable')
+              : 'SET_TO block must have a variable selected. Choose a variable to set.';
+            break;
+          case 'SET_TO_NO_VALUE':
+            message = t ?
+              t('visualFlowEditor.validation.setToNoValue')
+              : 'SET_TO block must have a value specified. Enter a numeric value.';
+            break;
+          case 'ADD_NO_VARIABLE':
+            message = t ?
+              t('visualFlowEditor.validation.addNoVariable')
+              : 'ADD block must have a variable selected. Choose a variable to modify.';
+            break;
+          case 'ADD_NO_VALUE':
+            message = t ?
+              t('visualFlowEditor.validation.addNoValue')
+              : 'ADD block must have a value specified. Enter a numeric value to add.';
             break;
           case 'RETURN_AT_ROOT_LEVEL':
             message = t ? 

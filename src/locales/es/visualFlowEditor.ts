@@ -61,6 +61,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE2': 'HIDEALLPATHS requires node2. Please select the second node or choose "None".',
   'visualFlowEditor.validation.SHOWBUTTON_NO_BUTTON': 'Se requiere botón. Por favor selecciona un botón.',
   'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Se requiere botón. Por favor selecciona un botón.',
+  'visualFlowEditor.validation.SETFOCUS_NO_BUTTON': 'Se requiere botón. Por favor selecciona un botón.',
+  'visualFlowEditor.validation.RESETFOCUS_NO_BUTTON': 'Se requiere botón. Por favor selecciona un botón.',
   'visualFlowEditor.blocks.map.node1': 'Lugar de Salida',
   'visualFlowEditor.blocks.map.node2': 'Lugar de Llegada',
   'visualFlowEditor.blocks.map.route': 'Ruta',
@@ -77,6 +79,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.map.compact.move': 'Mover',
   'visualFlowEditor.blocks.map.compact.showButton': 'Mostrar',
   'visualFlowEditor.blocks.map.compact.hideButton': 'Ocultar',
+  'visualFlowEditor.blocks.map.compact.setFocus': 'Enfocar',
+  'visualFlowEditor.blocks.map.compact.resetFocus': 'Resetear Enfoque',
   
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Errores de Validación',
@@ -839,4 +843,30 @@ export const visualFlowEditorTranslations = {
   
   // Blocks
   'visualFlowEditor.blocks.modifyOpponentsBuildSpeed.percentage': 'Velocidad Construcción %',
+  
+  // Variable Commands
+  'visualFlowEditor.command.selectVariable': 'Seleccionar variable...',
+  
+  // Validation Error Messages for SET_TO and ADD
+  'visualFlowEditor.validation.setToNoVariable': 'El bloque SET_TO debe tener una variable seleccionada. Seleccione una variable para establecer.',
+  'visualFlowEditor.validation.setToNoValue': 'El bloque SET_TO debe tener un valor establecido. Ingrese un valor numérico.',
+  'visualFlowEditor.validation.addNoVariable': 'El bloque ADD debe tener una variable seleccionada. Seleccione una variable para sumar.',
+  'visualFlowEditor.validation.addNoValue': 'El bloque ADD debe tener un valor establecido. Ingrese un valor numérico para sumar.',
+  
+  // Command labels
+  'visualFlowEditor.command.variableLabel': 'Variable:',
+  
+  // SET_TO Block
+  'visualFlowEditor.blocks.setTo.variableLabel': 'Variable',
+  'visualFlowEditor.blocks.setTo.valueLabel': 'Valor',
+  'visualFlowEditor.blocks.setTo.valuePlaceholder': 'Ingrese valor numérico...',
+  'visualFlowEditor.blocks.setTo.description': 'Establece la variable al valor especificado',
+  'visualFlowEditor.blocks.setTo.noVariable': 'Ninguna variable seleccionada',
+  
+  // ADD Block
+  'visualFlowEditor.blocks.add.variableLabel': 'Variable',
+  'visualFlowEditor.blocks.add.valueLabel': 'Valor a sumar',
+  'visualFlowEditor.blocks.add.valuePlaceholder': 'Ingrese valor numérico...',
+  'visualFlowEditor.blocks.add.description': 'Suma un valor a la variable especificada',
+  'visualFlowEditor.blocks.add.noVariable': 'Ninguna variable seleccionada',
 } as const;

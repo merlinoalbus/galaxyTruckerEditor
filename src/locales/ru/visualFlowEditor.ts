@@ -61,6 +61,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE2': 'HIDEALLPATHS requires node2. Please select the second node or choose "None".',
   'visualFlowEditor.validation.SHOWBUTTON_NO_BUTTON': 'Требуется кнопка. Пожалуйста, выберите кнопку.',
   'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Требуется кнопка. Пожалуйста, выберите кнопку.',
+  'visualFlowEditor.validation.SETFOCUS_NO_BUTTON': 'Требуется кнопка. Пожалуйста, выберите кнопку.',
+  'visualFlowEditor.validation.RESETFOCUS_NO_BUTTON': 'Требуется кнопка. Пожалуйста, выберите кнопку.',
   'visualFlowEditor.blocks.map.node1': 'Место Отправления',
   'visualFlowEditor.blocks.map.node2': 'Место Прибытия',
   'visualFlowEditor.blocks.map.route': 'Маршрут',
@@ -77,6 +79,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.map.compact.move': 'Переместить',
   'visualFlowEditor.blocks.map.compact.showButton': 'Показать',
   'visualFlowEditor.blocks.map.compact.hideButton': 'Скрыть',
+  'visualFlowEditor.blocks.map.compact.setFocus': 'Установить Фокус',
+  'visualFlowEditor.blocks.map.compact.resetFocus': 'Сбросить Фокус',
   
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Ошибки валидации',
@@ -843,4 +847,30 @@ export const visualFlowEditorTranslations = {
 
   // Multilingual - add missing language
   'visualFlowEditor.multilingual.languages.it': 'Итальянский',
+  
+  // Variable Commands
+  'visualFlowEditor.command.selectVariable': 'Выбрать переменную...',
+  
+  // Validation Error Messages for SET_TO and ADD
+  'visualFlowEditor.validation.setToNoVariable': 'Блок SET_TO должен иметь выбранную переменную. Выберите переменную для установки.',
+  'visualFlowEditor.validation.setToNoValue': 'Блок SET_TO должен иметь установленное значение. Введите числовое значение.',
+  'visualFlowEditor.validation.addNoVariable': 'Блок ADD должен иметь выбранную переменную. Выберите переменную для сложения.',
+  'visualFlowEditor.validation.addNoValue': 'Блок ADD должен иметь установленное значение. Введите числовое значение для сложения.',
+  
+  // Command labels
+  'visualFlowEditor.command.variableLabel': 'Переменная:',
+  
+  // SET_TO Block
+  'visualFlowEditor.blocks.setTo.variableLabel': 'Переменная',
+  'visualFlowEditor.blocks.setTo.valueLabel': 'Значение',
+  'visualFlowEditor.blocks.setTo.valuePlaceholder': 'Введите числовое значение...',
+  'visualFlowEditor.blocks.setTo.description': 'Устанавливает переменную в указанное значение',
+  'visualFlowEditor.blocks.setTo.noVariable': 'Переменная не выбрана',
+  
+  // ADD Block
+  'visualFlowEditor.blocks.add.variableLabel': 'Переменная',
+  'visualFlowEditor.blocks.add.valueLabel': 'Значение для сложения',
+  'visualFlowEditor.blocks.add.valuePlaceholder': 'Введите числовое значение...',
+  'visualFlowEditor.blocks.add.description': 'Добавляет значение к указанной переменной',
+  'visualFlowEditor.blocks.add.noVariable': 'Переменная не выбрана',
 } as const;

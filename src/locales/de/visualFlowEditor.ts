@@ -2,7 +2,7 @@
  * Visual Flow Editor translations for German
  */
 
-export const visualFlowEditorTranslations = {
+const visualFlowEditorTranslations = {
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
   'visualFlowEditor.subtitle': 'Vollständiger Visueller Editor',
@@ -62,6 +62,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.map.compact.move': 'Bewegen',
   'visualFlowEditor.blocks.map.compact.showButton': 'Zeigen',
   'visualFlowEditor.blocks.map.compact.hideButton': 'Verbergen',
+  'visualFlowEditor.blocks.map.compact.setFocus': 'Fokussieren',
+  'visualFlowEditor.blocks.map.compact.resetFocus': 'Fokus zurücksetzen',
   
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Validierungsfehler',
@@ -84,6 +86,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE2': 'HIDEALLPATHS requires node2. Please select the second node or choose "None".',
   'visualFlowEditor.validation.SHOWBUTTON_NO_BUTTON': 'Taste erforderlich. Bitte wählen Sie eine Taste aus.',
   'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Taste erforderlich. Bitte wählen Sie eine Taste aus.',
+  'visualFlowEditor.validation.SETFOCUS_NO_BUTTON': 'Taste erforderlich. Bitte wählen Sie eine Taste aus.',
+  'visualFlowEditor.validation.RESETFOCUS_NO_BUTTON': 'Taste erforderlich. Bitte wählen Sie eine Taste aus.',
   'visualFlowEditor.blocks.map.node1': 'Abfahrtsort',
   'visualFlowEditor.blocks.map.node2': 'Ankunftsort',
   'visualFlowEditor.blocks.map.route': 'Route',
@@ -840,4 +844,32 @@ export const visualFlowEditorTranslations = {
   
   // Blocks
   'visualFlowEditor.blocks.modifyOpponentsBuildSpeed.percentage': 'Bau-Geschwindigkeit %',
+  
+  // Variable Commands
+  'visualFlowEditor.command.selectVariable': 'Variable auswählen...',
+  
+  // Validation Error Messages for SET_TO and ADD
+  'visualFlowEditor.validation.setToNoVariable': 'SET_TO Block muss eine Variable ausgewählt haben. Wählen Sie eine Variable zum Setzen.',
+  'visualFlowEditor.validation.setToNoValue': 'SET_TO Block muss einen Wert gesetzt haben. Geben Sie einen numerischen Wert ein.',
+  'visualFlowEditor.validation.addNoVariable': 'ADD Block muss eine Variable ausgewählt haben. Wählen Sie eine Variable zum Hinzufügen.',
+  'visualFlowEditor.validation.addNoValue': 'ADD Block muss einen Wert gesetzt haben. Geben Sie einen numerischen Wert zum Hinzufügen ein.',
+  
+  // Command labels
+  'visualFlowEditor.command.variableLabel': 'Variable:',
+  
+  // SET_TO Block
+  'visualFlowEditor.blocks.setTo.variableLabel': 'Variable',
+  'visualFlowEditor.blocks.setTo.valueLabel': 'Wert',
+  'visualFlowEditor.blocks.setTo.valuePlaceholder': 'Numerischen Wert eingeben...',
+  'visualFlowEditor.blocks.setTo.description': 'Setzt die Variable auf den angegebenen Wert',
+  'visualFlowEditor.blocks.setTo.noVariable': 'Keine Variable ausgewählt',
+  
+  // ADD Block
+  'visualFlowEditor.blocks.add.variableLabel': 'Variable',
+  'visualFlowEditor.blocks.add.valueLabel': 'Zu addierender Wert',
+  'visualFlowEditor.blocks.add.valuePlaceholder': 'Numerischen Wert eingeben...',
+  'visualFlowEditor.blocks.add.description': 'Fügt einen Wert zur angegebenen Variable hinzu',
+  'visualFlowEditor.blocks.add.noVariable': 'Keine Variable ausgewählt',
 } as const;
+
+export { visualFlowEditorTranslations };

@@ -56,6 +56,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE': 'Uzel je povinný. Vyberte prosím uzel.',
   'visualFlowEditor.validation.SHOWBUTTON_NO_BUTTON': 'Tlačítko je povinné. Vyberte prosím tlačítko.',
   'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Tlačítko je povinné. Vyberte prosím tlačítko.',
+  'visualFlowEditor.validation.SETFOCUS_NO_BUTTON': 'Tlačítko je povinné. Vyberte prosím tlačítko.',
+  'visualFlowEditor.validation.RESETFOCUS_NO_BUTTON': 'Tlačítko je povinné. Vyberte prosím tlačítko.',
   'visualFlowEditor.blocks.map.compact.show': 'Zobrazit',
   'visualFlowEditor.blocks.map.compact.hide': 'Skrýt',
   'visualFlowEditor.blocks.map.compact.add': 'Přidat',
@@ -64,6 +66,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.map.compact.move': 'Přesunout',
   'visualFlowEditor.blocks.map.compact.showButton': 'Zobrazit',
   'visualFlowEditor.blocks.map.compact.hideButton': 'Skrýt',
+  'visualFlowEditor.blocks.map.compact.setFocus': 'Nastavit Fokus',
+  'visualFlowEditor.blocks.map.compact.resetFocus': 'Resetovat Fokus',
   
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Chyby validace',
@@ -616,6 +620,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.selectLabel': 'Vybrat štítek...',
   'visualFlowEditor.command.labelName': 'Název štítku...',
   'visualFlowEditor.command.selectScript': 'Vybrat skript...',
+  'visualFlowEditor.command.selectVariable': 'Vybrat proměnnou...',
   'visualFlowEditor.command.selectCondition': 'Vybrat podmínku...',
   'visualFlowEditor.command.opponent': 'Postava Protivníka',
   'visualFlowEditor.command.opponentPlaceholder': 'obchodník, nepřítel, atd.',
@@ -839,4 +844,27 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.metacode.plural': 'Množné číslo',
   'visualFlowEditor.metacode.singularExample': 'jednotné (např. bod)',
   'visualFlowEditor.metacode.pluralExample': 'množné (např. body)',
+  
+  // Validation Error Messages for SET_TO and ADD
+  'visualFlowEditor.validation.setToNoVariable': 'Blok SET_TO musí mít vybranou proměnnou. Vyberte proměnnou pro nastavení.',
+  'visualFlowEditor.validation.setToNoValue': 'Blok SET_TO musí mít nastavenou hodnotu. Zadejte číselnou hodnotu.',
+  'visualFlowEditor.validation.addNoVariable': 'Blok ADD musí mít vybranou proměnnou. Vyberte proměnnou pro přičtení.',
+  'visualFlowEditor.validation.addNoValue': 'Blok ADD musí mít nastavenou hodnotu. Zadejte číselnou hodnotu k přičtení.',
+  
+  // Command labels
+  'visualFlowEditor.command.variableLabel': 'Proměnná:',
+  
+  // SET_TO Block
+  'visualFlowEditor.blocks.setTo.variableLabel': 'Proměnná',
+  'visualFlowEditor.blocks.setTo.valueLabel': 'Hodnota',
+  'visualFlowEditor.blocks.setTo.valuePlaceholder': 'Zadejte číselnou hodnotu...',
+  'visualFlowEditor.blocks.setTo.description': 'Nastaví proměnnou na zadanou hodnotu',
+  'visualFlowEditor.blocks.setTo.noVariable': 'Není vybrána žádná proměnná',
+  
+  // ADD Block
+  'visualFlowEditor.blocks.add.variableLabel': 'Proměnná',
+  'visualFlowEditor.blocks.add.valueLabel': 'Hodnota k přidání',
+  'visualFlowEditor.blocks.add.valuePlaceholder': 'Zadejte číselnou hodnotu...',
+  'visualFlowEditor.blocks.add.description': 'Přidá hodnotu k zadané proměnné',
+  'visualFlowEditor.blocks.add.noVariable': 'Není vybrána žádná proměnná',
 } as const;

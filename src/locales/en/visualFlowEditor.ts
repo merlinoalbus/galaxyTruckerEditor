@@ -71,6 +71,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE': 'Node is required. Please select a node.',
   'visualFlowEditor.validation.SHOWBUTTON_NO_BUTTON': 'Button is required. Please select a button.',
   'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Button is required. Please select a button.',
+  'visualFlowEditor.validation.SETFOCUS_NO_BUTTON': 'Button is required. Please select a button.',
+  'visualFlowEditor.validation.RESETFOCUS_NO_BUTTON': 'Button is required. Please select a button.',
   'visualFlowEditor.blocks.map.compact.show': 'Show',
   'visualFlowEditor.blocks.map.compact.hide': 'Hide',
   'visualFlowEditor.blocks.map.compact.add': 'Add',
@@ -79,6 +81,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.map.compact.move': 'Move',
   'visualFlowEditor.blocks.map.compact.showButton': 'Show',
   'visualFlowEditor.blocks.map.compact.hideButton': 'Hide',
+  'visualFlowEditor.blocks.map.compact.setFocus': 'Focus',
+  'visualFlowEditor.blocks.map.compact.resetFocus': 'Reset Focus',
   
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Validation Errors',
@@ -371,6 +375,10 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.returnAtRootLevel': 'Warning: RETURN at root level will exit the entire script.',
   'visualFlowEditor.validation.setNoSemaphore': 'SET block must have a semaphore selected. Choose a semaphore to set.',
   'visualFlowEditor.validation.resetNoSemaphore': 'RESET block must have a semaphore selected. Choose a semaphore to reset.',
+  'visualFlowEditor.validation.setToNoVariable': 'SET_TO block must have a variable selected. Choose a variable to set.',
+  'visualFlowEditor.validation.setToNoValue': 'SET_TO block must have a value specified. Enter a numeric value.',
+  'visualFlowEditor.validation.addNoVariable': 'ADD block must have a variable selected. Choose a variable to modify.',
+  'visualFlowEditor.validation.addNoValue': 'ADD block must have a value specified. Enter a numeric value to add.',
   'visualFlowEditor.validation.consecutiveAskError': '🚫 Two consecutive ASK blocks are not allowed. Insert another type of block between the two ASK blocks.',
   'visualFlowEditor.validation.blockInBuildError': '🚫 The {blockType} block cannot be inserted inside a BUILD block. BUILD and FLIGHT blocks cannot be nested.',
   'visualFlowEditor.validation.blockInFlightError': '🚫 The {blockType} block cannot be inserted inside a FLIGHT block. BUILD and FLIGHT blocks cannot be nested.',
@@ -621,6 +629,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.selectLabel': 'Select label...',
   'visualFlowEditor.command.labelName': 'Label name...',
   'visualFlowEditor.command.selectScript': 'Select script...',
+  'visualFlowEditor.command.selectVariable': 'Select variable...',
   'visualFlowEditor.command.opponent': 'Opponent Character',
   'visualFlowEditor.command.opponentPlaceholder': 'merchant, enemy, etc.',
   'visualFlowEditor.command.shipClassI': 'Class I',
@@ -771,6 +780,23 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.setFocus.description': 'Set focus',
   'visualFlowEditor.tools.resetFocus.description': 'Reset focus',
   'visualFlowEditor.tools.setFocusIfCredits.description': 'Conditional focus',
+  
+  // Command labels
+  'visualFlowEditor.command.variableLabel': 'Variable:',
+  
+  // SET_TO Block
+  'visualFlowEditor.blocks.setTo.variableLabel': 'Variable',
+  'visualFlowEditor.blocks.setTo.valueLabel': 'Value',
+  'visualFlowEditor.blocks.setTo.valuePlaceholder': 'Enter numeric value...',
+  'visualFlowEditor.blocks.setTo.description': 'Sets a variable to the specified value',
+  'visualFlowEditor.blocks.setTo.noVariable': 'No variable selected',
+  
+  // ADD Block
+  'visualFlowEditor.blocks.add.variableLabel': 'Variable',
+  'visualFlowEditor.blocks.add.valueLabel': 'Value to add',
+  'visualFlowEditor.blocks.add.valuePlaceholder': 'Enter numeric value...',
+  'visualFlowEditor.blocks.add.description': 'Adds a value to the specified variable',
+  'visualFlowEditor.blocks.add.noVariable': 'No variable selected',
   
   // Tool Descriptions - Info
   'visualFlowEditor.tools.addInfoWindow.description': 'Add info window',

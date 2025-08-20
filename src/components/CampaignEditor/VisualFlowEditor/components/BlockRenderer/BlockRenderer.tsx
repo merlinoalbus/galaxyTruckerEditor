@@ -13,6 +13,8 @@ import { AnnounceBlock } from '../blocks/AnnounceBlock/AnnounceBlock';
 import { ReturnBlock } from '../blocks/ReturnBlock/ReturnBlock';
 import { SetBlock } from '../blocks/SetBlock/SetBlock';
 import { ResetBlock } from '../blocks/ResetBlock/ResetBlock';
+import { SetToBlock } from '../blocks/SetToBlock/SetToBlock';
+import { AddBlock } from '../blocks/AddBlock/AddBlock';
 import { AddPartToShipBlock } from '../blocks/AddPartToShipBlock/AddPartToShipBlock';
 import { AddPartToAsideSlotBlock } from '../blocks/AddPartToAsideSlotBlock/AddPartToAsideSlotBlock';
 import { AddShipPartsBlock } from '../blocks/AddShipPartsBlock/AddShipPartsBlock';
@@ -436,6 +438,48 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
     return (
       <div data-block-id={block.id}>
         <ResetBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
+        />
+      </div>
+    );
+  }
+
+  // Render SET_TO block
+  if (block.type === 'SET_TO') {
+    return (
+      <div data-block-id={block.id}>
+        <SetToBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
+        />
+      </div>
+    );
+  }
+
+  // Render ADD block
+  if (block.type === 'ADD') {
+    return (
+      <div data-block-id={block.id}>
+        <AddBlock
           block={block}
           onUpdate={updateBlock}
           onRemove={isRootInZoom ? undefined : removeBlock}

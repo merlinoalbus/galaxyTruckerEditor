@@ -124,6 +124,8 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
       { id: 'hideallpaths', name: 'HIDEALLPATHS', icon: CMD_EMOJI['HIDEALLPATHS'], blockType: 'HIDEALLPATHS', description: t('visualFlowEditor.tools.hideAllPaths.description'), implemented: true },
   { id: 'hidebutton', name: 'HIDEBUTTON', icon: CMD_EMOJI['HIDEBUTTON'], blockType: 'HIDEBUTTON', description: t('visualFlowEditor.tools.hideButton.description'), implemented: true },
     { id: 'showbutton', name: 'SHOWBUTTON', icon: CMD_EMOJI['SHOWBUTTON'], blockType: 'SHOWBUTTON', description: t('visualFlowEditor.tools.showButton.description'), implemented: true },
+  { id: 'setfocus', name: 'SETFOCUS', icon: CMD_EMOJI['SETFOCUS'], blockType: 'SETFOCUS', description: t('visualFlowEditor.tools.setFocus.description'), implemented: true },
+    { id: 'resetfocus', name: 'RESETFOCUS', icon: CMD_EMOJI['RESETFOCUS'], blockType: 'RESETFOCUS', description: t('visualFlowEditor.tools.resetFocus.description'), implemented: true },
     { id: 'centermapbypath', name: 'CENTERMAPBYPATH', icon: CMD_EMOJI['CENTERMAPBYPATH'], blockType: 'CENTERMAPBYPATH', description: t('visualFlowEditor.tools.centerMapByPath.description'), implemented: true },
   { id: 'centermapbynode', name: 'CENTERMAPBYNODE', icon: CMD_EMOJI['CENTERMAPBYNODE'], blockType: 'CENTERMAPBYNODE', description: t('visualFlowEditor.tools.centerMapByNode.description'), implemented: true },
       { id: 'moveplayertonode', name: 'MOVEPLAYERTONODE', icon: CMD_EMOJI['MOVEPLAYERTONODE'], blockType: 'MOVEPLAYERTONODE', description: t('visualFlowEditor.tools.movePlayerToNode.description'), implemented: true }
@@ -158,11 +160,9 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
     name: t('visualFlowEditor.tools.category.variables'),
   icon: '🧮',
     tools: [
-    { id: 'set_to', name: 'SET_TO', icon: CMD_EMOJI['SET_TO'], blockType: 'SET_TO', description: t('visualFlowEditor.tools.setTo.description'), implemented: false },
-    { id: 'add', name: 'ADD', icon: CMD_EMOJI['ADD'], blockType: 'ADD', description: t('visualFlowEditor.tools.add.description'), implemented: false },
-  { id: 'setfocus', name: 'SETFOCUS', icon: CMD_EMOJI['SETFOCUS'], blockType: 'SETFOCUS', description: t('visualFlowEditor.tools.setFocus.description'), implemented: false },
-    { id: 'resetfocus', name: 'RESETFOCUS', icon: CMD_EMOJI['RESETFOCUS'], blockType: 'RESETFOCUS', description: t('visualFlowEditor.tools.resetFocus.description'), implemented: false },
-    { id: 'setfocusifcredits', name: 'SETFOCUSIFCREDITS', icon: CMD_EMOJI['SETFOCUSIFCREDITS'], blockType: 'SETFOCUSIFCREDITS', description: t('visualFlowEditor.tools.setFocusIfCredits.description'), implemented: false }
+    { id: 'set_to', name: 'SET_TO', icon: CMD_EMOJI['SET_TO'], blockType: 'SET_TO', description: t('visualFlowEditor.tools.setTo.description'), implemented: true },
+    { id: 'add', name: 'ADD', icon: CMD_EMOJI['ADD'], blockType: 'ADD', description: t('visualFlowEditor.tools.add.description'), implemented: true },
+    { id: 'setfocusifcredits', name: 'SETFOCUSIFCREDITS', icon: CMD_EMOJI['SETFOCUSIFCREDITS'], blockType: 'SETFOCUSIFCREDITS', description: t('visualFlowEditor.tools.setFocusIfCredits.description'), implemented: false, inProgress: true }
     ]
   },
   {

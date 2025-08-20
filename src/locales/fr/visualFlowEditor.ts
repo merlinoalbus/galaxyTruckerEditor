@@ -62,6 +62,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.map.compact.move': 'Déplacer',
   'visualFlowEditor.blocks.map.compact.showButton': 'Afficher',
   'visualFlowEditor.blocks.map.compact.hideButton': 'Masquer',
+  'visualFlowEditor.blocks.map.compact.setFocus': 'Focaliser',
+  'visualFlowEditor.blocks.map.compact.resetFocus': 'Réinitialiser Focus',
   
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Erreurs de validation',
@@ -75,6 +77,8 @@ export const visualFlowEditorTranslations = {
     'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE2': 'HIDEALLPATHS requires node2. Please select the second node or choose "None".',
     'visualFlowEditor.validation.SHOWBUTTON_NO_BUTTON': 'Bouton requis. Veuillez sélectionner un bouton.',
     'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Bouton requis. Veuillez sélectionner un bouton.',
+    'visualFlowEditor.validation.SETFOCUS_NO_BUTTON': 'Bouton requis. Veuillez sélectionner un bouton.',
+    'visualFlowEditor.validation.RESETFOCUS_NO_BUTTON': 'Bouton requis. Veuillez sélectionner un bouton.',
   'visualFlowEditor.blocks.map.node1': 'Lieu de Départ',
   'visualFlowEditor.blocks.map.node2': 'Lieu d\'Arrivée',
   'visualFlowEditor.blocks.map.route': 'Route',
@@ -839,4 +843,30 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askNoScene': 'ASK nécessite une scène active. Ajoutez SHOWDLGSCENE avant ce bloc.',
   'visualFlowEditor.validation.askIfInvalidThen': 'Après ASK, la branche THEN du bloc IF doit commencer par MENU ou GO.',
   'visualFlowEditor.validation.askIfInvalidElse': 'Après ASK, la branche ELSE du bloc IF doit commencer par MENU ou GO.',
+  
+  // Variable Commands
+  'visualFlowEditor.command.selectVariable': 'Sélectionner variable...',
+  
+  // Validation Error Messages for SET_TO and ADD
+  'visualFlowEditor.validation.setToNoVariable': 'Le bloc SET_TO doit avoir une variable sélectionnée. Sélectionnez une variable à définir.',
+  'visualFlowEditor.validation.setToNoValue': 'Le bloc SET_TO doit avoir une valeur définie. Entrez une valeur numérique.',
+  'visualFlowEditor.validation.addNoVariable': 'Le bloc ADD doit avoir une variable sélectionnée. Sélectionnez une variable à additionner.',
+  'visualFlowEditor.validation.addNoValue': 'Le bloc ADD doit avoir une valeur définie. Entrez une valeur numérique à additionner.',
+  
+  // Command labels
+  'visualFlowEditor.command.variableLabel': 'Variable:',
+  
+  // SET_TO Block
+  'visualFlowEditor.blocks.setTo.variableLabel': 'Variable',
+  'visualFlowEditor.blocks.setTo.valueLabel': 'Valeur',
+  'visualFlowEditor.blocks.setTo.valuePlaceholder': 'Entrez une valeur numérique...',
+  'visualFlowEditor.blocks.setTo.description': 'Définit la variable à la valeur spécifiée',
+  'visualFlowEditor.blocks.setTo.noVariable': 'Aucune variable sélectionnée',
+  
+  // ADD Block
+  'visualFlowEditor.blocks.add.variableLabel': 'Variable',
+  'visualFlowEditor.blocks.add.valueLabel': 'Valeur à ajouter',
+  'visualFlowEditor.blocks.add.valuePlaceholder': 'Entrez une valeur numérique...',
+  'visualFlowEditor.blocks.add.description': 'Ajoute une valeur à la variable spécifiée',
+  'visualFlowEditor.blocks.add.noVariable': 'Aucune variable sélectionnée',
 } as const;

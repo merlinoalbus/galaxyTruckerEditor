@@ -11,7 +11,7 @@ export interface BlockColorConfig {
   dragHandle: string;
 }
 
-// Categorie principali   'ACT_MISSION': BlockCategory.MISSION, blocchi
+// Categorie principali
 export enum BlockCategory {
   CONTROL_FLOW = 'CONTROL_FLOW',      // IF, MENU, OPT, etc.
   MISSION = 'MISSION',                 // MISSION, BUILD, FLIGHT
@@ -56,11 +56,11 @@ const CATEGORY_COLORS: Record<BlockCategory, BlockColorConfig> = {
     dragHandle: 'bg-fuchsia-700'
   },
   [BlockCategory.VARIABLES]: {
-    background: 'bg-emerald-950/90',
-    border: 'border-emerald-700/80',
-    icon: 'bg-emerald-900/80',
-    text: 'text-emerald-300',
-    dragHandle: 'bg-emerald-700'
+    background: 'bg-orange-950/90',
+    border: 'border-orange-700/80',
+    icon: 'bg-orange-900/80',
+    text: 'text-orange-300',
+    dragHandle: 'bg-orange-700'
   },
   [BlockCategory.MAP]: {
     background: 'bg-teal-950/90',
@@ -326,6 +326,7 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   
   // Variables
   'SET': BlockCategory.VARIABLES,
+  'SET_TO': BlockCategory.VARIABLES,
   'ADD': BlockCategory.VARIABLES,
   'SUB': BlockCategory.VARIABLES,
   'MUL': BlockCategory.VARIABLES,
@@ -354,6 +355,8 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   // Map button commands
   'SHOWBUTTON': BlockCategory.MAP,
   'HIDEBUTTON': BlockCategory.MAP,
+  'SETFOCUS': BlockCategory.MAP,
+  'RESETFOCUS': BlockCategory.MAP,
   
   // Game State
   'SAVE': BlockCategory.GAME_STATE,

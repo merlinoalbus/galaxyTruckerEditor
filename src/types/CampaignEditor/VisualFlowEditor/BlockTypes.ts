@@ -30,7 +30,7 @@ export type BlockType =
   // Mappa e navigazione
   | 'SHOWPATH' | 'SHOWNODE' | 'HIDEPATH' | 'HIDENODE' | 'HIDEALLPATHS'
   | 'CENTERMAPBYNODE' | 'CENTERMAPBYPATH' | 'MOVEPLAYERTONODE' | 'ADDNODE'
-  | 'SETNODEKNOWN' | 'SHOWBUTTON' | 'HIDEBUTTON' | 'SETFOCUSIFCREDITS'
+  | 'SETNODEKNOWN' | 'SHOWBUTTON' | 'HIDEBUTTON' | 'SETFOCUS' | 'RESETFOCUS' | 'SETFOCUSIFCREDITS'
   // Variabili e dati  
   | 'SET_TO' | 'ADD' | 'SETFOCUS' | 'RESETFOCUS'
   // Info e help
@@ -159,6 +159,20 @@ export interface ShowButtonBlock extends CommandBlock {
 
 export interface HideButtonBlock extends CommandBlock {
   type: 'HIDEBUTTON';
+  parameters: {
+    button: string;
+  };
+}
+
+export interface SetFocusBlock extends CommandBlock {
+  type: 'SETFOCUS';
+  parameters: {
+    button: string;
+  };
+}
+
+export interface ResetFocusBlock extends CommandBlock {
+  type: 'RESETFOCUS';
   parameters: {
     button: string;
   };

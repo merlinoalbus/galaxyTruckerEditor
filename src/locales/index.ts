@@ -419,6 +419,10 @@ export type TranslationKey =
   | 'visualFlowEditor.blocks.map.compact.known'
   | 'visualFlowEditor.blocks.map.compact.center'
   | 'visualFlowEditor.blocks.map.compact.move'
+  | 'visualFlowEditor.blocks.map.compact.showButton'
+  | 'visualFlowEditor.blocks.map.compact.hideButton'
+  | 'visualFlowEditor.blocks.map.compact.setFocus'
+  | 'visualFlowEditor.blocks.map.compact.resetFocus'
   
   // Visual Flow Editor - Validation
   | 'visualFlowEditor.validation.title'
@@ -509,12 +513,20 @@ export type TranslationKey =
   | 'visualFlowEditor.validation.modifyOpponentsBuildSpeedNoPercentage'
   | 'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutOfRange'
   | 'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutsideContext'
+  | 'visualFlowEditor.validation.setToNoVariable'
+  | 'visualFlowEditor.validation.setToNoValue'
+  | 'visualFlowEditor.validation.addNoVariable'
+  | 'visualFlowEditor.validation.addNoValue'
   | 'visualFlowEditor.validation.SHOWNODE_NO_NODE'
   | 'visualFlowEditor.validation.HIDENODE_NO_NODE'
   | 'visualFlowEditor.validation.ADDNODE_NO_NODE'
   | 'visualFlowEditor.validation.SETNODEKNOWN_NO_NODE'
   | 'visualFlowEditor.validation.CENTERMAPBYNODE_NO_NODE'
   | 'visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE'
+  | 'visualFlowEditor.validation.SHOWBUTTON_NO_BUTTON'
+  | 'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON'
+  | 'visualFlowEditor.validation.SETFOCUS_NO_BUTTON'
+  | 'visualFlowEditor.validation.RESETFOCUS_NO_BUTTON'
   
   // Visual Flow Editor - Error Modal
   | 'visualFlowEditor.errorModal.close'
@@ -566,6 +578,20 @@ export type TranslationKey =
   | 'visualFlowEditor.blocks.finishMission.compact'
   | 'visualFlowEditor.blocks.setSpecCondition.condition'
   | 'visualFlowEditor.blocks.modifyOpponentsBuildSpeed.percentage'
+  
+  // SET_TO Block
+  | 'visualFlowEditor.blocks.setTo.variableLabel'
+  | 'visualFlowEditor.blocks.setTo.valueLabel'
+  | 'visualFlowEditor.blocks.setTo.valuePlaceholder'
+  | 'visualFlowEditor.blocks.setTo.description'
+  | 'visualFlowEditor.blocks.setTo.noVariable'
+  
+  // ADD Block  
+  | 'visualFlowEditor.blocks.add.variableLabel'
+  | 'visualFlowEditor.blocks.add.valueLabel'
+  | 'visualFlowEditor.blocks.add.valuePlaceholder'
+  | 'visualFlowEditor.blocks.add.description'
+  | 'visualFlowEditor.blocks.add.noVariable'
   
   // Visual Flow Editor - Tools
   | 'visualFlowEditor.tools.title'
@@ -734,6 +760,8 @@ export type TranslationKey =
   | 'visualFlowEditor.command.shipClassII'
   | 'visualFlowEditor.command.shipClassIII'
   | 'visualFlowEditor.command.selectCondition'
+  | 'visualFlowEditor.command.selectVariable'
+  | 'visualFlowEditor.command.variableLabel'
   
   // Visual Flow Editor - Script Block
   | 'visualFlowEditor.script.scriptName'

@@ -2,6 +2,10 @@ SCRIPTS
 
   SCRIPT aaa_pippo
     ShowDlgScene
+    SET_TO currentMission 21
+    ADD questProgress 22
+    SetFocus bclub
+    ResetFocus bpirate1
     Say "prova"
     HideDlgScene
   END_OF_SCRIPT

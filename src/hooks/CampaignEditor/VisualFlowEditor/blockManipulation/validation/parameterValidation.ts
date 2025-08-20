@@ -451,6 +451,44 @@ export const validateResetParameters = (block: any): { valid: boolean; error?: s
 };
 
 /**
+ * Valida i parametri di un blocco SET_TO
+ */
+export const validateSetToParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.variable || block.parameters.variable.trim() === '') {
+    return { 
+      valid: false, 
+      error: 'SET_TO_NO_VARIABLE' 
+    };
+  }
+  if (block.parameters?.value === undefined || block.parameters?.value === null) {
+    return {
+      valid: false,
+      error: 'SET_TO_NO_VALUE'
+    };
+  }
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri di un blocco ADD
+ */
+export const validateAddParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.variable || block.parameters.variable.trim() === '') {
+    return { 
+      valid: false, 
+      error: 'ADD_NO_VARIABLE' 
+    };
+  }
+  if (block.parameters?.value === undefined || block.parameters?.value === null) {
+    return {
+      valid: false,
+      error: 'ADD_NO_VALUE'
+    };
+  }
+  return { valid: true };
+};
+
+/**
  * Valida i parametri di un blocco ADDPARTTOSHIP
  */
 export const validateAddPartToShipParameters = (block: any): { valid: boolean; error?: string } => {
@@ -604,6 +642,10 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return validateSetParameters(block);
     case 'RESET':
       return validateResetParameters(block);
+    case 'SET_TO':
+      return validateSetToParameters(block);
+    case 'ADD':
+      return validateAddParameters(block);
     case 'ADDPARTTOSHIP':
       return validateAddPartToShipParameters(block);
     case 'ADDPARTTOASIDESLOT':
@@ -658,6 +700,8 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
     // Button based commands: require button parameter
     case 'SHOWBUTTON':
     case 'HIDEBUTTON':
+    case 'SETFOCUS':
+    case 'RESETFOCUS':
       return (!block.parameters?.button || String(block.parameters.button).trim() === '')
         ? { valid: false, error: `${block.type}_NO_BUTTON` }
         : { valid: true };

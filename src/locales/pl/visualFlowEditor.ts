@@ -56,6 +56,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE': 'Wymagany jest węzeł. Proszę wybrać węzeł.',
   'visualFlowEditor.validation.SHOWBUTTON_NO_BUTTON': 'Przycisk jest wymagany. Proszę wybrać przycisk.',
   'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Przycisk jest wymagany. Proszę wybrać przycisk.',
+  'visualFlowEditor.validation.SETFOCUS_NO_BUTTON': 'Przycisk jest wymagany. Proszę wybrać przycisk.',
+  'visualFlowEditor.validation.RESETFOCUS_NO_BUTTON': 'Przycisk jest wymagany. Proszę wybrać przycisk.',
   // Newly added validation messages for map route/node commands
   'visualFlowEditor.validation.SHOWPATH_NO_ROUTE': 'Route is required. Please select a route.',
   'visualFlowEditor.validation.HIDEPATH_NO_ROUTE': 'Route is required. Please select a route.',
@@ -78,6 +80,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.map.compact.move': 'Przenieś',
   'visualFlowEditor.blocks.map.compact.showButton': 'Pokaż',
   'visualFlowEditor.blocks.map.compact.hideButton': 'Ukryj',
+  'visualFlowEditor.blocks.map.compact.setFocus': 'Ustaw Fokus',
+  'visualFlowEditor.blocks.map.compact.resetFocus': 'Resetuj Fokus',
   
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Błędy walidacji',
@@ -839,4 +843,30 @@ export const visualFlowEditorTranslations = {
   
   // Blocks
   'visualFlowEditor.blocks.modifyOpponentsBuildSpeed.percentage': 'Prędkość Budowy %',
+  
+  // Variable Commands
+  'visualFlowEditor.command.selectVariable': 'Wybierz zmienną...',
+  
+  // Validation Error Messages for SET_TO and ADD
+  'visualFlowEditor.validation.setToNoVariable': 'Blok SET_TO musi mieć wybraną zmienną. Wybierz zmienną do ustawienia.',
+  'visualFlowEditor.validation.setToNoValue': 'Blok SET_TO musi mieć ustawioną wartość. Wprowadź wartość numeryczną.',
+  'visualFlowEditor.validation.addNoVariable': 'Blok ADD musi mieć wybraną zmienną. Wybierz zmienną do dodania.',
+  'visualFlowEditor.validation.addNoValue': 'Blok ADD musi mieć ustawioną wartość. Wprowadź wartość numeryczną do dodania.',
+  
+  // Command labels
+  'visualFlowEditor.command.variableLabel': 'Zmienna:',
+  
+  // SET_TO Block
+  'visualFlowEditor.blocks.setTo.variableLabel': 'Zmienna',
+  'visualFlowEditor.blocks.setTo.valueLabel': 'Wartość',
+  'visualFlowEditor.blocks.setTo.valuePlaceholder': 'Wprowadź wartość numeryczną...',
+  'visualFlowEditor.blocks.setTo.description': 'Ustawia zmienną na określoną wartość',
+  'visualFlowEditor.blocks.setTo.noVariable': 'Nie wybrano żadnej zmiennej',
+  
+  // ADD Block
+  'visualFlowEditor.blocks.add.variableLabel': 'Zmienna',
+  'visualFlowEditor.blocks.add.valueLabel': 'Wartość do dodania',
+  'visualFlowEditor.blocks.add.valuePlaceholder': 'Wprowadź wartość numeryczną...',
+  'visualFlowEditor.blocks.add.description': 'Dodaje wartość do określonej zmiennej',
+  'visualFlowEditor.blocks.add.noVariable': 'Nie wybrano żadnej zmiennej',
 } as const;
