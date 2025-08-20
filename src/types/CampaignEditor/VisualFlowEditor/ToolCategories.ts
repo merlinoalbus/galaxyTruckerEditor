@@ -1,6 +1,31 @@
+/** @jsxImportSource react */
+// Forza il supporto JSX per TypeScript
+
+import React from 'react';
 import { logger } from '@/utils/logger';
 import { BlockType } from './BlockTypes';
 import { CMD_EMOJI } from '@/components/Emoji/cmdEmojiMap';
+import Emoji from '@/components/Emoji/Emoji';
+import { StackedEmoji } from '@/components/Emoji/StackedEmoji';
+/**
+ * Renderizza l'icona di un tool: se contiene più emoji, usa StackedEmoji, altrimenti Emoji.
+ * @param icon stringa emoji (anche doppia)
+ * @param size dimensione in px (default 22)
+ * @param className classi CSS opzionali
+ */
+export function renderToolIcon(icon: string, size = 22, className = ""): React.ReactElement | null {
+  if (!icon) return null;
+  
+  // Usa una funzione più robusta per separare le emoji
+  const emojiRegex = /\p{Emoji}(\p{Emoji_Modifier}|\uFE0F|\u200D\p{Emoji})*|\p{Emoji_Presentation}/gu;
+  const emojiMatches = icon.match(emojiRegex);
+  const emojiArr: string[] = emojiMatches || [];
+  
+  if (emojiArr.length > 1) {
+    return React.createElement(StackedEmoji, { emojis: emojiArr, size, className });
+  }
+  return React.createElement(Emoji, { text: icon, className });
+}
 
 export interface Tool {
   id: string;
@@ -94,12 +119,12 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
   { id: 'hidenode', name: 'HIDENODE', icon: CMD_EMOJI['HIDENODE'], blockType: 'HIDENODE', description: t('visualFlowEditor.tools.hideNode.description'), implemented: true },
   { id: 'addnode', name: 'ADDNODE', icon: CMD_EMOJI['ADDNODE'], blockType: 'ADDNODE', description: t('visualFlowEditor.tools.addNode.description'), implemented: true },
   { id: 'setnodeknown', name: 'SETNODEKNOWN', icon: CMD_EMOJI['SETNODEKNOWN'], blockType: 'SETNODEKNOWN', description: t('visualFlowEditor.tools.setNodeKnown.description'), implemented: true },
-  { id: 'showpath', name: 'SHOWPATH', icon: CMD_EMOJI['SHOWPATH'], blockType: 'SHOWPATH', description: t('visualFlowEditor.tools.showPath.description'), implemented: false, inProgress: true },
-  { id: 'hidepath', name: 'HIDEPATH', icon: CMD_EMOJI['HIDEPATH'], blockType: 'HIDEPATH', description: t('visualFlowEditor.tools.hidePath.description'), implemented: false, inProgress: true },
-      { id: 'hideallpaths', name: 'HIDEALLPATHS', icon: CMD_EMOJI['HIDEALLPATHS'], blockType: 'HIDEALLPATHS', description: t('visualFlowEditor.tools.hideAllPaths.description'), implemented: false, inProgress: true },
+    { id: 'showpath', name: 'SHOWPATH', icon: CMD_EMOJI['SHOWPATH'], blockType: 'SHOWPATH', description: t('visualFlowEditor.tools.showPath.description'), implemented: true },
+  { id: 'hidepath', name: 'HIDEPATH', icon: CMD_EMOJI['HIDEPATH'], blockType: 'HIDEPATH', description: t('visualFlowEditor.tools.hidePath.description'), implemented: true },
+      { id: 'hideallpaths', name: 'HIDEALLPATHS', icon: CMD_EMOJI['HIDEALLPATHS'], blockType: 'HIDEALLPATHS', description: t('visualFlowEditor.tools.hideAllPaths.description'), implemented: true },
   { id: 'hidebutton', name: 'HIDEBUTTON', icon: CMD_EMOJI['HIDEBUTTON'], blockType: 'HIDEBUTTON', description: t('visualFlowEditor.tools.hideButton.description'), implemented: false, inProgress: true },
     { id: 'showbutton', name: 'SHOWBUTTON', icon: CMD_EMOJI['SHOWBUTTON'], blockType: 'SHOWBUTTON', description: t('visualFlowEditor.tools.showButton.description'), implemented: false, inProgress: true },
-  { id: 'centermapbypath', name: 'CENTERMAPBYPATH', icon: CMD_EMOJI['CENTERMAPBYPATH'], blockType: 'CENTERMAPBYPATH', description: t('visualFlowEditor.tools.centerMapByPath.description'), implemented: false, inProgress: true },
+    { id: 'centermapbypath', name: 'CENTERMAPBYPATH', icon: CMD_EMOJI['CENTERMAPBYPATH'], blockType: 'CENTERMAPBYPATH', description: t('visualFlowEditor.tools.centerMapByPath.description'), implemented: true },
   { id: 'centermapbynode', name: 'CENTERMAPBYNODE', icon: CMD_EMOJI['CENTERMAPBYNODE'], blockType: 'CENTERMAPBYNODE', description: t('visualFlowEditor.tools.centerMapByNode.description'), implemented: true },
       { id: 'moveplayertonode', name: 'MOVEPLAYERTONODE', icon: CMD_EMOJI['MOVEPLAYERTONODE'], blockType: 'MOVEPLAYERTONODE', description: t('visualFlowEditor.tools.movePlayerToNode.description'), implemented: true }
     ]

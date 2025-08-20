@@ -75,6 +75,17 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.addOpponentNotInMission': 'ADDOPPONENT sollte sich in einem MISSION-Block befinden.',
   'visualFlowEditor.validation.setShipTypeNoType': 'SETSHIPTYPE-Block muss einen Schiffstyp ausgewählt haben.',
   'visualFlowEditor.validation.setShipTypeNotInMission': 'SETSHIPTYPE sollte sich in einem MISSION-Block befinden.',
+  'visualFlowEditor.validation.SHOWPATH_NO_ROUTE': 'Route is required. Please select a route.',
+  'visualFlowEditor.validation.HIDEPATH_NO_ROUTE': 'Route is required. Please select a route.',
+  'visualFlowEditor.validation.CENTERMAPBYPATH_NO_ROUTE': 'Route is required. Please select a route.',
+  'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE1': 'HIDEALLPATHS requires node1. Please select the first node or choose "None".',
+  'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE2': 'HIDEALLPATHS requires node2. Please select the second node or choose "None".',
+  'visualFlowEditor.blocks.map.node1': 'Abfahrtsort',
+  'visualFlowEditor.blocks.map.node2': 'Ankunftsort',
+  'visualFlowEditor.blocks.hideAllPaths.summary': 'Wege verbergen',
+  'visualFlowEditor.blocks.hideAllPaths.from': 'Von',
+  'visualFlowEditor.blocks.hideAllPaths.to': 'Nach',
+  'visualFlowEditor.blocks.hideAllPaths.selectLocations': 'Orte auswählen',
   
   // Delay Block
   'visualFlowEditor.blocks.delay.duration': 'Dauer',

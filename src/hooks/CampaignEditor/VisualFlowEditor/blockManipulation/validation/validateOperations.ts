@@ -390,6 +390,31 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
               t('visualFlowEditor.validation.CENTERMAPBYNODE_NO_NODE')
               : 'Select a node.';
             break;
+          case 'SHOWPATH_NO_ROUTE':
+            message = t ?
+              t('visualFlowEditor.validation.SHOWPATH_NO_ROUTE')
+              : 'Select a route.';
+            break;
+          case 'HIDEPATH_NO_ROUTE':
+            message = t ?
+              t('visualFlowEditor.validation.HIDEPATH_NO_ROUTE')
+              : 'Select a route.';
+            break;
+          case 'CENTERMAPBYPATH_NO_ROUTE':
+            message = t ?
+              t('visualFlowEditor.validation.CENTERMAPBYPATH_NO_ROUTE')
+              : 'Select a route.';
+            break;
+          case 'HIDEALLPATHS_NO_NODE1':
+            message = t ?
+              t('visualFlowEditor.validation.HIDEALLPATHS_NO_NODE1')
+              : 'Select the first node.';
+            break;
+          case 'HIDEALLPATHS_NO_NODE2':
+            message = t ?
+              t('visualFlowEditor.validation.HIDEALLPATHS_NO_NODE2')
+              : 'Select the second node.';
+            break;
           case 'MOVEPLAYERTONODE_NO_NODE':
             message = t ?
               t('visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE')
