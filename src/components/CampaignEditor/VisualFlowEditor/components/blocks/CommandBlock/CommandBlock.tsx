@@ -320,6 +320,54 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
             </div>
           );
         }
+        case 'SETFOCUSIFCREDITS': {
+          const items = getButtonsForSelect();
+          
+          return (
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
+                  {(t as any)('visualFlowEditor.blocks.map.button')}:
+                </label>
+                <div className="flex-1">
+                  <SelectWithModal
+                    type="parts"
+                    value={String(block.parameters?.button || '')}
+                    onChange={(value) => onUpdate({ parameters: { ...block.parameters, button: value } })}
+                    placeholder={(t as any)('visualFlowEditor.command.selectButton')}
+                    availableItems={items}
+                    onAddItem={undefined}
+                  />
+                </div>
+                <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
+                  Crediti Minimi:
+                </label>
+                <div className="w-32">
+                  <input
+                    type="number"
+                    className="w-full bg-slate-800/50 text-white px-2 py-1 rounded text-sm border border-slate-700 focus:border-blue-600 focus:outline-none"
+                    placeholder="0"
+                    value={block.parameters?.credits !== undefined ? String(block.parameters.credits) : ''}
+                    min="0"
+                    onChange={(e) => {
+                      const numValue = parseInt(e.target.value, 10);
+                      onUpdate({ 
+                        parameters: { 
+                          ...block.parameters, 
+                          credits: isNaN(numValue) ? undefined : numValue 
+                        } 
+                      });
+                    }}
+                  />
+                </div>
+              </div>
+              
+              <div className="text-xs text-gray-500">
+                Imposta il focus su un bottone solo se il giocatore ha almeno i crediti specificati
+              </div>
+            </div>
+          );
+        }
       case 'SAY':
       case 'ASK': {
         // Usa lo stato simulato per trovare l'ultimo personaggio modificato
@@ -1426,6 +1474,26 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
           return <span className="text-gray-400">{prefix}: {buttonLabel}</span>;
         }
         return <span className="text-xs text-gray-500 italic">{(t as any)('visualFlowEditor.command.selectButton')}</span>;
+      }
+      case 'SETFOCUSIFCREDITS': {
+        const buttonId = block.parameters?.button ? String(block.parameters.button) : '';
+        const credits = block.parameters?.credits;
+        
+        if (buttonId && credits !== undefined) {
+          // Trova il pulsante corrispondente e recupera la label localizzata
+          const button = buttons.find(b => b.id === buttonId);
+          const buttonLabel = button 
+            ? (button.localizedLabels[currentLanguage] || button.localizedLabels['EN'] || button.id)
+            : buttonId;
+          
+          return (
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400">Focus Condizionale: {buttonLabel}</span>
+              <span className="text-yellow-400">≥{String(credits)}</span>
+            </div>
+          );
+        }
+        return <span className="text-xs text-gray-500 italic">Bottone e crediti non impostati</span>;
       }
       default: {
         // Gestione generica per blocchi non implementati - mostra un riepilogo compatto dei parametri

@@ -162,7 +162,7 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
     tools: [
     { id: 'set_to', name: 'SET_TO', icon: CMD_EMOJI['SET_TO'], blockType: 'SET_TO', description: t('visualFlowEditor.tools.setTo.description'), implemented: true },
     { id: 'add', name: 'ADD', icon: CMD_EMOJI['ADD'], blockType: 'ADD', description: t('visualFlowEditor.tools.add.description'), implemented: true },
-    { id: 'setfocusifcredits', name: 'SETFOCUSIFCREDITS', icon: CMD_EMOJI['SETFOCUSIFCREDITS'], blockType: 'SETFOCUSIFCREDITS', description: t('visualFlowEditor.tools.setFocusIfCredits.description'), implemented: false, inProgress: true }
+    { id: 'setfocusifcredits', name: 'SETFOCUSIFCREDITS', icon: CMD_EMOJI['SETFOCUSIFCREDITS'], blockType: 'SETFOCUSIFCREDITS', description: t('visualFlowEditor.tools.setFocusIfCredits.description'), implemented: true, inProgress: false }
     ]
   },
   {

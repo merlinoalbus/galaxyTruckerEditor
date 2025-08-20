@@ -15,6 +15,7 @@ import { SetBlock } from '../blocks/SetBlock/SetBlock';
 import { ResetBlock } from '../blocks/ResetBlock/ResetBlock';
 import { SetToBlock } from '../blocks/SetToBlock/SetToBlock';
 import { AddBlock } from '../blocks/AddBlock/AddBlock';
+import { SetFocusIfCreditsBlock } from '../blocks/SetFocusIfCreditsBlock/SetFocusIfCreditsBlock';
 import { AddPartToShipBlock } from '../blocks/AddPartToShipBlock/AddPartToShipBlock';
 import { AddPartToAsideSlotBlock } from '../blocks/AddPartToAsideSlotBlock/AddPartToAsideSlotBlock';
 import { AddShipPartsBlock } from '../blocks/AddShipPartsBlock/AddShipPartsBlock';
@@ -480,6 +481,27 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
     return (
       <div data-block-id={block.id}>
         <AddBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
+        />
+      </div>
+    );
+  }
+
+  // Render SETFOCUSIFCREDITS block
+  if (block.type === 'SETFOCUSIFCREDITS') {
+    return (
+      <div data-block-id={block.id}>
+        <SetFocusIfCreditsBlock
           block={block}
           onUpdate={updateBlock}
           onRemove={isRootInZoom ? undefined : removeBlock}

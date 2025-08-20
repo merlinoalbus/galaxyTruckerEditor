@@ -705,6 +705,15 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return (!block.parameters?.button || String(block.parameters.button).trim() === '')
         ? { valid: false, error: `${block.type}_NO_BUTTON` }
         : { valid: true };
+    case 'SETFOCUSIFCREDITS': {
+      if (!block.parameters?.button || String(block.parameters.button).trim() === '') {
+        return { valid: false, error: 'SETFOCUSIFCREDITS_NO_BUTTON' };
+      }
+      if (block.parameters?.credits === undefined || block.parameters.credits < 0) {
+        return { valid: false, error: 'SETFOCUSIFCREDITS_NO_CREDITS' };
+      }
+      return { valid: true };
+    }
     // EXIT_MENU, SHOWDLGSCENE, HIDEDLGSCENE non hanno parametri da validare
     default:
       return { valid: true };

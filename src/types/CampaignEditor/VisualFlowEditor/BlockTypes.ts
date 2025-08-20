@@ -178,6 +178,14 @@ export interface ResetFocusBlock extends CommandBlock {
   };
 }
 
+export interface SetFocusIfCreditsBlock extends CommandBlock {
+  type: 'SETFOCUSIFCREDITS';
+  parameters: {
+    button: string;
+    credits: number;
+  };
+}
+
 // Strumenti disponibili nella barra laterale
 export interface ToolItem {
   id: string;

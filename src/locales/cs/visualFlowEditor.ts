@@ -58,6 +58,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Tlačítko je povinné. Vyberte prosím tlačítko.',
   'visualFlowEditor.validation.SETFOCUS_NO_BUTTON': 'Tlačítko je povinné. Vyberte prosím tlačítko.',
   'visualFlowEditor.validation.RESETFOCUS_NO_BUTTON': 'Tlačítko je povinné. Vyberte prosím tlačítko.',
+  'visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_BUTTON': 'Tlačítko je povinné. Vyberte prosím tlačítko.',
+  'visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_CREDITS': 'Kredity jsou povinné. Zadejte prosím minimální hodnotu kreditů.',
   'visualFlowEditor.blocks.map.compact.show': 'Zobrazit',
   'visualFlowEditor.blocks.map.compact.hide': 'Skrýt',
   'visualFlowEditor.blocks.map.compact.add': 'Přidat',
