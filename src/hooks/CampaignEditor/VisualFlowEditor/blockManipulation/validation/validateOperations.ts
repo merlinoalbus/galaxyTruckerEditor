@@ -1266,7 +1266,37 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           });
         }
       }
-      
+      if (block.type === 'BUILDINGHELPSCRIPT') {
+        const v = block.parameters?.value;
+        const s = block.parameters?.script;
+        if (typeof v !== 'number' || isNaN(v) || v < 0 || !s) {
+          errors++;
+          invalidBlocks.push(block.id);
+          errorDetails.push({
+            blockId: block.id,
+            blockType: block.type,
+            errorType: 'BUILDINGHELPSCRIPT_PARAMS_INVALID',
+            message: t ? t('visualFlowEditor.validation.buildingHelpScriptParams') : 'BUILDINGHELPSCRIPT requires a numeric value (>= 0) and a script.',
+            path: [...path],
+            type: 'error'
+          });
+        }
+      }
+      if (block.type === 'FLIGHTHELPSCRIPT' || block.type === 'ALIENHELPSCRIPT') {
+        const s = block.parameters?.script;
+        if (!s) {
+          errors++;
+          invalidBlocks.push(block.id);
+          errorDetails.push({
+            blockId: block.id,
+            blockType: block.type,
+            errorType: 'HELPSCRIPT_PARAMS_INVALID',
+            message: t ? t('visualFlowEditor.validation.helpScriptParams') : 'This command requires the script parameter.',
+            path: [...path],
+            type: 'error'
+          });
+        }
+      }
       // Ricorsione per container
       if (block.children) {
         // Per i container normali, passa il blocco corrente come parent e mantieni allRootBlocks

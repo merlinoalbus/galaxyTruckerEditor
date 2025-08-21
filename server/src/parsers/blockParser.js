@@ -174,7 +174,7 @@ const COMMAND_CATALOG = {
   'UNLOCKSHUTTLES': { params: [], pattern: /^UnlockShuttles$/i },
   
   // HELP SCRIPTS
-  'BUILDINGHELPSCRIPT': { params: [], pattern: /^BuildingHelpScript$/i },
+  'BUILDINGHELPSCRIPT': { params: ['value:number', 'script:string'], pattern: /^BuildingHelpScript\s+(\d+)\s+"?([\\/\w-]+)"?$/i },
   'FLIGHTHELPSCRIPT': { params: ['script:string'], pattern: /^FlightHelpScript\s+"?(\w+)"?$/ },
   'ALIENHELPSCRIPT': { params: ['script:string'], pattern: /^AlienHelpScript\s+"?(\w+)"?$/ },
   

@@ -1,4 +1,4 @@
-  // SHOWHELPIMAGE Block
+// SHOWHELPIMAGE Block
 /**
  * Visual Flow Editor translations for Italian
  */
@@ -516,22 +516,28 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.category.combat': 'Combattimento',
   'visualFlowEditor.tools.category.game': 'Gioco',
   'visualFlowEditor.tools.category.special': 'Speciali',
-  
-  // JSON View
-  'visualFlowEditor.jsonView.title': 'Vista JSON',
-  'visualFlowEditor.jsonView.copy': 'Copia',
-  'visualFlowEditor.jsonView.copied': 'Copiato!',
-  'visualFlowEditor.jsonView.close': 'Chiudi',
-  'visualFlowEditor.jsonView.noScriptLoaded': 'Nessuno script caricato',
-  'visualFlowEditor.jsonView.copyError': 'Errore nella copia del JSON:',
-  'visualFlowEditor.jsonView.hideView': 'Nascondi vista JSON',
-  'visualFlowEditor.jsonView.showView': 'Mostra vista JSON',
-  'visualFlowEditor.jsonView.expand': 'Espandi',
-  'visualFlowEditor.jsonView.compress': 'Comprimi',
-  'visualFlowEditor.jsonView.copyToClipboard': 'Copia JSON negli appunti',
-  'visualFlowEditor.jsonView.keys': 'chiavi',
-  'visualFlowEditor.jsonView.characters': 'caratteri',
-  
+  // Info&Help
+  'visualFlowEditor.tools.infoHelp': 'Info & Help',
+  'visualFlowEditor.tools.buildingHelpScript': 'Building Help Script',
+  'visualFlowEditor.tools.flightHelpScript': 'Flight Help Script',
+  'visualFlowEditor.tools.alienHelpScript': 'Alien Help Script',
+
+  // Command labels
+  'visualFlowEditor.command.buildingHelpScript': 'Building Help Script',
+  'visualFlowEditor.command.flightHelpScript': 'Flight Help Script',
+  'visualFlowEditor.command.alienHelpScript': 'Alien Help Script',
+  'visualFlowEditor.command.script': 'Script',
+  'visualFlowEditor.command.value': 'Ritardo (ms)',
+
+  // Validation
+  'visualFlowEditor.validation.buildingHelpScriptParams': 'BUILDINGHELPSCRIPT richiede value (numero) e script.',
+  'visualFlowEditor.validation.helpScriptParams': 'Questo comando richiede il parametro script.',
+
+  // Headers compact
+  'visualFlowEditor.header.navigateToScript': 'Vai allo script',
+  'visualFlowEditor.header.compact.buildingHelp': 'delay: {value} • {script}',
+  'visualFlowEditor.header.compact.help': '{script}',
+
   // Block Actions (existing and new)
   'visualFlowEditor.addBlock': 'Aggiungi Blocco',
   'visualFlowEditor.deleteBlock': 'Elimina Blocco',
@@ -587,6 +593,21 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.scriptsList.searchPlaceholder': 'Cerca script...',
   'visualFlowEditor.missionsList.title': 'Missions Disponibili',
   'visualFlowEditor.missionsList.searchPlaceholder': 'Cerca mission...',
+
+  // JSON View
+  'visualFlowEditor.jsonView.title': 'Vista JSON',
+  'visualFlowEditor.jsonView.copy': 'Copia',
+  'visualFlowEditor.jsonView.copied': 'Copiato! ',
+  'visualFlowEditor.jsonView.close': 'Chiudi',
+  'visualFlowEditor.jsonView.noScriptLoaded': 'Nessuno script caricato',
+  'visualFlowEditor.jsonView.copyError': 'Errore durante la copia del JSON:',
+  'visualFlowEditor.jsonView.hideView': 'Nascondi vista JSON',
+  'visualFlowEditor.jsonView.showView': 'Mostra vista JSON',
+  'visualFlowEditor.jsonView.expand': 'Espandi',
+  'visualFlowEditor.jsonView.compress': 'Comprimi',
+  'visualFlowEditor.jsonView.copyToClipboard': 'Copia JSON negli appunti',
+  'visualFlowEditor.jsonView.keys': 'chiavi',
+  'visualFlowEditor.jsonView.characters': 'caratteri',
   
   // ToolsPanel
   'visualFlowEditor.tools.inDevelopment': 'In sviluppo',

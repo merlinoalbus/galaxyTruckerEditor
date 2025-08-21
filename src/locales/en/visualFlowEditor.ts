@@ -173,6 +173,13 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.addPartToAsideSlot.noParameters': 'No parameters configured',
   'visualFlowEditor.blocks.addPartToAsideSlot.params': 'Params',
   
+  // SHOWHELPIMAGE Block
+  'visualFlowEditor.blocks.showHelpImage.parameters': 'Text',
+  'visualFlowEditor.blocks.showHelpImage.placeholder': 'Enter help text or image path...',
+  'visualFlowEditor.blocks.showHelpImage.hint': 'Text or path to a help image',
+  'visualFlowEditor.blocks.showHelpImage.noParameters': 'No text configured',
+  'visualFlowEditor.blocks.showHelpImage.params': 'Text',
+  
   // ADDSHIPPARTS Block
   'visualFlowEditor.blocks.addShipParts.partsFileLabel': 'Parts File',
   'visualFlowEditor.blocks.addShipParts.selectParts': 'Select parts file',
@@ -447,6 +454,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askNoScene': 'ASK requires an active scene. Add SHOWDLGSCENE before this block.',
   'visualFlowEditor.validation.askIfInvalidThen': 'After ASK, IF block\'s THEN branch must start with MENU or GO.',
   'visualFlowEditor.validation.askIfInvalidElse': 'After ASK, IF block\'s ELSE branch must start with MENU or GO.',
+  // HelpScript validation
+  'visualFlowEditor.validation.buildingHelpScriptParams': 'BUILDINGHELPSCRIPT requires value (number) and script.',
+  'visualFlowEditor.validation.helpScriptParams': 'This command requires the script parameter.',
   // Info blocks
   'visualFlowEditor.validation.ADDINFOWINDOW_NO_IMAGE': 'ADDINFOWINDOW block must have an image selected. Choose an image.',
   'visualFlowEditor.validation.SHOWINFOWINDOW_NO_IMAGE': 'SHOWINFOWINDOW block must have an image selected. Choose an image.',
@@ -788,6 +798,11 @@ export const visualFlowEditorTranslations = {
   
   // Command labels
   'visualFlowEditor.command.variableLabel': 'Variable:',
+  'visualFlowEditor.command.buildingHelpScript': 'Building Help Script',
+  'visualFlowEditor.command.flightHelpScript': 'Flight Help Script',
+  'visualFlowEditor.command.alienHelpScript': 'Alien Help Script',
+  'visualFlowEditor.command.script': 'Script',
+  'visualFlowEditor.command.value': 'Delay (ms)',
   
   // SET_TO Block
   'visualFlowEditor.blocks.setTo.variableLabel': 'Variable',
@@ -807,6 +822,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.addInfoWindow.description': 'Add info window',
   'visualFlowEditor.tools.showInfoWindow.description': 'Show info window',
   'visualFlowEditor.tools.showHelpImage.description': 'Show help image',
+  // Info & Help tools (labels)
+  'visualFlowEditor.tools.infoHelp': 'Info & Help',
+  'visualFlowEditor.tools.buildingHelpScript': 'Building Help Script',
+  'visualFlowEditor.tools.flightHelpScript': 'Flight Help Script',
+  'visualFlowEditor.tools.alienHelpScript': 'Alien Help Script',
   'visualFlowEditor.tools.buildingHelpScript.description': 'Building help script',
   'visualFlowEditor.tools.flightHelpScript.description': 'Flight help script',
   'visualFlowEditor.tools.alienHelpScript.description': 'Alien help script',
@@ -869,4 +889,9 @@ export const visualFlowEditorTranslations = {
   
   // Blocks
   'visualFlowEditor.blocks.modifyOpponentsBuildSpeed.percentage': 'Build Speed %',
+  
+  // Headers compact / navigation
+  'visualFlowEditor.header.navigateToScript': 'Go to script',
+  'visualFlowEditor.header.compact.buildingHelp': 'delay: {value} • {script}',
+  'visualFlowEditor.header.compact.help': '{script}',
 } as const;

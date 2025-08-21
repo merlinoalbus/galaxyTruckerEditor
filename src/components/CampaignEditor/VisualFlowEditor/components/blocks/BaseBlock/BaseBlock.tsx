@@ -41,6 +41,8 @@ interface BaseBlockProps {
   avatarCharacter?: any; // Personaggio da mostrare nell'avatar
   isShipType?: boolean; // Indica se l'avatar è per SETSHIPTYPE
   isNodeType?: boolean; // Indica se l'avatar è per comandi mappa (nodo)
+  // Azioni sempre visibili nella header (es. navigate to script)
+  headerActions?: React.ReactNode;
 }
 
 /**
@@ -67,6 +69,7 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
   avatarCharacter,
   isShipType = false,
   isNodeType = false
+  , headerActions
 }) => {
   const { t } = useTranslation();
   // Stato interno per collapse se non è controllato dall'esterno
@@ -298,6 +301,13 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
             ) : (
               <CharacterAvatar character={avatarCharacter} isShipType={isShipType} isNodeType={isNodeType} />
             )}
+          </div>
+        )}
+
+        {/* Header actions - sempre visibili e non soggette a hide del summary */}
+        {headerActions && (
+          <div className="ml-2 flex items-center gap-1 flex-shrink-0">
+            {headerActions}
           </div>
         )}
       </div>

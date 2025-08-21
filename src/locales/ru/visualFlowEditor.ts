@@ -877,4 +877,33 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.add.valuePlaceholder': 'Введите числовое значение...',
   'visualFlowEditor.blocks.add.description': 'Добавляет значение к указанной переменной',
   'visualFlowEditor.blocks.add.noVariable': 'Переменная не выбрана',
+
+  // SHOWHELPIMAGE Block
+  'visualFlowEditor.blocks.showHelpImage.parameters': 'Текст',
+  'visualFlowEditor.blocks.showHelpImage.placeholder': 'Введите справочный текст или путь к изображению...',
+  'visualFlowEditor.blocks.showHelpImage.hint': 'Текст или путь к изображению помощи',
+  'visualFlowEditor.blocks.showHelpImage.noParameters': 'Текст не настроен',
+  'visualFlowEditor.blocks.showHelpImage.params': 'Текст',
+
+  // HelpScript validation
+  'visualFlowEditor.validation.buildingHelpScriptParams': 'BUILDINGHELPSCRIPT требует значение (число) и скрипт.',
+  'visualFlowEditor.validation.helpScriptParams': 'Эта команда требует параметр "скрипт".',
+
+  // Info & Help tools (labels)
+  'visualFlowEditor.tools.infoHelp': 'Инфо и помощь',
+  'visualFlowEditor.tools.buildingHelpScript': 'Скрипт помощи постройки',
+  'visualFlowEditor.tools.flightHelpScript': 'Скрипт помощи полета',
+  'visualFlowEditor.tools.alienHelpScript': 'Скрипт помощи пришельцев',
+
+  // HelpScript commands
+  'visualFlowEditor.command.buildingHelpScript': 'Скрипт помощи постройки',
+  'visualFlowEditor.command.flightHelpScript': 'Скрипт помощи полета',
+  'visualFlowEditor.command.alienHelpScript': 'Скрипт помощи пришельцев',
+  'visualFlowEditor.command.script': 'Скрипт',
+  'visualFlowEditor.command.value': 'Задержка (мс)',
+
+  // Headers compact / navigation
+  'visualFlowEditor.header.navigateToScript': 'Перейти к скрипту',
+  'visualFlowEditor.header.compact.buildingHelp': 'задержка: {value} • {script}',
+  'visualFlowEditor.header.compact.help': '{script}',
 } as const;

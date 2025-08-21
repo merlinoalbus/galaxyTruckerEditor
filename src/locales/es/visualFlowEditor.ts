@@ -45,6 +45,13 @@ export const visualFlowEditorTranslations = {
   
   // Missions List
   'visualFlowEditor.missionsList.loadingMissions': 'Cargando misiones...',
+  
+  // SHOWHELPIMAGE Block
+  'visualFlowEditor.blocks.showHelpImage.parameters': 'Texto',
+  'visualFlowEditor.blocks.showHelpImage.placeholder': 'Introduce texto o ruta de imagen...',
+  'visualFlowEditor.blocks.showHelpImage.hint': 'Texto o ruta de una imagen de ayuda',
+  'visualFlowEditor.blocks.showHelpImage.noParameters': 'Sin texto configurado',
+  'visualFlowEditor.blocks.showHelpImage.params': 'Texto',
   // Map blocks (flat keys)
   'visualFlowEditor.blocks.nodeSelector.search': 'Buscar nodo...',
   'visualFlowEditor.blocks.nodeSelector.none': 'Ninguno',
@@ -97,6 +104,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.modifyOpponentsBuildSpeedNoPercentage': 'El bloque MODIFYOPPONENTSBUILDSPEED debe tener un valor porcentual (1-200).',
   'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutOfRange': 'El porcentaje de MODIFYOPPONENTSBUILDSPEED debe estar entre 1 y 200.',
   'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutsideContext': 'MODIFYOPPONENTSBUILDSPEED debe usarse dentro de un bloque MISSION, BUILD o FLIGHT.',
+  'visualFlowEditor.validation.buildingHelpScriptParams': 'BUILDINGHELPSCRIPT requiere value (número) y script.',
+  'visualFlowEditor.validation.helpScriptParams': 'Este comando requiere el parámetro script.',
   'visualFlowEditor.validation.setSpecConditionNoCondition': 'SETSPECCONDITION debe especificar una condición. Elija una de la lista.',
   'visualFlowEditor.validation.setSpecConditionOutsideContext': 'SETSPECCONDITION debería usarse dentro de un bloque MISSION, BUILD o FLIGHT. Considere moverlo.',
   'visualFlowEditor.validation.addOpponentNoCharacter': 'El bloque ADDOPPONENT debe tener un personaje seleccionado.',
@@ -179,6 +188,13 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.announce.description': 'Muestra un mensaje de anuncio sin requerir una escena',
   'visualFlowEditor.blocks.announce.placeholder': 'Introducir texto del anuncio...',
   'visualFlowEditor.blocks.announce.textLabel': 'Texto del anuncio',
+
+  // Info & Help Commands
+  'visualFlowEditor.command.buildingHelpScript': 'Script de ayuda de construcción',
+  'visualFlowEditor.command.flightHelpScript': 'Script de ayuda de vuelo',
+  'visualFlowEditor.command.alienHelpScript': 'Script de ayuda alienígena',
+  'visualFlowEditor.command.script': 'Script',
+  'visualFlowEditor.command.value': 'Retraso (ms)',
   
   // RETURN Block
   'visualFlowEditor.blocks.return.title': 'Volver',
@@ -501,6 +517,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.category.combat': 'Combate',
   'visualFlowEditor.tools.category.game': 'Juego',
   'visualFlowEditor.tools.category.special': 'Especial',
+  // Info&Help
+  'visualFlowEditor.tools.infoHelp': 'Info y Ayuda',
+  'visualFlowEditor.tools.buildingHelpScript': 'Script de ayuda de construcción',
+  'visualFlowEditor.tools.flightHelpScript': 'Script de ayuda de vuelo',
+  'visualFlowEditor.tools.alienHelpScript': 'Script de ayuda alienígena',
   
   // JSON View
   'visualFlowEditor.jsonView.title': 'Vista JSON',
@@ -516,6 +537,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.jsonView.copyToClipboard': 'Copiar JSON al portapapeles',
   'visualFlowEditor.jsonView.keys': 'claves',
   'visualFlowEditor.jsonView.characters': 'caracteres',
+
+  // Headers compact
+  'visualFlowEditor.header.navigateToScript': 'Ir al script',
+  'visualFlowEditor.header.compact.buildingHelp': 'retraso: {value} • {script}',
+  'visualFlowEditor.header.compact.help': '{script}',
   
   // Block Actions
   'visualFlowEditor.block.delete': 'Eliminar',

@@ -173,9 +173,9 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
   { id: 'addinfowindow', name: 'ADDINFOWINDOW', icon: CMD_EMOJI['ADDINFOWINDOW'], blockType: 'ADDINFOWINDOW', description: t('visualFlowEditor.tools.addInfoWindow.description'), implemented: true },
     { id: 'showinfowindow', name: 'SHOWINFOWINDOW', icon: CMD_EMOJI['SHOWINFOWINDOW'], blockType: 'SHOWINFOWINDOW', description: t('visualFlowEditor.tools.showInfoWindow.description'), implemented: true },
   { id: 'showhelpimage', name: 'SHOWHELPIMAGE', icon: CMD_EMOJI['SHOWHELPIMAGE'], blockType: 'SHOWHELPIMAGE', description: t('visualFlowEditor.tools.showHelpImage.description'), implemented: true },
-  { id: 'buildinghelpscript', name: 'BUILDINGHELPSCRIPT', icon: CMD_EMOJI['BUILDINGHELPSCRIPT'], blockType: 'BUILDINGHELPSCRIPT', description: t('visualFlowEditor.tools.buildingHelpScript.description'), implemented: false },
-  { id: 'flighthelpscript', name: 'FLIGHTHELPSCRIPT', icon: CMD_EMOJI['FLIGHTHELPSCRIPT'], blockType: 'FLIGHTHELPSCRIPT', description: t('visualFlowEditor.tools.flightHelpScript.description'), implemented: false },
-    { id: 'alienhelpscript', name: 'ALIENHELPSCRIPT', icon: CMD_EMOJI['ALIENHELPSCRIPT'], blockType: 'ALIENHELPSCRIPT', description: t('visualFlowEditor.tools.alienHelpScript.description'), implemented: false }
+  { id: 'buildinghelpscript', name: 'BUILDINGHELPSCRIPT', icon: CMD_EMOJI['BUILDINGHELPSCRIPT'], blockType: 'BUILDINGHELPSCRIPT', description: t('visualFlowEditor.tools.buildingHelpScript.description'), implemented: true },
+  { id: 'flighthelpscript', name: 'FLIGHTHELPSCRIPT', icon: CMD_EMOJI['FLIGHTHELPSCRIPT'], blockType: 'FLIGHTHELPSCRIPT', description: t('visualFlowEditor.tools.flightHelpScript.description'), implemented: true },
+    { id: 'alienhelpscript', name: 'ALIENHELPSCRIPT', icon: CMD_EMOJI['ALIENHELPSCRIPT'], blockType: 'ALIENHELPSCRIPT', description: t('visualFlowEditor.tools.alienHelpScript.description'), implemented: true }
     ]
   },
   {

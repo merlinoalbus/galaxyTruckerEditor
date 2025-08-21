@@ -45,6 +45,13 @@ export const visualFlowEditorTranslations = {
   
   // Missions List
   'visualFlowEditor.missionsList.loadingMissions': 'Ładowanie misji...',
+  
+  // SHOWHELPIMAGE Block
+  'visualFlowEditor.blocks.showHelpImage.parameters': 'Tekst',
+  'visualFlowEditor.blocks.showHelpImage.placeholder': 'Wprowadź tekst lub ścieżkę obrazu...',
+  'visualFlowEditor.blocks.showHelpImage.hint': 'Tekst lub ścieżka do obrazu pomocy',
+  'visualFlowEditor.blocks.showHelpImage.noParameters': 'Brak skonfigurowanego tekstu',
+  'visualFlowEditor.blocks.showHelpImage.params': 'Tekst',
   // Map blocks (flat keys)
   'visualFlowEditor.blocks.nodeSelector.search': 'Szukaj węzłów...',
   'visualFlowEditor.blocks.nodeSelector.none': 'Brak',
@@ -95,6 +102,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.goToBlock': 'Idź →',
   'visualFlowEditor.validation.goToBlockTitle': 'Idź do bloku',
   'visualFlowEditor.validation.footer': 'Napraw te błędy, aby zapewnić poprawne działanie skryptu. Bloki z błędami są podświetlone na czerwono w edytorze.',
+  'visualFlowEditor.validation.buildingHelpScriptParams': 'BUILDINGHELPSCRIPT wymaga value (liczba) i script.',
+  'visualFlowEditor.validation.helpScriptParams': 'To polecenie wymaga parametru script.',
   'visualFlowEditor.validation.addOpponentNoCharacter': 'Blok ADDOPPONENT musi mieć wybraną postać.',
   'visualFlowEditor.validation.addOpponentNotInMission': 'ADDOPPONENT powinien być wewnątrz bloku MISSION.',
   'visualFlowEditor.validation.setShipTypeNoType': 'Blok SETSHIPTYPE musi mieć wybrany typ statku.',
@@ -318,6 +327,13 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.announce.placeholder': 'Wprowadź tekst ogłoszenia...',
   'visualFlowEditor.blocks.announce.textLabel': 'Tekst ogłoszenia',
   
+  // Info & Help Commands
+  'visualFlowEditor.command.buildingHelpScript': 'Skrypt pomocy budowy',
+  'visualFlowEditor.command.flightHelpScript': 'Skrypt pomocy lotu',
+  'visualFlowEditor.command.alienHelpScript': 'Skrypt pomocy obcych',
+  'visualFlowEditor.command.script': 'Skrypt',
+  'visualFlowEditor.command.value': 'Opóźnienie (ms)',
+  
   // RETURN Block
   'visualFlowEditor.blocks.return.title': 'Return',
   'visualFlowEditor.blocks.return.descriptionSubscript': 'Zwraca kontrolę do skryptu nadrzędnego',
@@ -501,6 +517,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.category.combat': 'Walka',
   'visualFlowEditor.tools.category.game': 'Gra',
   'visualFlowEditor.tools.category.special': 'Specjalne',
+  // Info&Help
+  'visualFlowEditor.tools.infoHelp': 'Info i pomoc',
+  'visualFlowEditor.tools.buildingHelpScript': 'Skrypt pomocy budowy',
+  'visualFlowEditor.tools.flightHelpScript': 'Skrypt pomocy lotu',
+  'visualFlowEditor.tools.alienHelpScript': 'Skrypt pomocy obcych',
   
   // JSON View
   'visualFlowEditor.jsonView.title': 'Widok JSON',
@@ -516,6 +537,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.jsonView.copyToClipboard': 'Kopiuj JSON do schowka',
   'visualFlowEditor.jsonView.keys': 'klucze',
   'visualFlowEditor.jsonView.characters': 'znaki',
+  
+  // Headers compact
+  'visualFlowEditor.header.navigateToScript': 'Przejdź do skryptu',
+  'visualFlowEditor.header.compact.buildingHelp': 'opóźnienie: {value} • {script}',
+  'visualFlowEditor.header.compact.help': '{script}',
   
   // Block Actions
   'visualFlowEditor.block.delete': 'Usuń',

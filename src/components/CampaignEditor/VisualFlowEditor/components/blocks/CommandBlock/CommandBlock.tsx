@@ -210,6 +210,69 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   };
   const renderParameters = () => {
     switch (block.type) {
+      // HELPSCRIPT COMMANDS (render as standard CommandBlock, single-row layout + navigate)
+  case 'BUILDINGHELPSCRIPT': {
+        const value = typeof block.parameters?.value === 'number' ? block.parameters.value : 0;
+        const script = String(block.parameters?.script || '');
+        return (
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-slate-400 whitespace-nowrap">
+              {(t as any)('visualFlowEditor.blocks.subScript.scriptName')}:
+            </label>
+            <SelectWithModal
+              type="script"
+              value={script}
+              onChange={(value) => onUpdate({ parameters: { ...block.parameters, script: value } })}
+              placeholder={(t as any)('visualFlowEditor.command.selectScript')}
+              availableItems={(sessionData?.availableScripts?.map((s: any) => s.name) || []).filter((name: string) => {
+                const norm = (name || '').replace(/\.txt$/i, '');
+                const current = (sessionData?.currentScriptName || '').replace(/\.txt$/i, '');
+                return name && norm !== current;
+              })}
+              onAddItem={undefined}
+              className="flex-1"
+            />
+            {/* Pulsante di navigazione spostato nella headerActions */}
+            <label className="text-xs text-slate-400 whitespace-nowrap ml-2">
+              {(t as any)('visualFlowEditor.blocks.delay.duration')}
+            </label>
+            <input
+              type="number"
+              className="w-24 px-2 py-1 bg-slate-800 text-white rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none"
+              min={0}
+              placeholder={(t as any)('visualFlowEditor.command.milliseconds')}
+              value={value}
+              onChange={(e) => onUpdate({ parameters: { ...block.parameters, value: parseInt(e.target.value || '0', 10) } })}
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        );
+      }
+      case 'FLIGHTHELPSCRIPT':
+      case 'ALIENHELPSCRIPT': {
+        const script = String(block.parameters?.script || '');
+        return (
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-slate-400 whitespace-nowrap">
+              {(t as any)('visualFlowEditor.blocks.subScript.scriptName')}:
+            </label>
+            <SelectWithModal
+              type="script"
+              value={script}
+              onChange={(value) => onUpdate({ parameters: { ...block.parameters, script: value } })}
+              placeholder={(t as any)('visualFlowEditor.command.selectScript')}
+              availableItems={(sessionData?.availableScripts?.map((s: any) => s.name) || []).filter((name: string) => {
+                const norm = (name || '').replace(/\.txt$/i, '');
+                const current = (sessionData?.currentScriptName || '').replace(/\.txt$/i, '');
+                return name && norm !== current;
+              })}
+              onAddItem={undefined}
+              className="flex-1"
+            />
+            {/* Pulsante di navigazione spostato nella headerActions */}
+          </div>
+        );
+      }
       // MAP COMMANDS WITH NODE SELECTOR
       case 'SHOWNODE':
       case 'HIDENODE':
@@ -601,19 +664,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
               onAddItem={undefined} // Non permettere aggiunta di nuovi script
               className="flex-1"
             />
-            <button
-              type="button"
-              onClick={() => {
-                if (block.parameters?.script && onNavigateToSubScript) {
-                  onNavigateToSubScript(block.parameters.script, block);
-                }
-              }}
-              disabled={!block.parameters?.script}
-              className="p-1 hover:bg-slate-700 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              title={t('visualFlowEditor.blocks.subScript.navigate')}
-            >
-              <ArrowRight className="w-4 h-4 text-blue-400" />
-            </button>
+            {/* Pulsante di navigazione spostato nella headerActions */}
           </div>
         );
       
@@ -1081,6 +1132,20 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   // Genera i parametri compatti per la visualizzazione collapsed
   const getCompactParams = () => {
     switch (block.type) {
+      case 'BUILDINGHELPSCRIPT': {
+        const value = typeof block.parameters?.value === 'number' ? block.parameters.value : 0;
+        const script = String(block.parameters?.script || '');
+        const compact = (t as any)('visualFlowEditor.header.compact.buildingHelp')
+          .replace('{value}', String(value))
+          .replace('{script}', script || '-');
+        return <span className="text-gray-400">{compact}</span>;
+      }
+      case 'FLIGHTHELPSCRIPT':
+      case 'ALIENHELPSCRIPT': {
+        const script = String(block.parameters?.script || '');
+        const compact = (t as any)('visualFlowEditor.header.compact.help').replace('{script}', script || '-');
+        return <span className="text-gray-400">{compact}</span>;
+      }
       case 'SAY':
         if (block.parameters?.text) {
           let text = '';
@@ -1559,7 +1624,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
           </span>
         );
       }
-      default: {
+  default: {
         // Gestione generica per blocchi non implementati - mostra un riepilogo compatto dei parametri
         const params = block.parameters || {};
         const paramEntries = Object.entries(params);
@@ -1700,10 +1765,38 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
             setIsCollapsed(true);
           }
         }}
-        className={`${getBlockClassName(block.type, isInvalid, validationType)} p-3 mb-2 transition-all hover:shadow-lg`}
+        className={`${getBlockClassName(
+          (['BUILDINGHELPSCRIPT','FLIGHTHELPSCRIPT','ALIENHELPSCRIPT'].includes(block.type) ? 'SHOWINFOWINDOW' : block.type) as any,
+          isInvalid,
+          validationType
+        )} p-3 mb-2 transition-all hover:shadow-lg`}
         isInvalid={isInvalid}
         validationType={validationType}
         extraControls={allBlocks.length > 0 && <SceneDebugButton block={block} allBlocks={allBlocks} characters={characters} />}
+        headerActions={(
+          (() => {
+            const isScriptNavType = ['SUB_SCRIPT','BUILDINGHELPSCRIPT','FLIGHTHELPSCRIPT','ALIENHELPSCRIPT'].includes(block.type);
+            if (!isScriptNavType) return null;
+            const scriptValue = String(block.parameters?.script || '');
+            const disabled = !scriptValue;
+            return (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!disabled && onNavigateToSubScript) {
+                    onNavigateToSubScript(scriptValue, block);
+                  }
+                }}
+                disabled={disabled}
+                className="p-1 hover:bg-slate-700 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title={(t as any)('visualFlowEditor.blocks.subScript.navigate')}
+              >
+                <ArrowRight className="w-4 h-4 text-blue-400" />
+              </button>
+            );
+          })()
+        )}
   showAvatar={(block.type === 'SAY' || block.type === 'ASK' || block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE' || block.type === 'HIDEALLPATHS' || ['SHOWNODE','HIDENODE','ADDNODE','SETNODEKNOWN','CENTERMAPBYNODE','MOVEPLAYERTONODE'].includes(block.type))}
         avatarCharacter={
           block.type === 'HIDEALLPATHS' ? hideAllPathsAvatars :

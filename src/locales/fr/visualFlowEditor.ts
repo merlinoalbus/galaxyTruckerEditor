@@ -45,6 +45,13 @@ export const visualFlowEditorTranslations = {
   
   // Missions List
   'visualFlowEditor.missionsList.loadingMissions': 'Chargement des missions...',
+  
+  // SHOWHELPIMAGE Block
+  'visualFlowEditor.blocks.showHelpImage.parameters': 'Texte',
+  'visualFlowEditor.blocks.showHelpImage.placeholder': 'Saisir du texte ou un chemin d\'image...',
+  'visualFlowEditor.blocks.showHelpImage.hint': 'Texte ou chemin d\'une image d\'aide',
+  'visualFlowEditor.blocks.showHelpImage.noParameters': 'Aucun texte configuré',
+  'visualFlowEditor.blocks.showHelpImage.params': 'Texte',
   // Map blocks (flat keys)
   'visualFlowEditor.blocks.nodeSelector.search': 'Rechercher un nœud...',
   'visualFlowEditor.blocks.nodeSelector.none': 'Aucun',
@@ -97,6 +104,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.modifyOpponentsBuildSpeedNoPercentage': 'Le bloc MODIFYOPPONENTSBUILDSPEED doit avoir une valeur en pourcentage (1-200).',
   'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutOfRange': 'Le pourcentage de MODIFYOPPONENTSBUILDSPEED doit être compris entre 1 et 200.',
   'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutsideContext': 'MODIFYOPPONENTSBUILDSPEED devrait être utilisé dans un bloc MISSION, BUILD ou FLIGHT.',
+  'visualFlowEditor.validation.buildingHelpScriptParams': 'BUILDINGHELPSCRIPT requiert value (nombre) et script.',
+  'visualFlowEditor.validation.helpScriptParams': 'Cette commande requiert le paramètre script.',
   'visualFlowEditor.validation.addOpponentNoCharacter': 'Le bloc ADDOPPONENT doit avoir un personnage sélectionné.',
   'visualFlowEditor.validation.addOpponentNotInMission': 'ADDOPPONENT devrait être dans un bloc MISSION.',
   'visualFlowEditor.validation.setShipTypeNoType': 'Le bloc SETSHIPTYPE doit avoir un type de vaisseau sélectionné.',
@@ -360,6 +369,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.category.combat': 'Combat',
   'visualFlowEditor.tools.category.game': 'Jeu',
   'visualFlowEditor.tools.category.special': 'Spécial',
+  // Info&Help
+  'visualFlowEditor.tools.infoHelp': 'Info et aide',
+  'visualFlowEditor.tools.buildingHelpScript': 'Script d\'aide à la construction',
+  'visualFlowEditor.tools.flightHelpScript': 'Script d\'aide au vol',
+  'visualFlowEditor.tools.alienHelpScript': 'Script d\'aide alien',
   
   // JSON View
   'visualFlowEditor.jsonView.title': 'Vue JSON',
@@ -375,6 +389,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.jsonView.copyToClipboard': 'Copier JSON vers le presse-papiers',
   'visualFlowEditor.jsonView.keys': 'clés',
   'visualFlowEditor.jsonView.characters': 'caractères',
+  
+  // Headers compact
+  'visualFlowEditor.header.navigateToScript': 'Aller au script',
+  'visualFlowEditor.header.compact.buildingHelp': 'délai : {value} • {script}',
+  'visualFlowEditor.header.compact.help': '{script}',
   
   // Block Actions
   'visualFlowEditor.block.delete': 'Supprimer',
@@ -768,6 +787,13 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.announce.description': 'Affiche un message d\'annonce sans nécessiter de scène',
   'visualFlowEditor.blocks.announce.placeholder': 'Entrez le texte de l\'annonce...',
   'visualFlowEditor.blocks.announce.textLabel': 'Texte de l\'annonce',
+
+  // Info & Help Commands
+  'visualFlowEditor.command.buildingHelpScript': 'Script d\'aide à la construction',
+  'visualFlowEditor.command.flightHelpScript': 'Script d\'aide au vol',
+  'visualFlowEditor.command.alienHelpScript': 'Script d\'aide alien',
+  'visualFlowEditor.command.script': 'Script',
+  'visualFlowEditor.command.value': 'Délai (ms)',
 
   // RETURN
   'visualFlowEditor.blocks.return.title': 'Retour',
