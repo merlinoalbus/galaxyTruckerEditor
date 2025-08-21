@@ -862,6 +862,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.metacode.selectPlayer': 'Select player',
   'visualFlowEditor.metacode.current': 'Current',
   'visualFlowEditor.metacode.playerNumber': 'Player {num}',
+  'visualFlowEditor.metacode.playerNumberShort': 'P{num}',
   'visualFlowEditor.metacode.generatedCode': 'Generated code:',
   'visualFlowEditor.metacode.numericValue': 'Numeric Value',
   'visualFlowEditor.metacode.numericValueDescription': 'Inserts a dynamic or ordinal numeric value.',
@@ -894,4 +895,14 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.header.navigateToScript': 'Go to script',
   'visualFlowEditor.header.compact.buildingHelp': 'delay: {value} • {script}',
   'visualFlowEditor.header.compact.help': '{script}',
+  
+  // Credits - UI labels
+  'visualFlowEditor.blocks.addOpponentsCredits.player': 'Player',
+  
+  // Credits - Validation
+  'visualFlowEditor.validation.ADDOPPONENTSCREDITS_INVALID_INDEX': 'ADDOPPONENTSCREDITS requires a player index between 0 and 3.',
+  'visualFlowEditor.validation.ADDOPPONENTSCREDITS_NO_CREDITS': 'Credits value is required. Specify a number (positive or negative).',
+  'visualFlowEditor.validation.ADDCREDITS_NO_AMOUNT': 'Amount is required. Specify a number (positive or negative).',
+  'visualFlowEditor.validation.SETCREDITS_NO_AMOUNT': 'Amount is required. Specify a number.',
+  'visualFlowEditor.validation.ADDMISSIONCREDITS_NO_AMOUNT': 'Amount is required. Specify a number (positive or negative).',
 } as const;

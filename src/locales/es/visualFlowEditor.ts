@@ -814,6 +814,15 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.subOpponentCreditsByResult.description': 'Restar créditos',
   'visualFlowEditor.tools.addOpponentsCredits.description': 'Agregar créditos de oponente',
   
+  // Credits - Etiquetas de UI
+  'visualFlowEditor.blocks.addOpponentsCredits.player': 'Jugador',
+  
+  // Credits - Mensajes de validación
+  'visualFlowEditor.validation.ADDOPPONENTSCREDITS_INVALID_INDEX': 'ADDOPPONENTSCREDITS requiere un índice de jugador entre 0 y 3.',
+  'visualFlowEditor.validation.ADDOPPONENTSCREDITS_NO_CREDITS': 'Se requiere el valor de créditos. Especifica un número (positivo o negativo).',
+  'visualFlowEditor.validation.ADDCREDITS_NO_AMOUNT': 'Se requiere el importe. Especifica un número (positivo o negativo).',
+  'visualFlowEditor.validation.SETCREDITS_NO_AMOUNT': 'Se requiere el importe. Especifica un número.',
+  'visualFlowEditor.validation.ADDMISSIONCREDITS_NO_AMOUNT': 'Se requiere el importe. Especifica un número (positivo o negativo).',
   // Tool Descriptions - Achievement
   'visualFlowEditor.tools.setAchievementProgress.description': 'Establecer progreso de logro',
   'visualFlowEditor.tools.setAchievementAttempt.description': 'Establecer intento de logro',
@@ -847,6 +856,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.metacode.selectPlayer': 'Seleccionar jugador',
   'visualFlowEditor.metacode.current': 'Actual',
   'visualFlowEditor.metacode.playerNumber': 'Jugador {num}',
+  'visualFlowEditor.metacode.playerNumberShort': 'J{num}',
   'visualFlowEditor.metacode.generatedCode': 'Código generado:',
   'visualFlowEditor.metacode.numericValue': 'Valor Numérico',
   'visualFlowEditor.metacode.numericValueDescription': 'Inserta un valor numérico dinámico u ordinal.',

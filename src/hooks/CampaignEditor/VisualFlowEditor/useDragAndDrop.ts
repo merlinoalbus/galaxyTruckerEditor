@@ -150,6 +150,15 @@ export const useDragAndDrop = ({
       if (blockType === 'MODIFYOPPONENTSBUILDSPEED') {
         newBlock.parameters.percentage = 60;
       }
+
+      // Default per comandi crediti
+      if (blockType === 'ADDOPPONENTSCREDITS') {
+        newBlock.parameters.index = 1; // Giocatore 2 (visualizzato come 2)
+        newBlock.parameters.credits = -3; // default richiesto
+      }
+      if (blockType === 'ADDCREDITS' || blockType === 'SETCREDITS' || blockType === 'ADDMISSIONCREDITS') {
+        newBlock.parameters.amount = 0;
+      }
     }
     
     return newBlock;

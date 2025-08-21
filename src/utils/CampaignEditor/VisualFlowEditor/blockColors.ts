@@ -23,11 +23,20 @@ export enum BlockCategory {
   MULTIMEDIA = 'MULTIMEDIA',           // PLAY, STOP, VIDEO, etc.
   TIME = 'TIME',                      // DELAY, WAIT, etc.
   INFO_HELP = 'INFO_HELP',            // Info & Help blocks
+  CREDITS = 'CREDITS',                // Credits-related blocks
   UTILITY = 'UTILITY'                 // Altri comandi
 }
 
 // Colori per categoria
 const CATEGORY_COLORS: Record<BlockCategory, BlockColorConfig> = {
+  [BlockCategory.CREDITS]: {
+    // Distinct dark-golden/brown palette to differ from other categories
+    background: 'bg-[#6B4E16]/90',
+    border: 'border-[#6B4E16]/80',
+    icon: 'bg-[#6B4E16]/80',
+    text: 'text-[#E0B341]',
+    dragHandle: 'bg-[#6B4E16]'
+  },
   [BlockCategory.INFO_HELP]: {
     background: 'bg-[#8B2C3A]/90', // Watermelon Extra Dark
     border: 'border-[#8B2C3A]/80',
@@ -397,6 +406,13 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   'BUILDINGHELPSCRIPT': BlockCategory.INFO_HELP,
   'FLIGHTHELPSCRIPT': BlockCategory.INFO_HELP,
   'ALIENHELPSCRIPT': BlockCategory.INFO_HELP,
+  // Credits-related commands
+  'ADDCREDITS': BlockCategory.CREDITS,
+  'SETCREDITS': BlockCategory.CREDITS,
+  'ADDMISSIONCREDITS': BlockCategory.CREDITS,
+  'ADDMISSIONCREDITSBYRESULT': BlockCategory.CREDITS,
+  'SUBOPPONENTCREDITSBYRESULT': BlockCategory.CREDITS,
+  'ADDOPPONENTSCREDITS': BlockCategory.CREDITS,
   'TIMER_START': BlockCategory.TIME,
   'TIMER_STOP': BlockCategory.TIME,
   
