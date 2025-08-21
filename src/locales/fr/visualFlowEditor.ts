@@ -503,6 +503,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.shipClassI': 'Classe I',
   'visualFlowEditor.command.shipClassII': 'Classe II',
   'visualFlowEditor.command.shipClassIII': 'Classe III',
+  'visualFlowEditor.command.statusText': 'Texte de statut',
   'visualFlowEditor.command.selectRoute': 'Sélectionner une route...',
   'visualFlowEditor.command.selectButton': 'Sélectionner un bouton...',
   
@@ -701,6 +702,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.saveState.description': 'Sauvegarder l\'état du jeu',
   'visualFlowEditor.tools.loadState.description': 'Charger l\'état du jeu',
   'visualFlowEditor.tools.quitCampaign.description': 'Quitter la campagne',
+  'visualFlowEditor.blocks.saveState.compact': 'Sauvegarder',
+  'visualFlowEditor.blocks.loadState.compact': 'Charger',
+  'visualFlowEditor.blocks.quitCampaign.compact': 'Quitter',
+  'visualFlowEditor.blocks.saveState.fullDescription': 'Sauvegarde l\'état actuel de la campagne permettant de le restaurer plus tard avec LoadState. Utile pour créer des points de sauvegarde pendant la narration.',
+  'visualFlowEditor.blocks.loadState.fullDescription': 'Charge un état de campagne précédemment sauvegardé. Restaure la situation du joueur, les missions, personnages et variables au moment de la sauvegarde.',
+  'visualFlowEditor.blocks.quitCampaign.fullDescription': 'Termine immédiatement la campagne et renvoie le joueur au menu principal. À utiliser avec précaution car cela interrompt définitivement le flux narratif.',
   
   // Metacode Modal Translations
   'visualFlowEditor.metacode.playerReference': 'Référence du Joueur',
@@ -836,6 +843,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.characterSelector.noAvailable': 'Aucun personnage disponible à afficher',
   'visualFlowEditor.blocks.characterSelector.noVisible': 'Aucun personnage visible à masquer',
   'visualFlowEditor.blocks.characterSelector.selected': 'Sélectionné',
+  'visualFlowEditor.blocks.characterSelector.none': 'Aucun',
 
   // Validations ajoutées
   'visualFlowEditor.validation.announceNoText': 'Le bloc ANNOUNCE doit avoir du texte. Ajoutez au moins le texte en anglais.',
@@ -911,4 +919,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.add.valuePlaceholder': 'Entrez une valeur numérique...',
   'visualFlowEditor.blocks.add.description': 'Ajoute une valeur à la variable spécifiée',
   'visualFlowEditor.blocks.add.noVariable': 'Aucune variable sélectionnée',
+
+  // ASKCHAR/FOCUSCHAR validation keys
+  'visualFlowEditor.validation.ASKCHAR_NO_CHARACTER': 'Le bloc ASKCHAR doit avoir un personnage sélectionné. Sélectionnez un personnage de la liste.',
+  'visualFlowEditor.validation.ASKCHAR_NO_TEXT': 'Le bloc ASKCHAR doit avoir du texte. Entrez le dialogue du personnage.',
+  'visualFlowEditor.validation.ASKCHAR_NO_SCENE': 'ASKCHAR nécessite une scène active. Ajoutez SHOWDLGSCENE avant ce bloc.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_CHARACTER': 'Le bloc FOCUSCHAR doit avoir un personnage sélectionné. Sélectionnez un personnage de la liste.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_SCENE': 'FOCUSCHAR nécessite une scène active. Ajoutez SHOWDLGSCENE avant ce bloc.',
+  
 } as const;

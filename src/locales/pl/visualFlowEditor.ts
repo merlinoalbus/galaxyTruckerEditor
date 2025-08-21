@@ -364,6 +364,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.characterSelector.noAvailable': 'Brak dostępnych postaci do pokazania',
   'visualFlowEditor.blocks.characterSelector.noVisible': 'Brak widocznych postaci do ukrycia',
   'visualFlowEditor.blocks.characterSelector.selected': 'Wybrano',
+  'visualFlowEditor.blocks.characterSelector.none': 'Żadne',
   
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Błąd walidacji',
@@ -651,6 +652,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.shipClassI': 'Klasa I',
   'visualFlowEditor.command.shipClassII': 'Klasa II',
   'visualFlowEditor.command.shipClassIII': 'Klasa III',
+  'visualFlowEditor.command.statusText': 'Tekst statusu',
   'visualFlowEditor.command.selectRoute': 'Wybierz trasę...',
   'visualFlowEditor.command.selectButton': 'Wybierz przycisk...',
   
@@ -848,6 +850,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.saveState.description': 'Zapisz stan gry',
   'visualFlowEditor.tools.loadState.description': 'Wczytaj stan gry',
   'visualFlowEditor.tools.quitCampaign.description': 'Wyjdź z kampanii',
+  'visualFlowEditor.blocks.saveState.compact': 'Zapisz stan',
+  'visualFlowEditor.blocks.loadState.compact': 'Wczytaj stan',
+  'visualFlowEditor.blocks.quitCampaign.compact': 'Wyjdź',
+  'visualFlowEditor.blocks.saveState.fullDescription': 'Zapisuje aktualny stan kampanii umożliwiając przywrócenie go później za pomocą LoadState. Przydatne do tworzenia punktów zapisu podczas narracji.',
+  'visualFlowEditor.blocks.loadState.fullDescription': 'Wczytuje wcześniej zapisany stan kampanii. Przywraca sytuację gracza, misje, postacie i zmienne z momentu zapisu.',
+  'visualFlowEditor.blocks.quitCampaign.fullDescription': 'Natychmiast kończy kampanię i powraca gracza do menu głównego. Używaj ostrożnie, ponieważ definitywnie przerywa przepływ narracji.',
   
   // Metacode Modal Translations
   'visualFlowEditor.metacode.playerReference': 'Odniesienie do Gracza',
@@ -909,4 +917,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.add.valuePlaceholder': 'Wprowadź wartość numeryczną...',
   'visualFlowEditor.blocks.add.description': 'Dodaje wartość do określonej zmiennej',
   'visualFlowEditor.blocks.add.noVariable': 'Nie wybrano żadnej zmiennej',
+
+  // ASKCHAR and FOCUSCHAR Validation
+  'visualFlowEditor.validation.ASKCHAR_NO_CHARACTER': 'Blok ASKCHAR musi mieć wybraną postać. Wybierz postać.',
+  'visualFlowEditor.validation.ASKCHAR_NO_TEXT': 'Blok ASKCHAR musi mieć wprowadzony tekst. Wprowadź tekst dla postaci.',
+  'visualFlowEditor.validation.ASKCHAR_NO_SCENE': 'Blok ASKCHAR musi być użyty w scenie. Dodaj blok wewnątrz sceny.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_CHARACTER': 'Blok FOCUSCHAR musi mieć wybraną postać. Wybierz postać.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_SCENE': 'Blok FOCUSCHAR musi być użyty w scenie. Dodaj blok wewnątrz sceny.',
 } as const;

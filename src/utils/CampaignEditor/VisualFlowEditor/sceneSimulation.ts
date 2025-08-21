@@ -228,6 +228,52 @@ export function simulateSceneExecution(
           // Imposta come ultimo personaggio modificato
           lastModifiedCharacter = block.parameters.character;
         }
+      } else if (block.type === 'ASKCHAR' && block.parameters?.character) {
+        // Comportamento analogo a SAYCHAR: assicura presenza/visibilità del personaggio e aggiorna lastModified
+        if (sceneStack.length > 0) {
+          const currentScene = sceneStack[sceneStack.length - 1];
+          const existingCharIndex = currentScene.personaggi.findIndex(
+            p => p.nomepersonaggio === block.parameters!.character
+          );
+          if (existingCharIndex >= 0) {
+            currentScene.personaggi[existingCharIndex].visible = true;
+          } else {
+            const imageToUse = getCharacterBaseImage(block.parameters.character);
+            const newChar: SimulatedCharacter = {
+              nomepersonaggio: block.parameters.character,
+              lastImmagine: imageToUse,
+              visible: true,
+              posizione: 'left'
+            };
+            const charInSamePosition = currentScene.personaggi.find(
+              p => p.posizione === 'left' && p.visible
+            );
+            if (charInSamePosition) {
+              charInSamePosition.visible = false;
+            }
+            currentScene.personaggi.push(newChar);
+          }
+          lastModifiedCharacter = block.parameters.character;
+        }
+      } else if (block.type === 'FOCUSCHAR' && block.parameters?.character) {
+        // Porta il personaggio selezionato in focus: mantieni visibile, aggiorna lastModified e opzionalmente porta in primo piano la posizione corrente
+        if (sceneStack.length > 0) {
+          const currentScene = sceneStack[sceneStack.length - 1];
+          const charIndex = currentScene.personaggi.findIndex(p => p.nomepersonaggio === block.parameters!.character);
+          if (charIndex >= 0) {
+            currentScene.personaggi[charIndex].visible = true;
+            // Mantieni la posizione esistente. Se non esiste, aggiungi a sinistra con immagine base
+          } else {
+            const imageToUse = getCharacterBaseImage(block.parameters.character);
+            currentScene.personaggi.push({
+              nomepersonaggio: block.parameters.character,
+              lastImmagine: imageToUse,
+              visible: true,
+              posizione: 'left'
+            });
+          }
+          lastModifiedCharacter = block.parameters.character;
+        }
       }
       
       // Ricorsione per blocchi annidati

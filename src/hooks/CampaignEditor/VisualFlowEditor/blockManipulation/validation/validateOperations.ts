@@ -30,8 +30,8 @@ export const validateBlockInsertion = (
   index?: number,
   allBlocks?: any[]
 ): boolean => {
-  // Validazione ASK consecutivi
-  if (blockType === 'ASK') {
+  // Validazione ASK consecutivi (considera anche ASKCHAR)
+  if (blockType === 'ASK' || blockType === 'ASKCHAR') {
     if (!validateAskInsertion(targetContainer, targetContainerType, index)) {
       return false;
     }
@@ -789,7 +789,7 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
         });
       }
       // NUOVA VALIDAZIONE: ASK non può seguire un altro ASK
-      if (block.type === 'ASK' && index > 0 && blocks[index - 1].type === 'ASK') {
+    if ((block.type === 'ASK' || block.type === 'ASKCHAR') && index > 0 && (blocks[index - 1].type === 'ASK' || blocks[index - 1].type === 'ASKCHAR')) {
         warnings++; // Warning, non error
         invalidBlocks.push(block.id);
         const prevAsk = blocks[index - 1];
@@ -797,8 +797,8 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
         const firstAskText = extractFirstText(prevAsk.parameters?.text) || (t ? t('visualFlowEditor.validation.noText') : 'no text');
         errorDetails.push({
           blockId: block.id,
-          blockType: block.type,
-          errorType: 'CONSECUTIVE_ASK',
+      blockType: block.type,
+      errorType: 'CONSECUTIVE_ASK',
           message: t ? 
             t('visualFlowEditor.validation.consecutiveAskDetailed').replace('{firstAsk}', firstAskText)
             : `Two consecutive ASK blocks are not allowed. The first ASK (${firstAskText}) is followed directly by this ASK. Insert a SAY, MENU or other command between the two ASK blocks.`,
@@ -809,16 +809,16 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
       }
       
       // NUOVA VALIDAZIONE: Ad un blocco ASK deve seguire un blocco MENU o LABEL
-      if (block.type === 'ASK') {
+  if (block.type === 'ASK' || block.type === 'ASKCHAR') {
         let isValidAsk = false;
         const nextBlock = index < blocks.length - 1 ? blocks[index + 1] : null;
         
-        // Controllo 1: Blocco successivo è MENU o LABEL
+  // Controllo 1: Blocco successivo è MENU o LABEL
         if (nextBlock && (nextBlock.type === 'MENU' || nextBlock.type === 'LABEL')) {
           isValidAsk = true;
         }
         
-        // Controllo 2: Blocco successivo è GO la cui LABEL è seguita da MENU
+  // Controllo 2: Blocco successivo è GO la cui LABEL è seguita da MENU
         if (!isValidAsk && nextBlock && nextBlock.type === 'GO' && allRootBlocks) {
           const labelName = nextBlock.parameters?.label;
           if (labelName) {
@@ -827,7 +827,7 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
               for (let i = 0; i < blocks.length; i++) {
                 const b = blocks[i];
                 if (b.type === 'LABEL' && b.parameters?.name === labelName) {
-                  // Controlla se il blocco dopo LABEL è MENU
+                    // Controlla se il blocco dopo LABEL è MENU
                   const nextAfterLabel = i < blocks.length - 1 ? blocks[i + 1] : null;
                   if (nextAfterLabel && nextAfterLabel.type === 'MENU') {
                     return true;
@@ -851,7 +851,7 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           }
         }
         
-        // Controllo 3: Blocco successivo è IF con MENU o LABEL come primo elemento in THEN/ELSE
+  // Controllo 3: Blocco successivo è IF con MENU o LABEL come primo elemento in THEN/ELSE
         if (!isValidAsk && nextBlock && nextBlock.type === 'IF') {
           let thenValid = false;
           let elseValid = false;
@@ -880,7 +880,7 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           }
         }
         
-        // Se ASK è l'ultimo blocco in un ramo IF, controlla dopo l'IF
+  // Se ASK/ASKCHAR è l'ultimo blocco in un ramo IF, controlla dopo l'IF
         if (!isValidAsk && !nextBlock && parentBlock && parentBlock.type === 'IF' && allRootBlocks) {
           const findBlockAfterIf = (blocks: any[], ifBlock: any): any | null => {
             for (let i = 0; i < blocks.length; i++) {
@@ -910,13 +910,13 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           }
         }
         
-        if (!isValidAsk) {
+    if (!isValidAsk) {
           warnings++; // Warning, non error
           invalidBlocks.push(block.id);
           errorDetails.push({
             blockId: block.id,
             blockType: block.type,
-            errorType: nextBlock ? 'ASK_NOT_FOLLOWED_BY_MENU' : 'ASK_WITHOUT_MENU',
+      errorType: nextBlock ? 'ASK_NOT_FOLLOWED_BY_MENU' : 'ASK_WITHOUT_MENU',
             message: t ? 
               (nextBlock ? 
                 t('visualFlowEditor.validation.askMustBeFollowedByMenu')
@@ -986,7 +986,7 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
       }
       
       // Valida blocchi MENU - Regole complete
-      if (block.type === 'MENU') {
+  if (block.type === 'MENU') {
         let isValidMenu = false;
         let prevBlock = null;
         
@@ -997,15 +997,15 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           prevBlock = findBlockBeforeContainer(allRootBlocks, parentBlock.id);
         }
         
-        // Regola 1: MENU preceduto da ASK (diretto o nello stesso ramo IF)
-        if (prevBlock && prevBlock.type === 'ASK') {
+  // Regola 1: MENU preceduto da ASK o ASKCHAR (diretto o nello stesso ramo IF)
+  if (prevBlock && (prevBlock.type === 'ASK' || prevBlock.type === 'ASKCHAR')) {
           isValidMenu = true;
         }
         
         // Se MENU è dentro IF, controlla se c'è un ASK prima dell'IF
         if (!isValidMenu && parentBlock && parentBlock.type === 'IF' && allRootBlocks) {
           const blockBeforeIf = findBlockBeforeContainer(allRootBlocks, parentBlock.id);
-          if (blockBeforeIf && blockBeforeIf.type === 'ASK') {
+          if (blockBeforeIf && (blockBeforeIf.type === 'ASK' || blockBeforeIf.type === 'ASKCHAR')) {
             isValidMenu = true;
           }
         }
@@ -1021,10 +1021,10 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           }
         }
         
-        // Regola 3: MENU preceduto da LABEL che a sua volta è preceduto da ASK
+        // Regola 3: MENU preceduto da LABEL che a sua volta è preceduta da ASK/ASKCHAR
         if (!isValidMenu && prevBlock && prevBlock.type === 'LABEL' && index > 1) {
           const blockBeforeLabel = blocks[index - 2];
-          if (blockBeforeLabel && blockBeforeLabel.type === 'ASK') {
+          if (blockBeforeLabel && (blockBeforeLabel.type === 'ASK' || blockBeforeLabel.type === 'ASKCHAR')) {
             isValidMenu = true;
           }
         }
@@ -1042,11 +1042,11 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
                   if (lastInOpt.type === 'GO' && allRootBlocks) {
                     const labelName = lastInOpt.parameters?.label;
                     if (labelName) {
-                      // Trova la LABEL e controlla se è preceduta da ASK
+          // Trova la LABEL e controlla se è preceduta da ASK/ASKCHAR
                       const findLabelPrecededByAsk = (blocks: any[]): boolean => {
                         for (let i = 0; i < blocks.length; i++) {
                           if (blocks[i].type === 'LABEL' && blocks[i].parameters?.name === labelName) {
-                            if (i > 0 && blocks[i - 1].type === 'ASK') {
+            if (i > 0 && (blocks[i - 1].type === 'ASK' || blocks[i - 1].type === 'ASKCHAR')) {
                               return true;
                             }
                           }

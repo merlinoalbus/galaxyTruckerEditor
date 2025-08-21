@@ -489,6 +489,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.shipClassI': 'Класс I',
   'visualFlowEditor.command.shipClassII': 'Класс II',
   'visualFlowEditor.command.shipClassIII': 'Класс III',
+  'visualFlowEditor.command.statusText': 'Текст статуса',
   'visualFlowEditor.command.selectRoute': 'Выбрать маршрут...',
   'visualFlowEditor.command.selectButton': 'Выбрать кнопку...',
   
@@ -687,6 +688,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.saveState.description': 'Сохранить состояние игры',
   'visualFlowEditor.tools.loadState.description': 'Загрузить состояние игры',
   'visualFlowEditor.tools.quitCampaign.description': 'Выйти из кампании',
+  'visualFlowEditor.blocks.saveState.compact': 'Сохранить',
+  'visualFlowEditor.blocks.loadState.compact': 'Загрузить',
+  'visualFlowEditor.blocks.quitCampaign.compact': 'Выйти',
+  'visualFlowEditor.blocks.saveState.fullDescription': 'Сохраняет текущее состояние кампании, позволяя восстановить его позже с помощью LoadState. Полезно для создания точек сохранения во время повествования.',
+  'visualFlowEditor.blocks.loadState.fullDescription': 'Загружает ранее сохранённое состояние кампании. Восстанавливает ситуацию игрока, миссии, персонажей и переменные на момент сохранения.',
+  'visualFlowEditor.blocks.quitCampaign.fullDescription': 'Немедленно завершает кампанию и возвращает игрока в главное меню. Используйте осторожно, так как это окончательно прерывает поток повествования.',
   
   // Metacode Modal Translations
   'visualFlowEditor.metacode.playerReference': 'Ссылка на Игрока',
@@ -798,6 +805,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.characterSelector.noAvailable': 'Нет доступных персонажей для показа',
   'visualFlowEditor.blocks.characterSelector.noVisible': 'Нет видимых персонажей для скрытия',
   'visualFlowEditor.blocks.characterSelector.selected': 'Выбрано',
+  'visualFlowEditor.blocks.characterSelector.none': 'Нет',
 
   // SETADVPILE Block
   'visualFlowEditor.blocks.setAdvPile.parameters': 'Параметры',
@@ -916,4 +924,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.header.navigateToScript': 'Перейти к скрипту',
   'visualFlowEditor.header.compact.buildingHelp': 'задержка: {value} • {script}',
   'visualFlowEditor.header.compact.help': '{script}',
+
+  // ASKCHAR and FOCUSCHAR Validation
+  'visualFlowEditor.validation.ASKCHAR_NO_CHARACTER': 'Блок ASKCHAR должен иметь выбранного персонажа. Выберите персонажа.',
+  'visualFlowEditor.validation.ASKCHAR_NO_TEXT': 'Блок ASKCHAR должен иметь введённый текст. Введите текст для персонажа.',
+  'visualFlowEditor.validation.ASKCHAR_NO_SCENE': 'Блок ASKCHAR должен использоваться в сцене. Добавьте блок внутри сцены.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_CHARACTER': 'Блок FOCUSCHAR должен иметь выбранного персонажа. Выберите персонажа.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_SCENE': 'Блок FOCUSCHAR должен использоваться в сцене. Добавьте блок внутри сцены.',
 } as const;

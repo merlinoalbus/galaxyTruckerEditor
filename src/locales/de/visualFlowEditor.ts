@@ -207,6 +207,7 @@ const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.characterSelector.noAvailable': 'Keine verfügbaren Charaktere zum Anzeigen',
   'visualFlowEditor.blocks.characterSelector.noVisible': 'Keine sichtbaren Charaktere zum Ausblenden',
   'visualFlowEditor.blocks.characterSelector.selected': 'Ausgewählt',
+  'visualFlowEditor.blocks.characterSelector.none': 'Keine',
   
   // ADDPARTTOSHIP Block
   'visualFlowEditor.blocks.addPartToShip.parameters': 'Parameter',
@@ -642,6 +643,7 @@ const visualFlowEditorTranslations = {
   'visualFlowEditor.command.shipClassI': 'Klasse I',
   'visualFlowEditor.command.shipClassII': 'Klasse II',
   'visualFlowEditor.command.shipClassIII': 'Klasse III',
+  'visualFlowEditor.command.statusText': 'Statustext',
   'visualFlowEditor.command.selectRoute': 'Route auswählen...',
   'visualFlowEditor.command.selectButton': 'Taste auswählen...',
   
@@ -845,6 +847,12 @@ const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.saveState.description': 'Spielstand speichern',
   'visualFlowEditor.tools.loadState.description': 'Spielstand laden',
   'visualFlowEditor.tools.quitCampaign.description': 'Kampagne verlassen',
+  'visualFlowEditor.blocks.saveState.compact': 'Speichern',
+  'visualFlowEditor.blocks.loadState.compact': 'Laden',
+  'visualFlowEditor.blocks.quitCampaign.compact': 'Beenden',
+  'visualFlowEditor.blocks.saveState.fullDescription': 'Speichert den aktuellen Kampagnenzustand und ermöglicht es, ihn später mit LoadState wiederherzustellen. Nützlich für die Erstellung von Speicherpunkten während der Erzählung.',
+  'visualFlowEditor.blocks.loadState.fullDescription': 'Lädt einen zuvor gespeicherten Kampagnenzustand. Stellt die Situation des Spielers, Missionen, Charaktere und Variablen zum Zeitpunkt der Speicherung wieder her.',
+  'visualFlowEditor.blocks.quitCampaign.fullDescription': 'Beendet sofort die Kampagne und bringt den Spieler zurück zum Hauptmenü. Mit Vorsicht verwenden, da der Erzählungsfluss endgültig unterbrochen wird.',
   
   // Metacode Modal Translations
   'visualFlowEditor.metacode.playerReference': 'Spieler-Referenz',
@@ -911,6 +919,13 @@ const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.add.valuePlaceholder': 'Numerischen Wert eingeben...',
   'visualFlowEditor.blocks.add.description': 'Fügt einen Wert zur angegebenen Variable hinzu',
   'visualFlowEditor.blocks.add.noVariable': 'Keine Variable ausgewählt',
+
+  // ASKCHAR and FOCUSCHAR Validation
+  'visualFlowEditor.validation.ASKCHAR_NO_CHARACTER': 'ASKCHAR Block muss einen Charakter ausgewählt haben. Wählen Sie einen Charakter aus.',
+  'visualFlowEditor.validation.ASKCHAR_NO_TEXT': 'ASKCHAR Block muss einen Text eingegeben haben. Geben Sie den Text für den Charakter ein.',
+  'visualFlowEditor.validation.ASKCHAR_NO_SCENE': 'ASKCHAR Block muss in einer Szene verwendet werden. Fügen Sie den Block innerhalb einer Szene hinzu.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_CHARACTER': 'FOCUSCHAR Block muss einen Charakter ausgewählt haben. Wählen Sie einen Charakter aus.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_SCENE': 'FOCUSCHAR Block muss in einer Szene verwendet werden. Fügen Sie den Block innerhalb einer Szene hinzu.',
 } as const;
 
 export { visualFlowEditorTranslations };

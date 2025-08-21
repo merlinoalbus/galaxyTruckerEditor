@@ -111,7 +111,7 @@ export const CharacterSelector: React.FC<CharacterSelectorProps> = ({
             className={`grid gap-1 ${!forceColumns ? (mode === 'hide' ? 'grid-cols-10' : 'grid-cols-7') : ''}`}
             style={forceColumns ? { gridTemplateColumns: `repeat(${forceColumns}, minmax(0, 1fr))` } : {}}
           >
-            {/* Opzione "Nessuno" per deselezionare */}
+            {/* Opzione "Nessuno"/None per deselezionare (i18n) */}
             {mode === 'show' && (
               <div
                 onClick={() => onChange('')}
@@ -119,7 +119,7 @@ export const CharacterSelector: React.FC<CharacterSelectorProps> = ({
                   relative cursor-pointer transition-all rounded p-1 flex flex-col items-center
                   ${value === '' ? 'ring-1 ring-purple-500 bg-slate-700' : 'hover:bg-slate-700'}
                 `}
-                title="Nessuno"
+                title={t('visualFlowEditor.blocks.characterSelector.none')}
               >
                 <div className="w-full aspect-square mb-0.5 overflow-hidden rounded transform scale-90">
                   <div className="w-full h-full rounded bg-slate-800 border border-slate-600 flex items-center justify-center">
@@ -127,7 +127,7 @@ export const CharacterSelector: React.FC<CharacterSelectorProps> = ({
                   </div>
                 </div>
                 <div className="text-[9px] text-gray-300 text-center truncate w-full leading-tight">
-                  Nessuno
+                  {t('visualFlowEditor.blocks.characterSelector.none')}
                 </div>
                 {value === '' && (
                   <div className="absolute top-0.5 right-0.5">

@@ -376,6 +376,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.characterSelector.noAvailable': 'Nessun personaggio disponibile da mostrare',
   'visualFlowEditor.blocks.characterSelector.noVisible': 'Nessun personaggio visibile da nascondere',
   'visualFlowEditor.blocks.characterSelector.selected': 'Selezionato',
+  'visualFlowEditor.blocks.characterSelector.none': 'Nessuno',
   
   // Validation Error Messages (existing and new)
   'visualFlowEditor.validation.error': 'Errore di validazione',
@@ -671,6 +672,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.dialogLabel': 'Dialogo',
   'visualFlowEditor.command.questionText': 'Testo domanda',
   'visualFlowEditor.command.questionLabel': 'Domanda',
+  'visualFlowEditor.command.statusText': 'Testo stato',
   'visualFlowEditor.command.milliseconds': 'Millisecondi (es. 1000 = 1 secondo)',
   'visualFlowEditor.command.selectLabel': 'Seleziona etichetta...',
   'visualFlowEditor.command.labelName': 'Nome etichetta...',
@@ -876,6 +878,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.saveState.description': 'Salva stato gioco',
   'visualFlowEditor.tools.loadState.description': 'Carica stato gioco',
   'visualFlowEditor.tools.quitCampaign.description': 'Esci dalla campagna',
+  'visualFlowEditor.blocks.saveState.compact': 'Salva stato',
+  'visualFlowEditor.blocks.loadState.compact': 'Carica stato',
+  'visualFlowEditor.blocks.quitCampaign.compact': 'Esci campagna',
+  'visualFlowEditor.blocks.saveState.fullDescription': 'Salva lo stato attuale della campagna permettendo di ripristinarlo successivamente con LoadState. Utile per creare punti di salvataggio durante la narrazione.',
+  'visualFlowEditor.blocks.loadState.fullDescription': 'Carica un stato precedentemente salvato della campagna. Ripristina la situazione del giocatore, missioni, personaggi e variabili al momento del salvataggio.',
+  'visualFlowEditor.blocks.quitCampaign.fullDescription': 'Termina immediatamente la campagna e riporta il giocatore al menu principale. Utilizzare con cautela in quanto interrompe definitivamente il flusso narrativo.',
   
   // Metacode Modal Translations
   'visualFlowEditor.metacode.playerReference': 'Riferimento Giocatore',
@@ -918,5 +926,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.ADDCREDITS_NO_AMOUNT': 'L\'importo è obbligatorio. Specifica un numero (positivo o negativo).',
   'visualFlowEditor.validation.SETCREDITS_NO_AMOUNT': 'L\'importo è obbligatorio. Specifica un numero.',
   'visualFlowEditor.validation.ADDMISSIONCREDITS_NO_AMOUNT': 'L\'importo è obbligatorio. Specifica un numero (positivo o negativo).',
+  
+  // ASKCHAR/FOCUSCHAR validation keys
+  'visualFlowEditor.validation.ASKCHAR_NO_CHARACTER': 'Il blocco ASKCHAR deve avere un personaggio selezionato. Seleziona un personaggio dalla lista.',
+  'visualFlowEditor.validation.ASKCHAR_NO_TEXT': 'Il blocco ASKCHAR deve avere un testo. Inserisci il dialogo del personaggio.',
+  'visualFlowEditor.validation.ASKCHAR_NO_SCENE': 'ASKCHAR richiede una scena attiva. Aggiungi SHOWDLGSCENE prima di questo blocco.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_CHARACTER': 'Il blocco FOCUSCHAR deve avere un personaggio selezionato. Seleziona un personaggio dalla lista.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_SCENE': 'FOCUSCHAR richiede una scena attiva. Aggiungi SHOWDLGSCENE prima di questo blocco.',
   
 } as const;

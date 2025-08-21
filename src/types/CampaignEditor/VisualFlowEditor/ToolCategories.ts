@@ -208,8 +208,8 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
     name: t('visualFlowEditor.tools.category.characters'),
     icon: '🎭',
     tools: [
-  { id: 'askchar', name: 'ASKCHAR', icon: CMD_EMOJI['ASKCHAR'], blockType: 'ASKCHAR', description: t('visualFlowEditor.tools.askChar.description'), implemented: false },
-  { id: 'focuschar', name: 'FOCUSCHAR', icon: CMD_EMOJI['FOCUSCHAR'], blockType: 'FOCUSCHAR', description: t('visualFlowEditor.tools.focusChar.description'), implemented: false }
+  { id: 'askchar', name: 'ASKCHAR', icon: CMD_EMOJI['ASKCHAR'], blockType: 'ASKCHAR', description: t('visualFlowEditor.tools.askChar.description'), implemented: true },
+  { id: 'focuschar', name: 'FOCUSCHAR', icon: CMD_EMOJI['FOCUSCHAR'], blockType: 'FOCUSCHAR', description: t('visualFlowEditor.tools.focusChar.description'), implemented: true }
     ]
   },
   {
@@ -217,10 +217,10 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
     name: t('visualFlowEditor.tools.category.system'),
     icon: '💾',
     tools: [
-    { id: 'setflightstatusbar', name: 'SETFLIGHTSTATUSBAR', icon: CMD_EMOJI['SETFLIGHTSTATUSBAR'], blockType: 'SETFLIGHTSTATUSBAR', description: t('visualFlowEditor.tools.setFlightStatusBar.description'), implemented: false },
-  { id: 'savestate', name: 'SAVESTATE', icon: CMD_EMOJI['SAVESTATE'], blockType: 'SAVESTATE', description: t('visualFlowEditor.tools.saveState.description'), implemented: false },
-  { id: 'loadstate', name: 'LOADSTATE', icon: CMD_EMOJI['LOADSTATE'], blockType: 'LOADSTATE', description: t('visualFlowEditor.tools.loadState.description'), implemented: false },
-  { id: 'quitcampaign', name: 'QUITCAMPAIGN', icon: CMD_EMOJI['QUITCAMPAIGN'], blockType: 'QUITCAMPAIGN', description: t('visualFlowEditor.tools.quitCampaign.description'), implemented: false }
+    { id: 'setflightstatusbar', name: 'SETFLIGHTSTATUSBAR', icon: CMD_EMOJI['SETFLIGHTSTATUSBAR'], blockType: 'SETFLIGHTSTATUSBAR', description: t('visualFlowEditor.tools.setFlightStatusBar.description'), implemented: true },
+  { id: 'savestate', name: 'SAVESTATE', icon: CMD_EMOJI['SAVESTATE'], blockType: 'SAVESTATE', description: t('visualFlowEditor.tools.saveState.description'), implemented: true },
+  { id: 'loadstate', name: 'LOADSTATE', icon: CMD_EMOJI['LOADSTATE'], blockType: 'LOADSTATE', description: t('visualFlowEditor.tools.loadState.description'), implemented: true },
+  { id: 'quitcampaign', name: 'QUITCAMPAIGN', icon: CMD_EMOJI['QUITCAMPAIGN'], blockType: 'QUITCAMPAIGN', description: t('visualFlowEditor.tools.quitCampaign.description'), implemented: true }
     ]
   }
 ];
