@@ -35,7 +35,6 @@ export type BlockType =
   | 'SET_TO' | 'ADD' | 'SETFOCUS' | 'RESETFOCUS'
   // Info e help
   | 'ADDINFOWINDOW' | 'SHOWINFOWINDOW' | 'SHOWHELPIMAGE'
-  | 'BUILDINGHELPSCRIPT' | 'FLIGHTHELPSCRIPT' | 'ALIENHELPSCRIPT'
   // Missione e combattimento
   | 'ADDOPPONENT' | 'SETSHIPTYPE' | 'ADDPARTTOSHIP' | 'ADDPARTTOASIDESLOT'
   | 'ACT_MISSION' | 'SETTURNBASED' | 'ADDSHIPPARTS'
@@ -52,6 +51,8 @@ export type BlockType =
   | 'ASKCHAR' | 'FOCUSCHAR'
   // Sistema
   | 'SAVESTATE' | 'LOADSTATE' | 'QUITCAMPAIGN'
+  // Tutorial / Info&Help
+  | 'BUILDINGHELPSCRIPT' | 'FLIGHTHELPSCRIPT' | 'ALIENHELPSCRIPT'
   // Contenitori
   | 'IF' | 'MENU' | 'OPT' | 'BUILD' | 'FLIGHT';
 
@@ -184,6 +185,22 @@ export interface SetFocusIfCreditsBlock extends CommandBlock {
     button: string;
     credits: number;
   };
+}
+
+// Aggiungi tipi parametri specifici (se usate interfacce per blocchi comando)
+export interface BuildingHelpScriptBlock extends BaseBlock {
+  type: 'BUILDINGHELPSCRIPT';
+  parameters: { value: number; script: string };
+}
+
+export interface FlightHelpScriptBlock extends BaseBlock {
+  type: 'FLIGHTHELPSCRIPT';
+  parameters: { script: string };
+}
+
+export interface AlienHelpScriptBlock extends BaseBlock {
+  type: 'ALIENHELPSCRIPT';
+  parameters: { script: string };
 }
 
 // Strumenti disponibili nella barra laterale

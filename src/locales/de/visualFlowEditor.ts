@@ -236,6 +236,13 @@ const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.addPartToAsideSlot.noParameters': 'Keine Parameter konfiguriert',
   'visualFlowEditor.blocks.addPartToAsideSlot.params': 'Parameter',
 
+  // SHOWHELPIMAGE Block
+  'visualFlowEditor.blocks.showHelpImage.parameters': 'Text',
+  'visualFlowEditor.blocks.showHelpImage.placeholder': 'Hilfetext oder Bildpfad eingeben...',
+  'visualFlowEditor.blocks.showHelpImage.hint': 'Text oder Pfad zu einem Hilfebild',
+  'visualFlowEditor.blocks.showHelpImage.noParameters': 'Kein Text konfiguriert',
+  'visualFlowEditor.blocks.showHelpImage.params': 'Text',
+
   // ADDSHIPPARTS Block
   'visualFlowEditor.blocks.addShipParts.partsFileLabel': 'Teile-Datei',
   'visualFlowEditor.blocks.addShipParts.selectParts': 'Teile-Datei auswählen',
@@ -409,6 +416,9 @@ const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askNoScene': 'ASK erfordert eine aktive Szene. Fügen Sie vor diesem Block SHOWDLGSCENE hinzu.',
   'visualFlowEditor.validation.askIfInvalidThen': 'Nach ASK muss der THEN-Zweig des IF-Blocks mit MENU oder GO beginnen.',
   'visualFlowEditor.validation.askIfInvalidElse': 'Nach ASK muss der ELSE-Zweig des IF-Blocks mit MENU oder GO beginnen.',
+  // HelpScript validation
+  'visualFlowEditor.validation.buildingHelpScriptParams': 'BUILDINGHELPSCRIPT erfordert Wert (Zahl) und Skript.',
+  'visualFlowEditor.validation.helpScriptParams': 'Dieser Befehl erfordert den Skript-Parameter.',
   // Info-Blöcke
   'visualFlowEditor.validation.ADDINFOWINDOW_NO_IMAGE': 'Der Block ADDINFOWINDOW muss ein Bild ausgewählt haben. Wählen Sie ein Bild aus.',
   'visualFlowEditor.validation.SHOWINFOWINDOW_NO_IMAGE': 'Der Block SHOWINFOWINDOW muss ein Bild ausgewählt haben. Wählen Sie ein Bild aus.',
@@ -621,6 +631,12 @@ const visualFlowEditorTranslations = {
   'visualFlowEditor.command.labelName': 'Labelname...',
   'visualFlowEditor.command.selectScript': 'Skript auswählen...',
   'visualFlowEditor.command.selectCondition': 'Bedingung auswählen...',
+  // HelpScript Befehlsbezeichnungen
+  'visualFlowEditor.command.buildingHelpScript': 'Bau-Hilfsskript',
+  'visualFlowEditor.command.flightHelpScript': 'Flug-Hilfsskript',
+  'visualFlowEditor.command.alienHelpScript': 'Alien-Hilfsskript',
+  'visualFlowEditor.command.script': 'Skript',
+  'visualFlowEditor.command.value': 'Verzögerung (ms)',
   'visualFlowEditor.command.opponent': 'Gegner Charakter',
   'visualFlowEditor.command.opponentPlaceholder': 'Händler, Feind, usw.',
   'visualFlowEditor.command.shipClassI': 'Klasse I',
@@ -780,6 +796,11 @@ const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.buildingHelpScript.description': 'Bau-Hilfsskript',
   'visualFlowEditor.tools.flightHelpScript.description': 'Flug-Hilfsskript',
   'visualFlowEditor.tools.alienHelpScript.description': 'Alien-Hilfsskript',
+  // Info & Hilfe Werkzeuge (Labels)
+  'visualFlowEditor.tools.infoHelp': 'Info & Hilfe',
+  'visualFlowEditor.tools.buildingHelpScript': 'Bau-Hilfsskript',
+  'visualFlowEditor.tools.flightHelpScript': 'Flug-Hilfsskript',
+  'visualFlowEditor.tools.alienHelpScript': 'Alien-Hilfsskript',
   
   // Tool Descriptions - Credits
   'visualFlowEditor.tools.addCredits.description': 'Credits hinzufügen',
@@ -849,6 +870,11 @@ const visualFlowEditorTranslations = {
   
   // Blocks
   'visualFlowEditor.blocks.modifyOpponentsBuildSpeed.percentage': 'Bau-Geschwindigkeit %',
+  
+  // Kopfzeilen kompakt / Navigation
+  'visualFlowEditor.header.navigateToScript': 'Zum Skript gehen',
+  'visualFlowEditor.header.compact.buildingHelp': 'Verzögerung: {value} • {script}',
+  'visualFlowEditor.header.compact.help': '{script}',
   
   // Variable Commands
   'visualFlowEditor.command.selectVariable': 'Variable auswählen...',

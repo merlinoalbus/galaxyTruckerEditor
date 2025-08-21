@@ -278,6 +278,19 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
     currentScript
   });
 
+  // Listener globale per richieste di navigazione a script (es. dai blocchi HelpScript)
+  useEffect(() => {
+    const onNavigateToScript = (e: Event) => {
+      const detail = (e as CustomEvent)?.detail;
+      if (detail?.scriptName) {
+        // parentBlockId non è obbligatorio per la navigazione
+        handleNavigateToSubScript(detail.scriptName, { id: detail.parentBlockId || '', type: 'SUB_SCRIPT' } as any);
+      }
+    };
+    window.addEventListener('VFE:navigateToScript', onNavigateToScript as EventListener);
+    return () => window.removeEventListener('VFE:navigateToScript', onNavigateToScript as EventListener);
+  }, [handleNavigateToSubScript]);
+
   // Usa hook per drag & drop
   const {
     draggedTool,

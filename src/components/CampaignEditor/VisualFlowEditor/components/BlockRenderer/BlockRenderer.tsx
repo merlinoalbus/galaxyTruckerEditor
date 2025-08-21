@@ -21,7 +21,6 @@ import { AddPartToAsideSlotBlock } from '../blocks/AddPartToAsideSlotBlock/AddPa
 import { AddShipPartsBlock } from '../blocks/AddShipPartsBlock/AddShipPartsBlock';
 import { FinishMissionBlock } from '../blocks/FinishMissionBlock/FinishMissionBlock';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
-
 interface BlockRendererProps {
   block: IFlowBlock;
   depth?: number;
@@ -641,6 +640,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
       </div>
     );
   }
+
+  // HelpScript blocks are rendered by CommandBlock (fallback)
 
   // Render FINISH_MISSION block
   if (block.type === 'FINISH_MISSION') {

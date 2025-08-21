@@ -158,6 +158,9 @@ const GENERAL_COMMAND_COLORS: Record<string, BlockColorConfig> = {
   'ADDINFOWINDOW': CATEGORY_COLORS[BlockCategory.INFO_HELP],
   'SHOWINFOWINDOW': CATEGORY_COLORS[BlockCategory.INFO_HELP],
   'SHOWHELPIMAGE': CATEGORY_COLORS[BlockCategory.INFO_HELP],
+  'BUILDINGHELPSCRIPT': CATEGORY_COLORS[BlockCategory.INFO_HELP],
+  'FLIGHTHELPSCRIPT': CATEGORY_COLORS[BlockCategory.INFO_HELP],
+  'ALIENHELPSCRIPT': CATEGORY_COLORS[BlockCategory.INFO_HELP],
   'GO': {
     background: 'bg-fuchsia-950/90',
     border: 'border-fuchsia-700/80',
@@ -391,6 +394,9 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   // Info
   'ADDINFOWINDOW': BlockCategory.INFO_HELP,
   'SHOWINFOWINDOW': BlockCategory.INFO_HELP,
+  'BUILDINGHELPSCRIPT': BlockCategory.INFO_HELP,
+  'FLIGHTHELPSCRIPT': BlockCategory.INFO_HELP,
+  'ALIENHELPSCRIPT': BlockCategory.INFO_HELP,
   'TIMER_START': BlockCategory.TIME,
   'TIMER_STOP': BlockCategory.TIME,
   

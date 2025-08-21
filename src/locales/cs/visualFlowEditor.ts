@@ -410,6 +410,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askNoScene': 'ASK vyžaduje aktivní scénu. Přidejte SHOWDLGSCENE před tento blok.',
   'visualFlowEditor.validation.askIfInvalidThen': 'Po ASK musí větev THEN bloku IF začínat MENU nebo GO.',
   'visualFlowEditor.validation.askIfInvalidElse': 'Po ASK musí větev ELSE bloku IF začínat MENU nebo GO.',
+  // HelpScript validation
+  'visualFlowEditor.validation.buildingHelpScriptParams': 'BUILDINGHELPSCRIPT vyžaduje value (číslo) a script.',
+  'visualFlowEditor.validation.helpScriptParams': 'Tento příkaz vyžaduje parametr script.',
   // Bloky Info
   'visualFlowEditor.validation.ADDINFOWINDOW_NO_IMAGE': 'Blok ADDINFOWINDOW musí mít vybraný obrázek. Vyberte obrázek.',
   'visualFlowEditor.validation.SHOWINFOWINDOW_NO_IMAGE': 'Blok SHOWINFOWINDOW musí mít vybraný obrázek. Vyberte obrázek.',
@@ -858,6 +861,11 @@ export const visualFlowEditorTranslations = {
   
   // Command labels
   'visualFlowEditor.command.variableLabel': 'Proměnná:',
+  'visualFlowEditor.command.buildingHelpScript': 'Skript nápovědy stavby',
+  'visualFlowEditor.command.flightHelpScript': 'Skript nápovědy letu',
+  'visualFlowEditor.command.alienHelpScript': 'Skript nápovědy mimozemšťanů',
+  'visualFlowEditor.command.script': 'Skript',
+  'visualFlowEditor.command.value': 'Zpoždění (ms)',
   
   // SET_TO Block
   'visualFlowEditor.blocks.setTo.variableLabel': 'Proměnná',
@@ -872,4 +880,22 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.add.valuePlaceholder': 'Zadejte číselnou hodnotu...',
   'visualFlowEditor.blocks.add.description': 'Přidá hodnotu k zadané proměnné',
   'visualFlowEditor.blocks.add.noVariable': 'Není vybrána žádná proměnná',
+  
+  // SHOWHELPIMAGE Block
+  'visualFlowEditor.blocks.showHelpImage.parameters': 'Text',
+  'visualFlowEditor.blocks.showHelpImage.placeholder': 'Zadejte text nápovědy nebo cestu k obrázku...',
+  'visualFlowEditor.blocks.showHelpImage.hint': 'Text nebo cesta k obrázku nápovědy',
+  'visualFlowEditor.blocks.showHelpImage.noParameters': 'Žádný text nenastaven',
+  'visualFlowEditor.blocks.showHelpImage.params': 'Text',
+  
+  // Info & Help tools (labels)
+  'visualFlowEditor.tools.infoHelp': 'Info a nápověda',
+  'visualFlowEditor.tools.buildingHelpScript': 'Skript nápovědy stavby',
+  'visualFlowEditor.tools.flightHelpScript': 'Skript nápovědy letu',
+  'visualFlowEditor.tools.alienHelpScript': 'Skript nápovědy mimozemšťanů',
+  
+  // Headers compact / navigation
+  'visualFlowEditor.header.navigateToScript': 'Přejít na skript',
+  'visualFlowEditor.header.compact.buildingHelp': 'zpoždění: {value} • {script}',
+  'visualFlowEditor.header.compact.help': '{script}',
 } as const;
