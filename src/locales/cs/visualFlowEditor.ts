@@ -795,6 +795,15 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.subOpponentCreditsByResult.description': 'Odečíst kredity',
   'visualFlowEditor.tools.addOpponentsCredits.description': 'Přidat kredity protivníka',
   
+  // Credits - Popisky UI
+  'visualFlowEditor.blocks.addOpponentsCredits.player': 'Hráč',
+  
+  // Credits - Chybové zprávy ověření
+  'visualFlowEditor.validation.ADDOPPONENTSCREDITS_INVALID_INDEX': 'ADDOPPONENTSCREDITS vyžaduje index hráče mezi 0 a 3.',
+  'visualFlowEditor.validation.ADDOPPONENTSCREDITS_NO_CREDITS': 'Hodnota kreditů je povinná. Zadejte číslo (kladné nebo záporné).',
+  'visualFlowEditor.validation.ADDCREDITS_NO_AMOUNT': 'Částka je povinná. Zadejte číslo (kladné nebo záporné).',
+  'visualFlowEditor.validation.SETCREDITS_NO_AMOUNT': 'Částka je povinná. Zadejte číslo.',
+  'visualFlowEditor.validation.ADDMISSIONCREDITS_NO_AMOUNT': 'Částka je povinná. Zadejte číslo (kladné nebo záporné).',
   // Tool Descriptions - Achievement
   'visualFlowEditor.tools.setAchievementProgress.description': 'Nastavit postup úspěchu',
   'visualFlowEditor.tools.setAchievementAttempt.description': 'Nastavit pokus o úspěch',
@@ -828,6 +837,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.metacode.selectPlayer': 'Vybrat hráče',
   'visualFlowEditor.metacode.current': 'Aktuální',
   'visualFlowEditor.metacode.playerNumber': 'Hráč {num}',
+  'visualFlowEditor.metacode.playerNumberShort': 'H{num}',
   'visualFlowEditor.metacode.generatedCode': 'Generovaný kód:',
   'visualFlowEditor.metacode.numericValue': 'Číselná hodnota',
   'visualFlowEditor.metacode.numericValueDescription': 'Vloží dynamickou nebo ordinální číselnou hodnotu.',

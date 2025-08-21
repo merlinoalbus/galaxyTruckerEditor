@@ -183,12 +183,12 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
     name: t('visualFlowEditor.tools.category.credits'),
     icon: '💰',
     tools: [
-      { id: 'addcredits', name: 'ADDCREDITS', icon: CMD_EMOJI['ADDCREDITS'], blockType: 'ADDCREDITS', description: t('visualFlowEditor.tools.addCredits.description'), implemented: false },
-      { id: 'setcredits', name: 'SETCREDITS', icon: CMD_EMOJI['SETCREDITS'], blockType: 'SETCREDITS', description: t('visualFlowEditor.tools.setCredits.description'), implemented: false },
-        { id: 'addmissioncredits', name: 'ADDMISSIONCREDITS', icon: CMD_EMOJI['ADDMISSIONCREDITS'], blockType: 'ADDMISSIONCREDITS', description: t('visualFlowEditor.tools.addMissionCredits.description'), implemented: false },
-      { id: 'addmissioncreditsbyresult', name: 'ADDMISSIONCREDITSBYRESULT', icon: CMD_EMOJI['ADDMISSIONCREDITSBYRESULT'], blockType: 'ADDMISSIONCREDITSBYRESULT', description: t('visualFlowEditor.tools.addMissionCreditsByResult.description'), implemented: false },
-      { id: 'subopponentcreditsbyresult', name: 'SUBOPPONENTCREDITSBYRESULT', icon: CMD_EMOJI['SUBOPPONENTCREDITSBYRESULT'], blockType: 'SUBOPPONENTCREDITSBYRESULT', description: t('visualFlowEditor.tools.subOpponentCreditsByResult.description'), implemented: false },
-      { id: 'addopponentscredits', name: 'ADDOPPONENTSCREDITS', icon: CMD_EMOJI['ADDOPPONENTSCREDITS'], blockType: 'ADDOPPONENTSCREDITS', description: t('visualFlowEditor.tools.addOpponentsCredits.description'), implemented: false }
+      { id: 'addcredits', name: 'ADDCREDITS', icon: CMD_EMOJI['ADDCREDITS'], blockType: 'ADDCREDITS', description: t('visualFlowEditor.tools.addCredits.description'), implemented: true, inProgress: false },
+      { id: 'setcredits', name: 'SETCREDITS', icon: CMD_EMOJI['SETCREDITS'], blockType: 'SETCREDITS', description: t('visualFlowEditor.tools.setCredits.description'), implemented: true, inProgress: false },
+        { id: 'addmissioncredits', name: 'ADDMISSIONCREDITS', icon: CMD_EMOJI['ADDMISSIONCREDITS'], blockType: 'ADDMISSIONCREDITS', description: t('visualFlowEditor.tools.addMissionCredits.description'), implemented: true, inProgress: false },
+      { id: 'addmissioncreditsbyresult', name: 'ADDMISSIONCREDITSBYRESULT', icon: CMD_EMOJI['ADDMISSIONCREDITSBYRESULT'], blockType: 'ADDMISSIONCREDITSBYRESULT', description: t('visualFlowEditor.tools.addMissionCreditsByResult.description'), implemented: true },
+      { id: 'subopponentcreditsbyresult', name: 'SUBOPPONENTCREDITSBYRESULT', icon: CMD_EMOJI['SUBOPPONENTCREDITSBYRESULT'], blockType: 'SUBOPPONENTCREDITSBYRESULT', description: t('visualFlowEditor.tools.subOpponentCreditsByResult.description'), implemented: true },
+  { id: 'addopponentscredits', name: 'ADDOPPONENTSCREDITS', icon: CMD_EMOJI['ADDOPPONENTSCREDITS'], blockType: 'ADDOPPONENTSCREDITS', description: t('visualFlowEditor.tools.addOpponentsCredits.description'), implemented: true, inProgress: false }
     ]
   },
   {

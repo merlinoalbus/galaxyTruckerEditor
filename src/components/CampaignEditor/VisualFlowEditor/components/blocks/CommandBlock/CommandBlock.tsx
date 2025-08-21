@@ -210,6 +210,87 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   };
   const renderParameters = () => {
     switch (block.type) {
+      // CREDITS COMMANDS
+      case 'ADDOPPONENTSCREDITS': {
+        const idx = typeof block.parameters?.index === 'number' ? block.parameters.index : 0;
+        const credits = typeof block.parameters?.credits === 'number' ? block.parameters.credits : 0;
+        return (
+          <div className="flex items-center gap-3">
+            <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
+              {(t as any)('visualFlowEditor.blocks.addOpponentsCredits.player')}
+            </label>
+            {/* Option menu esclusivo (segmented control) per scelta singolo giocatore */}
+            <div className="inline-flex rounded-md overflow-hidden border border-slate-700 bg-slate-800/50">
+              {[0,1,2,3].map((v) => {
+                const selected = idx === v;
+                return (
+                  <button
+                    key={v}
+                    type="button"
+                    role="radio"
+                    aria-checked={selected}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onUpdate({ parameters: { ...block.parameters, index: v } });
+                    }}
+                    className={`px-3 py-1 text-sm border-r border-slate-700 last:border-r-0 transition-colors ${selected ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700'}`}
+                    title={(t as any)('visualFlowEditor.metacode.playerNumber', { num: v + 1 })}
+                  >
+                    {(t as any)('visualFlowEditor.metacode.playerNumberShort', { num: v + 1 }) || (t as any)('visualFlowEditor.metacode.playerNumber', { num: v + 1 })}
+                  </button>
+                );
+              })}
+            </div>
+            <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
+              {(t as any)('visualFlowEditor.if.credits')}
+            </label>
+            <div className="w-32">
+              <input
+                type="number"
+                className="w-full bg-slate-800/50 text-white px-2 py-1 rounded text-sm border border-slate-700 focus:border-blue-600 focus:outline-none"
+                placeholder="0"
+                value={String(credits)}
+                onChange={(e) => onUpdate({ parameters: { ...block.parameters, credits: parseInt(e.target.value || '0', 10) } })}
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+          </div>
+        );
+      }
+      case 'ADDMISSIONCREDITSBYRESULT':
+      case 'SUBOPPONENTCREDITSBYRESULT': {
+        // Parameterless credits-by-result blocks: show informative description only
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {/* No specific description keys provided; keep UI minimal and consistent */}
+                {(block.type === 'ADDMISSIONCREDITSBYRESULT') ? (t as any)('visualFlowEditor.tools.addMissionCreditsByResult.description') : (t as any)('visualFlowEditor.tools.subOpponentCreditsByResult.description')}
+              </p>
+            </div>
+          </div>
+        );
+      }
+      case 'ADDCREDITS':
+      case 'SETCREDITS':
+      case 'ADDMISSIONCREDITS': {
+        const amount = typeof block.parameters?.amount === 'number' ? block.parameters.amount : 0;
+        return (
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-slate-400 whitespace-nowrap">
+              {(t as any)('visualFlowEditor.if.credits')}
+            </label>
+            <input
+              type="number"
+              className="w-32 px-2 py-1 bg-slate-800 text-white rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none"
+              placeholder="0"
+              value={String(amount)}
+              onChange={(e) => onUpdate({ parameters: { ...block.parameters, amount: parseInt(e.target.value || '0', 10) } })}
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        );
+      }
       // HELPSCRIPT COMMANDS (render as standard CommandBlock, single-row layout + navigate)
   case 'BUILDINGHELPSCRIPT': {
         const value = typeof block.parameters?.value === 'number' ? block.parameters.value : 0;
@@ -1132,6 +1213,34 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   // Genera i parametri compatti per la visualizzazione collapsed
   const getCompactParams = () => {
     switch (block.type) {
+      case 'ADDOPPONENTSCREDITS': {
+        const idx = typeof block.parameters?.index === 'number' ? block.parameters.index : 0;
+        const credits = block.parameters?.credits;
+        const signCredits = typeof credits === 'number' ? (credits >= 0 ? `+${credits}` : String(credits)) : '';
+        return <span className="text-gray-400">P{idx + 1}: {signCredits || '0'}</span>;
+      }
+      case 'ADDCREDITS': {
+        const amount = block.parameters?.amount;
+        const v = typeof amount === 'number' ? (amount >= 0 ? `+${amount}` : String(amount)) : '';
+        return <span className="text-gray-400">💰 {v || '0'}</span>;
+      }
+      case 'SETCREDITS': {
+        const amount = block.parameters?.amount;
+        const v = typeof amount === 'number' ? String(amount) : '';
+        return <span className="text-gray-400">💰 = {v || '0'}</span>;
+      }
+      case 'ADDMISSIONCREDITS': {
+        const amount = block.parameters?.amount;
+        const v = typeof amount === 'number' ? (amount >= 0 ? `+${amount}` : String(amount)) : '';
+        return <span className="text-gray-400">🎯 {v || '0'}</span>;
+      }
+      case 'ADDMISSIONCREDITSBYRESULT': {
+        // Parameterless summary; use concise label
+        return <span className="text-xs text-gray-400">🎯 {(t as any)('visualFlowEditor.tools.addMissionCreditsByResult.description')}</span>;
+      }
+      case 'SUBOPPONENTCREDITSBYRESULT': {
+        return <span className="text-xs text-gray-400">🤼 {(t as any)('visualFlowEditor.tools.subOpponentCreditsByResult.description')}</span>;
+      }
       case 'BUILDINGHELPSCRIPT': {
         const value = typeof block.parameters?.value === 'number' ? block.parameters.value : 0;
         const script = String(block.parameters?.script || '');

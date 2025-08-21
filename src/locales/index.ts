@@ -437,6 +437,12 @@ export type TranslationKey =
   | 'visualFlowEditor.validation.error'
   | 'visualFlowEditor.validation.setSpecConditionNoCondition'
   | 'visualFlowEditor.validation.setSpecConditionOutsideContext'
+  // Credits validation keys
+  | 'visualFlowEditor.validation.ADDOPPONENTSCREDITS_INVALID_INDEX'
+  | 'visualFlowEditor.validation.ADDOPPONENTSCREDITS_NO_CREDITS'
+  | 'visualFlowEditor.validation.ADDCREDITS_NO_AMOUNT'
+  | 'visualFlowEditor.validation.SETCREDITS_NO_AMOUNT'
+  | 'visualFlowEditor.validation.ADDMISSIONCREDITS_NO_AMOUNT'
   | 'visualFlowEditor.validation.consecutiveAskError'
   | 'visualFlowEditor.validation.blockInBuildError'
   | 'visualFlowEditor.validation.blockInFlightError'
@@ -578,6 +584,8 @@ export type TranslationKey =
   | 'visualFlowEditor.blocks.finishMission.compact'
   | 'visualFlowEditor.blocks.setSpecCondition.condition'
   | 'visualFlowEditor.blocks.modifyOpponentsBuildSpeed.percentage'
+  // Credits - UI labels
+  | 'visualFlowEditor.blocks.addOpponentsCredits.player'
   
   // SET_TO Block
   | 'visualFlowEditor.blocks.setTo.variableLabel'
@@ -921,6 +929,7 @@ export type TranslationKey =
   | 'visualFlowEditor.metacode.selectPlayer'
   | 'visualFlowEditor.metacode.current'
   | 'visualFlowEditor.metacode.playerNumber'
+  | 'visualFlowEditor.metacode.playerNumberShort'
   | 'visualFlowEditor.metacode.generatedCode'
   | 'visualFlowEditor.metacode.numericValue'
   | 'visualFlowEditor.metacode.numericValueDescription'
@@ -959,6 +968,7 @@ export type TranslationKey =
   | 'visualFlowEditor.metacode.selectPlayer'
   | 'visualFlowEditor.metacode.current'
   | 'visualFlowEditor.metacode.playerNumber'
+  | 'visualFlowEditor.metacode.playerNumberShort'
   | 'visualFlowEditor.metacode.generatedCode'
   | 'visualFlowEditor.metacode.numericValue'
   | 'visualFlowEditor.metacode.numericValueDescription'
@@ -1218,11 +1228,21 @@ export const translations: Translations = {
 // Custom hook for translations - maintains exact same functionality
 export function useTranslation() {
   const { currentLanguage } = useLanguage();
-  
-  const t = (key: TranslationKey): string => {
-    return translations[currentLanguage]?.[key] || translations.EN?.[key] || key;
+
+  // Simple interpolation: replaces {var} with provided values
+  const interpolate = (template: string, vars?: Record<string, string | number>): string => {
+    if (!vars) return template;
+    return template.replace(/\{(\w+)\}/g, (_, k: string) => {
+      const v = vars[k];
+      return v === undefined || v === null ? `{${k}}` : String(v);
+    });
   };
-  
+
+  const t = (key: TranslationKey, vars?: Record<string, string | number>): string => {
+    const base = translations[currentLanguage]?.[key] || translations.EN?.[key] || key;
+    return interpolate(base, vars);
+  };
+
   return { t };
 }
 

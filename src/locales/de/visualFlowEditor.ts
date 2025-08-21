@@ -810,6 +810,15 @@ const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.subOpponentCreditsByResult.description': 'Credits abziehen',
   'visualFlowEditor.tools.addOpponentsCredits.description': 'Gegner-Credits hinzufügen',
   
+  // Credits - UI-Beschriftungen
+  'visualFlowEditor.blocks.addOpponentsCredits.player': 'Spieler',
+  
+  // Credits - Validierungsmeldungen
+  'visualFlowEditor.validation.ADDOPPONENTSCREDITS_INVALID_INDEX': 'ADDOPPONENTSCREDITS erfordert einen Spielerindex zwischen 0 und 3.',
+  'visualFlowEditor.validation.ADDOPPONENTSCREDITS_NO_CREDITS': 'Kreditwert ist erforderlich. Bitte eine Zahl angeben (positiv oder negativ).',
+  'visualFlowEditor.validation.ADDCREDITS_NO_AMOUNT': 'Betrag ist erforderlich. Bitte eine Zahl angeben (positiv oder negativ).',
+  'visualFlowEditor.validation.SETCREDITS_NO_AMOUNT': 'Betrag ist erforderlich. Bitte eine Zahl angeben.',
+  'visualFlowEditor.validation.ADDMISSIONCREDITS_NO_AMOUNT': 'Betrag ist erforderlich. Bitte eine Zahl angeben (positiv oder negativ).',
   // Tool Descriptions - Achievement
   'visualFlowEditor.tools.setAchievementProgress.description': 'Erfolg-Fortschritt setzen',
   'visualFlowEditor.tools.setAchievementAttempt.description': 'Erfolg-Versuch setzen',
@@ -843,6 +852,7 @@ const visualFlowEditorTranslations = {
   'visualFlowEditor.metacode.selectPlayer': 'Spieler auswählen',
   'visualFlowEditor.metacode.current': 'Aktuell',
   'visualFlowEditor.metacode.playerNumber': 'Spieler {num}',
+  'visualFlowEditor.metacode.playerNumberShort': 'S{num}',
   'visualFlowEditor.metacode.generatedCode': 'Generierter Code:',
   'visualFlowEditor.metacode.numericValue': 'Numerischer Wert',
   'visualFlowEditor.metacode.numericValueDescription': 'Fügt einen dynamischen oder ordinalen numerischen Wert ein.',

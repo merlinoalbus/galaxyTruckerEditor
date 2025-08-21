@@ -883,6 +883,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.metacode.selectPlayer': 'Seleziona giocatore',
   'visualFlowEditor.metacode.current': 'Corrente',
   'visualFlowEditor.metacode.playerNumber': 'Player {num}',
+  'visualFlowEditor.metacode.playerNumberShort': 'G{num}',
   'visualFlowEditor.metacode.generatedCode': 'Codice generato:',
   'visualFlowEditor.metacode.numericValue': 'Valore Numerico',
   'visualFlowEditor.metacode.numericValueDescription': 'Inserisce un valore numerico dinamico o ordinale.',
@@ -907,5 +908,15 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.metacode.plural': 'Plurale',
   'visualFlowEditor.metacode.singularExample': 'singolare (es. point)',
   'visualFlowEditor.metacode.pluralExample': 'plurale (es. points)',
+  
+  // Credits - Etichette UI
+  'visualFlowEditor.blocks.addOpponentsCredits.player': 'Giocatore',
+  
+  // Credits - Messaggi di validazione
+  'visualFlowEditor.validation.ADDOPPONENTSCREDITS_INVALID_INDEX': 'ADDOPPONENTSCREDITS richiede un indice giocatore tra 0 e 3.',
+  'visualFlowEditor.validation.ADDOPPONENTSCREDITS_NO_CREDITS': 'Il valore dei crediti è obbligatorio. Specifica un numero (positivo o negativo).',
+  'visualFlowEditor.validation.ADDCREDITS_NO_AMOUNT': 'L\'importo è obbligatorio. Specifica un numero (positivo o negativo).',
+  'visualFlowEditor.validation.SETCREDITS_NO_AMOUNT': 'L\'importo è obbligatorio. Specifica un numero.',
+  'visualFlowEditor.validation.ADDMISSIONCREDITS_NO_AMOUNT': 'L\'importo è obbligatorio. Specifica un numero (positivo o negativo).',
   
 } as const;

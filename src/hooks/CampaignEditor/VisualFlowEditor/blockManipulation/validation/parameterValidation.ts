@@ -608,6 +608,35 @@ export const validateModifyOpponentsBuildSpeedParameters = (block: any): { valid
 };
 
 /**
+ * Valida i parametri di un blocco ADDOPPONENTSCREDITS
+ */
+export const validateAddOpponentsCreditsParameters = (block: any): { valid: boolean; error?: string } => {
+  const idx = block.parameters?.index;
+  const credits = block.parameters?.credits;
+  const idxNum = Number(idx);
+  const creditsNum = Number(credits);
+  if (!Number.isInteger(idxNum) || idxNum < 0 || idxNum > 3) {
+    return { valid: false, error: 'ADDOPPONENTSCREDITS_INVALID_INDEX' };
+  }
+  if (Number.isNaN(creditsNum)) {
+    return { valid: false, error: 'ADDOPPONENTSCREDITS_NO_CREDITS' };
+  }
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri dei blocchi con singolo amount (ADDCREDITS/SETCREDITS/ADDMISSIONCREDITS)
+ */
+export const validateSingleAmountCreditsParameters = (block: any): { valid: boolean; error?: string } => {
+  const amount = block.parameters?.amount;
+  const num = Number(amount);
+  if (Number.isNaN(num)) {
+    return { valid: false, error: `${block.type}_NO_AMOUNT` };
+  }
+  return { valid: true };
+};
+
+/**
  * Valida i parametri di un blocco in base al suo tipo
  */
 export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
@@ -693,6 +722,12 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return validateSetSpecConditionParameters(block);
     case 'MODIFYOPPONENTSBUILDSPEED':
       return validateModifyOpponentsBuildSpeedParameters(block);
+    case 'ADDOPPONENTSCREDITS':
+      return validateAddOpponentsCreditsParameters(block);
+    case 'ADDCREDITS':
+    case 'SETCREDITS':
+    case 'ADDMISSIONCREDITS':
+      return validateSingleAmountCreditsParameters(block);
     // Map commands: require node
     case 'SHOWNODE':
     case 'HIDENODE':

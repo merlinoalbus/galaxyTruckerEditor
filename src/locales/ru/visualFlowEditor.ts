@@ -652,6 +652,15 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.subOpponentCreditsByResult.description': 'Вычесть кредиты',
   'visualFlowEditor.tools.addOpponentsCredits.description': 'Добавить кредиты противника',
   
+  // Credits - Метки UI
+  'visualFlowEditor.blocks.addOpponentsCredits.player': 'Игрок',
+  
+  // Credits - Сообщения проверки
+  'visualFlowEditor.validation.ADDOPPONENTSCREDITS_INVALID_INDEX': 'ADDOPPONENTSCREDITS требует индекс игрока от 0 до 3.',
+  'visualFlowEditor.validation.ADDOPPONENTSCREDITS_NO_CREDITS': 'Требуется значение кредитов. Укажите число (положительное или отрицательное).',
+  'visualFlowEditor.validation.ADDCREDITS_NO_AMOUNT': 'Требуется сумма. Укажите число (положительное или отрицательное).',
+  'visualFlowEditor.validation.SETCREDITS_NO_AMOUNT': 'Требуется сумма. Укажите число.',
+  'visualFlowEditor.validation.ADDMISSIONCREDITS_NO_AMOUNT': 'Требуется сумма. Укажите число (положительное или отрицательное).',
   // Tool Descriptions - Achievement
   'visualFlowEditor.tools.setAchievementProgress.description': 'Установить прогресс достижения',
   'visualFlowEditor.tools.setAchievementAttempt.description': 'Установить попытку достижения',
@@ -685,6 +694,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.metacode.selectPlayer': 'Выбрать игрока',
   'visualFlowEditor.metacode.current': 'Текущий',
   'visualFlowEditor.metacode.playerNumber': 'Игрок {num}',
+  'visualFlowEditor.metacode.playerNumberShort': 'И{num}',
   'visualFlowEditor.metacode.generatedCode': 'Сгенерированный код:',
   'visualFlowEditor.metacode.numericValue': 'Числовое Значение',
   'visualFlowEditor.metacode.numericValueDescription': 'Вставляет динамическое или порядковое числовое значение.',
