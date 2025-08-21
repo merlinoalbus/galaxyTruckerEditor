@@ -554,6 +554,9 @@ export type TranslationKey =
   | 'visualFlowEditor.blocks.exitMenu.info'
   | 'visualFlowEditor.blocks.exitMenu.compact'
   | 'visualFlowEditor.blocks.exitMenu.fullDescription'
+  | 'visualFlowEditor.blocks.saveState.compact'
+  | 'visualFlowEditor.blocks.loadState.compact'
+  | 'visualFlowEditor.blocks.quitCampaign.compact'
   // Mission parameterless blocks
   | 'visualFlowEditor.blocks.setTurnBased.compact'
   | 'visualFlowEditor.blocks.setTurnBased.fullDescription'
@@ -758,6 +761,7 @@ export type TranslationKey =
   | 'visualFlowEditor.command.dialogLabel'
   | 'visualFlowEditor.command.questionText'
   | 'visualFlowEditor.command.questionLabel'
+  | 'visualFlowEditor.command.statusText'
   | 'visualFlowEditor.command.milliseconds'
   | 'visualFlowEditor.command.selectLabel'
   | 'visualFlowEditor.command.labelName'
@@ -1095,6 +1099,10 @@ export type TranslationKey =
   | 'visualFlowEditor.blocks.characterSelector.noAvailable'
   | 'visualFlowEditor.blocks.characterSelector.noVisible'
   | 'visualFlowEditor.blocks.characterSelector.selected'
+  | 'visualFlowEditor.blocks.characterSelector.none'
+  | 'visualFlowEditor.header.navigateToScript'
+  | 'visualFlowEditor.header.compact.buildingHelp'
+  | 'visualFlowEditor.header.compact.help'
   
   // Visual Flow Editor - Tool Descriptions
   | 'visualFlowEditor.tools.delay.description'

@@ -226,6 +226,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.characterSelector.noAvailable': 'No hay personajes disponibles para mostrar',
   'visualFlowEditor.blocks.characterSelector.noVisible': 'No hay personajes visibles para ocultar',
   'visualFlowEditor.blocks.characterSelector.selected': 'Seleccionado',
+  'visualFlowEditor.blocks.characterSelector.none': 'Ninguno',
   
   // ADDPARTTOSHIP Block
   'visualFlowEditor.blocks.addPartToShip.parameters': 'Parámetros',
@@ -650,6 +651,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.shipClassI': 'Clase I',
   'visualFlowEditor.command.shipClassII': 'Clase II',
   'visualFlowEditor.command.shipClassIII': 'Clase III',
+  'visualFlowEditor.command.statusText': 'Texto de estado',
   'visualFlowEditor.command.selectRoute': 'Seleccionar ruta...',
   'visualFlowEditor.command.selectButton': 'Seleccionar botón...',
   'visualFlowEditor.command.selectCondition': 'Seleccionar condición...',
@@ -849,6 +851,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.saveState.description': 'Guardar estado del juego',
   'visualFlowEditor.tools.loadState.description': 'Cargar estado del juego',
   'visualFlowEditor.tools.quitCampaign.description': 'Salir de la campaña',
+  'visualFlowEditor.blocks.saveState.compact': 'Guardar estado',
+  'visualFlowEditor.blocks.loadState.compact': 'Cargar estado',
+  'visualFlowEditor.blocks.quitCampaign.compact': 'Salir campaña',
+  'visualFlowEditor.blocks.saveState.fullDescription': 'Guarda el estado actual de la campaña permitiendo restaurarlo posteriormente con LoadState. Útil para crear puntos de guardado durante la narrativa.',
+  'visualFlowEditor.blocks.loadState.fullDescription': 'Carga un estado previamente guardado de la campaña. Restaura la situación del jugador, misiones, personajes y variables al momento del guardado.',
+  'visualFlowEditor.blocks.quitCampaign.fullDescription': 'Termina inmediatamente la campaña y devuelve al jugador al menú principal. Usar con precaución ya que interrumpe definitivamente el flujo narrativo.',
   
   // Metacode Modal Translations
   'visualFlowEditor.metacode.playerReference': 'Referencia del Jugador',
@@ -910,4 +918,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.add.valuePlaceholder': 'Ingrese valor numérico...',
   'visualFlowEditor.blocks.add.description': 'Suma un valor a la variable especificada',
   'visualFlowEditor.blocks.add.noVariable': 'Ninguna variable seleccionada',
+
+  // ASKCHAR/FOCUSCHAR validation keys
+  'visualFlowEditor.validation.ASKCHAR_NO_CHARACTER': 'El bloque ASKCHAR debe tener un personaje seleccionado. Selecciona un personaje de la lista.',
+  'visualFlowEditor.validation.ASKCHAR_NO_TEXT': 'El bloque ASKCHAR debe tener texto. Ingresa el diálogo del personaje.',
+  'visualFlowEditor.validation.ASKCHAR_NO_SCENE': 'ASKCHAR requiere una escena activa. Agrega SHOWDLGSCENE antes de este bloque.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_CHARACTER': 'El bloque FOCUSCHAR debe tener un personaje seleccionado. Selecciona un personaje de la lista.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_SCENE': 'FOCUSCHAR requiere una escena activa. Agrega SHOWDLGSCENE antes de este bloque.',
+  
 } as const;

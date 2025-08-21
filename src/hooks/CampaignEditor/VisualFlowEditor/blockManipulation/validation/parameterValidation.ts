@@ -117,6 +117,29 @@ export const validateAskParameters = (block: any, allBlocks?: IFlowBlock[], char
 };
 
 /**
+ * Valida i parametri di un blocco ASKCHAR
+ * Regole: come ASK (testo multilingua richiesto e scena attiva) + personaggio selezionato
+ */
+export const validateAskCharParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
+  // Personaggio obbligatorio
+  if (!block.parameters?.character || String(block.parameters.character).trim().length === 0) {
+    return { valid: false, error: 'ASKCHAR_NO_CHARACTER' };
+  }
+  // Testo multilingua obbligatorio
+  if (!isMultilingualTextValid(block.parameters?.text)) {
+    return { valid: false, error: 'ASKCHAR_NO_TEXT' };
+  }
+  // Deve esserci una scena attiva
+  if (allBlocks && block.id) {
+    const sceneState = simulateSceneExecution(allBlocks, block.id, characters);
+    if (!sceneState.isInDialogScene) {
+      return { valid: false, error: 'ASKCHAR_NO_SCENE' };
+    }
+  }
+  return { valid: true };
+};
+
+/**
  * Valida che dopo un ASK ci sia un IF con MENU/GO come primi elementi
  */
 export const validateAskIfStructure = (askBlock: any, allBlocks: IFlowBlock[]): { valid: boolean; error?: string } => {
@@ -398,6 +421,23 @@ export const validateHideCharParameters = (block: any, allBlocks?: IFlowBlock[],
 };
 
 /**
+ * Valida i parametri di un blocco FOCUSCHAR
+ * Regole minime: personaggio selezionato e (se disponibile) scena attiva
+ */
+export const validateFocusCharParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
+  if (!block.parameters?.character || String(block.parameters.character).trim().length === 0) {
+    return { valid: false, error: 'FOCUSCHAR_NO_CHARACTER' };
+  }
+  if (allBlocks && block.id) {
+    const sceneState = simulateSceneExecution(allBlocks, block.id, characters);
+    if (!sceneState.isInDialogScene) {
+      return { valid: false, error: 'FOCUSCHAR_NO_SCENE' };
+    }
+  }
+  return { valid: true };
+};
+
+/**
  * Valida i parametri di un blocco ADDOPPONENT
  */
 export const validateAddOpponentParameters = (block: any): { valid: boolean; error?: string } => {
@@ -668,6 +708,15 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       }
       return askValidation;
     }
+    case 'ASKCHAR': {
+      const askCharValidation = validateAskCharParameters(block, allBlocks, characters);
+      if (!askCharValidation.valid) return askCharValidation;
+      if (allBlocks) {
+        // Riutilizza la stessa regola strutturale di ASK
+        return validateAskIfStructure(block, allBlocks);
+      }
+      return askCharValidation;
+    }
     case 'GO':
       return validateGoParameters(block);
     case 'LABEL':
@@ -680,6 +729,8 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return validateShowCharParameters(block, allBlocks, characters);
     case 'HIDECHAR':
       return validateHideCharParameters(block, allBlocks, characters);
+    case 'FOCUSCHAR':
+      return validateFocusCharParameters(block, allBlocks, characters);
     case 'CHANGECHAR':
       return validateChangeCharParameters(block, allBlocks, characters);
     case 'ADDOPPONENT':

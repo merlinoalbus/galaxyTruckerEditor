@@ -367,6 +367,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.characterSelector.noAvailable': 'No characters available to show',
   'visualFlowEditor.blocks.characterSelector.noVisible': 'No visible characters to hide',
   'visualFlowEditor.blocks.characterSelector.selected': 'Selected',
+  'visualFlowEditor.blocks.characterSelector.none': 'None',
   
   // Validation Error Messages
   'visualFlowEditor.validation.error': 'Validation error',
@@ -640,6 +641,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.dialogLabel': 'Dialog',
   'visualFlowEditor.command.questionText': 'Question text',
   'visualFlowEditor.command.questionLabel': 'Question',
+  'visualFlowEditor.command.statusText': 'Status text',
   'visualFlowEditor.command.milliseconds': 'Milliseconds (e.g. 1000 = 1 second)',
   'visualFlowEditor.command.selectLabel': 'Select label...',
   'visualFlowEditor.command.labelName': 'Label name...',
@@ -855,6 +857,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.saveState.description': 'Save game state',
   'visualFlowEditor.tools.loadState.description': 'Load game state',
   'visualFlowEditor.tools.quitCampaign.description': 'Quit campaign',
+  'visualFlowEditor.blocks.saveState.compact': 'Save state',
+  'visualFlowEditor.blocks.loadState.compact': 'Load state',
+  'visualFlowEditor.blocks.quitCampaign.compact': 'Quit campaign',
+  'visualFlowEditor.blocks.saveState.fullDescription': 'Saves the current campaign state allowing it to be restored later with LoadState. Useful for creating save points during the narrative.',
+  'visualFlowEditor.blocks.loadState.fullDescription': 'Loads a previously saved campaign state. Restores the player\'s situation, missions, characters and variables to the moment of saving.',
+  'visualFlowEditor.blocks.quitCampaign.fullDescription': 'Immediately terminates the campaign and returns the player to the main menu. Use with caution as it definitively interrupts the narrative flow.',
   
   // Metacode Modal Translations
   'visualFlowEditor.metacode.playerReference': 'Player Reference',
@@ -905,4 +913,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.ADDCREDITS_NO_AMOUNT': 'Amount is required. Specify a number (positive or negative).',
   'visualFlowEditor.validation.SETCREDITS_NO_AMOUNT': 'Amount is required. Specify a number.',
   'visualFlowEditor.validation.ADDMISSIONCREDITS_NO_AMOUNT': 'Amount is required. Specify a number (positive or negative).',
+
+  // ASKCHAR/FOCUSCHAR validation keys
+  'visualFlowEditor.validation.ASKCHAR_NO_CHARACTER': 'ASKCHAR block must have a character selected. Select a character from the list.',
+  'visualFlowEditor.validation.ASKCHAR_NO_TEXT': 'ASKCHAR block must have text. Enter the character\'s dialogue.',
+  'visualFlowEditor.validation.ASKCHAR_NO_SCENE': 'ASKCHAR requires an active scene. Add SHOWDLGSCENE before this block.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_CHARACTER': 'FOCUSCHAR block must have a character selected. Select a character from the list.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_SCENE': 'FOCUSCHAR requires an active scene. Add SHOWDLGSCENE before this block.',
+  
 } as const;

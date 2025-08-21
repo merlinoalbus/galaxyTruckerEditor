@@ -210,6 +210,79 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   };
   const renderParameters = () => {
     switch (block.type) {
+      // CHARACTERS: ASKCHAR, FOCUSCHAR
+      case 'ASKCHAR': {
+        const character = String(block.parameters?.character || '');
+        const text = typeof block.parameters?.text === 'object' ? (block.parameters?.text as any) : (block.parameters?.text ? { EN: String(block.parameters.text) } : {});
+        return (
+          <div className="flex items-start gap-3" style={{ height: '220px' }}>
+            <div className="flex-1">
+              <CharacterSelector
+                value={character}
+                onChange={(value) => onUpdate({ parameters: { ...block.parameters, character: value } })}
+                mode="show"
+                className="h-full"
+                characters={characters}
+                simulatedSceneState={simulatedSceneState}
+              />
+            </div>
+            <div className="flex-[1.2]">
+              <MultilingualTextEditor
+                value={text as any}
+                onChange={(value) => onUpdate({ parameters: { ...block.parameters, text: value } })}
+                placeholder={t('visualFlowEditor.command.questionText')}
+                isCustom={isCustom}
+                availableLanguages={availableLanguages}
+                label={t('visualFlowEditor.command.questionLabel')}
+              />
+            </div>
+          </div>
+        );
+      }
+      case 'FOCUSCHAR': {
+        const character = String(block.parameters?.character || '');
+        return (
+          <div style={{ height: '180px' }}>
+            <CharacterSelector
+              value={character}
+              onChange={(value) => onUpdate({ parameters: { ...block.parameters, character: value } })}
+              mode="hide"
+              className="h-full w-full"
+              characters={characters}
+              simulatedSceneState={simulatedSceneState}
+            />
+          </div>
+        );
+      }
+      // SYSTEM: SETFLIGHTSTATUSBAR (multilingual text), SAVESTATE/LOADSTATE/QUITCAMPAIGN (info only)
+      case 'SETFLIGHTSTATUSBAR': {
+        const value = typeof block.parameters?.text === 'object' ? (block.parameters?.text as any) : (block.parameters?.text ? { EN: String(block.parameters.text) } : {});
+        return (
+          <div className="space-y-2">
+            <MultilingualTextEditor
+              value={value}
+              onChange={(newValue) => onUpdate({ parameters: { ...block.parameters, text: newValue } })}
+              placeholder={(t as any)('visualFlowEditor.command.statusText')}
+              isCustom={isCustom}
+              availableLanguages={availableLanguages}
+            />
+          </div>
+        );
+      }
+      case 'SAVESTATE':
+      case 'LOADSTATE':
+      case 'QUITCAMPAIGN': {
+        const key = block.type === 'SAVESTATE' ? 'saveState' : block.type === 'LOADSTATE' ? 'loadState' : 'quitCampaign';
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {(t as any)(`visualFlowEditor.blocks.${key}.fullDescription`) || (t as any)(`visualFlowEditor.tools.${key}.description`)}
+              </p>
+            </div>
+          </div>
+        );
+      }
       // CREDITS COMMANDS
       case 'ADDOPPONENTSCREDITS': {
         const idx = typeof block.parameters?.index === 'number' ? block.parameters.index : 0;
@@ -1213,6 +1286,37 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   // Genera i parametri compatti per la visualizzazione collapsed
   const getCompactParams = () => {
     switch (block.type) {
+      case 'ASKCHAR': {
+        const character = String(block.parameters?.character || '');
+        const textObj = block.parameters?.text as any;
+        let txt = '';
+        if (textObj) {
+          if (typeof textObj === 'string') txt = textObj; else txt = textObj[currentLanguage] || textObj.EN || '';
+        }
+        return (
+          <span className="text-gray-400">
+            {character ? `🎭 ${character}` : '🎭 …'}{txt ? ` — "${txt}"` : ''}
+          </span>
+        );
+      }
+      case 'FOCUSCHAR': {
+        const character = String(block.parameters?.character || '');
+        return <span className="text-gray-400">🎯 {character || '…'}</span>;
+      }
+      case 'SETFLIGHTSTATUSBAR': {
+        const textObj = block.parameters?.text as any;
+        let txt = '';
+        if (textObj) {
+          if (typeof textObj === 'string') txt = textObj; else txt = textObj[currentLanguage] || textObj.EN || '';
+        }
+  return <span className="text-gray-400">🛩️ {txt ? `"${txt}"` : (t as any)('visualFlowEditor.command.statusText')}</span>;
+      }
+      case 'SAVESTATE':
+        return <span className="text-xs text-gray-400">💾 {(t as any)('visualFlowEditor.blocks.saveState.compact') || (t as any)('visualFlowEditor.tools.saveState.description')}</span>;
+      case 'LOADSTATE':
+        return <span className="text-xs text-gray-400">📂 {(t as any)('visualFlowEditor.blocks.loadState.compact') || (t as any)('visualFlowEditor.tools.loadState.description')}</span>;
+      case 'QUITCAMPAIGN':
+        return <span className="text-xs text-gray-400">🚪 {(t as any)('visualFlowEditor.blocks.quitCampaign.compact') || (t as any)('visualFlowEditor.tools.quitCampaign.description')}</span>;
       case 'ADDOPPONENTSCREDITS': {
         const idx = typeof block.parameters?.index === 'number' ? block.parameters.index : 0;
         const credits = block.parameters?.credits;

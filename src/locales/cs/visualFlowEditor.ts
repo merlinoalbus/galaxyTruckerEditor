@@ -195,6 +195,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.characterSelector.noAvailable': 'Žádné dostupné postavy k zobrazení',
   'visualFlowEditor.blocks.characterSelector.noVisible': 'Žádné viditelné postavy ke skrytí',
   'visualFlowEditor.blocks.characterSelector.selected': 'Vybráno',
+  'visualFlowEditor.blocks.characterSelector.none': 'Žádné',
 
   // Mission Commands (parameterless)
   'visualFlowEditor.blocks.setTurnBased.compact': 'Nastavit tahový režim',
@@ -635,6 +636,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.shipClassI': 'Třída I',
   'visualFlowEditor.command.shipClassII': 'Třída II',
   'visualFlowEditor.command.shipClassIII': 'Třída III',
+  'visualFlowEditor.command.statusText': 'Text stavu',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Název skriptu...',
@@ -830,6 +832,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.saveState.description': 'Uložit stav hry',
   'visualFlowEditor.tools.loadState.description': 'Načíst stav hry',
   'visualFlowEditor.tools.quitCampaign.description': 'Ukončit kampaň',
+  'visualFlowEditor.blocks.saveState.compact': 'Uložit stav',
+  'visualFlowEditor.blocks.loadState.compact': 'Načíst stav',
+  'visualFlowEditor.blocks.quitCampaign.compact': 'Ukončit',
+  'visualFlowEditor.blocks.saveState.fullDescription': 'Uloží aktuální stav kampaně a umožní jej později obnovit pomocí LoadState. Užitečné pro vytváření bodů uložení během vyprávění.',
+  'visualFlowEditor.blocks.loadState.fullDescription': 'Načte dříve uložený stav kampaně. Obnoví situaci hráče, mise, postavy a proměnné v okamžiku uložení.',
+  'visualFlowEditor.blocks.quitCampaign.fullDescription': 'Okamžitě ukončí kampaň a vrátí hráče do hlavního menu. Používejte opatrně, protože definitivně přeruší tok vyprávění.',
   
   // Metacode Modal Translations
   'visualFlowEditor.metacode.playerReference': 'Reference hráče',
@@ -908,4 +916,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.header.navigateToScript': 'Přejít na skript',
   'visualFlowEditor.header.compact.buildingHelp': 'zpoždění: {value} • {script}',
   'visualFlowEditor.header.compact.help': '{script}',
+
+  // ASKCHAR and FOCUSCHAR Validation
+  'visualFlowEditor.validation.ASKCHAR_NO_CHARACTER': 'ASKCHAR blok musí mít vybranou postavu. Vyberte postavu.',
+  'visualFlowEditor.validation.ASKCHAR_NO_TEXT': 'ASKCHAR blok musí mít zadaný text. Zadejte text pro postavu.',
+  'visualFlowEditor.validation.ASKCHAR_NO_SCENE': 'ASKCHAR blok musí být použit ve scéně. Přidejte blok do scény.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_CHARACTER': 'FOCUSCHAR blok musí mít vybranou postavu. Vyberte postavu.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_SCENE': 'FOCUSCHAR blok musí být použit ve scéně. Přidejte blok do scény.',
 } as const;
