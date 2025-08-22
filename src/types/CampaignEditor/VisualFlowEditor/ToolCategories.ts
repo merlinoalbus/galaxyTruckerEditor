@@ -223,6 +223,21 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
   { id: 'quitcampaign', name: 'QUITCAMPAIGN', icon: CMD_EMOJI['QUITCAMPAIGN'], blockType: 'QUITCAMPAIGN', description: t('visualFlowEditor.tools.quitCampaign.description'), implemented: true }
     ]
   }
+  ,
+  {
+    id: 'deck',
+    name: 'Deck',
+    icon: '🃎',
+    tools: [
+      { id: 'deckaddcardtype', name: 'DECKADDCARDTYPE', icon: CMD_EMOJI['DECKADDCARDTYPE'] || '➕🃏', blockType: 'DECKADDCARDTYPE' as any, description: 'Aggiungi tipo carta (param string)', implemented: false, inProgress: true },
+      { id: 'deckaddallcards', name: 'DECKADDALLCARDS', icon: CMD_EMOJI['DECKADDALLCARDS'] || '📥🃏', blockType: 'DECKADDALLCARDS' as any, description: 'Aggiungi tutte le carte', implemented: false, inProgress: true },
+      { id: 'deckaddcardround', name: 'DECKADDCARDROUND', icon: CMD_EMOJI['DECKADDCARDROUND'] || '🔁🃏', blockType: 'DECKADDCARDROUND' as any, description: 'Aggiungi carte per round', implemented: false, inProgress: true },
+      { id: 'deckaddruleposition', name: 'DECKADDRULEPOSITION', icon: CMD_EMOJI['DECKADDRULEPOSITION'] || '📌🃏', blockType: 'DECKADDRULEPOSITION' as any, description: 'Regola posizione', implemented: false, inProgress: true },
+      { id: 'deckaddrulerange', name: 'DECKADDRULERANGE', icon: CMD_EMOJI['DECKADDRULERANGE'] || '📏🃏', blockType: 'DECKADDRULERANGE' as any, description: 'Regola intervallo', implemented: false, inProgress: true },
+      { id: 'deckshuffle', name: 'DECKSHUFFLE', icon: CMD_EMOJI['DECKSHUFFLE'] || '🔀🃏', blockType: 'DECKSHUFFLE' as any, description: 'Mescola deck', implemented: false, inProgress: true },
+      { id: 'setsupercardscnt', name: 'SETSUPERCARDSCNT', icon: CMD_EMOJI['SETSUPERCARDSCNT'] || '⭐🃏', blockType: 'SETSUPERCARDSCNT' as any, description: 'Imposta super carte', implemented: false, inProgress: true }
+    ]
+  }
 ];
 
 // Nota: TOOL_CATEGORIES rimosso per evitare esecuzione durante l'import

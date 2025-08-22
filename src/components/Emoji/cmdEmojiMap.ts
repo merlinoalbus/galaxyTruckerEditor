@@ -78,5 +78,13 @@ export const CMD_EMOJI: Record<string, string> = {
   MENU: "☰",
   OPT: "⭕",
   BUILD: "🏗️",
-  FLIGHT: "🛫"
+  FLIGHT: "🛫",
+  // Deck commands (toolbar placeholders)
+  DECKADDCARDTYPE: "➕🃏",
+  DECKADDALLCARDS: "📥🃏",
+  DECKADDCARDROUND: "🔁🃏",
+  DECKADDRULEPOSITION: "📌🃏",
+  DECKADDRULERANGE: "📏🃏",
+  DECKSHUFFLE: "🔀🃏",
+  SETSUPERCARDSCNT: "⭐🃏"
 };

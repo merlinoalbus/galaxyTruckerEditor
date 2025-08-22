@@ -11,10 +11,18 @@ export const convertBlocksToJson = (blocks: any[]): any[] => {
       jsonBlock.blocksMission = convertBlocksToJson(block.blocksMission || []);
       jsonBlock.blocksFinish = convertBlocksToJson(block.blocksFinish || []);
     } else if (block.type === 'IF') {
-      jsonBlock.ifType = block.ifType || 'IF';
-      // SEMPRE includi variabile e valore, anche se vuoti
-      jsonBlock.variabile = block.variabile || '';
-      jsonBlock.valore = block.valore !== undefined ? block.valore : '';
+      const ifType = block.ifType || 'IF';
+      jsonBlock.ifType = ifType;
+      // Gestione parametri in base al tipo di IF
+      const valueTypes = new Set(['IF_HAS_CREDITS','IF_IS','IF_MAX','IF_MIN','IF_PROB','IFMISSIONRESULTIS','IFMISSIONRESULTMIN','IF_ORDER','IF_POSITION_ORDER']);
+      const variableTypes = new Set(['IF','IFNOT','IF_IS','IF_MAX','IF_MIN','IFMISSIONRESULTIS','IFMISSIONRESULTMIN']);
+
+      if (variableTypes.has(ifType) && block.variabile !== undefined && block.variabile !== '') {
+        jsonBlock.variabile = block.variabile;
+      }
+      if (valueTypes.has(ifType) && block.valore !== undefined && block.valore !== '') {
+        jsonBlock.valore = block.valore;
+      }
       jsonBlock.numThen = block.numThen || 0;
       jsonBlock.numElse = block.numElse || 0;
       if (block.thenBlocks) {
@@ -75,6 +83,22 @@ export const convertBlocksToJson = (blocks: any[]): any[] => {
       jsonBlock.parameters = {
         params: block.parameters.params || ''
       };
+      } else if (
+        (
+          block.type === 'DECKADDCARDTYPE' ||
+          block.type === 'DECKREMOVECARDTYPE' ||
+          block.type === 'DECKADDALLCARDS' ||
+          block.type === 'DECKADDCARDROUND' ||
+          block.type === 'DECKADDRULEPOSITION' ||
+          block.type === 'DECKADDRULERANGE' ||
+          block.type === 'DECKSHUFFLE' ||
+          block.type === 'SETSUPERCARDSCNT'
+        )
+      ) {
+        // Comandi Deck: parametro generico 'params' o nessuno
+        if (block.parameters && typeof block.parameters.params === 'string') {
+          jsonBlock.parameters = { params: block.parameters.params };
+        }
     } else if (block.type === 'UNLOCKSHIPPLAN' && block.parameters) {
       // Usa chiave standard 'shipPlan' (compat con legacy 'plan')
       const value = block.parameters.shipPlan || block.parameters.plan || block.parameters.params || '';
