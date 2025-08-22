@@ -3,6 +3,44 @@
  */
 
 export const visualFlowEditorTranslations = {
+  // Deck tools
+  'visualFlowEditor.tools.deckAddCardType.description': 'Añade tipos de cartas específicos al mazo. Parámetros: cadena única con ids/tipos y calificadores opcionales.',
+  'visualFlowEditor.tools.deckAddAllCards.description': 'Añade todas las cartas disponibles al mazo.',
+  'visualFlowEditor.tools.deckAddCardRound.description': 'Añade cartas para una ronda específica. Parámetros: cadena única.',
+  'visualFlowEditor.tools.deckAddRulePosition.description': 'Añade una regla de posición al mazo. Parámetros: cadena única.',
+  'visualFlowEditor.tools.deckAddRuleRange.description': 'Añade una regla de rango al mazo. Parámetros: cadena única.',
+  'visualFlowEditor.tools.deckShuffle.description': 'Baraja el mazo.',
+  'visualFlowEditor.tools.setSuperCardsCnt.description': 'Define el número de super cartas. Parámetros: cadena única (p. ej., cantidad).',
+
+  // Deck blocks UI
+  'visualFlowEditor.blocks.deckAddAllCards.description': 'Añade todas las cartas al mazo para el contexto actual.',
+  'visualFlowEditor.blocks.deckShuffle.description': 'Baraja el mazo actual.',
+  'visualFlowEditor.blocks.deckAddAllCards.compact': 'Añadir todas las cartas',
+  'visualFlowEditor.blocks.deckShuffle.compact': 'Barajar mazo',
+  'visualFlowEditor.blocks.deckAddCardType.label': 'Parámetros',
+  'visualFlowEditor.blocks.deckAddCardType.placeholder': 'p. ej. alienGun 2; merchant 1',
+  // Común
+  'visualFlowEditor.common.parameters': 'Parámetros',
+  'visualFlowEditor.blocks.deckAddCardType.hint': 'Cadena única, argumentos separados por espacios. Mantén la sintaxis de los scripts.',
+  'visualFlowEditor.blocks.deckAddCardRound.label': 'Parámetros',
+  'visualFlowEditor.blocks.deckAddCardRound.placeholder': 'p. ej. 2 alienGun 1',
+  'visualFlowEditor.blocks.deckAddCardRound.hint': 'Cadena única para la configuración de la ronda.',
+  'visualFlowEditor.blocks.deckAddRulePosition.label': 'Parámetros',
+  'visualFlowEditor.blocks.deckAddRulePosition.placeholder': 'p. ej. pos 1-3',
+  'visualFlowEditor.blocks.deckAddRulePosition.hint': 'Cadena única que describe la regla de posición.',
+  'visualFlowEditor.blocks.deckAddRuleRange.label': 'Parámetros',
+  'visualFlowEditor.blocks.deckAddRuleRange.placeholder': 'p. ej. range 2-5',
+  'visualFlowEditor.blocks.deckAddRuleRange.hint': 'Cadena única que describe la regla de rango.',
+  'visualFlowEditor.blocks.setSuperCardsCnt.label': 'Parámetros',
+  'visualFlowEditor.blocks.setSuperCardsCnt.placeholder': 'p. ej. 3',
+  'visualFlowEditor.blocks.setSuperCardsCnt.hint': 'Número de super cartas (cadena única).',
+
+  // Deck validation
+  'visualFlowEditor.validation.DECKADDCARDTYPE_NO_PARAMS': 'Se requieren parámetros. Proporcione un valor.',
+  'visualFlowEditor.validation.DECKADDCARDROUND_NO_PARAMS': 'Se requieren parámetros. Proporcione un valor.',
+  'visualFlowEditor.validation.DECKADDRULEPOSITION_NO_PARAMS': 'Se requieren parámetros. Proporcione un valor.',
+  'visualFlowEditor.validation.DECKADDRULERANGE_NO_PARAMS': 'Se requieren parámetros. Proporcione un valor.',
+  'visualFlowEditor.validation.SETSUPERCARDSCNT_NO_PARAMS': 'Se requieren parámetros. Proporcione un valor.',
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
   'visualFlowEditor.subtitle': 'Editor Visual Completo',

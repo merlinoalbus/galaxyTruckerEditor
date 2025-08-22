@@ -3,6 +3,42 @@
  */
 
 export const visualFlowEditorTranslations = {
+  // Deck tools
+  'visualFlowEditor.tools.deckAddCardType.description': 'Ajoute des types de cartes spécifiques au deck. Paramètres : chaîne unique avec ids/types et qualificatifs optionnels.',
+  'visualFlowEditor.tools.deckAddAllCards.description': 'Ajoute toutes les cartes disponibles au deck.',
+  'visualFlowEditor.tools.deckAddCardRound.description': 'Ajoute des cartes pour un round spécifique. Paramètres : chaîne unique.',
+  'visualFlowEditor.tools.deckAddRulePosition.description': 'Ajoute une règle de position pour le deck. Paramètres : chaîne unique.',
+  'visualFlowEditor.tools.deckAddRuleRange.description': 'Ajoute une règle d’intervalle pour le deck. Paramètres : chaîne unique.',
+  'visualFlowEditor.tools.deckShuffle.description': 'Mélange le deck.',
+  'visualFlowEditor.tools.setSuperCardsCnt.description': 'Définit le nombre de super cartes. Paramètres : chaîne unique (ex. nombre).',
+
+  // Deck blocks UI
+  'visualFlowEditor.blocks.deckAddAllCards.description': 'Ajoute toutes les cartes au deck pour le contexte actuel.',
+  'visualFlowEditor.blocks.deckShuffle.description': 'Mélange le deck courant.',
+  'visualFlowEditor.blocks.deckAddAllCards.compact': 'Ajouter toutes les cartes',
+  'visualFlowEditor.blocks.deckShuffle.compact': 'Mélanger le deck',
+  'visualFlowEditor.blocks.deckAddCardType.label': 'Paramètres',
+  'visualFlowEditor.blocks.deckAddCardType.placeholder': 'ex. alienGun 2; merchant 1',
+  'visualFlowEditor.blocks.deckAddCardType.hint': 'Chaîne unique, arguments séparés par des espaces. Conservez la syntaxe des scripts.',
+  'visualFlowEditor.blocks.deckAddCardRound.label': 'Paramètres',
+  'visualFlowEditor.blocks.deckAddCardRound.placeholder': 'ex. 2 alienGun 1',
+  'visualFlowEditor.blocks.deckAddCardRound.hint': 'Chaîne unique pour configurer le round.',
+  'visualFlowEditor.blocks.deckAddRulePosition.label': 'Paramètres',
+  'visualFlowEditor.blocks.deckAddRulePosition.placeholder': 'ex. pos 1-3',
+  'visualFlowEditor.blocks.deckAddRulePosition.hint': 'Chaîne unique décrivant la règle de position.',
+  'visualFlowEditor.blocks.deckAddRuleRange.label': 'Paramètres',
+  'visualFlowEditor.blocks.deckAddRuleRange.placeholder': 'ex. range 2-5',
+  'visualFlowEditor.blocks.deckAddRuleRange.hint': 'Chaîne unique décrivant la règle d’intervalle.',
+  'visualFlowEditor.blocks.setSuperCardsCnt.label': 'Paramètres',
+  'visualFlowEditor.blocks.setSuperCardsCnt.placeholder': 'ex. 3',
+  'visualFlowEditor.blocks.setSuperCardsCnt.hint': 'Nombre de super cartes (chaîne unique).',
+
+  // Deck validation
+  'visualFlowEditor.validation.DECKADDCARDTYPE_NO_PARAMS': 'Paramètres requis. Veuillez fournir une valeur.',
+  'visualFlowEditor.validation.DECKADDCARDROUND_NO_PARAMS': 'Paramètres requis. Veuillez fournir une valeur.',
+  'visualFlowEditor.validation.DECKADDRULEPOSITION_NO_PARAMS': 'Paramètres requis. Veuillez fournir une valeur.',
+  'visualFlowEditor.validation.DECKADDRULERANGE_NO_PARAMS': 'Paramètres requis. Veuillez fournir une valeur.',
+  'visualFlowEditor.validation.SETSUPERCARDSCNT_NO_PARAMS': 'Paramètres requis. Veuillez fournir une valeur.',
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
   'visualFlowEditor.subtitle': 'Éditeur Visuel Complet',
@@ -132,6 +168,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.subScript.scriptName': 'Nom du script',
   'visualFlowEditor.blocks.subScript.hint': 'Sélectionnez le script à exécuter',
   'visualFlowEditor.blocks.subScript.navigate': 'Naviguer vers le sous-script',
+  // Common
+  'visualFlowEditor.common.parameters': 'Paramètres',
   // SETSPECCONDITION Block
   'visualFlowEditor.blocks.setSpecCondition.condition': 'Condition',
   

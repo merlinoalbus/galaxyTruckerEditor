@@ -3,6 +3,44 @@
  */
 
 export const visualFlowEditorTranslations = {
+  // Deck tools
+  'visualFlowEditor.tools.deckAddCardType.description': 'Přidá specifické typy karet do balíčku. Parametry: jediný řetězec s id/typy karet a volitelnými kvalifikátory.',
+  'visualFlowEditor.tools.deckAddAllCards.description': 'Přidá všechny dostupné karty do balíčku.',
+  'visualFlowEditor.tools.deckAddCardRound.description': 'Přidá karty pro konkrétní kolo. Parametry: jediný řetězec.',
+  'visualFlowEditor.tools.deckAddRulePosition.description': 'Přidá pravidlo pozice pro balíček. Parametry: jediný řetězec.',
+  'visualFlowEditor.tools.deckAddRuleRange.description': 'Přidá pravidlo rozsahu pro balíček. Parametry: jediný řetězec.',
+  'visualFlowEditor.tools.deckShuffle.description': 'Zamíchá balíček.',
+  'visualFlowEditor.tools.setSuperCardsCnt.description': 'Nastaví počet super karet. Parametry: jediný řetězec (např. počet).',
+  // Společné
+  'visualFlowEditor.common.parameters': 'Parametry',
+
+  // Deck blocks UI
+  'visualFlowEditor.blocks.deckAddAllCards.description': 'Přidá všechny karty do balíčku v aktuálním kontextu.',
+  'visualFlowEditor.blocks.deckShuffle.description': 'Zamíchá aktuální balíček.',
+  'visualFlowEditor.blocks.deckAddAllCards.compact': 'Přidat všechny karty',
+  'visualFlowEditor.blocks.deckShuffle.compact': 'Zamíchat balíček',
+  'visualFlowEditor.blocks.deckAddCardType.label': 'Parametry',
+  'visualFlowEditor.blocks.deckAddCardType.placeholder': 'např. alienGun 2; merchant 1',
+  'visualFlowEditor.blocks.deckAddCardType.hint': 'Jediný řetězec, argumenty oddělené mezerou. Zachovejte syntaxi skriptů.',
+  'visualFlowEditor.blocks.deckAddCardRound.label': 'Parametry',
+  'visualFlowEditor.blocks.deckAddCardRound.placeholder': 'např. 2 alienGun 1',
+  'visualFlowEditor.blocks.deckAddCardRound.hint': 'Jediný řetězec pro konfiguraci kola.',
+  'visualFlowEditor.blocks.deckAddRulePosition.label': 'Parametry',
+  'visualFlowEditor.blocks.deckAddRulePosition.placeholder': 'např. pos 1-3',
+  'visualFlowEditor.blocks.deckAddRulePosition.hint': 'Jediný řetězec popisující pravidlo pozice.',
+  'visualFlowEditor.blocks.deckAddRuleRange.label': 'Parametry',
+  'visualFlowEditor.blocks.deckAddRuleRange.placeholder': 'např. range 2-5',
+  'visualFlowEditor.blocks.deckAddRuleRange.hint': 'Jediný řetězec popisující pravidlo rozsahu.',
+  'visualFlowEditor.blocks.setSuperCardsCnt.label': 'Parametry',
+  'visualFlowEditor.blocks.setSuperCardsCnt.placeholder': 'např. 3',
+  'visualFlowEditor.blocks.setSuperCardsCnt.hint': 'Počet super karet (jediný řetězec).',
+
+  // Deck validation
+  'visualFlowEditor.validation.DECKADDCARDTYPE_NO_PARAMS': 'Parametry jsou povinné. Zadejte hodnotu.',
+  'visualFlowEditor.validation.DECKADDCARDROUND_NO_PARAMS': 'Parametry jsou povinné. Zadejte hodnotu.',
+  'visualFlowEditor.validation.DECKADDRULEPOSITION_NO_PARAMS': 'Parametry jsou povinné. Zadejte hodnotu.',
+  'visualFlowEditor.validation.DECKADDRULERANGE_NO_PARAMS': 'Parametry jsou povinné. Zadejte hodnotu.',
+  'visualFlowEditor.validation.SETSUPERCARDSCNT_NO_PARAMS': 'Parametry jsou povinné. Zadejte hodnotu.',
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
   'visualFlowEditor.subtitle': 'Kompletní Vizuální Editor',

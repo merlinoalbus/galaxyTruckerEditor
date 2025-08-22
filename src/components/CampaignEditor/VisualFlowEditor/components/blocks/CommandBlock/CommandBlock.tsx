@@ -223,6 +223,62 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   };
   const renderParameters = () => {
     switch (block.type) {
+      // ===== DECK COMMANDS =====
+      case 'DECKADDALLCARDS': {
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {(t as any)('visualFlowEditor.blocks.deckAddAllCards.description') || (t as any)('visualFlowEditor.tools.deckAddAllCards.description')}
+              </p>
+            </div>
+          </div>
+        );
+      }
+      case 'DECKSHUFFLE': {
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {(t as any)('visualFlowEditor.blocks.deckShuffle.description') || (t as any)('visualFlowEditor.tools.deckShuffle.description')}
+              </p>
+            </div>
+          </div>
+        );
+      }
+      case 'DECKADDCARDTYPE':
+      case 'DECKADDCARDROUND':
+      case 'DECKADDRULEPOSITION':
+      case 'DECKADDRULERANGE':
+      case 'SETSUPERCARDSCNT': {
+        const deckKeyMap: Record<string, string> = {
+          DECKADDCARDTYPE: 'deckAddCardType',
+          DECKADDCARDROUND: 'deckAddCardRound',
+          DECKADDRULEPOSITION: 'deckAddRulePosition',
+          DECKADDRULERANGE: 'deckAddRuleRange',
+          SETSUPERCARDSCNT: 'setSuperCardsCnt',
+        } as const;
+        const k = deckKeyMap[block.type] || 'deck';
+        const value = String(block.parameters?.params ?? '');
+        return (
+          <div className="flex flex-col gap-2">
+            <label className="text-xs text-slate-400">
+              {(t as any)(`visualFlowEditor.blocks.${k}.label`) || (t as any)('visualFlowEditor.common.parameters')}
+            </label>
+            <input
+              type="text"
+              className="w-full p-2 bg-slate-800 text-white rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none"
+              placeholder={(t as any)(`visualFlowEditor.blocks.${k}.placeholder`) || ''}
+              value={value}
+              onChange={(e) => onUpdate({ parameters: { ...block.parameters, params: e.target.value } })}
+              onClick={(e) => e.stopPropagation()}
+            />
+            <span className="block text-xs text-slate-500">
+              {(t as any)(`visualFlowEditor.blocks.${k}.hint`) || ''}
+            </span>
+          </div>
+        );
+      }
       // ACHIEVEMENT/SHIP PLAN COMMANDS (UI DEI PARAMETRI)
       case 'UNLOCKSHUTTLES': {
         // Solo informativo, senza parametri
@@ -1383,6 +1439,23 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   // Genera i parametri compatti per la visualizzazione collapsed
   const getCompactParams = () => {
     switch (block.type) {
+      // DECK commands compact summaries
+      case 'DECKADDALLCARDS':
+        return (
+          <span className="text-xs text-gray-400">🃏 {(t as any)('visualFlowEditor.blocks.deckAddAllCards.compact') || (t as any)('visualFlowEditor.tools.deckAddAllCards.description')}</span>
+        );
+      case 'DECKSHUFFLE':
+        return (
+          <span className="text-xs text-gray-400">🔀 {(t as any)('visualFlowEditor.blocks.deckShuffle.compact') || (t as any)('visualFlowEditor.tools.deckShuffle.description')}</span>
+        );
+      case 'DECKADDCARDTYPE':
+      case 'DECKADDCARDROUND':
+      case 'DECKADDRULEPOSITION':
+      case 'DECKADDRULERANGE':
+      case 'SETSUPERCARDSCNT': {
+        const params = String(block.parameters?.params || '');
+        return <span className="text-gray-400">🃏 {params || '…'}</span>;
+      }
       case 'UNLOCKSHUTTLES':
         return <span className="text-xs text-gray-400">🛰️ {(t as any)('visualFlowEditor.tools.unlockShuttles.description')}</span>;
       case 'UNLOCKACHIEVEMENT': {

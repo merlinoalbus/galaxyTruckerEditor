@@ -3,6 +3,42 @@
  */
 
 const visualFlowEditorTranslations = {
+  // Deck tools
+  'visualFlowEditor.tools.deckAddCardType.description': 'Fügt bestimmte Kartentypen zum Deck hinzu. Parameter: einzelne Zeichenkette mit Karten-IDs/-Typen und optionalen Qualifikatoren.',
+  'visualFlowEditor.tools.deckAddAllCards.description': 'Fügt alle verfügbaren Karten zum Deck hinzu.',
+  'visualFlowEditor.tools.deckAddCardRound.description': 'Fügt Karten für eine bestimmte Runde hinzu. Parameter: einzelne Zeichenkette.',
+  'visualFlowEditor.tools.deckAddRulePosition.description': 'Fügt eine Positionsregel zum Deck hinzu. Parameter: einzelne Zeichenkette.',
+  'visualFlowEditor.tools.deckAddRuleRange.description': 'Fügt eine Bereichsregel zum Deck hinzu. Parameter: einzelne Zeichenkette.',
+  'visualFlowEditor.tools.deckShuffle.description': 'Mischt das Deck.',
+  'visualFlowEditor.tools.setSuperCardsCnt.description': 'Setzt die Anzahl der Superkarten. Parameter: einzelne Zeichenkette (z. B. Anzahl).',
+
+  // Deck blocks UI
+  'visualFlowEditor.blocks.deckAddAllCards.description': 'Fügt alle Karten dem Deck im aktuellen Kontext hinzu.',
+  'visualFlowEditor.blocks.deckShuffle.description': 'Mischt das aktuelle Deck.',
+  'visualFlowEditor.blocks.deckAddAllCards.compact': 'Alle Karten hinzufügen',
+  'visualFlowEditor.blocks.deckShuffle.compact': 'Deck mischen',
+  'visualFlowEditor.blocks.deckAddCardType.label': 'Parameter',
+  'visualFlowEditor.blocks.deckAddCardType.placeholder': 'z. B. alienGun 2; merchant 1',
+  'visualFlowEditor.blocks.deckAddCardType.hint': 'Einzelne Zeichenkette, durch Leerzeichen getrennte Argumente. Skriptsyntax beibehalten.',
+  'visualFlowEditor.blocks.deckAddCardRound.label': 'Parameter',
+  'visualFlowEditor.blocks.deckAddCardRound.placeholder': 'z. B. 2 alienGun 1',
+  'visualFlowEditor.blocks.deckAddCardRound.hint': 'Einzelne Zeichenkette für die Rundenkonfiguration.',
+  'visualFlowEditor.blocks.deckAddRulePosition.label': 'Parameter',
+  'visualFlowEditor.blocks.deckAddRulePosition.placeholder': 'z. B. pos 1-3',
+  'visualFlowEditor.blocks.deckAddRulePosition.hint': 'Einzelne Zeichenkette, die die Positionsregel beschreibt.',
+  'visualFlowEditor.blocks.deckAddRuleRange.label': 'Parameter',
+  'visualFlowEditor.blocks.deckAddRuleRange.placeholder': 'z. B. range 2-5',
+  'visualFlowEditor.blocks.deckAddRuleRange.hint': 'Einzelne Zeichenkette, die die Bereichsregel beschreibt.',
+  'visualFlowEditor.blocks.setSuperCardsCnt.label': 'Parameter',
+  'visualFlowEditor.blocks.setSuperCardsCnt.placeholder': 'z. B. 3',
+  'visualFlowEditor.blocks.setSuperCardsCnt.hint': 'Anzahl der Superkarten (einzelne Zeichenkette).',
+
+  // Deck validation
+  'visualFlowEditor.validation.DECKADDCARDTYPE_NO_PARAMS': 'Parameter erforderlich. Bitte geben Sie einen Wert an.',
+  'visualFlowEditor.validation.DECKADDCARDROUND_NO_PARAMS': 'Parameter erforderlich. Bitte geben Sie einen Wert an.',
+  'visualFlowEditor.validation.DECKADDRULEPOSITION_NO_PARAMS': 'Parameter erforderlich. Bitte geben Sie einen Wert an.',
+  'visualFlowEditor.validation.DECKADDRULERANGE_NO_PARAMS': 'Parameter erforderlich. Bitte geben Sie einen Wert an.',
+  'visualFlowEditor.validation.SETSUPERCARDSCNT_NO_PARAMS': 'Parameter erforderlich. Bitte geben Sie einen Wert an.',
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
   'visualFlowEditor.subtitle': 'Vollständiger Visueller Editor',
@@ -115,6 +151,8 @@ const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.subScript.scriptName': 'Skriptname',
   'visualFlowEditor.blocks.subScript.hint': 'Wählen Sie das auszuführende Skript',
   'visualFlowEditor.blocks.subScript.navigate': 'Zum Unterskript navigieren',
+  // Common
+  'visualFlowEditor.common.parameters': 'Parameter',
   // SETSPECCONDITION Block
   'visualFlowEditor.blocks.setSpecCondition.condition': 'Bedingung',
   

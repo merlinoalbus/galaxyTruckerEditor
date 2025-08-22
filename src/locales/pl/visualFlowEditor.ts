@@ -3,6 +3,44 @@
  */
 
 export const visualFlowEditorTranslations = {
+  // Deck tools
+  'visualFlowEditor.tools.deckAddCardType.description': 'Dodaje określone typy kart do talii. Parametry: pojedynczy ciąg z id/typami kart i opcjonalnymi kwalifikatorami.',
+  'visualFlowEditor.tools.deckAddAllCards.description': 'Dodaje wszystkie dostępne karty do talii.',
+  'visualFlowEditor.tools.deckAddCardRound.description': 'Dodaje karty dla konkretnej rundy. Parametry: pojedynczy ciąg.',
+  'visualFlowEditor.tools.deckAddRulePosition.description': 'Dodaje regułę pozycji dla talii. Parametry: pojedynczy ciąg.',
+  'visualFlowEditor.tools.deckAddRuleRange.description': 'Dodaje regułę zakresu dla talii. Parametry: pojedynczy ciąg.',
+  'visualFlowEditor.tools.deckShuffle.description': 'Tasuje talię.',
+  'visualFlowEditor.tools.setSuperCardsCnt.description': 'Ustawia liczbę super kart. Parametry: pojedynczy ciąg (np. liczba).',
+  // Wspólne
+  'visualFlowEditor.common.parameters': 'Parametry',
+
+  // Deck blocks UI
+  'visualFlowEditor.blocks.deckAddAllCards.description': 'Dodaje wszystkie karty do talii w bieżącym kontekście.',
+  'visualFlowEditor.blocks.deckShuffle.description': 'Tasuje bieżącą talię.',
+  'visualFlowEditor.blocks.deckAddAllCards.compact': 'Dodaj wszystkie karty',
+  'visualFlowEditor.blocks.deckShuffle.compact': 'TASUJ talię',
+  'visualFlowEditor.blocks.deckAddCardType.label': 'Parametry',
+  'visualFlowEditor.blocks.deckAddCardType.placeholder': 'np. alienGun 2; merchant 1',
+  'visualFlowEditor.blocks.deckAddCardType.hint': 'Pojedynczy ciąg, argumenty rozdzielone spacjami. Zachowaj składnię używaną w skryptach.',
+  'visualFlowEditor.blocks.deckAddCardRound.label': 'Parametry',
+  'visualFlowEditor.blocks.deckAddCardRound.placeholder': 'np. 2 alienGun 1',
+  'visualFlowEditor.blocks.deckAddCardRound.hint': 'Pojedynczy ciąg do konfiguracji rundy.',
+  'visualFlowEditor.blocks.deckAddRulePosition.label': 'Parametry',
+  'visualFlowEditor.blocks.deckAddRulePosition.placeholder': 'np. pos 1-3',
+  'visualFlowEditor.blocks.deckAddRulePosition.hint': 'Pojedynczy ciąg opisujący regułę pozycji.',
+  'visualFlowEditor.blocks.deckAddRuleRange.label': 'Parametry',
+  'visualFlowEditor.blocks.deckAddRuleRange.placeholder': 'np. range 2-5',
+  'visualFlowEditor.blocks.deckAddRuleRange.hint': 'Pojedynczy ciąg opisujący regułę zakresu.',
+  'visualFlowEditor.blocks.setSuperCardsCnt.label': 'Parametry',
+  'visualFlowEditor.blocks.setSuperCardsCnt.placeholder': 'np. 3',
+  'visualFlowEditor.blocks.setSuperCardsCnt.hint': 'Liczba super kart (pojedynczy ciąg).',
+
+  // Deck validation
+  'visualFlowEditor.validation.DECKADDCARDTYPE_NO_PARAMS': 'Wymagane są parametry. Podaj wartość.',
+  'visualFlowEditor.validation.DECKADDCARDROUND_NO_PARAMS': 'Wymagane są parametry. Podaj wartość.',
+  'visualFlowEditor.validation.DECKADDRULEPOSITION_NO_PARAMS': 'Wymagane są parametry. Podaj wartość.',
+  'visualFlowEditor.validation.DECKADDRULERANGE_NO_PARAMS': 'Wymagane są parametry. Podaj wartość.',
+  'visualFlowEditor.validation.SETSUPERCARDSCNT_NO_PARAMS': 'Wymagane są parametry. Podaj wartość.',
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
   'visualFlowEditor.subtitle': 'Kompletny Edytor Wizualny',

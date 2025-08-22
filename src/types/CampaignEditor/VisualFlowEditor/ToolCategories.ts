@@ -229,13 +229,13 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
     name: 'Deck',
     icon: '🃎',
     tools: [
-      { id: 'deckaddcardtype', name: 'DECKADDCARDTYPE', icon: CMD_EMOJI['DECKADDCARDTYPE'] || '➕🃏', blockType: 'DECKADDCARDTYPE' as any, description: 'Aggiungi tipo carta (param string)', implemented: false, inProgress: true },
-      { id: 'deckaddallcards', name: 'DECKADDALLCARDS', icon: CMD_EMOJI['DECKADDALLCARDS'] || '📥🃏', blockType: 'DECKADDALLCARDS' as any, description: 'Aggiungi tutte le carte', implemented: false, inProgress: true },
-      { id: 'deckaddcardround', name: 'DECKADDCARDROUND', icon: CMD_EMOJI['DECKADDCARDROUND'] || '🔁🃏', blockType: 'DECKADDCARDROUND' as any, description: 'Aggiungi carte per round', implemented: false, inProgress: true },
-      { id: 'deckaddruleposition', name: 'DECKADDRULEPOSITION', icon: CMD_EMOJI['DECKADDRULEPOSITION'] || '📌🃏', blockType: 'DECKADDRULEPOSITION' as any, description: 'Regola posizione', implemented: false, inProgress: true },
-      { id: 'deckaddrulerange', name: 'DECKADDRULERANGE', icon: CMD_EMOJI['DECKADDRULERANGE'] || '📏🃏', blockType: 'DECKADDRULERANGE' as any, description: 'Regola intervallo', implemented: false, inProgress: true },
-      { id: 'deckshuffle', name: 'DECKSHUFFLE', icon: CMD_EMOJI['DECKSHUFFLE'] || '🔀🃏', blockType: 'DECKSHUFFLE' as any, description: 'Mescola deck', implemented: false, inProgress: true },
-      { id: 'setsupercardscnt', name: 'SETSUPERCARDSCNT', icon: CMD_EMOJI['SETSUPERCARDSCNT'] || '⭐🃏', blockType: 'SETSUPERCARDSCNT' as any, description: 'Imposta super carte', implemented: false, inProgress: true }
+  { id: 'deckaddcardtype', name: 'DECKADDCARDTYPE', icon: CMD_EMOJI['DECKADDCARDTYPE'] || '➕🃏', blockType: 'DECKADDCARDTYPE' as any, description: t('visualFlowEditor.tools.deckAddCardType.description'), implemented: true, inProgress: false },
+  { id: 'deckaddallcards', name: 'DECKADDALLCARDS', icon: CMD_EMOJI['DECKADDALLCARDS'] || '📥🃏', blockType: 'DECKADDALLCARDS' as any, description: t('visualFlowEditor.tools.deckAddAllCards.description'), implemented: true, inProgress: false },
+  { id: 'deckaddcardround', name: 'DECKADDCARDROUND', icon: CMD_EMOJI['DECKADDCARDROUND'] || '🔁🃏', blockType: 'DECKADDCARDROUND' as any, description: t('visualFlowEditor.tools.deckAddCardRound.description'), implemented: true, inProgress: false },
+  { id: 'deckaddruleposition', name: 'DECKADDRULEPOSITION', icon: CMD_EMOJI['DECKADDRULEPOSITION'] || '📌🃏', blockType: 'DECKADDRULEPOSITION' as any, description: t('visualFlowEditor.tools.deckAddRulePosition.description'), implemented: true, inProgress: false },
+  { id: 'deckaddrulerange', name: 'DECKADDRULERANGE', icon: CMD_EMOJI['DECKADDRULERANGE'] || '📏🃏', blockType: 'DECKADDRULERANGE' as any, description: t('visualFlowEditor.tools.deckAddRuleRange.description'), implemented: true, inProgress: false },
+  { id: 'deckshuffle', name: 'DECKSHUFFLE', icon: CMD_EMOJI['DECKSHUFFLE'] || '🔀🃏', blockType: 'DECKSHUFFLE' as any, description: t('visualFlowEditor.tools.deckShuffle.description'), implemented: true, inProgress: false },
+  { id: 'setsupercardscnt', name: 'SETSUPERCARDSCNT', icon: CMD_EMOJI['SETSUPERCARDSCNT'] || '⭐🃏', blockType: 'SETSUPERCARDSCNT' as any, description: t('visualFlowEditor.tools.setSuperCardsCnt.description'), implemented: true, inProgress: false }
     ]
   }
 ];

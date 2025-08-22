@@ -198,7 +198,16 @@ const COMMAND_CATALOG = {
   'SETADVPILE': { params: ['params:complex'], pattern: /^SetAdvPile\s+(.+)$/i, example: '1 3' },
   'SETSECRETADVPILE': { params: ['params:complex'], pattern: /^SetSecretAdvPile\s+(.+)$/i, example: '2 1' },
   'ADDSHIPPARTS': { params: ['params:string'], pattern: /^AddShipParts\s+(.+)$/i, example: 'parts/allParts.yaml' },
-  'SHOWHELPIMAGE': { params: ['params:complex'], pattern: /^SHOWHELPIMAGE\s+(.+)$/i, example: '40 50 70 campaign/tutorial-purple.png' }
+  'SHOWHELPIMAGE': { params: ['params:complex'], pattern: /^SHOWHELPIMAGE\s+(.+)$/i, example: '40 50 70 campaign/tutorial-purple.png' },
+
+  // DECK MANAGEMENT (gestiti principalmente come stringa unica per massima compatibilità)
+  'DECKADDCARDTYPE': { params: ['params:complex'], pattern: /^DeckAddCardType\s+(.+)$/i },
+  'DECKADDALLCARDS': { params: [], pattern: /^DeckAddAllCards$/i },
+  'DECKADDCARDROUND': { params: ['params:complex'], pattern: /^DeckAddCardRound\s+(.+)$/i },
+  'DECKADDRULEPOSITION': { params: ['params:complex'], pattern: /^DeckAddRulePosition\s+(.+)$/i },
+  'DECKADDRULERANGE': { params: ['params:complex'], pattern: /^DeckAddRuleRange\s+(.+)$/i },
+  'DECKSHUFFLE': { params: [], pattern: /^DeckShuffle$/i },
+  'SETSUPERCARDSCNT': { params: ['params:complex'], pattern: /^SetSuperCardsCnt\s+(.+)$/i }
 };
 
 /**
@@ -1462,7 +1471,16 @@ const COMMAND_SYNTAX_MAP = {
   'SETADVPILE': 'SetAdvPile',
   'SETSECRETADVPILE': 'SetSecretAdvPile',
   'ADDSHIPPARTS': 'AddShipParts',
-  'SHOWHELPIMAGE': 'ShowHelpImage'
+  'SHOWHELPIMAGE': 'ShowHelpImage',
+
+  // Deck commands
+  'DECKADDCARDTYPE': 'DeckAddCardType',
+  'DECKADDALLCARDS': 'DeckAddAllCards',
+  'DECKADDCARDROUND': 'DeckAddCardRound',
+  'DECKADDRULEPOSITION': 'DeckAddRulePosition',
+  'DECKADDRULERANGE': 'DeckAddRuleRange',
+  'DECKSHUFFLE': 'DeckShuffle',
+  'SETSUPERCARDSCNT': 'SetSuperCardsCnt'
 };
 
 /**

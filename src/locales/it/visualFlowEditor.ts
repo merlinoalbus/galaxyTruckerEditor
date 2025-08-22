@@ -4,6 +4,42 @@
  */
 
 export const visualFlowEditorTranslations = {
+  // Deck tools
+  'visualFlowEditor.tools.deckAddCardType.description': 'Aggiunge tipi di carte specifici al mazzo. Parametri: stringa con id/tipi carta e qualificatori opzionali.',
+  'visualFlowEditor.tools.deckAddAllCards.description': 'Aggiunge tutte le carte disponibili al mazzo.',
+  'visualFlowEditor.tools.deckAddCardRound.description': 'Aggiunge carte al mazzo per un round specifico. Parametri: stringa singola.',
+  'visualFlowEditor.tools.deckAddRulePosition.description': 'Aggiunge una regola di posizione per il mazzo. Parametri: stringa singola.',
+  'visualFlowEditor.tools.deckAddRuleRange.description': 'Aggiunge una regola di intervallo per il mazzo. Parametri: stringa singola.',
+  'visualFlowEditor.tools.deckShuffle.description': 'Mescola il mazzo.',
+  'visualFlowEditor.tools.setSuperCardsCnt.description': 'Imposta il numero di super carte. Parametri: stringa singola (es. conteggio).',
+
+  // Deck blocks UI
+  'visualFlowEditor.blocks.deckAddAllCards.description': 'Aggiunge tutte le carte al mazzo nel contesto corrente.',
+  'visualFlowEditor.blocks.deckShuffle.description': 'Mescola il mazzo corrente.',
+  'visualFlowEditor.blocks.deckAddAllCards.compact': 'Aggiungi tutte le carte',
+  'visualFlowEditor.blocks.deckShuffle.compact': 'Mescola mazzo',
+  'visualFlowEditor.blocks.deckAddCardType.label': 'Parametri',
+  'visualFlowEditor.blocks.deckAddCardType.placeholder': 'es. alienGun 2; merchant 1',
+  'visualFlowEditor.blocks.deckAddCardType.hint': 'Stringa singola, argomenti separati da spazi. Mantieni la sintassi usata negli script.',
+  'visualFlowEditor.blocks.deckAddCardRound.label': 'Parametri',
+  'visualFlowEditor.blocks.deckAddCardRound.placeholder': 'es. 2 alienGun 1',
+  'visualFlowEditor.blocks.deckAddCardRound.hint': 'Stringa singola per la configurazione del round.',
+  'visualFlowEditor.blocks.deckAddRulePosition.label': 'Parametri',
+  'visualFlowEditor.blocks.deckAddRulePosition.placeholder': 'es. pos 1-3',
+  'visualFlowEditor.blocks.deckAddRulePosition.hint': 'Stringa singola che descrive la regola di posizione.',
+  'visualFlowEditor.blocks.deckAddRuleRange.label': 'Parametri',
+  'visualFlowEditor.blocks.deckAddRuleRange.placeholder': 'es. range 2-5',
+  'visualFlowEditor.blocks.deckAddRuleRange.hint': 'Stringa singola che descrive la regola di intervallo.',
+  'visualFlowEditor.blocks.setSuperCardsCnt.label': 'Parametri',
+  'visualFlowEditor.blocks.setSuperCardsCnt.placeholder': 'es. 3',
+  'visualFlowEditor.blocks.setSuperCardsCnt.hint': 'Numero di super carte (stringa singola).',
+
+  // Deck validation
+  'visualFlowEditor.validation.DECKADDCARDTYPE_NO_PARAMS': 'Parametri obbligatori. Inserisci un valore.',
+  'visualFlowEditor.validation.DECKADDCARDROUND_NO_PARAMS': 'Parametri obbligatori. Inserisci un valore.',
+  'visualFlowEditor.validation.DECKADDRULEPOSITION_NO_PARAMS': 'Parametri obbligatori. Inserisci un valore.',
+  'visualFlowEditor.validation.DECKADDRULERANGE_NO_PARAMS': 'Parametri obbligatori. Inserisci un valore.',
+  'visualFlowEditor.validation.SETSUPERCARDSCNT_NO_PARAMS': 'Parametri obbligatori. Inserisci un valore.',
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
   'visualFlowEditor.subtitle': 'Editor Visuale Completo',
@@ -125,6 +161,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.subScript.scriptName': 'Nome Script',
   'visualFlowEditor.blocks.subScript.hint': 'Seleziona lo script da eseguire',
   'visualFlowEditor.blocks.subScript.navigate': 'Naviga al sub-script',
+  // Common
+  'visualFlowEditor.common.parameters': 'Parametri',
   
   // ACT_MISSION Block
   'visualFlowEditor.blocks.actMission.missionName': 'Nome Mission',
