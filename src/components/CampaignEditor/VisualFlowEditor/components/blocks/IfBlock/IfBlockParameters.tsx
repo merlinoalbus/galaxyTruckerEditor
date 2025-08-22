@@ -124,7 +124,8 @@ export const IfBlockParameters: React.FC<IfBlockParametersProps> = ({ block, onU
         </div>
       );
     
-    case 'IF_ORDER':
+  case 'IF_ORDER':
+  case 'IF_POSITION_ORDER':
       const orderValues = Array.isArray(block.valore) ? block.valore : [];
       return (
         <div className="mt-1">
@@ -152,44 +153,11 @@ export const IfBlockParameters: React.FC<IfBlockParametersProps> = ({ block, onU
       );
     
     case 'IF_DEBUG':
-      return null; // Nessun parametro per IF_DEBUG
-    
     case 'IF_FROM_CAMPAIGN':
-      return (
-        <input
-          type="text"
-          className="bg-slate-800/50 text-white px-2 py-1 rounded text-xs border border-slate-700 focus:border-blue-600 focus:outline-none"
-          placeholder={t('visualFlowEditor.if.campaignName')}
-          value={block.valore || ''}
-          onChange={(e) => onUpdate({ valore: e.target.value })}
-          onClick={(e) => e.stopPropagation()}
-        />
-      );
-    
     case 'IF_MISSION_WON':
-      return (
-        <SelectWithModal
-          type="mission"
-          value={block.valore || ''}
-          onChange={(value) => onUpdate({ valore: value })}
-          placeholder={t('visualFlowEditor.if.selectMission')}
-          availableItems={sessionData?.missions || []}
-          onAddItem={sessionData?.addMission}
-          className="flex-1"
-        />
-      );
-    
     case 'IF_TUTORIAL_SEEN':
-      return (
-        <input
-          type="text"
-          className="bg-slate-800/50 text-white px-2 py-1 rounded text-xs border border-slate-700 focus:border-blue-600 focus:outline-none"
-          placeholder={t('visualFlowEditor.if.tutorialId')}
-          value={block.valore || ''}
-          onChange={(e) => onUpdate({ valore: e.target.value })}
-          onClick={(e) => e.stopPropagation()}
-        />
-      );
+    case 'IF_ALL_RESIGNED':
+      return null; // Nessun parametro per questi tipi
     
     default:
       return null;

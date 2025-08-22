@@ -187,13 +187,23 @@ function parseCommand(line, lineNumber) {
 
   // Character commands
   } else if (upperLine.startsWith('SHOWCHAR ')) {
-    type = 'show_character';
-    const parts = trimmed.split(' ');
-    parameters = {
-      character: parts[1],
-      position: parts[2] || 'center',
-      image: parts[3] || 'default'
-    };
+    // Allinea a blockParser: case-insensitive, posizioni ammesse e immagine opzionale
+    const match = trimmed.match(/^ShowChar\s+(\w+)\s+(left|center|right|top|bottom|lefttop|leftbottom|righttop|rightbottom)(?:\s+(.+))?$/i);
+    if (match) {
+      type = 'show_character';
+      parameters = {
+        character: match[1],
+        position: match[2].toLowerCase(),
+        image: match[3] || 'default'
+      };
+    } else {
+      // Se non rispetta la sintassi attesa, marchia come comando sconosciuto per coerenza
+      type = 'unknown_command';
+      parameters = {
+        originalLine: trimmed,
+        commandType: 'SHOWCHAR'
+      };
+    }
   } else if (upperLine.startsWith('HIDECHAR')) {
     type = 'hide_character';
     const parts = trimmed.split(' ');

@@ -106,7 +106,8 @@ const COMMAND_CATALOG = {
   'SETFLIGHTSTATUSBAR': { params: ['text:multilingual'], pattern: /^SetFlightStatusBar\s+"(.+)"$/ },
   
   // PERSONAGGI
-  'SHOWCHAR': { params: ['character', 'position:enum'], pattern: /^ShowChar\s+(\w+)\s+(left|center|right)$/ },
+  // Reso case-insensitive, esteso a tutte le posizioni note e con immagine opzionale (terzo parametro)
+  'SHOWCHAR': { params: ['character', 'position:enum', 'image'], pattern: /^ShowChar\s+(\w+)\s+(left|center|right|top|bottom|lefttop|leftbottom|righttop|rightbottom)(?:\s+(.+))?$/i },
   'HIDECHAR': { params: ['character'], pattern: /^HideChar\s+(\w+)$/ },
   'CHANGECHAR': { params: ['character', 'image'], pattern: /^ChangeChar\s+(\w+)\s+(.+)$/ },
   'FOCUSCHAR': { params: ['character'], pattern: /^FocusChar\s+(\w+)$/i },

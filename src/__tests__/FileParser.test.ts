@@ -30,13 +30,17 @@ describe('FileParser', () => {
     expect(fields).toContain('flightsPicked');
   });
 
-  test('parseDeckScript and serializeDeckScript', () => {
+  test('parseDeckScript and serializeDeckScript (no TMP commands)', () => {
     const input = `SCRIPTS\n\n  SCRIPT MyScript\n    TmpDeckLoad "deck.yaml"\n\tDeckAddCardType 1 openspace 3\n`;
     const parsed: DeckScript = FileParser.parseDeckScript(input);
     expect(parsed.name).toBe('MyScript');
-    expect(parsed.commands[0]).toEqual({ type: 'TmpDeckLoad', deckFile: 'deck.yaml' });
+    // TMP* command must be ignored and not included in parsed commands
+    expect(parsed.commands.find(c => c.type === 'TmpDeckLoad' as any)).toBeUndefined();
+    // Known deck command is parsed generically
+    expect(parsed.commands[0]).toEqual({ type: 'DeckAddCardType', params: '1 openspace 3' });
     const out = FileParser.serializeDeckScript(parsed);
-    expect(out).toContain('TmpDeckLoad "deck.yaml"');
+    // Ensure we don't serialize TMP commands
+    expect(out).not.toContain('TmpDeckLoad');
     expect(out).toContain('DeckAddCardType 1 openspace 3');
   });
 

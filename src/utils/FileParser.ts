@@ -126,21 +126,33 @@ export class FileParser {
         continue;
       }
 
-      if (line.startsWith('TmpDeckLoad ')) {
-        const deckFile = line.replace('TmpDeckLoad ', '').replace(/"/g, '');
-        commands.push({
-          type: 'TmpDeckLoad',
-          deckFile
-        });
-      } else if (line.startsWith('DeckAddCardType ')) {
-        const parts = line.replace('DeckAddCardType ', '').split(' ');
-        commands.push({
-          type: 'DeckAddCardType',
-          flight: parseInt(parts[0]),
-          cardType: parts[1],
-          count: parseInt(parts[2])
-        });
+      // Gestione generica dei comandi deck con params string
+      const deckCommands = [
+        'DeckAddCardType',
+        'DeckRemoveCardType',
+        'DeckAddAllCards',
+        'DeckAddCardRound',
+        'DeckAddRulePosition',
+        'DeckAddRuleRange',
+        'DeckShuffle',
+        'SetSuperCardsCnt'
+      ];
+
+      let matched = false;
+      for (const cmdName of deckCommands) {
+        if (line === cmdName) {
+          commands.push({ type: cmdName as DeckCommand['type'] });
+          matched = true;
+          break;
+        }
+        if (line.startsWith(cmdName + ' ')) {
+          const params = line.substring(cmdName.length + 1); // conserva le virgolette e spazi
+          commands.push({ type: cmdName as DeckCommand['type'], params });
+          matched = true;
+          break;
+        }
       }
+      if (matched) continue;
     }
 
     return { name: scriptName, commands };
@@ -152,10 +164,12 @@ export class FileParser {
     content += `  SCRIPT ${script.name}\n`;
     
     script.commands.forEach(cmd => {
-      if (cmd.type === 'TmpDeckLoad') {
-        content += `    TmpDeckLoad "${cmd.deckFile}"\n`;
-      } else if (cmd.type === 'DeckAddCardType') {
-        content += `\tDeckAddCardType ${cmd.flight} ${cmd.cardType} ${cmd.count}\n`;
+      // Emissione generica: nome comando + params se presenti
+      const p = cmd.params?.trim();
+      if (p && p.length > 0) {
+        content += `    ${cmd.type} ${p}\n`;
+      } else {
+        content += `    ${cmd.type}\n`;
       }
     });
 

@@ -15,7 +15,7 @@ interface AchievementsImagesContextType {
   refresh: () => Promise<void>;
 }
 
-const AchievementsImagesContext = createContext<AchievementsImagesContextType | undefined>(undefined);
+export const AchievementsImagesContext = createContext<AchievementsImagesContextType | undefined>(undefined);
 
 export const useAchievementsImages = () => {
   const context = useContext(AchievementsImagesContext);
