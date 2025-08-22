@@ -64,6 +64,8 @@ export const ChangeCharBlock: React.FC<ChangeCharBlockProps> = ({
   // I characters vengono passati da sessionData, wrappati in useMemo per evitare warning
   const characters = useMemo(() => sessionData?.characters || [], [sessionData?.characters]);
   const [noAvatarImage, setNoAvatarImage] = useState<string | null>(null);
+  // Cache temporanea per immagini non presenti nei metadata locali (percorso -> dataURL)
+  const [tempImageCache, setTempImageCache] = useState<Record<string, string>>({});
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   
   // Calcola lo stato simulato della scena fino a questo blocco
@@ -72,18 +74,10 @@ export const ChangeCharBlock: React.FC<ChangeCharBlockProps> = ({
     return simulateSceneExecution(allBlocks, block.id, characters);
   }, [allBlocks, block.id, characters]);
   
-  // Ottieni i personaggi visibili nella scena simulata
-  const visibleCharacters = useMemo(() => {
-    if (!simulatedSceneState?.currentScene) return [];
-    return simulatedSceneState.currentScene.personaggi
-      .filter(p => p.visible)
-      .map(p => {
-        // Trova il personaggio completo nei dati di sessione
-        const fullChar = characters.find((c: Character) => c.nomepersonaggio === p.nomepersonaggio);
-        return fullChar;
-      })
-      .filter(char => char && char.listaimmagini && char.listaimmagini.length > 1);
-  }, [simulatedSceneState, characters]);
+  // Lista completa personaggi per selezione (tutti, non solo visibili)
+  const allCharacters = useMemo(() => {
+    return (characters || []).filter((c: Character) => !!c);
+  }, [characters]);
   
   // Carica no_avatar una volta sola
   useEffect(() => {
@@ -94,15 +88,34 @@ export const ChangeCharBlock: React.FC<ChangeCharBlockProps> = ({
     }).catch(console.error);
   }, []);
   
-  // Aggiorna il personaggio selezionato quando cambia il parametro
+  // Aggiorna il personaggio selezionato quando cambia il parametro (dalla lista completa)
   useEffect(() => {
     if (block.parameters?.character) {
-      const char = visibleCharacters.find(c => c.nomepersonaggio === block.parameters?.character);
+      const char = allCharacters.find((c: Character) => c.nomepersonaggio === block.parameters?.character);
       setSelectedCharacter(char || null);
     } else {
       setSelectedCharacter(null);
     }
-  }, [block.parameters?.character, visibleCharacters]);
+  }, [block.parameters?.character, allCharacters]);
+
+  // Se l'immagine selezionata non è nella lista del personaggio, prova a caricarla e cache locale
+  useEffect(() => {
+    const imgPath: string | undefined = block.parameters?.image;
+    if (!selectedCharacter || !imgPath) return;
+    const existsInList = (selectedCharacter.listaimmagini || []).some(img => img.percorso === imgPath || img.nomefile === imgPath);
+    if (existsInList) return;
+    if (tempImageCache[imgPath]) return;
+    imagesViewService.getImageBinary([imgPath])
+      .then(res => {
+        const item = res?.data?.find((d: any) => d?.percorso === imgPath || d?.nomefile === imgPath);
+        if (item?.binary) {
+          const ext = (imgPath.split('.').pop() || '').toLowerCase();
+          const mime = ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : ext === 'webp' ? 'image/webp' : ext === 'gif' ? 'image/gif' : ext === 'bmp' ? 'image/bmp' : 'image/png';
+          setTempImageCache(prev => ({ ...prev, [imgPath]: `data:${mime};base64,${item.binary}` }));
+        }
+      })
+      .catch(() => {});
+  }, [block.parameters?.image, selectedCharacter, tempImageCache]);
   
   
   // Auto-collapse se lo spazio è insufficiente
@@ -140,9 +153,9 @@ export const ChangeCharBlock: React.FC<ChangeCharBlockProps> = ({
           <div className="h-full">
             <div className="text-xs text-gray-400 mb-1 text-center">{t('visualFlowEditor.blocks.changeChar.selectCharacter')}</div>
             <div className="grid grid-cols-5 gap-1 p-2 bg-slate-800 rounded border border-slate-600 h-[110px] overflow-y-auto">
-              {visibleCharacters.length === 0 ? (
+              {allCharacters.length === 0 ? (
                 <div className="col-span-5 flex items-center justify-center text-gray-500 text-xs">
-                  {t('visualFlowEditor.blocks.changeChar.noVisibleCharacters')}
+                  {t('visualFlowEditor.blocks.characterSelector.noAvailable')}
                 </div>
               ) : (
                 <>
@@ -173,8 +186,8 @@ export const ChangeCharBlock: React.FC<ChangeCharBlockProps> = ({
                     </div>
                   </div>
                   
-                  {/* Personaggi visibili */}
-                  {visibleCharacters.map((char: Character) => {
+                  {/* Tutti i personaggi */}
+                  {allCharacters.map((char: Character) => {
                     const charImage = char.immaginebase?.binary 
                       ? `data:image/png;base64,${char.immaginebase.binary}`
                       : char.listaimmagini?.[0]?.binary 
@@ -230,14 +243,26 @@ export const ChangeCharBlock: React.FC<ChangeCharBlockProps> = ({
           </div>
         </div>
         
-        {/* Image selector - metà destra con griglia 5 colonne - invisibile se nessun personaggio selezionato */}
+        {/* Image selector - metà destra con griglia 5 colonne - visibile solo se c'è un personaggio selezionato */}
         {selectedCharacter ? (
           <div className="flex-1">
             <div className="h-full">
               <div className="text-xs text-gray-400 mb-1 text-center">{t('visualFlowEditor.blocks.changeChar.selectNewImage')}</div>
               <div className="grid grid-cols-5 gap-1 p-2 bg-slate-800 rounded border border-slate-600 h-[110px] overflow-y-auto">
-                {selectedCharacter.listaimmagini && selectedCharacter.listaimmagini.length > 0 ? (
-                  selectedCharacter.listaimmagini
+                {(() => {
+                  // Costruisci la lista immagini includendo eventuale immagine esterna selezionata
+                  const baseList = selectedCharacter.listaimmagini && selectedCharacter.listaimmagini.length > 0 ? selectedCharacter.listaimmagini : [];
+                  const imgPath: string | undefined = block.parameters?.image;
+                  const existsInList = imgPath ? baseList.some((i: any) => i.percorso === imgPath || i.nomefile === imgPath) : false;
+                  const augmentedList = !existsInList && imgPath
+                    ? [
+                        // Inserisci prima una voce sintetica per l'immagine esterna attuale
+                        { nomefile: imgPath.split('/').pop() || imgPath, percorso: imgPath, binary: tempImageCache[imgPath] }
+                      , ...baseList]
+                    : baseList;
+
+                  return augmentedList && augmentedList.length > 0 ? (
+                    augmentedList
                     .filter((img: any) => {
                       // Escludi l'immagine corrente del personaggio
                       const currentImage = selectedCharacter.immaginebase?.nomefile || 
@@ -249,10 +274,13 @@ export const ChangeCharBlock: React.FC<ChangeCharBlockProps> = ({
                         ? `data:image/png;base64,${img.binary}`
                         : null;
                       const imageName = img.nomefile || `Image ${index + 1}`;
+                      const imgPathLocal = img.percorso || imageName;
+                      const cached = tempImageCache[imgPathLocal];
+                      const finalUrl = cached || imageUrl || null;
                       
                       return (
                         <div
-                          key={imageName}
+                          key={`${imgPathLocal}-${index}`}
                           onClick={() => {
                             onUpdate({ 
                               parameters: { 
@@ -268,9 +296,9 @@ export const ChangeCharBlock: React.FC<ChangeCharBlockProps> = ({
                           title={imageName}
                         >
                           <div className="w-full aspect-square mb-0.5 overflow-hidden rounded">
-                            {imageUrl ? (
+                            {finalUrl ? (
                               <img 
-                                src={imageUrl}
+                                src={finalUrl}
                                 alt={imageName}
                                 className="w-full h-full object-cover object-top"
                               />
@@ -292,11 +320,12 @@ export const ChangeCharBlock: React.FC<ChangeCharBlockProps> = ({
                         </div>
                       );
                     })
-                ) : (
-                  <div className="col-span-5 flex items-center justify-center text-gray-500 text-xs">
-                    {t('visualFlowEditor.blocks.changeChar.noImagesAvailable')}
-                  </div>
-                )}
+                  ) : (
+                    <div className="col-span-5 flex items-center justify-center text-gray-500 text-xs">
+                      {t('visualFlowEditor.blocks.changeChar.noImagesAvailable')}
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           </div>
@@ -314,7 +343,7 @@ export const ChangeCharBlock: React.FC<ChangeCharBlockProps> = ({
   // Genera i parametri compatti per la visualizzazione collapsed
   const getCompactParams = () => {
     if (block.parameters?.character && block.parameters?.image) {
-      const char = visibleCharacters.find(c => c.nomepersonaggio === block.parameters?.character);
+      const char = allCharacters.find((c: Character) => c.nomepersonaggio === block.parameters?.character);
       const currentImage = char?.immaginebase?.binary 
         ? `data:image/png;base64,${char.immaginebase.binary}`
         : char?.listaimmagini?.[0]?.binary 
@@ -325,8 +354,11 @@ export const ChangeCharBlock: React.FC<ChangeCharBlockProps> = ({
         img.percorso === block.parameters?.image || 
         img.nomefile === block.parameters?.image // fallback
       );
+      // Prova temp cache se non trovato nei metadata
       const newImage = newImageData?.binary 
         ? `data:image/png;base64,${newImageData.binary}`
+        : (block.parameters?.image && tempImageCache[block.parameters.image])
+        ? tempImageCache[block.parameters.image]
         : null;
       
       return (

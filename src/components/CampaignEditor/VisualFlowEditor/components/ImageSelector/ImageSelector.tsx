@@ -24,9 +24,37 @@ export const ImageSelector: React.FC<ImageSelectorProps> = ({
   // Cache locale per immagini binarie come in Achievements
   const [imageCache, setImageCache] = useState<Record<string, string>>({});
   const [isFetchingBinary, setIsFetchingBinary] = useState(false);
+  const [syntheticCurrent, setSyntheticCurrent] = useState<{ percorso: string; nomefile: string } | null>(null);
 
   // Nessun filtro per cartella: mostra tutte le immagini disponibili (ricerca le restringe).
-  const filteredByFolder = allImageData;
+  // Se il valore corrente non è tra le immagini note, crea una voce sintetica che verrà mostrata in cima
+  useEffect(() => {
+    if (!value) { setSyntheticCurrent(null); return; }
+    const exists = allImageData.some(img => img.percorso === value || img.nomefile === value);
+    if (!exists) {
+      const nomefile = value.split('/').pop() || value;
+      setSyntheticCurrent({ percorso: value, nomefile });
+      // Prova a prelevare il binario per mostrarne l'anteprima
+      if (!imageCache[value]) {
+        imagesViewService.getImageBinary([value]).then(res => {
+          const item = res?.data?.find((d: any) => d?.percorso === value || d?.nomefile === value);
+          if (item?.binary) {
+            const ext = (value.split('.').pop() || '').toLowerCase();
+            const mime = ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : ext === 'webp' ? 'image/webp' : ext === 'gif' ? 'image/gif' : ext === 'bmp' ? 'image/bmp' : 'image/png';
+            setImageCache(prev => ({ ...prev, [value]: `data:${mime};base64,${item.binary}` }));
+          }
+        }).catch(() => {});
+      }
+    } else {
+      setSyntheticCurrent(null);
+    }
+  }, [value, allImageData, imageCache]);
+
+  const filteredByFolder = syntheticCurrent ? [
+    // in cima la voce sintetica dell'immagine corrente esterna
+    { percorso: syntheticCurrent.percorso, nomefile: syntheticCurrent.nomefile, thumbnail: imageCache[syntheticCurrent.percorso] || null } as any,
+    ...allImageData
+  ] : allImageData;
   
   // Filtra per ricerca
   const filteredImages = useMemo(() => {

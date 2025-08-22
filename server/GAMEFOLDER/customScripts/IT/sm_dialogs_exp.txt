@@ -5,23 +5,23 @@ SCRIPTS
     ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head-hand-up.png
     ShowChar artifact_runner left
     Delay 400
-    Ask "Ciao. Sto cercando un camionista."
+    Ask "Ciao. Sto cercando un[g(|a)] Camionista."
     MENU
-      OPT "Beh, l'hai appena trovato."
+      OPT "Beh, l'hai appena trovat[g(o|a)]."
         EXIT_MENU
       END_OF_OPT
     END_OF_MENU
     ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
-    Ask "Bene. Io non mi occupo molto di trasporti, sai, perché sono uno specialista."
+    Ask "Fantastico. Non mi occupo molto di trasporti, perchè, come vedi, sono uno Specialista."
     MENU
-      OPT "Fammi indovinare: sei un archeologo, giusto?"
+      OPT "Fammi indovinare: sei un Archeologo, vero?"
         ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
-        Say "Beh... è un modo molto generoso di dirlo. Ma, sì. Diciamo che sono un archeologo."
+        Say "Beh... è una definizione che non mi calza propriamente a pennello. Ma, sì. Diciamo che sono un Archeologo."
         EXIT_MENU
       END_OF_OPT
-      OPT "Fammi indovinare: sei un mulattiere, giusto?"
+      OPT "Fammi indovinare: sei un Domatore di Tigri, giusto?"
         ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
-        Ask "Ah... no. Diciamo che sono un archeologo."
+        Ask "Ehm... no. Diciamo che sono un Archeologo."
         MENU
           OPT "Okay, come vuoi. Solo, non colpirmi con quella frusta."
             ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-hands-down.png
@@ -32,29 +32,29 @@ SCRIPTS
         EXIT_MENU
       END_OF_OPT
     END_OF_MENU
-    Say "Ho fatto delle... ricerche, e ho scoperto un artefatto alieno."
+    Say "Ho fatto delle... ricerche, ed ho scoperto un Artefatto Alieno."
     ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
-    Ask "Ho bisogno che tu lo porti al museo. Maneggiare con cura, se capisci cosa intendo."
+    Ask "Ho bisogno che tu lo porti al museo. E' un oggetto speciale e va maneggiato con cura, capisci cosa intendo?"
     MENU
-      OPT "Sì, capisco cosa intendi."
+      OPT "Sì, capisco."
         ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-happy.png
-        Say "Perfetto! Sempre felice di lavorare con un professionista!"
+        Say "Perfetto! E' sempre bello poter lavorare con un[g(|a)] professionista!"
         HideDlgScene
         RETURN
       END_OF_OPT
       OPT "Intendi dire che è fragile? O pericoloso?"
         ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
-        Ask "Non fragile. Neanche pericoloso, se sai come maneggiarlo. Solo, sai, un classico artefatto alieno."
+        Ask "Non direi fragile... ma neanche pericoloso, se sai come maneggiarlo. Diciamo... ehm beh... lo sai, un classico Artefatto Alieno."
         MENU
-          OPT "Okay. Sembra abbastanza semplice."
+          OPT "Okay. Sembra abbastanza facile."
             ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-happy.png
-            Say "Perfetto! Sempre felice di lavorare con un professionista!"
+            Say "Perfetto! E' sempre bello lavorare con un[g(|a)] professionista!"
             HideDlgScene
             RETURN
           END_OF_OPT
           OPT "Potresti essere più specifico?"
             ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-hands-down.png
-            Ask "I raggi dell'artefatto creano una zona morta sulla tua nave. Niente nella zona morta funziona, tranne le cose strutturali, come i connettori."
+            Ask "Ecco... diciamo che le radiazioni dell'artefatto creano una zona morta sulla tua nave. Niente nella zona morta funziona, tranne i componenti strutturali, come i connettori."
             MENU
               OPT "Sembra complicato. Ma ci proverò."
                 ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
@@ -64,7 +64,7 @@ SCRIPTS
               END_OF_OPT
               OPT "Forse dovresti venire con me."
                 ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
-                Say "Mi spiace, [g(buddy|sweetheart)], le civiltà antiche non si dissotterrano da sole. Devo tornare al sito."
+                Say "Mi spiace, [g(amico|dolcezza)], ma le civiltà antiche non si dissotterrano da sole. Devo ritornare al sito."
                 HideDlgScene
                 RETURN
               END_OF_OPT
