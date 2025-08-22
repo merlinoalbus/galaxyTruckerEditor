@@ -3,6 +3,7 @@ import { Trash2, ChevronDown, ChevronUp, GripVertical } from 'lucide-react';
 import { getBlockColors } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
 import { useTranslation } from '@/locales';
 import { CharacterAvatar } from '../../CharacterAvatar';
+import { AchievementAvatar } from '../../AchievementAvatar';
 
 interface BaseBlockProps {
   // Identificazione blocco
@@ -41,6 +42,8 @@ interface BaseBlockProps {
   avatarCharacter?: any; // Personaggio da mostrare nell'avatar
   isShipType?: boolean; // Indica se l'avatar è per SETSHIPTYPE
   isNodeType?: boolean; // Indica se l'avatar è per comandi mappa (nodo)
+  isAchievementType?: boolean; // Indica se l'avatar è per achievement
+  achievementName?: string; // Nome dell'achievement da mostrare
   // Azioni sempre visibili nella header (es. navigate to script)
   headerActions?: React.ReactNode;
 }
@@ -68,8 +71,10 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
   showAvatar = false,
   avatarCharacter,
   isShipType = false,
-  isNodeType = false
-  , headerActions
+  isNodeType = false,
+  isAchievementType = false,
+  achievementName,
+  headerActions
 }) => {
   const { t } = useTranslation();
   // Stato interno per collapse se non è controllato dall'esterno
@@ -298,6 +303,8 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
                 </div>
                 <CharacterAvatar character={(avatarCharacter as any).node2} isNodeType={true} size="small" />
               </div>
+            ) : isAchievementType ? (
+              <AchievementAvatar achievementName={achievementName} size="small" />
             ) : (
               <CharacterAvatar character={avatarCharacter} isShipType={isShipType} isNodeType={isNodeType} />
             )}

@@ -3,6 +3,11 @@ SCRIPTS
   SCRIPT aaa_pippo
     ShowDlgScene
     Say "prova"
+    SetAchievementProgress camp_aliens 3
+    SetAchievementAttempt camp_bet 2
+    UnlockAchievement camp_bet
+    UnlockShipPlan "I-pyramid"
+    UnlockShuttles
     HideDlgScene
   END_OF_SCRIPT
 

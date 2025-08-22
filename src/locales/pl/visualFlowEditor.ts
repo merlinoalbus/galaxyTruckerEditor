@@ -830,6 +830,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.unlockAchievement.description': 'Odblokuj osiągnięcie',
   'visualFlowEditor.tools.unlockShipPlan.description': 'Odblokuj plan statku',
   'visualFlowEditor.tools.unlockShuttles.description': 'Odblokuj promy',
+  'visualFlowEditor.blocks.achievement.selectAchievement': 'Osiągnięcie:',
+  'visualFlowEditor.blocks.achievement.value': 'Wartość',
+  'visualFlowEditor.blocks.achievement.objectives': 'Cele:',
+  'visualFlowEditor.blocks.achievement.none': 'Brak',
+  'visualFlowEditor.blocks.unlockShipPlan.label': 'Plan statku:',
+  'visualFlowEditor.blocks.unlockShipPlan.short': 'plan',
   
   // Tool Descriptions - Characters
   'visualFlowEditor.tools.askChar.description': 'Pytanie z postacią',

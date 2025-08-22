@@ -196,11 +196,11 @@ const TOOL_CATEGORIES_DEFINITION = (t: any): ToolCategory[] => [
     name: t('visualFlowEditor.tools.category.achievement'),
     icon: '🏆',
     tools: [
-  { id: 'setachievementprogress', name: 'SETACHIEVEMENTPROGRESS', icon: CMD_EMOJI['SETACHIEVEMENTPROGRESS'], blockType: 'SETACHIEVEMENTPROGRESS', description: t('visualFlowEditor.tools.setAchievementProgress.description'), implemented: false, inProgress: true },
-  { id: 'setachievementattempt', name: 'SETACHIEVEMENTATTEMPT', icon: CMD_EMOJI['SETACHIEVEMENTATTEMPT'], blockType: 'SETACHIEVEMENTATTEMPT', description: t('visualFlowEditor.tools.setAchievementAttempt.description'), implemented: false, inProgress: true },
-  { id: 'unlockachievement', name: 'UNLOCKACHIEVEMENT', icon: CMD_EMOJI['UNLOCKACHIEVEMENT'], blockType: 'UNLOCKACHIEVEMENT', description: t('visualFlowEditor.tools.unlockAchievement.description'), implemented: false, inProgress: true },
-  { id: 'unlockshipplan', name:'UNLOCKSHIPPLAN', icon: CMD_EMOJI['UNLOCKSHIPPLAN'], blockType: 'UNLOCKSHIPPLAN', description: t('visualFlowEditor.tools.unlockShipPlan.description'), implemented: false, inProgress: true },
-  { id: 'unlockshuttles', name: 'UNLOCKSHUTTLES', icon: CMD_EMOJI['UNLOCKSHUTTLES'], blockType: 'UNLOCKSHUTTLES', description: t('visualFlowEditor.tools.unlockShuttles.description'), implemented: false, inProgress: true }
+  { id: 'setachievementprogress', name: 'SETACHIEVEMENTPROGRESS', icon: CMD_EMOJI['SETACHIEVEMENTPROGRESS'], blockType: 'SETACHIEVEMENTPROGRESS', description: t('visualFlowEditor.tools.setAchievementProgress.description'), implemented: true },
+  { id: 'setachievementattempt', name: 'SETACHIEVEMENTATTEMPT', icon: CMD_EMOJI['SETACHIEVEMENTATTEMPT'], blockType: 'SETACHIEVEMENTATTEMPT', description: t('visualFlowEditor.tools.setAchievementAttempt.description'), implemented: true },
+  { id: 'unlockachievement', name: 'UNLOCKACHIEVEMENT', icon: CMD_EMOJI['UNLOCKACHIEVEMENT'], blockType: 'UNLOCKACHIEVEMENT', description: t('visualFlowEditor.tools.unlockAchievement.description'), implemented: true },
+  { id: 'unlockshipplan', name:'UNLOCKSHIPPLAN', icon: CMD_EMOJI['UNLOCKSHIPPLAN'], blockType: 'UNLOCKSHIPPLAN', description: t('visualFlowEditor.tools.unlockShipPlan.description'), implemented: true },
+  { id: 'unlockshuttles', name: 'UNLOCKSHUTTLES', icon: CMD_EMOJI['UNLOCKSHUTTLES'], blockType: 'UNLOCKSHUTTLES', description: t('visualFlowEditor.tools.unlockShuttles.description'), implemented: true }
     ]
   },
   {

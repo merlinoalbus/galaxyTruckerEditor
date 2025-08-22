@@ -23,22 +23,31 @@ export interface ButtonItemForSelect {
   label: string;
 }
 
+let BUTTONS_CACHE: ButtonItem[] | null = null;
+let BUTTONS_LOADING = false;
+
 export const useButtonsList = (currentLanguage: string = 'EN') => {
-  const [buttons, setButtons] = useState<ButtonItem[]>([]);
+  const [buttons, setButtons] = useState<ButtonItem[]>(BUTTONS_CACHE || []);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchButtons = async () => {
+      if (BUTTONS_CACHE || BUTTONS_LOADING) {
+        // Already have cache or in progress
+        if (BUTTONS_CACHE) setButtons(BUTTONS_CACHE);
+        return;
+      }
       setIsLoading(true);
       setError(null);
-      
+      BUTTONS_LOADING = true;
       try {
         const response = await fetch(`${API_CONFIG.API_BASE_URL}/game/buttons`);
         const result = await response.json();
         
         if (result.success && result.data) {
-          setButtons(result.data);
+          BUTTONS_CACHE = result.data as ButtonItem[];
+          setButtons(BUTTONS_CACHE);
         } else {
           throw new Error(result.message || 'Failed to fetch buttons');
         }
@@ -47,6 +56,7 @@ export const useButtonsList = (currentLanguage: string = 'EN') => {
         setError(err instanceof Error ? err.message : 'Failed to fetch buttons');
       } finally {
         setIsLoading(false);
+        BUTTONS_LOADING = false;
       }
     };
 

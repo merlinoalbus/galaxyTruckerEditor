@@ -827,6 +827,12 @@ const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.unlockAchievement.description': 'Erfolg freischalten',
   'visualFlowEditor.tools.unlockShipPlan.description': 'Schiffsplan freischalten',
   'visualFlowEditor.tools.unlockShuttles.description': 'Shuttles freischalten',
+  'visualFlowEditor.blocks.achievement.selectAchievement': 'Erfolg:',
+  'visualFlowEditor.blocks.achievement.value': 'Wert',
+  'visualFlowEditor.blocks.achievement.objectives': 'Ziele:',
+  'visualFlowEditor.blocks.achievement.none': 'Keiner',
+  'visualFlowEditor.blocks.unlockShipPlan.label': 'Schiffsplan:',
+  'visualFlowEditor.blocks.unlockShipPlan.short': 'Plan',
   
   // Tool Descriptions - Characters
   'visualFlowEditor.tools.askChar.description': 'Frage mit Charakter',

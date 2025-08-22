@@ -13,6 +13,59 @@ const router = express.Router();
 const logger = getLogger();
 const { findAllRelatedScripts } = require('../utils/scriptAnalyzer');
 
+// API: Lista ship plans da GAME_ROOT/ships (name/type)
+router.get('/ship-plans', async (req, res) => {
+  try {
+    logger.info('API call: GET /api/game/ship-plans - Listing ship plans from ships/*.yaml');
+
+    const shipsDir = path.join(GAME_ROOT, 'ships');
+    if (!await fs.pathExists(shipsDir)) {
+      logger.warn('ships directory not found');
+      return res.json({ success: true, data: [], count: 0 });
+    }
+
+  const entries = await fs.readdir(shipsDir, { withFileTypes: true });
+  const plans = [];
+
+    for (const entry of entries) {
+      if (entry.isFile() && /\.ya?ml$/i.test(entry.name)) {
+        const fullPath = path.join(shipsDir, entry.name);
+        try {
+          const content = await fs.readFile(fullPath, 'utf8');
+          const data = yaml.load(content);
+          // Some YAML files are arrays of plans, others single objects
+          if (Array.isArray(data)) {
+            for (const item of data) {
+              if (item && typeof item === 'object' && item.name) {
+                plans.push({ id: String(item.name), type: item.type ?? null });
+              }
+            }
+          } else if (data && typeof data === 'object') {
+            if (data.name) {
+              plans.push({ id: String(data.name), type: data.type ?? null });
+            } else {
+              // no name -> skip (we don't use filename-derived ids per spec)
+              logger.warn(`Ship plan file ${entry.name} missing 'name' field, skipping.`);
+            }
+          } else {
+            logger.warn(`Ship plan file ${entry.name} has unsupported YAML structure`);
+          }
+        } catch (e) {
+          logger.warn(`Failed to parse ship plan ${entry.name}: ${e.message}`);
+        }
+      }
+    }
+
+  // Ordina per id
+  plans.sort((a, b) => (a.id || '').localeCompare(b.id || ''));
+
+  res.json({ success: true, data: plans, count: plans.length });
+  } catch (error) {
+    logger.error(`Error retrieving ship plans: ${error.message}`);
+    res.status(500).json({ success: false, error: 'Failed to retrieve ship plans', message: error.message });
+  }
+});
+
 // API 6: Lista personaggi secondo specifica
 router.get('/characters', async (req, res) => {
   try {

@@ -669,6 +669,16 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.unlockShipPlan.description': 'Разблокировать план корабля',
   'visualFlowEditor.tools.unlockShuttles.description': 'Разблокировать шаттлы',
   
+  // Achievement UI - Labels
+  'visualFlowEditor.blocks.achievement.selectAchievement': 'Достижение:',
+  'visualFlowEditor.blocks.achievement.value': 'Значение',
+  'visualFlowEditor.blocks.achievement.objectives': 'Цели:',
+  'visualFlowEditor.blocks.achievement.none': 'Нет',
+  
+  // UnlockShipPlan - Labels
+  'visualFlowEditor.blocks.unlockShipPlan.label': 'План корабля:',
+  'visualFlowEditor.blocks.unlockShipPlan.short': 'план',
+  
   // Tool Descriptions - Characters
   'visualFlowEditor.tools.askChar.description': 'Вопрос с персонажем',
   'visualFlowEditor.tools.focusChar.description': 'Сфокусироваться на персонаже',

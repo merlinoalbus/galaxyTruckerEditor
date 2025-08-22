@@ -868,6 +868,14 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.unlockAchievement.description': 'Sblocca achievement',
   'visualFlowEditor.tools.unlockShipPlan.description': 'Sblocca piano nave',
   'visualFlowEditor.tools.unlockShuttles.description': 'Sblocca shuttle',
+  // Achievement - UI
+  'visualFlowEditor.blocks.achievement.selectAchievement': 'Obiettivo:',
+  'visualFlowEditor.blocks.achievement.value': 'Valore',
+  'visualFlowEditor.blocks.achievement.objectives': 'Obiettivi:',
+  'visualFlowEditor.blocks.achievement.none': 'Nessuno',
+  // Ship Plan - UI
+  'visualFlowEditor.blocks.unlockShipPlan.label': 'Progetto Navale:',
+  'visualFlowEditor.blocks.unlockShipPlan.short': 'progetto',
   
   // Tool Descriptions - Characters
   'visualFlowEditor.tools.askChar.description': 'Domanda con personaggio',

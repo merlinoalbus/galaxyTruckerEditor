@@ -281,6 +281,35 @@ const GENERAL_COMMAND_COLORS: Record<string, BlockColorConfig> = {
     icon: 'bg-indigo-800/80',
     text: 'text-indigo-300',
     dragHandle: 'bg-indigo-600'
+  },
+  // Distinct colors for new achievement and ship plan commands
+  'UNLOCKACHIEVEMENT': {
+    background: 'bg-pink-950/90',
+    border: 'border-pink-700/80',
+    icon: 'bg-pink-900/80',
+    text: 'text-pink-300',
+    dragHandle: 'bg-pink-700'
+  },
+  'SETACHIEVEMENTPROGRESS': {
+    background: 'bg-rose-950/90',
+    border: 'border-rose-700/80',
+    icon: 'bg-rose-900/80',
+    text: 'text-rose-300',
+    dragHandle: 'bg-rose-700'
+  },
+  'SETACHIEVEMENTATTEMPT': {
+    background: 'bg-fuchsia-950/90',
+    border: 'border-fuchsia-700/80',
+    icon: 'bg-fuchsia-900/80',
+    text: 'text-fuchsia-300',
+    dragHandle: 'bg-fuchsia-700'
+  },
+  'UNLOCKSHIPPLAN': {
+    background: 'bg-cyan-950/90',
+    border: 'border-cyan-700/80',
+    icon: 'bg-cyan-900/80',
+    text: 'text-cyan-300',
+    dragHandle: 'bg-cyan-700'
   }
 };
 
@@ -332,6 +361,7 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   'ALLSHIPSGIVEUP': BlockCategory.MISSION,
   'GIVEUPFLIGHT': BlockCategory.MISSION,
   'MODIFYOPPONENTSBUILDSPEED': BlockCategory.MISSION,
+  'UNLOCKSHIPPLAN': BlockCategory.MISSION,
   
   // Dialogue
   'SAY': BlockCategory.DIALOGUE,
@@ -339,6 +369,9 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   'BRIEF': BlockCategory.DIALOGUE,
   'DEBRIEF': BlockCategory.DIALOGUE,
   'DIALOGUE': BlockCategory.DIALOGUE,
+  'UNLOCKACHIEVEMENT': BlockCategory.DIALOGUE,
+  'SETACHIEVEMENTPROGRESS': BlockCategory.DIALOGUE,
+  'SETACHIEVEMENTATTEMPT': BlockCategory.DIALOGUE,
   
   // Navigation
   'GO': BlockCategory.NAVIGATION,

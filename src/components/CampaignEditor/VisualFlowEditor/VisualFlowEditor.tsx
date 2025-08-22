@@ -14,6 +14,7 @@ import { TIMEOUT_CONSTANTS, PERFORMANCE_CONSTANTS, UI_CONSTANTS } from '@/consta
 import { API_CONFIG } from '@/config/constants';
 import { SceneProvider, useScene } from '@/contexts/SceneContext';
 import { ScriptMetadataProvider } from '@/contexts/ScriptMetadataContext';
+import { AchievementsImagesProvider } from '@/contexts/AchievementsImagesContext';
 
 // Import componenti modulari
 import { BlockRenderer } from './components/BlockRenderer/BlockRenderer';
@@ -1169,7 +1170,9 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
 export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = (props) => {
   return (
     <SceneProvider>
-      <VisualFlowEditorInternal {...props} />
+      <AchievementsImagesProvider>
+        <VisualFlowEditorInternal {...props} />
+      </AchievementsImagesProvider>
     </SceneProvider>
   );
 };

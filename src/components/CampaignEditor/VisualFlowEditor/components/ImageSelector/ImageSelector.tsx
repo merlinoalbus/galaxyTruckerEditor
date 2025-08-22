@@ -1,8 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Search, Check } from 'lucide-react';
 import { useTranslation } from '@/locales';
 import type { ImageData } from '@/types/CampaignEditor/VariablesSystem/types/ImagesView/ImagesView.types';
 import { useImages } from '@/contexts/ImagesContext';
+import { imagesViewService } from '@/services/CampaignEditor/VariablesSystem/services/ImagesView/imagesViewService';
 
 interface ImageSelectorProps {
   value: string;
@@ -20,18 +21,12 @@ export const ImageSelector: React.FC<ImageSelectorProps> = ({
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const { images: allImageData, loading, error } = useImages();
+  // Cache locale per immagini binarie come in Achievements
+  const [imageCache, setImageCache] = useState<Record<string, string>>({});
+  const [isFetchingBinary, setIsFetchingBinary] = useState(false);
 
-  // Filtra solo le immagini nella cartella campaign/ o tutorial/ (non sottocartelle)
-  // Mostra SOLO immagini direttamente in campaign/ o tutorial/ (esclude sottocartelle)
-  const filteredByFolder = useMemo(() => {
-    return allImageData.filter(imageData => {
-      const normalizedPath = imageData.percorso.replace(/\\/g, '/');
-      // Path deve terminare con /campaign/<file> oppure /tutorial/<file>
-      const campaignMatch = /\/campaign\/[^/]+$/.test(normalizedPath);
-      const tutorialMatch = /\/tutorial\/[^/]+$/.test(normalizedPath);
-      return campaignMatch || tutorialMatch;
-    });
-  }, [allImageData]);
+  // Nessun filtro per cartella: mostra tutte le immagini disponibili (ricerca le restringe).
+  const filteredByFolder = allImageData;
   
   // Filtra per ricerca
   const filteredImages = useMemo(() => {
@@ -41,6 +36,46 @@ export const ImageSelector: React.FC<ImageSelectorProps> = ({
       imageData.nomefile.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [filteredByFolder, searchTerm]);
+
+  // Carica in batch i binari per i primi N risultati filtrati (approccio Achievements)
+  useEffect(() => {
+    const LIMIT = 200; // batch massimo da caricare velocemente
+    if (!filteredImages || filteredImages.length === 0) return;
+    // Se molti sono già in cache, evita chiamate inutili
+    const toLoad = filteredImages
+      .slice(0, LIMIT)
+      .map(img => img.percorso)
+      .filter(path => !imageCache[path]);
+    if (toLoad.length === 0 || isFetchingBinary) return;
+    setIsFetchingBinary(true);
+    imagesViewService.getImageBinary(toLoad)
+      .then(res => {
+        if (res?.success && Array.isArray(res.data)) {
+          const newEntries: Record<string, string> = {};
+          for (const item of res.data) {
+            if (!item?.percorso || !item?.binary) continue;
+            // Considera anche fallback: se binary esiste, usalo comunque
+            // Imposta MIME in base all'estensione del file richiesto
+            const ext = (item.percorso.split('.').pop() || '').toLowerCase();
+            const mime = ext === 'jpg' || ext === 'jpeg'
+              ? 'image/jpeg'
+              : ext === 'webp'
+              ? 'image/webp'
+              : ext === 'gif'
+              ? 'image/gif'
+              : ext === 'bmp'
+              ? 'image/bmp'
+              : 'image/png';
+            newEntries[item.percorso] = `data:${mime};base64,${item.binary}`;
+          }
+          if (Object.keys(newEntries).length > 0) {
+            setImageCache(prev => ({ ...prev, ...newEntries }));
+          }
+        }
+      })
+      .catch(() => {})
+      .finally(() => setIsFetchingBinary(false));
+  }, [filteredImages, imageCache, isFetchingBinary]);
   
   // Estrai il nome del file per la visualizzazione
   const getImageDisplayName = (imageData: ImageData) => {
@@ -50,7 +85,10 @@ export const ImageSelector: React.FC<ImageSelectorProps> = ({
   if (loading) {
     return (
       <div className={`${className} h-full flex items-center justify-center`}>
-        <div className="text-gray-500 text-xs">Loading images...</div>
+        <div className="text-gray-400 text-xs flex items-center gap-2">
+          <span className="inline-block w-3 h-3 border-2 border-gray-500 border-t-transparent rounded-full animate-spin"></span>
+          {t('common.loading')}
+        </div>
       </div>
     );
   }
@@ -80,10 +118,10 @@ export const ImageSelector: React.FC<ImageSelectorProps> = ({
       </div>
       
       {/* Image grid con anteprime */}
-  <div className="overflow-y-auto bg-[#8B2C3A] border border-slate-600 rounded p-1 flex-1" style={{ minHeight: 0 }}>
-        {filteredImages.length === 0 ? (
+      <div className="overflow-y-auto bg-slate-800 border border-slate-600 rounded p-1 flex-1" style={{ minHeight: 0, maxHeight: '130px' }}>
+  {filteredImages.length === 0 ? (
           <div className="text-center text-gray-500 text-xs py-2">
-            No images found in campaign folder
+            {t('visualFlowEditor.metacode.noImagesFound')}
           </div>
         ) : (
           <div 
@@ -95,17 +133,17 @@ export const ImageSelector: React.FC<ImageSelectorProps> = ({
               onClick={() => onChange('')}
               className={`
                 relative cursor-pointer transition-all rounded p-1 flex flex-col items-center
-                ${value === '' ? 'ring-1 ring-purple-500 bg-[#8B2C3A]' : 'hover:bg-[#8B2C3A]'}
+                ${value === '' ? 'ring-1 ring-purple-500 bg-slate-700/40' : 'hover:bg-slate-700/30'}
               `}
-              title="Nessuno"
+              title={t('visualFlowEditor.metacode.none')}
             >
               <div className="w-full aspect-square mb-0.5 overflow-hidden rounded transform scale-90">
-                <div className="w-full h-full rounded bg-[#8B2C3A] border border-slate-600 flex items-center justify-center">
+                <div className="w-full h-full rounded bg-slate-800 border border-slate-600 flex items-center justify-center">
                   <span className="text-[16px] text-gray-400">∅</span>
                 </div>
               </div>
               <div className="text-[9px] text-gray-300 text-center truncate w-full leading-tight">
-                Nessuno
+                {t('visualFlowEditor.metacode.none')}
               </div>
               {value === '' && (
                 <div className="absolute top-0.5 right-0.5">
@@ -117,16 +155,28 @@ export const ImageSelector: React.FC<ImageSelectorProps> = ({
             {filteredImages.map((imageData) => {
               const isSelected = value === imageData.percorso;
               const displayName = getImageDisplayName(imageData);
-              // Usa SOLO il thumbnail già caricato, gestendo prefisso duplicato
-              let thumbnailUrl: string | null = null;
-              if (imageData.thumbnail) {
-                if (imageData.thumbnail.startsWith('data:image/')) {
-                  thumbnailUrl = imageData.thumbnail;
-                } else {
-                  // fallback: PNG di default
-                  thumbnailUrl = `data:image/png;base64,${imageData.thumbnail}`;
-                }
-              }
+              // Usa SOLO il thumbnail già caricato; se manca il prefisso data:, applica il MIME corretto
+              const buildDataUrl = (base64: string, filename: string): string => {
+                const clean = (base64 || '').trim();
+                if (!clean) return '';
+                if (clean.startsWith('data:image/')) return clean; // già pronto
+                const ext = (filename.split('.').pop() || '').toLowerCase();
+                const mime = ext === 'jpg' || ext === 'jpeg'
+                  ? 'image/jpeg'
+                  : ext === 'webp'
+                  ? 'image/webp'
+                  : ext === 'gif'
+                  ? 'image/gif'
+                  : 'image/png';
+                return `data:${mime};base64,${clean}`;
+              };
+              // Priorità: cache binaria (più affidabile) -> thumbnail
+              const cached = imageCache[imageData.percorso];
+              const thumbnailUrl: string | null = cached
+                ? cached
+                : imageData.thumbnail
+                ? buildDataUrl(imageData.thumbnail, imageData.nomefile)
+                : null;
               
               return (
                 <div
@@ -134,7 +184,7 @@ export const ImageSelector: React.FC<ImageSelectorProps> = ({
                   onClick={() => onChange(imageData.percorso)}
                   className={`
                     relative cursor-pointer transition-all rounded p-1 flex flex-col items-center
-                    ${isSelected ? 'ring-1 ring-purple-500 bg-[#8B2C3A]' : 'hover:bg-[#8B2C3A]'}
+                    ${isSelected ? 'ring-1 ring-purple-500 bg-slate-700/40' : 'hover:bg-slate-700/30'}
                   `}
                   title={imageData.percorso}
                 >
@@ -144,10 +194,11 @@ export const ImageSelector: React.FC<ImageSelectorProps> = ({
                       <img 
                         src={thumbnailUrl}
                         alt={displayName}
+                        loading="lazy"
                         className="w-full h-full object-cover border border-slate-600"
                       />
                     ) : (
-                      <div className="w-full h-full rounded bg-[#8B2C3A] border border-slate-600 flex items-center justify-center">
+                      <div className="w-full h-full rounded bg-slate-800 border border-slate-600 flex items-center justify-center">
                         <span className="text-[10px] text-gray-500">?</span>
                       </div>
                     )}
