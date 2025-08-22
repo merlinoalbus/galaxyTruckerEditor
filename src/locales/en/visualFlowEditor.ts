@@ -3,6 +3,42 @@
  */
 
 export const visualFlowEditorTranslations = {
+  // Deck tools
+  'visualFlowEditor.tools.deckAddCardType.description': 'Add specific card type(s) to the deck. Params: string with card ids/types and optional qualifiers.',
+  'visualFlowEditor.tools.deckAddAllCards.description': 'Add all available cards to the deck.',
+  'visualFlowEditor.tools.deckAddCardRound.description': 'Add cards to the deck for a specific round. Params: single string.',
+  'visualFlowEditor.tools.deckAddRulePosition.description': 'Add a position rule for the deck. Params: single string.',
+  'visualFlowEditor.tools.deckAddRuleRange.description': 'Add a range rule for the deck. Params: single string.',
+  'visualFlowEditor.tools.deckShuffle.description': 'Shuffle the deck.',
+  'visualFlowEditor.tools.setSuperCardsCnt.description': 'Set the number of super cards. Params: single string (e.g., count).',
+
+  // Deck blocks UI
+  'visualFlowEditor.blocks.deckAddAllCards.description': 'Adds all cards to the deck for the current context.',
+  'visualFlowEditor.blocks.deckShuffle.description': 'Shuffles the current deck.',
+  'visualFlowEditor.blocks.deckAddAllCards.compact': 'Add all cards to deck',
+  'visualFlowEditor.blocks.deckShuffle.compact': 'Shuffle deck',
+  'visualFlowEditor.blocks.deckAddCardType.label': 'Parameters',
+  'visualFlowEditor.blocks.deckAddCardType.placeholder': 'e.g. alienGun 2; merchant 1',
+  'visualFlowEditor.blocks.deckAddCardType.hint': 'Single string, space-separated args. Keep original syntax used by scripts.',
+  'visualFlowEditor.blocks.deckAddCardRound.label': 'Parameters',
+  'visualFlowEditor.blocks.deckAddCardRound.placeholder': 'e.g. 2 alienGun 1',
+  'visualFlowEditor.blocks.deckAddCardRound.hint': 'Single string for the round setup.',
+  'visualFlowEditor.blocks.deckAddRulePosition.label': 'Parameters',
+  'visualFlowEditor.blocks.deckAddRulePosition.placeholder': 'e.g. pos 1-3',
+  'visualFlowEditor.blocks.deckAddRulePosition.hint': 'Single string describing the position rule.',
+  'visualFlowEditor.blocks.deckAddRuleRange.label': 'Parameters',
+  'visualFlowEditor.blocks.deckAddRuleRange.placeholder': 'e.g. range 2-5',
+  'visualFlowEditor.blocks.deckAddRuleRange.hint': 'Single string describing the range rule.',
+  'visualFlowEditor.blocks.setSuperCardsCnt.label': 'Parameters',
+  'visualFlowEditor.blocks.setSuperCardsCnt.placeholder': 'e.g. 3',
+  'visualFlowEditor.blocks.setSuperCardsCnt.hint': 'Number of super cards (single string).',
+
+  // Deck validation
+  'visualFlowEditor.validation.DECKADDCARDTYPE_NO_PARAMS': 'Parameters are required. Please provide a value.',
+  'visualFlowEditor.validation.DECKADDCARDROUND_NO_PARAMS': 'Parameters are required. Please provide a value.',
+  'visualFlowEditor.validation.DECKADDRULEPOSITION_NO_PARAMS': 'Parameters are required. Please provide a value.',
+  'visualFlowEditor.validation.DECKADDRULERANGE_NO_PARAMS': 'Parameters are required. Please provide a value.',
+  'visualFlowEditor.validation.SETSUPERCARDSCNT_NO_PARAMS': 'Parameters are required. Please provide a value.',
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
   'visualFlowEditor.subtitle': 'Complete Visual Editor',
@@ -118,6 +154,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.subScript.scriptName': 'Script Name',
   'visualFlowEditor.blocks.subScript.hint': 'Select the script to execute',
   'visualFlowEditor.blocks.subScript.navigate': 'Navigate to sub-script',
+  // Common
+  'visualFlowEditor.common.parameters': 'Parameters',
   
   // ACT_MISSION Block
   'visualFlowEditor.blocks.actMission.missionName': 'Mission Name',

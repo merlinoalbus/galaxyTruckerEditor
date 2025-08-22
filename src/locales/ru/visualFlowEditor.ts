@@ -3,6 +3,44 @@
  */
 
 export const visualFlowEditorTranslations = {
+  // Deck tools
+  'visualFlowEditor.tools.deckAddCardType.description': 'Добавляет определенные типы карт в колоду. Параметры: одна строка с id/типами карт и опциональными квалификаторами.',
+  'visualFlowEditor.tools.deckAddAllCards.description': 'Добавляет все доступные карты в колоду.',
+  'visualFlowEditor.tools.deckAddCardRound.description': 'Добавляет карты для указанного раунда. Параметры: одна строка.',
+  'visualFlowEditor.tools.deckAddRulePosition.description': 'Добавляет правило позиции для колоды. Параметры: одна строка.',
+  'visualFlowEditor.tools.deckAddRuleRange.description': 'Добавляет правило диапазона для колоды. Параметры: одна строка.',
+  'visualFlowEditor.tools.deckShuffle.description': 'Перемешивает колоду.',
+  'visualFlowEditor.tools.setSuperCardsCnt.description': 'Устанавливает количество супер-карт. Параметры: одна строка (например, число).',
+  // Общие
+  'visualFlowEditor.common.parameters': 'Параметры',
+
+  // Deck blocks UI
+  'visualFlowEditor.blocks.deckAddAllCards.description': 'Добавляет все карты в колоду в текущем контексте.',
+  'visualFlowEditor.blocks.deckShuffle.description': 'Перемешивает текущую колоду.',
+  'visualFlowEditor.blocks.deckAddAllCards.compact': 'Добавить все карты',
+  'visualFlowEditor.blocks.deckShuffle.compact': 'Перемешать колоду',
+  'visualFlowEditor.blocks.deckAddCardType.label': 'Параметры',
+  'visualFlowEditor.blocks.deckAddCardType.placeholder': 'напр. alienGun 2; merchant 1',
+  'visualFlowEditor.blocks.deckAddCardType.hint': 'Одна строка, аргументы через пробел. Сохраняйте синтаксис скриптов.',
+  'visualFlowEditor.blocks.deckAddCardRound.label': 'Параметры',
+  'visualFlowEditor.blocks.deckAddCardRound.placeholder': 'напр. 2 alienGun 1',
+  'visualFlowEditor.blocks.deckAddCardRound.hint': 'Одна строка для настройки раунда.',
+  'visualFlowEditor.blocks.deckAddRulePosition.label': 'Параметры',
+  'visualFlowEditor.blocks.deckAddRulePosition.placeholder': 'напр. pos 1-3',
+  'visualFlowEditor.blocks.deckAddRulePosition.hint': 'Одна строка, описывающая правило позиции.',
+  'visualFlowEditor.blocks.deckAddRuleRange.label': 'Параметры',
+  'visualFlowEditor.blocks.deckAddRuleRange.placeholder': 'напр. range 2-5',
+  'visualFlowEditor.blocks.deckAddRuleRange.hint': 'Одна строка, описывающая правило диапазона.',
+  'visualFlowEditor.blocks.setSuperCardsCnt.label': 'Параметры',
+  'visualFlowEditor.blocks.setSuperCardsCnt.placeholder': 'напр. 3',
+  'visualFlowEditor.blocks.setSuperCardsCnt.hint': 'Количество супер-карт (одна строка).',
+
+  // Deck validation
+  'visualFlowEditor.validation.DECKADDCARDTYPE_NO_PARAMS': 'Требуются параметры. Укажите значение.',
+  'visualFlowEditor.validation.DECKADDCARDROUND_NO_PARAMS': 'Требуются параметры. Укажите значение.',
+  'visualFlowEditor.validation.DECKADDRULEPOSITION_NO_PARAMS': 'Требуются параметры. Укажите значение.',
+  'visualFlowEditor.validation.DECKADDRULERANGE_NO_PARAMS': 'Требуются параметры. Укажите значение.',
+  'visualFlowEditor.validation.SETSUPERCARDSCNT_NO_PARAMS': 'Требуются параметры. Укажите значение.',
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
   'visualFlowEditor.subtitle': 'Полный Визуальный Редактор',

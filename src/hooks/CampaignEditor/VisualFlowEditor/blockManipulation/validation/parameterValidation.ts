@@ -15,6 +15,15 @@ export const validateShowHelpImageParameters = (block: any): { valid: boolean; e
   return { valid: true };
 };
 /**
+ * Valida i parametri di un blocco con singola stringa in parameters.params
+ */
+export const validateSingleStringParams = (block: any, errorKey: string): { valid: boolean; error?: string } => {
+  if (!block.parameters?.params || String(block.parameters.params).trim() === '') {
+    return { valid: false, error: errorKey };
+  }
+  return { valid: true };
+};
+/**
  * Parameter Validation Module
  * Funzioni per validare che i parametri dei blocchi siano valorizzati correttamente
  */
@@ -801,6 +810,17 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return validateModifyOpponentsBuildSpeedParameters(block);
     case 'ADDOPPONENTSCREDITS':
       return validateAddOpponentsCreditsParameters(block);
+    // ===== DECK commands (single string) =====
+    case 'DECKADDCARDTYPE':
+      return validateSingleStringParams(block, 'DECKADDCARDTYPE_NO_PARAMS');
+    case 'DECKADDCARDROUND':
+      return validateSingleStringParams(block, 'DECKADDCARDROUND_NO_PARAMS');
+    case 'DECKADDRULEPOSITION':
+      return validateSingleStringParams(block, 'DECKADDRULEPOSITION_NO_PARAMS');
+    case 'DECKADDRULERANGE':
+      return validateSingleStringParams(block, 'DECKADDRULERANGE_NO_PARAMS');
+    case 'SETSUPERCARDSCNT':
+      return validateSingleStringParams(block, 'SETSUPERCARDSCNT_NO_PARAMS');
     case 'ADDCREDITS':
     case 'SETCREDITS':
     case 'ADDMISSIONCREDITS':
