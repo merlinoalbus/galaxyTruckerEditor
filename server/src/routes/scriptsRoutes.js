@@ -629,7 +629,8 @@ router.get('/translations/coverage', async (req, res) => {
       for (const lang of languages) {
         if (lang === 'EN') continue;
         const stats = perLang[lang] || { covered: 0, missing: 0, different: 0 };
-        const percent = totals.totalFields > 0 ? Math.round((stats.covered / totals.totalFields) * 100) : 100;
+        // If script has no translatable fields, set percent to 0 (frontend filters 0-field scripts)
+        const percent = totals.totalFields > 0 ? Math.round((stats.covered / totals.totalFields) * 100) : 0;
         scriptEntry.languages[lang] = {
           covered: stats.covered,
           missing: stats.missing,
@@ -651,15 +652,14 @@ router.get('/translations/coverage', async (req, res) => {
     for (const lang of languages) {
       if (lang === 'EN') continue;
       const g = globalCounters[lang];
-      // Average percent across all scripts/mission (including those with 0 fields as 100%)
-      const percents = perScript.map(s => s.languages[lang]?.percent ?? 100);
-      const avgPercent = percents.length > 0 ? Math.round(percents.reduce((a, b) => a + b, 0) / percents.length) : 100;
+      // Compute percent as aggregated ratio: total covered fields / total fields
+      const percent = g.totalFields > 0 ? Math.round((g.covered / g.totalFields) * 100) : 100;
       perLanguage[lang] = {
         covered: g.covered,
         missing: g.missing,
         different: g.different,
         totalFields: g.totalFields,
-        percent: avgPercent
+        percent
       };
     }
 
