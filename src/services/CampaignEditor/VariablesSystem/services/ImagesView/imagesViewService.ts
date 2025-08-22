@@ -13,11 +13,18 @@ class ImagesViewService {
         params.append('thumbnail', 'true');
         params.append('thumbnailSize', thumbnailSize.toString());
       }
+    // Cache-busting per evitare 304/ETag e risposte senza body
+    params.append('_', Date.now().toString());
       
       const response = await fetch(`${API_BASE_URL}/images?${params.toString()}`, {
         method: 'GET',
+        // Evita 304/ETag e garantisce corpo JSON sempre presente
+        cache: 'no-store',
         headers: {
           'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+          Pragma: 'no-cache',
+      'If-None-Match': '"force-refresh"'
         },
       });
 
@@ -37,8 +44,11 @@ class ImagesViewService {
     try {
       const response = await fetch(`${API_BASE_URL}/images/binary`, {
         method: 'POST',
+        cache: 'no-store',
         headers: {
           'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+          Pragma: 'no-cache',
         },
         body: JSON.stringify({ percorsi }),
       });
@@ -59,6 +69,11 @@ class ImagesViewService {
     try {
       const response = await fetch(`${API_BASE_URL}/file/${percorso}`, {
         method: 'GET',
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          Pragma: 'no-cache',
+        },
       });
 
       if (!response.ok) {

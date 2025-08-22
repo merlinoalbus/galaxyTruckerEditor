@@ -38,6 +38,7 @@ export const API_ENDPOINTS = {
   GAME_BUTTONS: '/game/buttons',
   GAME_ACHIEVEMENTS: '/game/achievements',
   GAME_ACHIEVEMENTS_IMAGES: '/game/achievements/images',
+  GAME_SHIP_PLANS: '/game/ship-plans',
 
   // Generic API
   IMAGES: '/images',

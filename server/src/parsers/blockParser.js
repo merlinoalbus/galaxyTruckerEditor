@@ -170,7 +170,7 @@ const COMMAND_CATALOG = {
   'SETACHIEVEMENTPROGRESS': { params: ['achievement', 'value:number'], pattern: /^SetAchievementProgress\s+([\w_]+)\s+(\d+)$/i },
   'SETACHIEVEMENTATTEMPT': { params: ['achievement', 'value:number'], pattern: /^SetAchievementAttempt\s+([\w_]+)\s+(\d+)$/i },
   'UNLOCKACHIEVEMENT': { params: ['achievement'], pattern: /^UnlockAchievement\s+([\w_]+)$/i },
-  'UNLOCKSHIPPLAN': { params: ['plan'], pattern: /^UnlockShipPlan\s+(\w+)$/i },
+  'UNLOCKSHIPPLAN': { params: ['plan'], pattern: /^UnlockShipPlan\s+"?([^"]+)"?$/i },
   'UNLOCKSHUTTLES': { params: [], pattern: /^UnlockShuttles$/i },
   
   // HELP SCRIPTS
@@ -1043,6 +1043,14 @@ function parseCommand(line, commandMatch, language, lineIndex) {
       });
     }
     
+    // Alias e normalizzazioni post-mapping
+    if (commandName === 'UNLOCKSHIPPLAN') {
+      // Normalizza: esponi anche 'shipPlan' come alias di 'plan'
+      if (commandObject.parameters && commandObject.parameters.plan && commandObject.parameters.shipPlan === undefined) {
+        commandObject.parameters.shipPlan = commandObject.parameters.plan;
+      }
+    }
+
     return {
       nextIndex: lineIndex + 1,
       object: commandObject,
@@ -1481,6 +1489,10 @@ function serializeCommand(element, targetLanguage = 'EN') {
       
       // Prima cerca in element.parameters, poi direttamente in element
       let paramValue = element.parameters ? element.parameters[paramName] : undefined;
+      // Compatibilità: accetta 'shipPlan' come alias di 'plan'
+      if (paramValue === undefined && paramName === 'plan' && element.parameters && element.parameters.shipPlan !== undefined) {
+        paramValue = element.parameters.shipPlan;
+      }
       if (paramValue === undefined && element[paramName] !== undefined) {
         paramValue = element[paramName];
       }
@@ -1510,7 +1522,7 @@ function serializeCommand(element, targetLanguage = 'EN') {
           // Per parametri stringa che necessitano virgolette
           // NON aggiungere virgolette per: achievement, shiptype, condition, pile, progress, node, image, script
           const noQuoteParams = ['achievement', 'shiptype', 'pile', 'progress', 'node', 'image', 'script'];
-          const needQuoteParams = ['path', 'file']; // Parametri che necessitano sempre virgolette
+          const needQuoteParams = ['path', 'file', 'plan']; // Parametri che necessitano sempre virgolette
           
           // Eccezione: per SetDeckPreparationScript e SetFlightDeckPreparationScript, il parametro 'script' deve SEMPRE essere tra virgolette
           if ((element.type === 'SETDECKPREPARATIONSCRIPT' || element.type === 'SETFLIGHTDECKPREPARATIONSCRIPT') && paramName === 'script') {

@@ -6,6 +6,7 @@ import { StackedEmoji } from '@/components/Emoji/StackedEmoji';
 import { CMD_EMOJI } from '@/components/Emoji/cmdEmojiMap';
 import { BaseBlock } from '../BaseBlock/BaseBlock';
 import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
+import { AchievementsSelector } from '../../AchievementsSelector/AchievementsSelector';
 import { MultilingualTextEditor } from '../../MultilingualTextEditor';
 import { CharacterSelector } from '../../CharacterSelector';
 import { NodeSelector } from '../../NodeSelector/NodeSelector';
@@ -14,9 +15,13 @@ import { useTranslation } from '@/locales';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SceneDebugButton } from '../../SceneDebugButton';
 import { CharacterAvatar } from '../../CharacterAvatar';
+import { AchievementAvatar } from '../../AchievementAvatar';
 import { simulateSceneExecution, getLastModifiedVisibleCharacter } from '@/utils/CampaignEditor/VisualFlowEditor/sceneSimulation';
 import { imagesViewService } from '@/services/CampaignEditor/VariablesSystem/services/ImagesView/imagesViewService';
 import { interactiveMapService } from '@/services/CampaignEditor/InteractiveMap/interactiveMapService';
+import { variablesSystemApiService } from '@/services/CampaignEditor/VariablesSystem/variablesSystemApiService';
+import { gameDataService } from '@/services/CampaignEditor/GameDataService';
+import { useCachedAchievements, useCachedShipPlans } from '@/hooks/CampaignEditor/VisualFlowEditor/useCachedGameData';
 import type { Mission } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { PercentageInput } from '../../PercentageInput';
 import { useButtonsList } from '@/hooks/CampaignEditor/VisualFlowEditor/useButtonsList';
@@ -94,9 +99,14 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   const [selectedCharacterImage, setSelectedCharacterImage] = useState<string | null>(null);
   const [characterImages, setCharacterImages] = useState<Record<string, string>>({});
   const [noAvatarImage, setNoAvatarImage] = useState<string | null>(null);
+  // Achievements & Ship Plans (lazy)
+  const cachedAchievements = useCachedAchievements();
+  const cachedShipPlans = useCachedShipPlans();
+  const [achievementsList, setAchievementsList] = useState<string[] | null>(null);
+  const [shipPlansList, setShipPlansList] = useState<Array<{ id: string; type: string | null }> | null>(null);
   
   // Load buttons list for SHOWBUTTON/HIDEBUTTON commands
-  const { buttons, isLoading: buttonsLoading, error: buttonsError, getButtonsForSelect } = useButtonsList();
+  const { buttons, isLoading: buttonsLoading, error: buttonsError, getButtonsForSelect } = useButtonsList(currentLanguage);
   
   // Calcola lo stato simulato della scena fino a questo blocco
   const simulatedSceneState = useMemo(() => {
@@ -147,8 +157,11 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         if (mounted) setMissionsList([]);
       });
     }
+    // Populate from caches (one-time)
+    if (!achievementsList && cachedAchievements) setAchievementsList(cachedAchievements);
+    if (!shipPlansList && cachedShipPlans) setShipPlansList(cachedShipPlans.map(sp => ({ id: sp.id, type: sp.type })));
     return () => { mounted = false; };
-  }, [block.type, missionsList]);
+  }, [block.type, missionsList, achievementsList, shipPlansList, cachedAchievements, cachedShipPlans]);
   
   // NON USARE useEffect per aggiornare la scena - non funziona con componenti separati
   // La scena deve essere gestita a livello superiore con esecuzione sequenziale
@@ -195,9 +208,9 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
       case 'HIDEDLGSCENE':
         return <Emoji text="🫥" className="text-2xl leading-none inline-block align-middle" />;
       default: {
+        // Solo icona: i parametri vengono renderizzati da renderParameters
         const emoji = CMD_EMOJI[block.type as keyof typeof CMD_EMOJI];
         if (emoji) {
-          // Estrae solo i caratteri emoji (Unicode property Emoji)
           const emojiArr = Array.from(emoji).filter(e => /\p{Emoji}/u.test(e));
           if (emojiArr.length > 1) {
             return <StackedEmoji emojis={emojiArr} size={20} className="inline-block align-middle" />;
@@ -210,6 +223,90 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   };
   const renderParameters = () => {
     switch (block.type) {
+      // ACHIEVEMENT/SHIP PLAN COMMANDS (UI DEI PARAMETRI)
+      case 'UNLOCKSHUTTLES': {
+        // Solo informativo, senza parametri
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {(t as any)('visualFlowEditor.tools.unlockShuttles.description')}
+              </p>
+            </div>
+          </div>
+        );
+      }
+      case 'UNLOCKACHIEVEMENT': {
+        const achievement = String(block.parameters?.achievement || '');
+        const list = achievementsList || [];
+        return (
+          <div className="flex items-start gap-2" style={{ height: '160px' }}>
+            <div className="flex-1">
+              <AchievementsSelector
+                value={achievement}
+                onChange={(value) => onUpdate({ parameters: { ...block.parameters, achievement: value } })}
+                achievements={list}
+                allowNone={true}
+                forceColumns={8}
+              />
+            </div>
+          </div>
+        );
+      }
+      case 'SETACHIEVEMENTPROGRESS':
+      case 'SETACHIEVEMENTATTEMPT': {
+        const achievement = String(block.parameters?.achievement || '');
+        const value = typeof block.parameters?.value === 'number' ? block.parameters.value : undefined;
+        const list = achievementsList || [];
+        return (
+          <div className="flex items-center gap-3">
+            <div className="flex-1">
+              <AchievementsSelector
+                value={achievement}
+                onChange={(val) => onUpdate({ parameters: { ...block.parameters, achievement: val } })}
+                achievements={list}
+                allowNone={true}
+                forceColumns={8}
+              />
+            </div>
+            <div className="flex items-center gap-2 ml-2">
+              <label className="text-xs text-slate-400 whitespace-nowrap">{(t as any)('visualFlowEditor.blocks.achievement.objectives')}</label>
+              <input
+                type="number"
+                className="w-24 px-2 py-1 bg-slate-800 text-white rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none"
+                min={1}
+                placeholder="1"
+                value={value !== undefined ? String(value) : ''}
+                onChange={(e) => {
+                  const v = parseInt(e.target.value || '0', 10);
+                  onUpdate({ parameters: { ...block.parameters, value: isNaN(v) ? undefined : Math.max(1, v) } });
+                }}
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+          </div>
+        );
+      }
+      case 'UNLOCKSHIPPLAN': {
+        const shipPlan = String(block.parameters?.shipPlan || (block.parameters as any)?.plan || '');
+        const items = (shipPlansList || []).map(sp => ({ key: sp.id, label: sp.type ? `${sp.id} (${sp.type})` : sp.id }));
+        return (
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-slate-400 whitespace-nowrap">
+              {(t as any)('visualFlowEditor.blocks.unlockShipPlan.label')}
+            </label>
+            <SelectWithModal
+              type="parts"
+              value={shipPlan}
+              onChange={(value) => onUpdate({ parameters: { ...block.parameters, shipPlan: value } })}
+              placeholder={(t as any)('visualFlowEditor.blocks.unlockShipPlan.label')}
+              availableItems={items}
+              onAddItem={undefined}
+              className="flex-1"
+            />
+          </div>
+        );
+      }
       // CHARACTERS: ASKCHAR, FOCUSCHAR
       case 'ASKCHAR': {
         const character = String(block.parameters?.character || '');
@@ -586,10 +683,10 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
             </div>
           );
         }
-      case 'ADDINFOWINDOW':
-      case 'SHOWINFOWINDOW': {
+    case 'ADDINFOWINDOW':
+    case 'SHOWINFOWINDOW': {
         return (
-          <div className="flex gap-2" style={{ height: '190px' }}>
+      <div className="flex gap-2" style={{ height: '160px' }}>
             <div className="flex-1">
               <ImageSelector
                 value={block.parameters?.image || ''}
@@ -1286,6 +1383,26 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   // Genera i parametri compatti per la visualizzazione collapsed
   const getCompactParams = () => {
     switch (block.type) {
+      case 'UNLOCKSHUTTLES':
+        return <span className="text-xs text-gray-400">🛰️ {(t as any)('visualFlowEditor.tools.unlockShuttles.description')}</span>;
+      case 'UNLOCKACHIEVEMENT': {
+        const a = String(block.parameters?.achievement || '');
+        return <span className="text-xs text-gray-400">🏆 {a || (t as any)('visualFlowEditor.blocks.achievement.none')}</span>;
+      }
+      case 'SETACHIEVEMENTPROGRESS': {
+        const a = String(block.parameters?.achievement || '');
+        const v = block.parameters?.value;
+        return <span className="text-xs text-gray-400">🏅 {a || '…'} • +{v ?? 1}</span>;
+      }
+      case 'SETACHIEVEMENTATTEMPT': {
+        const a = String(block.parameters?.achievement || '');
+        const v = block.parameters?.value;
+        return <span className="text-xs text-gray-400">🎯 {a || '…'} • ×{v ?? 1}</span>;
+      }
+      case 'UNLOCKSHIPPLAN': {
+        const sp = String(block.parameters?.shipPlan || block.parameters?.plan || '');
+        return <span className="text-xs text-gray-400">🚢 {sp || (t as any)('visualFlowEditor.blocks.unlockShipPlan.short')}</span>;
+      }
       case 'ASKCHAR': {
         const character = String(block.parameters?.character || '');
         const textObj = block.parameters?.text as any;
@@ -2010,7 +2127,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
             );
           })()
         )}
-  showAvatar={(block.type === 'SAY' || block.type === 'ASK' || block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE' || block.type === 'HIDEALLPATHS' || ['SHOWNODE','HIDENODE','ADDNODE','SETNODEKNOWN','CENTERMAPBYNODE','MOVEPLAYERTONODE'].includes(block.type))}
+  showAvatar={(block.type === 'SAY' || block.type === 'ASK' || block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE' || block.type === 'HIDEALLPATHS' || ['SHOWNODE','HIDENODE','ADDNODE','SETNODEKNOWN','CENTERMAPBYNODE','MOVEPLAYERTONODE'].includes(block.type) || ['SETACHIEVEMENTPROGRESS', 'SETACHIEVEMENTATTEMPT', 'UNLOCKACHIEVEMENT'].includes(block.type))}
         avatarCharacter={
           block.type === 'HIDEALLPATHS' ? hideAllPathsAvatars :
           block.type === 'ADDOPPONENT' ? opponentCharacter : 
@@ -2022,6 +2139,8 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         }
   isShipType={block.type === 'SETSHIPTYPE'}
   isNodeType={(['SHOWNODE','HIDENODE','ADDNODE','SETNODEKNOWN','CENTERMAPBYNODE','MOVEPLAYERTONODE'] as any).includes(block.type)}
+  isAchievementType={(['SETACHIEVEMENTPROGRESS', 'SETACHIEVEMENTATTEMPT', 'UNLOCKACHIEVEMENT'] as any).includes(block.type)}
+  achievementName={(['SETACHIEVEMENTPROGRESS', 'SETACHIEVEMENTATTEMPT', 'UNLOCKACHIEVEMENT'] as any).includes(block.type) ? String(block.parameters?.achievement || '') : undefined}
       >
         {/* Block parameters - visibili solo se expanded */}
         {renderParameters()}

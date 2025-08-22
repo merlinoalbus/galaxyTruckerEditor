@@ -17,6 +17,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.toolbar.save': 'Enregistrer',
   'visualFlowEditor.toolbar.saving': 'Enregistrement...',
   'visualFlowEditor.toolbar.scriptManagement': 'Gestion des scripts',
+  // Achievement labels
+  'visualFlowEditor.blocks.achievement.selectAchievement': 'Succès:',
+  'visualFlowEditor.blocks.achievement.value': 'Valeur',
+  'visualFlowEditor.blocks.achievement.objectives': 'Objectifs:',
+  'visualFlowEditor.blocks.achievement.none': 'Aucun',
   'visualFlowEditor.toolbar.missionManagement': 'Gestion des missions',
   'visualFlowEditor.toolbar.newScript': 'Nouveau script',
   'visualFlowEditor.toolbar.viewJson': 'Voir JSON',
@@ -682,6 +687,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.unlockAchievement.description': 'Débloquer le succès',
   'visualFlowEditor.tools.unlockShipPlan.description': 'Débloquer le plan de vaisseau',
   'visualFlowEditor.tools.unlockShuttles.description': 'Débloquer les navettes',
+  'visualFlowEditor.blocks.unlockShipPlan.label': 'Plan de vaisseau :',
+  'visualFlowEditor.blocks.unlockShipPlan.short': 'plan',
   
   // Tool Descriptions - Characters
   'visualFlowEditor.tools.askChar.description': 'Question avec personnage',

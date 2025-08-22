@@ -847,6 +847,14 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.unlockAchievement.description': 'Unlock achievement',
   'visualFlowEditor.tools.unlockShipPlan.description': 'Unlock ship plan',
   'visualFlowEditor.tools.unlockShuttles.description': 'Unlock shuttles',
+  // Achievement UI labels
+  'visualFlowEditor.blocks.achievement.selectAchievement': 'Achievement:',
+  'visualFlowEditor.blocks.achievement.value': 'Value',
+  'visualFlowEditor.blocks.achievement.objectives': 'Objectives:',
+  'visualFlowEditor.blocks.achievement.none': 'None',
+  // Ship plan UI labels
+  'visualFlowEditor.blocks.unlockShipPlan.label': 'Ship plan:',
+  'visualFlowEditor.blocks.unlockShipPlan.short': 'ship plan',
   
   // Tool Descriptions - Characters
   'visualFlowEditor.tools.askChar.description': 'Ask with character',

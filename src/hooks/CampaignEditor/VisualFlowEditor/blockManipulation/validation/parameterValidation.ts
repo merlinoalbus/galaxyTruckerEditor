@@ -681,6 +681,32 @@ export const validateSingleAmountCreditsParameters = (block: any): { valid: bool
  */
 export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
   switch (block.type) {
+    // New validations: Achievements and Ship Plan
+    case 'UNLOCKACHIEVEMENT': {
+      return (!block.parameters?.achievement || String(block.parameters.achievement).trim() === '')
+        ? { valid: false, error: 'UNLOCKACHIEVEMENT_NO_ACHIEVEMENT' }
+        : { valid: true };
+    }
+    case 'SETACHIEVEMENTPROGRESS':
+    case 'SETACHIEVEMENTATTEMPT': {
+      if (!block.parameters?.achievement || String(block.parameters.achievement).trim() === '') {
+        return { valid: false, error: `${block.type}_NO_ACHIEVEMENT` };
+      }
+      const v = block.parameters?.value;
+      if (v === undefined || v === null) {
+        return { valid: false, error: `${block.type}_NO_VALUE` };
+      }
+      const num = Number(v);
+      if (!Number.isFinite(num) || num < 1) {
+        return { valid: false, error: `${block.type}_INVALID_VALUE` };
+      }
+      return { valid: true };
+    }
+    case 'UNLOCKSHIPPLAN': {
+      return (!block.parameters?.shipPlan || String(block.parameters.shipPlan).trim() === '')
+        ? { valid: false, error: 'UNLOCKSHIPPLAN_NO_SHIPPLAN' }
+        : { valid: true };
+    }
     case 'ADDINFOWINDOW':
     case 'SHOWINFOWINDOW': {
       // Richiedono sempre un parametro image valorizzato

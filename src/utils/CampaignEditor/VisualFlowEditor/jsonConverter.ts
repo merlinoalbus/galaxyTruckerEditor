@@ -75,6 +75,12 @@ export const convertBlocksToJson = (blocks: any[]): any[] => {
       jsonBlock.parameters = {
         params: block.parameters.params || ''
       };
+    } else if (block.type === 'UNLOCKSHIPPLAN' && block.parameters) {
+      // Usa chiave standard 'shipPlan' (compat con legacy 'plan')
+      const value = block.parameters.shipPlan || block.parameters.plan || block.parameters.params || '';
+      jsonBlock.parameters = {
+        shipPlan: value
+      };
     } else if (block.isContainer && block.children) {
       jsonBlock.children = convertBlocksToJson(block.children);
     } else if (block.parameters) {

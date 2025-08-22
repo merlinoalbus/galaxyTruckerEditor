@@ -813,6 +813,16 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.unlockShipPlan.description': 'Odemknout plán lodi',
   'visualFlowEditor.tools.unlockShuttles.description': 'Odemknout raketoplány',
   
+  // Achievement UI - Labels
+  'visualFlowEditor.blocks.achievement.selectAchievement': 'Úspěch:',
+  'visualFlowEditor.blocks.achievement.value': 'Hodnota',
+  'visualFlowEditor.blocks.achievement.objectives': 'Cíle:',
+  'visualFlowEditor.blocks.achievement.none': 'Žádné',
+  
+  // UnlockShipPlan - Labels
+  'visualFlowEditor.blocks.unlockShipPlan.label': 'Plán lodi:',
+  'visualFlowEditor.blocks.unlockShipPlan.short': 'plán',
+  
   // Tool Descriptions - Characters
   'visualFlowEditor.tools.askChar.description': 'Otázka s postavou',
   'visualFlowEditor.tools.focusChar.description': 'Zaměřit na postavu',

@@ -831,6 +831,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.unlockAchievement.description': 'Desbloquear logro',
   'visualFlowEditor.tools.unlockShipPlan.description': 'Desbloquear plano de nave',
   'visualFlowEditor.tools.unlockShuttles.description': 'Desbloquear transbordadores',
+  'visualFlowEditor.blocks.achievement.selectAchievement': 'Logro:',
+  'visualFlowEditor.blocks.achievement.value': 'Valor',
+  'visualFlowEditor.blocks.achievement.objectives': 'Objetivos:',
+  'visualFlowEditor.blocks.achievement.none': 'Ninguno',
+  'visualFlowEditor.blocks.unlockShipPlan.label': 'Plano de nave:',
+  'visualFlowEditor.blocks.unlockShipPlan.short': 'plano',
   
   // Tool Descriptions - Characters
   'visualFlowEditor.tools.askChar.description': 'Preguntar con personaje',
