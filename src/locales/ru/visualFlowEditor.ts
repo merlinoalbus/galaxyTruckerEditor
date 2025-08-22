@@ -64,6 +64,15 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.toolbar.error': 'ошибка',
   'visualFlowEditor.toolbar.errors': 'ошибки',
   'visualFlowEditor.toolbar.fixErrorsBeforeSaving': 'Исправьте {count} ошибок перед сохранением',
+  // Toolbar & Модальное окно AI All
+  'visualFlowEditor.toolbar.aiSuggestAll': 'Предложить ИИ для всех текстов',
+  'visualFlowEditor.toolbar.aiAll': 'AI All',
+  'visualFlowEditor.toolbar.aiAllTitle': 'Предложить ИИ для всех текстов',
+  'visualFlowEditor.toolbar.aiAllSubtitle': 'Выберите целевой язык и сгенерируйте предложения для всех многоязычных полей на основе EN.',
+  'visualFlowEditor.toolbar.targetLanguage': 'Целевой язык',
+  'visualFlowEditor.toolbar.aiAllApplied': 'Применено предложений: {count}',
+  'visualFlowEditor.toolbar.generate': 'Сгенерировать',
+  'visualFlowEditor.toolbar.generating': 'Генерация…',
   
   // New Script Dialog
   'visualFlowEditor.newScriptDialog.title': 'Новый элемент',
@@ -285,6 +294,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.metacode.specialPluralPlaceholder': 'напр. очков',
   'visualFlowEditor.metacode.imageSizePlaceholder': 'напр. n, 3, playerCount',
   'visualFlowEditor.metacode.imagePathPlaceholder': 'путь/изображение.png',
+
+  // Multilingual editor
+  'visualFlowEditor.multilingual.aiSuggest': 'Предложение ИИ',
   
   // Dialog Scene Commands
   'visualFlowEditor.blocks.showDlgScene.title': 'Показать Сцену Диалога',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { GameDataProvider, useGameData } from '@/contexts/GameDataContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { FullscreenProvider, useFullscreen } from '@/contexts/FullscreenContext';
@@ -8,12 +8,48 @@ import { Header } from '@/components/CampaignEditor/components/Header/Header';
 import { Sidebar } from '@/components/CampaignEditor/components/Sidebar';
 // import { Traduzioni } from '@/components/Editors/Traduzioni';
 import { CampaignEditor } from '@/components/CampaignEditor/CampaignEditor';
+import { TranslationsPage } from '@/components/CampaignEditor/Translations/TranslationsPage';
 import '@/App.css';
+
+// Routed shell under Router to allow navigation hooks
+function RoutedApp() {
+  const { isMapFullscreen, isFlowFullscreen } = useFullscreen();
+  const isAnyFullscreen = isMapFullscreen || isFlowFullscreen;
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Bridge: consente a componenti fuori da CampaignEditor (es. /localization) di aprire il VFE
+  React.useEffect(() => {
+    const handler = (event: Event) => {
+      const custom = event as CustomEvent;
+      if (location.pathname === '/') return; // già su CampaignEditor
+      navigate('/');
+      setTimeout(() => {
+        try { window.dispatchEvent(new CustomEvent('navigateToVisualFlow', { detail: custom.detail })); } catch {}
+      }, 150);
+    };
+    window.addEventListener('navigateToVisualFlow', handler as EventListener);
+    return () => window.removeEventListener('navigateToVisualFlow', handler as EventListener);
+  }, [navigate, location.pathname]);
+
+  return (
+    <div className="flex h-screen bg-slate-900">
+      <Sidebar />
+      <div className="flex-1 flex flex-col">
+        <Header />
+        <main className={`flex-1 overflow-auto ${!isAnyFullscreen ? 'p-6' : 'p-2'}`}>
+          <Routes>
+            <Route path="/" element={<CampaignEditor />} />
+            <Route path="/localization" element={<TranslationsPage />} />
+          </Routes>
+        </main>
+      </div>
+    </div>
+  );
+}
 
 function AppContent() {
   const { connected, loading, error } = useGameData();
-  const { isMapFullscreen, isFlowFullscreen } = useFullscreen();
-  const isAnyFullscreen = isMapFullscreen || isFlowFullscreen;
 
   if (loading) {
     return (
@@ -62,18 +98,7 @@ function AppContent() {
 
   return (
     <Router>
-      <div className="flex h-screen bg-slate-900">
-        <Sidebar />
-        <div className="flex-1 flex flex-col">
-          <Header />
-          <main className={`flex-1 overflow-auto ${!isAnyFullscreen ? 'p-6' : 'p-2'}`}>
-            <Routes>
-              <Route path="/" element={<CampaignEditor />} />
-              <Route path="/localization" element={<div className="p-6 text-center text-gray-400">Traduzioni temporaneamente disabilitato</div>} />
-            </Routes>
-          </main>
-        </div>
-      </div>
+      <RoutedApp />
     </Router>
   );
 }

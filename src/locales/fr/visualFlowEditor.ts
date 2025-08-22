@@ -67,6 +67,15 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.toolbar.error': 'erreur',
   'visualFlowEditor.toolbar.errors': 'erreurs',
   'visualFlowEditor.toolbar.fixErrorsBeforeSaving': 'Corriger {count} erreurs avant d\'enregistrer',
+  // Toolbar & Modale AI All
+  'visualFlowEditor.toolbar.aiSuggestAll': 'Suggérer l’IA pour tous les textes',
+  'visualFlowEditor.toolbar.aiAll': 'AI All',
+  'visualFlowEditor.toolbar.aiAllTitle': 'Suggérer l’IA pour tous les textes',
+  'visualFlowEditor.toolbar.aiAllSubtitle': 'Choisissez la langue cible et générez des suggestions pour tous les champs multilingues à partir de EN.',
+  'visualFlowEditor.toolbar.targetLanguage': 'Langue cible',
+  'visualFlowEditor.toolbar.aiAllApplied': 'Suggestions appliquées : {count}',
+  'visualFlowEditor.toolbar.generate': 'Générer',
+  'visualFlowEditor.toolbar.generating': 'Génération…',
   
   // New Script Dialog
   'visualFlowEditor.newScriptDialog.title': 'Nouvel élément',
@@ -299,6 +308,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.metacode.specialPluralPlaceholder': 'ex. forme spéciale',
   'visualFlowEditor.metacode.imageSizePlaceholder': 'ex. n, 3, playerCount',
   'visualFlowEditor.metacode.imagePathPlaceholder': 'chemin/image.png',
+
+  // Multilingual editor
+  'visualFlowEditor.multilingual.aiSuggest': 'Suggestion IA',
   
   // Dialog Scene Commands
   'visualFlowEditor.blocks.showDlgScene.title': 'Afficher Scène de Dialogue',

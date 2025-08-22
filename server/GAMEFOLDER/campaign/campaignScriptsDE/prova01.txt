@@ -2,6 +2,7 @@ SCRIPTS
 
   SCRIPT aaa_pippo
     ShowDlgScene
+    Say "rancon"
     HideDlgScene
   END_OF_SCRIPT
 

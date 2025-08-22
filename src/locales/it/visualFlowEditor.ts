@@ -64,6 +64,15 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.toolbar.error': 'errore',
   'visualFlowEditor.toolbar.errors': 'errori',
   'visualFlowEditor.toolbar.fixErrorsBeforeSaving': 'Correggi {count} errori prima di salvare',
+  // Toolbar & Modale AI All
+  'visualFlowEditor.toolbar.aiSuggestAll': 'Suggerisci AI per tutti i testi',
+  'visualFlowEditor.toolbar.aiAll': 'AI All',
+  'visualFlowEditor.toolbar.aiAllTitle': 'Suggerisci AI per tutti i testi',
+  'visualFlowEditor.toolbar.aiAllSubtitle': 'Scegli la lingua target e genera suggerimenti per tutti i campi multilingua basati su EN.',
+  'visualFlowEditor.toolbar.targetLanguage': 'Lingua target',
+  'visualFlowEditor.toolbar.aiAllApplied': 'Suggerimenti applicati: {count}',
+  'visualFlowEditor.toolbar.generate': 'Genera',
+  'visualFlowEditor.toolbar.generating': 'Generazione…',
   
   // New Script Dialog
   'visualFlowEditor.newScriptDialog.title': 'Nuovo Elemento',
@@ -661,6 +670,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.multilingual.collapse': 'Comprimi',
   'visualFlowEditor.multilingual.copyToAll': 'Copia in tutte le lingue',
   'visualFlowEditor.multilingual.copyFromEN': 'Copia da EN',
+  'visualFlowEditor.multilingual.aiSuggest': 'Suggerimento AI',
   'visualFlowEditor.multilingual.languages.en': 'Inglese',
   'visualFlowEditor.multilingual.languages.it': 'Italiano',
   'visualFlowEditor.multilingual.languages.cs': 'Ceco',

@@ -1,0 +1,78 @@
+SCRIPTS
+
+  SCRIPT artifact_Dlg
+    ShowDlgScene
+    ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head-hand-up.png
+    ShowChar artifact_runner left
+    Delay 400
+    Ask "Ciao. Sto cercando un camionista."
+    MENU
+      OPT "Beh, l'hai appena trovato."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
+    Ask "Bene. Io non mi occupo molto di trasporti, sai, perché sono uno specialista."
+    MENU
+      OPT "Fammi indovinare: sei un archeologo, giusto?"
+        ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
+        Say "Beh... è un modo molto generoso di dirlo. Ma, sì. Diciamo che sono un archeologo."
+        EXIT_MENU
+      END_OF_OPT
+      OPT "Fammi indovinare: sei un mulattiere, giusto?"
+        ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
+        Ask "Ah... no. Diciamo che sono un archeologo."
+        MENU
+          OPT "Okay, come vuoi. Solo, non colpirmi con quella frusta."
+            ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-hands-down.png
+            Delay 500
+            EXIT_MENU
+          END_OF_OPT
+        END_OF_MENU
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    Say "Ho fatto delle... ricerche, e ho scoperto un artefatto alieno."
+    ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
+    Ask "Ho bisogno che tu lo porti al museo. Maneggiare con cura, se capisci cosa intendo."
+    MENU
+      OPT "Sì, capisco cosa intendi."
+        ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-happy.png
+        Say "Perfetto! Sempre felice di lavorare con un professionista!"
+        HideDlgScene
+        RETURN
+      END_OF_OPT
+      OPT "Intendi dire che è fragile? O pericoloso?"
+        ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
+        Ask "Non fragile. Neanche pericoloso, se sai come maneggiarlo. Solo, sai, un classico artefatto alieno."
+        MENU
+          OPT "Okay. Sembra abbastanza semplice."
+            ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-happy.png
+            Say "Perfetto! Sempre felice di lavorare con un professionista!"
+            HideDlgScene
+            RETURN
+          END_OF_OPT
+          OPT "Potresti essere più specifico?"
+            ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-hands-down.png
+            Ask "I raggi dell'artefatto creano una zona morta sulla tua nave. Niente nella zona morta funziona, tranne le cose strutturali, come i connettori."
+            MENU
+              OPT "Sembra complicato. Ma ci proverò."
+                ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
+                Say "Grazie. Buona fortuna."
+                HideDlgScene
+                RETURN
+              END_OF_OPT
+              OPT "Forse dovresti venire con me."
+                ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
+                Say "Mi spiace, [g(buddy|sweetheart)], le civiltà antiche non si dissotterrano da sole. Devo tornare al sito."
+                HideDlgScene
+                RETURN
+              END_OF_OPT
+            END_OF_MENU
+          END_OF_OPT
+        END_OF_MENU
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_SCRIPT
+
+END_OF_SCRIPTS
