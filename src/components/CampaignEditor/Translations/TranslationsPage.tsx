@@ -92,7 +92,10 @@ export const TranslationsPage: React.FC = () => {
 
   const scriptsSorted = useMemo(() => {
     if (!coverage) return [] as CoverageResponse['data']['perScript'];
-    const list = [...coverage.perScript];
+    // Escludi gli script che per la lingua selezionata non hanno campi (totalFields === 0)
+    const list = coverage.perScript
+      .filter(s => (s.languages[selectedLang]?.totalFields ?? s.totalFields ?? 0) > 0)
+      .slice();
     list.sort((a, b) => {
       const pa = a.languages[selectedLang]?.percent ?? -1;
       const pb = b.languages[selectedLang]?.percent ?? -1;

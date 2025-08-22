@@ -136,10 +136,12 @@ export function simulateSceneExecution(
           };
           
           if (existingCharIndex >= 0) {
-            // Aggiorna il personaggio esistente
-            currentScene.personaggi[existingCharIndex] = newChar;
+            // Se il personaggio esiste già, aggiorna solo visible e posizione, NON lastImmagine
+            currentScene.personaggi[existingCharIndex].visible = true;
+            currentScene.personaggi[existingCharIndex].posizione = position;
+            // lastImmagine resta invariata (può essere stata impostata da CHANGECHAR)
           } else {
-            // Aggiungi il nuovo personaggio
+            // Se non esiste, crea con baseImage
             currentScene.personaggi.push(newChar);
           }
           

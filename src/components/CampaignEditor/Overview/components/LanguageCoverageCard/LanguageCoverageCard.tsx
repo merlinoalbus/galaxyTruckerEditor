@@ -64,7 +64,7 @@ export const LanguageCoverageCard: React.FC<LanguageCoverageCardProps> = ({
                 {getStatusIcon(lang.coveragePercentage)}
               </div>
               <div className="flex items-center gap-2 text-gray-400">
-                <span>{lang.translatedScripts}/{lang.totalScripts}</span>
+                <span>{lang.translatedMultilanguage}/{lang.totalMultilanguage}</span>
                 <span className="font-semibold">{lang.coveragePercentage}%</span>
               </div>
             </div>

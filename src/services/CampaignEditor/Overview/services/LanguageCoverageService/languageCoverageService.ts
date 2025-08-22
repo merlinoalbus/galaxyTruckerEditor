@@ -6,44 +6,50 @@ import type { LanguageCoverage } from '@/types/CampaignEditor/Overview/Overview.
 
 export const languageCoverageService = {
   calculateCoverage(analysis: CampaignAnalysis): LanguageCoverage[] {
-    // Analyzing language coverage
-    
-    // Definisci tutte le lingue supportate dall'interfaccia (inclusa IT)
+    // Nuova logica: calcola la copertura multilanguage sulle chiavi text tradotte
     const allSupportedLanguages = ['IT', 'EN', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU'];
-    const languageCountMap = new Map<string, number>();
-    const totalScripts = analysis.scripts.length;
-    
+  const multilanguageCountMap = new Map<string, number>(); // Quante multilanguage tradotte per lingua
+  let totalMultilanguage = 0; // Totale multilanguage (chiavi text)
+
     // Inizializza tutte le lingue a 0
     allSupportedLanguages.forEach(lang => {
-      languageCountMap.set(lang, 0);
+      multilanguageCountMap.set(lang, 0);
     });
-    
-    // Debug: log prima analisi
-    if (totalScripts === 0) {
-  logger.warn('No scripts found in analysis');
-      return [];
-    }
-    
-    // Per ogni script, conta le lingue supportate
-    analysis.scripts.forEach((script, index) => {
-      // Processing script languages
-      
-      if (script.languages && Array.isArray(script.languages)) {
-        script.languages.forEach(lang => {
-          if (allSupportedLanguages.includes(lang)) {
-            languageCountMap.set(lang, (languageCountMap.get(lang) || 0) + 1);
-          }
-        });
-      }
+
+    // Funzione di utilità: true se il comando è linguistico
+    const isLinguisticCommand = (cmdType: string) => {
+      const linguisticCommandTypes = [
+        'SAY', 'ASK', 'ANNOUNCE', 'MENU', 'OPT', 'OPT_IF',
+        'dialogue', 'question', 'announce', 'opt', 'opt_if',
+        'dialog_start', 'dialog_text', 'dialog_button', 'TEXT'
+      ];
+      return linguisticCommandTypes.some(type => type.toLowerCase() === cmdType?.toLowerCase());
+    };
+
+    // Itera tutti i comandi di tutti gli script
+    analysis.scripts.forEach(script => {
+      if (!script.commands) return;
+      script.commands.forEach(cmd => {
+        if (!isLinguisticCommand(cmd.type)) return;
+        // Cerca il campo text nei parametri
+        const textField = cmd.parameters?.text;
+        if (textField && typeof textField === 'object' && !Array.isArray(textField)) {
+          // È un oggetto multilanguage: conta ogni lingua
+          totalMultilanguage++;
+          allSupportedLanguages.forEach(lang => {
+            const value = textField[lang];
+            if (String(value).trim().length > 0) {
+              multilanguageCountMap.set(lang, (multilanguageCountMap.get(lang) || 0) + 1);
+            }
+          });
+        }
+      });
     });
-    
-    // Language counts calculated
-    
+
+    // Gap analysis e priorità come prima
     const coverage: LanguageCoverage[] = [];
-    
-    // Per ogni lingua supportata, calcola la copertura (incluse quelle al 0%)
     allSupportedLanguages.forEach(lang => {
-      const scriptsWithLanguage = languageCountMap.get(lang) || 0;
+      const translatedMultilanguage = multilanguageCountMap.get(lang) || 0;
       const missingScripts: string[] = [];
       const gapAnalysis = {
         critical: [] as string[],
@@ -51,13 +57,17 @@ export const languageCoverageService = {
         medium: [] as string[],
         low: [] as string[]
       };
-      
-      // Trova script che NON supportano questa lingua
+
+      // Trova script che NON hanno almeno una multilanguage tradotta in questa lingua
       analysis.scripts.forEach(script => {
-        if (!script.languages || !script.languages.includes(lang)) {
+        const hasTranslation = script.commands?.some(cmd => {
+          if (!isLinguisticCommand(cmd.type)) return false;
+          const textField = cmd.parameters?.text;
+          const value = textField && typeof textField === 'object' && !Array.isArray(textField) ? textField[lang] : undefined;
+          return value && String(value).trim().length > 0;
+        });
+        if (!hasTranslation) {
           missingScripts.push(script.name);
-          
-          // Categorizza per priorità
           if (this.isCriticalScript(script.name)) {
             gapAnalysis.critical.push(script.name);
           } else if (this.isHighPriorityScript(script.name)) {
@@ -69,22 +79,23 @@ export const languageCoverageService = {
           }
         }
       });
-      
-      const coveragePercentage = totalScripts > 0 
-        ? Math.round((scriptsWithLanguage / totalScripts) * 100)
+
+      const coveragePercentage = totalMultilanguage > 0
+        ? Math.round((translatedMultilanguage / totalMultilanguage) * 100)
         : 0;
-      
+
       coverage.push({
         language: lang,
-        totalScripts,
-        translatedScripts: scriptsWithLanguage,
+        totalScripts: analysis.scripts.length,
+        translatedScripts: translatedMultilanguage,
         coveragePercentage,
         missingScripts: missingScripts.slice(0, 10),
-        gapAnalysis
+        gapAnalysis,
+        totalMultilanguage,
+        translatedMultilanguage
       });
     });
-    
-    // Coverage calculation completed
+
     return coverage.sort((a, b) => b.coveragePercentage - a.coveragePercentage);
   },
   
