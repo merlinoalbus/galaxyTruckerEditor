@@ -64,6 +64,15 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.toolbar.error': 'error',
   'visualFlowEditor.toolbar.errors': 'errores',
   'visualFlowEditor.toolbar.fixErrorsBeforeSaving': 'Corrija {count} errores antes de guardar',
+  // Toolbar & Modal AI All
+  'visualFlowEditor.toolbar.aiSuggestAll': 'Sugerir IA para todos los textos',
+  'visualFlowEditor.toolbar.aiAll': 'AI All',
+  'visualFlowEditor.toolbar.aiAllTitle': 'Sugerir IA para todos los textos',
+  'visualFlowEditor.toolbar.aiAllSubtitle': 'Elige el idioma de destino y genera sugerencias para todos los campos multilingües basadas en EN.',
+  'visualFlowEditor.toolbar.targetLanguage': 'Idioma de destino',
+  'visualFlowEditor.toolbar.aiAllApplied': 'Sugerencias aplicadas: {count}',
+  'visualFlowEditor.toolbar.generate': 'Generar',
+  'visualFlowEditor.toolbar.generating': 'Generando…',
   
   // New Script Dialog
   'visualFlowEditor.newScriptDialog.title': 'Nuevo Elemento',
@@ -397,6 +406,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.metacode.specialPluralPlaceholder': 'ej. forma especial',
   'visualFlowEditor.metacode.imageSizePlaceholder': 'ej. n, 3, playerCount',
   'visualFlowEditor.metacode.imagePathPlaceholder': 'ruta/imagen.png',
+
+  // Multilingual editor
+  'visualFlowEditor.multilingual.aiSuggest': 'Sugerencia IA',
   
   // Dialog Scene Commands
   'visualFlowEditor.blocks.showDlgScene.title': 'Mostrar Escena de Diálogo',

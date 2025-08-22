@@ -62,6 +62,15 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.toolbar.error': 'error',
   'visualFlowEditor.toolbar.errors': 'errors',
   'visualFlowEditor.toolbar.fixErrorsBeforeSaving': 'Fix {count} errors before saving',
+  // AI All toolbar & modal
+  'visualFlowEditor.toolbar.aiSuggestAll': 'Suggest AI for all texts',
+  'visualFlowEditor.toolbar.aiAll': 'AI All',
+  'visualFlowEditor.toolbar.aiAllTitle': 'Suggest AI for all texts',
+  'visualFlowEditor.toolbar.aiAllSubtitle': 'Choose the target language and generate suggestions for all multilingual fields based on EN.',
+  'visualFlowEditor.toolbar.targetLanguage': 'Target language',
+  'visualFlowEditor.toolbar.aiAllApplied': 'Suggestions applied: {count}',
+  'visualFlowEditor.toolbar.generate': 'Generate',
+  'visualFlowEditor.toolbar.generating': 'Generating…',
   
   // New Script Dialog
   'visualFlowEditor.newScriptDialog.title': 'New Element',
@@ -630,6 +639,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.multilingual.collapse': 'Collapse',
   'visualFlowEditor.multilingual.copyToAll': 'Copy to all languages',
   'visualFlowEditor.multilingual.copyFromEN': 'Copy from EN',
+  'visualFlowEditor.multilingual.aiSuggest': 'AI Suggest',
   'visualFlowEditor.multilingual.languages.en': 'English',
   'visualFlowEditor.multilingual.languages.it': 'Italian',
   'visualFlowEditor.multilingual.languages.cs': 'Czech',

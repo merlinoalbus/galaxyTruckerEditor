@@ -64,6 +64,14 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.toolbar.error': 'chyba',
   'visualFlowEditor.toolbar.errors': 'chyby',
   'visualFlowEditor.toolbar.fixErrorsBeforeSaving': 'Opravte {count} chyb před uložením',
+  'visualFlowEditor.toolbar.aiSuggestAll': 'Navrhnout vše (AI)',
+  'visualFlowEditor.toolbar.aiAll': 'AI Vše',
+  'visualFlowEditor.toolbar.aiAllTitle': 'Hromadné návrhy (AI)',
+  'visualFlowEditor.toolbar.aiAllSubtitle': 'Vygeneruje návrhy pro všechny prázdné texty z EN. Zachová metakódy.',
+  'visualFlowEditor.toolbar.targetLanguage': 'Cílový jazyk',
+  'visualFlowEditor.toolbar.aiAllApplied': 'Návrhy použity',
+  'visualFlowEditor.toolbar.generate': 'Vygenerovat',
+  'visualFlowEditor.toolbar.generating': 'Generování...',
   
   // New Script Dialog
   'visualFlowEditor.newScriptDialog.title': 'Nový prvek',
@@ -611,6 +619,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.multilingual.collapse': 'Sbalit',
   'visualFlowEditor.multilingual.copyToAll': 'Kopírovat do všech jazyků',
   'visualFlowEditor.multilingual.copyFromEN': 'Kopírovat z EN',
+  'visualFlowEditor.multilingual.aiSuggest': 'AI návrh',
   'visualFlowEditor.multilingual.languages.it': 'Italština',
   'visualFlowEditor.multilingual.languages.en': 'Angličtina',
   'visualFlowEditor.multilingual.languages.cs': 'Čeština',

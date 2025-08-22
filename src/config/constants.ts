@@ -25,6 +25,11 @@ export const API_ENDPOINTS = {
   SCRIPTS_VARIABLES: '/scripts/variables',
   SCRIPTS_SEMAPHORES: '/scripts/semaphores',
   SCRIPTS_LABELS: '/scripts/labels',
+  // Translations API
+  SCRIPTS_TRANSLATIONS_COVERAGE: '/scripts/translations/coverage',
+  SCRIPTS_TRANSLATIONS_DETAILS: (name: string) => `/scripts/translations/${name}`,
+  SCRIPTS_AI_TRANSLATE: '/scripts/ai-translate',
+  SCRIPTS_AI_TRANSLATE_BATCH: '/scripts/ai-translate-batch',
 
   // Missions API  
   MISSIONS: '/missions',

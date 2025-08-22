@@ -1,6 +1,6 @@
 import { logger } from '@/utils/logger';
 import React from 'react';
-import { Code2, List, Plus, FileText, Save, Maximize2, Minimize2, AlertCircle, Target, ChevronsDown, ChevronsUp } from 'lucide-react';
+import { Code2, List, Plus, FileText, Save, Maximize2, Minimize2, AlertCircle, Target, ChevronsDown, ChevronsUp, Wand2 } from 'lucide-react';
 import { visualFlowEditorStyles } from '@/styles/CampaignEditor/VisualFlowEditor/VisualFlowEditor.styles';
 import { NavigationBreadcrumb } from '../NavigationBreadcrumb';
 import { NavigationPathItem } from '@/hooks/CampaignEditor/VisualFlowEditor/useZoomNavigation';
@@ -37,6 +37,7 @@ interface ToolbarProps {
   onExpandAll?: () => void;
   bypassedErrorsCount?: number;
   totalErrors?: number;
+  onOpenAiAllModal?: () => void;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
@@ -65,7 +66,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onCollapseAll,
   onExpandAll,
   bypassedErrorsCount = 0,
-  totalErrors = 0
+  totalErrors = 0,
+  onOpenAiAllModal
 }) => {
   const { t } = useTranslation();
   const [isSaving, setIsSaving] = React.useState(false);
@@ -202,6 +204,18 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           <FileText className="w-4 h-4" />
           {t('visualFlowEditor.toolbar.json')}
         </button>
+
+        {/* Suggerisci AI All */}
+        {currentScript && (
+          <button
+            onClick={onOpenAiAllModal}
+            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
+            title={(t as any)('visualFlowEditor.toolbar.aiSuggestAll') || 'Suggerisci AI All'}
+          >
+            <Wand2 className="w-4 h-4" />
+            {(t as any)('visualFlowEditor.toolbar.aiAll') || 'AI All'}
+          </button>
+        )}
         
         {/* Replace static icons with dynamic rendering */}
         {currentScript && (
