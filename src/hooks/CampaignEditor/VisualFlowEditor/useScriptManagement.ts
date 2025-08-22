@@ -390,13 +390,21 @@ export const useScriptManagement = ({
           }
           
           if (scriptJson && !savedScriptNames.has(scriptJson.name)) {
-            // Aggiungi i metadati custom se esistono
+            // Determina metadati/flag per salvataggio coerente multilingua
+            const isCustom = (scriptData.isCustom !== undefined ? scriptData.isCustom : (currentScript?.isCustom ?? false)) as boolean;
+            const availableLangs = (scriptData.availableLanguages && scriptData.availableLanguages.length > 0)
+              ? scriptData.availableLanguages
+              : (currentScript?.availableLanguages && currentScript.availableLanguages.length > 0)
+                ? currentScript.availableLanguages
+                : (isCustom ? ['EN'] : [...SUPPORTED_LANGUAGES]);
+            // Regola: Standard sempre multilingua; Custom solo se multilingua
+            const isMultilingual = isCustom ? (availableLangs?.length > 1) : true;
+
             const scriptWithMetadata = {
               ...scriptJson,
-              ...(scriptData.isCustom !== undefined && { isCustom: scriptData.isCustom }),
-              ...(scriptData.customPath !== undefined && { customPath: scriptData.customPath }),
-              // Aggiungi flag per indicare se è multilingua (il backend ne ha bisogno per sapere dove salvare)
-              ...(scriptData.isCustom && scriptData.availableLanguages?.length > 1 && { isMultilingual: true })
+              isCustom,
+              ...(scriptData.customPath !== undefined ? { customPath: scriptData.customPath } : (currentScript?.customPath !== undefined ? { customPath: currentScript.customPath } : {})),
+              ...(isMultilingual ? { isMultilingual: true, availableLanguages: availableLangs } : {})
             };
             scriptsToSave.push(scriptWithMetadata);
             savedScriptNames.add(scriptJson.name);
@@ -413,14 +421,19 @@ export const useScriptManagement = ({
           const scriptBlock = mainBlocks.find(b => b.type === 'SCRIPT');
           
           // Aggiungi i metadati custom dal blocco SCRIPT o da currentScript
+          const computedIsCustom = (scriptBlock?.isCustom !== undefined ? scriptBlock.isCustom : (currentScript?.isCustom ?? false)) as boolean;
+          const computedAvailableLangs = (currentScript?.availableLanguages && currentScript.availableLanguages.length > 0)
+            ? currentScript.availableLanguages
+            : (computedIsCustom ? ['EN'] : [...SUPPORTED_LANGUAGES]);
+          const computedIsMultilingual = computedIsCustom ? (computedAvailableLangs.length > 1) : true;
+
           const scriptWithMetadata = {
             ...mainScriptJson,
-            ...((scriptBlock?.isCustom !== undefined || currentScript?.isCustom !== undefined) && { 
-              isCustom: scriptBlock?.isCustom ?? currentScript?.isCustom 
-            }),
+            isCustom: computedIsCustom,
             ...((scriptBlock?.customPath !== undefined || currentScript?.customPath !== undefined) && { 
               customPath: scriptBlock?.customPath ?? currentScript?.customPath 
-            })
+            }),
+            ...(computedIsMultilingual ? { isMultilingual: true, availableLanguages: computedAvailableLangs } : {})
           };
           scriptsToSave.push(scriptWithMetadata);
           savedScriptNames.add(mainScriptJson.name);
@@ -493,16 +506,20 @@ export const useScriptManagement = ({
     const missionBlock = blocksToSave.find(b => b.type === 'MISSION');
     
     // Aggiungi i metadati custom se presenti
+    const computedIsCustom = (missionBlock?.isCustom !== undefined ? missionBlock.isCustom : (currentScript?.isCustom ?? false)) as boolean;
+    const computedAvailableLangs = (currentScript?.availableLanguages && currentScript.availableLanguages.length > 0)
+      ? currentScript.availableLanguages
+      : (computedIsCustom ? ['EN'] : [...SUPPORTED_LANGUAGES]);
+    // Regola: Standard sempre multilingua; Custom solo se multilingua
+    const computedIsMultilingual = computedIsCustom ? (computedAvailableLangs.length > 1) : true;
+
     const missionWithMetadata = {
       ...missionJson,
-      ...((missionBlock?.isCustom !== undefined || currentScript?.isCustom !== undefined) && { 
-        isCustom: missionBlock?.isCustom ?? currentScript?.isCustom 
-      }),
+      isCustom: computedIsCustom,
       ...((missionBlock?.customPath !== undefined || currentScript?.customPath !== undefined) && { 
         customPath: missionBlock?.customPath ?? currentScript?.customPath 
       }),
-      // Aggiungi flag per indicare se è multilingua
-      ...(currentScript?.isCustom && currentScript?.availableLanguages?.length > 1 && { isMultilingual: true })
+      ...(computedIsMultilingual ? { isMultilingual: true, availableLanguages: computedAvailableLangs } : {})
     };
 
     // L'API si aspetta un array di mission

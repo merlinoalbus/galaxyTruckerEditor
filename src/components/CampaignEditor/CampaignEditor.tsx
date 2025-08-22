@@ -62,6 +62,27 @@ export const CampaignEditor: React.FC = () => {
     };
   }, [setActiveTab]);
 
+  // Handle navigation from Interactive Map to Visual Flow Editor for missions
+  useEffect(() => {
+    const handleNavigateToVisualFlowMission = (event: CustomEvent) => {
+      const { missionName } = event.detail || {};
+      if (!missionName) return;
+
+      // Switch to Visual Flow Editor tab
+      setActiveTab('flow');
+
+      // After switching tab, ask Visual Flow Editor to load the mission
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('VFE:loadMissionByName', { detail: { missionName } }));
+      }, 100);
+    };
+
+    window.addEventListener('navigateToVisualFlowMission', handleNavigateToVisualFlowMission as EventListener);
+    return () => {
+      window.removeEventListener('navigateToVisualFlowMission', handleNavigateToVisualFlowMission as EventListener);
+    };
+  }, [setActiveTab]);
+
   const tabs = [
     { id: 'map', label: t('tabs.interactiveMap') },
     { id: 'flow', label: t('tabs.visualFlowEditor') },
@@ -147,11 +168,11 @@ export const CampaignEditor: React.FC = () => {
           />
         )}
 
-        {activeTab === 'flow' && (
+    {activeTab === 'flow' && (
           <ImagesProvider>
             <VisualFlowEditor 
               analysis={analysis}
-              selectedScript={selectedScript?.nomescript || null}
+      scriptId={selectedScript?.nomescript || null}
               onScriptSelect={(scriptName: string) => {
                 // Qui dovremmo trovare lo script completo per nome
                 // Per ora passiamo solo il nome
