@@ -698,11 +698,36 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
   ]);
 
   // Carica script se viene passato uno scriptId dal componente chiamante
+  // Usa una ref per evitare loop dovuti al cambio identità di loadScriptWithReset
+  const loadScriptWithResetRef = useRef(loadScriptWithReset);
+  useEffect(() => { loadScriptWithResetRef.current = loadScriptWithReset; }, [loadScriptWithReset]);
+  const lastLoadedScriptIdRef = useRef<string | null>(null);
   useEffect(() => {
-    if (scriptId) {
-      loadScriptWithReset(scriptId);
+    if (scriptId && scriptId !== lastLoadedScriptIdRef.current) {
+      lastLoadedScriptIdRef.current = scriptId;
+      loadScriptWithResetRef.current(scriptId);
     }
-  }, [scriptId, loadScriptWithReset]);
+  }, [scriptId]);
+
+  // Listener: carica missione per nome quando richiesto da CampaignEditor (da Interactive Map)
+  useEffect(() => {
+    const onLoadMissionByName = (e: Event) => {
+      const detail = (e as CustomEvent)?.detail;
+      const missionName: string | undefined = detail?.missionName;
+      if (!missionName) return;
+      // Mission API accetta nome senza .txt
+      const clean = missionName.endsWith('.txt') ? missionName.slice(0, -4) : missionName;
+      if (clean !== (lastLoadedMissionRef.current || '')) {
+        lastLoadedMissionRef.current = clean;
+        loadMissionWithReset(clean);
+      }
+    };
+    window.addEventListener('VFE:loadMissionByName', onLoadMissionByName as EventListener);
+    return () => window.removeEventListener('VFE:loadMissionByName', onLoadMissionByName as EventListener);
+  }, [loadMissionWithReset]);
+
+  // Track ultima missione caricata per prevenire loop
+  const lastLoadedMissionRef = useRef<string | null>(null);
   
   // Salva lo script principale nella mappa quando viene caricato per la prima volta
   useEffect(() => {

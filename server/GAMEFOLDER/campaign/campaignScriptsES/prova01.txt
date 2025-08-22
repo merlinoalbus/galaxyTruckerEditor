@@ -2,7 +2,6 @@ SCRIPTS
 
   SCRIPT aaa_pippo
     ShowDlgScene
-    Say "prova"
     HideDlgScene
   END_OF_SCRIPT
 
