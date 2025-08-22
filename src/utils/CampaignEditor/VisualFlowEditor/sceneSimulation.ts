@@ -163,33 +163,48 @@ export function simulateSceneExecution(
       } else if (block.type === 'CHANGECHAR' && block.parameters?.character && block.parameters?.image) {
         if (sceneStack.length > 0) {
           const currentScene = sceneStack[sceneStack.length - 1];
-          const charIndex = currentScene.personaggi.findIndex(
-            p => p.nomepersonaggio === block.parameters!.character && p.visible
+          // Cerca il personaggio in scena (anche se non visibile)
+          let charIndex = currentScene.personaggi.findIndex(
+            p => p.nomepersonaggio === block.parameters!.character
           );
-          if (charIndex >= 0) {
-            // Trova l'immagine selezionata dai dati del personaggio
-            if (charactersData) {
-              const charData = charactersData.find(c => c.nomepersonaggio === block.parameters!.character);
-              if (charData && charData.listaimmagini) {
-                const selectedImage = charData.listaimmagini.find(img => 
-                  img.percorso === block.parameters!.image ||
-                  img.nomefile === block.parameters!.image // fallback per compatibilità
-                );
-                
-                if (selectedImage) {
-                  // Aggiorna la lastImmagine del personaggio
-                  currentScene.personaggi[charIndex].lastImmagine = {
-                    nomefile: selectedImage.nomefile || '',
-                    percorso: selectedImage.percorso,
-                    binary: selectedImage.binary
-                  };
-                  
-                  // Imposta questo personaggio come lastModifiedCharacter
-                  lastModifiedCharacter = block.parameters.character;
-                }
+          // Se non esiste ancora in scena, crealo come non visibile con posizione di default
+          if (charIndex < 0) {
+            currentScene.personaggi.push({
+              nomepersonaggio: block.parameters.character,
+              lastImmagine: null,
+              visible: false,
+              posizione: 'left'
+            });
+            charIndex = currentScene.personaggi.length - 1;
+          }
+          // Trova l'immagine selezionata dai dati del personaggio, se disponibile
+          let newImage: SimulatedImage | null = null;
+          if (charactersData) {
+            const charData = charactersData.find(c => c.nomepersonaggio === block.parameters!.character);
+            if (charData && charData.listaimmagini) {
+              const selectedImage = charData.listaimmagini.find(img => 
+                img.percorso === block.parameters!.image ||
+                img.nomefile === block.parameters!.image // fallback per compatibilità
+              );
+              if (selectedImage) {
+                newImage = {
+                  nomefile: selectedImage.nomefile || '',
+                  percorso: selectedImage.percorso,
+                  binary: selectedImage.binary
+                };
               }
             }
           }
+          // Se non trovata nei dati, crea un riferimento di fallback usando percorso/nome
+          if (!newImage) {
+            const path = String(block.parameters.image);
+            const fileName = path.split('/').pop() || path;
+            newImage = { nomefile: fileName, percorso: path };
+          }
+          // Aggiorna lastImmagine anche se il personaggio non è visibile
+          currentScene.personaggi[charIndex].lastImmagine = newImage;
+          // Aggiorna lastModifiedCharacter
+          lastModifiedCharacter = block.parameters.character;
         }
       } else if (block.type === 'SAYCHAR' && block.parameters?.character) {
         if (sceneStack.length > 0) {
