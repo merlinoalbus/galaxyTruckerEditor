@@ -5,14 +5,20 @@ import { Character } from '@/types/CampaignEditor/VariablesSystem/VariablesSyste
 import { useScene } from '@/contexts/SceneContext';
 import type { SimulatedSceneState } from '@/utils/CampaignEditor/VisualFlowEditor/sceneSimulation';
 
+type Position = 'left' | 'right' | 'top' | 'bottom' | 'lefttop' | 'leftbottom' | 'righttop' | 'rightbottom';
+
 interface CharacterSelectorProps {
   value: string;
   onChange: (character: string) => void;
-  mode: 'show' | 'hide';
+  mode: 'show' | 'hide' | 'change';
   className?: string;
   characters?: Character[];  // Opzionale, se passato usa questi invece di caricarli
   simulatedSceneState?: SimulatedSceneState | null;  // Stato simulato della scena
   forceColumns?: number;  // Forza un numero specifico di colonne
+  selectedImage?: string;  // Per mode='change': immagine selezionata
+  onImageChange?: (image: string) => void;  // Per mode='change': callback per cambio immagine
+  position?: Position;  // Per mode='show' con SAYCHAR: posizione
+  onPositionChange?: (position: Position) => void;  // Per mode='show' con SAYCHAR: callback per cambio posizione
 }
 
 export const CharacterSelector: React.FC<CharacterSelectorProps> = ({
@@ -22,7 +28,11 @@ export const CharacterSelector: React.FC<CharacterSelectorProps> = ({
   className = '',
   characters: propsCharacters,
   simulatedSceneState,
-  forceColumns
+  forceColumns,
+  selectedImage,
+  onImageChange,
+  position,
+  onPositionChange
 }) => {
   const { t } = useTranslation();
   const { getCurrentScene } = useScene();
@@ -46,6 +56,11 @@ export const CharacterSelector: React.FC<CharacterSelectorProps> = ({
   
   // Filtra i personaggi in base al mode e alla scena simulata
   const availableCharacters = useMemo(() => {
+    // Per mode='change', mostra tutti i personaggi
+    if (mode === 'change') {
+      return characters;
+    }
+    
     // Usa lo stato simulato se disponibile, altrimenti usa il context
     const scenePersonaggi: any[] = simulatedSceneState?.currentScene?.personaggi || getCurrentScene()?.personaggi || [];
     
