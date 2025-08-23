@@ -190,22 +190,25 @@ export const useScriptManagement = ({
       if (result.success && result.data) {
         setCurrentScript(result.data);
         
-        // Aggiungi ID univoci e flag container
+        // Usa addUniqueIds dal blockIdManager che gestisce tutti i tipi di contenitori
+        // Processa blocksMission e blocksFinish con addUniqueIds
+        const blocksMission = result.data.blocksMission ? addUniqueIds(result.data.blocksMission) : [];
+        const blocksFinish = result.data.blocksFinish ? addUniqueIds(result.data.blocksFinish) : [];
+        
+        // Aggiungi flag container dopo aver aggiunto gli ID
         const addContainerFlags = (blocks: any[]): any[] => {
           return blocks.map(block => {
             const newBlock = { ...block };
             
-            // Aggiungi ID se manca
-            if (!newBlock.id) {
-              newBlock.id = generateBlockId(block.type || 'BLOCK');
-            }
-            
-            // Un blocco è container se ha children, thenBlocks, elseBlocks, blocksMission o blocksFinish
-            if (block.children || block.thenBlocks || block.elseBlocks || block.blocksMission || block.blocksFinish) {
+            // Un blocco è container se ha children, thenBlocks, elseBlocks, blocksMission, blocksFinish, blockInit, blockStart, blockEvaluate o finishSection
+            if (block.children || block.thenBlocks || block.elseBlocks || 
+                block.blocksMission || block.blocksFinish || 
+                block.blockInit || block.blockStart || block.blockEvaluate || 
+                block.finishSection) {
               newBlock.isContainer = true;
             }
             
-            // Ricorsivamente processa i children
+            // Ricorsivamente processa tutti i tipi di children
             if (newBlock.children) {
               newBlock.children = addContainerFlags(newBlock.children);
             }
@@ -221,14 +224,26 @@ export const useScriptManagement = ({
             if (newBlock.blocksFinish) {
               newBlock.blocksFinish = addContainerFlags(newBlock.blocksFinish);
             }
+            if (newBlock.blockInit) {
+              newBlock.blockInit = addContainerFlags(newBlock.blockInit);
+            }
+            if (newBlock.blockStart) {
+              newBlock.blockStart = addContainerFlags(newBlock.blockStart);
+            }
+            if (newBlock.blockEvaluate) {
+              newBlock.blockEvaluate = addContainerFlags(newBlock.blockEvaluate);
+            }
+            if (newBlock.finishSection) {
+              newBlock.finishSection = addContainerFlags(newBlock.finishSection);
+            }
             
             return newBlock;
           });
         };
         
-        // Processa blocksMission e blocksFinish
-        const blocksMission = result.data.blocksMission ? addContainerFlags(result.data.blocksMission) : [];
-        const blocksFinish = result.data.blocksFinish ? addContainerFlags(result.data.blocksFinish) : [];
+        // Applica i flag container ai blocchi già processati con ID
+        const blocksMissionWithFlags = addContainerFlags(blocksMission);
+        const blocksFinishWithFlags = addContainerFlags(blocksFinish);
         
         // Crea il blocco MISSION principale
         const missionBlock: IFlowBlock = {
@@ -236,8 +251,8 @@ export const useScriptManagement = ({
           type: 'MISSION',
           position: { x: UI_CONSTANTS.DEFAULT_POSITION_X, y: UI_CONSTANTS.DEFAULT_POSITION_Y },
           isContainer: true,
-          blocksMission: blocksMission,
-          blocksFinish: blocksFinish,
+          blocksMission: blocksMissionWithFlags,
+          blocksFinish: blocksFinishWithFlags,
           name: result.data.name,
           missionName: result.data.name, // Aggiungi anche missionName per compatibilità con MissionBlock
           fileName: result.data.fileName,

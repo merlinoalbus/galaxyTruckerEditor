@@ -43,7 +43,8 @@
       "Bash(git commit:*)",
       "Bash(./scripts/restart-be.sh:*)",
       "Bash(npm test)",
-      "mcp__ide__executeCode"
+      "mcp__ide__executeCode",
+      "Bash(npm test:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",

@@ -38,6 +38,25 @@ export const addUniqueIds = (blocks: any[]): any[] => {
     if (newBlock.elseBlocks) {
       newBlock.elseBlocks = addUniqueIds(newBlock.elseBlocks);
     }
+    // Aggiungi ID per i blocchi specifici delle missions
+    if (newBlock.blocksMission) {
+      newBlock.blocksMission = addUniqueIds(newBlock.blocksMission);
+    }
+    if (newBlock.blocksFinish) {
+      newBlock.blocksFinish = addUniqueIds(newBlock.blocksFinish);
+    }
+    if (newBlock.blockInit) {
+      newBlock.blockInit = addUniqueIds(newBlock.blockInit);
+    }
+    if (newBlock.blockStart) {
+      newBlock.blockStart = addUniqueIds(newBlock.blockStart);
+    }
+    if (newBlock.blockEvaluate) {
+      newBlock.blockEvaluate = addUniqueIds(newBlock.blockEvaluate);
+    }
+    if (newBlock.finishSection) {
+      newBlock.finishSection = addUniqueIds(newBlock.finishSection);
+    }
     
     return newBlock;
   });
@@ -67,8 +86,16 @@ export const allBlocksHaveIds = (blocks: any[]): boolean => {
     const childrenValid = !block.children || allBlocksHaveIds(block.children);
     const thenBlocksValid = !block.thenBlocks || allBlocksHaveIds(block.thenBlocks);
     const elseBlocksValid = !block.elseBlocks || allBlocksHaveIds(block.elseBlocks);
+    const blocksMissionValid = !block.blocksMission || allBlocksHaveIds(block.blocksMission);
+    const blocksFinishValid = !block.blocksFinish || allBlocksHaveIds(block.blocksFinish);
+    const blockInitValid = !block.blockInit || allBlocksHaveIds(block.blockInit);
+    const blockStartValid = !block.blockStart || allBlocksHaveIds(block.blockStart);
+    const blockEvaluateValid = !block.blockEvaluate || allBlocksHaveIds(block.blockEvaluate);
+    const finishSectionValid = !block.finishSection || allBlocksHaveIds(block.finishSection);
     
-    return childrenValid && thenBlocksValid && elseBlocksValid;
+    return childrenValid && thenBlocksValid && elseBlocksValid && 
+           blocksMissionValid && blocksFinishValid &&
+           blockInitValid && blockStartValid && blockEvaluateValid && finishSectionValid;
   });
 };
 
@@ -87,6 +114,12 @@ export const countBlocks = (blocks: any[]): number => {
     if (block.children) total += countBlocks(block.children);
     if (block.thenBlocks) total += countBlocks(block.thenBlocks);
     if (block.elseBlocks) total += countBlocks(block.elseBlocks);
+    if (block.blocksMission) total += countBlocks(block.blocksMission);
+    if (block.blocksFinish) total += countBlocks(block.blocksFinish);
+    if (block.blockInit) total += countBlocks(block.blockInit);
+    if (block.blockStart) total += countBlocks(block.blockStart);
+    if (block.blockEvaluate) total += countBlocks(block.blockEvaluate);
+    if (block.finishSection) total += countBlocks(block.finishSection);
     
     return count + total;
   }, 0);
@@ -113,6 +146,24 @@ export const findBlockById = (blocks: any[], blockId: string): any | null => {
     
     const foundInElse = findBlockById(block.elseBlocks || [], blockId);
     if (foundInElse) return foundInElse;
+    
+    const foundInBlocksMission = findBlockById(block.blocksMission || [], blockId);
+    if (foundInBlocksMission) return foundInBlocksMission;
+    
+    const foundInBlocksFinish = findBlockById(block.blocksFinish || [], blockId);
+    if (foundInBlocksFinish) return foundInBlocksFinish;
+    
+    const foundInInit = findBlockById(block.blockInit || [], blockId);
+    if (foundInInit) return foundInInit;
+    
+    const foundInStart = findBlockById(block.blockStart || [], blockId);
+    if (foundInStart) return foundInStart;
+    
+    const foundInEvaluate = findBlockById(block.blockEvaluate || [], blockId);
+    if (foundInEvaluate) return foundInEvaluate;
+    
+    const foundInFinish = findBlockById(block.finishSection || [], blockId);
+    if (foundInFinish) return foundInFinish;
   }
   
   return null;
