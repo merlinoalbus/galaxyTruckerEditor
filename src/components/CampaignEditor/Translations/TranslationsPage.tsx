@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { API_CONFIG, API_ENDPOINTS } from '@/config';
 import { useTranslation } from '@/locales';
 import { IFlowBlock } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
+import { useLocalizationStrings } from '@/hooks/CampaignEditor/useLocalizationStrings';
 
 // Minimal types for coverage API
 type PerLanguage = Record<string, { covered: number; missing: number; different: number; totalFields: number; percent: number }>;
@@ -59,33 +60,66 @@ export const TranslationsPage: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [scriptContent, setScriptContent] = useState<any>(null);
   
-  // Stati per missions
-  const [selectedTab, setSelectedTab] = useState<'scripts' | 'missions'>('scripts');
+  // Stati per missions e localization
+  const [selectedTab, setSelectedTab] = useState<'scripts' | 'missions' | 'strings'>('scripts');
   const [missionsCoverage, setMissionsCoverage] = useState<any>(null);
   const [selectedMission, setSelectedMission] = useState<string | null>(null);
   const [missionDetails, setMissionDetails] = useState<any>(null);
   const [missionContent, setMissionContent] = useState<any>(null);
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        setLoading(true);
-        
-        // Carica coverage degli scripts
-        const scriptsRes = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_TRANSLATIONS_COVERAGE}`);
-        const scriptsJson: CoverageResponse = await scriptsRes.json();
-        if (!scriptsJson.success) throw new Error('scripts coverage failed');
-        setCoverage(scriptsJson.data);
-        
-        setError(null);
-      } catch (e: any) {
-        setError(e?.message || 'Error');
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
+  // Hook per localization strings
+  const {
+    categories,
+    selectedCategory,
+    isLoading: isLoadingStrings,
+    isLoadingCategory,
+    isSaving: isSavingStrings,
+    isTranslating,
+    error: stringsError,
+    searchTerm: stringsSearchTerm,
+    selectedLanguage: stringsSelectedLanguage,
+    filteredStrings,
+    categoryStats,
+    setSearchTerm: setStringsSearchTerm,
+    setSelectedLanguage: setStringsSelectedLanguage,
+    setError: setStringsError,
+    loadCategory,
+    saveCategory,
+    translateString,
+    translateCategory,
+    updateString,
+    setSelectedCategory,
+    SUPPORTED_LANGUAGES
+  } = useLocalizationStrings();
+
+  // Carica la coverage degli scripts solo quando necessario
+  const loadScriptsCoverage = useCallback(async () => {
+    try {
+      setLoading(true);
+      
+      // Carica coverage degli scripts
+      const scriptsRes = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_TRANSLATIONS_COVERAGE}`);
+      const scriptsJson: CoverageResponse = await scriptsRes.json();
+      if (!scriptsJson.success) throw new Error('scripts coverage failed');
+      setCoverage(scriptsJson.data);
+      
+      setError(null);
+    } catch (e: any) {
+      setError(e?.message || 'Error');
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  // Carica coverage solo per il tab selezionato
+  useEffect(() => {
+    if (selectedTab === 'scripts' && !coverage) {
+      loadScriptsCoverage();
+    } else if (selectedTab === 'strings' || selectedTab === 'missions') {
+      // Per strings e missions, imposta loading a false immediatamente
+      setLoading(false);
+    }
+  }, [selectedTab, coverage, loadScriptsCoverage]);
 
   // Funzione per estrarre i campi multilingua dai blocchi
   const extractTranslationFields = useCallback((blocks: IFlowBlock[], languages: string[]): TranslationField[] => {
@@ -161,7 +195,7 @@ export const TranslationsPage: React.FC = () => {
     let missing = 0;
     
     for (const field of fields) {
-      const targetVal = field.values[targetLang]?.trim() || '';
+      const targetVal = (typeof field.values[targetLang] === 'string' ? field.values[targetLang]!.trim() : '') || '';
       const enVal = field.en.trim();
       
       if (!targetVal || targetVal === enVal) {
@@ -266,7 +300,7 @@ export const TranslationsPage: React.FC = () => {
           for (const lang of availableLanguages) {
             if (lang === 'EN') continue;
             const key = `${selectedScript}|${idx}|${lang}`;
-            const currentValue = field.values[lang]?.trim() || '';
+            const currentValue = (typeof field.values[lang] === 'string' ? field.values[lang]!.trim() : '') || '';
             if (currentValue) {
               initialEdits[key] = currentValue;
             }
@@ -487,7 +521,7 @@ export const TranslationsPage: React.FC = () => {
         for (const lang of availableLanguages) {
           if (lang === 'EN') continue;
           const key = `${missionName}|${idx}|${lang}`;
-          const currentValue = field.values[lang]?.trim() || '';
+          const currentValue = (typeof field.values[lang] === 'string' ? field.values[lang]!.trim() : '') || '';
           if (currentValue) {
             initialEdits[key] = currentValue;
           }
@@ -690,23 +724,131 @@ export const TranslationsPage: React.FC = () => {
   if (loading) return <div className="p-6 text-gray-300">{t('common.loading')}</div>;
   if (error) return <div className="p-6 text-red-400">{t('common.error')}: {error}</div>;
   
-  const currentCoverage = selectedTab === 'scripts' ? coverage : missionsCoverage;
+  let currentCoverage: CoverageResponse['data'] | null = null;
+  if (selectedTab === 'scripts') {
+    currentCoverage = coverage;
+  } else if (selectedTab === 'missions') {
+    currentCoverage = missionsCoverage;
+  } else if (selectedTab === 'strings') {
+    // Per le strings, creiamo una struttura coverage globale basata sulle categorie disponibili
+    if (categories && categories.length > 0) {
+      const globalLanguageStats: PerLanguage = {};
+      
+      // Calcola le statistiche globali per tutte le categorie (escludendo EN)
+      for (const lang of SUPPORTED_LANGUAGES.filter(lang => lang !== 'EN')) {
+        let totalCovered = 0;
+        let totalFields = 0;
+        
+        for (const category of categories) {
+          const categoryTranslated = category.listKeys.filter(item => {
+            const value = item.values[lang];
+            const enValue = item.values['EN'] || '';
+            // Tradotta se: esiste, è stringa, non è vuota, ed è diversa da EN
+            return value && typeof value === 'string' && value.trim() !== '' && value.trim() !== enValue.trim();
+          }).length;
+          totalCovered += categoryTranslated;
+          totalFields += category.numKeys;
+        }
+        
+        globalLanguageStats[lang] = {
+          covered: totalCovered,
+          missing: totalFields - totalCovered,
+          different: totalCovered,
+          totalFields: totalFields,
+          percent: totalFields > 0 ? Math.round((totalCovered / totalFields) * 100) : 0
+        };
+      }
+      
+      currentCoverage = {
+        perLanguage: globalLanguageStats,
+        perScript: [] // Non utilizzato per le strings ma richiesto per compatibilità
+      };
+    } else if (!isLoadingStrings) {
+      // Se non ci sono categorie e non stiamo caricando, crea una coverage vuota (escludendo EN)
+      currentCoverage = {
+        perLanguage: SUPPORTED_LANGUAGES.filter(lang => lang !== 'EN').reduce((acc, lang) => {
+          acc[lang] = {
+            covered: 0,
+            missing: 0,
+            different: 0,
+            totalFields: 0,
+            percent: 0
+          };
+          return acc;
+        }, {} as PerLanguage),
+        perScript: []
+      };
+    }
+  }
   
   // Se non abbiamo dati per il tab corrente, mostra loading o noData
   if (!currentCoverage) {
     if (selectedTab === 'missions') {
       // Per missions, se non abbiamo dati potrebbe essere in caricamento
       return <div className="p-6 text-gray-300">{t('common.loading')}</div>;
+    } else if (selectedTab === 'strings') {
+      // Per strings, mostra loading solo se stiamo caricando
+      if (isLoadingStrings) {
+        return <div className="p-6 text-gray-300">{t('common.loading')}</div>;
+      } else {
+        // Se non stiamo caricando, mostra noData
+        return <div className="p-6 text-gray-400">Nessuna categoria di stringhe disponibile</div>;
+      }
     } else {
       // Per scripts, se non abbiamo coverage è un errore
       return <div className="p-6 text-gray-400">{t('common.noData')}</div>;
     }
   }
 
-  const langs = Object.keys(currentCoverage.perLanguage);
-  const currentSorted = selectedTab === 'scripts' ? scriptsSorted : missionsSorted;
-  const currentDetails = selectedTab === 'scripts' ? scriptDetails : missionDetails;
-  const currentSaveFunction = selectedTab === 'scripts' ? saveTranslations : saveMissionTranslations;
+  const langs = currentCoverage ? Object.keys(currentCoverage.perLanguage).filter(lang => lang !== 'EN') : [];
+  
+  let currentSorted: any;
+  let currentDetails: any;
+  let currentSaveFunction: any;
+  
+  if (selectedTab === 'scripts') {
+    currentSorted = scriptsSorted;
+    currentDetails = scriptDetails;
+    currentSaveFunction = saveTranslations;
+  } else if (selectedTab === 'missions') {
+    currentSorted = missionsSorted;
+    currentDetails = missionDetails;
+    currentSaveFunction = saveMissionTranslations;
+  } else if (selectedTab === 'strings') {
+    // Per le strings, usiamo le categories come "sorted" (filtrando EN)
+    currentSorted = categories.map(cat => ({
+      category: cat.nome,
+      languages: SUPPORTED_LANGUAGES.filter(lang => lang !== 'EN').reduce((acc, lang) => {
+        const translated = cat.listKeys.filter(key => {
+          const value = key.values[lang];
+          const enValue = key.values['EN'] || '';
+          // Tradotta se: esiste, è stringa, non è vuota, ed è diversa da EN
+          return value && typeof value === 'string' && value.trim() !== '' && value.trim() !== enValue.trim();
+        }).length;
+        const total = cat.numKeys || 1;
+        acc[lang] = {
+          covered: translated,
+          missing: total - translated,
+          different: translated,
+          totalFields: total,
+          percent: Math.round((translated / total) * 100)
+        };
+        return acc;
+      }, {} as PerLanguage)
+    }));
+    currentDetails = selectedCategory;
+    currentSaveFunction = async () => {
+      if (selectedCategory) {
+        // Passa la lista completa aggiornata delle stringhe
+        const result = await saveCategory(selectedCategory.id, selectedCategory.listKeys);
+        if (result.success) {
+          alert(`Categoria ${selectedCategory.nome} salvata con successo!`);
+        } else {
+          alert(`Errore nel salvataggio: ${result.error}`);
+        }
+      }
+    };
+  }
 
   return (
     <div className="space-y-6">
@@ -724,17 +866,23 @@ export const TranslationsPage: React.FC = () => {
         >
           🚀 Missions
         </button>
+        <button
+          className={`px-4 py-2 rounded ${selectedTab === 'strings' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-gray-300 hover:bg-slate-600'}`}
+          onClick={() => setSelectedTab('strings')}
+        >
+          🌐 Strings
+        </button>
       </div>
 
       {/* Overview */}
       <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
         <h2 className="text-white font-semibold mb-2">
-          {selectedTab === 'scripts' ? 'Scripts' : 'Missions'} Translations Overview
+          {selectedTab === 'scripts' ? 'Scripts' : selectedTab === 'missions' ? 'Missions' : 'Localization Strings'} Translations Overview
         </h2>
         {currentCoverage && (
           <div className="flex flex-wrap gap-3">
             {langs.map((lang) => {
-              const d = currentCoverage.perLanguage[lang];
+              const d = currentCoverage?.perLanguage[lang];
               if (!d) return null;
               return (
                 <div key={lang} className={`px-3 py-2 rounded border text-sm ${d.percent >= 90 ? 'border-green-600 text-green-300' : d.percent >= 60 ? 'border-yellow-600 text-yellow-300' : 'border-red-700 text-red-300'}`}>
@@ -765,7 +913,11 @@ export const TranslationsPage: React.FC = () => {
         <table className="w-full text-left text-sm">
           <thead className="bg-slate-900 text-gray-300">
             <tr>
-              <th className="px-3 py-2">{selectedTab === 'scripts' ? 'Script' : 'Mission'}</th>
+              <th className="px-3 py-2">
+                {selectedTab === 'scripts' ? 'Script' : 
+                 selectedTab === 'missions' ? 'Mission' : 
+                 'Category'}
+              </th>
               <th className="px-3 py-2">% {selectedLang}</th>
               <th className="px-3 py-2">Azioni</th>
             </tr>
@@ -776,8 +928,20 @@ export const TranslationsPage: React.FC = () => {
               if (!d) return null;
               // Show in Solo mancanti only if completion < 100
               if (onlyMissing && (d.percent >= 100)) return null;
-              const itemName = selectedTab === 'scripts' ? item.script : item.mission;
-              const isOpen = selectedTab === 'scripts' ? selectedScript === itemName : selectedMission === itemName;
+              
+              let itemName: string = '';
+              let isOpen: boolean = false;
+              
+              if (selectedTab === 'scripts') {
+                itemName = item.script || '';
+                isOpen = selectedScript === itemName;
+              } else if (selectedTab === 'missions') {
+                itemName = item.mission || '';
+                isOpen = selectedMission === itemName;
+              } else if (selectedTab === 'strings') {
+                itemName = item.category || '';
+                isOpen = selectedCategory?.nome === itemName;
+              }
               return (
                 <React.Fragment key={itemName}>
                   <tr className="hover:bg-slate-700/40">
@@ -789,8 +953,17 @@ export const TranslationsPage: React.FC = () => {
                         onClick={() => {
                           if (selectedTab === 'scripts') {
                             setSelectedScript(isOpen ? null : itemName);
-                          } else {
+                          } else if (selectedTab === 'missions') {
                             setSelectedMission(isOpen ? null : itemName);
+                          } else if (selectedTab === 'strings') {
+                            // Per le strings, carichiamo la categoria
+                            if (isOpen) {
+                              // Se è già aperta, chiudiamo la categoria
+                              setSelectedCategory(null);
+                            } else {
+                              // Carichiamo la categoria
+                              loadCategory(itemName);
+                            }
                           }
                         }}
                       >
@@ -820,12 +993,21 @@ export const TranslationsPage: React.FC = () => {
                       )}
                     </td>
                   </tr>
-                  {isOpen && currentDetails && currentDetails.script === itemName && (
+                  {isOpen && currentDetails && 
+                   ((selectedTab === 'scripts' && currentDetails.script === itemName) ||
+                    (selectedTab === 'missions' && currentDetails.script === itemName) ||
+                    (selectedTab === 'strings' && currentDetails.nome === itemName)) && (
                     <tr className="bg-slate-900/40">
                       <td colSpan={3} className="px-3 py-2">
                         <div className="space-y-3">
                           <div className="flex items-center justify-between">
-                            <div className="text-gray-300 text-sm">Copertura {selectedLang}: {currentDetails.summary[selectedLang]?.percent ?? 0}%</div>
+                            <div className="text-gray-300 text-sm">
+                              Copertura {selectedLang}: {
+                                selectedTab === 'strings' && categoryStats 
+                                  ? Math.round(((categoryStats.translatedKeys[selectedLang] || 0) / categoryStats.totalKeys) * 100)
+                                  : currentDetails.summary[selectedLang]?.percent ?? 0
+                              }%
+                            </div>
                             <div className="flex items-center gap-2">
                               <button
                                 disabled={saving || !currentDetails}
@@ -843,25 +1025,64 @@ export const TranslationsPage: React.FC = () => {
                                   if (!currentDetails) return;
                                   try {
                                     setSaving(true);
-                                    const items = currentDetails.details.map((d: any) => ({
-                                      textEN: d.en,
-                                      metacodesDetected: (d.en.match(/\[[^\]]+\]/g) || [])
-                                    }));
-                                    const resp = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE_BATCH}`, {
-                                      method: 'POST', headers: { 'Content-Type': 'application/json' },
-                                      body: JSON.stringify({ items, langTarget: selectedLang })
-                                    });
-                                    const j = await resp.json();
-                                    if (!resp.ok || !j?.success) throw new Error(j?.message || 'batch failed');
-                                    const suggestions: string[] = j.data?.suggestions || [];
-                                    // Popola tutte le inputbox
-                                    const newEdits: Record<string, string> = { ...edits };
-                                    currentDetails.details.forEach((_: any, idx: number) => {
-                                      const key = `${currentDetails.script}|${idx}|${selectedLang}`;
-                                      const sug = suggestions[idx];
-                                      if (typeof sug === 'string' && sug.length > 0) newEdits[key] = sug;
-                                    });
-                                    setEdits(newEdits);
+                                    
+                                    if (selectedTab === 'strings' && selectedCategory) {
+                                      // Per le strings, usa la nuova API
+                                      const result = await translateCategory(selectedCategory.id, 'EN', selectedLang);
+                                      if (result.success && result.translations) {
+                                        // Applica le traduzioni sistemando il formato
+                                        result.translations.forEach((translation: any) => {
+                                          // Rimuovi tutti i possibili prefissi placeholder
+                                          let cleanTranslation = translation.translatedText || '';
+                                          
+                                          // Pattern di prefissi da rimuovere
+                                          const prefixPatterns = [
+                                            `[AI_TRANSLATED:${selectedLang}] `,
+                                            `[AI_TRANSLATED:${selectedLang.toLowerCase()}] `,
+                                            `[AI_TRANSLATED:${selectedLang.toUpperCase()}] `,
+                                            `[TRANSLATED:${selectedLang}] `,
+                                            `[TRANSLATED:${selectedLang.toLowerCase()}] `,
+                                            `[TRANSLATED:${selectedLang.toUpperCase()}] `
+                                          ];
+                                          
+                                          for (const prefix of prefixPatterns) {
+                                            if (cleanTranslation.startsWith(prefix)) {
+                                              cleanTranslation = cleanTranslation.substring(prefix.length);
+                                              break;
+                                            }
+                                          }
+                                          
+                                          // Rimuovi anche eventuali spazi iniziali/finali e newline
+                                          cleanTranslation = cleanTranslation.trim().replace(/[\r\n]/g, ' ');
+                                          
+                                          if (cleanTranslation) {
+                                            updateString(translation.key, selectedLang, cleanTranslation);
+                                          }
+                                        });
+                                        alert(`Tutte le stringhe sono state tradotte in ${selectedLang}!`);
+                                      }
+                                    } else {
+                                      // Per scripts e missions, usa la logica esistente
+                                      const items = currentDetails.details.map((d: any) => ({
+                                        textEN: d.en,
+                                        metacodesDetected: (d.en.match(/\[[^\]]+\]/g) || [])
+                                      }));
+                                      const resp = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE_BATCH}`, {
+                                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ items, langTarget: selectedLang })
+                                      });
+                                      const j = await resp.json();
+                                      if (!resp.ok || !j?.success) throw new Error(j?.message || 'batch failed');
+                                      const suggestions: string[] = j.data?.suggestions || [];
+                                      // Popola tutte le inputbox
+                                      const newEdits: Record<string, string> = { ...edits };
+                                      currentDetails.details.forEach((_: any, idx: number) => {
+                                        const key = `${currentDetails.script}|${idx}|${selectedLang}`;
+                                        const sug = suggestions[idx];
+                                        if (typeof sug === 'string' && sug.length > 0) newEdits[key] = sug;
+                                      });
+                                      setEdits(newEdits);
+                                    }
                                   } catch (e: any) {
                                     alert(e?.message || 'Impossibile generare suggerimenti in batch');
                                   } finally {
@@ -872,17 +1093,117 @@ export const TranslationsPage: React.FC = () => {
                             </div>
                           </div>
                           <div className="max-h-72 overflow-auto border border-slate-700 rounded">
-                            <table className="w-full text-left text-sm">
-                              <thead className="bg-slate-900 text-gray-300">
-                                <tr>
-                                  <th className="px-3 py-2 w-[10%]">Campo</th>
-                                  <th className="px-3 py-2 w-[40%]">EN</th>
-                                  <th className="px-3 py-2 w-[40%]">{selectedLang}</th>
-                                  <th className="px-3 py-2 w-[10%]">Azioni</th>
-                                </tr>
-                              </thead>
-                              <tbody className="divide-y divide-slate-700">
-                                {currentDetails.details.map((d: any, idx: number) => {
+                            {selectedTab === 'strings' && selectedCategory ? (
+                              // Rendering per localization strings
+                              <table className="w-full text-left text-sm">
+                                <thead className="bg-slate-900 text-gray-300">
+                                  <tr>
+                                    <th className="px-3 py-2 w-[20%]">Key</th>
+                                    <th className="px-3 py-2 w-[30%]">EN</th>
+                                    <th className="px-3 py-2 w-[40%]">{selectedLang}</th>
+                                    <th className="px-3 py-2 w-[10%]">Azioni</th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-700">
+                                  {filteredStrings.map((stringItem, idx) => {
+                                    const enValue = stringItem.values.EN || '';
+                                    const rawValue = stringItem.values[selectedLang] || '';
+                                    
+                                    // Per la textarea, usa sempre il valore della lingua selezionata (può essere vuoto)
+                                    const textareaValue = rawValue;
+                                    
+                                    // Non tradotta se: vuota o uguale a EN
+                                    const isMissing = !rawValue || rawValue.trim() === '' || rawValue.trim() === enValue.trim();
+                                    
+                                    return (
+                                      <tr key={stringItem.id} className={`${isMissing ? 'bg-red-900/20' : 'bg-yellow-900/20'}`}>
+                                        <td className="px-3 py-2 text-gray-400 w-[20%] font-mono text-xs break-all">
+                                          {stringItem.id}
+                                        </td>
+                                        <td className="px-3 py-2 text-gray-200 w-[30%]">
+                                          {enValue}
+                                        </td>
+                                        <td className="px-3 py-2 text-gray-200 w-[40%]">
+                                          <textarea
+                                            className="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-gray-200 resize-y"
+                                            rows={2}
+                                            value={textareaValue}
+                                            onChange={(e) => {
+                                              // Rimuovi i newline per mantenere tutto su una singola riga
+                                              const singleLineValue = e.target.value.replace(/[\r\n]/g, ' ');
+                                              updateString(stringItem.id, selectedLang, singleLineValue);
+                                            }}
+                                            onKeyDown={(e) => {
+                                              // Impedisci Enter per evitare newline
+                                              if (e.key === 'Enter') {
+                                                e.preventDefault();
+                                              }
+                                            }}
+                                            placeholder={`Traduzione in ${selectedLang} (EN: ${enValue})`}
+                                            style={{ overflow: 'auto', minHeight: '3rem' }}
+                                          />
+                                        </td>
+                                        <td className="px-3 py-2 text-gray-300 w-[10%]">
+                                          <button 
+                                            className="btn-primary text-lg hover:bg-blue-600 px-2 py-1" 
+                                            title="Suggerimento IA"
+                                            onClick={async () => {
+                                              try {
+                                                const result = await translateString(enValue, 'EN', selectedLang, stringItem.id);
+                                                if (result.success && result.translatedText) {
+                                                  // Rimuovi tutti i possibili prefissi placeholder
+                                                  let cleanTranslation = result.translatedText;
+                                                  
+                                                  // Pattern di prefissi da rimuovere
+                                                  const prefixPatterns = [
+                                                    `[AI_TRANSLATED:${selectedLang}] `,
+                                                    `[AI_TRANSLATED:${selectedLang.toLowerCase()}] `,
+                                                    `[AI_TRANSLATED:${selectedLang.toUpperCase()}] `,
+                                                    `[TRANSLATED:${selectedLang}] `,
+                                                    `[TRANSLATED:${selectedLang.toLowerCase()}] `,
+                                                    `[TRANSLATED:${selectedLang.toUpperCase()}] `
+                                                  ];
+                                                  
+                                                  for (const prefix of prefixPatterns) {
+                                                    if (cleanTranslation.startsWith(prefix)) {
+                                                      cleanTranslation = cleanTranslation.substring(prefix.length);
+                                                      break;
+                                                    }
+                                                  }
+                                                  
+                                                  // Rimuovi anche eventuali spazi iniziali/finali e newline
+                                                  cleanTranslation = cleanTranslation.trim().replace(/[\r\n]/g, ' ');
+                                                  
+                                                  if (cleanTranslation) {
+                                                    updateString(stringItem.id, selectedLang, cleanTranslation);
+                                                  }
+                                                }
+                                              } catch (e) {
+                                                alert('Impossibile generare suggerimento');
+                                              }
+                                            }}
+                                          >
+                                            🪄
+                                          </button>
+                                        </td>
+                                      </tr>
+                                    );
+                                  })}
+                                </tbody>
+                              </table>
+                            ) : (
+                              // Rendering per scripts e missions
+                              <table className="w-full text-left text-sm">
+                                <thead className="bg-slate-900 text-gray-300">
+                                  <tr>
+                                    <th className="px-3 py-2 w-[10%]">Campo</th>
+                                    <th className="px-3 py-2 w-[40%]">EN</th>
+                                    <th className="px-3 py-2 w-[40%]">{selectedLang}</th>
+                                    <th className="px-3 py-2 w-[10%]">Azioni</th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-700">
+                                  {currentDetails.details.map((d: any, idx: number) => {
                                   const key = `${currentDetails.script}|${idx}|${selectedLang}`;
                                   const initial = (d.values[selectedLang] || '');
                                   const targetVal = edits[key] !== undefined ? edits[key] : initial;
@@ -893,11 +1214,23 @@ export const TranslationsPage: React.FC = () => {
                                       <td className="px-3 py-2 text-gray-400 w-[10%]">{d.type || d.field || '-'}</td>
                                       <td className="px-3 py-2 text-gray-200 w-[40%]">{d.en}</td>
                                       <td className="px-3 py-2 text-gray-200 w-[40%]">
-                                        <input
-                                          className="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-gray-200"
+                                        <textarea
+                                          className="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-gray-200 resize-y"
+                                          rows={2}
                                           value={targetVal || (d.values[selectedLang] || '')}
-                                          onChange={(e) => setEdits(prev => ({ ...prev, [key]: e.target.value }))}
+                                          onChange={(e) => {
+                                            // Rimuovi i newline per mantenere tutto su una singola riga
+                                            const singleLineValue = e.target.value.replace(/[\r\n]/g, ' ');
+                                            setEdits(prev => ({ ...prev, [key]: singleLineValue }));
+                                          }}
+                                          onKeyDown={(e) => {
+                                            // Impedisci Enter per evitare newline
+                                            if (e.key === 'Enter') {
+                                              e.preventDefault();
+                                            }
+                                          }}
                                           placeholder="Inserisci traduzione"
+                                          style={{ overflow: 'auto', minHeight: '3rem' }}
                                         />
                                       </td>
                                       <td className="px-3 py-2 text-gray-300 w-[10%]">
@@ -923,9 +1256,10 @@ export const TranslationsPage: React.FC = () => {
                                       </td>
                                     </tr>
                                   );
-                                })}
-                              </tbody>
-                            </table>
+                                  })}
+                                </tbody>
+                              </table>
+                            )}
                           </div>
                         </div>
                       </td>
