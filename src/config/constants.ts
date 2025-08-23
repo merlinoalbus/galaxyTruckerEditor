@@ -39,6 +39,12 @@ export const API_ENDPOINTS = {
   MISSIONS_SAVE_MISSION: '/missions/saveMission',
   MISSIONS_TRANSLATIONS_COVERAGE: '/missions/translations/coverage',
 
+  // Localization API
+  LOCALIZATION_NODES: '/localization/nodes',
+  LOCALIZATION_NODES_SAVE: '/localization/nodes/save',
+  LOCALIZATION_MISSIONS: '/localization/missions',
+  LOCALIZATION_MISSIONS_SAVE: '/localization/missions/save',
+
   // Game Elements API
   GAME_CHARACTERS: '/game/characters',
   GAME_NODES: '/game/nodes',

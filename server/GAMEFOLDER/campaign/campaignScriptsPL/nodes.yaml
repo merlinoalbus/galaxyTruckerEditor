@@ -29,7 +29,7 @@
 - name: purpleHome
   coordinates: [230, 2320]
   image: purplehome.png
-  caption: "Th'kzw-r"
+  caption: "Th'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r"
   description: "Planeta macierzysta fioletowych kosmitów, niezrównanych wojowników, ale kiepskich poliglotów."
   buttons: [[bpurple, purpleHomeDlg, "Porozmawiaj z miejscowymi."], [bmerchant, merchantDlg, "Porozmawiaj z ludzkim biznesmenem."]]
 - name: brownHome

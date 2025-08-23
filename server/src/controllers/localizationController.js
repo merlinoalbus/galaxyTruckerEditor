@@ -153,7 +153,7 @@ class LocalizationController {
   parseYamlContent(content, filePath) {
     try {
       // Prima prova con parser YAML standard
-      return yaml.parse(content) || {};
+      return yaml.load(content) || {};
     } catch (yamlError) {
       logger.debug(`YAML parse failed for ${filePath}, using manual parsing`);
       
@@ -380,7 +380,7 @@ class LocalizationController {
           let existingContent = {};
           try {
             const existing = await fs.readFile(filePath, 'utf8');
-            existingContent = yaml.parse(existing) || {};
+            existingContent = yaml.load(existing) || {};
           } catch (readError) {
             logger.warn(`Could not read existing file ${filePath}, creating new`);
           }
@@ -501,7 +501,7 @@ class LocalizationController {
     }
     
     const referenceContent = await fs.readFile(languagePaths.get(referenceLang), 'utf8');
-    const referenceData = yaml.parse(referenceContent) || [];
+    const referenceData = yaml.load(referenceContent) || [];
     
     // Per ogni item nel file di riferimento, raccogli le traduzioni
     for (let i = 0; i < referenceData.length; i++) {
@@ -518,26 +518,63 @@ class LocalizationController {
       for (const [language, filePath] of languagePaths) {
         try {
           const content = await fs.readFile(filePath, 'utf8');
-          const data = yaml.parse(content) || [];
+          const data = yaml.load(content) || [];
           const langItem = data[i];
           
           if (langItem && langItem.name === item.name) {
-            translations_item.translations[language] = {
+            const itemTranslation = {
               caption: langItem.caption || '',
               description: langItem.description || ''
             };
+            
+            // Aggiungi i buttons se presenti
+            if (langItem.buttons && Array.isArray(langItem.buttons)) {
+              itemTranslation.buttons = langItem.buttons.map(button => {
+                if (Array.isArray(button) && button.length >= 3) {
+                  return {
+                    id: button[0],
+                    action: button[1],
+                    text: button[2] || ''
+                  };
+                }
+                return { id: '', action: '', text: '' };
+              });
+            } else {
+              itemTranslation.buttons = [];
+            }
+            
+            translations_item.translations[language] = itemTranslation;
           } else {
             // Cerca per nome se l'indice non corrisponde
             const found = data.find(d => d && d.name === item.name);
             if (found) {
-              translations_item.translations[language] = {
+              const foundTranslation = {
                 caption: found.caption || '',
                 description: found.description || ''
               };
+              
+              // Aggiungi i buttons se presenti
+              if (found.buttons && Array.isArray(found.buttons)) {
+                foundTranslation.buttons = found.buttons.map(button => {
+                  if (Array.isArray(button) && button.length >= 3) {
+                    return {
+                      id: button[0],
+                      action: button[1],
+                      text: button[2] || ''
+                    };
+                  }
+                  return { id: '', action: '', text: '' };
+                });
+              } else {
+                foundTranslation.buttons = [];
+              }
+              
+              translations_item.translations[language] = foundTranslation;
             } else {
               translations_item.translations[language] = {
                 caption: '',
-                description: ''
+                description: '',
+                buttons: []
               };
             }
           }
@@ -545,7 +582,8 @@ class LocalizationController {
           logger.warn(`Error reading ${fileName} for language ${language}:`, error.message);
           translations_item.translations[language] = {
             caption: '',
-            description: ''
+            description: '',
+            buttons: []
           };
         }
       }
@@ -627,7 +665,7 @@ class LocalizationController {
   }
 
   /**
-   * Salva le modifiche per un file di campagna
+   * Salva le modifiche per un file di campagna PRESERVANDO IL FORMATO ORIGINALE
    */
   async saveCampaignFileTranslations(fileName, items) {
     const campaignPath = path.join(config.GAME_ROOT, 'campaign');
@@ -645,57 +683,89 @@ class LocalizationController {
       }
     }
     
-    // Per ogni lingua, aggiorna il file
+    // Per ogni lingua, aggiorna il file PRESERVANDO IL FORMATO
     for (const [language, filePath] of languagePaths) {
       try {
-        // Leggi il file esistente
-        let existingData = [];
+        // Leggi il contenuto originale come testo (NON yaml.load!)
+        let originalContent = '';
         try {
-          const content = await fs.readFile(filePath, 'utf8');
-          existingData = yaml.parse(content) || [];
+          originalContent = await fs.readFile(filePath, 'utf8');
         } catch (readError) {
-          logger.warn(`Could not read existing ${fileName} for ${language}, creating new`);
+          logger.warn(`Could not read existing ${fileName} for ${language}, skipping`);
+          continue;
         }
         
-        // Aggiorna con le traduzioni
+        let modifiedContent = originalContent;
+        
+        // Per ogni item da aggiornare
         for (const item of items) {
           const translation = item.translations[language];
           if (!translation) continue;
           
-          // Trova l'item corrispondente nell'array esistente
-          let targetItem = existingData[item.index];
-          if (!targetItem || targetItem.name !== item.id) {
-            // Cerca per nome
-            targetItem = existingData.find(d => d && d.name === item.id);
-            if (!targetItem) {
-              // Crea nuovo item se non esiste
-              targetItem = { name: item.id };
-              if (item.index < existingData.length) {
-                existingData[item.index] = targetItem;
-              } else {
-                existingData.push(targetItem);
-              }
+          // Pattern per trovare il nodo specifico
+          const nodePattern = new RegExp(`(^- name:\\s*["']?${item.id}["']?\\s*$)`, 'm');
+          const nodeMatch = modifiedContent.match(nodePattern);
+          
+          if (!nodeMatch) {
+            logger.warn(`Node ${item.id} not found in ${language} ${fileName}`);
+            continue;
+          }
+          
+          const nodeStartIndex = nodeMatch.index;
+          
+          // Trova l'inizio del prossimo nodo o la fine del file
+          const nextNodePattern = /^- name:/m;
+          const restContent = modifiedContent.substring(nodeStartIndex + nodeMatch[0].length);
+          const nextNodeMatch = restContent.match(nextNodePattern);
+          
+          const nodeEndIndex = nextNodeMatch 
+            ? nodeStartIndex + nodeMatch[0].length + nextNodeMatch.index
+            : modifiedContent.length;
+          
+          let nodeContent = modifiedContent.substring(nodeStartIndex, nodeEndIndex);
+          
+          // Aggiorna caption se presente
+          if (translation.caption !== undefined && translation.caption !== '') {
+            const captionPattern = /(caption:\s*["'])([^"']*)(["'])/;
+            if (captionPattern.test(nodeContent)) {
+              nodeContent = nodeContent.replace(captionPattern, `$1${translation.caption}$3`);
             }
           }
           
-          // Aggiorna le traduzioni
-          if (translation.caption !== undefined) {
-            targetItem.caption = translation.caption;
+          // Aggiorna description se presente
+          if (translation.description !== undefined && translation.description !== '') {
+            const descriptionPattern = /(description:\s*["'])([^"']*)(["'])/;
+            if (descriptionPattern.test(nodeContent)) {
+              nodeContent = nodeContent.replace(descriptionPattern, `$1${translation.description}$3`);
+            }
           }
-          if (translation.description !== undefined) {
-            targetItem.description = translation.description;
+          
+          // Aggiorna buttons se presente  
+          if (translation.buttons !== undefined && Array.isArray(translation.buttons)) {
+            // Pattern che cattura l'intera linea dei buttons fino alla fine
+            // Usa lookahead per essere sicuri di catturare tutto fino al ]
+            const buttonsPattern = /(buttons:\s*\[)[^\n]*(\])/;
+            const buttonsMatch = nodeContent.match(buttonsPattern);
+            
+            if (buttonsMatch) {
+              // Ricostruisci l'array dei buttons mantenendo il formato compatto
+              const newButtonsArray = translation.buttons.map(button => 
+                `[${button.id}, ${button.action}, "${button.text}"]`
+              ).join(', ');
+              
+              // Sostituisci SOLO la prima occorrenza trovata
+              nodeContent = nodeContent.replace(buttonsPattern, `$1${newButtonsArray}$2`);
+            }
           }
+          
+          // Sostituisci il nodo nel contenuto modificato
+          modifiedContent = modifiedContent.substring(0, nodeStartIndex) + 
+                           nodeContent + 
+                           modifiedContent.substring(nodeEndIndex);
         }
         
-        // Salva il file
-        const yamlContent = yaml.dump(existingData, {
-          indent: 2,
-          lineWidth: -1,
-          forceQuotes: true,
-          quotingType: '"'
-        });
-        
-        await fs.writeFile(filePath, yamlContent, 'utf8');
+        // Salva il file PRESERVANDO IL FORMATO ORIGINALE
+        await fs.writeFile(filePath, modifiedContent, 'utf8');
         
       } catch (fileError) {
         logger.error(`Error saving ${fileName} for language ${language}:`, fileError);

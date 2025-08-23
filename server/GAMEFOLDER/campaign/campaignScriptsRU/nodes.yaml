@@ -29,7 +29,7 @@
 - name: purpleHome
   coordinates: [230, 2320]
   image: purplehome.png
-  caption: "Тх'кзв-р"
+  caption: "Тх'кзв-р'кзв-р'кзв-р'кзв-р'кзв-р'кзв-р'кзв-р'кзв-р"
   description: "Родная планета фиолетовых инопланетян: отличных воинов, но с иностранными языками у них просто беда."
   buttons: [[bpurple, purpleHomeDlg, "Поговорить с местными"], [bmerchant, merchantDlg, "Поговорить с коммерсантом"]]
 - name: brownHome
