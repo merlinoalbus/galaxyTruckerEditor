@@ -29,7 +29,7 @@
 - name: purpleHome
   coordinates: [230, 2320]
   image: purplehome.png
-  caption: "Th'kzw-r"
+  caption: "Th'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r"
   description: "Heimatwelt der lila Aliens: großartig in der Kriegskunst, mies in Fremdsprachen."
   buttons: [[bpurple, purpleHomeDlg, "Mit den Einheimischen reden."], [bmerchant, merchantDlg, "Mit Geschäftsmann von der Erde reden."]]
 - name: brownHome

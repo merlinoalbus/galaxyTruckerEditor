@@ -29,7 +29,7 @@
 - name: purpleHome
   coordinates: [230, 2320]
   image: purplehome.png
-  caption: "Th'kzw-r"
+  caption: "Th'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r"
   description: "Tierra natal de los alienígenas de color violeta: grandes guerreros, pésimos estudiantes de idiomas."
   buttons: [[bpurple, purpleHomeDlg, "Habla con los nativos."], [bmerchant, merchantDlg, "Habla con el hombre de negocios humano."]]
 - name: brownHome

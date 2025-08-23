@@ -60,12 +60,18 @@ export const TranslationsPage: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [scriptContent, setScriptContent] = useState<any>(null);
   
-  // Stati per missions e localization
-  const [selectedTab, setSelectedTab] = useState<'scripts' | 'missions' | 'strings'>('scripts');
+  // Stati per tutti i tipi di traduzioni
+  const [selectedTab, setSelectedTab] = useState<'scripts' | 'missions' | 'strings' | 'nodes' | 'yaml-missions'>('scripts');
   const [missionsCoverage, setMissionsCoverage] = useState<any>(null);
   const [selectedMission, setSelectedMission] = useState<string | null>(null);
   const [missionDetails, setMissionDetails] = useState<any>(null);
   const [missionContent, setMissionContent] = useState<any>(null);
+
+  // Stati per nodes.yaml e missions.yaml
+  const [nodesData, setNodesData] = useState<any>(null);
+  const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const [yamlMissionsData, setYamlMissionsData] = useState<any>(null);
+  const [selectedYamlMission, setSelectedYamlMission] = useState<string | null>(null);
 
   // Hook per localization strings
   const {
@@ -111,15 +117,51 @@ export const TranslationsPage: React.FC = () => {
     }
   }, []);
 
+  // Carica dati nodes.yaml
+  const loadNodesData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const nodesRes = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.LOCALIZATION_NODES}`);
+      const nodesJson = await nodesRes.json();
+      if (!nodesJson.success) throw new Error('nodes data failed');
+      setNodesData(nodesJson.data);
+      setError(null);
+    } catch (e: any) {
+      setError(e?.message || 'Error loading nodes');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Carica dati missions.yaml
+  const loadYamlMissionsData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const missionsRes = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.LOCALIZATION_MISSIONS}`);
+      const missionsJson = await missionsRes.json();
+      if (!missionsJson.success) throw new Error('yaml missions data failed');
+      setYamlMissionsData(missionsJson.data);
+      setError(null);
+    } catch (e: any) {
+      setError(e?.message || 'Error loading yaml missions');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   // Carica coverage solo per il tab selezionato
   useEffect(() => {
     if (selectedTab === 'scripts' && !coverage) {
       loadScriptsCoverage();
+    } else if (selectedTab === 'nodes' && !nodesData) {
+      loadNodesData();
+    } else if (selectedTab === 'yaml-missions' && !yamlMissionsData) {
+      loadYamlMissionsData();
     } else if (selectedTab === 'strings' || selectedTab === 'missions') {
       // Per strings e missions, imposta loading a false immediatamente
       setLoading(false);
     }
-  }, [selectedTab, coverage, loadScriptsCoverage]);
+  }, [selectedTab, coverage, nodesData, yamlMissionsData, loadScriptsCoverage, loadNodesData, loadYamlMissionsData]);
 
   // Funzione per estrarre i campi multilingua dai blocchi
   const extractTranslationFields = useCallback((blocks: IFlowBlock[], languages: string[]): TranslationField[] => {
@@ -682,6 +724,161 @@ export const TranslationsPage: React.FC = () => {
     }
   }, [selectedMission, missionContent, translationFields, edits, selectedLang, applyEditsToBlocks, extractTranslationFields, calculateCoverageStats, missionDetails, ensureBlockIds]);
 
+  // Funzioni per salvare traduzioni nodes.yaml
+  const saveNodesTranslations = useCallback(async () => {
+    if (!nodesData || !selectedNode) {
+      alert('Errore: dati del nodo non disponibili');
+      return;
+    }
+
+    try {
+      setSaving(true);
+      
+      // Prepara i dati nel formato richiesto dall'API
+      const updatedItems = nodesData.items.map((item: any) => {
+        const key = `nodes|${item.id}|${selectedLang}`;
+        const captionEdit = edits[`${key}_caption`];
+        const descriptionEdit = edits[`${key}_description`];
+        
+        const updatedTranslations = { ...item.translations };
+        const currentLangTranslation = { ...updatedTranslations[selectedLang] };
+        
+        if (captionEdit !== undefined) {
+          currentLangTranslation.caption = captionEdit;
+        }
+        if (descriptionEdit !== undefined) {
+          currentLangTranslation.description = descriptionEdit;
+        }
+        
+        // Gestione buttons
+        if (item.translations['EN']?.buttons && Array.isArray(item.translations['EN'].buttons)) {
+          const updatedButtons = [...(currentLangTranslation.buttons || [])];
+          
+          item.translations['EN'].buttons.forEach((enButton: any, buttonIndex: number) => {
+            const buttonKey = `${selectedTab}|${item.id}|${selectedLang}_button_${enButton.id}`;
+            const buttonEdit = edits[buttonKey];
+            
+            if (buttonEdit !== undefined) {
+              // Assicurati che l'array buttons esista e sia della lunghezza corretta
+              while (updatedButtons.length <= buttonIndex) {
+                updatedButtons.push({ id: '', action: '', text: '' });
+              }
+              
+              updatedButtons[buttonIndex] = {
+                id: enButton.id,
+                action: enButton.action,
+                text: buttonEdit
+              };
+            }
+          });
+          
+          currentLangTranslation.buttons = updatedButtons;
+        }
+        
+        updatedTranslations[selectedLang] = currentLangTranslation;
+        
+        return {
+          ...item,
+          translations: updatedTranslations
+        };
+      });
+
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.LOCALIZATION_NODES_SAVE}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ items: updatedItems })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save nodes translations');
+      }
+
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.message || 'Save failed');
+      }
+
+      alert('Traduzioni nodi salvate con successo!');
+      
+      // Ricarica i dati
+      await loadNodesData();
+
+    } catch (error: any) {
+      console.error('Error saving nodes translations:', error);
+      alert(`Errore durante il salvataggio: ${error.message}`);
+    } finally {
+      setSaving(false);
+    }
+  }, [nodesData, selectedNode, selectedLang, edits, loadNodesData, selectedTab]);
+
+  // Funzioni per salvare traduzioni missions.yaml
+  const saveYamlMissionsTranslations = useCallback(async () => {
+    if (!yamlMissionsData || !selectedYamlMission) {
+      alert('Errore: dati della mission non disponibili');
+      return;
+    }
+
+    try {
+      setSaving(true);
+      
+      // Prepara i dati nel formato richiesto dall'API
+      const updatedItems = yamlMissionsData.items.map((item: any) => {
+        const key = `yaml-missions|${item.id}|${selectedLang}`;
+        const captionEdit = edits[`${key}_caption`];
+        const descriptionEdit = edits[`${key}_description`];
+        
+        const updatedTranslations = { ...item.translations };
+        if (captionEdit !== undefined) {
+          updatedTranslations[selectedLang] = {
+            ...updatedTranslations[selectedLang],
+            caption: captionEdit
+          };
+        }
+        if (descriptionEdit !== undefined) {
+          updatedTranslations[selectedLang] = {
+            ...updatedTranslations[selectedLang],
+            description: descriptionEdit
+          };
+        }
+        
+        return {
+          ...item,
+          translations: updatedTranslations
+        };
+      });
+
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.LOCALIZATION_MISSIONS_SAVE}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ items: updatedItems })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save yaml missions translations');
+      }
+
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.message || 'Save failed');
+      }
+
+      alert('Traduzioni missions YAML salvate con successo!');
+      
+      // Ricarica i dati
+      await loadYamlMissionsData();
+
+    } catch (error: any) {
+      console.error('Error saving yaml missions translations:', error);
+      alert(`Errore durante il salvataggio: ${error.message}`);
+    } finally {
+      setSaving(false);
+    }
+  }, [yamlMissionsData, selectedYamlMission, selectedLang, edits, loadYamlMissionsData]);
+
   // Carica dettagli mission quando selezionata
   useEffect(() => {
     if (selectedMission && selectedTab === 'missions') {
@@ -779,6 +976,113 @@ export const TranslationsPage: React.FC = () => {
         perScript: []
       };
     }
+  } else if (selectedTab === 'nodes') {
+    // Per nodes, creiamo una struttura coverage dai dati nodesData
+    if (nodesData && nodesData.items) {
+      const globalLanguageStats: PerLanguage = {};
+      
+      // Calcola le statistiche per ogni lingua (escludendo EN)
+      const availableLanguages = Object.keys(nodesData.items[0]?.translations || {}).filter(lang => lang !== 'EN');
+      
+      for (const lang of availableLanguages) {
+        let totalCovered = 0;
+        let totalFields = 0;
+        
+        for (const item of nodesData.items) {
+          const translations = item.translations[lang] || {};
+          const enTranslations = item.translations['EN'] || {};
+          
+          // Conta caption
+          if (enTranslations.caption) {
+            totalFields++;
+            if (translations.caption && translations.caption.trim() !== '' && translations.caption !== enTranslations.caption) {
+              totalCovered++;
+            }
+          }
+          
+          // Conta description
+          if (enTranslations.description) {
+            totalFields++;
+            if (translations.description && translations.description.trim() !== '' && translations.description !== enTranslations.description) {
+              totalCovered++;
+            }
+          }
+          
+          // Conta buttons
+          if (enTranslations.buttons && Array.isArray(enTranslations.buttons)) {
+            enTranslations.buttons.forEach((enButton: any, buttonIndex: number) => {
+              if (enButton && enButton.text) {
+                totalFields++;
+                const translatedButton = translations.buttons?.[buttonIndex];
+                if (translatedButton && translatedButton.text && translatedButton.text.trim() !== '' && translatedButton.text !== enButton.text) {
+                  totalCovered++;
+                }
+              }
+            });
+          }
+        }
+        
+        globalLanguageStats[lang] = {
+          covered: totalCovered,
+          missing: totalFields - totalCovered,
+          different: totalCovered,
+          totalFields: totalFields,
+          percent: totalFields > 0 ? Math.round((totalCovered / totalFields) * 100) : 0
+        };
+      }
+      
+      currentCoverage = {
+        perLanguage: globalLanguageStats,
+        perScript: []
+      };
+    }
+  } else if (selectedTab === 'yaml-missions') {
+    // Per yaml-missions, creiamo una struttura coverage dai dati yamlMissionsData
+    if (yamlMissionsData && yamlMissionsData.items) {
+      const globalLanguageStats: PerLanguage = {};
+      
+      // Calcola le statistiche per ogni lingua (escludendo EN)
+      const availableLanguages = Object.keys(yamlMissionsData.items[0]?.translations || {}).filter(lang => lang !== 'EN');
+      
+      for (const lang of availableLanguages) {
+        let totalCovered = 0;
+        let totalFields = 0;
+        
+        for (const item of yamlMissionsData.items) {
+          const translations = item.translations[lang] || {};
+          const enTranslations = item.translations['EN'] || {};
+          
+          // Conta caption
+          if (enTranslations.caption) {
+            totalFields++;
+            if (translations.caption && translations.caption.trim() !== '' && translations.caption !== enTranslations.caption) {
+              totalCovered++;
+            }
+          }
+          
+          // Conta description
+          if (enTranslations.description) {
+            totalFields++;
+            if (translations.description && translations.description.trim() !== '' && translations.description !== enTranslations.description) {
+              totalCovered++;
+            }
+          }
+        }
+        
+        globalLanguageStats[lang] = {
+          covered: totalCovered,
+          missing: totalFields - totalCovered,
+          different: totalCovered,
+          totalFields: totalFields,
+          percent: totalFields > 0 ? Math.round((totalCovered / totalFields) * 100) : 0
+        };
+      }
+      
+      currentCoverage = {
+        perLanguage: globalLanguageStats,
+        perScript: []
+      };
+    }
   }
   
   // Se non abbiamo dati per il tab corrente, mostra loading o noData
@@ -794,6 +1098,12 @@ export const TranslationsPage: React.FC = () => {
         // Se non stiamo caricando, mostra noData
         return <div className="p-6 text-gray-400">Nessuna categoria di stringhe disponibile</div>;
       }
+    } else if (selectedTab === 'nodes') {
+      // Per nodes, se non abbiamo dati potrebbe essere in caricamento
+      return <div className="p-6 text-gray-300">{t('common.loading')}</div>;
+    } else if (selectedTab === 'yaml-missions') {
+      // Per yaml-missions, se non abbiamo dati potrebbe essere in caricamento
+      return <div className="p-6 text-gray-300">{t('common.loading')}</div>;
     } else {
       // Per scripts, se non abbiamo coverage è un errore
       return <div className="p-6 text-gray-400">{t('common.noData')}</div>;
@@ -848,6 +1158,97 @@ export const TranslationsPage: React.FC = () => {
         }
       }
     };
+  } else if (selectedTab === 'nodes') {
+    // Per nodes, usiamo nodesData.items come "sorted"
+    currentSorted = nodesData?.items?.map((node: any) => ({
+      node: node.id,
+      languages: Object.keys(node.translations).filter(lang => lang !== 'EN').reduce((acc: any, lang: string) => {
+        const translations = node.translations[lang] || {};
+        const enTranslations = node.translations['EN'] || {};
+        
+        let covered = 0;
+        let total = 0;
+        
+        // Conta caption
+        if (enTranslations.caption) {
+          total++;
+          if (translations.caption && translations.caption.trim() !== '' && translations.caption !== enTranslations.caption) {
+            covered++;
+          }
+        }
+        
+        // Conta description
+        if (enTranslations.description) {
+          total++;
+          if (translations.description && translations.description.trim() !== '' && translations.description !== enTranslations.description) {
+            covered++;
+          }
+        }
+        
+        // Conta buttons
+        if (enTranslations.buttons && Array.isArray(enTranslations.buttons)) {
+          enTranslations.buttons.forEach((enButton: any, buttonIndex: number) => {
+            if (enButton && enButton.text) {
+              total++;
+              const translatedButton = translations.buttons?.[buttonIndex];
+              if (translatedButton && translatedButton.text && translatedButton.text.trim() !== '' && translatedButton.text !== enButton.text) {
+                covered++;
+              }
+            }
+          });
+        }
+        
+        acc[lang] = {
+          covered: covered,
+          missing: total - covered,
+          different: covered,
+          totalFields: total,
+          percent: total > 0 ? Math.round((covered / total) * 100) : 0
+        };
+        return acc;
+      }, {})
+    })) || [];
+    currentDetails = selectedNode ? nodesData?.items?.find((item: any) => item.id === selectedNode) : null;
+    currentSaveFunction = saveNodesTranslations;
+  } else if (selectedTab === 'yaml-missions') {
+    // Per yaml-missions, usiamo yamlMissionsData.items come "sorted"
+    currentSorted = yamlMissionsData?.items?.map((mission: any) => ({
+      mission: mission.id,
+      languages: Object.keys(mission.translations).filter(lang => lang !== 'EN').reduce((acc: any, lang: string) => {
+        const translations = mission.translations[lang] || {};
+        const enTranslations = mission.translations['EN'] || {};
+        
+        let covered = 0;
+        let total = 0;
+        
+        // Conta caption
+        if (enTranslations.caption) {
+          total++;
+          if (translations.caption && translations.caption.trim() !== '' && translations.caption !== enTranslations.caption) {
+            covered++;
+          }
+        }
+        
+        // Conta description
+        if (enTranslations.description) {
+          total++;
+          if (translations.description && translations.description.trim() !== '' && translations.description !== enTranslations.description) {
+            covered++;
+          }
+        }
+        
+        acc[lang] = {
+          covered: covered,
+          missing: total - covered,
+          different: covered,
+          totalFields: total,
+          percent: total > 0 ? Math.round((covered / total) * 100) : 0
+        };
+        return acc;
+      }, {})
+    })) || [];
+    currentDetails = selectedYamlMission ? yamlMissionsData?.items?.find((item: any) => item.id === selectedYamlMission) : null;
+    currentSaveFunction = saveYamlMissionsTranslations;
   }
 
   return (
@@ -855,29 +1256,45 @@ export const TranslationsPage: React.FC = () => {
       {/* Tab Navigation */}
       <div className="flex items-center gap-4 bg-slate-800 border border-slate-700 rounded-lg p-4">
         <button
-          className={`px-4 py-2 rounded ${selectedTab === 'scripts' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-gray-300 hover:bg-slate-600'}`}
+          className={`px-4 py-2 rounded ${selectedTab === 'scripts' ? 'bg-slate-800 text-white border-2 border-slate-400' : 'bg-slate-700 text-gray-300 hover:bg-slate-600'}`}
           onClick={() => setSelectedTab('scripts')}
         >
           📜 Scripts
         </button>
         <button
-          className={`px-4 py-2 rounded ${selectedTab === 'missions' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-gray-300 hover:bg-slate-600'}`}
+          className={`px-4 py-2 rounded ${selectedTab === 'missions' ? 'bg-slate-800 text-white border-2 border-slate-400' : 'bg-slate-700 text-gray-300 hover:bg-slate-600'}`}
           onClick={() => setSelectedTab('missions')}
         >
           🚀 Missions
         </button>
         <button
-          className={`px-4 py-2 rounded ${selectedTab === 'strings' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-gray-300 hover:bg-slate-600'}`}
+          className={`px-4 py-2 rounded ${selectedTab === 'strings' ? 'bg-slate-800 text-white border-2 border-slate-400' : 'bg-slate-700 text-gray-300 hover:bg-slate-600'}`}
           onClick={() => setSelectedTab('strings')}
         >
           🌐 Strings
+        </button>
+        <button
+          className={`px-4 py-2 rounded ${selectedTab === 'nodes' ? 'bg-slate-800 text-white border-2 border-slate-400' : 'bg-slate-700 text-gray-300 hover:bg-slate-600'}`}
+          onClick={() => setSelectedTab('nodes')}
+        >
+          🏠 Nodes
+        </button>
+        <button
+          className={`px-4 py-2 rounded ${selectedTab === 'yaml-missions' ? 'bg-slate-800 text-white border-2 border-slate-400' : 'bg-slate-700 text-gray-300 hover:bg-slate-600'}`}
+          onClick={() => setSelectedTab('yaml-missions')}
+        >
+          📍 Missions YAML
         </button>
       </div>
 
       {/* Overview */}
       <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
         <h2 className="text-white font-semibold mb-2">
-          {selectedTab === 'scripts' ? 'Scripts' : selectedTab === 'missions' ? 'Missions' : 'Localization Strings'} Translations Overview
+          {selectedTab === 'scripts' ? 'Scripts' : 
+           selectedTab === 'missions' ? 'Missions' : 
+           selectedTab === 'strings' ? 'Localization Strings' :
+           selectedTab === 'nodes' ? 'Nodes YAML' :
+           selectedTab === 'yaml-missions' ? 'Missions YAML' : 'Translations'} Overview
         </h2>
         {currentCoverage && (
           <div className="flex flex-wrap gap-3">
@@ -916,7 +1333,9 @@ export const TranslationsPage: React.FC = () => {
               <th className="px-3 py-2">
                 {selectedTab === 'scripts' ? 'Script' : 
                  selectedTab === 'missions' ? 'Mission' : 
-                 'Category'}
+                 selectedTab === 'strings' ? 'Category' :
+                 selectedTab === 'nodes' ? 'Node' :
+                 selectedTab === 'yaml-missions' ? 'Mission' : 'Item'}
               </th>
               <th className="px-3 py-2">% {selectedLang}</th>
               <th className="px-3 py-2">Azioni</th>
@@ -941,6 +1360,12 @@ export const TranslationsPage: React.FC = () => {
               } else if (selectedTab === 'strings') {
                 itemName = item.category || '';
                 isOpen = selectedCategory?.nome === itemName;
+              } else if (selectedTab === 'nodes') {
+                itemName = item.node || '';
+                isOpen = selectedNode === itemName;
+              } else if (selectedTab === 'yaml-missions') {
+                itemName = item.mission || '';
+                isOpen = selectedYamlMission === itemName;
               }
               return (
                 <React.Fragment key={itemName}>
@@ -949,7 +1374,7 @@ export const TranslationsPage: React.FC = () => {
                     <td className="px-3 py-2 text-gray-300">{d.percent}% <span className="text-xs text-gray-500">({d.covered}/{d.totalFields})</span></td>
                     <td className="px-3 py-2 text-gray-300">
                       <button 
-                        className="btn-primary mr-2" 
+                        className="bg-slate-700 hover:bg-slate-600 text-white border border-slate-500 mr-2" 
                         onClick={() => {
                           if (selectedTab === 'scripts') {
                             setSelectedScript(isOpen ? null : itemName);
@@ -964,29 +1389,36 @@ export const TranslationsPage: React.FC = () => {
                               // Carichiamo la categoria
                               loadCategory(itemName);
                             }
+                          } else if (selectedTab === 'nodes') {
+                            setSelectedNode(isOpen ? null : itemName);
+                          } else if (selectedTab === 'yaml-missions') {
+                            setSelectedYamlMission(isOpen ? null : itemName);
                           }
                         }}
+                        style={{ fontSize: '35px', lineHeight: '35px', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
                         {isOpen ? '👁️‍🗨️' : '👁️'}
                       </button>
                       {selectedTab === 'scripts' && (
                         <button 
-                          className="btn-secondary"
+                          className="bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded transition-colors"
                           title="Apri in Visual Flow Editor"
                           onClick={() => {
                             window.dispatchEvent(new CustomEvent('navigateToVisualFlow', { detail: { scriptName: itemName } as any }));
                           }}
+                          style={{ fontSize: '35px', lineHeight: '35px', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                         >
                           🎯
                         </button>
                       )}
                       {selectedTab === 'missions' && (
                         <button 
-                          className="btn-secondary"
+                          className="bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded transition-colors"
                           title="Apri in Visual Flow Editor"
                           onClick={() => {
                             window.dispatchEvent(new CustomEvent('navigateToVisualFlowMission', { detail: { missionName: itemName } as any }));
                           }}
+                          style={{ fontSize: '35px', lineHeight: '35px', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                         >
                           🎯
                         </button>
@@ -996,7 +1428,9 @@ export const TranslationsPage: React.FC = () => {
                   {isOpen && currentDetails && 
                    ((selectedTab === 'scripts' && currentDetails.script === itemName) ||
                     (selectedTab === 'missions' && currentDetails.script === itemName) ||
-                    (selectedTab === 'strings' && currentDetails.nome === itemName)) && (
+                    (selectedTab === 'strings' && currentDetails.nome === itemName) ||
+                    (selectedTab === 'nodes' && currentDetails.id === itemName) ||
+                    (selectedTab === 'yaml-missions' && currentDetails.id === itemName)) && (
                     <tr className="bg-slate-900/40">
                       <td colSpan={3} className="px-3 py-2">
                         <div className="space-y-3">
@@ -1005,21 +1439,58 @@ export const TranslationsPage: React.FC = () => {
                               Copertura {selectedLang}: {
                                 selectedTab === 'strings' && categoryStats 
                                   ? Math.round(((categoryStats.translatedKeys[selectedLang] || 0) / categoryStats.totalKeys) * 100)
-                                  : currentDetails.summary[selectedLang]?.percent ?? 0
+                                  : selectedTab === 'nodes' || selectedTab === 'yaml-missions'
+                                    ? (() => {
+                                        const translations = currentDetails.translations[selectedLang] || {};
+                                        const enTranslations = currentDetails.translations['EN'] || {};
+                                        let covered = 0;
+                                        let total = 0;
+                                        
+                                        if (enTranslations.caption) {
+                                          total++;
+                                          if (translations.caption && translations.caption.trim() !== '' && translations.caption !== enTranslations.caption) {
+                                            covered++;
+                                          }
+                                        }
+                                        
+                                        if (enTranslations.description) {
+                                          total++;
+                                          if (translations.description && translations.description.trim() !== '' && translations.description !== enTranslations.description) {
+                                            covered++;
+                                          }
+                                        }
+                                        
+                                        // Conta buttons
+                                        if (enTranslations.buttons && Array.isArray(enTranslations.buttons)) {
+                                          enTranslations.buttons.forEach((enButton: any, buttonIndex: number) => {
+                                            if (enButton && enButton.text) {
+                                              total++;
+                                              const translatedButton = translations.buttons?.[buttonIndex];
+                                              if (translatedButton && translatedButton.text && translatedButton.text.trim() !== '' && translatedButton.text !== enButton.text) {
+                                                covered++;
+                                              }
+                                            }
+                                          });
+                                        }
+                                        
+                                        return total > 0 ? Math.round((covered / total) * 100) : 0;
+                                      })()
+                                    : currentDetails.summary[selectedLang]?.percent ?? 0
                               }%
                             </div>
                             <div className="flex items-center gap-2">
                               <button
                                 disabled={saving || !currentDetails}
-                                className={`btn-primary ${saving || !currentDetails ? 'opacity-60 cursor-not-allowed' : ''}`}
+                                className={`bg-slate-700 hover:bg-slate-600 text-white border border-slate-500 ${saving || !currentDetails ? 'opacity-60 cursor-not-allowed' : ''}`}
                                 title={saving ? 'Salvando...' : 'Salva Modifiche'}
                                 onClick={currentSaveFunction}
+                                style={{ fontSize: '35px', lineHeight: '35px', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                               >
                                 {saving ? '⏳' : '💾'}
                               </button>
                               <button
                                 disabled={saving || !currentDetails}
-                                className={`btn-secondary ${saving || !currentDetails ? 'opacity-60 cursor-not-allowed' : ''}`}
+                                className={`bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded transition-colors ${saving || !currentDetails ? 'opacity-60 cursor-not-allowed' : ''}`}
                                 title="Suggerimenti IA per tutti i campi"
                                 onClick={async () => {
                                   if (!currentDetails) return;
@@ -1061,6 +1532,61 @@ export const TranslationsPage: React.FC = () => {
                                         });
                                         alert(`Tutte le stringhe sono state tradotte in ${selectedLang}!`);
                                       }
+                                    } else if (selectedTab === 'nodes' || selectedTab === 'yaml-missions') {
+                                      // Per nodes e yaml-missions, usa batch API come per scripts
+                                      const fieldsToTranslate = [
+                                        ...(currentDetails.translations['EN']?.caption ? [{
+                                          field: 'caption',
+                                          text: currentDetails.translations['EN'].caption
+                                        }] : []),
+                                        ...(currentDetails.translations['EN']?.description ? [{
+                                          field: 'description', 
+                                          text: currentDetails.translations['EN'].description
+                                        }] : []),
+                                        ...(currentDetails.translations['EN']?.buttons && Array.isArray(currentDetails.translations['EN'].buttons) ? 
+                                          currentDetails.translations['EN'].buttons.map((button: any, buttonIndex: number) => ({
+                                            field: `button_${button.id}`,
+                                            text: button.text || ''
+                                          })).filter((button: any) => button.text) : [])
+                                      ];
+
+                                      if (fieldsToTranslate.length > 0) {
+                                        const items = fieldsToTranslate.map(field => ({
+                                          textEN: field.text,
+                                          metacodesDetected: (field.text.match(/\[[^\]]+\]/g) || [])
+                                        }));
+                                        
+                                        const resp = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE_BATCH}`, {
+                                          method: 'POST', 
+                                          headers: { 'Content-Type': 'application/json' },
+                                          body: JSON.stringify({ items, langTarget: selectedLang })
+                                        });
+                                        
+                                        const j = await resp.json();
+                                        if (!resp.ok || !j?.success) throw new Error(j?.message || 'batch failed');
+                                        
+                                        const suggestions: string[] = j.data?.suggestions || [];
+                                        
+                                        // Popola tutte le textarea con le traduzioni (rimuovi prefissi numerati)
+                                        const updatedEdits: Record<string, string> = {};
+                                        fieldsToTranslate.forEach((field, idx) => {
+                                          if (suggestions[idx]) {
+                                            let cleanTranslation = suggestions[idx];
+                                            
+                                            // Rimuovi prefissi numerati tipo "1. ", "2. ", etc.
+                                            cleanTranslation = cleanTranslation.replace(/^\d+\.\s*/, '');
+                                            
+                                            // Rimuovi eventuali spazi iniziali/finali
+                                            cleanTranslation = cleanTranslation.trim();
+                                            
+                                            const key = `${selectedTab}|${currentDetails.id}|${selectedLang}_${field.field}`;
+                                            updatedEdits[key] = cleanTranslation;
+                                          }
+                                        });
+                                        
+                                        setEdits(prev => ({ ...prev, ...updatedEdits }));
+                                        alert(`Tutti i ${fieldsToTranslate.length} campi sono stati tradotti in ${selectedLang}!`);
+                                      }
                                     } else {
                                       // Per scripts e missions, usa la logica esistente
                                       const items = currentDetails.details.map((d: any) => ({
@@ -1089,22 +1615,30 @@ export const TranslationsPage: React.FC = () => {
                                     setSaving(false);
                                   }
                                 }}
-                              >🪄✨</button>
+                                style={{ fontSize: '35px', lineHeight: '1', width: '100px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px', flexDirection: 'row' }}
+                              >
+                                <span>🪄</span>
+                                <span>✨</span>
+                              </button>
                             </div>
                           </div>
-                          <div className="max-h-72 overflow-auto border border-slate-700 rounded">
+                          <div className="border border-slate-700 rounded">
                             {selectedTab === 'strings' && selectedCategory ? (
                               // Rendering per localization strings
-                              <table className="w-full text-left text-sm">
-                                <thead className="bg-slate-900 text-gray-300">
-                                  <tr>
-                                    <th className="px-3 py-2 w-[20%]">Key</th>
-                                    <th className="px-3 py-2 w-[30%]">EN</th>
-                                    <th className="px-3 py-2 w-[40%]">{selectedLang}</th>
-                                    <th className="px-3 py-2 w-[10%]">Azioni</th>
-                                  </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-700">
+                              <div className="w-full">
+                                <table className="w-full text-left text-sm">
+                                  <thead className="bg-slate-900 text-gray-300 sticky top-0 z-10">
+                                    <tr>
+                                      <th className="px-3 py-2 w-[20%]">Key</th>
+                                      <th className="px-3 py-2 w-[30%]">EN</th>
+                                      <th className="px-3 py-2 w-[40%]">{selectedLang}</th>
+                                      <th className="px-3 py-2 w-[10%]">Azioni</th>
+                                    </tr>
+                                  </thead>
+                                </table>
+                                <div className="max-h-72 overflow-auto">
+                                  <table className="w-full text-left text-sm">
+                                    <tbody className="divide-y divide-slate-700">
                                   {filteredStrings.map((stringItem, idx) => {
                                     const enValue = stringItem.values.EN || '';
                                     const rawValue = stringItem.values[selectedLang] || '';
@@ -1145,8 +1679,9 @@ export const TranslationsPage: React.FC = () => {
                                         </td>
                                         <td className="px-3 py-2 text-gray-300 w-[10%]">
                                           <button 
-                                            className="btn-primary text-lg hover:bg-blue-600 px-2 py-1" 
+                                            className="bg-slate-700 hover:bg-slate-600 text-white border border-slate-500 text-lg hover:bg-slate-700 px-2 py-1" 
                                             title="Suggerimento IA"
+                                            style={{ fontSize: '35px', lineHeight: '35px', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                             onClick={async () => {
                                               try {
                                                 const result = await translateString(enValue, 'EN', selectedLang, stringItem.id);
@@ -1189,20 +1724,133 @@ export const TranslationsPage: React.FC = () => {
                                       </tr>
                                     );
                                   })}
-                                </tbody>
-                              </table>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            ) : selectedTab === 'nodes' || selectedTab === 'yaml-missions' ? (
+                              // Rendering per nodes.yaml e missions.yaml
+                              <div className="w-full">
+                                <table className="w-full text-left text-sm">
+                                  <thead className="bg-slate-900 text-gray-300 sticky top-0 z-10">
+                                    <tr>
+                                      <th className="px-3 py-2 w-[10%]">Campo</th>
+                                      <th className="px-3 py-2 w-[40%]">EN</th>
+                                      <th className="px-3 py-2 w-[40%]">{selectedLang}</th>
+                                      <th className="px-3 py-2 w-[10%]">Azioni</th>
+                                    </tr>
+                                  </thead>
+                                </table>
+                                <div className="max-h-72 overflow-auto">
+                                  <table className="w-full text-left text-sm">
+                                    <tbody className="divide-y divide-slate-700">
+                                  {currentDetails && currentDetails.translations && [
+                                    ...(currentDetails.translations['EN']?.caption ? [{
+                                      field: 'caption',
+                                      en: currentDetails.translations['EN'].caption,
+                                      current: currentDetails.translations[selectedLang]?.caption || ''
+                                    }] : []),
+                                    ...(currentDetails.translations['EN']?.description ? [{
+                                      field: 'description', 
+                                      en: currentDetails.translations['EN'].description,
+                                      current: currentDetails.translations[selectedLang]?.description || ''
+                                    }] : []),
+                                    ...(currentDetails.translations['EN']?.buttons && Array.isArray(currentDetails.translations['EN'].buttons) ? 
+                                      currentDetails.translations['EN'].buttons.map((button: any, buttonIndex: number) => ({
+                                        field: `button_${button.id}`,
+                                        en: button.text || '',
+                                        current: currentDetails.translations[selectedLang]?.buttons?.[buttonIndex]?.text || '',
+                                        buttonIndex: buttonIndex
+                                      })).filter((button: any) => button.en) : [])
+                                  ].map((item, idx) => {
+                                    const key = `${selectedTab}|${currentDetails.id}|${selectedLang}_${item.field}`;
+                                    const targetVal = edits[key] !== undefined ? edits[key] : (item.current || item.en);
+                                    const isMissing = !targetVal || targetVal.trim() === '' || targetVal === item.en;
+                                    const isDifferent = !!targetVal && targetVal !== item.en;
+                                    
+                                    return (
+                                      <tr key={idx} className={`${isMissing ? 'bg-red-900/20' : isDifferent ? 'bg-yellow-900/20' : ''}`}>
+                                        <td className="px-3 py-2 text-gray-400 w-[10%] capitalize">{item.field}</td>
+                                        <td className="px-3 py-2 text-gray-200 w-[40%]">{item.en}</td>
+                                        <td className="px-3 py-2 text-gray-200 w-[40%]">
+                                          <textarea
+                                            className="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-gray-200 resize-y"
+                                            rows={2}
+                                            value={targetVal || ''}
+                                            onChange={(e) => {
+                                              const singleLineValue = e.target.value.replace(/[\r\n]/g, ' ');
+                                              setEdits(prev => ({ ...prev, [key]: singleLineValue }));
+                                            }}
+                                            onKeyDown={(e) => {
+                                              if (e.key === 'Enter') {
+                                                e.preventDefault();
+                                              }
+                                            }}
+                                            placeholder={`Traduzione ${item.field} in ${selectedLang}`}
+                                            style={{ overflow: 'auto', minHeight: '3rem' }}
+                                          />
+                                        </td>
+                                        <td className="px-3 py-2 text-gray-300 w-[10%]">
+                                          <button 
+                                            className="bg-slate-700 hover:bg-slate-600 text-white border border-slate-500 text-lg hover:bg-slate-700 px-2 py-1" 
+                                            title="Suggerimento IA"
+                                            style={{ fontSize: '35px', lineHeight: '35px', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                            onClick={async () => {
+                                              try {
+                                                const response = await fetch(`${API_CONFIG.API_BASE_URL}/localization/ai-translate`, {
+                                                  method: 'POST',
+                                                  headers: { 'Content-Type': 'application/json' },
+                                                  body: JSON.stringify({
+                                                    text: item.en,
+                                                    fromLanguage: 'EN',
+                                                    toLanguage: selectedLang,
+                                                    context: `${selectedTab === 'nodes' ? 'Node' : 'Mission'} ${item.field}`
+                                                  })
+                                                });
+                                                
+                                                const result = await response.json();
+                                                if (result.success && result.data && result.data.translatedText) {
+                                                  let cleanTranslation = result.data.translatedText;
+                                                  
+                                                  // Rimuovi prefissi numerati tipo "1. ", "2. ", etc.
+                                                  cleanTranslation = cleanTranslation.replace(/^\d+\.\s*/, '');
+                                                  
+                                                  // Rimuovi eventuali spazi iniziali/finali
+                                                  cleanTranslation = cleanTranslation.trim();
+                                                  
+                                                  setEdits(prev => ({ ...prev, [key]: cleanTranslation }));
+                                                }
+                                              } catch (e) {
+                                                alert('Impossibile generare suggerimento IA');
+                                              }
+                                            }}
+                                          >
+                                            🪄
+                                          </button>
+                                        </td>
+                                      </tr>
+                                    );
+                                  })}
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
                             ) : (
                               // Rendering per scripts e missions
-                              <table className="w-full text-left text-sm">
-                                <thead className="bg-slate-900 text-gray-300">
-                                  <tr>
-                                    <th className="px-3 py-2 w-[10%]">Campo</th>
-                                    <th className="px-3 py-2 w-[40%]">EN</th>
-                                    <th className="px-3 py-2 w-[40%]">{selectedLang}</th>
-                                    <th className="px-3 py-2 w-[10%]">Azioni</th>
-                                  </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-700">
+                              <div className="w-full">
+                                <table className="w-full text-left text-sm">
+                                  <thead className="bg-slate-900 text-gray-300 sticky top-0 z-10">
+                                    <tr>
+                                      <th className="px-3 py-2 w-[10%]">Campo</th>
+                                      <th className="px-3 py-2 w-[40%]">EN</th>
+                                      <th className="px-3 py-2 w-[40%]">{selectedLang}</th>
+                                      <th className="px-3 py-2 w-[10%]">Azioni</th>
+                                    </tr>
+                                  </thead>
+                                </table>
+                                <div className="max-h-72 overflow-auto">
+                                  <table className="w-full text-left text-sm">
+                                    <tbody className="divide-y divide-slate-700">
                                   {currentDetails.details.map((d: any, idx: number) => {
                                   const key = `${currentDetails.script}|${idx}|${selectedLang}`;
                                   const initial = (d.values[selectedLang] || '');
@@ -1235,8 +1883,9 @@ export const TranslationsPage: React.FC = () => {
                                       </td>
                                       <td className="px-3 py-2 text-gray-300 w-[10%]">
                                         <button 
-                                          className="btn-primary text-lg hover:bg-blue-600 px-2 py-1" 
+                                          className="bg-slate-700 hover:bg-slate-600 text-white border border-slate-500 text-lg hover:bg-slate-700 px-2 py-1" 
                                           title="Suggerimento IA"
+                                          style={{ fontSize: '35px', lineHeight: '35px', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                           onClick={async () => {
                                           try {
                                             const metacodes = (d.en.match(/\[[^\]]+\]/g) || []);
@@ -1257,8 +1906,10 @@ export const TranslationsPage: React.FC = () => {
                                     </tr>
                                   );
                                   })}
-                                </tbody>
-                              </table>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
                             )}
                           </div>
                         </div>
