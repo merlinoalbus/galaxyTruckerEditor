@@ -2699,5 +2699,81 @@ function extractBlocksForLanguage(blocks, language) {
   });
 }
 
+// API Batch Search: Cerca un termine nel contenuto di tutti gli script specificati
+router.post('/translations/batch-search', async (req, res) => {
+  try {
+    const { scriptNames, searchTerm } = req.body;
+    
+    if (!Array.isArray(scriptNames) || !searchTerm || typeof searchTerm !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid request. Expected { scriptNames: string[], searchTerm: string }'
+      });
+    }
+    
+    logger.info(`Batch search for "${searchTerm}" in ${scriptNames.length} scripts`);
+    
+    const matchingScripts = [];
+    const normalizedSearchTerm = searchTerm.toLowerCase().trim();
+    
+    // Processa gli script in parallelo per performance
+    const searchPromises = scriptNames.map(async (scriptName) => {
+      try {
+        // Usa parseScriptMultilingual come l'endpoint esistente /translations/:scriptName
+        const merged = await parseScriptMultilingual(scriptName, 'blocks');
+        if (!merged || !Array.isArray(merged.blocks)) {
+          return null;
+        }
+        
+        const languages = merged.availableLanguages || SUPPORTED_LANGUAGES;
+        const { fields } = computeCoverageFromBlocks(merged.blocks, languages);
+        
+        // Cerca il termine nei campi traduttibili
+        for (const field of fields) {
+          // Cerca nel testo EN
+          if (field.en && field.en.toLowerCase().includes(normalizedSearchTerm)) {
+            return scriptName;
+          }
+          
+          // Cerca nei valori delle altre lingue
+          for (const lang in field.values) {
+            const text = field.values[lang];
+            if (text && text.toLowerCase().includes(normalizedSearchTerm)) {
+              return scriptName;
+            }
+          }
+        }
+        
+      } catch (error) {
+        logger.warn(`Error searching script ${scriptName}: ${error.message}`);
+      }
+      return null;
+    });
+    
+    const results = await Promise.all(searchPromises);
+    const matchingScriptNames = results.filter(name => name !== null);
+    
+    logger.info(`Found ${matchingScriptNames.length} scripts matching "${searchTerm}"`);
+    
+    res.json({
+      success: true,
+      data: {
+        searchTerm,
+        totalSearched: scriptNames.length,
+        matchingScripts: matchingScriptNames,
+        matchCount: matchingScriptNames.length
+      }
+    });
+    
+  } catch (error) {
+    logger.error(`Batch search error: ${error.message}`);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error during batch search',
+      message: error.message
+    });
+  }
+});
+
 // Mantieni compatibilità con export precedente
 module.exports = router;
