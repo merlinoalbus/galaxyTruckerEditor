@@ -40,7 +40,10 @@
       "Bash(cp:*)",
       "Bash(cat:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(./scripts/restart-be.sh:*)",
+      "Bash(npm test)",
+      "mcp__ide__executeCode"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",
