@@ -16,7 +16,7 @@
   coordinates: [1830, 2030]
   image: spacebar.png
   caption: "Space Bar"
-  description: "A long time ago, this was the most famous bar in this part of the Galaxy. It's still pretty decent.'s still pretty decent.'s still pretty decent.'s still pretty decent.'s still pretty decent.'s still pretty decent.'s still pretty decent.'s still pretty decent."
+  description: "A long time ago, this was the most famous bar in this part of the Galaxy. It's still pretty decent."
   shuttles: [["newbie", 10], ["regula", 10], ["outpost", 15], ["forge", 15], ["lab", 20], ["club",25],["workshop",15],["brownHome",25]]
   buttons: [[bbarprogress, barDebug, "[Progress with sailor quest]"], [bbartender, barDlg, "Talk to bartender."], [bguests, barGuestsDlg, "Talk to patrons."]]
 - name: regula
@@ -29,7 +29,7 @@
 - name: purpleHome
   coordinates: [230, 2320]
   image: purplehome.png
-  caption: "Th'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r"
+  caption: "Th'kzw-r"
   description: "Home planet of purple aliens: great at warfare, bad at foreign languages."
   buttons: [[bpurple, purpleHomeDlg, "Talk to natives."], [bmerchant, merchantDlg, "Talk to human businessman."]]
 - name: brownHome
