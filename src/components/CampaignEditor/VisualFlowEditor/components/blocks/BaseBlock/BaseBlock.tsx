@@ -292,8 +292,15 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
         {/* Avatar per SAY/ASK sempre visibile */}
         {showAvatar && (
           <div className="ml-auto mr-2">
-            {/* Gestione speciale per HIDEALLPATHS con due avatar e freccia + X */}
-            {avatarCharacter && typeof avatarCharacter === 'object' && 'node1' in avatarCharacter && 'node2' in avatarCharacter ? (
+            {/* Gestione speciale per transizioni di scena (prima/dopo) */}
+            {avatarCharacter && typeof avatarCharacter === 'object' && 'before' in avatarCharacter && 'after' in avatarCharacter ? (
+              <div className="flex items-center gap-1">
+                <CharacterAvatar character={(avatarCharacter as any).before} size="small" />
+                <span className="text-gray-500 text-xs">→</span>
+                <CharacterAvatar character={(avatarCharacter as any).after} size="small" />
+              </div>
+            ) : /* Gestione speciale per HIDEALLPATHS con due avatar e freccia + X */
+            avatarCharacter && typeof avatarCharacter === 'object' && 'node1' in avatarCharacter && 'node2' in avatarCharacter ? (
               <div className="flex items-center gap-2">
                 <CharacterAvatar character={(avatarCharacter as any).node1} isNodeType={true} size="small" />
                 {/* Freccia con X sovrapposta */}
@@ -321,6 +328,7 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
       
       {/* Main content - visibile solo se non collapsed */}
       {!isCollapsed && children}
+      
     </div>
   );
 };

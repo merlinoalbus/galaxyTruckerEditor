@@ -16,7 +16,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { SceneDebugButton } from '../../SceneDebugButton';
 import { CharacterAvatar } from '../../CharacterAvatar';
 import { AchievementAvatar } from '../../AchievementAvatar';
-import { simulateSceneExecution, getLastModifiedVisibleCharacter } from '@/utils/CampaignEditor/VisualFlowEditor/sceneSimulation';
+import { simulateSceneExecution, getLastModifiedVisibleCharacter, getLastModifiedCharacter, simulateSceneBeforeBlock } from '@/utils/CampaignEditor/VisualFlowEditor/sceneSimulation';
 import { imagesViewService } from '@/services/CampaignEditor/VariablesSystem/services/ImagesView/imagesViewService';
 import { interactiveMapService } from '@/services/CampaignEditor/InteractiveMap/interactiveMapService';
 import { variablesSystemApiService } from '@/services/CampaignEditor/VariablesSystem/variablesSystemApiService';
@@ -363,7 +363,58 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
           </div>
         );
       }
-      // CHARACTERS: ASKCHAR, FOCUSCHAR
+      // CHARACTERS: CHANGECHAR, SAYCHAR, ASKCHAR, FOCUSCHAR
+      case 'CHANGECHAR': {
+        const character = String(block.parameters?.character || '');
+        const selectedImage = String(block.parameters?.image || '');
+        return (
+          <div className="flex items-start gap-3" style={{ height: '220px' }}>
+            <div className="flex-1">
+              <CharacterSelector
+                value={character}
+                onChange={(value) => onUpdate({ parameters: { ...block.parameters, character: value } })}
+                mode="change"
+                selectedImage={selectedImage}
+                onImageChange={(image) => onUpdate({ parameters: { ...block.parameters, image } })}
+                className="h-full"
+                characters={characters}
+                simulatedSceneState={simulatedSceneState}
+              />
+            </div>
+          </div>
+        );
+      }
+      case 'SAYCHAR': {
+        const character = String(block.parameters?.character || '');
+        const text = typeof block.parameters?.text === 'object' ? (block.parameters?.text as any) : (block.parameters?.text ? { EN: String(block.parameters.text) } : {});
+        const position = block.parameters?.position || 'left';
+        return (
+          <div className="flex items-start gap-3" style={{ height: '220px' }}>
+            <div className="flex-1">
+              <CharacterSelector
+                value={character}
+                onChange={(value) => onUpdate({ parameters: { ...block.parameters, character: value } })}
+                mode="show"
+                position={position}
+                onPositionChange={(pos) => onUpdate({ parameters: { ...block.parameters, position: pos } })}
+                className="h-full"
+                characters={characters}
+                simulatedSceneState={simulatedSceneState}
+              />
+            </div>
+            <div className="flex-[1.2]">
+              <MultilingualTextEditor
+                value={text as any}
+                onChange={(value) => onUpdate({ parameters: { ...block.parameters, text: value } })}
+                placeholder={t('visualFlowEditor.command.dialogText')}
+                isCustom={isCustom}
+                availableLanguages={availableLanguages}
+                label={t('visualFlowEditor.command.dialogLabel')}
+              />
+            </div>
+          </div>
+        );
+      }
       case 'ASKCHAR': {
         const character = String(block.parameters?.character || '');
         const text = typeof block.parameters?.text === 'object' ? (block.parameters?.text as any) : (block.parameters?.text ? { EN: String(block.parameters.text) } : {});
@@ -1476,6 +1527,30 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         const sp = String(block.parameters?.shipPlan || block.parameters?.plan || '');
         return <span className="text-xs text-gray-400">🚢 {sp || (t as any)('visualFlowEditor.blocks.unlockShipPlan.short')}</span>;
       }
+      case 'CHANGECHAR': {
+        const character = String(block.parameters?.character || '');
+        const image = String(block.parameters?.image || '');
+        const imageName = image.split('/').pop()?.replace(/\.(png|jpg|jpeg|gif)$/i, '') || image;
+        return (
+          <span className="text-gray-400">
+            {character ? `🎨 ${character}` : '🎨 …'}{imageName ? ` → ${imageName}` : ''}
+          </span>
+        );
+      }
+      case 'SAYCHAR': {
+        const character = String(block.parameters?.character || '');
+        const textObj = block.parameters?.text as any;
+        let txt = '';
+        if (textObj) {
+          if (typeof textObj === 'string') txt = textObj; else txt = textObj[currentLanguage] || textObj.EN || '';
+        }
+        const position = block.parameters?.position || 'left';
+        return (
+          <span className="text-gray-400">
+            {character ? `💬 ${character}` : '💬 …'}{position !== 'left' ? ` @${position}` : ''}{txt ? ` — "${txt}"` : ''}
+          </span>
+        );
+      }
       case 'ASKCHAR': {
         const character = String(block.parameters?.character || '');
         const textObj = block.parameters?.text as any;
@@ -1666,77 +1741,13 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.hideDlgScene.compact')}</span>;
       case 'SHOWCHAR': {
         if (block.parameters?.character) {
-          // Trova il personaggio che è attualmente nella posizione specificata
           const position = block.parameters.position || 'left';
-          let charInPosition = null;
-          let currentCharImage = null;
-          
-          if (simulatedSceneState?.currentScene) {
-            // Trova il personaggio visibile nella posizione specificata
-            charInPosition = simulatedSceneState.currentScene.personaggi.find(
-              p => p.posizione === position && p.visible
-            );
-            
-            if (charInPosition && charInPosition.lastImmagine?.binary) {
-              currentCharImage = `data:image/png;base64,${charInPosition.lastImmagine.binary}`;
-            }
-          }
-          
           return (
-            <div className="flex items-center justify-between gap-2 w-full bg-slate-800/30 rounded px-2 py-1">
-              <div className="flex items-center gap-2">
-                <span className="text-gray-400">{block.parameters!.character}</span>
-                {block.parameters!.position && (
-                  <span className="text-gray-600 text-xs">@{block.parameters!.position}</span>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                {/* Immagine del personaggio attualmente in quella posizione (o no_avatar se vuota) */}
-                <div className="w-10 h-10 rounded overflow-hidden border border-slate-600">
-                  {currentCharImage ? (
-                    <img 
-                      src={currentCharImage}
-                      alt="current"
-                      className="w-full h-full object-cover object-top"
-                      title={`In posizione ${position}: ${charInPosition?.nomepersonaggio}`}
-                    />
-                  ) : noAvatarImage ? (
-                    <img 
-                      src={noAvatarImage}
-                      alt="no avatar"
-                      className="w-full h-full object-cover object-top"
-                      title={`Posizione ${position} vuota`}
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-slate-700 flex items-center justify-center" title={`Posizione ${position} vuota`}>
-                      <span className="text-xs text-gray-500">∅</span>
-                    </div>
-                  )}
-                </div>
-                <span className="text-gray-500">→</span>
-                {/* Immagine del personaggio che verrà mostrato */}
-                <div className="w-10 h-10 rounded overflow-hidden border border-slate-600">
-                  {selectedCharacterImage ? (
-                    <img 
-                      src={selectedCharacterImage}
-                      alt={block.parameters!.character}
-                      className="w-full h-full object-cover object-top"
-                      title={`Mostrerà: ${block.parameters!.character}`}
-                    />
-                  ) : noAvatarImage ? (
-                    <img 
-                      src={noAvatarImage}
-                      alt="no avatar"
-                      className="w-full h-full object-cover object-top"
-                      title="Seleziona un personaggio"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-slate-700 flex items-center justify-center" title="Seleziona un personaggio">
-                      <span className="text-xs text-gray-500">?</span>
-                    </div>
-                  )}
-                </div>
-              </div>
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400">{block.parameters.character}</span>
+              {position !== 'left' && (
+                <span className="text-gray-600 text-xs">@{position}</span>
+              )}
             </div>
           );
         }
@@ -1745,51 +1756,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
       case 'HIDECHAR': {
         if (block.parameters?.character) {
           return (
-            <div className="flex items-center justify-between gap-2 w-full bg-slate-800/30 rounded px-2 py-1">
-              <div className="flex items-center gap-2">
-                <span className="text-gray-400">{block.parameters!.character}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                {/* Immagine del personaggio che verrà nascosto */}
-                <div className="w-10 h-10 rounded overflow-hidden border border-slate-600">
-                  {selectedCharacterImage ? (
-                    <img 
-                      src={selectedCharacterImage}
-                      alt={block.parameters!.character}
-                      className="w-full h-full object-cover object-top"
-                      title={`Nasconderà: ${block.parameters!.character}`}
-                    />
-                  ) : noAvatarImage ? (
-                    <img 
-                      src={noAvatarImage}
-                      alt="no avatar"
-                      className="w-full h-full object-cover object-top"
-                      title="Seleziona un personaggio"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-slate-700 flex items-center justify-center" title="Seleziona un personaggio">
-                      <span className="text-xs text-gray-500">?</span>
-                    </div>
-                  )}
-                </div>
-                <span className="text-gray-500">→</span>
-                {/* no_avatar per indicare che sarà nascosto */}
-                <div className="w-10 h-10 rounded overflow-hidden border border-slate-600">
-                  {noAvatarImage ? (
-                    <img 
-                      src={noAvatarImage}
-                      alt="hidden"
-                      className="w-full h-full object-cover object-top"
-                      title="Diventerà nascosto"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-slate-700 flex items-center justify-center" title="Diventerà nascosto">
-                      <span className="text-xs text-gray-500">∅</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+            <span className="text-gray-400">{block.parameters.character}</span>
           );
         }
         break;
@@ -2079,10 +2046,118 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
     return null;
   };
 
-  // Ottieni il personaggio per SAY/ASK
-  const avatarCharacter = (block.type === 'SAY' || block.type === 'ASK') && simulatedSceneState 
-    ? getLastModifiedVisibleCharacter(simulatedSceneState) 
-    : null;
+  // Calcola lo stato simulato PRIMA di questo blocco per i comandi che mostrano transizioni
+  const simulatedSceneStateBefore = useMemo(() => {
+    const needsBeforeState = ['SHOWCHAR', 'HIDECHAR', 'CHANGECHAR', 'SAYCHAR', 'ASKCHAR'].includes(block.type);
+    if (!needsBeforeState || !allBlocks || allBlocks.length === 0) return null;
+    return simulateSceneBeforeBlock(allBlocks, block.id, characters);
+  }, [allBlocks, block.id, block.type, characters]);
+  
+  // Avatar singolo per SAY/ASK (solo lastModified corrente, visibile)
+  const singleAvatar = useMemo(() => {
+    if (!['SAY', 'ASK'].includes(block.type)) return null;
+    return simulatedSceneState ? getLastModifiedVisibleCharacter(simulatedSceneState) : null;
+  }, [block.type, simulatedSceneState]);
+  
+  // Avatar doppi per comandi che modificano la scena (prima/dopo)
+  const doubleAvatars = useMemo(() => {
+    if (!['SHOWCHAR', 'HIDECHAR', 'CHANGECHAR', 'SAYCHAR', 'ASKCHAR'].includes(block.type)) {
+      return null;
+    }
+    
+    let beforeChar = null;
+    let afterChar = null;
+    
+    if (block.type === 'CHANGECHAR') {
+      // Per CHANGECHAR: mostra lastimage precedente => lastimage attuale dello STESSO personaggio
+      const selectedCharacterName = block.parameters?.character;
+      
+      if (selectedCharacterName && simulatedSceneState) {
+        // PRIMA: Il personaggio selezionato con la sua lastImmagine PRIMA del cambio
+        // Dobbiamo usare simulateSceneBeforeBlock per ottenere lo stato prima del CHANGECHAR
+        const beforeState = simulatedSceneStateBefore;
+        
+        if (beforeState?.currentScene) {
+          // Cerca il personaggio nello stato precedente
+          const charBefore = beforeState.currentScene.personaggi.find(
+            p => p.nomepersonaggio === selectedCharacterName
+          );
+          
+          if (charBefore) {
+            beforeChar = charBefore;
+          } else if (characters) {
+            // Se non era in scena, usa l'immagine base
+            const charData = characters.find((c: Character) => c.nomepersonaggio === selectedCharacterName);
+            if (charData) {
+              beforeChar = {
+                nomepersonaggio: selectedCharacterName,
+                lastImmagine: charData.immaginebase || (charData.listaimmagini?.[0] || null),
+                visible: false,
+                posizione: 'left'
+              };
+            }
+          }
+        }
+        
+        // DOPO: Il personaggio selezionato con la sua lastImmagine DOPO il cambio
+        const charInScene = simulatedSceneState.currentScene?.personaggi.find(
+          p => p.nomepersonaggio === selectedCharacterName
+        );
+        
+        if (charInScene) {
+          afterChar = charInScene;
+        }
+      }
+    } else {
+      // Per altri comandi: logica precedente
+      // PRIMA: lastModifiedCharacter attuale 
+      beforeChar = simulatedSceneState ? getLastModifiedCharacter(simulatedSceneState) : null;
+      
+      // DOPO: il personaggio che QUESTO comando sta modificando
+      if (['SHOWCHAR', 'SAYCHAR', 'ASKCHAR'].includes(block.type)) {
+        const selectedCharacterName = block.parameters?.character;
+        if (selectedCharacterName && simulatedSceneState) {
+          // Cerchiamo il personaggio nello stato simulato DOPO l'esecuzione del comando
+          const charInScene = simulatedSceneState.currentScene?.personaggi.find(
+            p => p.nomepersonaggio === selectedCharacterName
+          );
+          
+          if (charInScene) {
+            // Se è in scena, usa la sua lastImmagine attuale (può essere stata modificata)
+            afterChar = charInScene;
+          } else if (characters) {
+            // Se non è in scena, usa l'immagine base dai dati del personaggio
+            const charData = characters.find((c: Character) => c.nomepersonaggio === selectedCharacterName);
+            if (charData) {
+              afterChar = {
+                nomepersonaggio: selectedCharacterName,
+                lastImmagine: charData.immaginebase || (charData.listaimmagini?.[0] || null),
+                visible: ['SHOWCHAR', 'SAYCHAR', 'ASKCHAR'].includes(block.type),
+                posizione: block.parameters?.position || 'left'
+              };
+            }
+          }
+        }
+      }
+    }
+    
+    if (block.type === 'HIDECHAR') {
+      // Per HIDECHAR, "dopo" è il prossimo personaggio visibile (o null se non ce ne sono)
+      const hideCharName = block.parameters?.character;
+      if (simulatedSceneState?.currentScene && hideCharName) {
+        // Trova altro personaggio visibile che non sia quello che stiamo nascondendo
+        const otherVisible = simulatedSceneState.currentScene.personaggi.find(
+          p => p.visible && p.nomepersonaggio !== hideCharName
+        );
+        afterChar = otherVisible || null;
+      }
+    }
+    
+    return {
+      before: beforeChar,
+      after: afterChar
+    };
+  }, [block.type, block.parameters, simulatedSceneState, simulatedSceneStateBefore, characters]);
   
   // Ottieni il personaggio per ADDOPPONENT e adatta la struttura per CharacterAvatar
   const opponentCharacterRaw = block.type === 'ADDOPPONENT' && block.parameters?.character
@@ -2200,15 +2275,20 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
             );
           })()
         )}
-  showAvatar={(block.type === 'SAY' || block.type === 'ASK' || block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE' || block.type === 'HIDEALLPATHS' || ['SHOWNODE','HIDENODE','ADDNODE','SETNODEKNOWN','CENTERMAPBYNODE','MOVEPLAYERTONODE'].includes(block.type) || ['SETACHIEVEMENTPROGRESS', 'SETACHIEVEMENTATTEMPT', 'UNLOCKACHIEVEMENT'].includes(block.type))}
+  showAvatar={(block.type === 'SAY' || block.type === 'ASK' || block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE' || block.type === 'HIDEALLPATHS' || ['SHOWNODE','HIDENODE','ADDNODE','SETNODEKNOWN','CENTERMAPBYNODE','MOVEPLAYERTONODE'].includes(block.type) || ['SETACHIEVEMENTPROGRESS', 'SETACHIEVEMENTATTEMPT', 'UNLOCKACHIEVEMENT'].includes(block.type) || ['SHOWCHAR', 'HIDECHAR', 'CHANGECHAR', 'SAYCHAR', 'ASKCHAR'].includes(block.type))}
         avatarCharacter={
+          // Avatar doppi per comandi che modificano la scena (prima/dopo)
+          ['SHOWCHAR', 'HIDECHAR', 'CHANGECHAR', 'SAYCHAR', 'ASKCHAR'].includes(block.type) ? doubleAvatars :
+          // Avatar singolo per SAY/ASK
+          ['SAY', 'ASK'].includes(block.type) ? singleAvatar :
+          // Altri tipi di avatar
           block.type === 'HIDEALLPATHS' ? hideAllPathsAvatars :
           block.type === 'ADDOPPONENT' ? opponentCharacter : 
           block.type === 'SETSHIPTYPE' ? {
             nomepersonaggio: shipType || 'STI',
             lastImmagine: shipImagePath ? { nomefile: shipImagePath, percorso: shipImagePath } : null
           } : block.type && ['SHOWNODE','HIDENODE','ADDNODE','SETNODEKNOWN','CENTERMAPBYNODE','MOVEPLAYERTONODE'].includes(block.type) ? nodeAvatar :
-          avatarCharacter
+          null
         }
   isShipType={block.type === 'SETSHIPTYPE'}
   isNodeType={(['SHOWNODE','HIDENODE','ADDNODE','SETNODEKNOWN','CENTERMAPBYNODE','MOVEPLAYERTONODE'] as any).includes(block.type)}
