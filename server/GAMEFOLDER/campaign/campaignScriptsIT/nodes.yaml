@@ -9,7 +9,7 @@
   coordinates: [770, 2200]
   image: outpost.png
   caption: "Ambasciata"
-  description: "Al confine tra l'insediamento umano e quello alieno. Casa di diplomatici e uomini d'affari.'insediamento umano e quello alieno. Casa di diplomatici e uomini d'affari."
+  description: "Al confine tra l'insediamento umano e quello alieno. Casa di diplomatici e uomini d'affari."
   shuttles: [["newbie", 10], ["regula", 10], ["bar", 15], ["forge", 15], ["lab", 20], ["club",25],["workshop",15],["brownHome",15]]
   buttons: [[bambassador, embassyDlg, "Visita l'ambasciata."], [bvip, vipCheck, "Vai nella sala VIP."], [bvip2, vipCheck, "Prova a visitare di nuovo la sala VIP."], [brichgirl2, richGirlDlg2, "Vai a spasso con un camionista VIP."]]
 - name: bar
@@ -23,13 +23,13 @@
   coordinates: [1300, 1700]
   image: regula.png
   caption: "Regula"
-  description: "The very capital of bureaucracy."
+  description: "La vera capitale della Burocrazia."
   shuttles: [["newbie", 15], ["bar", 10], ["outpost", 10], ["forge", 10], ["lab", 15], ["club",20], ["workshop", 10], ["brownHome", 20]]
-  buttons: [[bdebugcredits, debugCredits, "[Debug options]"], [bclerk, regulaDlg, "Visit an office."], [bmech, mechDlg, "Look around the port."]]
+  buttons: [[bdebugcredits, debugCredits, "[Opzioni Debug]"], [bclerk, regulaDlg, "Visita un ufficio."], [bmech, mechDlg, "Gironzola per l'astroporto."]]
 - name: purpleHome
   coordinates: [230, 2320]
   image: purplehome.png
-  caption: "Th'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r"
+  caption: "Th'kzw-r"
   description: "Home planet of purple aliens: great at warfare, bad at foreign languages."
   buttons: [[bpurple, purpleHomeDlg, "Talk to natives."], [bmerchant, merchantDlg, "Talk to human businessman."]]
 - name: brownHome

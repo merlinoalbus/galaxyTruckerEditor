@@ -726,17 +726,35 @@ class LocalizationController {
           
           // Aggiorna caption se presente
           if (translation.caption !== undefined && translation.caption !== '') {
-            const captionPattern = /(caption:\s*["'])([^"']*)(["'])/;
+            // Pattern che cattura tutto il contenuto tra virgolette, gestendo correttamente apostrofi
+            const captionPattern = /(caption:\s*")([^"]*)(")|(caption:\s*')([^']*')(')/;
             if (captionPattern.test(nodeContent)) {
-              nodeContent = nodeContent.replace(captionPattern, `$1${translation.caption}$3`);
+              nodeContent = nodeContent.replace(captionPattern, (match, p1, p2, p3, p4, p5, p6) => {
+                if (p1) {
+                  // Caso con virgolette doppie
+                  return `${p1}${translation.caption}${p3}`;
+                } else {
+                  // Caso con virgolette singole
+                  return `${p4}${translation.caption}${p6}`;
+                }
+              });
             }
           }
           
           // Aggiorna description se presente
           if (translation.description !== undefined && translation.description !== '') {
-            const descriptionPattern = /(description:\s*["'])([^"']*)(["'])/;
+            // Pattern che cattura tutto il contenuto tra virgolette, gestendo correttamente apostrofi
+            const descriptionPattern = /(description:\s*")([^"]*)(")|(description:\s*')([^']*')(')/;
             if (descriptionPattern.test(nodeContent)) {
-              nodeContent = nodeContent.replace(descriptionPattern, `$1${translation.description}$3`);
+              nodeContent = nodeContent.replace(descriptionPattern, (match, p1, p2, p3, p4, p5, p6) => {
+                if (p1) {
+                  // Caso con virgolette doppie
+                  return `${p1}${translation.description}${p3}`;
+                } else {
+                  // Caso con virgolette singole
+                  return `${p4}${translation.description}${p6}`;
+                }
+              });
             }
           }
           

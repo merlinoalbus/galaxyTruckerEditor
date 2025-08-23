@@ -29,7 +29,7 @@
 - name: purpleHome
   coordinates: [230, 2320]
   image: purplehome.png
-  caption: "Th'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r'kzw-r"
+  caption: "Th'kzw-r"
   description: "Domovská planeta fialových mimozemšťanů. Jsou skvělí ve válčení, ale mizerní v učení cizích jazyků."
   buttons: [[bpurple, purpleHomeDlg, "Promluvit si s místními"], [bmerchant, merchantDlg, "Promluvit si s obchodníkem"]]
 - name: brownHome
