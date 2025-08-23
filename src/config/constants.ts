@@ -36,6 +36,8 @@ export const API_ENDPOINTS = {
   MISSION_BY_NAME: (name: string) => `/missions/${name}`,
   MISSION_SAVE: (name: string) => `/missions/${name}/save`,
   MISSIONS_ROUTES: '/missions/routes',
+  MISSIONS_SAVE_MISSION: '/missions/saveMission',
+  MISSIONS_TRANSLATIONS_COVERAGE: '/missions/translations/coverage',
 
   // Game Elements API
   GAME_CHARACTERS: '/game/characters',

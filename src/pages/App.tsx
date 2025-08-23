@@ -32,6 +32,20 @@ function RoutedApp() {
     return () => window.removeEventListener('navigateToVisualFlow', handler as EventListener);
   }, [navigate, location.pathname]);
 
+  // Bridge per missions: consente a componenti fuori da CampaignEditor di aprire missions nel VFE
+  React.useEffect(() => {
+    const handler = (event: Event) => {
+      const custom = event as CustomEvent;
+      if (location.pathname === '/') return; // già su CampaignEditor
+      navigate('/');
+      setTimeout(() => {
+        try { window.dispatchEvent(new CustomEvent('navigateToVisualFlowMission', { detail: custom.detail })); } catch {}
+      }, 150);
+    };
+    window.addEventListener('navigateToVisualFlowMission', handler as EventListener);
+    return () => window.removeEventListener('navigateToVisualFlowMission', handler as EventListener);
+  }, [navigate, location.pathname]);
+
   return (
     <div className="flex h-screen bg-slate-900">
       <Sidebar />
