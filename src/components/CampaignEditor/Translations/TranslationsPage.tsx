@@ -1996,7 +1996,7 @@ export const TranslationsPage: React.FC = () => {
                                           buttonIndex: buttonIndex
                                         })).filter((button: any) => button.en) : [])
                                     ];
-                                  })()?.map((item, idx) => {
+                                  })()?.map((item: any, idx: number) => {
                                     const itemData = selectedTab === 'yaml-missions' 
                                       ? yamlMissionsData?.items?.find((item: any) => item.id === itemName)
                                       : currentDetails;

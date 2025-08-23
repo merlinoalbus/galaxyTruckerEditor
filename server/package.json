@@ -9,6 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "archiver": "^7.0.1",
     "chokidar": "^3.5.3",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",

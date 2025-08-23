@@ -1,0 +1,43 @@
+GALAXY TRUCKER - TRANSLATION INSTALLATION GUIDE
+===============================================
+
+EXPORTED LANGUAGES: EN
+EXPORT DATE: 2025-08-23T23:19:56.643Z
+PATCH MODE: EN -> IT
+
+INSTALLATION INSTRUCTIONS:
+--------------------------
+
+1. LOCATE YOUR GALAXY TRUCKER INSTALLATION:
+   - Steam: Usually in "C:\Program Files (x86)\Steam\steamapps\common\Galaxy Trucker"
+   - Other platforms: Check your games library
+
+2. BACKUP YOUR CURRENT GAME FILES:
+   - Make a copy of your Galaxy Trucker folder before proceeding
+   - This allows you to restore the original files if needed
+
+3. EXTRACT AND INSTALL:
+   - Extract this ZIP file
+   - Copy all extracted files to your Galaxy Trucker installation folder
+   - Choose "Replace" when prompted to overwrite existing files
+
+IMPORTANT NOTES:
+----------------
+
+• PATCH MODE ACTIVE: This installation will replace IT language files with EN language content
+• The IT language flag will still show in-game, but content will be in EN
+• To access this language, select IT in the game's language settings
+
+• NEW GAME LEVELS: If you have custom scripts or additional game levels, you must export 
+  and install ALL languages for them to work properly
+
+• GAME COMPATIBILITY: These files are compatible with Galaxy Trucker version 2.0+
+
+TROUBLESHOOTING:
+----------------
+
+• If the game doesn't start, verify all files were extracted to the correct location
+• If translations don't appear, check that you selected the correct language in game settings
+• For custom content, ensure all language files are present and properly named
+
+For support, visit: https://github.com/your-repo/galaxy-trucker-translations
