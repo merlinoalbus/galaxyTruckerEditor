@@ -56,7 +56,8 @@
       "Bash(./scripts/start-be.sh:*)",
       "Bash(./scripts/stop-be.sh:*)",
       "Bash(restartFE)",
-      "Bash(./scripts/restart-fe.sh:*)"
+      "Bash(./scripts/restart-fe.sh:*)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",
