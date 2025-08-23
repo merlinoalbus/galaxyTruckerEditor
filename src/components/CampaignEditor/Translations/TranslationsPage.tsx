@@ -63,7 +63,7 @@ export const TranslationsPage: React.FC = () => {
   // Stati per tutti i tipi di traduzioni
   const [selectedTab, setSelectedTab] = useState<'scripts' | 'missions' | 'strings' | 'nodes' | 'yaml-missions'>('scripts');
   const [missionsCoverage, setMissionsCoverage] = useState<any>(null);
-  const [selectedMission, setSelectedMission] = useState<string | null>(null);
+  const [selectedMissions, setSelectedMissions] = useState<Set<string>>(new Set());
   const [missionDetails, setMissionDetails] = useState<any>(null);
   const [missionContent, setMissionContent] = useState<any>(null);
 
@@ -71,7 +71,12 @@ export const TranslationsPage: React.FC = () => {
   const [nodesData, setNodesData] = useState<any>(null);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [yamlMissionsData, setYamlMissionsData] = useState<any>(null);
-  const [selectedYamlMission, setSelectedYamlMission] = useState<string | null>(null);
+  const [selectedYamlMissions, setSelectedYamlMissions] = useState<Set<string>>(new Set());
+
+  // Campo di ricerca globale
+  const [globalSearchTerm, setGlobalSearchTerm] = useState<string>('');
+  const [filteredScriptNames, setFilteredScriptNames] = useState<Set<string>>(new Set());
+  const [isSearching, setIsSearching] = useState<boolean>(false);
 
   // Hook per localization strings
   const {
@@ -97,6 +102,160 @@ export const TranslationsPage: React.FC = () => {
     setSelectedCategory,
     SUPPORTED_LANGUAGES
   } = useLocalizationStrings();
+  
+  // Funzione helper per filtrare gli elementi basata sul termine di ricerca
+  const filterItems = useCallback((items: any[], searchTerm: string) => {
+    if (!searchTerm.trim()) return items;
+    
+    const normalizedSearch = searchTerm.toLowerCase().trim();
+    
+    return items.filter((item: any) => {
+      // Get the item name/key
+      const itemName = item.script || item.mission || item.category || item.node || '';
+      
+      // Per gli script, usa i risultati della ricerca asincrona nel contenuto
+      if (selectedTab === 'scripts' && item.script) {
+        return filteredScriptNames.has(item.script) || item.script.toLowerCase().includes(normalizedSearch);
+      }
+      
+      // Per altri tab, continua con la logica standard
+      if (itemName.toLowerCase().includes(normalizedSearch)) {
+        return true;
+      }
+      
+      // For strings tab, check EN and current language values
+      if (selectedTab === 'strings' && item.category && selectedCategory && selectedCategory.nome === item.category) {
+        const categoryWithStrings = selectedCategory as any;
+        // Check EN values
+        const enStrings = Object.values(categoryWithStrings.strings || {}).map((str: any) => str.EN || '').join(' ').toLowerCase();
+        if (enStrings.includes(normalizedSearch)) return true;
+        
+        // Check current language values
+        const currentLangStrings = Object.values(categoryWithStrings.strings || {}).map((str: any) => str[selectedLang] || '').join(' ').toLowerCase();
+        if (currentLangStrings.includes(normalizedSearch)) return true;
+      }
+      
+      // For nodes and yaml-missions, need to look up the actual data
+      if (selectedTab === 'nodes' && nodesData?.items) {
+        const nodeData = nodesData.items.find((n: any) => n.id === itemName);
+        if (nodeData?.translations) {
+          const enTranslations = nodeData.translations['EN'] || {};
+          const currentLangTranslations = nodeData.translations[selectedLang] || {};
+          
+          // Check EN values
+          const enValues = [enTranslations.caption, enTranslations.description].filter(Boolean).join(' ').toLowerCase();
+          if (enValues.includes(normalizedSearch)) return true;
+          
+          // Check current language values
+          const currentLangValues = [currentLangTranslations.caption, currentLangTranslations.description].filter(Boolean).join(' ').toLowerCase();
+          if (currentLangValues.includes(normalizedSearch)) return true;
+          
+          // Check buttons text
+          if (enTranslations.buttons && Array.isArray(enTranslations.buttons)) {
+            const enButtonsText = enTranslations.buttons.map((btn: any) => btn?.text || '').join(' ').toLowerCase();
+            if (enButtonsText.includes(normalizedSearch)) return true;
+          }
+          
+          if (currentLangTranslations.buttons && Array.isArray(currentLangTranslations.buttons)) {
+            const currentLangButtonsText = currentLangTranslations.buttons.map((btn: any) => btn?.text || '').join(' ').toLowerCase();
+            if (currentLangButtonsText.includes(normalizedSearch)) return true;
+          }
+        }
+      }
+      
+      if (selectedTab === 'yaml-missions' && yamlMissionsData?.items) {
+        const missionData = yamlMissionsData.items.find((m: any) => m.id === itemName);
+        if (missionData?.translations) {
+          const enTranslations = missionData.translations['EN'] || {};
+          const currentLangTranslations = missionData.translations[selectedLang] || {};
+          
+          // Check EN values
+          const enValues = [enTranslations.caption, enTranslations.description].filter(Boolean).join(' ').toLowerCase();
+          if (enValues.includes(normalizedSearch)) return true;
+          
+          // Check current language values
+          const currentLangValues = [currentLangTranslations.caption, currentLangTranslations.description].filter(Boolean).join(' ').toLowerCase();
+          if (currentLangValues.includes(normalizedSearch)) return true;
+        }
+      }
+      
+      return false;
+    });
+  }, [selectedTab, selectedLang, categories, selectedCategory, nodesData, yamlMissionsData, filteredScriptNames]);
+  
+  // Funzione batch per cercare un termine nel contenuto di tutti gli script
+  const batchSearchInScripts = useCallback(async (scriptNames: string[], searchTerm: string): Promise<string[]> => {
+    try {
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}/scripts/translations/batch-search`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          scriptNames,
+          searchTerm
+        })
+      });
+      
+      const result = await response.json();
+      if (result.success) {
+        return result.data.matchingScripts || [];
+      } else {
+        console.error('Batch search failed:', result.error);
+        return [];
+      }
+    } catch (error) {
+      console.error('Error in batch search:', error);
+      return [];
+    }
+  }, []);
+  
+  // Funzione manuale per cercare nel contenuto degli script (usando batch endpoint)
+  const performScriptContentSearch = useCallback(async () => {
+    if (!globalSearchTerm.trim() || selectedTab !== 'scripts') {
+      setFilteredScriptNames(new Set());
+      setIsSearching(false);
+      return;
+    }
+    
+    if (!coverage?.perScript || coverage.perScript.length === 0) {
+      setFilteredScriptNames(new Set());
+      setIsSearching(false);
+      return;
+    }
+    
+    setIsSearching(true);
+    const matchingScripts = new Set<string>();
+    
+    try {
+      const scriptNames = coverage.perScript.map(s => s.script);
+      
+      // Prima cerca nei nomi degli script (veloce)
+      for (const scriptName of scriptNames) {
+        if (scriptName.toLowerCase().includes(globalSearchTerm.toLowerCase())) {
+          matchingScripts.add(scriptName);
+        }
+      }
+      
+      // Poi cerca nel contenuto usando batch endpoint (UNA sola chiamata)
+      const remainingScripts = scriptNames.filter(name => !matchingScripts.has(name));
+      
+      console.log(`Ricerca batch nel contenuto di ${remainingScripts.length} script...`);
+      
+      if (remainingScripts.length > 0) {
+        const contentMatches = await batchSearchInScripts(remainingScripts, globalSearchTerm);
+        contentMatches.forEach(scriptName => matchingScripts.add(scriptName));
+        console.log(`Trovati ${contentMatches.length} script con il contenuto cercato`);
+      }
+      
+    } catch (error) {
+      console.error('Errore durante la ricerca:', error);
+      alert('Errore durante la ricerca nel contenuto degli script');
+    }
+    
+    setFilteredScriptNames(matchingScripts);
+    setIsSearching(false);
+  }, [globalSearchTerm, selectedTab, coverage, batchSearchInScripts]);
 
   // Carica la coverage degli scripts solo quando necessario
   const loadScriptsCoverage = useCallback(async () => {
@@ -367,7 +526,7 @@ export const TranslationsPage: React.FC = () => {
     const clonedBlocks = JSON.parse(JSON.stringify(blocks)) as IFlowBlock[];
     
     // Determina il nome corrente (script o mission)
-    const currentName = selectedTab === 'scripts' ? selectedScript : selectedMission;
+    const currentName = selectedTab === 'scripts' ? selectedScript : (selectedMissions.size === 1 ? Array.from(selectedMissions)[0] : null);
     
     fields.forEach((field, idx) => {
       const key = `${currentName}|${idx}|${targetLang}`;
@@ -411,7 +570,7 @@ export const TranslationsPage: React.FC = () => {
     });
     
     return clonedBlocks;
-  }, [selectedScript, selectedMission, selectedTab]);
+  }, [selectedScript, selectedMissions, selectedTab]);
 
   // Funzione per salvare le modifiche
   const saveTranslations = useCallback(async () => {
@@ -618,7 +777,7 @@ export const TranslationsPage: React.FC = () => {
 
   // Funzione per salvare le modifiche alle missions
   const saveMissionTranslations = useCallback(async () => {
-    if (!selectedMission || !missionContent) {
+    if (selectedMissions.size === 0 || !missionContent) {
       alert('Errore: dati della mission non disponibili');
       return;
     }
@@ -722,7 +881,7 @@ export const TranslationsPage: React.FC = () => {
     } finally {
       setSaving(false);
     }
-  }, [selectedMission, missionContent, translationFields, edits, selectedLang, applyEditsToBlocks, extractTranslationFields, calculateCoverageStats, missionDetails, ensureBlockIds]);
+  }, [selectedMissions, missionContent, translationFields, edits, selectedLang, applyEditsToBlocks, extractTranslationFields, calculateCoverageStats, missionDetails, ensureBlockIds]);
 
   // Funzioni per salvare traduzioni nodes.yaml
   const saveNodesTranslations = useCallback(async () => {
@@ -815,8 +974,8 @@ export const TranslationsPage: React.FC = () => {
 
   // Funzioni per salvare traduzioni missions.yaml
   const saveYamlMissionsTranslations = useCallback(async () => {
-    if (!yamlMissionsData || !selectedYamlMission) {
-      alert('Errore: dati della mission non disponibili');
+    if (!yamlMissionsData || selectedYamlMissions.size === 0) {
+      alert('Errore: nessuna mission selezionata');
       return;
     }
 
@@ -877,19 +1036,21 @@ export const TranslationsPage: React.FC = () => {
     } finally {
       setSaving(false);
     }
-  }, [yamlMissionsData, selectedYamlMission, selectedLang, edits, loadYamlMissionsData]);
+  }, [yamlMissionsData, selectedYamlMissions, selectedLang, edits, loadYamlMissionsData]);
 
   // Carica dettagli mission quando selezionata
   useEffect(() => {
-    if (selectedMission && selectedTab === 'missions') {
-      loadMissionDetails(selectedMission);
-    } else if (!selectedMission) {
+    if (selectedMissions.size > 0 && selectedTab === 'missions') {
+      // Per ora carichiamo solo la prima missione selezionata per compatibilità
+      const firstSelected = Array.from(selectedMissions)[0];
+      loadMissionDetails(firstSelected);
+    } else if (selectedMissions.size === 0) {
       setMissionDetails(null);
       setMissionContent(null);
       setTranslationFields([]);
       setEdits({});
     }
-  }, [selectedMission, selectedTab, loadMissionDetails]);
+  }, [selectedMissions, selectedTab, loadMissionDetails]);
 
   const scriptsSorted = useMemo(() => {
     if (!coverage) return [] as CoverageResponse['data']['perScript'];
@@ -1247,9 +1408,13 @@ export const TranslationsPage: React.FC = () => {
         return acc;
       }, {})
     })) || [];
-    currentDetails = selectedYamlMission ? yamlMissionsData?.items?.find((item: any) => item.id === selectedYamlMission) : null;
+    // Per yaml-missions supportiamo apertura multipla, non c'è currentDetails singolo
+    currentDetails = null;
     currentSaveFunction = saveYamlMissionsTranslations;
   }
+  
+  // Applica il filtro di ricerca globale
+  const filteredSorted = filterItems(currentSorted, globalSearchTerm);
 
   return (
     <div className="space-y-6">
@@ -1285,6 +1450,49 @@ export const TranslationsPage: React.FC = () => {
         >
           📍 Missions YAML
         </button>
+      </div>
+
+      {/* Search Field */}
+      <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
+        <div className="flex items-center gap-4">
+          <label className="text-white font-semibold">
+            🔍 Ricerca: {isSearching && selectedTab === 'scripts' && (
+              <span className="text-yellow-400 ml-2">⏳ Cercando nel contenuto...</span>
+            )}
+          </label>
+          <input
+            type="text"
+            className="flex-1 px-3 py-2 bg-slate-700 border border-slate-600 rounded text-white placeholder-slate-400 focus:outline-none focus:border-slate-400"
+            placeholder="Cerca per nome elemento, testo EN o testo nella lingua corrente..."
+            value={globalSearchTerm}
+            onChange={(e) => setGlobalSearchTerm(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && selectedTab === 'scripts' && globalSearchTerm.trim()) {
+                performScriptContentSearch();
+              }
+            }}
+          />
+          {selectedTab === 'scripts' && globalSearchTerm && (
+            <button
+              className="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white border border-blue-500 rounded disabled:opacity-50"
+              onClick={performScriptContentSearch}
+              disabled={isSearching}
+            >
+              {isSearching ? '⏳' : '🔍'} Cerca nel contenuto
+            </button>
+          )}
+          {globalSearchTerm && (
+            <button
+              className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white border border-slate-600 rounded"
+              onClick={() => {
+                setGlobalSearchTerm('');
+                setFilteredScriptNames(new Set());
+              }}
+            >
+              ✕ Clear
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Overview */}
@@ -1342,7 +1550,7 @@ export const TranslationsPage: React.FC = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-700">
-            {currentSorted.map((item: any) => {
+            {filteredSorted.map((item: any) => {
               const d = item.languages[selectedLang];
               if (!d) return null;
               // Show in Solo mancanti only if completion < 100
@@ -1356,7 +1564,7 @@ export const TranslationsPage: React.FC = () => {
                 isOpen = selectedScript === itemName;
               } else if (selectedTab === 'missions') {
                 itemName = item.mission || '';
-                isOpen = selectedMission === itemName;
+                isOpen = selectedMissions.has(itemName);
               } else if (selectedTab === 'strings') {
                 itemName = item.category || '';
                 isOpen = selectedCategory?.nome === itemName;
@@ -1365,7 +1573,7 @@ export const TranslationsPage: React.FC = () => {
                 isOpen = selectedNode === itemName;
               } else if (selectedTab === 'yaml-missions') {
                 itemName = item.mission || '';
-                isOpen = selectedYamlMission === itemName;
+                isOpen = selectedYamlMissions.has(itemName);
               }
               return (
                 <React.Fragment key={itemName}>
@@ -1379,7 +1587,13 @@ export const TranslationsPage: React.FC = () => {
                           if (selectedTab === 'scripts') {
                             setSelectedScript(isOpen ? null : itemName);
                           } else if (selectedTab === 'missions') {
-                            setSelectedMission(isOpen ? null : itemName);
+                            const newSet = new Set(selectedMissions);
+                            if (isOpen) {
+                              newSet.delete(itemName);
+                            } else {
+                              newSet.add(itemName);
+                            }
+                            setSelectedMissions(newSet);
                           } else if (selectedTab === 'strings') {
                             // Per le strings, carichiamo la categoria
                             if (isOpen) {
@@ -1392,7 +1606,13 @@ export const TranslationsPage: React.FC = () => {
                           } else if (selectedTab === 'nodes') {
                             setSelectedNode(isOpen ? null : itemName);
                           } else if (selectedTab === 'yaml-missions') {
-                            setSelectedYamlMission(isOpen ? null : itemName);
+                            const newSet = new Set(selectedYamlMissions);
+                            if (isOpen) {
+                              newSet.delete(itemName);
+                            } else {
+                              newSet.add(itemName);
+                            }
+                            setSelectedYamlMissions(newSet);
                           }
                         }}
                         style={{ fontSize: '35px', lineHeight: '35px', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -1425,12 +1645,12 @@ export const TranslationsPage: React.FC = () => {
                       )}
                     </td>
                   </tr>
-                  {isOpen && currentDetails && 
-                   ((selectedTab === 'scripts' && currentDetails.script === itemName) ||
-                    (selectedTab === 'missions' && currentDetails.script === itemName) ||
-                    (selectedTab === 'strings' && currentDetails.nome === itemName) ||
-                    (selectedTab === 'nodes' && currentDetails.id === itemName) ||
-                    (selectedTab === 'yaml-missions' && currentDetails.id === itemName)) && (
+                  {isOpen && 
+                   ((selectedTab === 'scripts' && currentDetails && currentDetails.script === itemName) ||
+                    (selectedTab === 'missions' && selectedMissions.has(itemName) && currentDetails && currentDetails.script === itemName) ||
+                    (selectedTab === 'strings' && currentDetails && currentDetails.nome === itemName) ||
+                    (selectedTab === 'nodes' && currentDetails && currentDetails.id === itemName) ||
+                    (selectedTab === 'yaml-missions' && selectedYamlMissions.has(itemName))) && (
                     <tr className="bg-slate-900/40">
                       <td colSpan={3} className="px-3 py-2">
                         <div className="space-y-3">
@@ -1441,8 +1661,12 @@ export const TranslationsPage: React.FC = () => {
                                   ? Math.round(((categoryStats.translatedKeys[selectedLang] || 0) / categoryStats.totalKeys) * 100)
                                   : selectedTab === 'nodes' || selectedTab === 'yaml-missions'
                                     ? (() => {
-                                        const translations = currentDetails.translations[selectedLang] || {};
-                                        const enTranslations = currentDetails.translations['EN'] || {};
+                                        // Per yaml-missions, trova i dati dalla fonte corretta
+                                        const itemData = selectedTab === 'yaml-missions' 
+                                          ? yamlMissionsData?.items?.find((item: any) => item.id === itemName)
+                                          : currentDetails;
+                                        const translations = itemData?.translations[selectedLang] || {};
+                                        const enTranslations = itemData?.translations['EN'] || {};
                                         let covered = 0;
                                         let total = 0;
                                         
@@ -1534,17 +1758,20 @@ export const TranslationsPage: React.FC = () => {
                                       }
                                     } else if (selectedTab === 'nodes' || selectedTab === 'yaml-missions') {
                                       // Per nodes e yaml-missions, usa batch API come per scripts
+                                      const itemData = selectedTab === 'yaml-missions' 
+                                        ? yamlMissionsData?.items?.find((item: any) => item.id === itemName)
+                                        : currentDetails;
                                       const fieldsToTranslate = [
-                                        ...(currentDetails.translations['EN']?.caption ? [{
+                                        ...(itemData?.translations['EN']?.caption ? [{
                                           field: 'caption',
-                                          text: currentDetails.translations['EN'].caption
+                                          text: itemData.translations['EN'].caption
                                         }] : []),
-                                        ...(currentDetails.translations['EN']?.description ? [{
+                                        ...(itemData?.translations['EN']?.description ? [{
                                           field: 'description', 
-                                          text: currentDetails.translations['EN'].description
+                                          text: itemData.translations['EN'].description
                                         }] : []),
-                                        ...(currentDetails.translations['EN']?.buttons && Array.isArray(currentDetails.translations['EN'].buttons) ? 
-                                          currentDetails.translations['EN'].buttons.map((button: any, buttonIndex: number) => ({
+                                        ...(itemData?.translations['EN']?.buttons && Array.isArray(itemData.translations['EN'].buttons) ? 
+                                          itemData.translations['EN'].buttons.map((button: any, buttonIndex: number) => ({
                                             field: `button_${button.id}`,
                                             text: button.text || ''
                                           })).filter((button: any) => button.text) : [])
@@ -1744,26 +1971,36 @@ export const TranslationsPage: React.FC = () => {
                                 <div className="max-h-72 overflow-auto">
                                   <table className="w-full text-left text-sm">
                                     <tbody className="divide-y divide-slate-700">
-                                  {currentDetails && currentDetails.translations && [
-                                    ...(currentDetails.translations['EN']?.caption ? [{
-                                      field: 'caption',
-                                      en: currentDetails.translations['EN'].caption,
-                                      current: currentDetails.translations[selectedLang]?.caption || ''
-                                    }] : []),
-                                    ...(currentDetails.translations['EN']?.description ? [{
-                                      field: 'description', 
-                                      en: currentDetails.translations['EN'].description,
-                                      current: currentDetails.translations[selectedLang]?.description || ''
-                                    }] : []),
-                                    ...(currentDetails.translations['EN']?.buttons && Array.isArray(currentDetails.translations['EN'].buttons) ? 
-                                      currentDetails.translations['EN'].buttons.map((button: any, buttonIndex: number) => ({
-                                        field: `button_${button.id}`,
-                                        en: button.text || '',
-                                        current: currentDetails.translations[selectedLang]?.buttons?.[buttonIndex]?.text || '',
-                                        buttonIndex: buttonIndex
-                                      })).filter((button: any) => button.en) : [])
-                                  ].map((item, idx) => {
-                                    const key = `${selectedTab}|${currentDetails.id}|${selectedLang}_${item.field}`;
+                                  {(() => {
+                                    // Per yaml-missions, trova i dati dalla fonte corretta
+                                    const itemData = selectedTab === 'yaml-missions' 
+                                      ? yamlMissionsData?.items?.find((item: any) => item.id === itemName)
+                                      : currentDetails;
+                                    
+                                    return itemData && itemData.translations && [
+                                      ...(itemData.translations['EN']?.caption ? [{
+                                        field: 'caption',
+                                        en: itemData.translations['EN'].caption,
+                                        current: itemData.translations[selectedLang]?.caption || ''
+                                      }] : []),
+                                      ...(itemData.translations['EN']?.description ? [{
+                                        field: 'description', 
+                                        en: itemData.translations['EN'].description,
+                                        current: itemData.translations[selectedLang]?.description || ''
+                                      }] : []),
+                                      ...(itemData.translations['EN']?.buttons && Array.isArray(itemData.translations['EN'].buttons) ? 
+                                        itemData.translations['EN'].buttons.map((button: any, buttonIndex: number) => ({
+                                          field: `button_${button.id}`,
+                                          en: button.text || '',
+                                          current: itemData.translations[selectedLang]?.buttons?.[buttonIndex]?.text || '',
+                                          buttonIndex: buttonIndex
+                                        })).filter((button: any) => button.en) : [])
+                                    ];
+                                  })()?.map((item, idx) => {
+                                    const itemData = selectedTab === 'yaml-missions' 
+                                      ? yamlMissionsData?.items?.find((item: any) => item.id === itemName)
+                                      : currentDetails;
+                                    const key = `${selectedTab}|${itemData?.id}|${selectedLang}_${item.field}`;
                                     const targetVal = edits[key] !== undefined ? edits[key] : (item.current || item.en);
                                     const isMissing = !targetVal || targetVal.trim() === '' || targetVal === item.en;
                                     const isDifferent = !!targetVal && targetVal !== item.en;

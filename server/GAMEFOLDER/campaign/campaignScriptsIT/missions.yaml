@@ -4,32 +4,32 @@
   missiontype: NORMAL
   license: STI
   button: ["blaunch", "camp_takeRoute", "ms_first_mission"]
-  caption: "Regular Route to Space Bar"
-  description: "Good mission to start with, for a newbie trucker."
+  caption: "Rotta Standard per Bar Spaziale"
+  description: "Una buona missione per iniziare, per un camionista alle prime armi."
 - name: R1-1b
   source: bar
   destination: newbie
   missiontype: NORMAL
   license: STI
   button: ["blaunch", "camp_takeRoute", "basic1easy3p"]
-  caption: "Regular Route to Port Newbie"
-  description: "A regular route. Nothing special here."
+  caption: "Rotta Standard per l'Astroporto dei Novellini"
+  description: "Una rotta standard. Niente di speciale."
 - name: R1-2a
   source: newbie
   destination: outpost
   missiontype: NORMAL
   license: STI
   button: ["blaunch", "camp_takeRoute", "ms_rough_mission"]
-  caption: "Long Route to Embassy Station"
-  description: "High occurrence of meteors reported on this route!"
+  caption: "Rotta Estesa per l'Ambasciata"
+  description: "È stata segnalata un'alta densità di meteoriti su questa rotta!"
 - name: R1-2b
   source: outpost
   destination: newbie
   missiontype: NORMAL
   license: STI
   button: ["blaunch", "camp_takeRoute", "ms_rough_mission"]
-  caption: "Long Route to Port Newbie"
-  description: "High occurrence of meteors reported on this route!"
+  caption: "Rotta Estesa per l'Astroporto dei Novellini"
+  description: "È stata segnalata un'alta densità di meteoriti su questa rotta!"
 - name: R1-3a
   source: bar
   destination: regula

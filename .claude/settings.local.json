@@ -51,7 +51,12 @@
       "Bash(taskkill:*)",
       "Bash(claude \"galaxy-task-validator\" \"\nSPECIFICA ORIGINALE:\nL''utente ha richiesto di implementare componenti per la gestione delle traduzioni di nodes.yaml e missions.yaml, come già fatto per Scripts, Missions e Strings. Deve poter gestire le traduzioni delle parti localizzate dei file .yaml di campaign\\campaignScripts<LANG>\\missions.yaml e campaign\\campaignScripts<LANG>\\nodes.yaml. Vuole ricevere un JSON dal BE con la lista di id stringhe, valori (tutte le lingue) e poter modificare il testo di una lingua per rimandarlo al BE per il salvataggio.\n\nTESTO INTEGRALE DEL PUNTO TODOS CORRENTE:\nAnalizzare i file nodes.yaml e missions.yaml per capire la struttura delle stringhe localizzate\n\nVALIDAZIONE RICHIESTA:\nVerificare che l''analisi della struttura dei file nodes.yaml e missions.yaml sia completa e sufficiente per implementare le API di traduzione. L''analisi deve coprire:\n1. Struttura completa dei file YAML \n2. Identificazione di tutti i campi localizzabili\n3. Consistenza della struttura tra le diverse lingue\n4. Eventuali particolarità o eccezioni nella struttura\n5. Verifica che tutte le lingue supportate abbiano i file necessari\n\")",
       "Bash(rg:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(startBE)",
+      "Bash(./scripts/start-be.sh:*)",
+      "Bash(./scripts/stop-be.sh:*)",
+      "Bash(restartFE)",
+      "Bash(./scripts/restart-fe.sh:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",
