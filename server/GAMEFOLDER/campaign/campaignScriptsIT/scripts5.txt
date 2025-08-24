@@ -143,7 +143,6 @@ SCRIPT tutorClass3Dlg
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorShuttleSubdlg
 
   MENU
@@ -183,7 +182,6 @@ SCRIPT tutorShuttleSubdlg
   Say "Anyway, if you're at a station with a shuttleport, you can buy a ticket to any other shuttleport."
   Say "Just [v(tap|click)] on the destination and say you want to go there. Simple as pie, newbie."
 END_OF_SCRIPT
-
 SCRIPT guruDlg
 
   ShowDlgScene
@@ -310,7 +308,6 @@ SCRIPT guruDlg
   HideChar guru
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT clubDlg
 
   ShowDlgScene
@@ -594,7 +591,6 @@ SCRIPT clubDlg
   HideChar chairman
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT merchCyanDlg
 
   IFNOT wasAtCyan
@@ -713,7 +709,6 @@ SCRIPT merchCyanDlg
   HideChar merchant
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT labDlg
 
   ShowDlgScene
@@ -1244,7 +1239,6 @@ SCRIPT labDlg
   HideChar designer
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT raceDlg
 
   ShowDlgScene
@@ -1263,317 +1257,313 @@ SCRIPT raceDlg
   HideChar chairman
   HideDlgScene
 END_OF_SCRIPT
-
-SCRIPT FinalRaceDlg
-
-  ShowDlgScene
-  ADD frRound 1
-  IF_IS frRound 3
-    GO frRound3
-  END_OF_IF
-  IF_IS frRound 2
-    GO frRound2
-  END_OF_IF
-  IF_ORDER 0 1
-    IF_ORDER 1 2
-      ShowChar tutor left
-      Say "Hey, nice going. For a newbie."
-      Say "I let you have a head start, but now you better watch your back."
-      ShowChar richgirl right
-      Say "Tch. You two. In the next two flights I will blow you away."
-      SayChar tutor "Talk is cheap, lady. We'll see you in space."
-      HideChar tutor
-      HideChar richgirl
-    ELSE
-      IF_ORDER 2 2
-        ShowChar richgirl left
-        Say "Just so you know, holding back in second place is part of my plan."
-        Say "It's a long race. No sense in wasting energy early."
-        ShowChar tutor right
-        Say "Yeah, whatever. Let's see what happens in round two."
+  SCRIPT FinalRaceDlg
+    ShowDlgScene
+    ADD frRound 1
+    IF_IS frRound 3
+      GO frRound3
+    END_OF_IF
+    IF_IS frRound 2
+      GO frRound2
+    END_OF_IF
+    IF_ORDER 0 1
+      IF_ORDER 1 2
+        ShowChar tutor left
+        Say "Hey, nice going. For a newbie."
+        Say "I let you have a head start, but now you better watch your back."
+        ShowChar richgirl right
+        Say "Tch. You two. In the next two flights I will blow you away."
+        SayChar tutor "Talk is cheap, lady. We'll see you in space."
         HideChar tutor
         HideChar richgirl
       ELSE
-        IF_ORDER 3 2
-          ShowChar tutor left
-          ShowChar richgirl right
-          SayChar tutor "Will you look at that! The newbie and the stripey are in the lead!"
-          SayChar richgirl "All part of my plan. I like to attack from behind."
-          SayChar tutor "Yeah, whatever. Let's see what happens in round two."
+        IF_ORDER 2 2
+          ShowChar richgirl left
+          Say "Just so you know, holding back in second place is part of my plan."
+          Say "It's a long race. No sense in wasting energy early."
+          ShowChar tutor right
+          Say "Yeah, whatever. Let's see what happens in round two."
           HideChar tutor
           HideChar richgirl
-        END_OF_IF
-      END_OF_IF
-    END_OF_IF
-  ELSE
-    IF_ORDER 1 1
-      ShowChar tutor left
-      Say "Yeah. Great start! Now I just need to extend my lead."
-      IF_ORDER 0 2
-        Say "You're not doing too bad, either, newbie!"
-      END_OF_IF
-      IF_ORDER 2 2
-        ShowChar richgirl right
-        Say "You call that a lead? I'll make that up in round two before you even get out of the warehouse."
-        HideChar richgirl
-      END_OF_IF
-      IF_ORDER 3 2
-        ShowChar halfbreed right
-        Say "Kh."
-        HideChar halfbreed
-      END_OF_IF
-      HideChar tutor
-    ELSE
-      IF_ORDER 2 1
-        ShowChar richgirl left
-        Say "Looks like I'm in front. As usual."
-        IF_ORDER 0 2
-          ShowChar tutor right
-          Say "Don't get overconfident, lady. My newbie is right behind you."
-          HideChar tutor
-        END_OF_IF
-        IF_ORDER 1 2
-          ShowChar tutor right
-          Say "That was just round 1, lady. We'll see what things look like after round 2."
-          SayChar richgirl "And what about round 3? That's what counts. We all know how this is going to end."
-          HideChar tutor
-        END_OF_IF
-        IF_ORDER 3 2
-          ShowChar halfbreed right
-          Say "Kh. Fwr'z."
-          HideChar halfbreed
-        END_OF_IF
-        HideChar richgirl
-      ELSE
-        IF_ORDER 3 1
-          ShowChar halfbreed left
-          Say "...!"
-          IF_ORDER 0 2
-            ShowChar tutor right
-            Say "Nice work, stripey! But my newbie is right on your tentacles."
-            HideChar tutor
-          END_OF_IF
-          IF_ORDER 1 2
-            ShowChar tutor right
-            Say "Nice work, stripey, but the race isn't over yet."
-            HideChar tutor
-          END_OF_IF
-          IF_ORDER 2 2
-            ShowChar richgirl right
-            Say "Strong language. Don't get so excited. You need to save something for the later rounds."
-            HideChar richgirl
-          END_OF_IF
-          HideChar halfbreed
-        END_OF_IF
-      END_OF_IF
-    END_OF_IF
-  END_OF_IF
-  HideDlgScene
-  RETURN
-
-  LABEL frRound2
-  IF_ORDER 0 1
-    IF_ORDER 1 2
-      ShowChar tutor left
-      Say "You're having a good day, newbie."
-      Say "But I'm right behind you. Don't expect me to take it easy on you in the final round."
-      ShowChar richgirl right
-      Say "Hm. Really. I just let you two have a lead to make the third round interesting."
-      SayChar tutor "Ha! We'll see!"
-      HideChar tutor
-      HideChar richgirl
-    ELSE
-      IF_ORDER 2 2
-        ShowChar richgirl left
-        Say "All according to plan. Sit comfortably in second place, then rocket ahead at the finish."
-        ShowChar tutor right
-        Say "Don't listen to her, newbie! You're trucking great today!"
-        HideChar tutor
-        HideChar richgirl
-      ELSE
-        IF_ORDER 3 2
-          ShowChar tutor left
-          ShowChar richgirl right
-          SayChar tutor "My newbie is doing great. And stripey's not too bad, either."
-          SayChar richgirl "Well, they're both doing okay, but they won't stand a chance against me in round 3."
-          SayChar tutor "Yeah? This I gotta see, lady."
-          HideChar tutor
-          HideChar richgirl
-        END_OF_IF
-      END_OF_IF
-    END_OF_IF
-  ELSE
-    IF_ORDER 1 1
-      ShowChar tutor left
-      Say "Ha! This is my big chance!"
-      IF_ORDER 0 2
-        Say "I hope you like second place, newbie!"
-      END_OF_IF
-      IF_ORDER 2 2
-        ShowChar richgirl right
-        Say "Yes. You might get second place if those two in the back don't get going."
-        Say "Well, I let you have a lead to make the third round interesting, but I doubt this will be much of a challenge."
-        HideChar richgirl
-      END_OF_IF
-      IF_ORDER 3 2
-        ShowChar halfbreed right
-        Say "Kh."
-        HideChar halfbreed
-      END_OF_IF
-      HideChar tutor
-    ELSE
-      IF_ORDER 2 1
-        ShowChar richgirl left
-        Say "Hm. I'm winning without even trying. Is that all you guys got?"
-        IF_ORDER 0 2
-          ShowChar tutor right
-          Say "Hey, newbie, you're not too far behind. Go catch her!"
-          HideChar tutor
-        END_OF_IF
-        IF_ORDER 1 2
-          ShowChar tutor right
-          Say "Don't push me lady. I think you're scared."
-          SayChar richgirl "Yes, I'm afraid of being bored to death. Oh well. Let's go fly round three."
-          HideChar tutor
-        END_OF_IF
-        IF_ORDER 3 2
-          ShowChar halfbreed right
-          Say "Kh. Kh fwr'z."
-          HideChar halfbreed
-        END_OF_IF
-        HideChar richgirl
-      ELSE
-        IF_ORDER 3 1
-          ShowChar halfbreed left
-          Say "...!"
-          IF_ORDER 0 2
-            ShowChar tutor right
-            Say "Aw, stripey is getting away. At least my newbie is hanging in there."
-            HideChar tutor
-            ShowChar richgirl right
-            Say "Getting away from you, maybe. I'll pass them both in round three."
-            HideChar richgirl
-          END_OF_IF
-          IF_ORDER 1 2
-            ShowChar tutor right
-            Say "Maybe so, stripey, but you won't have the last word!"
-            HideChar tutor
-          END_OF_IF
-          IF_ORDER 2 2
-            ShowChar richgirl right
-            Say "Let's not exaggerate, alien. I'll be red-shifting past you so fast, you won't know what color you are."
-            HideChar richgirl
-          END_OF_IF
-          HideChar halfbreed
-        END_OF_IF
-      END_OF_IF
-    END_OF_IF
-  END_OF_IF
-  HideDlgScene
-  RETURN
-
-  LABEL frRound3
-  RESET frHBfirst
-  RESET frRGfirst
-  SET finalRaceFinished
-  IF_ORDER 2 1
-    SET frRGfirst
-    ChangeChar richgirl campaign/rich-smile.png
-    ShowChar richgirl left
-    Say "Yesss! I did it!"
-    Delay 500
-    ChangeChar richgirl campaign/rich-bored.png
-    Delay 200
-    Say "I mean ... as expected, of course."
-    Say "Not bad, guys. Practice for a few more years and you might even become a challenge."
-    Delay 200
-    ChangeChar richgirl campaign/rich-smile.png
-    Delay 600
-    ChangeChar richgirl campaign/rich-smile-cheer.png
-    Delay 400
-    ChangeChar richgirl campaign/rich-smile.png
-  ELSE
-    IF_ORDER 3 1
-      SET frHBfirst
-      ShowChar halfbreed left
-      Say "... ... !"
-      Say "H' khwk!"
-      Say "I wins / is the victor / takes first prize!"
-    END_OF_IF
-  END_OF_IF
-  ShowChar tutor right
-  IF_ORDER 0 1
-    IF_ORDER 1 2
-      Say "Congratulations, newbie!"
-      Say "We both had good runs, but yours was a little better."
-    ELSE
-      Say "Congratulations, newbie!"
-      Say "Things didn't go so well for me, personally, but you showed us all!"
-    END_OF_IF
-    SET finalRaceWon
-  ELSE
-    IF_ORDER 0 2
-      IF_ORDER 1 1
-        Say "Yeah! I finally won!"
-        Say "You did pretty good, too, newbie. But I guess I did a little better."
-      ELSE
-        Say "Yeah. Nice flying."
-        Say "But my newbie did a good job, too. Second place. Not bad!"
-      END_OF_IF
-    ELSE
-      IF_ORDER 1 1
-        Say "Yeah! I finally won!"
-        Say "Sorry you didn't do as well as you hoped, newbie. But it was still pretty good for your first try."
-      ELSE
-        IF_ORDER 1 2
-          Say "Ahh! I was this close. Oh well. Congratulations."
-          Say "Hey, newbie, sorry you didn't do as well as you hoped. But that was still pretty good for your first try."
         ELSE
-          Say "Congratulations."
-          Say "I guess the newbie and I had a pretty rough time of it."
+          IF_ORDER 3 2
+            ShowChar tutor left
+            ShowChar richgirl right
+            SayChar tutor "Will you look at that! The newbie and the stripey are in the lead!"
+            SayChar richgirl "All part of my plan. I like to attack from behind."
+            SayChar tutor "Yeah, whatever. Let's see what happens in round two."
+            HideChar tutor
+            HideChar richgirl
+          END_OF_IF
+        END_OF_IF
+      END_OF_IF
+    ELSE
+      IF_ORDER 1 1
+        ShowChar tutor left
+        Say "Yeah. Great start! Now I just need to extend my lead."
+        IF_ORDER 0 2
+          Say "You're not doing too bad, either, newbie!"
+        END_OF_IF
+        IF_ORDER 2 2
+          ShowChar richgirl right
+          Say "You call that a lead? I'll make that up in round two before you even get out of the warehouse."
+          HideChar richgirl
+        END_OF_IF
+        IF_ORDER 3 2
+          ShowChar halfbreed right
+          Say "Kh."
+          HideChar halfbreed
+        END_OF_IF
+        HideChar tutor
+      ELSE
+        IF_ORDER 2 1
+          ShowChar richgirl left
+          Say "Looks like I'm in front. As usual."
+          IF_ORDER 0 2
+            ShowChar tutor right
+            Say "Don't get overconfident, lady. My newbie is right behind you."
+            HideChar tutor
+          END_OF_IF
+          IF_ORDER 1 2
+            ShowChar tutor right
+            Say "That was just round 1, lady. We'll see what things look like after round 2."
+            SayChar richgirl "And what about round 3? That's what counts. We all know how this is going to end."
+            HideChar tutor
+          END_OF_IF
+          IF_ORDER 3 2
+            ShowChar halfbreed right
+            Say "Kh. Fwr'z."
+            HideChar halfbreed
+          END_OF_IF
+          HideChar richgirl
+        ELSE
+          IF_ORDER 3 1
+            ShowChar halfbreed left
+            Say "...!"
+            IF_ORDER 0 2
+              ShowChar tutor right
+              Say "Nice work, stripey! But my newbie is right on your tentacles."
+              HideChar tutor
+            END_OF_IF
+            IF_ORDER 1 2
+              ShowChar tutor right
+              Say "Nice work, stripey, but the race isn't over yet."
+              HideChar tutor
+            END_OF_IF
+            IF_ORDER 2 2
+              ShowChar richgirl right
+              Say "Strong language. Don't get so excited. You need to save something for the later rounds."
+              HideChar richgirl
+            END_OF_IF
+            HideChar halfbreed
+          END_OF_IF
         END_OF_IF
       END_OF_IF
     END_OF_IF
-  END_OF_IF
-  IF frHBfirst
+    HideDlgScene
+    RETURN
+    LABEL frRound2
+    IF_ORDER 0 1
+      IF_ORDER 1 2
+        ShowChar tutor left
+        Say "You're having a good day, newbie."
+        Say "But I'm right behind you. Don't expect me to take it easy on you in the final round."
+        ShowChar richgirl right
+        Say "Hm. Really. I just let you two have a lead to make the third round interesting."
+        SayChar tutor "Ha! We'll see!"
+        HideChar tutor
+        HideChar richgirl
+      ELSE
+        IF_ORDER 2 2
+          ShowChar richgirl left
+          Say "All according to plan. Sit comfortably in second place, then rocket ahead at the finish."
+          ShowChar tutor right
+          Say "Don't listen to her, newbie! You're trucking great today!"
+          HideChar tutor
+          HideChar richgirl
+        ELSE
+          IF_ORDER 3 2
+            ShowChar tutor left
+            ShowChar richgirl right
+            SayChar tutor "My newbie is doing great. And stripey's not too bad, either."
+            SayChar richgirl "Well, they're both doing okay, but they won't stand a chance against me in round 3."
+            SayChar tutor "Yeah? This I gotta see, lady."
+            HideChar tutor
+            HideChar richgirl
+          END_OF_IF
+        END_OF_IF
+      END_OF_IF
+    ELSE
+      IF_ORDER 1 1
+        ShowChar tutor left
+        Say "Ha! This is my big chance!"
+        IF_ORDER 0 2
+          Say "I hope you like second place, newbie!"
+        END_OF_IF
+        IF_ORDER 2 2
+          ShowChar richgirl right
+          Say "Yes. You might get second place if those two in the back don't get going."
+          Say "Well, I let you have a lead to make the third round interesting, but I doubt this will be much of a challenge."
+          HideChar richgirl
+        END_OF_IF
+        IF_ORDER 3 2
+          ShowChar halfbreed right
+          Say "Kh."
+          HideChar halfbreed
+        END_OF_IF
+        HideChar tutor
+      ELSE
+        IF_ORDER 2 1
+          ShowChar richgirl left
+          Say "Hm. I'm winning without even trying. Is that all you guys got?"
+          IF_ORDER 0 2
+            ShowChar tutor right
+            Say "Hey, newbie, you're not too far behind. Go catch her!"
+            HideChar tutor
+          END_OF_IF
+          IF_ORDER 1 2
+            ShowChar tutor right
+            Say "Don't push me lady. I think you're scared."
+            SayChar richgirl "Yes, I'm afraid of being bored to death. Oh well. Let's go fly round three."
+            HideChar tutor
+          END_OF_IF
+          IF_ORDER 3 2
+            ShowChar halfbreed right
+            Say "Kh. Kh fwr'z."
+            HideChar halfbreed
+          END_OF_IF
+          HideChar richgirl
+        ELSE
+          IF_ORDER 3 1
+            ShowChar halfbreed left
+            Say "...!"
+            IF_ORDER 0 2
+              ShowChar tutor right
+              Say "Aw, stripey is getting away. At least my newbie is hanging in there."
+              HideChar tutor
+              ShowChar richgirl right
+              Say "Getting away from you, maybe. I'll pass them both in round three."
+              HideChar richgirl
+            END_OF_IF
+            IF_ORDER 1 2
+              ShowChar tutor right
+              Say "Maybe so, stripey, but you won't have the last word!"
+              HideChar tutor
+            END_OF_IF
+            IF_ORDER 2 2
+              ShowChar richgirl right
+              Say "Let's not exaggerate, alien. I'll be red-shifting past you so fast, you won't know what color you are."
+              HideChar richgirl
+            END_OF_IF
+            HideChar halfbreed
+          END_OF_IF
+        END_OF_IF
+      END_OF_IF
+    END_OF_IF
+    HideDlgScene
+    RETURN
+    LABEL frRound3
+    RESET frHBfirst
+    RESET frRGfirst
+    SET finalRaceFinished
+    IF_ORDER 2 1
+      SET frRGfirst
+      ChangeChar richgirl campaign/rich-smile.png
+      ShowChar richgirl left
+      Say "Yesss! I did it!"
+      Delay 500
+      ChangeChar richgirl campaign/rich-bored.png
+      Delay 200
+      Say "I mean ... as expected, of course."
+      Say "Not bad, guys. Practice for a few more years and you might even become a challenge."
+      Delay 200
+      ChangeChar richgirl campaign/rich-smile.png
+      Delay 600
+      ChangeChar richgirl campaign/rich-smile-cheer.png
+      Delay 400
+      ChangeChar richgirl campaign/rich-smile.png
+    ELSE
+      IF_ORDER 3 1
+        SET frHBfirst
+        ShowChar halfbreed left
+        Say "... ... !"
+        Say "H' khwk!"
+        Say "I wins / is the victor / takes first prize!"
+      END_OF_IF
+    END_OF_IF
+    ShowChar tutor right
+    IF_ORDER 0 1
+      IF_ORDER 1 2
+        Say "Congratulations, newbie!"
+        Say "We both had good runs, but yours was a little better."
+      ELSE
+        Say "Congratulations, newbie!"
+        Say "Things didn't go so well for me, personally, but you showed us all!"
+      END_OF_IF
+      SET finalRaceWon
+    ELSE
+      IF_ORDER 0 2
+        IF_ORDER 1 1
+          Say "Yeah! I finally won!"
+          Say "You did pretty good, too, newbie. But I guess I did a little better."
+        ELSE
+          Say "Yeah. Nice flying."
+          Say "But my newbie did a good job, too. Second place. Not bad!"
+        END_OF_IF
+      ELSE
+        IF_ORDER 1 1
+          Say "Yeah! I finally won!"
+          Say "Sorry you didn't do as well as you hoped, newbie. But it was still pretty good for your first try."
+        ELSE
+          IF_ORDER 1 2
+            Say "Ahh! I was this close. Oh well. Congratulations."
+            Say "Hey, newbie, sorry you didn't do as well as you hoped. But that was still pretty good for your first try."
+          ELSE
+            Say "Congratulations."
+            Say "I guess the newbie and I had a pretty rough time of it."
+          END_OF_IF
+        END_OF_IF
+      END_OF_IF
+    END_OF_IF
+    IF frHBfirst
+      Delay 300
+      HideChar halfbreed
+      Delay 300
+    END_OF_IF
+    IFNOT frRGfirst
+      ShowChar richgirl left
+    END_OF_IF
+    IF_ORDER 2 2
+      Say "Yes. Congratulations. I thought that this time I'd settle for second place so someone else could see what winning is like."
+    END_OF_IF
+    IF_ORDER 2 3
+      Say "Congratulations. I was just flying for fun this time."
+      Say "Actually, I was aiming for last place, but I'm so good that even when I don't try, I still finish ahead of someone."
+    END_OF_IF
+    IF_ORDER 2 4
+      Say "I decided to hold back this year so I could see how the three of you would do without my interference."
+      Say "Of course, it turned out just as I expected. Congratulations."
+    END_OF_IF
+    IFNOT frHBfirst
+      HideChar richgirl
+      Delay 300
+      ShowChar halfbreed left
+      Say "K'ngrtl's!"
+      Say "..."
+    END_OF_IF
+    Delay 800
+    SayChar tutor "Well, that was a great race."
+    SayChar tutor "I guess you're all pretty good truckers. In fact, you're so good that ..."
+    SayChar tutor "I'm buying pizza for everyone!"
     Delay 300
-    HideChar halfbreed
+    HideChar tutor
     Delay 300
-  END_OF_IF
-  IFNOT frRGfirst
-    ShowChar richgirl left
-  END_OF_IF
-  IF_ORDER 2 2
-    Say "Yes. Congratulations. I thought that this time I'd settle for second place so someone else could see what winning is like."
-  END_OF_IF
-  IF_ORDER 2 3
-    Say "Congratulations. I was just flying for fun this time."
-    Say "Actually, I was aiming for last place, but I'm so good that even when I don't try, I still finish ahead of someone."
-  END_OF_IF
-  IF_ORDER 2 4
-    Say "I decided to hold back this year so I could see how the three of you would do without my interference."
-    Say "Of course, it turned out just as I expected. Congratulations."
-  END_OF_IF
-  IFNOT frHBfirst
-    HideChar richgirl
-    Delay 300
-    ShowChar halfbreed left
-    Say "K'ngrtl's!"
-    Say "..."
-  END_OF_IF
-  Delay 800
-  SayChar tutor "Well, that was a great race."
-  SayChar tutor "I guess you're all pretty good truckers. In fact, you're so good that ..."
-  SayChar tutor "I'm buying pizza for everyone!"
-  Delay 300
-  HideChar tutor
-  Delay 300
-  IFNOT frHBfirst
-    HideChar halfbreed
-  ELSE
-    HideChar richgirl
-  END_OF_IF
-  HideDlgScene
-END_OF_SCRIPT
+    IFNOT frHBfirst
+      HideChar halfbreed
+    ELSE
+      HideChar richgirl
+    END_OF_IF
+    HideDlgScene
+  END_OF_SCRIPT
 
 END_OF_SCRIPTS

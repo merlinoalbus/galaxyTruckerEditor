@@ -33,7 +33,8 @@ app.use(cors({
   origin: [
     'http://localhost:3000',
     'http://localhost:3002',
-    'http://localhost'
+    'http://localhost',
+    'https://galaxytruckereditor.nasmerlinoalbus.cloud'
   ],
   credentials: true
 }));
