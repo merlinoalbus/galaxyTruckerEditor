@@ -37,10 +37,8 @@ RUN npm ci --only=production && npm cache clean --force
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nodejs -u 1001
 
-# Copia solo i file necessari (escluso GAMEFOLDER)
-COPY --chown=nodejs:nodejs server.js ./
-COPY --chown=nodejs:nodejs scripts/ ./scripts/
-COPY --chown=nodejs:nodejs tools/ ./tools/
+# Copia tutto il codice sorgente (escluso GAMEFOLDER tramite .dockerignore)
+COPY --chown=nodejs:nodejs . .
 
 # Crea directory per il mount point del volume esterno GAMEFOLDER
 RUN mkdir -p /app/server/GAMEFOLDER && chown -R nodejs:nodejs /app/server/GAMEFOLDER
