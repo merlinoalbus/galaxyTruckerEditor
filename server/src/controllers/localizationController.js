@@ -726,16 +726,18 @@ class LocalizationController {
           
           // Aggiorna caption se presente
           if (translation.caption !== undefined && translation.caption !== '') {
-            // Pattern che cattura tutto il contenuto tra virgolette, gestendo correttamente apostrofi
-            const captionPattern = /(caption:\s*")([^"]*)(")|(caption:\s*')([^']*')(')/;
+            // Pattern che cattura tutto il contenuto tra virgolette, gestendo correttamente virgolette escaped
+            const captionPattern = /(caption:\s*")((?:\\.|[^"\\])*)(")|(caption:\s*')((?:\\.|[^'\\])*')(')/;
             if (captionPattern.test(nodeContent)) {
               nodeContent = nodeContent.replace(captionPattern, (match, p1, p2, p3, p4, p5, p6) => {
                 if (p1) {
-                  // Caso con virgolette doppie
-                  return `${p1}${translation.caption}${p3}`;
+                  // Caso con virgolette doppie - escape le virgolette interne
+                  const escapedCaption = translation.caption.replace(/"/g, '\\"');
+                  return `${p1}${escapedCaption}${p3}`;
                 } else {
-                  // Caso con virgolette singole
-                  return `${p4}${translation.caption}${p6}`;
+                  // Caso con virgolette singole - escape gli apostrofi interni
+                  const escapedCaption = translation.caption.replace(/'/g, "\\'");
+                  return `${p4}${escapedCaption}${p6}`;
                 }
               });
             }
@@ -743,16 +745,18 @@ class LocalizationController {
           
           // Aggiorna description se presente
           if (translation.description !== undefined && translation.description !== '') {
-            // Pattern che cattura tutto il contenuto tra virgolette, gestendo correttamente apostrofi
-            const descriptionPattern = /(description:\s*")([^"]*)(")|(description:\s*')([^']*')(')/;
+            // Pattern che cattura tutto il contenuto tra virgolette, gestendo correttamente virgolette escaped
+            const descriptionPattern = /(description:\s*")((?:\\.|[^"\\])*)(")|(description:\s*')((?:\\.|[^'\\])*')(')/;
             if (descriptionPattern.test(nodeContent)) {
               nodeContent = nodeContent.replace(descriptionPattern, (match, p1, p2, p3, p4, p5, p6) => {
                 if (p1) {
-                  // Caso con virgolette doppie
-                  return `${p1}${translation.description}${p3}`;
+                  // Caso con virgolette doppie - escape le virgolette interne
+                  const escapedDescription = translation.description.replace(/"/g, '\\"');
+                  return `${p1}${escapedDescription}${p3}`;
                 } else {
-                  // Caso con virgolette singole
-                  return `${p4}${translation.description}${p6}`;
+                  // Caso con virgolette singole - escape gli apostrofi interni
+                  const escapedDescription = translation.description.replace(/'/g, "\\'");
+                  return `${p4}${escapedDescription}${p6}`;
                 }
               });
             }
