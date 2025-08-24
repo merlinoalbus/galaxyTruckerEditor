@@ -221,8 +221,7 @@ SingleArtifactText1: "Alien-Artefakte gibt es entweder einzeln oder als Doppel. 
 DoubleArtifactTitle: "Doppel-Artefakt"
 DoubleArtifactText1: "Ein Doppel-Artefakt erzeugt einen Totalausfall, der jedes Bauteil in seiner Reihe UND Spalte betrifft."
 ArtifactsDeadZoneTitle: "Totalausfall durch Artefakt"
-ArtifactsDeadZoneText1: "Wo das Artefakt einen Totalausfall erzeugt, funktionieren, einfach ausgedrückt, keine Bauteile mehr und du kannst weder Astronauten, Aliens, Batterien oder 
-Waren dort haben. Kanonen, Katapulte und Motoren zählen dort nicht zu deiner Stärke und können nicht schießen, usw."
+ArtifactsDeadZoneText1: "Wo das Artefakt einen Totalausfall erzeugt, funktionieren, einfach ausgedrückt, keine Bauteile mehr und du kannst weder Astronauten, Aliens, Batterien oder  Waren dort haben. Kanonen, Katapulte und Motoren zählen dort nicht zu deiner Stärke und können nicht schießen, usw."
 ArtifactsDeadZoneText2: "Alle Anschlüsse, unzerstörbare Platten und spezielle Frachtbauteile funktionieren weiterhin normal."
 ArtifactsDeadZoneText3: "Ein Artefakt darf nicht innerhalb des Bereichs des Totalausfalls eines anderen Artefakts liegen."
 CannonEngineCombinedTitle: "Kanonenmotor"

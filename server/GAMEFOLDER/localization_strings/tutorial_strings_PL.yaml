@@ -76,9 +76,7 @@ EnginesLimitationsText1: "Silniki muszą być skierowane do tyłu."
 EnginesLimitationsText2: "Pole za dyszą silnika musi być puste."
 EnginesLimitationsText3: "Najlepiej umieszczać silniki z tyłu statku."
 CargoTitle: "Ładownie"
-CargoText1: "Ładownie zapewniają przestrzeń, w której
-będziesz przechowywać zdobywane podczas
-podróży cenne towary."
+CargoText1: "Ładownie zapewniają przestrzeń, w której będziesz przechowywać zdobywane podczas podróży cenne towary."
 CargoText2: "Im więcej masz ładowni na statku, tym lepiej."
 SpecialCargoTitle: "Ładownie specjalne"
 SpecialCargoText1: "Czerwone towary są najcenniejsze. Można je załadować tylko do specjalnych (czerwonych) ładowni."

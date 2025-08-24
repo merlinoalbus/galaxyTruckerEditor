@@ -96,67 +96,62 @@ SCRIPT campaignIntro
     CenterMapByNode newbie
   END_OF_IF
 END_OF_SCRIPT
-
-SCRIPT tutorialIntro
-
-  ShowDlgScene
-  Delay 500
-  ShowChar tutor right
-  Delay 500
-  IF_FROM_CAMPAIGN
-    Say "Bienvenue dans l'entrepôt de Corporation Incorporated."
-    Say "C'est ici que vous construirez votre vaisseau."
-  ELSE
-    Say "Bonjour. Je serai votre instructeur. 
- (Cliquez n'importe où pour continuer.)"
-    Ask "Êtes-vous [g(prêt|prête)] à apprendre les rudiments du transport spatial ? 
- (Choisissez une réponse.)"
-    MENU
-      OPT "Chef, oui, chef !"
-        Say "Bon esprit, ça !"
-        EXIT_MENU
-      END_OF_OPT
-      OPT "Ouais, peu importe."
-        Say "Eh, un peu de sérieux ! C'est un véritable vaisseau spatial que vous allez construire."
-        EXIT_MENU
-      END_OF_OPT
-      OPT "Euh... ce n'est pas vraiment là que je voulais aller. Je peux partir ?"
-        Say "*Soupir*"
-        Delay 300
-        Delay 300
-        Say "Hé les gars, en voici encore [g(un|une)]. Jetez-[g(le|la)] dehors."
-        HideChar tutor
-        HideDlgScene
-        QuitCampaign
-        RETURN
-      END_OF_OPT
-    END_OF_MENU
-  END_OF_IF
-  Delay 300
-  ChangeChar tutor campaign/tutor-out.png
-  Delay 400
-  Say "Allez, vieil homme : montre-nous tes diapos !"
-  Delay 300
-  ChangeChar tutor campaign/tutor.png
-  Delay 300
-  HideChar tutor
-  HideDlgScene
-  AddInfoWindow "tutorial/infoGameGoal.png"
-  AddInfoWindow "tutorial/infoGameGoal2.png"
-  AddInfoWindow "tutorial/infoGameGoal3.png"
-  AddInfoWindow "tutorial/infoGameGoal4.png"
-  ShowInfoWindow "tutorial/infoGameGoal.png"
-  ShowDlgScene
-  ChangeChar tutor campaign/tutor.png
-  ShowChar tutor right
-  Say "Facile, non ? Commençons."
-  Say "Je garde un œil sur vous au cas où vous auriez besoin d'aide."
-  Delay 300
-  HideChar tutor
-  Delay 300
-  HideDlgScene
-END_OF_SCRIPT
-
+  SCRIPT tutorialIntro
+    ShowDlgScene
+    Delay 500
+    ShowChar tutor right
+    Delay 500
+    IF_FROM_CAMPAIGN
+      Say "Bienvenue dans l'entrepôt de Corporation Incorporated."
+      Say "C'est ici que vous construirez votre vaisseau."
+    ELSE
+      Say "Hello. I'm here to be your flight instructor.                                                                                         ([v(tap|click)] anywhere to continue)"
+      Ask "Are you ready to learn the basics of galaxy trucking?                                                      (choose an answer)"
+      MENU
+        OPT "Sir, yes, sir!"
+          Say "Good spirit!"
+          EXIT_MENU
+        END_OF_OPT
+        OPT "Yeah, whatever."
+          Say "Hey, perk up! You're gonna build an actual space ship."
+          EXIT_MENU
+        END_OF_OPT
+        OPT "Um ... this isn't where I wanted to be. Can I leave?"
+          Say "*Sigh*"
+          Delay 300
+          Delay 300
+          Say "Hey, guys, we have another one. Throw [g(him|her)] out."
+          HideChar tutor
+          HideDlgScene
+          QuitCampaign
+          RETURN
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_IF
+    Delay 300
+    ChangeChar tutor campaign/tutor-out.png
+    Delay 400
+    Say "Allez, vieil homme : montre-nous tes diapos !"
+    Delay 300
+    ChangeChar tutor campaign/tutor.png
+    Delay 300
+    HideChar tutor
+    HideDlgScene
+    AddInfoWindow tutorial/infoGameGoal.png
+    AddInfoWindow tutorial/infoGameGoal2.png
+    AddInfoWindow tutorial/infoGameGoal3.png
+    AddInfoWindow tutorial/infoGameGoal4.png
+    ShowInfoWindow "tutorial/infoGameGoal.png"
+    ShowDlgScene
+    ChangeChar tutor campaign/tutor.png
+    ShowChar tutor right
+    Say "Facile, non ? Commençons."
+    Say "Je garde un œil sur vous au cas où vous auriez besoin d'aide."
+    Delay 300
+    HideChar tutor
+    Delay 300
+    HideDlgScene
+  END_OF_SCRIPT
 SCRIPT tutorialEngineWrong
 
   ShowDlgScene
@@ -168,32 +163,27 @@ SCRIPT tutorialEngineWrong
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
-SCRIPT tutorialEngineClever
-
-  ShowDlgScene
-  Delay 500
-  ShowChar tutor right
-  Delay 300
-  Say "Ah, vous êtes [g(malin|maline)] vous !"
-  Say "Laisser le moteur à l'autre place aurait rendu toute la moitié droite de votre vaisseau inaccessible."
-  Delay 300
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
-
-SCRIPT tutorialAIBuilding
-
-  ShowDlgScene
-  Delay 200
-  ShowChar tutor right
-  Delay 200
-  Say "Oui, c'est une jolie place pour des cargos containers. Vous vous débrouillez bien."
-  Say "Mais n'oubliez pas que dans le vrai jeu, vous êtes en compétition avec les autres joueurs pour les meilleures composants. Laissez-moi me joindre à vous."
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
-
+  SCRIPT tutorialEngineClever
+    ShowDlgScene
+    Delay 500
+    ShowChar tutor right
+    Delay 300
+    Say "Ah, vous êtes [g(malin|maline)] vous !"
+    Say "Laisser le moteur à l'autre place aurait rendu toute la moitié droite de votre vaisseau inaccessible."
+    Delay 300
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
+  SCRIPT tutorialAIBuilding
+    ShowDlgScene
+    Delay 200
+    ShowChar tutor right
+    Delay 200
+    Say "Oui, c'est une jolie place pour des cargos containers. Vous vous débrouillez bien."
+    Say "Mais n'oubliez pas que dans le vrai jeu, vous êtes en compétition avec les autres joueurs pour les meilleures composants. Laissez-moi me joindre à vous."
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
 SCRIPT tutorialFlightIntro
 
   ShowDlgScene
@@ -228,13 +218,11 @@ SCRIPT tutorialFlightIntro
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialFlightViews
 
   AddInfoWindow "tutorial/infoFlightViews.png"
   ShowInfoWindow "tutorial/infoFlightViews.png"
 END_OF_SCRIPT
-
 SCRIPT tutorialFlightAdvCards
 
   ShowDlgScene
@@ -246,7 +234,6 @@ SCRIPT tutorialFlightAdvCards
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialPlanetsHasRed
 
   ShowDlgScene
@@ -259,7 +246,6 @@ SCRIPT tutorialPlanetsHasRed
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialPlanetsHasNoRed
 
   ShowDlgScene
@@ -272,7 +258,6 @@ SCRIPT tutorialPlanetsHasNoRed
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialPlanetLanding
 
   ShowDlgScene
@@ -286,7 +271,6 @@ SCRIPT tutorialPlanetLanding
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialCardInfo
 
   ShowDlgScene
@@ -298,7 +282,6 @@ SCRIPT tutorialCardInfo
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialAbandonedStation
 
   ShowDlgScene
@@ -321,7 +304,6 @@ SCRIPT tutorialAbandonedStation
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialMeteoricInfo
 
   ShowDlgScene
@@ -333,7 +315,6 @@ SCRIPT tutorialMeteoricInfo
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialMeteor1
 
   ShowDlgScene
@@ -345,7 +326,6 @@ SCRIPT tutorialMeteor1
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialMeteor2
 
   ShowDlgScene
@@ -357,7 +337,6 @@ SCRIPT tutorialMeteor2
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialMeteor3
 
   ShowDlgScene
@@ -370,14 +349,12 @@ SCRIPT tutorialMeteor3
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialShieldsInfo
 
   AddInfoWindow "tutorial/infoShield.png"
   AddInfoWindow "tutorial/infoShield2.png"
   ShowInfoWindow "tutorial/infoShield.png"
 END_OF_SCRIPT
-
 SCRIPT tutorialMeteor4
 
   ShowDlgScene
@@ -389,7 +366,6 @@ SCRIPT tutorialMeteor4
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialMeteorFinal
 
   ShowDlgScene
@@ -422,7 +398,6 @@ SCRIPT tutorialMeteorFinal
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialResults
 
   ShowDlgScene
@@ -434,7 +409,6 @@ SCRIPT tutorialResults
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialFinishZero
 
   ShowDlgScene
@@ -446,7 +420,6 @@ SCRIPT tutorialFinishZero
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialFinishPlayerWon
 
   ShowDlgScene
@@ -462,7 +435,6 @@ SCRIPT tutorialFinishPlayerWon
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialFinishPlayerLost
 
   ShowDlgScene
@@ -477,7 +449,6 @@ SCRIPT tutorialFinishPlayerLost
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialFinal
 
   ShowDlgScene

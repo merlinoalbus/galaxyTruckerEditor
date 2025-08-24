@@ -1,158 +1,153 @@
 SCRIPTS
 
-SCRIPT campaignIntro
-
-  ShowDlgScene
-  Delay 1000
-  ShowChar tutor left
-  Delay 1000
-  RESET tutorialSeen
-  IF_TUTORIAL_SEEN
-    SET tutorialSeen
-  END_OF_IF
-  IFNOT tutorialSeen
-    Say "Hi, newbie. I'm here to be your flight instructor.                                                                          ([v(Tap|Click)] anywhere to continue.)"
-    Ask "So ... how much do you know about galaxy trucking?                                            (Choose an answer.)"
-  ELSE
-    Say "Hi, newbie. I'm here to be your flight instructor."
-    Ask "So ... how much do you know about galaxy trucking?"
-  END_OF_IF
-  MENU
-    OPT "Nothing at all."
-      Say "Don't worry."
-      Say "Corporation Incorporated has hired me to turn you into a first-rate galaxy trucker."
-      Ask "We have a nice tutorial for you."
-      SET playerIsBeginner
-      EXIT_MENU
-    END_OF_OPT
-    OPT "I know all about cardboard, but this digital version is new to me."
-      Say "Oh, this will be a piece of cake. The rules are pretty much the same."
-      Ask "And we have a tutorial for you."
-      SET playerIsAdvanced
-      EXIT_MENU
-    END_OF_OPT
-    OPT "Just let me in. I know everything!"
-      Say "Oh ... another one."
-      IF_TUTORIAL_SEEN
-        Say "([g(He|She|It)] already saw the tutorial and now [g(he|she|it)] thinks [g(he|she|it)] knows everything.)"
-      END_OF_IF
-      SET playerIsCocky
-      SET tutorialRefused
-      Say "Take a shuttle to Port Newbie space station. I'll meet you there."
-      GO campaignIntroEnd
-    END_OF_OPT
-  END_OF_MENU
-  MENU
-    OPT "Cool. I'm ready for the tutorial."
-      Say "Good."
-      SET tutorialAsked
-      EXIT_MENU
-    END_OF_OPT
-    OPT_IF tutorialSeen "We'll, I've seen the tutorial already. But let's try it again."
-      Say "Good choice."
-      SET tutorialAsked
-      EXIT_MENU
-    END_OF_OPT
-    OPT_IF tutorialSeen "Thanks, but I've already seen the tutorial."
-      Say "Oh, okay."
-      Say "(I thought I knew you from somewhere.)"
-      Say "Let's just go straight to Port Newbie space station, then."
-      SET tutorialSkipped
-      GO campaignIntroEnd
-    END_OF_OPT
-    OPT_IFNOT tutorialSeen "I hate tutorials. Just let me in."
-      Say "Are you sure?"
-      Say "It's the best way to learn the game."
-      Say "And we get to fly together to Port Newbie space station."
-      Ask "It'll be fun."
-      MENU
-        OPT "Oh, all right. Let's do it."
-          Say "Good answer."
-          SET tutorialAsked
-          EXIT_MENU
-        END_OF_OPT
-        OPT "No thanks."
-          SET tutorialRefused
-          Say "Your loss."
-          Say "Take a shuttle to Port Newbie. I'll meet you there."
-          GO campaignIntroEnd
-        END_OF_OPT
-      END_OF_MENU
-    END_OF_OPT
-  END_OF_MENU
-
-  LABEL campaignIntroEnd
-  Delay 300
-  HideChar tutor
-  Delay 300
-  HideDlgScene
-  SUB_SCRIPT newbie_init
-  IF tutorialAsked
-    ACT_MISSION Tutorial
-    SetCredits 0
-  ELSE
-    CenterMapByNode newbie
-  END_OF_IF
-END_OF_SCRIPT
-
-SCRIPT tutorialIntro
-
-  ShowDlgScene
-  Delay 500
-  ShowChar tutor right
-  Delay 500
-  IF_FROM_CAMPAIGN
-    Say "Welcome to the warehouse of Corporation Incorporated."
-    Say "This is where you build your ship."
-  ELSE
-    Say "Hello. I'm here to be your flight instructor.                                                                                         ([v(tap|click)] anywhere to continue)"
-    Ask "Are you ready to learn the basics of galaxy trucking?                                                      (choose an answer)"
+  SCRIPT campaignIntro
+    ShowDlgScene
+    Delay 1000
+    ShowChar tutor left
+    Delay 1000
+    RESET tutorialSeen
+    IF_TUTORIAL_SEEN
+      SET tutorialSeen
+    END_OF_IF
+    IFNOT tutorialSeen
+      Say "Ciao, novellin[g(o|a)]. Sono qui per essere il tuo istruttore di volo.                                                                       ([v(Tappa|Clicca)] dove vuoi per continuare.)"
+      Ask "Allora... dimmi un po'... quanto ne sai di trasporti galattici?                                                   (Scegli una risposta.)"
+    ELSE
+      Say "Ciao, novellin[g(o|a)]. Sono qui per essere il tuo istruttore di volo."
+      Ask "Allora... dimmi un po'... quanto ne sai di trasporti galattici?"
+    END_OF_IF
     MENU
-      OPT "Sir, yes, sir!"
-        Say "Good spirit!"
+      OPT "Sono tabula rasa."
+        Say "Non preoccuparti."
+        Say "EssePiA S.p.A. mi ha assunto per trasformarti in un[g(|a)] camionista galattic[g(o|a)] di prim'ordine."
+        Ask "Abbiamo preparato un bellissimo tutorial apposta per te."
+        SET playerIsBeginner
         EXIT_MENU
       END_OF_OPT
-      OPT "Yeah, whatever."
-        Say "Hey, perk up! You're gonna build an actual space ship."
+      OPT "Conosco il gioco da tavola alla perfezione, ma questa versione digitale è nuova per me."
+        Say "Oh, sarà una passeggiata. Le regole sono praticamente le stesse."
+        Ask "Ed abbiamo anche un tutorial per te."
+        SET playerIsAdvanced
         EXIT_MENU
       END_OF_OPT
-      OPT "Um ... this isn't where I wanted to be. Can I leave?"
-        Say "*Sigh*"
-        Delay 300
-        Delay 300
-        Say "Hey, guys, we have another one. Throw [g(him|her)] out."
-        HideChar tutor
-        HideDlgScene
-        QuitCampaign
-        RETURN
+      OPT "Dimmi solo da che parte si inizia. So già tutto!"
+        Say "Oh... eccone un[g( altro|'altra)]..."
+        IF_TUTORIAL_SEEN
+          Say "(Un[g( altro|'altra)] che solo perchè ha già visto il tutorial una volta, pensa di sapere tutto.)"
+        END_OF_IF
+        SET playerIsCocky
+        SET tutorialRefused
+        Say "Prendi una navetta per l'Astroporto dei Novellini. Ci rivediamo lì."
+        GO campaignIntroEnd
       END_OF_OPT
     END_OF_MENU
-  END_OF_IF
-  Delay 300
-  ChangeChar tutor campaign/tutor-out.png
-  Delay 400
-  Say "Hey, old man: Show us your infographics!"
-  Delay 300
-  ChangeChar tutor campaign/tutor.png
-  Delay 300
-  HideChar tutor
-  HideDlgScene
-  AddInfoWindow "tutorial/infoGameGoal.png"
-  AddInfoWindow "tutorial/infoGameGoal2.png"
-  AddInfoWindow "tutorial/infoGameGoal3.png"
-  AddInfoWindow "tutorial/infoGameGoal4.png"
-  ShowInfoWindow "tutorial/infoGameGoal.png"
-  ShowDlgScene
-  ChangeChar tutor campaign/tutor.png
-  ShowChar tutor right
-  Say "Simple, right? Let's start."
-  Say "I'll keep an eye on you in case you need help."
-  Delay 300
-  HideChar tutor
-  Delay 300
-  HideDlgScene
-END_OF_SCRIPT
-
+    MENU
+      OPT "Figo. Sono pront[g(o|a)] per il tutorial."
+        Say "Bene."
+        SET tutorialAsked
+        EXIT_MENU
+      END_OF_OPT
+      OPT_IF tutorialSeen "Beh, in realtà il Tutorial l'avrei già visto... ma rivediamolo di nuovo."
+        Say "Saggia scelta."
+        SET tutorialAsked
+        EXIT_MENU
+      END_OF_OPT
+      OPT_IF tutorialSeen "Ti ringrazio, ma ho già visto questo tutorial."
+        Say "Ah, ok."
+        Say "(Mi sembrava in effetti un volto familiare.)"
+        Say "Andiamo direttamente l'Astroporto dei Novellini, allora."
+        SET tutorialSkipped
+        GO campaignIntroEnd
+      END_OF_OPT
+      OPT_IFNOT tutorialSeen "Odio i tutorial. Dimmi solo da che parte andare."
+        Say "Sei sicur[g(o|a)]?"
+        Say "È il modo migliore per imparare il gioco..."
+        Say "...e voleremmo insieme fino all'Astroporto dei Novellini."
+        Ask "Sarà divertente."
+        MENU
+          OPT "Oh, va bene, mi hai convinto. Facciamolo."
+            Say "Ottima scelta."
+            SET tutorialAsked
+            EXIT_MENU
+          END_OF_OPT
+          OPT "No, grazie."
+            SET tutorialRefused
+            Say "Come vuoi."
+            Say "In questo caso, prendi una navetta per l'Astroporto dei Novellini. Ci vedremo direttamente lì."
+            GO campaignIntroEnd
+          END_OF_OPT
+        END_OF_MENU
+      END_OF_OPT
+    END_OF_MENU
+    LABEL campaignIntroEnd
+    Delay 300
+    HideChar tutor
+    Delay 300
+    HideDlgScene
+    SUB_SCRIPT newbie_init
+    IF tutorialAsked
+      ACT_MISSION Tutorial
+      SetCredits 0
+    ELSE
+      CenterMapByNode newbie
+    END_OF_IF
+  END_OF_SCRIPT
+  SCRIPT tutorialIntro
+    ShowDlgScene
+    Delay 500
+    ShowChar tutor right
+    Delay 500
+    IF_FROM_CAMPAIGN
+      Say "Benvenut[g(o|a)] nel deposito dell'EssePiA S.p.A."
+      Say "Qui è dove costruirai la tua prima astronave."
+    ELSE
+      Say "Ciao novizi[g(o|a)]. Sono qui per farti da istruttore di volo. ([v(Tap|Clicc)]a dove preferisci per continuare)"
+      Ask "Sei pront[g(o|a)] ad imparare i fondamenti del trasporto intergalattico? (scegli una risposta)"
+      MENU
+        OPT "Signorsì, signore!"
+          Say "Questo è lo spirito giusto!"
+          EXIT_MENU
+        END_OF_OPT
+        OPT "Sì, beh... come vuoi."
+          Say "Ehi, un po' di entusiasmo! Stai per costruire una vera astronave!"
+          EXIT_MENU
+        END_OF_OPT
+        OPT "Ehm... ad essere sincer[g(o|a)] non dovrei essere qui. Posso andare?"
+          Say "*Sospiro*"
+          Delay 300
+          Delay 300
+          Say "Ehi ragazzi, qui ce ne sta un[g( altro|'altra)]. Buttate[g(lo|la)] fuori."
+          HideChar tutor
+          HideDlgScene
+          QuitCampaign
+          RETURN
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_IF
+    Delay 300
+    ChangeChar tutor campaign/tutor-out.png
+    Delay 400
+    Say "Ehi, nonno: vai con le tue diapositive!"
+    Delay 300
+    ChangeChar tutor campaign/tutor.png
+    Delay 300
+    HideChar tutor
+    HideDlgScene
+    AddInfoWindow tutorial/infoGameGoal.png
+    AddInfoWindow tutorial/infoGameGoal2.png
+    AddInfoWindow tutorial/infoGameGoal3.png
+    AddInfoWindow tutorial/infoGameGoal4.png
+    ShowInfoWindow "tutorial/infoGameGoal.png"
+    ShowDlgScene
+    ChangeChar tutor campaign/tutor.png
+    ShowChar tutor right
+    Say "Semplice, vero? Iniziamo."
+    Say "Ti terrò d'occhio nel caso avessi bisogno di aiuto."
+    Delay 300
+    HideChar tutor
+    Delay 300
+    HideDlgScene
+  END_OF_SCRIPT
 SCRIPT tutorialEngineWrong
 
   ShowDlgScene
@@ -164,32 +159,27 @@ SCRIPT tutorialEngineWrong
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
-SCRIPT tutorialEngineClever
-
-  ShowDlgScene
-  Delay 500
-  ShowChar tutor right
-  Delay 300
-  Say "Ah, you are clever!"
-  Say "Leaving the engine in that other square would have made the right half of your ship inaccessible."
-  Delay 300
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
-
-SCRIPT tutorialAIBuilding
-
-  ShowDlgScene
-  Delay 200
-  ShowChar tutor right
-  Delay 200
-  Say "Ha, nice place for the cargo hold. You are doing very well."
-  Say "But in the real game, you have to compete with others for the best tiles. I'll join you now."
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
-
+  SCRIPT tutorialEngineClever
+    ShowDlgScene
+    Delay 500
+    ShowChar tutor right
+    Delay 300
+    Say "Ah! Ah! Sei proprio furb[g(o|a)]!"
+    Say "Lasciare il motore in quell'altra casella avrebbe reso inaccessibile ed inutilizzabile tutto il lato destro della tua astronave!"
+    Delay 300
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
+  SCRIPT tutorialAIBuilding
+    ShowDlgScene
+    Delay 200
+    ShowChar tutor right
+    Delay 200
+    Say "Ah, proprio un bel posticino per metterci una stiva. Te la stai proprio cavando alla grande, eh eh!"
+    Say "Però in un vero round di volo, dovrai anche sgomitare con gli altri Camionisti per accaparrarti i componenti migliori. A questo punto inizio anch'io alle danze, Vedremo chi è il più furbo!"
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
 SCRIPT tutorialFlightIntro
 
   ShowDlgScene
@@ -224,25 +214,21 @@ SCRIPT tutorialFlightIntro
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialFlightViews
 
   AddInfoWindow "tutorial/infoFlightViews.png"
   ShowInfoWindow "tutorial/infoFlightViews.png"
 END_OF_SCRIPT
-
-SCRIPT tutorialFlightAdvCards
-
-  ShowDlgScene
-  Delay 200
-  ShowChar tutor left
-  Delay 200
-  Say "Truckers have a lot of adventures. Some are good, some are nasty."
-  Say "This one is good. We can pick up cargo on these planets."
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
-
+  SCRIPT tutorialFlightAdvCards
+    ShowDlgScene
+    Delay 200
+    ShowChar tutor left
+    Delay 200
+    Say "La vita di un[g(|a)] camionista è un susseguirsi di Avventure. Alcune belle, altre spiacevoli."
+    Say "Questa sembra essere una di quelle belle. Possiamo riempire le stive con le merci di questi pianeti."
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
 SCRIPT tutorialPlanetsHasRed
 
   ShowDlgScene
@@ -255,7 +241,6 @@ SCRIPT tutorialPlanetsHasRed
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialPlanetsHasNoRed
 
   ShowDlgScene
@@ -268,7 +253,6 @@ SCRIPT tutorialPlanetsHasNoRed
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialPlanetLanding
 
   ShowDlgScene
@@ -282,7 +266,6 @@ SCRIPT tutorialPlanetLanding
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialCardInfo
 
   ShowDlgScene
@@ -294,7 +277,6 @@ SCRIPT tutorialCardInfo
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialAbandonedStation
 
   ShowDlgScene
@@ -317,7 +299,6 @@ SCRIPT tutorialAbandonedStation
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialMeteoricInfo
 
   ShowDlgScene
@@ -329,7 +310,6 @@ SCRIPT tutorialMeteoricInfo
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialMeteor1
 
   ShowDlgScene
@@ -341,7 +321,6 @@ SCRIPT tutorialMeteor1
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialMeteor2
 
   ShowDlgScene
@@ -353,7 +332,6 @@ SCRIPT tutorialMeteor2
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialMeteor3
 
   ShowDlgScene
@@ -366,14 +344,12 @@ SCRIPT tutorialMeteor3
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialShieldsInfo
 
   AddInfoWindow "tutorial/infoShield.png"
   AddInfoWindow "tutorial/infoShield2.png"
   ShowInfoWindow "tutorial/infoShield.png"
 END_OF_SCRIPT
-
 SCRIPT tutorialMeteor4
 
   ShowDlgScene
@@ -385,7 +361,6 @@ SCRIPT tutorialMeteor4
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialMeteorFinal
 
   ShowDlgScene
@@ -418,19 +393,16 @@ SCRIPT tutorialMeteorFinal
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
-SCRIPT tutorialResults
-
-  ShowDlgScene
-  Delay 200
-  ShowChar tutor left
-  Delay 200
-  Say "Now we count up how much money we earned. I'd explain it to you, but I'd rather show you how to help yourself:"
-  Say "See the question mark in the upper right corner? Most screens have one. [v(Tapp|Click)]ing it brings up an explanation of the screen."
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
-
+  SCRIPT tutorialResults
+    ShowDlgScene
+    Delay 200
+    ShowChar tutor left
+    Delay 200
+    Say "Ora contiamo quanti soldi abbiamo guadagnato. Ti spiegherei il dettaglio di questo processo in modo dettagliato punto per punto, ma immagino tu possa anche cavartela da sol[g(o|a)]."
+    Say "Vedi quel punto interrogativo nell'angolo in alto a destra? La maggior parte delle schermate ne hanno uno. [v(Tappa|Clicca)]ndoci vedrai la spiegazione di dettaglio della schermata."
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
 SCRIPT tutorialFinishZero
 
   ShowDlgScene
@@ -442,7 +414,6 @@ SCRIPT tutorialFinishZero
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialFinishPlayerWon
 
   ShowDlgScene
@@ -458,7 +429,6 @@ SCRIPT tutorialFinishPlayerWon
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialFinishPlayerLost
 
   ShowDlgScene
@@ -473,7 +443,6 @@ SCRIPT tutorialFinishPlayerLost
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorialFinal
 
   ShowDlgScene
