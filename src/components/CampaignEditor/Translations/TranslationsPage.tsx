@@ -66,6 +66,7 @@ export const TranslationsPage: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState<'scripts' | 'missions' | 'strings' | 'nodes' | 'yaml-missions'>('scripts');
   const [missionsCoverage, setMissionsCoverage] = useState<any>(null);
   const [selectedMissions, setSelectedMissions] = useState<Set<string>>(new Set());
+  const [selectedMission, setSelectedMission] = useState<string | null>(null);
   const [missionDetails, setMissionDetails] = useState<any>(null);
   const [missionContent, setMissionContent] = useState<any>(null);
 
@@ -528,7 +529,7 @@ export const TranslationsPage: React.FC = () => {
     const clonedBlocks = JSON.parse(JSON.stringify(blocks)) as IFlowBlock[];
     
     // Determina il nome corrente (script o mission)
-    const currentName = selectedTab === 'scripts' ? selectedScript : (selectedMissions.size === 1 ? Array.from(selectedMissions)[0] : null);
+    const currentName = selectedTab === 'scripts' ? selectedScript : selectedMission;
     
     fields.forEach((field, idx) => {
       const key = `${currentName}|${idx}|${targetLang}`;
@@ -572,7 +573,7 @@ export const TranslationsPage: React.FC = () => {
     });
     
     return clonedBlocks;
-  }, [selectedScript, selectedMissions, selectedTab]);
+  }, [selectedScript, selectedMission, selectedTab]);
 
   // Funzione per salvare le modifiche
   const saveTranslations = useCallback(async () => {
@@ -779,7 +780,7 @@ export const TranslationsPage: React.FC = () => {
 
   // Funzione per salvare le modifiche alle missions
   const saveMissionTranslations = useCallback(async () => {
-    if (selectedMissions.size === 0 || !missionContent) {
+    if (!selectedMission || !missionContent) {
       alert('Errore: dati della mission non disponibili');
       return;
     }
@@ -883,7 +884,7 @@ export const TranslationsPage: React.FC = () => {
     } finally {
       setSaving(false);
     }
-  }, [selectedMissions, missionContent, translationFields, edits, selectedLang, applyEditsToBlocks, extractTranslationFields, calculateCoverageStats, missionDetails, ensureBlockIds]);
+  }, [selectedMission, missionContent, translationFields, edits, selectedLang, applyEditsToBlocks, extractTranslationFields, calculateCoverageStats, missionDetails, ensureBlockIds]);
 
   // Funzioni per salvare traduzioni nodes.yaml
   const saveNodesTranslations = useCallback(async () => {
@@ -1042,17 +1043,15 @@ export const TranslationsPage: React.FC = () => {
 
   // Carica dettagli mission quando selezionata
   useEffect(() => {
-    if (selectedMissions.size > 0 && selectedTab === 'missions') {
-      // Per ora carichiamo solo la prima missione selezionata per compatibilità
-      const firstSelected = Array.from(selectedMissions)[0];
-      loadMissionDetails(firstSelected);
-    } else if (selectedMissions.size === 0) {
+    if (selectedMission && selectedTab === 'missions') {
+      loadMissionDetails(selectedMission);
+    } else if (!selectedMission) {
       setMissionDetails(null);
       setMissionContent(null);
       setTranslationFields([]);
       setEdits({});
     }
-  }, [selectedMissions, selectedTab, loadMissionDetails]);
+  }, [selectedMission, selectedTab, loadMissionDetails]);
 
   const scriptsSorted = useMemo(() => {
     if (!coverage) return [] as CoverageResponse['data']['perScript'];
@@ -1090,7 +1089,7 @@ export const TranslationsPage: React.FC = () => {
 
     let dynamicCovered = baseCovered;
     const relevantDetails = selectedTab === 'scripts' && selectedScript === itemName ? scriptDetails 
-                          : selectedTab === 'missions' && selectedMissions.has(itemName) ? missionDetails 
+                          : selectedTab === 'missions' && selectedMission === itemName ? missionDetails 
                           : null;
 
     if (relevantDetails?.details) {
@@ -1120,7 +1119,7 @@ export const TranslationsPage: React.FC = () => {
 
     const dynamicPercent = baseTotal > 0 ? Math.round((dynamicCovered / baseTotal) * 100) : 100;
     return { percent: dynamicPercent, covered: dynamicCovered, totalFields: baseTotal };
-  }, [selectedTab, selectedScript, selectedMissions, scriptDetails, missionDetails, edits, selectedLang]);
+  }, [selectedTab, selectedScript, selectedMission, scriptDetails, missionDetails, edits, selectedLang]);
 
   if (loading) return <div className="p-6 text-gray-300">{t('common.loading')}</div>;
   if (error) return <div className="p-6 text-red-400">{t('common.error')}: {error}</div>;
@@ -1578,18 +1577,18 @@ export const TranslationsPage: React.FC = () => {
 
       {/* Content table */}
       <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
-        <table className="w-full text-left text-sm">
+        <table className="w-full text-left text-sm table-fixed">
           <thead className="bg-slate-900 text-gray-300">
             <tr>
-              <th className="px-3 py-2">
+              <th className="px-3 py-2 w-[60%]">
                 {selectedTab === 'scripts' ? 'Script' : 
                  selectedTab === 'missions' ? 'Mission' : 
                  selectedTab === 'strings' ? 'Category' :
                  selectedTab === 'nodes' ? 'Node' :
                  selectedTab === 'yaml-missions' ? 'Mission' : 'Item'}
               </th>
-              <th className="px-3 py-2">% {selectedLang}</th>
-              <th className="px-3 py-2">Azioni</th>
+              <th className="px-3 py-2 w-[20%]">% {selectedLang}</th>
+              <th className="px-3 py-2 w-[20%]">Azioni</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-700">
@@ -1607,7 +1606,7 @@ export const TranslationsPage: React.FC = () => {
                 isOpen = selectedScript === itemName;
               } else if (selectedTab === 'missions') {
                 itemName = item.mission || '';
-                isOpen = selectedMissions.has(itemName);
+                isOpen = selectedMission === itemName;
               } else if (selectedTab === 'strings') {
                 itemName = item.category || '';
                 isOpen = selectedCategory?.nome === itemName;
@@ -1621,8 +1620,8 @@ export const TranslationsPage: React.FC = () => {
               return (
                 <React.Fragment key={itemName}>
                   <tr className="hover:bg-slate-700/40">
-                    <td className="px-3 py-2 text-gray-200">{itemName}</td>
-                    <td className="px-3 py-2 text-gray-300">
+                    <td className="px-3 py-2 text-gray-200 w-[60%] truncate" title={itemName}>{itemName}</td>
+                    <td className="px-3 py-2 text-gray-300 w-[20%]">
                       {(() => {
                         const dynamicStats = calculateDynamicCoverage(itemName, d.percent, d.covered, d.totalFields);
                         return (
@@ -1638,7 +1637,7 @@ export const TranslationsPage: React.FC = () => {
                         );
                       })()}
                     </td>
-                    <td className="px-3 py-2 text-gray-300">
+                    <td className="px-3 py-2 text-gray-300 w-[20%]">
                       <div className="flex items-center space-x-2">
                         {/* Pulsanti SALVA e AI ALL - attivi solo se dettaglio aperto */}
                         {isOpen && (
@@ -1861,13 +1860,7 @@ export const TranslationsPage: React.FC = () => {
                           if (selectedTab === 'scripts') {
                             setSelectedScript(isOpen ? null : itemName);
                           } else if (selectedTab === 'missions') {
-                            const newSet = new Set(selectedMissions);
-                            if (isOpen) {
-                              newSet.delete(itemName);
-                            } else {
-                              newSet.add(itemName);
-                            }
-                            setSelectedMissions(newSet);
+                            setSelectedMission(isOpen ? null : itemName);
                           } else if (selectedTab === 'strings') {
                             // Per le strings, carichiamo la categoria
                             if (isOpen) {
@@ -1922,7 +1915,7 @@ export const TranslationsPage: React.FC = () => {
                   </tr>
                   {isOpen && 
                    ((selectedTab === 'scripts' && currentDetails && currentDetails.script === itemName) ||
-                    (selectedTab === 'missions' && selectedMissions.has(itemName) && currentDetails && currentDetails.script === itemName) ||
+                    (selectedTab === 'missions' && selectedMission === itemName && currentDetails && currentDetails.script === itemName) ||
                     (selectedTab === 'strings' && currentDetails && currentDetails.nome === itemName) ||
                     (selectedTab === 'nodes' && currentDetails && currentDetails.id === itemName) ||
                     (selectedTab === 'yaml-missions' && selectedYamlMissions.has(itemName))) && (
