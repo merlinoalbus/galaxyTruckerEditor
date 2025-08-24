@@ -37,7 +37,7 @@ git push
 VERSION=$(node -p "require('./package.json').version")
 echo "Building version: $VERSION"
 
-# Build Backend
+# Build Backend (GAMEFOLDER è escluso automaticamente)
 docker build -f server/Dockerfile -t ghcr.io/merlinoalbus/galaxy-trucker-backend:$VERSION ./server
 docker tag ghcr.io/merlinoalbus/galaxy-trucker-backend:$VERSION ghcr.io/merlinoalbus/galaxy-trucker-backend:latest
 
@@ -230,6 +230,8 @@ Prima di ogni release, verifica:
 - [ ] CHANGELOG aggiornato con le modifiche
 - [ ] Versione aggiornata in package.json
 - [ ] Docker images costruite correttamente
+- [ ] **Backend NON include GAMEFOLDER** (deve essere montato esternamente)
+- [ ] Volume mount su TrueNAS funziona correttamente
 - [ ] Test manuale delle funzionalità principali
 
 ## 🔍 Verifica Versione su TrueNAS

@@ -18,7 +18,7 @@ FROM base AS development
 # Installa tutte le dipendenze (incluse devDependencies)
 RUN npm ci
 
-# Copia il codice sorgente
+# Copia il codice sorgente (escluso GAMEFOLDER tramite .dockerignore)
 COPY . .
 
 # Espone la porta 3001
@@ -37,11 +37,13 @@ RUN npm ci --only=production && npm cache clean --force
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nodejs -u 1001
 
-# Copia il codice sorgente
-COPY --chown=nodejs:nodejs . .
+# Copia solo i file necessari (escluso GAMEFOLDER)
+COPY --chown=nodejs:nodejs server.js ./
+COPY --chown=nodejs:nodejs scripts/ ./scripts/
+COPY --chown=nodejs:nodejs tools/ ./tools/
 
-# Crea directory per il mount point del volume esterno
-RUN mkdir -p /galaxytrucker/game && chown -R nodejs:nodejs /galaxytrucker/game
+# Crea directory per il mount point del volume esterno GAMEFOLDER
+RUN mkdir -p /app/server/GAMEFOLDER && chown -R nodejs:nodejs /app/server/GAMEFOLDER
 
 # Espone la porta 3001 per il backend
 EXPOSE 3001
