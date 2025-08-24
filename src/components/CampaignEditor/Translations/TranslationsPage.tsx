@@ -1581,8 +1581,9 @@ export const TranslationsPage: React.FC = () => {
                     <td className="px-3 py-2 text-gray-200">{itemName}</td>
                     <td className="px-3 py-2 text-gray-300">{d.percent}% <span className="text-xs text-gray-500">({d.covered}/{d.totalFields})</span></td>
                     <td className="px-3 py-2 text-gray-300">
-                      <button 
-                        className="bg-slate-700 hover:bg-slate-600 text-white border border-slate-500 mr-2" 
+                      <div className="flex items-center space-x-2">
+                        <button 
+                          className="bg-slate-700 hover:bg-slate-600 text-white border border-slate-500" 
                         onClick={() => {
                           if (selectedTab === 'scripts') {
                             setSelectedScript(isOpen ? null : itemName);
@@ -1643,6 +1644,7 @@ export const TranslationsPage: React.FC = () => {
                           🎯
                         </button>
                       )}
+                      </div>
                     </td>
                   </tr>
                   {isOpen && 
