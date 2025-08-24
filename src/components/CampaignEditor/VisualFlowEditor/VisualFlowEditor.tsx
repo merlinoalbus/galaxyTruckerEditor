@@ -10,10 +10,12 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
 import { logger } from '@/utils/logger';
 import type { IFlowBlock, ValidationResult, ScriptContext, OpenedScript } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
-import { TIMEOUT_CONSTANTS, PERFORMANCE_CONSTANTS, UI_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
+import { TIMEOUT_CONSTANTS, PERFORMANCE_CONSTANTS, UI_CONSTANTS, SUPPORTED_LANGUAGES } from '@/constants/VisualFlowEditor.constants';
 import { API_CONFIG } from '@/config/constants';
+import { API_ENDPOINTS } from '@/config/constants';
 import { SceneProvider, useScene } from '@/contexts/SceneContext';
 import { ScriptMetadataProvider } from '@/contexts/ScriptMetadataContext';
+import { AchievementsImagesProvider } from '@/contexts/AchievementsImagesContext';
 
 // Import componenti modulari
 import { BlockRenderer } from './components/BlockRenderer/BlockRenderer';
@@ -61,6 +63,11 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
   const [showScriptsList, setShowScriptsList] = useState(false);
   const [showMissionsList, setShowMissionsList] = useState(false);
   const [showJsonView, setShowJsonView] = useState(false);
+  // AI All modal state
+  const [showAiAllModal, setShowAiAllModal] = useState(false);
+  const [aiAllTargetLang, setAiAllTargetLang] = useState<'EN' | 'IT' | 'DE' | 'ES' | 'FR' | 'PL' | 'CS' | 'RU'>('IT');
+  const [aiAllLoading, setAiAllLoading] = useState(false);
+  const [aiAllAppliedCount, setAiAllAppliedCount] = useState<number | null>(null);
   
   // Editor state
   const [currentScriptBlocks, setCurrentScriptBlocks] = useState<IFlowBlock[]>([]);
@@ -277,6 +284,19 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
     setCurrentScriptContext,
     currentScript
   });
+
+  // Listener globale per richieste di navigazione a script (es. dai blocchi HelpScript)
+  useEffect(() => {
+    const onNavigateToScript = (e: Event) => {
+      const detail = (e as CustomEvent)?.detail;
+      if (detail?.scriptName) {
+        // parentBlockId non è obbligatorio per la navigazione
+        handleNavigateToSubScript(detail.scriptName, { id: detail.parentBlockId || '', type: 'SUB_SCRIPT' } as any);
+      }
+    };
+    window.addEventListener('VFE:navigateToScript', onNavigateToScript as EventListener);
+    return () => window.removeEventListener('VFE:navigateToScript', onNavigateToScript as EventListener);
+  }, [handleNavigateToSubScript]);
 
   // Usa hook per drag & drop
   const {
@@ -684,11 +704,55 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
   ]);
 
   // Carica script se viene passato uno scriptId dal componente chiamante
+  // Usa una ref per evitare loop dovuti al cambio identità di loadScriptWithReset
+  const loadScriptWithResetRef = useRef(loadScriptWithReset);
+  useEffect(() => { loadScriptWithResetRef.current = loadScriptWithReset; }, [loadScriptWithReset]);
+  const lastLoadedScriptIdRef = useRef<string | null>(null);
   useEffect(() => {
-    if (scriptId) {
-      loadScriptWithReset(scriptId);
+    if (scriptId && scriptId !== lastLoadedScriptIdRef.current) {
+      lastLoadedScriptIdRef.current = scriptId;
+      loadScriptWithResetRef.current(scriptId);
     }
-  }, [scriptId, loadScriptWithReset]);
+  }, [scriptId]);
+
+  // Listener: carica script per nome (da pulsante esterno) e salta a label se richiesta
+  useEffect(() => {
+    const onLoadScriptWithElement = (e: Event) => {
+      const detail = (e as CustomEvent)?.detail || {};
+      const scriptName: string | undefined = detail.scriptName;
+      const elementName: string | undefined = detail.elementName;
+      if (!scriptName) return;
+      loadScriptWithReset(scriptName);
+      if (elementName) {
+        // Dai tempo al rendering
+        setTimeout(() => {
+          try { goToLabel(elementName); } catch {}
+        }, 200);
+      }
+    };
+    window.addEventListener('loadScriptWithElement', onLoadScriptWithElement as EventListener);
+    return () => window.removeEventListener('loadScriptWithElement', onLoadScriptWithElement as EventListener);
+  }, [loadScriptWithReset, goToLabel]);
+
+  // Listener: carica missione per nome quando richiesto da CampaignEditor (da Interactive Map)
+  useEffect(() => {
+    const onLoadMissionByName = (e: Event) => {
+      const detail = (e as CustomEvent)?.detail;
+      const missionName: string | undefined = detail?.missionName;
+      if (!missionName) return;
+      // Mission API accetta nome senza .txt
+      const clean = missionName.endsWith('.txt') ? missionName.slice(0, -4) : missionName;
+      if (clean !== (lastLoadedMissionRef.current || '')) {
+        lastLoadedMissionRef.current = clean;
+        loadMissionWithReset(clean);
+      }
+    };
+    window.addEventListener('VFE:loadMissionByName', onLoadMissionByName as EventListener);
+    return () => window.removeEventListener('VFE:loadMissionByName', onLoadMissionByName as EventListener);
+  }, [loadMissionWithReset]);
+
+  // Track ultima missione caricata per prevenire loop
+  const lastLoadedMissionRef = useRef<string | null>(null);
   
   // Salva lo script principale nella mappa quando viene caricato per la prima volta
   useEffect(() => {
@@ -970,6 +1034,7 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
             }
           }
         }}
+  onOpenAiAllModal={() => setShowAiAllModal(true)}
       />
 
       <ScriptsList
@@ -1069,6 +1134,202 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
         confirmNewScript={confirmNewScript}
         confirmNewMission={confirmNewMission}
       />
+
+      {/* Modal: Suggerisci AI All */}
+      {showAiAllModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="bg-slate-900 rounded-xl border border-slate-700 w-[90%] max-w-lg p-5 shadow-2xl">
+            <h3 className="text-lg font-semibold text-white mb-3">{(t as any)('visualFlowEditor.toolbar.aiAllTitle') || 'Suggerisci AI per tutti i testi'}</h3>
+            <p className="text-sm text-slate-300 mb-4">{(t as any)('visualFlowEditor.toolbar.aiAllSubtitle') || 'Scegli la lingua target e genera suggerimenti per tutti i campi multilingua basati su EN.'}</p>
+            <div className="flex items-center gap-3 mb-4">
+              <label className="text-sm text-slate-300">{(t as any)('visualFlowEditor.toolbar.targetLanguage') || 'Lingua target'}</label>
+              <select
+                className="px-3 py-2 bg-slate-800 text-white rounded border border-slate-700"
+                value={aiAllTargetLang}
+                onChange={(e) => setAiAllTargetLang(e.target.value as any)}
+                disabled={aiAllLoading}
+              >
+                {SUPPORTED_LANGUAGES.filter(l => l !== 'EN').map(l => (
+                  <option key={l} value={l}>{l}</option>
+                ))}
+              </select>
+            </div>
+            {aiAllAppliedCount !== null && (
+              <div className="mb-3 text-sm text-slate-300">
+                {(t as any)('visualFlowEditor.toolbar.aiAllApplied', { count: aiAllAppliedCount }) || `Suggerimenti applicati: ${aiAllAppliedCount}`}
+              </div>
+            )}
+            <div className="flex justify-end gap-2">
+              <button
+                className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded"
+                onClick={() => setShowAiAllModal(false)}
+                disabled={aiAllLoading}
+              >{(t as any)('common.cancel') || 'Annulla'}</button>
+              <button
+                className={`px-4 py-2 rounded text-white ${aiAllLoading ? 'bg-indigo-900 opacity-70' : 'bg-indigo-600 hover:bg-indigo-700'}`}
+                onClick={async () => {
+                  if (aiAllLoading) return;
+                  try {
+                    setAiAllLoading(true);
+                    setAiAllAppliedCount(null);
+                    // 1) Raccogli tutti i campi multilingua con testo EN e la relativa posizione per applicare
+                    type PathRef = { path: string[]; key: string; };
+                    const items: { textEN: string; metacodesDetected: string[] }[] = [];
+                    const refs: PathRef[] = [];
+                    const detectMetacodes = (s: string) => (s.match(/\[[^\]]+\]/g) || []);
+                    const scanValue = (val: any, path: string[], key: string) => {
+                      if (val && typeof val === 'object' && !Array.isArray(val)) {
+                        const hasEN = Object.prototype.hasOwnProperty.call(val, 'EN');
+                        const anyLang = Object.keys(val).some(k => SUPPORTED_LANGUAGES.includes(k as any));
+                        if (hasEN && anyLang) {
+                          const textEN = String(val.EN || '').trim();
+                          if (textEN) {
+                            items.push({ textEN, metacodesDetected: detectMetacodes(textEN) });
+                            refs.push({ path: [...path], key });
+                          }
+                        }
+                      }
+                    };
+                    const walkBlocks = (blocks: IFlowBlock[], basePath: string[] = []) => {
+                      for (let i = 0; i < blocks.length; i++) {
+                        const b = blocks[i];
+                        const p = [...basePath, String(i)];
+                        // campi multilingua a livello di blocco (es. OPT.text)
+                        if ((b as any).text && typeof (b as any).text === 'object' && !Array.isArray((b as any).text)) {
+                          scanValue((b as any).text, [...p], 'text');
+                        }
+                        // parametri noti multilingua
+                        if (b.parameters) {
+                          ['text'].forEach(paramKey => {
+                            if ((b.parameters as any)[paramKey] !== undefined) {
+                              scanValue((b.parameters as any)[paramKey], [...p, 'parameters'], paramKey);
+                            }
+                          });
+                          // generico: qualsiasi oggetto con chiavi lingua
+                          for (const [k, v] of Object.entries(b.parameters)) {
+                            if (k === 'text') continue; // già gestito sopra
+                            scanValue(v, [...p, 'parameters'], k);
+                          }
+                        }
+                        // ricorsione per contenitori
+                        if (b.children) walkBlocks(b.children, [...p, 'children']);
+                        if (b.type === 'IF') {
+                          if (b.thenBlocks) walkBlocks(b.thenBlocks, [...p, 'thenBlocks']);
+                          if (b.elseBlocks) walkBlocks(b.elseBlocks, [...p, 'elseBlocks']);
+                        }
+                        if (b.type === 'MISSION') {
+                          if (b.blocksMission) walkBlocks(b.blocksMission, [...p, 'blocksMission']);
+                          if (b.blocksFinish) walkBlocks(b.blocksFinish, [...p, 'blocksFinish']);
+                        }
+                        if (b.type === 'BUILD') {
+                          if (b.blockInit) walkBlocks(b.blockInit, [...p, 'blockInit']);
+                          if (b.blockStart) walkBlocks(b.blockStart, [...p, 'blockStart']);
+                        }
+                        if (b.type === 'FLIGHT') {
+                          if (b.blockInit) walkBlocks(b.blockInit, [...p, 'blockInit']);
+                          if (b.blockStart) walkBlocks(b.blockStart, [...p, 'blockStart']);
+                          if (b.blockEvaluate) walkBlocks(b.blockEvaluate, [...p, 'blockEvaluate']);
+                        }
+                      }
+                    };
+                    const sourceBlocks = (rootBlocks.length > 0 ? rootBlocks : currentScriptBlocks) || [];
+                    walkBlocks(sourceBlocks);
+                    if (items.length === 0) {
+                      setAiAllAppliedCount(0);
+                      // chiudi subito se non c'è nulla da applicare
+                      setShowAiAllModal(false);
+                      return;
+                    }
+                    // 2) Chiama endpoint batch
+                    const resp = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE_BATCH}`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ items, langTarget: aiAllTargetLang })
+                    });
+                    const j = await resp.json();
+                    if (!resp.ok || !j?.success) throw new Error(j?.message || 'AI batch failed');
+                    const suggestions: string[] = j.data?.suggestions || [];
+                    // 3) Applica i suggerimenti
+                    let applied = 0;
+          const applyOn = (base: any[]) => {
+                      const updated = JSON.parse(JSON.stringify(base));
+                      const getAtPath = (obj: any, path: string[]) => path.reduce((acc, part) => (acc ? acc[part] : undefined), obj);
+                      const setValue = (obj: any, path: string[], key: string, value: any) => {
+            const target = getAtPath(obj, path);
+            if (!target) return false;
+            // path punta già a ...['parameters'], quindi scrivi direttamente su target[key]
+            if (!target[key] || typeof target[key] !== 'object') target[key] = {};
+            (target[key] as any)[aiAllTargetLang] = value;
+            return true;
+                      };
+                      for (let i = 0; i < refs.length; i++) {
+                        const s = suggestions[i];
+                        if (typeof s === 'string' && s.length > 0) {
+                          if (setValue(updated, refs[i].path, refs[i].key, s)) applied++;
+                        }
+                      }
+                      return updated;
+                    };
+
+                    if (rootBlocks.length > 0) {
+                      // Applica al root quando siamo in zoom, poi riallinea il blocco corrente
+                      let updatedRoot: IFlowBlock[] = [];
+                      setRootBlocks(prevRoot => {
+                        updatedRoot = applyOn(prevRoot || []);
+                        return updatedRoot;
+                      });
+                      // Aggiorna la vista corrente puntando allo stesso blocco (per id) se possibile
+                      const findById = (blocks: any[], id: string): any | null => {
+                        for (const b of blocks) {
+                          if (b?.id === id) return b;
+                          const arrays: any[][] = [];
+                          if (b.children) arrays.push(b.children);
+                          if (b.thenBlocks) arrays.push(b.thenBlocks);
+                          if (b.elseBlocks) arrays.push(b.elseBlocks);
+                          if (b.blocksMission) arrays.push(b.blocksMission);
+                          if (b.blocksFinish) arrays.push(b.blocksFinish);
+                          if (b.blockInit) arrays.push(b.blockInit);
+                          if (b.blockStart) arrays.push(b.blockStart);
+                          if (b.blockEvaluate) arrays.push(b.blockEvaluate);
+                          for (const arr of arrays) {
+                            const res = findById(arr, id);
+                            if (res) return res;
+                          }
+                        }
+                        return null;
+                      };
+                      const focusedId = navigationPath?.[navigationPath.length - 1]?.id;
+                      if (focusedId) {
+                        const newFocused = findById(updatedRoot, focusedId);
+                        if (newFocused) {
+                          setCurrentScriptBlocks([newFocused]);
+                        } else {
+                          // fallback: mantieni i blocchi precedenti
+                          setCurrentScriptBlocks(prev => prev);
+                        }
+                      }
+                    } else {
+                      // Non in zoom: applica ai blocchi correnti
+                      setCurrentScriptBlocks(prev => applyOn(prev));
+                    }
+                    setAiAllAppliedCount(applied);
+                    // chiudi automaticamente il modale dopo applicazione
+                    setShowAiAllModal(false);
+                  } catch (err) {
+                    logger.error('[VFE] AI All error', err);
+                    setAiAllAppliedCount(0);
+                  } finally {
+                    setAiAllLoading(false);
+                    // In ogni caso, chiudi la modale per evitare blocchi UI
+                    setShowAiAllModal(false);
+                  }
+                }}
+                disabled={aiAllLoading}
+              >{aiAllLoading ? ((t as any)('visualFlowEditor.toolbar.generating') || 'Generazione…') : ((t as any)('visualFlowEditor.toolbar.generate') || 'Genera')}</button>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Modal per errori di drop */}
       {dropError && (
@@ -1156,7 +1417,9 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
 export const VisualFlowEditor: React.FC<VisualFlowEditorProps> = (props) => {
   return (
     <SceneProvider>
-      <VisualFlowEditorInternal {...props} />
+      <AchievementsImagesProvider>
+        <VisualFlowEditorInternal {...props} />
+      </AchievementsImagesProvider>
     </SceneProvider>
   );
 };

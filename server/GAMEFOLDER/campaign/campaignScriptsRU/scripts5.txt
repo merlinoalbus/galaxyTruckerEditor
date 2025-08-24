@@ -143,7 +143,6 @@ SCRIPT tutorClass3Dlg
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorShuttleSubdlg
 
   MENU
@@ -183,7 +182,6 @@ SCRIPT tutorShuttleSubdlg
   Say "В любом случае, если ты находишься на станции с космобусами, то можешь купить билет до любой другой станции с космобусами."
   Say "Просто нажми на пункт назначения и скажи, что тебе туда. Проще пареной репы, новичок."
 END_OF_SCRIPT
-
 SCRIPT guruDlg
 
   ShowDlgScene
@@ -310,7 +308,6 @@ SCRIPT guruDlg
   HideChar guru
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT clubDlg
 
   ShowDlgScene
@@ -594,7 +591,6 @@ SCRIPT clubDlg
   HideChar chairman
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT merchCyanDlg
 
   IFNOT wasAtCyan
@@ -713,7 +709,6 @@ SCRIPT merchCyanDlg
   HideChar merchant
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT labDlg
 
   ShowDlgScene
@@ -1244,7 +1239,6 @@ SCRIPT labDlg
   HideChar designer
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT raceDlg
 
   ShowDlgScene
@@ -1263,317 +1257,313 @@ SCRIPT raceDlg
   HideChar chairman
   HideDlgScene
 END_OF_SCRIPT
-
-SCRIPT FinalRaceDlg
-
-  ShowDlgScene
-  ADD frRound 1
-  IF_IS frRound 3
-    GO frRound3
-  END_OF_IF
-  IF_IS frRound 2
-    GO frRound2
-  END_OF_IF
-  IF_ORDER 0 1
-    IF_ORDER 1 2
-      ShowChar tutor left
-      Say "Отлично справляешься. Для новичка."
-      Say "Я дал тебе небольшую фору, но больше поблажек не будет."
-      ShowChar richgirl right
-      Say "Эй, вы двое. В следующих двух рейсах у вас нет ни шанса."
-      SayChar tutor "Болтать – не мешки ворочать, дамочка. Увидимся в космосе."
-      HideChar tutor
-      HideChar richgirl
-    ELSE
-      IF_ORDER 2 2
-        ShowChar richgirl left
-        Say "К твоему сведению, оставаться на втором месте – часть моего плана."
-        Say "Это длинная гонка. Нет смысла сразу тратить все свои силы."
-        ShowChar tutor right
-        Say "Слова, слова... Давайте лучше начнем второй раунд."
+  SCRIPT FinalRaceDlg
+    ShowDlgScene
+    ADD frRound 1
+    IF_IS frRound 3
+      GO frRound3
+    END_OF_IF
+    IF_IS frRound 2
+      GO frRound2
+    END_OF_IF
+    IF_ORDER 0 1
+      IF_ORDER 1 2
+        ShowChar tutor left
+        Say "Отлично справляешься. Для новичка."
+        Say "Я дал тебе небольшую фору, но больше поблажек не будет."
+        ShowChar richgirl right
+        Say "Эй, вы двое. В следующих двух рейсах у вас нет ни шанса."
+        SayChar tutor "Болтать – не мешки ворочать, дамочка. Увидимся в космосе."
         HideChar tutor
         HideChar richgirl
       ELSE
-        IF_ORDER 3 2
-          ShowChar tutor left
-          ShowChar richgirl right
-          SayChar tutor "Вы только гляньте! Новичок и пятнистый выбились в лидеры!"
-          SayChar richgirl "Все идет по моему плану. Мне нравится атаковать сзади."
-          SayChar tutor "Слова, слова... Давайте лучше начнем второй раунд."
+        IF_ORDER 2 2
+          ShowChar richgirl left
+          Say "К твоему сведению, оставаться на втором месте – часть моего плана."
+          Say "Это длинная гонка. Нет смысла сразу тратить все свои силы."
+          ShowChar tutor right
+          Say "Слова, слова... Давайте лучше начнем второй раунд."
           HideChar tutor
           HideChar richgirl
-        END_OF_IF
-      END_OF_IF
-    END_OF_IF
-  ELSE
-    IF_ORDER 1 1
-      ShowChar tutor left
-      Say "Да! Отличный старт! Осталось просто увеличивать этот отрыв."
-      IF_ORDER 0 2
-        Say "Но и ты, новичок, не отставай!"
-      END_OF_IF
-      IF_ORDER 2 2
-        ShowChar richgirl right
-        Say "И это по-твоему отрыв? Да я сделаю тебя в следующем раунде, ты даже со склада выйти не успеешь."
-        HideChar richgirl
-      END_OF_IF
-      IF_ORDER 3 2
-        ShowChar halfbreed right
-        Say "Кх."
-        HideChar halfbreed
-      END_OF_IF
-      HideChar tutor
-    ELSE
-      IF_ORDER 2 1
-        ShowChar richgirl left
-        Say "Похоже, я впереди. Впрочем, как обычно."
-        IF_ORDER 0 2
-          ShowChar tutor right
-          Say "Не слишком-то задавайся, дамочка. Мой новичок идет сразу за тобой."
-          HideChar tutor
-        END_OF_IF
-        IF_ORDER 1 2
-          ShowChar tutor right
-          Say "Это просто первый тур, дамочка. Посмотрим, что ты скажешь после второго."
-          SayChar richgirl "А после третьего? Решающий-то он. И мы все знаем, чем он закончится."
-          HideChar tutor
-        END_OF_IF
-        IF_ORDER 3 2
-          ShowChar halfbreed right
-          Say "Кх. Фвр'з."
-          HideChar halfbreed
-        END_OF_IF
-        HideChar richgirl
-      ELSE
-        IF_ORDER 3 1
-          ShowChar halfbreed left
-          Say "...!"
-          IF_ORDER 0 2
-            ShowChar tutor right
-            Say "Молодец, пятнистый! Но мой новичок буквально наступает тебе на щупальца."
-            HideChar tutor
-          END_OF_IF
-          IF_ORDER 1 2
-            ShowChar tutor right
-            Say "Молодец, пятнистый, но гонка только началась."
-            HideChar tutor
-          END_OF_IF
-          IF_ORDER 2 2
-            ShowChar richgirl right
-            Say "Сильно сказано, пришелец. Побереги силы для следующих раундов."
-            HideChar richgirl
-          END_OF_IF
-          HideChar halfbreed
-        END_OF_IF
-      END_OF_IF
-    END_OF_IF
-  END_OF_IF
-  HideDlgScene
-  RETURN
-
-  LABEL frRound2
-  IF_ORDER 0 1
-    IF_ORDER 1 2
-      ShowChar tutor left
-      Say "Тебе сегодня везет, новичок."
-      Say "Но я сразу за тобой. Не жди, что в последнем раунде будет так же легко."
-      ShowChar richgirl right
-      Say "Хм. действительно. Я специально пропустила вас вперед, чтобы последний раунд был поинтереснее."
-      SayChar tutor "Ха! Посмотрим!"
-      HideChar tutor
-      HideChar richgirl
-    ELSE
-      IF_ORDER 2 2
-        ShowChar richgirl left
-        Say "Все как я и хотела. Удобно устроится на втором месте, а в конце стремительно рвануть к финишу."
-        ShowChar tutor right
-        Say "Не слушай ее, новичок. Сегодня твой день!"
-        HideChar tutor
-        HideChar richgirl
-      ELSE
-        IF_ORDER 3 2
-          ShowChar tutor left
-          ShowChar richgirl right
-          SayChar tutor "Новичок идет просто отлично. Ну и пятнистый тоже неплох."
-          SayChar richgirl "Да, они оба хороши, но в третьем раунде у них портив меня нет шансов."
-          SayChar tutor "Вот как? Дерзайте, дамочка."
-          HideChar tutor
-          HideChar richgirl
-        END_OF_IF
-      END_OF_IF
-    END_OF_IF
-  ELSE
-    IF_ORDER 1 1
-      ShowChar tutor left
-      Say "Ха! Вот он, мой шанс!"
-      IF_ORDER 0 2
-        Say "Надеюсь, ты не против быть вторым, новичок?"
-      END_OF_IF
-      IF_ORDER 2 2
-        ShowChar richgirl right
-        Say "Кстати, да, ты вполне можешь быть вторым. Если эти двое будут прямо за тобой."
-        Say "Вы же понимаете, что я позволила вам пройти вперед только для того, чтобы третий раунд был интереснее. Ведь не думаете же вы, что представляете для меня серьезную угрозу?"
-        HideChar richgirl
-      END_OF_IF
-      IF_ORDER 3 2
-        ShowChar halfbreed right
-        Say "Кх."
-        HideChar halfbreed
-      END_OF_IF
-      HideChar tutor
-    ELSE
-      IF_ORDER 2 1
-        ShowChar richgirl left
-        Say "Хм. Я побеждаю, даже не напрягаясь. Ребята, неужели это все, на что вы способны?"
-        IF_ORDER 0 2
-          ShowChar tutor right
-          Say "Эй, новичок, не так уж и сильно ты отстаешь. Давай, догони ее!"
-          HideChar tutor
-        END_OF_IF
-        IF_ORDER 1 2
-          ShowChar tutor right
-          Say "Зря стараетесь, дамочка. Похоже, вы напуганы."
-          SayChar richgirl "Да, меня пугает перспектива помереть от скуки. Впрочем, ладно. Давайте уже начнем третий раунд."
-          HideChar tutor
-        END_OF_IF
-        IF_ORDER 3 2
-          ShowChar halfbreed right
-          Say "Кх. Кх фвр'з."
-          HideChar halfbreed
-        END_OF_IF
-        HideChar richgirl
-      ELSE
-        IF_ORDER 3 1
-          ShowChar halfbreed left
-          Say "...!"
-          IF_ORDER 0 2
-            ShowChar tutor right
-            Say "О, похоже, пятнистый здорово оторвался. По крайней мере, мой новичок где-то рядом."
-            HideChar tutor
-            ShowChar richgirl right
-            Say "От тебя, может, и оторвался. А я в третьем раунде сделаю их обоих."
-            HideChar richgirl
-          END_OF_IF
-          IF_ORDER 1 2
-            ShowChar tutor right
-            Say "Может и так, пятнистый, но это еще не все!"
-            HideChar tutor
-          END_OF_IF
-          IF_ORDER 2 2
-            ShowChar richgirl right
-            Say "Не преувеличивай, пришелец. В третьем раунде я обставлю всех так быстро, что ты и фасеткой своей  моргнуть не успеешь."
-            HideChar richgirl
-          END_OF_IF
-          HideChar halfbreed
-        END_OF_IF
-      END_OF_IF
-    END_OF_IF
-  END_OF_IF
-  HideDlgScene
-  RETURN
-
-  LABEL frRound3
-  RESET frHBfirst
-  RESET frRGfirst
-  SET finalRaceFinished
-  IF_ORDER 2 1
-    SET frRGfirst
-    ChangeChar richgirl campaign/rich-smile.png
-    ShowChar richgirl left
-    Say "О, да! У меня получилось!"
-    Delay 500
-    ChangeChar richgirl campaign/rich-bored.png
-    Delay 200
-    Say "В смысле... как я и думала, разумеется."
-    Say "Неплохо, ребята. Пару лет практики – и вы, возможно, сможете на что-то претендовать."
-    Delay 200
-    ChangeChar richgirl campaign/rich-smile.png
-    Delay 600
-    ChangeChar richgirl campaign/rich-smile-cheer.png
-    Delay 400
-    ChangeChar richgirl campaign/rich-smile.png
-  ELSE
-    IF_ORDER 3 1
-      SET frHBfirst
-      ShowChar halfbreed left
-      Say "... ... !"
-      Say "Х' Кхвк!"
-      Say "Я выиграл / победа / занял первое место!"
-    END_OF_IF
-  END_OF_IF
-  ShowChar tutor right
-  IF_ORDER 0 1
-    IF_ORDER 1 2
-      Say "Поздравляю, новичок!"
-      Say "Мы оба хорошо шли, но ты оказался чуть лучше."
-    ELSE
-      Say "Поздравляю, новичок!"
-      Say "У меня в этот раз получилось не так хорошо, но ты был просто на высоте!"
-    END_OF_IF
-    SET finalRaceWon
-  ELSE
-    IF_ORDER 0 2
-      IF_ORDER 1 1
-        Say "Да! Наконец-то я победил!"
-        Say "Новичок, ты был тоже весьма хорош. Но я оказался немного лучше."
-      ELSE
-        Say "Да! Наконец-то я победил!"
-        Say "Но и мой новичок тоже отличился. Второе место. Неплохо!"
-      END_OF_IF
-    ELSE
-      IF_ORDER 1 1
-        Say "Да! Наконец-то я победил!"
-        Say "Жаль, что у тебя все получилось не так, как ты рассчитывал, новичок. Но для первого раза – весьма неплохо."
-      ELSE
-        IF_ORDER 1 2
-          Say "Эх! А счастье было так близко. Но что поделать. Поздравляю."
-          Say "Эй, новичок, жаль, что все получилось не так, как ты рассчитывал. Но для первого раза было весьма неплохо."
         ELSE
-          Say "Поздравляю."
-          Say "Похоже, у нас с новичком ничего не вышло..."
+          IF_ORDER 3 2
+            ShowChar tutor left
+            ShowChar richgirl right
+            SayChar tutor "Вы только гляньте! Новичок и пятнистый выбились в лидеры!"
+            SayChar richgirl "Все идет по моему плану. Мне нравится атаковать сзади."
+            SayChar tutor "Слова, слова... Давайте лучше начнем второй раунд."
+            HideChar tutor
+            HideChar richgirl
+          END_OF_IF
+        END_OF_IF
+      END_OF_IF
+    ELSE
+      IF_ORDER 1 1
+        ShowChar tutor left
+        Say "Да! Отличный старт! Осталось просто увеличивать этот отрыв."
+        IF_ORDER 0 2
+          Say "Но и ты, новичок, не отставай!"
+        END_OF_IF
+        IF_ORDER 2 2
+          ShowChar richgirl right
+          Say "И это по-твоему отрыв? Да я сделаю тебя в следующем раунде, ты даже со склада выйти не успеешь."
+          HideChar richgirl
+        END_OF_IF
+        IF_ORDER 3 2
+          ShowChar halfbreed right
+          Say "Кх."
+          HideChar halfbreed
+        END_OF_IF
+        HideChar tutor
+      ELSE
+        IF_ORDER 2 1
+          ShowChar richgirl left
+          Say "Похоже, я впереди. Впрочем, как обычно."
+          IF_ORDER 0 2
+            ShowChar tutor right
+            Say "Не слишком-то задавайся, дамочка. Мой новичок идет сразу за тобой."
+            HideChar tutor
+          END_OF_IF
+          IF_ORDER 1 2
+            ShowChar tutor right
+            Say "Это просто первый тур, дамочка. Посмотрим, что ты скажешь после второго."
+            SayChar richgirl "А после третьего? Решающий-то он. И мы все знаем, чем он закончится."
+            HideChar tutor
+          END_OF_IF
+          IF_ORDER 3 2
+            ShowChar halfbreed right
+            Say "Кх. Фвр'з."
+            HideChar halfbreed
+          END_OF_IF
+          HideChar richgirl
+        ELSE
+          IF_ORDER 3 1
+            ShowChar halfbreed left
+            Say "...!"
+            IF_ORDER 0 2
+              ShowChar tutor right
+              Say "Молодец, пятнистый! Но мой новичок буквально наступает тебе на щупальца."
+              HideChar tutor
+            END_OF_IF
+            IF_ORDER 1 2
+              ShowChar tutor right
+              Say "Молодец, пятнистый, но гонка только началась."
+              HideChar tutor
+            END_OF_IF
+            IF_ORDER 2 2
+              ShowChar richgirl right
+              Say "Сильно сказано, пришелец. Побереги силы для следующих раундов."
+              HideChar richgirl
+            END_OF_IF
+            HideChar halfbreed
+          END_OF_IF
         END_OF_IF
       END_OF_IF
     END_OF_IF
-  END_OF_IF
-  IF frHBfirst
+    HideDlgScene
+    RETURN
+    LABEL frRound2
+    IF_ORDER 0 1
+      IF_ORDER 1 2
+        ShowChar tutor left
+        Say "Тебе сегодня везет, новичок."
+        Say "Но я сразу за тобой. Не жди, что в последнем раунде будет так же легко."
+        ShowChar richgirl right
+        Say "Хм. действительно. Я специально пропустила вас вперед, чтобы последний раунд был поинтереснее."
+        SayChar tutor "Ха! Посмотрим!"
+        HideChar tutor
+        HideChar richgirl
+      ELSE
+        IF_ORDER 2 2
+          ShowChar richgirl left
+          Say "Все как я и хотела. Удобно устроится на втором месте, а в конце стремительно рвануть к финишу."
+          ShowChar tutor right
+          Say "Не слушай ее, новичок. Сегодня твой день!"
+          HideChar tutor
+          HideChar richgirl
+        ELSE
+          IF_ORDER 3 2
+            ShowChar tutor left
+            ShowChar richgirl right
+            SayChar tutor "Новичок идет просто отлично. Ну и пятнистый тоже неплох."
+            SayChar richgirl "Да, они оба хороши, но в третьем раунде у них портив меня нет шансов."
+            SayChar tutor "Вот как? Дерзайте, дамочка."
+            HideChar tutor
+            HideChar richgirl
+          END_OF_IF
+        END_OF_IF
+      END_OF_IF
+    ELSE
+      IF_ORDER 1 1
+        ShowChar tutor left
+        Say "Ха! Вот он, мой шанс!"
+        IF_ORDER 0 2
+          Say "Надеюсь, ты не против быть вторым, новичок?"
+        END_OF_IF
+        IF_ORDER 2 2
+          ShowChar richgirl right
+          Say "Кстати, да, ты вполне можешь быть вторым. Если эти двое будут прямо за тобой."
+          Say "Вы же понимаете, что я позволила вам пройти вперед только для того, чтобы третий раунд был интереснее. Ведь не думаете же вы, что представляете для меня серьезную угрозу?"
+          HideChar richgirl
+        END_OF_IF
+        IF_ORDER 3 2
+          ShowChar halfbreed right
+          Say "Кх."
+          HideChar halfbreed
+        END_OF_IF
+        HideChar tutor
+      ELSE
+        IF_ORDER 2 1
+          ShowChar richgirl left
+          Say "Хм. Я побеждаю, даже не напрягаясь. Ребята, неужели это все, на что вы способны?"
+          IF_ORDER 0 2
+            ShowChar tutor right
+            Say "Эй, новичок, не так уж и сильно ты отстаешь. Давай, догони ее!"
+            HideChar tutor
+          END_OF_IF
+          IF_ORDER 1 2
+            ShowChar tutor right
+            Say "Зря стараетесь, дамочка. Похоже, вы напуганы."
+            SayChar richgirl "Да, меня пугает перспектива помереть от скуки. Впрочем, ладно. Давайте уже начнем третий раунд."
+            HideChar tutor
+          END_OF_IF
+          IF_ORDER 3 2
+            ShowChar halfbreed right
+            Say "Кх. Кх фвр'з."
+            HideChar halfbreed
+          END_OF_IF
+          HideChar richgirl
+        ELSE
+          IF_ORDER 3 1
+            ShowChar halfbreed left
+            Say "...!"
+            IF_ORDER 0 2
+              ShowChar tutor right
+              Say "О, похоже, пятнистый здорово оторвался. По крайней мере, мой новичок где-то рядом."
+              HideChar tutor
+              ShowChar richgirl right
+              Say "От тебя, может, и оторвался. А я в третьем раунде сделаю их обоих."
+              HideChar richgirl
+            END_OF_IF
+            IF_ORDER 1 2
+              ShowChar tutor right
+              Say "Может и так, пятнистый, но это еще не все!"
+              HideChar tutor
+            END_OF_IF
+            IF_ORDER 2 2
+              ShowChar richgirl right
+              Say "Не преувеличивай, пришелец. В третьем раунде я обставлю всех так быстро, что ты и фасеткой своей  моргнуть не успеешь."
+              HideChar richgirl
+            END_OF_IF
+            HideChar halfbreed
+          END_OF_IF
+        END_OF_IF
+      END_OF_IF
+    END_OF_IF
+    HideDlgScene
+    RETURN
+    LABEL frRound3
+    RESET frHBfirst
+    RESET frRGfirst
+    SET finalRaceFinished
+    IF_ORDER 2 1
+      SET frRGfirst
+      ChangeChar richgirl campaign/rich-smile.png
+      ShowChar richgirl left
+      Say "О, да! У меня получилось!"
+      Delay 500
+      ChangeChar richgirl campaign/rich-bored.png
+      Delay 200
+      Say "В смысле... как я и думала, разумеется."
+      Say "Неплохо, ребята. Пару лет практики – и вы, возможно, сможете на что-то претендовать."
+      Delay 200
+      ChangeChar richgirl campaign/rich-smile.png
+      Delay 600
+      ChangeChar richgirl campaign/rich-smile-cheer.png
+      Delay 400
+      ChangeChar richgirl campaign/rich-smile.png
+    ELSE
+      IF_ORDER 3 1
+        SET frHBfirst
+        ShowChar halfbreed left
+        Say "... ... !"
+        Say "Х' Кхвк!"
+        Say "Я выиграл / победа / занял первое место!"
+      END_OF_IF
+    END_OF_IF
+    ShowChar tutor right
+    IF_ORDER 0 1
+      IF_ORDER 1 2
+        Say "Поздравляю, новичок!"
+        Say "Мы оба хорошо шли, но ты оказался чуть лучше."
+      ELSE
+        Say "Поздравляю, новичок!"
+        Say "У меня в этот раз получилось не так хорошо, но ты был просто на высоте!"
+      END_OF_IF
+      SET finalRaceWon
+    ELSE
+      IF_ORDER 0 2
+        IF_ORDER 1 1
+          Say "Да! Наконец-то я победил!"
+          Say "Новичок, ты был тоже весьма хорош. Но я оказался немного лучше."
+        ELSE
+          Say "Да! Наконец-то я победил!"
+          Say "Но и мой новичок тоже отличился. Второе место. Неплохо!"
+        END_OF_IF
+      ELSE
+        IF_ORDER 1 1
+          Say "Да! Наконец-то я победил!"
+          Say "Жаль, что у тебя все получилось не так, как ты рассчитывал, новичок. Но для первого раза – весьма неплохо."
+        ELSE
+          IF_ORDER 1 2
+            Say "Эх! А счастье было так близко. Но что поделать. Поздравляю."
+            Say "Эй, новичок, жаль, что все получилось не так, как ты рассчитывал. Но для первого раза было весьма неплохо."
+          ELSE
+            Say "Поздравляю."
+            Say "Похоже, у нас с новичком ничего не вышло..."
+          END_OF_IF
+        END_OF_IF
+      END_OF_IF
+    END_OF_IF
+    IF frHBfirst
+      Delay 300
+      HideChar halfbreed
+      Delay 300
+    END_OF_IF
+    IFNOT frRGfirst
+      ShowChar richgirl left
+    END_OF_IF
+    IF_ORDER 2 2
+      Say "Что ж, поздравляю. Я как раз собиралась в этот раз занять второе место, чтобы кто-то еще смог ощутить радость победы. Так и получилось."
+    END_OF_IF
+    IF_ORDER 2 3
+      Say "Поздравляю. Я-то в этот раз летала просто ради забавы."
+      Say "Вообще-то я собиралась прилететь последней, но я настолько хороший пилот, что все равно кого-то обогнала."
+    END_OF_IF
+    IF_ORDER 2 4
+      Say "В этом году я решила просто посмотреть, что именно вы учудите, если я не буду вам мешать."
+      Say "Естественно, все получилось именно так, как я и предполагала. Поздравляю."
+    END_OF_IF
+    IFNOT frHBfirst
+      HideChar richgirl
+      Delay 300
+      ShowChar halfbreed left
+      Say "К'нгртл'с!"
+      Say "..."
+    END_OF_IF
+    Delay 800
+    SayChar tutor "Что ж, это была отличная гонка."
+    SayChar tutor "Все вы – просто отличные дальнобойщики. Настолько отличные, что я решил..."
+    SayChar tutor "...заказать пиццу на всех!"
     Delay 300
-    HideChar halfbreed
+    HideChar tutor
     Delay 300
-  END_OF_IF
-  IFNOT frRGfirst
-    ShowChar richgirl left
-  END_OF_IF
-  IF_ORDER 2 2
-    Say "Что ж, поздравляю. Я как раз собиралась в этот раз занять второе место, чтобы кто-то еще смог ощутить радость победы. Так и получилось."
-  END_OF_IF
-  IF_ORDER 2 3
-    Say "Поздравляю. Я-то в этот раз летала просто ради забавы."
-    Say "Вообще-то я собиралась прилететь последней, но я настолько хороший пилот, что все равно кого-то обогнала."
-  END_OF_IF
-  IF_ORDER 2 4
-    Say "В этом году я решила просто посмотреть, что именно вы учудите, если я не буду вам мешать."
-    Say "Естественно, все получилось именно так, как я и предполагала. Поздравляю."
-  END_OF_IF
-  IFNOT frHBfirst
-    HideChar richgirl
-    Delay 300
-    ShowChar halfbreed left
-    Say "К'нгртл'с!"
-    Say "..."
-  END_OF_IF
-  Delay 800
-  SayChar tutor "Что ж, это была отличная гонка."
-  SayChar tutor "Все вы – просто отличные дальнобойщики. Настолько отличные, что я решил..."
-  SayChar tutor "...заказать пиццу на всех!"
-  Delay 300
-  HideChar tutor
-  Delay 300
-  IFNOT frHBfirst
-    HideChar halfbreed
-  ELSE
-    HideChar richgirl
-  END_OF_IF
-  HideDlgScene
-END_OF_SCRIPT
+    IFNOT frHBfirst
+      HideChar halfbreed
+    ELSE
+      HideChar richgirl
+    END_OF_IF
+    HideDlgScene
+  END_OF_SCRIPT
 
 END_OF_SCRIPTS

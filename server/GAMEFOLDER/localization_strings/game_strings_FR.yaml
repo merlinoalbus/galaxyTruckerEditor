@@ -295,11 +295,7 @@ disconnect_by_oher_client: "Vous avez été déconnecté car votre compte en lig
 lobby_offline_msg: "Vous devez être en ligne pour rejoindre le Salon!"
 lobby_offline_msg_title: "Info"
 gdpr_win_title: "Conditions d'Utilisation & Politique de Confidentialité"
-gdpr_win_text: "Salut. Comme vous le savez déjà, avec l'arrivée du RGPD, nous devons vous demander votre accord concernant les Conditions d'Utilisation et la Politique de Confidentialité. <br /> <br />
-
-Votre compte CGE à besoin de se souvenir de vos identifiants de connexion et de la progression de vos parties en ligne (et si vous utilisez la synchronisation de compte, également votre progression en solo). Les données que nous recueillons ne sont utilisées que pour fournir une expérience multijoueur confortable où vous pouvez jouer à Galaxy Trucker et vos autres jeux CGE avec des amis ou des étrangers sur différentes plateformes. <br /> <br />
-
-Vous pouvez en savoir plus sur ce sujet ici:"
+gdpr_win_text: "Salut. Comme vous le savez déjà, avec l'arrivée du RGPD, nous devons vous demander votre accord concernant les Conditions d'Utilisation et la Politique de Confidentialité. <br /> <br />\nVotre compte CGE à besoin de se souvenir de vos identifiants de connexion et de la progression de vos parties en ligne (et si vous utilisez la synchronisation de compte, également votre progression en solo). Les données que nous recueillons ne sont utilisées que pour fournir une expérience multijoueur confortable où vous pouvez jouer à Galaxy Trucker et vos autres jeux CGE avec des amis ou des étrangers sur différentes plateformes. <br /> <br />\nVous pouvez en savoir plus sur ce sujet ici:"
 gdpr_win_note: "Cette décision est réversible. Vous pouvez toujours retirer votre accord en contactant notre support en utilisant le menu Extras."
 gdpr_win_checkbox: "J'ai lu et je suis d'accord avec les Conditions d'Utilisation & la Politique de Confidentialité."
 gdpr_win_disagree: "Notez que si vous n'acceptez pas les Conditions d'Utilisation & la Politique de Confidentialité, vous ne pourrez pas utiliser les fonctionnalités du jeu associées à votre compte CGE, telles que Jeu en ligne. Vous pouvez toujours changer d'avis en acceptant les Conditions d'utilisation & la Politique de Confidentialité en utilisant le menu Profil. Pour toute autre question, veuillez contacter notre support à appsupport@czechgames.com"

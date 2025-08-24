@@ -12,8 +12,10 @@ export type IfType =
   | 'IF_MIN'
   | 'IF_MISSION_WON'
   | 'IF_ORDER'
+  | 'IF_POSITION_ORDER'
   | 'IF_PROB'
   | 'IF_TUTORIAL_SEEN'
+  | 'IF_ALL_RESIGNED'
   | 'IFMISSIONRESULTIS'
   | 'IFMISSIONRESULTMIN';
 
@@ -110,6 +112,13 @@ export const IF_TYPE_CONFIGS: Record<IfType, IfTypeConfig> = {
     label: 'IF ORDER',
     description: 'Verifica ordine di arrivo'
   },
+  'IF_POSITION_ORDER': {
+    requiresVariable: false,
+    requiresValue: true,
+    valueType: 'array',
+    label: 'IF POSITION ORDER',
+    description: 'Verifica ordine di arrivo (alias di IF_ORDER)'
+  },
   'IF_PROB': {
     requiresVariable: false,
     requiresValue: true,
@@ -123,6 +132,12 @@ export const IF_TYPE_CONFIGS: Record<IfType, IfTypeConfig> = {
     requiresValue: false,
     label: 'IF TUTORIAL SEEN',
     description: 'Verifica tutorial visualizzato'
+  },
+  'IF_ALL_RESIGNED': {
+    requiresVariable: false,
+    requiresValue: false,
+    label: 'IF ALL RESIGNED',
+    description: 'Verifica se tutti hanno abbandonato (give up)'
   },
   'IFMISSIONRESULTIS': {
     requiresVariable: false,

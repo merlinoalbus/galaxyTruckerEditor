@@ -3,6 +3,44 @@
  */
 
 export const visualFlowEditorTranslations = {
+  // Deck tools
+  'visualFlowEditor.tools.deckAddCardType.description': 'Añade tipos de cartas específicos al mazo. Parámetros: cadena única con ids/tipos y calificadores opcionales.',
+  'visualFlowEditor.tools.deckAddAllCards.description': 'Añade todas las cartas disponibles al mazo.',
+  'visualFlowEditor.tools.deckAddCardRound.description': 'Añade cartas para una ronda específica. Parámetros: cadena única.',
+  'visualFlowEditor.tools.deckAddRulePosition.description': 'Añade una regla de posición al mazo. Parámetros: cadena única.',
+  'visualFlowEditor.tools.deckAddRuleRange.description': 'Añade una regla de rango al mazo. Parámetros: cadena única.',
+  'visualFlowEditor.tools.deckShuffle.description': 'Baraja el mazo.',
+  'visualFlowEditor.tools.setSuperCardsCnt.description': 'Define el número de super cartas. Parámetros: cadena única (p. ej., cantidad).',
+
+  // Deck blocks UI
+  'visualFlowEditor.blocks.deckAddAllCards.description': 'Añade todas las cartas al mazo para el contexto actual.',
+  'visualFlowEditor.blocks.deckShuffle.description': 'Baraja el mazo actual.',
+  'visualFlowEditor.blocks.deckAddAllCards.compact': 'Añadir todas las cartas',
+  'visualFlowEditor.blocks.deckShuffle.compact': 'Barajar mazo',
+  'visualFlowEditor.blocks.deckAddCardType.label': 'Parámetros',
+  'visualFlowEditor.blocks.deckAddCardType.placeholder': 'p. ej. alienGun 2; merchant 1',
+  // Común
+  'visualFlowEditor.common.parameters': 'Parámetros',
+  'visualFlowEditor.blocks.deckAddCardType.hint': 'Cadena única, argumentos separados por espacios. Mantén la sintaxis de los scripts.',
+  'visualFlowEditor.blocks.deckAddCardRound.label': 'Parámetros',
+  'visualFlowEditor.blocks.deckAddCardRound.placeholder': 'p. ej. 2 alienGun 1',
+  'visualFlowEditor.blocks.deckAddCardRound.hint': 'Cadena única para la configuración de la ronda.',
+  'visualFlowEditor.blocks.deckAddRulePosition.label': 'Parámetros',
+  'visualFlowEditor.blocks.deckAddRulePosition.placeholder': 'p. ej. pos 1-3',
+  'visualFlowEditor.blocks.deckAddRulePosition.hint': 'Cadena única que describe la regla de posición.',
+  'visualFlowEditor.blocks.deckAddRuleRange.label': 'Parámetros',
+  'visualFlowEditor.blocks.deckAddRuleRange.placeholder': 'p. ej. range 2-5',
+  'visualFlowEditor.blocks.deckAddRuleRange.hint': 'Cadena única que describe la regla de rango.',
+  'visualFlowEditor.blocks.setSuperCardsCnt.label': 'Parámetros',
+  'visualFlowEditor.blocks.setSuperCardsCnt.placeholder': 'p. ej. 3',
+  'visualFlowEditor.blocks.setSuperCardsCnt.hint': 'Número de super cartas (cadena única).',
+
+  // Deck validation
+  'visualFlowEditor.validation.DECKADDCARDTYPE_NO_PARAMS': 'Se requieren parámetros. Proporcione un valor.',
+  'visualFlowEditor.validation.DECKADDCARDROUND_NO_PARAMS': 'Se requieren parámetros. Proporcione un valor.',
+  'visualFlowEditor.validation.DECKADDRULEPOSITION_NO_PARAMS': 'Se requieren parámetros. Proporcione un valor.',
+  'visualFlowEditor.validation.DECKADDRULERANGE_NO_PARAMS': 'Se requieren parámetros. Proporcione un valor.',
+  'visualFlowEditor.validation.SETSUPERCARDSCNT_NO_PARAMS': 'Se requieren parámetros. Proporcione un valor.',
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
   'visualFlowEditor.subtitle': 'Editor Visual Completo',
@@ -26,6 +64,15 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.toolbar.error': 'error',
   'visualFlowEditor.toolbar.errors': 'errores',
   'visualFlowEditor.toolbar.fixErrorsBeforeSaving': 'Corrija {count} errores antes de guardar',
+  // Toolbar & Modal AI All
+  'visualFlowEditor.toolbar.aiSuggestAll': 'Sugerir IA para todos los textos',
+  'visualFlowEditor.toolbar.aiAll': 'AI All',
+  'visualFlowEditor.toolbar.aiAllTitle': 'Sugerir IA para todos los textos',
+  'visualFlowEditor.toolbar.aiAllSubtitle': 'Elige el idioma de destino y genera sugerencias para todos los campos multilingües basadas en EN.',
+  'visualFlowEditor.toolbar.targetLanguage': 'Idioma de destino',
+  'visualFlowEditor.toolbar.aiAllApplied': 'Sugerencias aplicadas: {count}',
+  'visualFlowEditor.toolbar.generate': 'Generar',
+  'visualFlowEditor.toolbar.generating': 'Generando…',
   
   // New Script Dialog
   'visualFlowEditor.newScriptDialog.title': 'Nuevo Elemento',
@@ -46,6 +93,51 @@ export const visualFlowEditorTranslations = {
   // Missions List
   'visualFlowEditor.missionsList.loadingMissions': 'Cargando misiones...',
   
+  // SHOWHELPIMAGE Block
+  'visualFlowEditor.blocks.showHelpImage.parameters': 'Texto',
+  'visualFlowEditor.blocks.showHelpImage.placeholder': 'Introduce texto o ruta de imagen...',
+  'visualFlowEditor.blocks.showHelpImage.hint': 'Texto o ruta de una imagen de ayuda',
+  'visualFlowEditor.blocks.showHelpImage.noParameters': 'Sin texto configurado',
+  'visualFlowEditor.blocks.showHelpImage.params': 'Texto',
+  // Map blocks (flat keys)
+  'visualFlowEditor.blocks.nodeSelector.search': 'Buscar nodo...',
+  'visualFlowEditor.blocks.nodeSelector.none': 'Ninguno',
+  'visualFlowEditor.validation.SHOWNODE_NO_NODE': 'Se requiere un nodo. Seleccione un nodo.',
+  'visualFlowEditor.validation.HIDENODE_NO_NODE': 'Se requiere un nodo. Seleccione un nodo.',
+  'visualFlowEditor.validation.ADDNODE_NO_NODE': 'Se requiere un nodo. Seleccione un nodo.',
+  'visualFlowEditor.validation.SETNODEKNOWN_NO_NODE': 'Se requiere un nodo. Seleccione un nodo.',
+  'visualFlowEditor.validation.CENTERMAPBYNODE_NO_NODE': 'Se requiere un nodo. Seleccione un nodo.',
+  'visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE': 'Se requiere un nodo. Seleccione un nodo.',
+  'visualFlowEditor.validation.SHOWPATH_NO_ROUTE': 'Route is required. Please select a route.',
+  'visualFlowEditor.validation.HIDEPATH_NO_ROUTE': 'Route is required. Please select a route.',
+  'visualFlowEditor.validation.CENTERMAPBYPATH_NO_ROUTE': 'Route is required. Please select a route.',
+  'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE1': 'HIDEALLPATHS requires node1. Please select the first node or choose "None".',
+  'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE2': 'HIDEALLPATHS requires node2. Please select the second node or choose "None".',
+  'visualFlowEditor.validation.SHOWBUTTON_NO_BUTTON': 'Se requiere botón. Por favor selecciona un botón.',
+  'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Se requiere botón. Por favor selecciona un botón.',
+  'visualFlowEditor.validation.SETFOCUS_NO_BUTTON': 'Se requiere botón. Por favor selecciona un botón.',
+  'visualFlowEditor.validation.RESETFOCUS_NO_BUTTON': 'Se requiere botón. Por favor selecciona un botón.',
+  'visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_BUTTON': 'Se requiere botón. Por favor selecciona un botón.',
+  'visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_CREDITS': 'Se requieren créditos. Por favor especifica el valor mínimo de créditos.',
+  'visualFlowEditor.blocks.map.node1': 'Lugar de Salida',
+  'visualFlowEditor.blocks.map.node2': 'Lugar de Llegada',
+  'visualFlowEditor.blocks.map.route': 'Ruta',
+  'visualFlowEditor.blocks.map.button': 'Botón',
+  'visualFlowEditor.blocks.hideAllPaths.summary': 'Ocultar rutas',
+  'visualFlowEditor.blocks.hideAllPaths.from': 'Desde',
+  'visualFlowEditor.blocks.hideAllPaths.to': 'Hacia',
+  'visualFlowEditor.blocks.hideAllPaths.selectLocations': 'Selecciona las ubicaciones',
+  'visualFlowEditor.blocks.map.compact.show': 'Mostrar',
+  'visualFlowEditor.blocks.map.compact.hide': 'Ocultar',
+  'visualFlowEditor.blocks.map.compact.add': 'Añadir',
+  'visualFlowEditor.blocks.map.compact.known': 'Conocido',
+  'visualFlowEditor.blocks.map.compact.center': 'Centrar',
+  'visualFlowEditor.blocks.map.compact.move': 'Mover',
+  'visualFlowEditor.blocks.map.compact.showButton': 'Mostrar',
+  'visualFlowEditor.blocks.map.compact.hideButton': 'Ocultar',
+  'visualFlowEditor.blocks.map.compact.setFocus': 'Enfocar',
+  'visualFlowEditor.blocks.map.compact.resetFocus': 'Resetear Enfoque',
+  
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Errores de Validación',
   'visualFlowEditor.validation.close': 'Cerrar',
@@ -59,6 +151,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.modifyOpponentsBuildSpeedNoPercentage': 'El bloque MODIFYOPPONENTSBUILDSPEED debe tener un valor porcentual (1-200).',
   'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutOfRange': 'El porcentaje de MODIFYOPPONENTSBUILDSPEED debe estar entre 1 y 200.',
   'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutsideContext': 'MODIFYOPPONENTSBUILDSPEED debe usarse dentro de un bloque MISSION, BUILD o FLIGHT.',
+  'visualFlowEditor.validation.buildingHelpScriptParams': 'BUILDINGHELPSCRIPT requiere value (número) y script.',
+  'visualFlowEditor.validation.helpScriptParams': 'Este comando requiere el parámetro script.',
   'visualFlowEditor.validation.setSpecConditionNoCondition': 'SETSPECCONDITION debe especificar una condición. Elija una de la lista.',
   'visualFlowEditor.validation.setSpecConditionOutsideContext': 'SETSPECCONDITION debería usarse dentro de un bloque MISSION, BUILD o FLIGHT. Considere moverlo.',
   'visualFlowEditor.validation.addOpponentNoCharacter': 'El bloque ADDOPPONENT debe tener un personaje seleccionado.',
@@ -141,6 +235,13 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.announce.description': 'Muestra un mensaje de anuncio sin requerir una escena',
   'visualFlowEditor.blocks.announce.placeholder': 'Introducir texto del anuncio...',
   'visualFlowEditor.blocks.announce.textLabel': 'Texto del anuncio',
+
+  // Info & Help Commands
+  'visualFlowEditor.command.buildingHelpScript': 'Script de ayuda de construcción',
+  'visualFlowEditor.command.flightHelpScript': 'Script de ayuda de vuelo',
+  'visualFlowEditor.command.alienHelpScript': 'Script de ayuda alienígena',
+  'visualFlowEditor.command.script': 'Script',
+  'visualFlowEditor.command.value': 'Retraso (ms)',
   
   // RETURN Block
   'visualFlowEditor.blocks.return.title': 'Volver',
@@ -172,6 +273,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.characterSelector.noAvailable': 'No hay personajes disponibles para mostrar',
   'visualFlowEditor.blocks.characterSelector.noVisible': 'No hay personajes visibles para ocultar',
   'visualFlowEditor.blocks.characterSelector.selected': 'Seleccionado',
+  'visualFlowEditor.blocks.characterSelector.none': 'Ninguno',
   
   // ADDPARTTOSHIP Block
   'visualFlowEditor.blocks.addPartToShip.parameters': 'Parámetros',
@@ -304,6 +406,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.metacode.specialPluralPlaceholder': 'ej. forma especial',
   'visualFlowEditor.metacode.imageSizePlaceholder': 'ej. n, 3, playerCount',
   'visualFlowEditor.metacode.imagePathPlaceholder': 'ruta/imagen.png',
+
+  // Multilingual editor
+  'visualFlowEditor.multilingual.aiSuggest': 'Sugerencia IA',
   
   // Dialog Scene Commands
   'visualFlowEditor.blocks.showDlgScene.title': 'Mostrar Escena de Diálogo',
@@ -421,6 +526,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askNoScene': 'ASK requiere una escena activa. Añade SHOWDLGSCENE antes de este bloque.',
   'visualFlowEditor.validation.askIfInvalidThen': 'Después de ASK, la rama THEN del bloque IF debe comenzar con MENU o GO.',
   'visualFlowEditor.validation.askIfInvalidElse': 'Después de ASK, la rama ELSE del bloque IF debe comenzar con MENU o GO.',
+  // Bloques de Información
+  'visualFlowEditor.validation.ADDINFOWINDOW_NO_IMAGE': 'El bloque ADDINFOWINDOW debe tener una imagen seleccionada. Elige una imagen.',
+  'visualFlowEditor.validation.SHOWINFOWINDOW_NO_IMAGE': 'El bloque SHOWINFOWINDOW debe tener una imagen seleccionada. Elige una imagen.',
   'visualFlowEditor.validation.addPartToShipNotInBuild': 'ADDPARTTOSHIP debería estar dentro de un bloque BUILD. Mueva este bloque dentro de una fase de construcción.',
   'visualFlowEditor.validation.addPartToAsideSlotNotInBuild': 'ADDPARTTOASIDESLOT debería estar dentro de un bloque BUILD. Mueva este bloque dentro de una fase de construcción.',
   'visualFlowEditor.validation.addShipPartsNoParams': 'El bloque ADDSHIPPARTS debe especificar un archivo de partes. Seleccione un archivo YAML para cargar las partes.',
@@ -460,6 +568,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.category.combat': 'Combate',
   'visualFlowEditor.tools.category.game': 'Juego',
   'visualFlowEditor.tools.category.special': 'Especial',
+  // Info&Help
+  'visualFlowEditor.tools.infoHelp': 'Info y Ayuda',
+  'visualFlowEditor.tools.buildingHelpScript': 'Script de ayuda de construcción',
+  'visualFlowEditor.tools.flightHelpScript': 'Script de ayuda de vuelo',
+  'visualFlowEditor.tools.alienHelpScript': 'Script de ayuda alienígena',
   
   // JSON View
   'visualFlowEditor.jsonView.title': 'Vista JSON',
@@ -475,6 +588,11 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.jsonView.copyToClipboard': 'Copiar JSON al portapapeles',
   'visualFlowEditor.jsonView.keys': 'claves',
   'visualFlowEditor.jsonView.characters': 'caracteres',
+
+  // Headers compact
+  'visualFlowEditor.header.navigateToScript': 'Ir al script',
+  'visualFlowEditor.header.compact.buildingHelp': 'retraso: {value} • {script}',
+  'visualFlowEditor.header.compact.help': '{script}',
   
   // Block Actions
   'visualFlowEditor.block.delete': 'Eliminar',
@@ -583,6 +701,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.shipClassI': 'Clase I',
   'visualFlowEditor.command.shipClassII': 'Clase II',
   'visualFlowEditor.command.shipClassIII': 'Clase III',
+  'visualFlowEditor.command.statusText': 'Texto de estado',
+  'visualFlowEditor.command.selectRoute': 'Seleccionar ruta...',
+  'visualFlowEditor.command.selectButton': 'Seleccionar botón...',
   'visualFlowEditor.command.selectCondition': 'Seleccionar condición...',
   
   // ScriptBlock
@@ -745,12 +866,27 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.subOpponentCreditsByResult.description': 'Restar créditos',
   'visualFlowEditor.tools.addOpponentsCredits.description': 'Agregar créditos de oponente',
   
+  // Credits - Etiquetas de UI
+  'visualFlowEditor.blocks.addOpponentsCredits.player': 'Jugador',
+  
+  // Credits - Mensajes de validación
+  'visualFlowEditor.validation.ADDOPPONENTSCREDITS_INVALID_INDEX': 'ADDOPPONENTSCREDITS requiere un índice de jugador entre 0 y 3.',
+  'visualFlowEditor.validation.ADDOPPONENTSCREDITS_NO_CREDITS': 'Se requiere el valor de créditos. Especifica un número (positivo o negativo).',
+  'visualFlowEditor.validation.ADDCREDITS_NO_AMOUNT': 'Se requiere el importe. Especifica un número (positivo o negativo).',
+  'visualFlowEditor.validation.SETCREDITS_NO_AMOUNT': 'Se requiere el importe. Especifica un número.',
+  'visualFlowEditor.validation.ADDMISSIONCREDITS_NO_AMOUNT': 'Se requiere el importe. Especifica un número (positivo o negativo).',
   // Tool Descriptions - Achievement
   'visualFlowEditor.tools.setAchievementProgress.description': 'Establecer progreso de logro',
   'visualFlowEditor.tools.setAchievementAttempt.description': 'Establecer intento de logro',
   'visualFlowEditor.tools.unlockAchievement.description': 'Desbloquear logro',
   'visualFlowEditor.tools.unlockShipPlan.description': 'Desbloquear plano de nave',
   'visualFlowEditor.tools.unlockShuttles.description': 'Desbloquear transbordadores',
+  'visualFlowEditor.blocks.achievement.selectAchievement': 'Logro:',
+  'visualFlowEditor.blocks.achievement.value': 'Valor',
+  'visualFlowEditor.blocks.achievement.objectives': 'Objetivos:',
+  'visualFlowEditor.blocks.achievement.none': 'Ninguno',
+  'visualFlowEditor.blocks.unlockShipPlan.label': 'Plano de nave:',
+  'visualFlowEditor.blocks.unlockShipPlan.short': 'plano',
   
   // Tool Descriptions - Characters
   'visualFlowEditor.tools.askChar.description': 'Preguntar con personaje',
@@ -771,6 +907,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.saveState.description': 'Guardar estado del juego',
   'visualFlowEditor.tools.loadState.description': 'Cargar estado del juego',
   'visualFlowEditor.tools.quitCampaign.description': 'Salir de la campaña',
+  'visualFlowEditor.blocks.saveState.compact': 'Guardar estado',
+  'visualFlowEditor.blocks.loadState.compact': 'Cargar estado',
+  'visualFlowEditor.blocks.quitCampaign.compact': 'Salir campaña',
+  'visualFlowEditor.blocks.saveState.fullDescription': 'Guarda el estado actual de la campaña permitiendo restaurarlo posteriormente con LoadState. Útil para crear puntos de guardado durante la narrativa.',
+  'visualFlowEditor.blocks.loadState.fullDescription': 'Carga un estado previamente guardado de la campaña. Restaura la situación del jugador, misiones, personajes y variables al momento del guardado.',
+  'visualFlowEditor.blocks.quitCampaign.fullDescription': 'Termina inmediatamente la campaña y devuelve al jugador al menú principal. Usar con precaución ya que interrumpe definitivamente el flujo narrativo.',
   
   // Metacode Modal Translations
   'visualFlowEditor.metacode.playerReference': 'Referencia del Jugador',
@@ -778,6 +920,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.metacode.selectPlayer': 'Seleccionar jugador',
   'visualFlowEditor.metacode.current': 'Actual',
   'visualFlowEditor.metacode.playerNumber': 'Jugador {num}',
+  'visualFlowEditor.metacode.playerNumberShort': 'J{num}',
   'visualFlowEditor.metacode.generatedCode': 'Código generado:',
   'visualFlowEditor.metacode.numericValue': 'Valor Numérico',
   'visualFlowEditor.metacode.numericValueDescription': 'Inserta un valor numérico dinámico u ordinal.',
@@ -805,4 +948,38 @@ export const visualFlowEditorTranslations = {
   
   // Blocks
   'visualFlowEditor.blocks.modifyOpponentsBuildSpeed.percentage': 'Velocidad Construcción %',
+  
+  // Variable Commands
+  'visualFlowEditor.command.selectVariable': 'Seleccionar variable...',
+  
+  // Validation Error Messages for SET_TO and ADD
+  'visualFlowEditor.validation.setToNoVariable': 'El bloque SET_TO debe tener una variable seleccionada. Seleccione una variable para establecer.',
+  'visualFlowEditor.validation.setToNoValue': 'El bloque SET_TO debe tener un valor establecido. Ingrese un valor numérico.',
+  'visualFlowEditor.validation.addNoVariable': 'El bloque ADD debe tener una variable seleccionada. Seleccione una variable para sumar.',
+  'visualFlowEditor.validation.addNoValue': 'El bloque ADD debe tener un valor establecido. Ingrese un valor numérico para sumar.',
+  
+  // Command labels
+  'visualFlowEditor.command.variableLabel': 'Variable:',
+  
+  // SET_TO Block
+  'visualFlowEditor.blocks.setTo.variableLabel': 'Variable',
+  'visualFlowEditor.blocks.setTo.valueLabel': 'Valor',
+  'visualFlowEditor.blocks.setTo.valuePlaceholder': 'Ingrese valor numérico...',
+  'visualFlowEditor.blocks.setTo.description': 'Establece la variable al valor especificado',
+  'visualFlowEditor.blocks.setTo.noVariable': 'Ninguna variable seleccionada',
+  
+  // ADD Block
+  'visualFlowEditor.blocks.add.variableLabel': 'Variable',
+  'visualFlowEditor.blocks.add.valueLabel': 'Valor a sumar',
+  'visualFlowEditor.blocks.add.valuePlaceholder': 'Ingrese valor numérico...',
+  'visualFlowEditor.blocks.add.description': 'Suma un valor a la variable especificada',
+  'visualFlowEditor.blocks.add.noVariable': 'Ninguna variable seleccionada',
+
+  // ASKCHAR/FOCUSCHAR validation keys
+  'visualFlowEditor.validation.ASKCHAR_NO_CHARACTER': 'El bloque ASKCHAR debe tener un personaje seleccionado. Selecciona un personaje de la lista.',
+  'visualFlowEditor.validation.ASKCHAR_NO_TEXT': 'El bloque ASKCHAR debe tener texto. Ingresa el diálogo del personaje.',
+  'visualFlowEditor.validation.ASKCHAR_NO_SCENE': 'ASKCHAR requiere una escena activa. Agrega SHOWDLGSCENE antes de este bloque.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_CHARACTER': 'El bloque FOCUSCHAR debe tener un personaje seleccionado. Selecciona un personaje de la lista.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_SCENE': 'FOCUSCHAR requiere una escena activa. Agrega SHOWDLGSCENE antes de este bloque.',
+  
 } as const;

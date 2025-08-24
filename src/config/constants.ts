@@ -25,12 +25,25 @@ export const API_ENDPOINTS = {
   SCRIPTS_VARIABLES: '/scripts/variables',
   SCRIPTS_SEMAPHORES: '/scripts/semaphores',
   SCRIPTS_LABELS: '/scripts/labels',
+  // Translations API
+  SCRIPTS_TRANSLATIONS_COVERAGE: '/scripts/translations/coverage',
+  SCRIPTS_TRANSLATIONS_DETAILS: (name: string) => `/scripts/translations/${name}`,
+  SCRIPTS_AI_TRANSLATE: '/scripts/ai-translate',
+  SCRIPTS_AI_TRANSLATE_BATCH: '/scripts/ai-translate-batch',
 
   // Missions API  
   MISSIONS: '/missions',
   MISSION_BY_NAME: (name: string) => `/missions/${name}`,
   MISSION_SAVE: (name: string) => `/missions/${name}/save`,
   MISSIONS_ROUTES: '/missions/routes',
+  MISSIONS_SAVE_MISSION: '/missions/saveMission',
+  MISSIONS_TRANSLATIONS_COVERAGE: '/missions/translations/coverage',
+
+  // Localization API
+  LOCALIZATION_NODES: '/localization/nodes',
+  LOCALIZATION_NODES_SAVE: '/localization/nodes/save',
+  LOCALIZATION_MISSIONS: '/localization/missions',
+  LOCALIZATION_MISSIONS_SAVE: '/localization/missions/save',
 
   // Game Elements API
   GAME_CHARACTERS: '/game/characters',
@@ -38,6 +51,7 @@ export const API_ENDPOINTS = {
   GAME_BUTTONS: '/game/buttons',
   GAME_ACHIEVEMENTS: '/game/achievements',
   GAME_ACHIEVEMENTS_IMAGES: '/game/achievements/images',
+  GAME_SHIP_PLANS: '/game/ship-plans',
 
   // Generic API
   IMAGES: '/images',

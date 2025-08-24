@@ -30,12 +30,11 @@ export type BlockType =
   // Mappa e navigazione
   | 'SHOWPATH' | 'SHOWNODE' | 'HIDEPATH' | 'HIDENODE' | 'HIDEALLPATHS'
   | 'CENTERMAPBYNODE' | 'CENTERMAPBYPATH' | 'MOVEPLAYERTONODE' | 'ADDNODE'
-  | 'SETNODEKNOWN' | 'SHOWBUTTON' | 'HIDEBUTTON' | 'SETFOCUSIFCREDITS'
+  | 'SETNODEKNOWN' | 'SHOWBUTTON' | 'HIDEBUTTON' | 'SETFOCUS' | 'RESETFOCUS' | 'SETFOCUSIFCREDITS'
   // Variabili e dati  
   | 'SET_TO' | 'ADD' | 'SETFOCUS' | 'RESETFOCUS'
   // Info e help
   | 'ADDINFOWINDOW' | 'SHOWINFOWINDOW' | 'SHOWHELPIMAGE'
-  | 'BUILDINGHELPSCRIPT' | 'FLIGHTHELPSCRIPT' | 'ALIENHELPSCRIPT'
   // Missione e combattimento
   | 'ADDOPPONENT' | 'SETSHIPTYPE' | 'ADDPARTTOSHIP' | 'ADDPARTTOASIDESLOT'
   | 'ACT_MISSION' | 'SETTURNBASED' | 'ADDSHIPPARTS'
@@ -52,6 +51,8 @@ export type BlockType =
   | 'ASKCHAR' | 'FOCUSCHAR'
   // Sistema
   | 'SAVESTATE' | 'LOADSTATE' | 'QUITCAMPAIGN'
+  // Tutorial / Info&Help
+  | 'BUILDINGHELPSCRIPT' | 'FLIGHTHELPSCRIPT' | 'ALIENHELPSCRIPT'
   // Contenitori
   | 'IF' | 'MENU' | 'OPT' | 'BUILD' | 'FLIGHT';
 
@@ -148,6 +149,58 @@ export interface LabelBlock extends CommandBlock {
   parameters: {
     name: string;
   };
+}
+
+export interface ShowButtonBlock extends CommandBlock {
+  type: 'SHOWBUTTON';
+  parameters: {
+    button: string;
+  };
+}
+
+export interface HideButtonBlock extends CommandBlock {
+  type: 'HIDEBUTTON';
+  parameters: {
+    button: string;
+  };
+}
+
+export interface SetFocusBlock extends CommandBlock {
+  type: 'SETFOCUS';
+  parameters: {
+    button: string;
+  };
+}
+
+export interface ResetFocusBlock extends CommandBlock {
+  type: 'RESETFOCUS';
+  parameters: {
+    button: string;
+  };
+}
+
+export interface SetFocusIfCreditsBlock extends CommandBlock {
+  type: 'SETFOCUSIFCREDITS';
+  parameters: {
+    button: string;
+    credits: number;
+  };
+}
+
+// Aggiungi tipi parametri specifici (se usate interfacce per blocchi comando)
+export interface BuildingHelpScriptBlock extends BaseBlock {
+  type: 'BUILDINGHELPSCRIPT';
+  parameters: { value: number; script: string };
+}
+
+export interface FlightHelpScriptBlock extends BaseBlock {
+  type: 'FLIGHTHELPSCRIPT';
+  parameters: { script: string };
+}
+
+export interface AlienHelpScriptBlock extends BaseBlock {
+  type: 'ALIENHELPSCRIPT';
+  parameters: { script: string };
 }
 
 // Strumenti disponibili nella barra laterale

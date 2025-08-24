@@ -9,6 +9,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
 const { findAllRelatedScripts } = require('../utils/scriptAnalyzer');
+const { initializeLanguage, isLanguageInitialized, getAvailableLanguages } = require('../utils/languageInitializer');
 
 const router = express.Router();
 const logger = getLogger();
@@ -552,6 +553,23 @@ router.post('/saveMission', async (req, res) => {
       });
     }
     
+    // Verifica e inizializza lingue non esistenti
+    for (const language of languages) {
+      if (!await isLanguageInitialized(language, GAME_ROOT)) {
+        logger.info(`Detected new language ${language}, initializing for mission save...`);
+        try {
+          await initializeLanguage(language, GAME_ROOT);
+          logger.info(`Successfully initialized new language: ${language}`);
+        } catch (initError) {
+          logger.error(`Failed to initialize language ${language}: ${initError.message}`);
+          return res.status(500).json({ 
+            success: false, 
+            error: `Failed to initialize language ${language}: ${initError.message}`
+          });
+        }
+      }
+    }
+    
     // Salva in tutte le lingue necessarie
     const savedLanguages = [];
     let errors = [];
@@ -567,7 +585,8 @@ router.post('/saveMission', async (req, res) => {
           finishSection: blocksFinish || []
         };
         
-        // Serializza solo la mission (senza SCRIPTS wrapper) per la lingua corrente
+        // Serializza solo la mission per la lingua corrente
+        // Se è multilingua, serializza per la lingua specifica per estrarre i testi corretti
         const missionContent = serializeElement(missionBlock, lang);
         
         // Percorso del file da salvare - gestisci custom missions
@@ -812,6 +831,7 @@ async function parseMissionFileForAPI12(filePath, fileName, language, allMission
         
         if (!allMissionsData.has(currentMission)) {
           allMissionsData.set(currentMission, {
+            name: currentMission,  // AGGIUNTO: campo name mancante
             languages: [],
             fileNames: {},
             commandCounts: {},
@@ -830,6 +850,11 @@ async function parseMissionFileForAPI12(filePath, fileName, language, allMission
         const missionData = allMissionsData.get(currentMission);
         if (!missionData.languages.includes(language)) {
           missionData.languages.push(language);
+        }
+        
+        // Assicurati che EN sia sempre incluso se esiste in qualsiasi lingua
+        if (language === 'EN' && !missionData.languages.includes('EN')) {
+          missionData.languages.push('EN');
         }
         missionData.fileNames[language] = fileName;
         
@@ -1357,54 +1382,78 @@ function mergeCommandParameters(refParams, parsedMissions, languages, blockPath)
 // Parse mission singola lingua (seguendo la stessa logica di parseScriptSingleLanguage)
 async function parseMissionSingleLanguage(missionName, language = 'EN', format = 'blocks') {
   try {
-    const missionsPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${language}`);
+    // Array delle directory da cercare in ordine di priorità
+    const searchPaths = [
+      // 1. Directory standard campaign
+      path.join(GAME_ROOT, 'campaign', `campaignScripts${language}`),
+      // 2. Custom missions multilingua
+      path.join(GAME_ROOT, 'customScripts', language),
+      // 3. Custom missions singola lingua (solo per EN o se non trovato altrove)
+      path.join(GAME_ROOT, 'customScripts')
+    ];
     
-    if (!await fs.pathExists(missionsPath)) {
-      logger.warn(`Mission path not found for language ${language}`);
-      return null;
-    }
-    
-    const files = await fs.readdir(missionsPath);
     let missionFound = false;
     let missionLines = [];
     let fileName = '';
+    let searchedPath = '';
     
-    // Cerca la mission nei file
-    for (const file of files.filter(f => f.endsWith('.txt'))) {
-      const filePath = path.join(missionsPath, file);
-      const content = await fs.readFile(filePath, 'utf8');
-      const lines = content.split('\n');
-      
-      let missionStartIndex = -1;
-      let missionEndIndex = -1;
-      let currentMission = null;
-      
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].trim();
-        
-        if (line.startsWith('MISSION ')) {
-          const mName = line.replace('MISSION ', '').trim();
-          if (mName === missionName) {
-            currentMission = mName;
-            missionStartIndex = i;
-          }
-        } else if (line === 'END_OF_MISSION' && currentMission === missionName) {
-          missionEndIndex = i;
-          break;
-        }
+    // Cerca la mission in tutte le directory
+    for (const missionsPath of searchPaths) {
+      if (!await fs.pathExists(missionsPath)) {
+        continue;
       }
       
-      if (missionStartIndex >= 0 && missionEndIndex >= 0) {
-        missionLines = lines.slice(missionStartIndex, missionEndIndex + 1);
-        missionFound = true;
-        fileName = file;
-        break;
+      try {
+        const files = await fs.readdir(missionsPath);
+        
+        // Cerca la mission nei file
+        for (const file of files.filter(f => f.endsWith('.txt'))) {
+          const filePath = path.join(missionsPath, file);
+          const content = await fs.readFile(filePath, 'utf8');
+          const lines = content.split('\n');
+          
+          let missionStartIndex = -1;
+          let missionEndIndex = -1;
+          let currentMission = null;
+          
+          for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            
+            if (line.startsWith('MISSION ')) {
+              const mName = line.replace('MISSION ', '').trim();
+              if (mName === missionName) {
+                currentMission = mName;
+                missionStartIndex = i;
+              }
+            } else if (line === 'END_OF_MISSION' && currentMission === missionName) {
+              missionEndIndex = i;
+              break;
+            }
+          }
+          
+          if (missionStartIndex >= 0 && missionEndIndex >= 0) {
+            missionLines = lines.slice(missionStartIndex, missionEndIndex + 1);
+            missionFound = true;
+            fileName = file;
+            searchedPath = missionsPath;
+            break;
+          }
+        }
+        
+        if (missionFound) {
+          break;
+        }
+      } catch (error) {
+        logger.warn(`Error scanning ${missionsPath}: ${error.message}`);
       }
     }
     
     if (!missionFound) {
+      logger.warn(`Mission '${missionName}' not found in any directory for language ${language}`);
       return null;
     }
+    
+    logger.info(`Mission '${missionName}' found in ${searchedPath}/${fileName}`);
     
     // Prepara risultato base
     const result = {
@@ -1493,6 +1542,334 @@ async function parseMissionSingleLanguage(missionName, language = 'EN', format =
     logger.error(`Error parsing mission ${missionName} for language ${language}: ${error.message}`);
     return null;
   }
+}
+
+// API per ottenere coverage traduzioni missions (simile a scripts)
+router.get('/translations/coverage', async (req, res) => {
+  try {
+    logger.info('API call: GET /api/missions/translations/coverage - Coverage traduzioni missions');
+    
+    const languages = ['EN', 'IT', 'DE', 'FR', 'ES', 'PL', 'CS', 'RU'];
+    const perLanguage = {};
+    const perMission = [];
+    
+    // Inizializza contatori per lingua
+    for (const lang of languages) {
+      if (lang === 'EN') continue; // EN è la lingua base
+      perLanguage[lang] = { covered: 0, missing: 0, different: 0, totalFields: 0, percent: 100 };
+    }
+    
+    // Ottieni lista missions usando la stessa logica dell'endpoint existente
+    // (evita fetch interno per problemi di dipendenze Node.js)
+    const allMissionsData = new Map();
+    
+    // Carica missions standard da tutte le lingue
+    for (const lang of languages) {
+      const missionsPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`);
+      logger.info(`🔍 Checking path: ${missionsPath}`);
+      if (await fs.pathExists(missionsPath)) {
+        try {
+          const files = await fs.readdir(missionsPath);
+          const txtFiles = files.filter(f => f.endsWith('.txt'));
+          logger.info(`📁 Found ${txtFiles.length} txt files in ${lang}: ${txtFiles.slice(0,3).join(', ')}${txtFiles.length > 3 ? '...' : ''}`);
+          for (const fileName of txtFiles) {
+            const filePath = path.join(missionsPath, fileName);
+            await parseMissionFileForAPI12(filePath, fileName, lang, allMissionsData, false);
+          }
+          logger.info(`📊 Total missions in allMissionsData after ${lang}: ${allMissionsData.size}`);
+        } catch (error) {
+          logger.warn(`Error scanning missions for ${lang}: ${error.message}`);
+        }
+      } else {
+        logger.warn(`Path does not exist: ${missionsPath}`);
+      }
+    }
+    
+    // Carica missions custom multilingua
+    const customScriptsPath = path.join(GAME_ROOT, 'customScripts');
+    for (const lang of languages) {
+      const langPath = path.join(customScriptsPath, lang);
+      if (await fs.pathExists(langPath)) {
+        try {
+          const files = await fs.readdir(langPath);
+          const txtFiles = files.filter(f => f.endsWith('.txt'));
+          for (const fileName of txtFiles) {
+            const filePath = path.join(langPath, fileName);
+            await parseMissionFileForAPI12(filePath, fileName, lang, allMissionsData, true);
+          }
+        } catch (error) {
+          logger.warn(`Error scanning custom missions for ${lang}: ${error.message}`);
+        }
+      }
+    }
+    
+    // Carica missions custom singola lingua
+    if (await fs.pathExists(customScriptsPath)) {
+      try {
+        const files = await fs.readdir(customScriptsPath);
+        const txtFiles = files.filter(f => f.endsWith('.txt') && f !== 'README.txt');
+        for (const fileName of txtFiles) {
+          const filePath = path.join(customScriptsPath, fileName);
+          const stat = await fs.stat(filePath);
+          if (stat.isFile()) {
+            await parseMissionFileForAPI12(filePath, fileName, 'EN', allMissionsData, true);
+          }
+        }
+      } catch (error) {
+        logger.warn(`Error scanning custom scripts root: ${error.message}`);
+      }
+    }
+    
+    const missions = Array.from(allMissionsData.values()).map(missionData => ({
+      nomemission: missionData.name,
+      name: missionData.name, // Aggiunge anche .name per compatibilità
+      languages: missionData.languages,
+      isCustom: missionData.isCustom || false
+    }));
+    
+    
+    // Calcola coverage per ogni mission multilingua
+    for (const mission of missions) {
+      const missionName = mission.nomemission;
+      if (!missionName) continue;
+      
+      
+      // Salta missions custom non-multilingua
+      const isNonMultilingual = mission.isCustom && (!mission.languages || (mission.languages.length === 1 && mission.languages[0] === 'EN'));
+      if (isNonMultilingual) {
+        continue;
+      }
+      
+      // Salta missions che non hanno EN (lingua base necessaria)
+      if (!mission.languages || !mission.languages.includes('EN')) {
+        continue;
+      }
+      
+      try {
+        // Usa lo stesso approccio dell'endpoint individuale che funziona
+        // Carica solo EN come riferimento per ottenere i campi da tradurre
+        const enMission = await parseMissionSingleLanguage(missionName, 'EN', 'blocks');
+        if (!enMission || !enMission.blocksMission) continue;
+        
+        // Estrai tutti i blocchi dalla versione EN
+        const allBlocks = [
+          ...(enMission.blocksMission || []),
+          ...(enMission.blocksFinish || [])
+        ];
+        
+        // Estrai campi multilingua dalla versione EN
+        const translationFields = extractMissionTranslationFields(allBlocks, languages);
+        
+        if (translationFields.length === 0) continue;
+        
+        const missionEntry = { mission: missionName, totalFields: translationFields.length, languages: {} };
+        
+        // Per ogni lingua target, carica la mission e confronta
+        for (const lang of languages) {
+          if (lang === 'EN') continue;
+          
+          // Salta lingue non supportate da questa mission
+          if (!mission.languages.includes(lang)) {
+            missionEntry.languages[lang] = {
+              covered: 0,
+              missing: translationFields.length,
+              different: 0,
+              totalFields: translationFields.length,
+              percent: 0
+            };
+            // Aggiungi ai contatori globali anche per lingue non supportate
+            perLanguage[lang].missing += translationFields.length;
+            perLanguage[lang].totalFields += translationFields.length;
+            continue;
+          }
+          
+          try {
+            const langMission = await parseMissionSingleLanguage(missionName, lang, 'blocks');
+            if (!langMission) {
+              missionEntry.languages[lang] = {
+                covered: 0,
+                missing: translationFields.length,
+                different: 0,
+                totalFields: translationFields.length,
+                percent: 0
+              };
+              continue;
+            }
+            
+            // Estrai campi dalla versione tradotta
+            const langBlocks = [
+              ...(langMission.blocksMission || []),
+              ...(langMission.blocksFinish || [])
+            ];
+            const langFields = extractMissionTranslationFields(langBlocks, [lang]);
+            
+            // Calcola coverage confrontando EN vs lang
+            const stats = calculateMissionCoverageStats(translationFields, lang, langFields);
+            missionEntry.languages[lang] = {
+              covered: stats.covered,
+              missing: stats.missing,
+              different: stats.covered,
+              totalFields: stats.total,
+              percent: stats.percent
+            };
+            
+            // Aggiungi ai contatori globali
+            perLanguage[lang].covered += stats.covered;
+            perLanguage[lang].missing += stats.missing;
+            perLanguage[lang].different += stats.covered;
+            perLanguage[lang].totalFields += stats.total;
+            
+          } catch (langError) {
+            // Se la lingua non esiste, considera tutto missing
+            missionEntry.languages[lang] = {
+              covered: 0,
+              missing: translationFields.length,
+              different: 0,
+              totalFields: translationFields.length,
+              percent: 0
+            };
+            perLanguage[lang].missing += translationFields.length;
+            perLanguage[lang].totalFields += translationFields.length;
+          }
+        }
+        
+        perMission.push(missionEntry);
+        
+      } catch (error) {
+        logger.warn(`Error processing mission ${missionName} for coverage: ${error.message}`);
+      }
+    }
+    
+    // Calcola percentuali globali
+    for (const lang of languages) {
+      if (lang === 'EN') continue;
+      const d = perLanguage[lang];
+      d.percent = d.totalFields > 0 ? Math.round((d.covered / d.totalFields) * 100) : 0;
+    }
+    
+    logger.info(`Missions translation coverage calculated for ${perMission.length} missions`);
+    
+    res.json({
+      success: true,
+      data: { perLanguage, perMission }
+    });
+    
+  } catch (error) {
+    logger.error(`Error calculating missions translation coverage: ${error.message}`);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to calculate missions translation coverage',
+      message: error.message 
+    });
+  }
+});
+
+// Funzione per estrarre campi multilingua dalle missions
+function extractMissionTranslationFields(blocks, languages) {
+  const fields = [];
+  const norm = (s) => (typeof s === 'string' ? s.trim() : '');
+  
+  function visit(list, pathStack) {
+    if (!Array.isArray(list)) return;
+    let lastLabel = null;
+    
+    for (let i = 0; i < list.length; i++) {
+      const b = list[i] || {};
+      const currentPath = [...pathStack, i];
+      
+      // Traccia label più vicino
+      if (b.type === 'LABEL' && b.parameters?.name) {
+        lastLabel = String(b.parameters.name);
+      }
+      
+      // Campo text (usato da OPT e SAY)
+      if (b.text && typeof b.text === 'object' && !Array.isArray(b.text)) {
+        const enVal = norm(b.text.EN || Object.values(b.text)[0] || '');
+        if (enVal) {
+          fields.push({
+            blockPath: currentPath,
+            field: 'text',
+            en: enVal,
+            values: { ...b.text },
+            nearestLabel: lastLabel,
+            type: b.type || null
+          });
+        }
+      }
+      
+      // Parametri con oggetti multilingua
+      if (b.parameters && typeof b.parameters === 'object') {
+        for (const [pName, pVal] of Object.entries(b.parameters)) {
+          if (pVal && typeof pVal === 'object' && !Array.isArray(pVal)) {
+            const enVal = norm(pVal.EN || Object.values(pVal)[0] || '');
+            if (enVal) {
+              fields.push({
+                blockPath: currentPath,
+                field: `parameters.${pName}`,
+                en: enVal,
+                values: { ...pVal },
+                nearestLabel: lastLabel,
+                type: b.type || null
+              });
+            }
+          }
+        }
+      }
+      
+      // Ricorsione sui contenitori
+      if (b.children) visit(b.children, [...currentPath, 'children']);
+      if (b.thenBlocks) visit(b.thenBlocks, [...currentPath, 'thenBlocks']);
+      if (b.elseBlocks) visit(b.elseBlocks, [...currentPath, 'elseBlocks']);
+      
+      // Ricorsione sui blocchi specifici delle missions
+      if (b.blockInit) visit(b.blockInit, [...currentPath, 'blockInit']);
+      if (b.blockStart) visit(b.blockStart, [...currentPath, 'blockStart']);
+      if (b.blockEvaluate) visit(b.blockEvaluate, [...currentPath, 'blockEvaluate']);
+    }
+  }
+  
+  visit(blocks, []);
+  return fields;
+}
+
+// Funzione per calcolare statistiche coverage missions
+function calculateMissionCoverageStats(enFields, targetLang, langFields = null) {
+  let covered = 0;
+  let missing = 0;
+  
+  if (langFields) {
+    // Confronta campi EN vs campi tradotti 
+    for (const enField of enFields) {
+      const langField = langFields.find(lf => 
+        lf.blockPath.join('.') === enField.blockPath.join('.') && 
+        lf.field === enField.field
+      );
+      
+      if (langField && langField.values[targetLang] && 
+          langField.values[targetLang].trim() !== enField.en.trim()) {
+        covered++;
+      } else {
+        missing++;
+      }
+    }
+  } else {
+    // Usa la logica originale se langFields non disponibili
+    for (const field of enFields) {
+      const targetVal = field.values[targetLang]?.trim() || '';
+      const enVal = field.en.trim();
+      
+      if (!targetVal || targetVal === enVal) {
+        missing++;
+      } else {
+        covered++;
+      }
+    }
+  }
+  
+  const total = enFields.length;
+  const percent = total > 0 ? Math.round((covered / total) * 100) : 100;
+  
+  return { covered, missing, total, percent };
 }
 
 module.exports = router;

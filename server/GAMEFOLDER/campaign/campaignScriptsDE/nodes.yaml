@@ -18,7 +18,7 @@
   caption: "Weltraumbar"
   description: "Es war einmal, vor langer Zeit, die berühmteste Bar in diesem Teil der Galaxis. Ist auch heute noch okay."
   shuttles: [["newbie", 10], ["regula", 10], ["outpost", 15], ["forge", 15], ["lab", 20], ["club",25],["workshop",15],["brownHome",25]]
-  buttons: [[bbarprogress, barDebug, "[Progress with sailor quest]"], [bbartender, barDlg, "Mit Barmann reden."], [bguests, barGuestsDlg, "Mit Gästen reden."]]
+  buttons: [[bbarprogress, barDebug, "[Fortschritt mit der Matrosen-Quest]"], [bbartender, barDlg, "Mit Barmann reden."], [bguests, barGuestsDlg, "Mit Gästen reden."]]
 - name: regula
   coordinates: [1300, 1700]
   image: regula.png

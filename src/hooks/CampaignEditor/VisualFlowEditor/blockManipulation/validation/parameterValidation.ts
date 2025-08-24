@@ -1,10 +1,32 @@
+
+import { simulateSceneExecution } from '@/utils/CampaignEditor/VisualFlowEditor/sceneSimulation';
+import type { IFlowBlock } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
+
+/**
+ * Valida i parametri di un blocco SHOWHELPIMAGE
+ */
+export const validateShowHelpImageParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.params || block.parameters.params.trim() === '') {
+    return {
+      valid: false,
+      error: 'SHOWHELPIMAGE_NO_PARAMS'
+    };
+  }
+  return { valid: true };
+};
+/**
+ * Valida i parametri di un blocco con singola stringa in parameters.params
+ */
+export const validateSingleStringParams = (block: any, errorKey: string): { valid: boolean; error?: string } => {
+  if (!block.parameters?.params || String(block.parameters.params).trim() === '') {
+    return { valid: false, error: errorKey };
+  }
+  return { valid: true };
+};
 /**
  * Parameter Validation Module
  * Funzioni per validare che i parametri dei blocchi siano valorizzati correttamente
  */
-
-import { simulateSceneExecution } from '@/utils/CampaignEditor/VisualFlowEditor/sceneSimulation';
-import type { IFlowBlock } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 
 /**
  * Verifica se un testo multilingua è valorizzato (deve avere almeno EN)
@@ -100,6 +122,29 @@ export const validateAskParameters = (block: any, allBlocks?: IFlowBlock[], char
     }
   }
   
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri di un blocco ASKCHAR
+ * Regole: come ASK (testo multilingua richiesto e scena attiva) + personaggio selezionato
+ */
+export const validateAskCharParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
+  // Personaggio obbligatorio
+  if (!block.parameters?.character || String(block.parameters.character).trim().length === 0) {
+    return { valid: false, error: 'ASKCHAR_NO_CHARACTER' };
+  }
+  // Testo multilingua obbligatorio
+  if (!isMultilingualTextValid(block.parameters?.text)) {
+    return { valid: false, error: 'ASKCHAR_NO_TEXT' };
+  }
+  // Deve esserci una scena attiva
+  if (allBlocks && block.id) {
+    const sceneState = simulateSceneExecution(allBlocks, block.id, characters);
+    if (!sceneState.isInDialogScene) {
+      return { valid: false, error: 'ASKCHAR_NO_SCENE' };
+    }
+  }
   return { valid: true };
 };
 
@@ -235,55 +280,15 @@ export const validateChangeCharParameters = (block: any, allBlocks?: IFlowBlock[
     };
   }
   
-  // Se abbiamo il contesto, verifica che siamo in una scena
+  // Se abbiamo il contesto, verifica solo che siamo in una scena (CHANGECHAR può precedere SHOWCHAR)
   if (allBlocks && block.id) {
     const sceneState = simulateSceneExecution(allBlocks, block.id, characters);
-    
-    // Verifica che siamo in una scena (warning)
     if (!sceneState.isInDialogScene) {
-      return {
-        valid: false,
-        error: 'CHANGECHAR_NO_SCENE'
-      };
-    }
-    
-    // Verifica che ci siano personaggi visibili (warning)
-    if (sceneState.currentScene) {
-      const visibleCharacters = sceneState.currentScene.personaggi.filter(p => p.visible);
-      if (visibleCharacters.length === 0) {
-        return {
-          valid: false,
-          error: 'CHANGECHAR_NO_VISIBLE_CHARACTERS'
-        };
-      }
-      
-      // Verifica che il personaggio selezionato sia visibile nella scena (warning)
-      const selectedCharVisible = visibleCharacters.find(p => p.nomepersonaggio === block.parameters.character);
-      if (!selectedCharVisible) {
-        return {
-          valid: false,
-          error: 'CHANGECHAR_CHARACTER_NOT_VISIBLE'
-        };
-      }
+      return { valid: false, error: 'CHANGECHAR_NO_SCENE' };
     }
   }
-  
-  // Verifica che l'immagine selezionata faccia parte della lista immagini del personaggio (warning)
-  if (characters && block.parameters?.character && block.parameters?.image) {
-    const character = characters.find((c: any) => c.nomepersonaggio === block.parameters.character);
-    if (character && character.listaimmagini) {
-      const imageExists = character.listaimmagini.find((img: any) => 
-        img.percorso === block.parameters.image || 
-        img.nomefile === block.parameters.image // fallback per compatibilità
-      );
-      if (!imageExists) {
-        return {
-          valid: false,
-          error: 'CHANGECHAR_IMAGE_NOT_IN_LIST'
-        };
-      }
-    }
-  }
+  // Nota: non imponiamo più che il personaggio sia visibile o che l'immagine sia nella lista.
+  // Questo per supportare script legacy dove CHANGECHAR precede SHOWCHAR e/o asset temporanei.
   
   return { valid: true };
 };
@@ -385,6 +390,23 @@ export const validateHideCharParameters = (block: any, allBlocks?: IFlowBlock[],
 };
 
 /**
+ * Valida i parametri di un blocco FOCUSCHAR
+ * Regole minime: personaggio selezionato e (se disponibile) scena attiva
+ */
+export const validateFocusCharParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
+  if (!block.parameters?.character || String(block.parameters.character).trim().length === 0) {
+    return { valid: false, error: 'FOCUSCHAR_NO_CHARACTER' };
+  }
+  if (allBlocks && block.id) {
+    const sceneState = simulateSceneExecution(allBlocks, block.id, characters);
+    if (!sceneState.isInDialogScene) {
+      return { valid: false, error: 'FOCUSCHAR_NO_SCENE' };
+    }
+  }
+  return { valid: true };
+};
+
+/**
  * Valida i parametri di un blocco ADDOPPONENT
  */
 export const validateAddOpponentParameters = (block: any): { valid: boolean; error?: string } => {
@@ -445,6 +467,44 @@ export const validateResetParameters = (block: any): { valid: boolean; error?: s
     return { 
       valid: false, 
       error: 'RESET_NO_SEMAPHORE' 
+    };
+  }
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri di un blocco SET_TO
+ */
+export const validateSetToParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.variable || block.parameters.variable.trim() === '') {
+    return { 
+      valid: false, 
+      error: 'SET_TO_NO_VARIABLE' 
+    };
+  }
+  if (block.parameters?.value === undefined || block.parameters?.value === null) {
+    return {
+      valid: false,
+      error: 'SET_TO_NO_VALUE'
+    };
+  }
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri di un blocco ADD
+ */
+export const validateAddParameters = (block: any): { valid: boolean; error?: string } => {
+  if (!block.parameters?.variable || block.parameters.variable.trim() === '') {
+    return { 
+      valid: false, 
+      error: 'ADD_NO_VARIABLE' 
+    };
+  }
+  if (block.parameters?.value === undefined || block.parameters?.value === null) {
+    return {
+      valid: false,
+      error: 'ADD_NO_VALUE'
     };
   }
   return { valid: true };
@@ -557,10 +617,73 @@ export const validateModifyOpponentsBuildSpeedParameters = (block: any): { valid
 };
 
 /**
+ * Valida i parametri di un blocco ADDOPPONENTSCREDITS
+ */
+export const validateAddOpponentsCreditsParameters = (block: any): { valid: boolean; error?: string } => {
+  const idx = block.parameters?.index;
+  const credits = block.parameters?.credits;
+  const idxNum = Number(idx);
+  const creditsNum = Number(credits);
+  if (!Number.isInteger(idxNum) || idxNum < 0 || idxNum > 3) {
+    return { valid: false, error: 'ADDOPPONENTSCREDITS_INVALID_INDEX' };
+  }
+  if (Number.isNaN(creditsNum)) {
+    return { valid: false, error: 'ADDOPPONENTSCREDITS_NO_CREDITS' };
+  }
+  return { valid: true };
+};
+
+/**
+ * Valida i parametri dei blocchi con singolo amount (ADDCREDITS/SETCREDITS/ADDMISSIONCREDITS)
+ */
+export const validateSingleAmountCreditsParameters = (block: any): { valid: boolean; error?: string } => {
+  const amount = block.parameters?.amount;
+  const num = Number(amount);
+  if (Number.isNaN(num)) {
+    return { valid: false, error: `${block.type}_NO_AMOUNT` };
+  }
+  return { valid: true };
+};
+
+/**
  * Valida i parametri di un blocco in base al suo tipo
  */
 export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], characters?: any[]): { valid: boolean; error?: string } => {
   switch (block.type) {
+    // New validations: Achievements and Ship Plan
+    case 'UNLOCKACHIEVEMENT': {
+      return (!block.parameters?.achievement || String(block.parameters.achievement).trim() === '')
+        ? { valid: false, error: 'UNLOCKACHIEVEMENT_NO_ACHIEVEMENT' }
+        : { valid: true };
+    }
+    case 'SETACHIEVEMENTPROGRESS':
+    case 'SETACHIEVEMENTATTEMPT': {
+      if (!block.parameters?.achievement || String(block.parameters.achievement).trim() === '') {
+        return { valid: false, error: `${block.type}_NO_ACHIEVEMENT` };
+      }
+      const v = block.parameters?.value;
+      if (v === undefined || v === null) {
+        return { valid: false, error: `${block.type}_NO_VALUE` };
+      }
+      const num = Number(v);
+      if (!Number.isFinite(num) || num < 1) {
+        return { valid: false, error: `${block.type}_INVALID_VALUE` };
+      }
+      return { valid: true };
+    }
+    case 'UNLOCKSHIPPLAN': {
+      return (!block.parameters?.shipPlan || String(block.parameters.shipPlan).trim() === '')
+        ? { valid: false, error: 'UNLOCKSHIPPLAN_NO_SHIPPLAN' }
+        : { valid: true };
+    }
+    case 'ADDINFOWINDOW':
+    case 'SHOWINFOWINDOW': {
+      // Richiedono sempre un parametro image valorizzato
+      if (!block.parameters?.image || String(block.parameters.image).trim() === '') {
+        return { valid: false, error: `${block.type}_NO_IMAGE` };
+      }
+      return { valid: true };
+    }
     case 'DELAY':
       return validateDelayParameters(block);
     case 'SAY':
@@ -580,6 +703,15 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       }
       return askValidation;
     }
+    case 'ASKCHAR': {
+      const askCharValidation = validateAskCharParameters(block, allBlocks, characters);
+      if (!askCharValidation.valid) return askCharValidation;
+      if (allBlocks) {
+        // Riutilizza la stessa regola strutturale di ASK
+        return validateAskIfStructure(block, allBlocks);
+      }
+      return askCharValidation;
+    }
     case 'GO':
       return validateGoParameters(block);
     case 'LABEL':
@@ -592,6 +724,8 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return validateShowCharParameters(block, allBlocks, characters);
     case 'HIDECHAR':
       return validateHideCharParameters(block, allBlocks, characters);
+    case 'FOCUSCHAR':
+      return validateFocusCharParameters(block, allBlocks, characters);
     case 'CHANGECHAR':
       return validateChangeCharParameters(block, allBlocks, characters);
     case 'ADDOPPONENT':
@@ -604,6 +738,10 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return validateSetParameters(block);
     case 'RESET':
       return validateResetParameters(block);
+    case 'SET_TO':
+      return validateSetToParameters(block);
+    case 'ADD':
+      return validateAddParameters(block);
     case 'ADDPARTTOSHIP':
       return validateAddPartToShipParameters(block);
     case 'ADDPARTTOASIDESLOT':
@@ -614,6 +752,8 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return validateSetAdvPileParameters(block);
     case 'SETSECRETADVPILE':
       return validateSetSecretAdvPileParameters(block);
+    case 'SHOWHELPIMAGE':
+      return validateShowHelpImageParameters(block);
     case 'ACT_MISSION':
       return validateActMissionParameters(block);
     case 'SETDECKPREPARATIONSCRIPT':
@@ -628,6 +768,67 @@ export const validateBlockParameters = (block: any, allBlocks?: IFlowBlock[], ch
       return validateSetSpecConditionParameters(block);
     case 'MODIFYOPPONENTSBUILDSPEED':
       return validateModifyOpponentsBuildSpeedParameters(block);
+    case 'ADDOPPONENTSCREDITS':
+      return validateAddOpponentsCreditsParameters(block);
+    // ===== DECK commands (single string) =====
+    case 'DECKADDCARDTYPE':
+      return validateSingleStringParams(block, 'DECKADDCARDTYPE_NO_PARAMS');
+    case 'DECKADDCARDROUND':
+      return validateSingleStringParams(block, 'DECKADDCARDROUND_NO_PARAMS');
+    case 'DECKADDRULEPOSITION':
+      return validateSingleStringParams(block, 'DECKADDRULEPOSITION_NO_PARAMS');
+    case 'DECKADDRULERANGE':
+      return validateSingleStringParams(block, 'DECKADDRULERANGE_NO_PARAMS');
+    case 'SETSUPERCARDSCNT':
+      return validateSingleStringParams(block, 'SETSUPERCARDSCNT_NO_PARAMS');
+    case 'ADDCREDITS':
+    case 'SETCREDITS':
+    case 'ADDMISSIONCREDITS':
+      return validateSingleAmountCreditsParameters(block);
+    // Map commands: require node
+    case 'SHOWNODE':
+    case 'HIDENODE':
+    case 'ADDNODE':
+    case 'SETNODEKNOWN':
+    case 'CENTERMAPBYNODE':
+    case 'MOVEPLAYERTONODE':
+      return (!block.parameters?.node || String(block.parameters.node).trim() === '')
+        ? { valid: false, error: `${block.type}_NO_NODE` }
+        : { valid: true };
+    // Path (route) based map commands: require route parameter
+    case 'SHOWPATH':
+    case 'HIDEPATH':
+    case 'CENTERMAPBYPATH':
+      return (!block.parameters?.route || String(block.parameters.route).trim() === '')
+        ? { valid: false, error: `${block.type}_NO_ROUTE` }
+        : { valid: true };
+    // Hide all paths requires two nodes (node1 and node2)
+    case 'HIDEALLPATHS': {
+      if (!block.parameters?.node1 || String(block.parameters.node1).trim() === '') {
+        return { valid: false, error: 'HIDEALLPATHS_NO_NODE1' };
+      }
+      if (!block.parameters?.node2 || String(block.parameters.node2).trim() === '') {
+        return { valid: false, error: 'HIDEALLPATHS_NO_NODE2' };
+      }
+      return { valid: true };
+    }
+    // Button based commands: require button parameter
+    case 'SHOWBUTTON':
+    case 'HIDEBUTTON':
+    case 'SETFOCUS':
+    case 'RESETFOCUS':
+      return (!block.parameters?.button || String(block.parameters.button).trim() === '')
+        ? { valid: false, error: `${block.type}_NO_BUTTON` }
+        : { valid: true };
+    case 'SETFOCUSIFCREDITS': {
+      if (!block.parameters?.button || String(block.parameters.button).trim() === '') {
+        return { valid: false, error: 'SETFOCUSIFCREDITS_NO_BUTTON' };
+      }
+      if (block.parameters?.credits === undefined || block.parameters.credits < 0) {
+        return { valid: false, error: 'SETFOCUSIFCREDITS_NO_CREDITS' };
+      }
+      return { valid: true };
+    }
     // EXIT_MENU, SHOWDLGSCENE, HIDEDLGSCENE non hanno parametri da validare
     default:
       return { valid: true };

@@ -7,6 +7,7 @@ import { useFullscreen } from '@/contexts/FullscreenContext';
 
 import { InteractiveMap } from './InteractiveMap/InteractiveMap';
 import { VisualFlowEditor } from './VisualFlowEditor/VisualFlowEditor';
+import { ImagesProvider } from '@/contexts/ImagesContext';
 import { VariablesSystem } from './VariablesSystem/VariablesSystem';
 import { Overview } from './Overview/Overview';
 import { ElementCounters } from './components/Header/components/ElementCounters/ElementCounters';
@@ -61,6 +62,27 @@ export const CampaignEditor: React.FC = () => {
     };
   }, [setActiveTab]);
 
+  // Handle navigation from Interactive Map to Visual Flow Editor for missions
+  useEffect(() => {
+    const handleNavigateToVisualFlowMission = (event: CustomEvent) => {
+      const { missionName } = event.detail || {};
+      if (!missionName) return;
+
+      // Switch to Visual Flow Editor tab
+      setActiveTab('flow');
+
+      // After switching tab, ask Visual Flow Editor to load the mission
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('VFE:loadMissionByName', { detail: { missionName } }));
+      }, 100);
+    };
+
+    window.addEventListener('navigateToVisualFlowMission', handleNavigateToVisualFlowMission as EventListener);
+    return () => {
+      window.removeEventListener('navigateToVisualFlowMission', handleNavigateToVisualFlowMission as EventListener);
+    };
+  }, [setActiveTab]);
+
   const tabs = [
     { id: 'map', label: t('tabs.interactiveMap') },
     { id: 'flow', label: t('tabs.visualFlowEditor') },
@@ -93,13 +115,6 @@ export const CampaignEditor: React.FC = () => {
             <h1 className="text-2xl font-bold text-white galaxy-title">{t('campaignEditor.title')}</h1>
             <p className="text-gray-400">{t('campaignEditor.description')}</p>
           </div>
-          <button
-            onClick={handleSaveAll}
-            className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white transition-colors"
-          >
-            <Save className="w-4 h-4" />
-            <span>{t('header.saveAll')}</span>
-          </button>
         </div>
       )}
 
@@ -146,16 +161,18 @@ export const CampaignEditor: React.FC = () => {
           />
         )}
 
-        {activeTab === 'flow' && (
-          <VisualFlowEditor 
-            analysis={analysis}
-            selectedScript={selectedScript?.nomescript || null}
-            onScriptSelect={(scriptName: string) => {
-              // Qui dovremmo trovare lo script completo per nome
-              // Per ora passiamo solo il nome
-              handleScriptSelect(scriptName as any);
-            }}
-          />
+    {activeTab === 'flow' && (
+          <ImagesProvider>
+            <VisualFlowEditor 
+              analysis={analysis}
+      scriptId={selectedScript?.nomescript || null}
+              onScriptSelect={(scriptName: string) => {
+                // Qui dovremmo trovare lo script completo per nome
+                // Per ora passiamo solo il nome
+                handleScriptSelect(scriptName as any);
+              }}
+            />
+          </ImagesProvider>
         )}
 
         {activeTab === 'variables' && (

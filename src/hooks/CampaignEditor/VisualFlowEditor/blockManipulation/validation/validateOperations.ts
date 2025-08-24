@@ -30,8 +30,8 @@ export const validateBlockInsertion = (
   index?: number,
   allBlocks?: any[]
 ): boolean => {
-  // Validazione ASK consecutivi
-  if (blockType === 'ASK') {
+  // Validazione ASK consecutivi (considera anche ASKCHAR)
+  if (blockType === 'ASK' || blockType === 'ASKCHAR') {
     if (!validateAskInsertion(targetContainer, targetContainerType, index)) {
       return false;
     }
@@ -365,6 +365,101 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
         // Genera messaggio specifico in base al tipo di errore
         let message = '';
         switch (paramValidation.error) {
+          case 'ADDINFOWINDOW_NO_IMAGE':
+            message = t ?
+              t('visualFlowEditor.validation.ADDINFOWINDOW_NO_IMAGE')
+              : 'ADDINFOWINDOW requires an image. Please select one.';
+            break;
+          case 'SHOWINFOWINDOW_NO_IMAGE':
+            message = t ?
+              t('visualFlowEditor.validation.SHOWINFOWINDOW_NO_IMAGE')
+              : 'SHOWINFOWINDOW requires an image. Please select one.';
+            break;
+          case 'SHOWNODE_NO_NODE':
+            message = t ?
+              t('visualFlowEditor.validation.SHOWNODE_NO_NODE')
+              : 'Select a node.';
+            break;
+          case 'HIDENODE_NO_NODE':
+            message = t ?
+              t('visualFlowEditor.validation.HIDENODE_NO_NODE')
+              : 'Select a node.';
+            break;
+          case 'ADDNODE_NO_NODE':
+            message = t ?
+              t('visualFlowEditor.validation.ADDNODE_NO_NODE')
+              : 'Select a node.';
+            break;
+          case 'SETNODEKNOWN_NO_NODE':
+            message = t ?
+              t('visualFlowEditor.validation.SETNODEKNOWN_NO_NODE')
+              : 'Select a node.';
+            break;
+          case 'CENTERMAPBYNODE_NO_NODE':
+            message = t ?
+              t('visualFlowEditor.validation.CENTERMAPBYNODE_NO_NODE')
+              : 'Select a node.';
+            break;
+          case 'SHOWPATH_NO_ROUTE':
+            message = t ?
+              t('visualFlowEditor.validation.SHOWPATH_NO_ROUTE')
+              : 'Select a route.';
+            break;
+          case 'HIDEPATH_NO_ROUTE':
+            message = t ?
+              t('visualFlowEditor.validation.HIDEPATH_NO_ROUTE')
+              : 'Select a route.';
+            break;
+          case 'CENTERMAPBYPATH_NO_ROUTE':
+            message = t ?
+              t('visualFlowEditor.validation.CENTERMAPBYPATH_NO_ROUTE')
+              : 'Select a route.';
+            break;
+          case 'HIDEALLPATHS_NO_NODE1':
+            message = t ?
+              t('visualFlowEditor.validation.HIDEALLPATHS_NO_NODE1')
+              : 'Select the first node.';
+            break;
+          case 'HIDEALLPATHS_NO_NODE2':
+            message = t ?
+              t('visualFlowEditor.validation.HIDEALLPATHS_NO_NODE2')
+              : 'Select the second node.';
+            break;
+          case 'SHOWBUTTON_NO_BUTTON':
+            message = t ?
+              t('visualFlowEditor.validation.SHOWBUTTON_NO_BUTTON')
+              : 'Select a button.';
+            break;
+          case 'HIDEBUTTON_NO_BUTTON':
+            message = t ?
+              t('visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON')
+              : 'Select a button.';
+            break;
+          case 'SETFOCUS_NO_BUTTON':
+            message = t ?
+              t('visualFlowEditor.validation.SETFOCUS_NO_BUTTON')
+              : 'Select a button.';
+            break;
+          case 'RESETFOCUS_NO_BUTTON':
+            message = t ?
+              t('visualFlowEditor.validation.RESETFOCUS_NO_BUTTON')
+              : 'Select a button.';
+            break;
+          case 'SETFOCUSIFCREDITS_NO_BUTTON':
+            message = t ?
+              t('visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_BUTTON')
+              : 'Select a button.';
+            break;
+          case 'SETFOCUSIFCREDITS_NO_CREDITS':
+            message = t ?
+              t('visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_CREDITS')
+              : 'Set minimum credits required.';
+            break;
+          case 'MOVEPLAYERTONODE_NO_NODE':
+            message = t ?
+              t('visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE')
+              : 'Select a node.';
+            break;
           case 'DELAY_NO_DURATION':
             message = t ? 
               t('visualFlowEditor.validation.delayNoDuration')
@@ -414,6 +509,26 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
             message = t ? 
               t('visualFlowEditor.validation.resetNoSemaphore')
               : 'RESET block must have a semaphore selected. Choose a semaphore to reset.';
+            break;
+          case 'SET_TO_NO_VARIABLE':
+            message = t ?
+              t('visualFlowEditor.validation.setToNoVariable')
+              : 'SET_TO block must have a variable selected. Choose a variable to set.';
+            break;
+          case 'SET_TO_NO_VALUE':
+            message = t ?
+              t('visualFlowEditor.validation.setToNoValue')
+              : 'SET_TO block must have a value specified. Enter a numeric value.';
+            break;
+          case 'ADD_NO_VARIABLE':
+            message = t ?
+              t('visualFlowEditor.validation.addNoVariable')
+              : 'ADD block must have a variable selected. Choose a variable to modify.';
+            break;
+          case 'ADD_NO_VALUE':
+            message = t ?
+              t('visualFlowEditor.validation.addNoValue')
+              : 'ADD block must have a value specified. Enter a numeric value to add.';
             break;
           case 'RETURN_AT_ROOT_LEVEL':
             message = t ? 
@@ -674,7 +789,7 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
         });
       }
       // NUOVA VALIDAZIONE: ASK non può seguire un altro ASK
-      if (block.type === 'ASK' && index > 0 && blocks[index - 1].type === 'ASK') {
+    if ((block.type === 'ASK' || block.type === 'ASKCHAR') && index > 0 && (blocks[index - 1].type === 'ASK' || blocks[index - 1].type === 'ASKCHAR')) {
         warnings++; // Warning, non error
         invalidBlocks.push(block.id);
         const prevAsk = blocks[index - 1];
@@ -682,8 +797,8 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
         const firstAskText = extractFirstText(prevAsk.parameters?.text) || (t ? t('visualFlowEditor.validation.noText') : 'no text');
         errorDetails.push({
           blockId: block.id,
-          blockType: block.type,
-          errorType: 'CONSECUTIVE_ASK',
+      blockType: block.type,
+      errorType: 'CONSECUTIVE_ASK',
           message: t ? 
             t('visualFlowEditor.validation.consecutiveAskDetailed').replace('{firstAsk}', firstAskText)
             : `Two consecutive ASK blocks are not allowed. The first ASK (${firstAskText}) is followed directly by this ASK. Insert a SAY, MENU or other command between the two ASK blocks.`,
@@ -694,16 +809,16 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
       }
       
       // NUOVA VALIDAZIONE: Ad un blocco ASK deve seguire un blocco MENU o LABEL
-      if (block.type === 'ASK') {
+  if (block.type === 'ASK' || block.type === 'ASKCHAR') {
         let isValidAsk = false;
         const nextBlock = index < blocks.length - 1 ? blocks[index + 1] : null;
         
-        // Controllo 1: Blocco successivo è MENU o LABEL
+  // Controllo 1: Blocco successivo è MENU o LABEL
         if (nextBlock && (nextBlock.type === 'MENU' || nextBlock.type === 'LABEL')) {
           isValidAsk = true;
         }
         
-        // Controllo 2: Blocco successivo è GO la cui LABEL è seguita da MENU
+  // Controllo 2: Blocco successivo è GO la cui LABEL è seguita da MENU
         if (!isValidAsk && nextBlock && nextBlock.type === 'GO' && allRootBlocks) {
           const labelName = nextBlock.parameters?.label;
           if (labelName) {
@@ -712,7 +827,7 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
               for (let i = 0; i < blocks.length; i++) {
                 const b = blocks[i];
                 if (b.type === 'LABEL' && b.parameters?.name === labelName) {
-                  // Controlla se il blocco dopo LABEL è MENU
+                    // Controlla se il blocco dopo LABEL è MENU
                   const nextAfterLabel = i < blocks.length - 1 ? blocks[i + 1] : null;
                   if (nextAfterLabel && nextAfterLabel.type === 'MENU') {
                     return true;
@@ -736,7 +851,7 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           }
         }
         
-        // Controllo 3: Blocco successivo è IF con MENU o LABEL come primo elemento in THEN/ELSE
+  // Controllo 3: Blocco successivo è IF con MENU o LABEL come primo elemento in THEN/ELSE
         if (!isValidAsk && nextBlock && nextBlock.type === 'IF') {
           let thenValid = false;
           let elseValid = false;
@@ -765,7 +880,7 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           }
         }
         
-        // Se ASK è l'ultimo blocco in un ramo IF, controlla dopo l'IF
+  // Se ASK/ASKCHAR è l'ultimo blocco in un ramo IF, controlla dopo l'IF
         if (!isValidAsk && !nextBlock && parentBlock && parentBlock.type === 'IF' && allRootBlocks) {
           const findBlockAfterIf = (blocks: any[], ifBlock: any): any | null => {
             for (let i = 0; i < blocks.length; i++) {
@@ -795,13 +910,13 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           }
         }
         
-        if (!isValidAsk) {
+    if (!isValidAsk) {
           warnings++; // Warning, non error
           invalidBlocks.push(block.id);
           errorDetails.push({
             blockId: block.id,
             blockType: block.type,
-            errorType: nextBlock ? 'ASK_NOT_FOLLOWED_BY_MENU' : 'ASK_WITHOUT_MENU',
+      errorType: nextBlock ? 'ASK_NOT_FOLLOWED_BY_MENU' : 'ASK_WITHOUT_MENU',
             message: t ? 
               (nextBlock ? 
                 t('visualFlowEditor.validation.askMustBeFollowedByMenu')
@@ -871,7 +986,7 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
       }
       
       // Valida blocchi MENU - Regole complete
-      if (block.type === 'MENU') {
+  if (block.type === 'MENU') {
         let isValidMenu = false;
         let prevBlock = null;
         
@@ -882,15 +997,15 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           prevBlock = findBlockBeforeContainer(allRootBlocks, parentBlock.id);
         }
         
-        // Regola 1: MENU preceduto da ASK (diretto o nello stesso ramo IF)
-        if (prevBlock && prevBlock.type === 'ASK') {
+  // Regola 1: MENU preceduto da ASK o ASKCHAR (diretto o nello stesso ramo IF)
+  if (prevBlock && (prevBlock.type === 'ASK' || prevBlock.type === 'ASKCHAR')) {
           isValidMenu = true;
         }
         
         // Se MENU è dentro IF, controlla se c'è un ASK prima dell'IF
         if (!isValidMenu && parentBlock && parentBlock.type === 'IF' && allRootBlocks) {
           const blockBeforeIf = findBlockBeforeContainer(allRootBlocks, parentBlock.id);
-          if (blockBeforeIf && blockBeforeIf.type === 'ASK') {
+          if (blockBeforeIf && (blockBeforeIf.type === 'ASK' || blockBeforeIf.type === 'ASKCHAR')) {
             isValidMenu = true;
           }
         }
@@ -906,10 +1021,10 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           }
         }
         
-        // Regola 3: MENU preceduto da LABEL che a sua volta è preceduto da ASK
+        // Regola 3: MENU preceduto da LABEL che a sua volta è preceduta da ASK/ASKCHAR
         if (!isValidMenu && prevBlock && prevBlock.type === 'LABEL' && index > 1) {
           const blockBeforeLabel = blocks[index - 2];
-          if (blockBeforeLabel && blockBeforeLabel.type === 'ASK') {
+          if (blockBeforeLabel && (blockBeforeLabel.type === 'ASK' || blockBeforeLabel.type === 'ASKCHAR')) {
             isValidMenu = true;
           }
         }
@@ -927,11 +1042,11 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
                   if (lastInOpt.type === 'GO' && allRootBlocks) {
                     const labelName = lastInOpt.parameters?.label;
                     if (labelName) {
-                      // Trova la LABEL e controlla se è preceduta da ASK
+          // Trova la LABEL e controlla se è preceduta da ASK/ASKCHAR
                       const findLabelPrecededByAsk = (blocks: any[]): boolean => {
                         for (let i = 0; i < blocks.length; i++) {
                           if (blocks[i].type === 'LABEL' && blocks[i].parameters?.name === labelName) {
-                            if (i > 0 && blocks[i - 1].type === 'ASK') {
+            if (i > 0 && (blocks[i - 1].type === 'ASK' || blocks[i - 1].type === 'ASKCHAR')) {
                               return true;
                             }
                           }
@@ -1151,7 +1266,37 @@ export const validateAllBlocks = (blocks: any[], t?: (key: any) => string, chara
           });
         }
       }
-      
+      if (block.type === 'BUILDINGHELPSCRIPT') {
+        const v = block.parameters?.value;
+        const s = block.parameters?.script;
+        if (typeof v !== 'number' || isNaN(v) || v < 0 || !s) {
+          errors++;
+          invalidBlocks.push(block.id);
+          errorDetails.push({
+            blockId: block.id,
+            blockType: block.type,
+            errorType: 'BUILDINGHELPSCRIPT_PARAMS_INVALID',
+            message: t ? t('visualFlowEditor.validation.buildingHelpScriptParams') : 'BUILDINGHELPSCRIPT requires a numeric value (>= 0) and a script.',
+            path: [...path],
+            type: 'error'
+          });
+        }
+      }
+      if (block.type === 'FLIGHTHELPSCRIPT' || block.type === 'ALIENHELPSCRIPT') {
+        const s = block.parameters?.script;
+        if (!s) {
+          errors++;
+          invalidBlocks.push(block.id);
+          errorDetails.push({
+            blockId: block.id,
+            blockType: block.type,
+            errorType: 'HELPSCRIPT_PARAMS_INVALID',
+            message: t ? t('visualFlowEditor.validation.helpScriptParams') : 'This command requires the script parameter.',
+            path: [...path],
+            type: 'error'
+          });
+        }
+      }
       // Ricorsione per container
       if (block.children) {
         // Per i container normali, passa il blocco corrente come parent e mantieni allRootBlocks

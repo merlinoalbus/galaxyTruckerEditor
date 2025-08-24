@@ -11,7 +11,7 @@ export interface BlockColorConfig {
   dragHandle: string;
 }
 
-// Categorie principali   'ACT_MISSION': BlockCategory.MISSION, blocchi
+// Categorie principali
 export enum BlockCategory {
   CONTROL_FLOW = 'CONTROL_FLOW',      // IF, MENU, OPT, etc.
   MISSION = 'MISSION',                 // MISSION, BUILD, FLIGHT
@@ -22,11 +22,28 @@ export enum BlockCategory {
   GAME_STATE = 'GAME_STATE',          // SAVE, LOAD, etc.
   MULTIMEDIA = 'MULTIMEDIA',           // PLAY, STOP, VIDEO, etc.
   TIME = 'TIME',                      // DELAY, WAIT, etc.
+  INFO_HELP = 'INFO_HELP',            // Info & Help blocks
+  CREDITS = 'CREDITS',                // Credits-related blocks
   UTILITY = 'UTILITY'                 // Altri comandi
 }
 
 // Colori per categoria
 const CATEGORY_COLORS: Record<BlockCategory, BlockColorConfig> = {
+  [BlockCategory.CREDITS]: {
+    // Distinct dark-golden/brown palette to differ from other categories
+    background: 'bg-[#6B4E16]/90',
+    border: 'border-[#6B4E16]/80',
+    icon: 'bg-[#6B4E16]/80',
+    text: 'text-[#E0B341]',
+    dragHandle: 'bg-[#6B4E16]'
+  },
+  [BlockCategory.INFO_HELP]: {
+    background: 'bg-[#8B2C3A]/90', // Watermelon Extra Dark
+    border: 'border-[#8B2C3A]/80',
+    icon: 'bg-[#8B2C3A]/80',
+    text: 'text-[#8B2C3A]',
+    dragHandle: 'bg-[#8B2C3A]'
+  },
   [BlockCategory.CONTROL_FLOW]: {
     background: 'bg-slate-950/90',
     border: 'border-slate-700/80',
@@ -56,11 +73,11 @@ const CATEGORY_COLORS: Record<BlockCategory, BlockColorConfig> = {
     dragHandle: 'bg-fuchsia-700'
   },
   [BlockCategory.VARIABLES]: {
-    background: 'bg-emerald-950/90',
-    border: 'border-emerald-700/80',
-    icon: 'bg-emerald-900/80',
-    text: 'text-emerald-300',
-    dragHandle: 'bg-emerald-700'
+    background: 'bg-orange-950/90',
+    border: 'border-orange-700/80',
+    icon: 'bg-orange-900/80',
+    text: 'text-orange-300',
+    dragHandle: 'bg-orange-700'
   },
   [BlockCategory.MAP]: {
     background: 'bg-teal-950/90',
@@ -147,6 +164,12 @@ const GENERAL_COMMAND_COLORS: Record<string, BlockColorConfig> = {
     text: 'text-yellow-300',
     dragHandle: 'bg-yellow-700'
   },
+  'ADDINFOWINDOW': CATEGORY_COLORS[BlockCategory.INFO_HELP],
+  'SHOWINFOWINDOW': CATEGORY_COLORS[BlockCategory.INFO_HELP],
+  'SHOWHELPIMAGE': CATEGORY_COLORS[BlockCategory.INFO_HELP],
+  'BUILDINGHELPSCRIPT': CATEGORY_COLORS[BlockCategory.INFO_HELP],
+  'FLIGHTHELPSCRIPT': CATEGORY_COLORS[BlockCategory.INFO_HELP],
+  'ALIENHELPSCRIPT': CATEGORY_COLORS[BlockCategory.INFO_HELP],
   'GO': {
     background: 'bg-fuchsia-950/90',
     border: 'border-fuchsia-700/80',
@@ -258,6 +281,35 @@ const GENERAL_COMMAND_COLORS: Record<string, BlockColorConfig> = {
     icon: 'bg-indigo-800/80',
     text: 'text-indigo-300',
     dragHandle: 'bg-indigo-600'
+  },
+  // Distinct colors for new achievement and ship plan commands
+  'UNLOCKACHIEVEMENT': {
+    background: 'bg-pink-950/90',
+    border: 'border-pink-700/80',
+    icon: 'bg-pink-900/80',
+    text: 'text-pink-300',
+    dragHandle: 'bg-pink-700'
+  },
+  'SETACHIEVEMENTPROGRESS': {
+    background: 'bg-rose-950/90',
+    border: 'border-rose-700/80',
+    icon: 'bg-rose-900/80',
+    text: 'text-rose-300',
+    dragHandle: 'bg-rose-700'
+  },
+  'SETACHIEVEMENTATTEMPT': {
+    background: 'bg-fuchsia-950/90',
+    border: 'border-fuchsia-700/80',
+    icon: 'bg-fuchsia-900/80',
+    text: 'text-fuchsia-300',
+    dragHandle: 'bg-fuchsia-700'
+  },
+  'UNLOCKSHIPPLAN': {
+    background: 'bg-cyan-950/90',
+    border: 'border-cyan-700/80',
+    icon: 'bg-cyan-900/80',
+    text: 'text-cyan-300',
+    dragHandle: 'bg-cyan-700'
   }
 };
 
@@ -274,8 +326,10 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   'IF_MIN': BlockCategory.CONTROL_FLOW,
   'IF_MISSION_WON': BlockCategory.CONTROL_FLOW,
   'IF_ORDER': BlockCategory.CONTROL_FLOW,
+  'IF_POSITION_ORDER': BlockCategory.CONTROL_FLOW,
   'IF_PROB': BlockCategory.CONTROL_FLOW,
   'IF_TUTORIAL_SEEN': BlockCategory.CONTROL_FLOW,
+  'IF_ALL_RESIGNED': BlockCategory.CONTROL_FLOW,
   'IFMISSIONRESULTIS': BlockCategory.CONTROL_FLOW,
   'IFMISSIONRESULTMIN': BlockCategory.CONTROL_FLOW,
   'MENU': BlockCategory.CONTROL_FLOW,
@@ -309,6 +363,7 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   'ALLSHIPSGIVEUP': BlockCategory.MISSION,
   'GIVEUPFLIGHT': BlockCategory.MISSION,
   'MODIFYOPPONENTSBUILDSPEED': BlockCategory.MISSION,
+  'UNLOCKSHIPPLAN': BlockCategory.MISSION,
   
   // Dialogue
   'SAY': BlockCategory.DIALOGUE,
@@ -316,6 +371,9 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   'BRIEF': BlockCategory.DIALOGUE,
   'DEBRIEF': BlockCategory.DIALOGUE,
   'DIALOGUE': BlockCategory.DIALOGUE,
+  'UNLOCKACHIEVEMENT': BlockCategory.DIALOGUE,
+  'SETACHIEVEMENTPROGRESS': BlockCategory.DIALOGUE,
+  'SETACHIEVEMENTATTEMPT': BlockCategory.DIALOGUE,
   
   // Navigation
   'GO': BlockCategory.NAVIGATION,
@@ -326,12 +384,14 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   
   // Variables
   'SET': BlockCategory.VARIABLES,
+  'SET_TO': BlockCategory.VARIABLES,
   'ADD': BlockCategory.VARIABLES,
   'SUB': BlockCategory.VARIABLES,
   'MUL': BlockCategory.VARIABLES,
   'DIV': BlockCategory.VARIABLES,
   'RANDOM': BlockCategory.VARIABLES,
   'CLEAR': BlockCategory.VARIABLES,
+  'SETFOCUSIFCREDITS': BlockCategory.VARIABLES,
   
   // Map
   'MAP_TRAVEL': BlockCategory.MAP,
@@ -339,6 +399,23 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   'MAP_LOCK': BlockCategory.MAP,
   'MAP_SHOW': BlockCategory.MAP,
   'MAP_HIDE': BlockCategory.MAP,
+  // Specific map commands used in editor
+  'SHOWNODE': BlockCategory.MAP,
+  'HIDENODE': BlockCategory.MAP,
+  'ADDNODE': BlockCategory.MAP,
+  'SETNODEKNOWN': BlockCategory.MAP,
+  'CENTERMAPBYNODE': BlockCategory.MAP,
+  'MOVEPLAYERTONODE': BlockCategory.MAP,
+  // New map route/path commands
+  'SHOWPATH': BlockCategory.MAP,
+  'HIDEPATH': BlockCategory.MAP,
+  'CENTERMAPBYPATH': BlockCategory.MAP,
+  'HIDEALLPATHS': BlockCategory.MAP,
+  // Map button commands
+  'SHOWBUTTON': BlockCategory.MAP,
+  'HIDEBUTTON': BlockCategory.MAP,
+  'SETFOCUS': BlockCategory.MAP,
+  'RESETFOCUS': BlockCategory.MAP,
   
   // Game State
   'SAVE': BlockCategory.GAME_STATE,
@@ -358,6 +435,19 @@ const BLOCK_TYPE_CATEGORY: Record<string, BlockCategory> = {
   // Time
   'DELAY': BlockCategory.TIME,
   'WAIT': BlockCategory.TIME,
+  // Info
+  'ADDINFOWINDOW': BlockCategory.INFO_HELP,
+  'SHOWINFOWINDOW': BlockCategory.INFO_HELP,
+  'BUILDINGHELPSCRIPT': BlockCategory.INFO_HELP,
+  'FLIGHTHELPSCRIPT': BlockCategory.INFO_HELP,
+  'ALIENHELPSCRIPT': BlockCategory.INFO_HELP,
+  // Credits-related commands
+  'ADDCREDITS': BlockCategory.CREDITS,
+  'SETCREDITS': BlockCategory.CREDITS,
+  'ADDMISSIONCREDITS': BlockCategory.CREDITS,
+  'ADDMISSIONCREDITSBYRESULT': BlockCategory.CREDITS,
+  'SUBOPPONENTCREDITSBYRESULT': BlockCategory.CREDITS,
+  'ADDOPPONENTSCREDITS': BlockCategory.CREDITS,
   'TIMER_START': BlockCategory.TIME,
   'TIMER_STOP': BlockCategory.TIME,
   

@@ -3,6 +3,7 @@ import { Trash2, ChevronDown, ChevronUp, GripVertical } from 'lucide-react';
 import { getBlockColors } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
 import { useTranslation } from '@/locales';
 import { CharacterAvatar } from '../../CharacterAvatar';
+import { AchievementAvatar } from '../../AchievementAvatar';
 
 interface BaseBlockProps {
   // Identificazione blocco
@@ -40,6 +41,11 @@ interface BaseBlockProps {
   showAvatar?: boolean;
   avatarCharacter?: any; // Personaggio da mostrare nell'avatar
   isShipType?: boolean; // Indica se l'avatar è per SETSHIPTYPE
+  isNodeType?: boolean; // Indica se l'avatar è per comandi mappa (nodo)
+  isAchievementType?: boolean; // Indica se l'avatar è per achievement
+  achievementName?: string; // Nome dell'achievement da mostrare
+  // Azioni sempre visibili nella header (es. navigate to script)
+  headerActions?: React.ReactNode;
 }
 
 /**
@@ -64,7 +70,11 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
   extraControls,
   showAvatar = false,
   avatarCharacter,
-  isShipType = false
+  isShipType = false,
+  isNodeType = false,
+  isAchievementType = false,
+  achievementName,
+  headerActions
 }) => {
   const { t } = useTranslation();
   // Stato interno per collapse se non è controllato dall'esterno
@@ -282,13 +292,43 @@ export const BaseBlock: React.FC<BaseBlockProps> = ({
         {/* Avatar per SAY/ASK sempre visibile */}
         {showAvatar && (
           <div className="ml-auto mr-2">
-            <CharacterAvatar character={avatarCharacter} isShipType={isShipType} />
+            {/* Gestione speciale per transizioni di scena (prima/dopo) */}
+            {avatarCharacter && typeof avatarCharacter === 'object' && 'before' in avatarCharacter && 'after' in avatarCharacter ? (
+              <div className="flex items-center gap-1">
+                <CharacterAvatar character={(avatarCharacter as any).before} size="small" />
+                <span className="text-gray-500 text-xs">→</span>
+                <CharacterAvatar character={(avatarCharacter as any).after} size="small" />
+              </div>
+            ) : /* Gestione speciale per HIDEALLPATHS con due avatar e freccia + X */
+            avatarCharacter && typeof avatarCharacter === 'object' && 'node1' in avatarCharacter && 'node2' in avatarCharacter ? (
+              <div className="flex items-center gap-2">
+                <CharacterAvatar character={(avatarCharacter as any).node1} isNodeType={true} size="small" />
+                {/* Freccia con X sovrapposta */}
+                <div className="relative flex items-center justify-center w-6 h-6">
+                  <div className="text-sm">➡️</div>
+                  <div className="absolute top-0 right-0 text-red-500 text-xs">❌</div>
+                </div>
+                <CharacterAvatar character={(avatarCharacter as any).node2} isNodeType={true} size="small" />
+              </div>
+            ) : isAchievementType ? (
+              <AchievementAvatar achievementName={achievementName} size="small" />
+            ) : (
+              <CharacterAvatar character={avatarCharacter} isShipType={isShipType} isNodeType={isNodeType} />
+            )}
+          </div>
+        )}
+
+        {/* Header actions - sempre visibili e non soggette a hide del summary */}
+        {headerActions && (
+          <div className="ml-2 flex items-center gap-1 flex-shrink-0">
+            {headerActions}
           </div>
         )}
       </div>
       
       {/* Main content - visibile solo se non collapsed */}
       {!isCollapsed && children}
+      
     </div>
   );
 };

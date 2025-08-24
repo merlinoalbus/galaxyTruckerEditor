@@ -6,13 +6,8 @@ const serializeDeckScript = (script: DeckScript): string => {
   content += `  SCRIPT ${script.name}\n`;
   
   script.commands.forEach(cmd => {
-    if (cmd.type === 'TmpDeckLoad' && cmd.deckFile) {
-      content += `    TmpDeckLoad "${cmd.deckFile}"\n`;
-    } else if (cmd.type === 'DeckAddCardType' && cmd.flight !== undefined && cmd.cardType && cmd.count !== undefined) {
-      content += `    DeckAddCardType ${cmd.flight} ${cmd.cardType} ${cmd.count}\n`;
-    } else if (cmd.type === 'DeckRemoveCardType' && cmd.flight !== undefined && cmd.cardType && cmd.count !== undefined) {
-      content += `    DeckRemoveCardType ${cmd.flight} ${cmd.cardType} ${cmd.count}\n`;
-    }
+    const p = cmd.params?.trim();
+    content += p && p.length > 0 ? `    ${cmd.type} ${p}\n` : `    ${cmd.type}\n`;
   });
   
   content += '\nEND_OF_SCRIPT\n';

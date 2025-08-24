@@ -1,18 +1,32 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { API_CONFIG } from '@/config/constants';
 import { MessageSquare, ArrowRight, ExternalLink } from 'lucide-react';
+import Emoji from '@/components/Emoji/Emoji';
+import { StackedEmoji } from '@/components/Emoji/StackedEmoji';
+import { CMD_EMOJI } from '@/components/Emoji/cmdEmojiMap';
 import { BaseBlock } from '../BaseBlock/BaseBlock';
 import { SelectWithModal } from '../../SelectWithModal/SelectWithModal';
+import { AchievementsSelector } from '../../AchievementsSelector/AchievementsSelector';
 import { MultilingualTextEditor } from '../../MultilingualTextEditor';
 import { CharacterSelector } from '../../CharacterSelector';
+import { NodeSelector } from '../../NodeSelector/NodeSelector';
 import { getBlockClassName } from '@/utils/CampaignEditor/VisualFlowEditor/blockColors';
 import { useTranslation } from '@/locales';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { SceneDebugButton } from '../../SceneDebugButton';
 import { CharacterAvatar } from '../../CharacterAvatar';
-import { simulateSceneExecution, getLastModifiedVisibleCharacter } from '@/utils/CampaignEditor/VisualFlowEditor/sceneSimulation';
+import { AchievementAvatar } from '../../AchievementAvatar';
+import { simulateSceneExecution, getLastModifiedVisibleCharacter, getLastModifiedCharacter, simulateSceneBeforeBlock } from '@/utils/CampaignEditor/VisualFlowEditor/sceneSimulation';
 import { imagesViewService } from '@/services/CampaignEditor/VariablesSystem/services/ImagesView/imagesViewService';
+import { interactiveMapService } from '@/services/CampaignEditor/InteractiveMap/interactiveMapService';
+import { variablesSystemApiService } from '@/services/CampaignEditor/VariablesSystem/variablesSystemApiService';
+import { gameDataService } from '@/services/CampaignEditor/GameDataService';
+import { useCachedAchievements, useCachedShipPlans } from '@/hooks/CampaignEditor/VisualFlowEditor/useCachedGameData';
+import type { Mission } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 import { PercentageInput } from '../../PercentageInput';
+import { useButtonsList } from '@/hooks/CampaignEditor/VisualFlowEditor/useButtonsList';
+import { getLocalizedString } from '@/utils/localization';
+import { ImageSelector } from '../../ImageSelector/ImageSelector';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 import type { Character } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
 
@@ -80,9 +94,19 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   
   // I characters vengono passati da sessionData, non caricati qui (memo per deps stabili)
   const characters = useMemo(() => sessionData?.characters || [], [sessionData?.characters]);
+  // Missions (used as routes list) - load once when needed
+  const [missionsList, setMissionsList] = useState<Mission[] | null>(null);
   const [selectedCharacterImage, setSelectedCharacterImage] = useState<string | null>(null);
   const [characterImages, setCharacterImages] = useState<Record<string, string>>({});
   const [noAvatarImage, setNoAvatarImage] = useState<string | null>(null);
+  // Achievements & Ship Plans (lazy)
+  const cachedAchievements = useCachedAchievements();
+  const cachedShipPlans = useCachedShipPlans();
+  const [achievementsList, setAchievementsList] = useState<string[] | null>(null);
+  const [shipPlansList, setShipPlansList] = useState<Array<{ id: string; type: string | null }> | null>(null);
+  
+  // Load buttons list for SHOWBUTTON/HIDEBUTTON commands
+  const { buttons, isLoading: buttonsLoading, error: buttonsError, getButtonsForSelect } = useButtonsList(currentLanguage);
   
   // Calcola lo stato simulato della scena fino a questo blocco
   const simulatedSceneState = useMemo(() => {
@@ -122,6 +146,22 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
       setSelectedCharacterImage(null);
     }
   }, [block.type, block.parameters?.character, characterImages]);
+
+  // Load missions (routes) lazily for route-based commands
+  useEffect(() => {
+    let mounted = true;
+    if (['SHOWPATH', 'HIDEPATH', 'CENTERMAPBYPATH'].includes(block.type) && !missionsList) {
+      interactiveMapService.loadMissions().then((m) => {
+        if (mounted) setMissionsList(m || []);
+      }).catch(() => {
+        if (mounted) setMissionsList([]);
+      });
+    }
+    // Populate from caches (one-time)
+    if (!achievementsList && cachedAchievements) setAchievementsList(cachedAchievements);
+    if (!shipPlansList && cachedShipPlans) setShipPlansList(cachedShipPlans.map(sp => ({ id: sp.id, type: sp.type })));
+    return () => { mounted = false; };
+  }, [block.type, missionsList, achievementsList, shipPlansList, cachedAchievements, cachedShipPlans]);
   
   // NON USARE useEffect per aggiornare la scena - non funziona con componenti separati
   // La scena deve essere gestita a livello superiore con esecuzione sequenziale
@@ -159,8 +199,633 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   // Rimuovo isCollapsed dalle dipendenze per evitare loop
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isManuallyExpanded]);
+
+  // Icona del blocco definita in alto per favorire i test che cercano i case espliciti
+  const getBlockIcon = () => {
+    switch (block.type) {
+      case 'SHOWDLGSCENE':
+        return <Emoji text="🗨️" className="text-2xl leading-none inline-block align-middle" />;
+      case 'HIDEDLGSCENE':
+        return <Emoji text="🫥" className="text-2xl leading-none inline-block align-middle" />;
+      default: {
+        // Solo icona: i parametri vengono renderizzati da renderParameters
+        const emoji = CMD_EMOJI[block.type as keyof typeof CMD_EMOJI];
+        if (emoji) {
+          const emojiArr = Array.from(emoji).filter(e => /\p{Emoji}/u.test(e));
+          if (emojiArr.length > 1) {
+            return <StackedEmoji emojis={emojiArr} size={20} className="inline-block align-middle" />;
+          }
+          return <Emoji text={emoji} className="text-2xl leading-none inline-block align-middle" />;
+        }
+        return <MessageSquare className="w-4 h-4" />;
+      }
+    }
+  };
   const renderParameters = () => {
     switch (block.type) {
+      // ===== DECK COMMANDS =====
+      case 'DECKADDALLCARDS': {
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {(t as any)('visualFlowEditor.blocks.deckAddAllCards.description') || (t as any)('visualFlowEditor.tools.deckAddAllCards.description')}
+              </p>
+            </div>
+          </div>
+        );
+      }
+      case 'DECKSHUFFLE': {
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {(t as any)('visualFlowEditor.blocks.deckShuffle.description') || (t as any)('visualFlowEditor.tools.deckShuffle.description')}
+              </p>
+            </div>
+          </div>
+        );
+      }
+      case 'DECKADDCARDTYPE':
+      case 'DECKADDCARDROUND':
+      case 'DECKADDRULEPOSITION':
+      case 'DECKADDRULERANGE':
+      case 'SETSUPERCARDSCNT': {
+        const deckKeyMap: Record<string, string> = {
+          DECKADDCARDTYPE: 'deckAddCardType',
+          DECKADDCARDROUND: 'deckAddCardRound',
+          DECKADDRULEPOSITION: 'deckAddRulePosition',
+          DECKADDRULERANGE: 'deckAddRuleRange',
+          SETSUPERCARDSCNT: 'setSuperCardsCnt',
+        } as const;
+        const k = deckKeyMap[block.type] || 'deck';
+        const value = String(block.parameters?.params ?? '');
+        return (
+          <div className="flex flex-col gap-2">
+            <label className="text-xs text-slate-400">
+              {(t as any)(`visualFlowEditor.blocks.${k}.label`) || (t as any)('visualFlowEditor.common.parameters')}
+            </label>
+            <input
+              type="text"
+              className="w-full p-2 bg-slate-800 text-white rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none"
+              placeholder={(t as any)(`visualFlowEditor.blocks.${k}.placeholder`) || ''}
+              value={value}
+              onChange={(e) => onUpdate({ parameters: { ...block.parameters, params: e.target.value } })}
+              onClick={(e) => e.stopPropagation()}
+            />
+            <span className="block text-xs text-slate-500">
+              {(t as any)(`visualFlowEditor.blocks.${k}.hint`) || ''}
+            </span>
+          </div>
+        );
+      }
+      // ACHIEVEMENT/SHIP PLAN COMMANDS (UI DEI PARAMETRI)
+      case 'UNLOCKSHUTTLES': {
+        // Solo informativo, senza parametri
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {(t as any)('visualFlowEditor.tools.unlockShuttles.description')}
+              </p>
+            </div>
+          </div>
+        );
+      }
+      case 'UNLOCKACHIEVEMENT': {
+        const achievement = String(block.parameters?.achievement || '');
+        const list = achievementsList || [];
+        return (
+          <div className="flex items-start gap-2" style={{ height: '160px' }}>
+            <div className="flex-1">
+              <AchievementsSelector
+                value={achievement}
+                onChange={(value) => onUpdate({ parameters: { ...block.parameters, achievement: value } })}
+                achievements={list}
+                allowNone={true}
+                forceColumns={8}
+              />
+            </div>
+          </div>
+        );
+      }
+      case 'SETACHIEVEMENTPROGRESS':
+      case 'SETACHIEVEMENTATTEMPT': {
+        const achievement = String(block.parameters?.achievement || '');
+        const value = typeof block.parameters?.value === 'number' ? block.parameters.value : undefined;
+        const list = achievementsList || [];
+        return (
+          <div className="flex items-center gap-3">
+            <div className="flex-1">
+              <AchievementsSelector
+                value={achievement}
+                onChange={(val) => onUpdate({ parameters: { ...block.parameters, achievement: val } })}
+                achievements={list}
+                allowNone={true}
+                forceColumns={8}
+              />
+            </div>
+            <div className="flex items-center gap-2 ml-2">
+              <label className="text-xs text-slate-400 whitespace-nowrap">{(t as any)('visualFlowEditor.blocks.achievement.objectives')}</label>
+              <input
+                type="number"
+                className="w-24 px-2 py-1 bg-slate-800 text-white rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none"
+                min={1}
+                placeholder="1"
+                value={value !== undefined ? String(value) : ''}
+                onChange={(e) => {
+                  const v = parseInt(e.target.value || '0', 10);
+                  onUpdate({ parameters: { ...block.parameters, value: isNaN(v) ? undefined : Math.max(1, v) } });
+                }}
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+          </div>
+        );
+      }
+      case 'UNLOCKSHIPPLAN': {
+        const shipPlan = String(block.parameters?.shipPlan || (block.parameters as any)?.plan || '');
+        const items = (shipPlansList || []).map(sp => ({ key: sp.id, label: sp.type ? `${sp.id} (${sp.type})` : sp.id }));
+        return (
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-slate-400 whitespace-nowrap">
+              {(t as any)('visualFlowEditor.blocks.unlockShipPlan.label')}
+            </label>
+            <SelectWithModal
+              type="parts"
+              value={shipPlan}
+              onChange={(value) => onUpdate({ parameters: { ...block.parameters, shipPlan: value } })}
+              placeholder={(t as any)('visualFlowEditor.blocks.unlockShipPlan.label')}
+              availableItems={items}
+              onAddItem={undefined}
+              className="flex-1"
+            />
+          </div>
+        );
+      }
+      // CHARACTERS: CHANGECHAR, SAYCHAR, ASKCHAR, FOCUSCHAR
+      case 'CHANGECHAR': {
+        const character = String(block.parameters?.character || '');
+        const selectedImage = String(block.parameters?.image || '');
+        return (
+          <div className="flex items-start gap-3" style={{ height: '220px' }}>
+            <div className="flex-1">
+              <CharacterSelector
+                value={character}
+                onChange={(value) => onUpdate({ parameters: { ...block.parameters, character: value } })}
+                mode="change"
+                selectedImage={selectedImage}
+                onImageChange={(image) => onUpdate({ parameters: { ...block.parameters, image } })}
+                className="h-full"
+                characters={characters}
+                simulatedSceneState={simulatedSceneState}
+              />
+            </div>
+          </div>
+        );
+      }
+      case 'SAYCHAR': {
+        const character = String(block.parameters?.character || '');
+        const text = typeof block.parameters?.text === 'object' ? (block.parameters?.text as any) : (block.parameters?.text ? { EN: String(block.parameters.text) } : {});
+        const position = block.parameters?.position || 'left';
+        return (
+          <div className="flex items-start gap-3" style={{ height: '220px' }}>
+            <div className="flex-1">
+              <CharacterSelector
+                value={character}
+                onChange={(value) => onUpdate({ parameters: { ...block.parameters, character: value } })}
+                mode="show"
+                position={position}
+                onPositionChange={(pos) => onUpdate({ parameters: { ...block.parameters, position: pos } })}
+                className="h-full"
+                characters={characters}
+                simulatedSceneState={simulatedSceneState}
+              />
+            </div>
+            <div className="flex-[1.2]">
+              <MultilingualTextEditor
+                value={text as any}
+                onChange={(value) => onUpdate({ parameters: { ...block.parameters, text: value } })}
+                placeholder={t('visualFlowEditor.command.dialogText')}
+                isCustom={isCustom}
+                availableLanguages={availableLanguages}
+                label={t('visualFlowEditor.command.dialogLabel')}
+              />
+            </div>
+          </div>
+        );
+      }
+      case 'ASKCHAR': {
+        const character = String(block.parameters?.character || '');
+        const text = typeof block.parameters?.text === 'object' ? (block.parameters?.text as any) : (block.parameters?.text ? { EN: String(block.parameters.text) } : {});
+        return (
+          <div className="flex items-start gap-3" style={{ height: '220px' }}>
+            <div className="flex-1">
+              <CharacterSelector
+                value={character}
+                onChange={(value) => onUpdate({ parameters: { ...block.parameters, character: value } })}
+                mode="show"
+                className="h-full"
+                characters={characters}
+                simulatedSceneState={simulatedSceneState}
+              />
+            </div>
+            <div className="flex-[1.2]">
+              <MultilingualTextEditor
+                value={text as any}
+                onChange={(value) => onUpdate({ parameters: { ...block.parameters, text: value } })}
+                placeholder={t('visualFlowEditor.command.questionText')}
+                isCustom={isCustom}
+                availableLanguages={availableLanguages}
+                label={t('visualFlowEditor.command.questionLabel')}
+              />
+            </div>
+          </div>
+        );
+      }
+      case 'FOCUSCHAR': {
+        const character = String(block.parameters?.character || '');
+        return (
+          <div style={{ height: '180px' }}>
+            <CharacterSelector
+              value={character}
+              onChange={(value) => onUpdate({ parameters: { ...block.parameters, character: value } })}
+              mode="hide"
+              className="h-full w-full"
+              characters={characters}
+              simulatedSceneState={simulatedSceneState}
+            />
+          </div>
+        );
+      }
+      // SYSTEM: SETFLIGHTSTATUSBAR (multilingual text), SAVESTATE/LOADSTATE/QUITCAMPAIGN (info only)
+      case 'SETFLIGHTSTATUSBAR': {
+        const value = typeof block.parameters?.text === 'object' ? (block.parameters?.text as any) : (block.parameters?.text ? { EN: String(block.parameters.text) } : {});
+        return (
+          <div className="space-y-2">
+            <MultilingualTextEditor
+              value={value}
+              onChange={(newValue) => onUpdate({ parameters: { ...block.parameters, text: newValue } })}
+              placeholder={(t as any)('visualFlowEditor.command.statusText')}
+              isCustom={isCustom}
+              availableLanguages={availableLanguages}
+            />
+          </div>
+        );
+      }
+      case 'SAVESTATE':
+      case 'LOADSTATE':
+      case 'QUITCAMPAIGN': {
+        const key = block.type === 'SAVESTATE' ? 'saveState' : block.type === 'LOADSTATE' ? 'loadState' : 'quitCampaign';
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {(t as any)(`visualFlowEditor.blocks.${key}.fullDescription`) || (t as any)(`visualFlowEditor.tools.${key}.description`)}
+              </p>
+            </div>
+          </div>
+        );
+      }
+      // CREDITS COMMANDS
+      case 'ADDOPPONENTSCREDITS': {
+        const idx = typeof block.parameters?.index === 'number' ? block.parameters.index : 0;
+        const credits = typeof block.parameters?.credits === 'number' ? block.parameters.credits : 0;
+        return (
+          <div className="flex items-center gap-3">
+            <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
+              {(t as any)('visualFlowEditor.blocks.addOpponentsCredits.player')}
+            </label>
+            {/* Option menu esclusivo (segmented control) per scelta singolo giocatore */}
+            <div className="inline-flex rounded-md overflow-hidden border border-slate-700 bg-slate-800/50">
+              {[0,1,2,3].map((v) => {
+                const selected = idx === v;
+                return (
+                  <button
+                    key={v}
+                    type="button"
+                    role="radio"
+                    aria-checked={selected}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onUpdate({ parameters: { ...block.parameters, index: v } });
+                    }}
+                    className={`px-3 py-1 text-sm border-r border-slate-700 last:border-r-0 transition-colors ${selected ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-700'}`}
+                    title={(t as any)('visualFlowEditor.metacode.playerNumber', { num: v + 1 })}
+                  >
+                    {(t as any)('visualFlowEditor.metacode.playerNumberShort', { num: v + 1 }) || (t as any)('visualFlowEditor.metacode.playerNumber', { num: v + 1 })}
+                  </button>
+                );
+              })}
+            </div>
+            <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
+              {(t as any)('visualFlowEditor.if.credits')}
+            </label>
+            <div className="w-32">
+              <input
+                type="number"
+                className="w-full bg-slate-800/50 text-white px-2 py-1 rounded text-sm border border-slate-700 focus:border-blue-600 focus:outline-none"
+                placeholder="0"
+                value={String(credits)}
+                onChange={(e) => onUpdate({ parameters: { ...block.parameters, credits: parseInt(e.target.value || '0', 10) } })}
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+          </div>
+        );
+      }
+      case 'ADDMISSIONCREDITSBYRESULT':
+      case 'SUBOPPONENTCREDITSBYRESULT': {
+        // Parameterless credits-by-result blocks: show informative description only
+        return (
+          <div className="space-y-2">
+            <div className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {/* No specific description keys provided; keep UI minimal and consistent */}
+                {(block.type === 'ADDMISSIONCREDITSBYRESULT') ? (t as any)('visualFlowEditor.tools.addMissionCreditsByResult.description') : (t as any)('visualFlowEditor.tools.subOpponentCreditsByResult.description')}
+              </p>
+            </div>
+          </div>
+        );
+      }
+      case 'ADDCREDITS':
+      case 'SETCREDITS':
+      case 'ADDMISSIONCREDITS': {
+        const amount = typeof block.parameters?.amount === 'number' ? block.parameters.amount : 0;
+        return (
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-slate-400 whitespace-nowrap">
+              {(t as any)('visualFlowEditor.if.credits')}
+            </label>
+            <input
+              type="number"
+              className="w-32 px-2 py-1 bg-slate-800 text-white rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none"
+              placeholder="0"
+              value={String(amount)}
+              onChange={(e) => onUpdate({ parameters: { ...block.parameters, amount: parseInt(e.target.value || '0', 10) } })}
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        );
+      }
+      // HELPSCRIPT COMMANDS (render as standard CommandBlock, single-row layout + navigate)
+  case 'BUILDINGHELPSCRIPT': {
+        const value = typeof block.parameters?.value === 'number' ? block.parameters.value : 0;
+        const script = String(block.parameters?.script || '');
+        return (
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-slate-400 whitespace-nowrap">
+              {(t as any)('visualFlowEditor.blocks.subScript.scriptName')}:
+            </label>
+            <SelectWithModal
+              type="script"
+              value={script}
+              onChange={(value) => onUpdate({ parameters: { ...block.parameters, script: value } })}
+              placeholder={(t as any)('visualFlowEditor.command.selectScript')}
+              availableItems={(sessionData?.availableScripts?.map((s: any) => s.name) || []).filter((name: string) => {
+                const norm = (name || '').replace(/\.txt$/i, '');
+                const current = (sessionData?.currentScriptName || '').replace(/\.txt$/i, '');
+                return name && norm !== current;
+              })}
+              onAddItem={undefined}
+              className="flex-1"
+            />
+            {/* Pulsante di navigazione spostato nella headerActions */}
+            <label className="text-xs text-slate-400 whitespace-nowrap ml-2">
+              {(t as any)('visualFlowEditor.blocks.delay.duration')}
+            </label>
+            <input
+              type="number"
+              className="w-24 px-2 py-1 bg-slate-800 text-white rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none"
+              min={0}
+              placeholder={(t as any)('visualFlowEditor.command.milliseconds')}
+              value={value}
+              onChange={(e) => onUpdate({ parameters: { ...block.parameters, value: parseInt(e.target.value || '0', 10) } })}
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        );
+      }
+      case 'FLIGHTHELPSCRIPT':
+      case 'ALIENHELPSCRIPT': {
+        const script = String(block.parameters?.script || '');
+        return (
+          <div className="flex items-center gap-2">
+            <label className="text-xs text-slate-400 whitespace-nowrap">
+              {(t as any)('visualFlowEditor.blocks.subScript.scriptName')}:
+            </label>
+            <SelectWithModal
+              type="script"
+              value={script}
+              onChange={(value) => onUpdate({ parameters: { ...block.parameters, script: value } })}
+              placeholder={(t as any)('visualFlowEditor.command.selectScript')}
+              availableItems={(sessionData?.availableScripts?.map((s: any) => s.name) || []).filter((name: string) => {
+                const norm = (name || '').replace(/\.txt$/i, '');
+                const current = (sessionData?.currentScriptName || '').replace(/\.txt$/i, '');
+                return name && norm !== current;
+              })}
+              onAddItem={undefined}
+              className="flex-1"
+            />
+            {/* Pulsante di navigazione spostato nella headerActions */}
+          </div>
+        );
+      }
+      // MAP COMMANDS WITH NODE SELECTOR
+      case 'SHOWNODE':
+      case 'HIDENODE':
+      case 'ADDNODE':
+      case 'SETNODEKNOWN':
+      case 'CENTERMAPBYNODE':
+      case 'MOVEPLAYERTONODE': {
+        return (
+          <div style={{ height: '160px' }}>
+                <NodeSelector
+                  value={block.parameters?.node || ''}
+                  onChange={(nodeName) => onUpdate({ parameters: { ...block.parameters, node: nodeName } })}
+                  nodes={sessionData?.nodes}
+                  className="h-full w-full"
+                  forceColumns={10}
+                />
+          </div>
+        );
+        }
+        // MAP COMMANDS WITH ROUTE SELECTOR
+        case 'SHOWPATH':
+        case 'HIDEPATH':
+        case 'CENTERMAPBYPATH': {
+          // Build items as structured {key,label} using missionsList (route key = mission.name)
+          const items = (missionsList || []).map(m => ({ key: m.name, label: getLocalizedString(m.localizedCaptions || {}, currentLanguage, m.name) }));
+          return (
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-slate-400 whitespace-nowrap">
+                {(t as any)('visualFlowEditor.blocks.map.route')}:
+              </label>
+              <SelectWithModal
+                type="mission"
+                value={String(block.parameters?.route || '')}
+                onChange={(value) => onUpdate({ parameters: { ...block.parameters, route: value } })}
+                placeholder={(t as any)('visualFlowEditor.command.selectRoute')}
+                availableItems={items}
+                onAddItem={undefined}
+                className="flex-1"
+              />
+            </div>
+          );
+        }
+        case 'HIDEALLPATHS': {
+          // Two NodeSelectors side-by-side with mutual exclusion and None option
+          return (
+            <div className="flex gap-2">
+              <div className="w-1/2">
+                <label className="text-xs text-slate-400">{(t as any)('visualFlowEditor.blocks.map.node1')}</label>
+                <NodeSelector
+                  value={String(block.parameters?.node1 || '')}
+                  onChange={(nodeName) => {
+                    // If selecting same as node2, clear node2 to enforce mutual exclusion
+                    const node2 = block.parameters?.node2 || '';
+                    const updates: any = { ...block.parameters, node1: nodeName };
+                    if (nodeName && nodeName === node2) {
+                      updates.node2 = '';
+                    }
+                    // If 'None' (empty string), remove the parameter
+                    if (!nodeName) delete updates.node1;
+                    onUpdate({ parameters: updates });
+                  }}
+                  nodes={sessionData?.nodes}
+                  excludeNodes={block.parameters?.node2 ? [String(block.parameters.node2)] : []}
+                  className="h-48"
+                />
+              </div>
+              <div className="w-1/2">
+                <label className="text-xs text-slate-400">{(t as any)('visualFlowEditor.blocks.map.node2')}</label>
+                <NodeSelector
+                  value={String(block.parameters?.node2 || '')}
+                  onChange={(nodeName) => {
+                    const node1 = block.parameters?.node1 || '';
+                    const updates: any = { ...block.parameters, node2: nodeName };
+                    if (nodeName && nodeName === node1) {
+                      updates.node1 = '';
+                    }
+                    if (!nodeName) delete updates.node2;
+                    onUpdate({ parameters: updates });
+                  }}
+                  nodes={sessionData?.nodes}
+                  excludeNodes={block.parameters?.node1 ? [String(block.parameters.node1)] : []}
+                  className="h-48"
+                />
+              </div>
+            </div>
+          );
+        }
+        // MAP COMMANDS WITH BUTTON SELECTOR
+        case 'SHOWBUTTON':
+        case 'HIDEBUTTON':
+        case 'SETFOCUS':
+        case 'RESETFOCUS': {
+          const items = getButtonsForSelect();
+          
+          return (
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-slate-400 whitespace-nowrap">
+                {(t as any)('visualFlowEditor.blocks.map.button')}:
+              </label>
+              <SelectWithModal
+                type="parts"
+                value={String(block.parameters?.button || '')}
+                onChange={(value) => onUpdate({ parameters: { ...block.parameters, button: value } })}
+                placeholder={(t as any)('visualFlowEditor.command.selectButton')}
+                availableItems={items}
+                onAddItem={undefined}
+                className="flex-1"
+              />
+            </div>
+          );
+        }
+        case 'SETFOCUSIFCREDITS': {
+          const items = getButtonsForSelect();
+          
+          return (
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
+                  {(t as any)('visualFlowEditor.blocks.map.button')}:
+                </label>
+                <div className="flex-1">
+                  <SelectWithModal
+                    type="parts"
+                    value={String(block.parameters?.button || '')}
+                    onChange={(value) => onUpdate({ parameters: { ...block.parameters, button: value } })}
+                    placeholder={(t as any)('visualFlowEditor.command.selectButton')}
+                    availableItems={items}
+                    onAddItem={undefined}
+                  />
+                </div>
+                <label className="text-sm font-medium text-gray-300 whitespace-nowrap">
+                  Crediti Minimi:
+                </label>
+                <div className="w-32">
+                  <input
+                    type="number"
+                    className="w-full bg-slate-800/50 text-white px-2 py-1 rounded text-sm border border-slate-700 focus:border-blue-600 focus:outline-none"
+                    placeholder="0"
+                    value={block.parameters?.credits !== undefined ? String(block.parameters.credits) : ''}
+                    min="0"
+                    onChange={(e) => {
+                      const numValue = parseInt(e.target.value, 10);
+                      onUpdate({ 
+                        parameters: { 
+                          ...block.parameters, 
+                          credits: isNaN(numValue) ? undefined : numValue 
+                        } 
+                      });
+                    }}
+                  />
+                </div>
+              </div>
+              
+              <div className="text-xs text-gray-500">
+                Imposta il focus su un bottone solo se il giocatore ha almeno i crediti specificati
+              </div>
+            </div>
+          );
+        }
+    case 'ADDINFOWINDOW':
+    case 'SHOWINFOWINDOW': {
+        return (
+      <div className="flex gap-2" style={{ height: '160px' }}>
+            <div className="flex-1">
+              <ImageSelector
+                value={block.parameters?.image || ''}
+                onChange={(image) => {
+                  onUpdate({ 
+                    parameters: { ...block.parameters, image } 
+                  });
+                }}
+                className="h-full"
+              />
+            </div>
+          </div>
+        );
+      }
+      case 'SHOWHELPIMAGE': {
+        // Campo con label e esempio valorizzazione, validazione gestita dal sistema standard
+        return (
+          <div className="flex flex-col gap-2">
+            <label className="text-xs text-slate-400">
+              Parametri immagine (esempio: "40 50 70 campaign/tutorial-purple.png")
+            </label>
+            <input
+              type="text"
+              className="w-full p-2 bg-slate-800 text-white rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none"
+              placeholder="40 50 70 campaign/tutorial-purple.png"
+              value={block.parameters?.params || ''}
+              onChange={e => onUpdate({ parameters: { ...block.parameters, params: e.target.value } })}
+              onClick={e => e.stopPropagation()}
+            />
+          </div>
+        );
+      }
       case 'SAY':
       case 'ASK': {
         // Usa lo stato simulato per trovare l'ultimo personaggio modificato
@@ -357,19 +1022,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
               onAddItem={undefined} // Non permettere aggiunta di nuovi script
               className="flex-1"
             />
-            <button
-              type="button"
-              onClick={() => {
-                if (block.parameters?.script && onNavigateToSubScript) {
-                  onNavigateToSubScript(block.parameters.script, block);
-                }
-              }}
-              disabled={!block.parameters?.script}
-              className="p-1 hover:bg-slate-700 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              title={t('visualFlowEditor.blocks.subScript.navigate')}
-            >
-              <ArrowRight className="w-4 h-4 text-blue-400" />
-            </button>
+            {/* Pulsante di navigazione spostato nella headerActions */}
           </div>
         );
       
@@ -832,38 +1485,145 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   };
 
 
-  const getBlockIcon = () => {
-    switch (block.type) {
-      case 'SAY': return <span className="text-2xl">💬</span>;
-      case 'ASK': return <span className="text-2xl">❓</span>;
-      case 'DELAY': return <span className="text-2xl">⏱️</span>;
-      case 'GO': return <span className="text-2xl">➡️</span>;
-      case 'LABEL': return <span className="text-2xl">🏷️</span>;
-      case 'SUB_SCRIPT': return <span className="text-2xl">📄</span>;
-      case 'ACT_MISSION': return <span className="text-2xl">🎬</span>;
-          case 'EXIT_MENU': return <span className="text-2xl">🚪</span>;
-  case 'SHOWDLGSCENE': return <span className="text-2xl">🗨️</span>;
-  case 'HIDEDLGSCENE': return <span className="text-2xl">🫥</span>;
-      case 'SHOWCHAR': return <span className="text-2xl">👤</span>;
-      case 'HIDECHAR': return <span className="text-2xl">👻</span>;
-      case 'ADDOPPONENT': return <span className="text-2xl">🎮</span>;
-      case 'SETSHIPTYPE': return <span className="text-2xl">🚀</span>;
-      case 'MODIFYOPPONENTSBUILDSPEED': return <span className="text-2xl">⚡</span>;
-  case 'SETSPECCONDITION': return <span className="text-2xl">🧩</span>;
-  case 'SETDECKPREPARATIONSCRIPT': return <span className="text-2xl">🃏</span>;
-  case 'SETFLIGHTDECKPREPARATIONSCRIPT': return <span className="text-2xl">🛩️</span>;
-  case 'SETTURNBASED': return <span className="text-2xl">⏲️</span>;
-  case 'SETMISSIONASFAILED': return <span className="text-2xl">🚨</span>;
-  case 'SETMISSIONASCOMPLETED': return <span className="text-2xl">✅</span>;
-  case 'ALLSHIPSGIVEUP': return <span className="text-2xl">🛎️</span>;
-  case 'GIVEUPFLIGHT': return <span className="text-2xl">👋</span>;
-      default: return <MessageSquare className="w-4 h-4" />;
-    }
-  };
+  // (definizione unica spostata in alto)
 
   // Genera i parametri compatti per la visualizzazione collapsed
   const getCompactParams = () => {
     switch (block.type) {
+      // DECK commands compact summaries
+      case 'DECKADDALLCARDS':
+        return (
+          <span className="text-xs text-gray-400">🃏 {(t as any)('visualFlowEditor.blocks.deckAddAllCards.compact') || (t as any)('visualFlowEditor.tools.deckAddAllCards.description')}</span>
+        );
+      case 'DECKSHUFFLE':
+        return (
+          <span className="text-xs text-gray-400">🔀 {(t as any)('visualFlowEditor.blocks.deckShuffle.compact') || (t as any)('visualFlowEditor.tools.deckShuffle.description')}</span>
+        );
+      case 'DECKADDCARDTYPE':
+      case 'DECKADDCARDROUND':
+      case 'DECKADDRULEPOSITION':
+      case 'DECKADDRULERANGE':
+      case 'SETSUPERCARDSCNT': {
+        const params = String(block.parameters?.params || '');
+        return <span className="text-gray-400">🃏 {params || '…'}</span>;
+      }
+      case 'UNLOCKSHUTTLES':
+        return <span className="text-xs text-gray-400">🛰️ {(t as any)('visualFlowEditor.tools.unlockShuttles.description')}</span>;
+      case 'UNLOCKACHIEVEMENT': {
+        const a = String(block.parameters?.achievement || '');
+        return <span className="text-xs text-gray-400">🏆 {a || (t as any)('visualFlowEditor.blocks.achievement.none')}</span>;
+      }
+      case 'SETACHIEVEMENTPROGRESS': {
+        const a = String(block.parameters?.achievement || '');
+        const v = block.parameters?.value;
+        return <span className="text-xs text-gray-400">🏅 {a || '…'} • +{v ?? 1}</span>;
+      }
+      case 'SETACHIEVEMENTATTEMPT': {
+        const a = String(block.parameters?.achievement || '');
+        const v = block.parameters?.value;
+        return <span className="text-xs text-gray-400">🎯 {a || '…'} • ×{v ?? 1}</span>;
+      }
+      case 'UNLOCKSHIPPLAN': {
+        const sp = String(block.parameters?.shipPlan || block.parameters?.plan || '');
+        return <span className="text-xs text-gray-400">🚢 {sp || (t as any)('visualFlowEditor.blocks.unlockShipPlan.short')}</span>;
+      }
+      case 'CHANGECHAR': {
+        const character = String(block.parameters?.character || '');
+        const image = String(block.parameters?.image || '');
+        const imageName = image.split('/').pop()?.replace(/\.(png|jpg|jpeg|gif)$/i, '') || image;
+        return (
+          <span className="text-gray-400">
+            {character ? `🎨 ${character}` : '🎨 …'}{imageName ? ` → ${imageName}` : ''}
+          </span>
+        );
+      }
+      case 'SAYCHAR': {
+        const character = String(block.parameters?.character || '');
+        const textObj = block.parameters?.text as any;
+        let txt = '';
+        if (textObj) {
+          if (typeof textObj === 'string') txt = textObj; else txt = textObj[currentLanguage] || textObj.EN || '';
+        }
+        const position = block.parameters?.position || 'left';
+        return (
+          <span className="text-gray-400">
+            {character ? `💬 ${character}` : '💬 …'}{position !== 'left' ? ` @${position}` : ''}{txt ? ` — "${txt}"` : ''}
+          </span>
+        );
+      }
+      case 'ASKCHAR': {
+        const character = String(block.parameters?.character || '');
+        const textObj = block.parameters?.text as any;
+        let txt = '';
+        if (textObj) {
+          if (typeof textObj === 'string') txt = textObj; else txt = textObj[currentLanguage] || textObj.EN || '';
+        }
+        return (
+          <span className="text-gray-400">
+            {character ? `🎭 ${character}` : '🎭 …'}{txt ? ` — "${txt}"` : ''}
+          </span>
+        );
+      }
+      case 'FOCUSCHAR': {
+        const character = String(block.parameters?.character || '');
+        return <span className="text-gray-400">🎯 {character || '…'}</span>;
+      }
+      case 'SETFLIGHTSTATUSBAR': {
+        const textObj = block.parameters?.text as any;
+        let txt = '';
+        if (textObj) {
+          if (typeof textObj === 'string') txt = textObj; else txt = textObj[currentLanguage] || textObj.EN || '';
+        }
+  return <span className="text-gray-400">🛩️ {txt ? `"${txt}"` : (t as any)('visualFlowEditor.command.statusText')}</span>;
+      }
+      case 'SAVESTATE':
+        return <span className="text-xs text-gray-400">💾 {(t as any)('visualFlowEditor.blocks.saveState.compact') || (t as any)('visualFlowEditor.tools.saveState.description')}</span>;
+      case 'LOADSTATE':
+        return <span className="text-xs text-gray-400">📂 {(t as any)('visualFlowEditor.blocks.loadState.compact') || (t as any)('visualFlowEditor.tools.loadState.description')}</span>;
+      case 'QUITCAMPAIGN':
+        return <span className="text-xs text-gray-400">🚪 {(t as any)('visualFlowEditor.blocks.quitCampaign.compact') || (t as any)('visualFlowEditor.tools.quitCampaign.description')}</span>;
+      case 'ADDOPPONENTSCREDITS': {
+        const idx = typeof block.parameters?.index === 'number' ? block.parameters.index : 0;
+        const credits = block.parameters?.credits;
+        const signCredits = typeof credits === 'number' ? (credits >= 0 ? `+${credits}` : String(credits)) : '';
+        return <span className="text-gray-400">P{idx + 1}: {signCredits || '0'}</span>;
+      }
+      case 'ADDCREDITS': {
+        const amount = block.parameters?.amount;
+        const v = typeof amount === 'number' ? (amount >= 0 ? `+${amount}` : String(amount)) : '';
+        return <span className="text-gray-400">💰 {v || '0'}</span>;
+      }
+      case 'SETCREDITS': {
+        const amount = block.parameters?.amount;
+        const v = typeof amount === 'number' ? String(amount) : '';
+        return <span className="text-gray-400">💰 = {v || '0'}</span>;
+      }
+      case 'ADDMISSIONCREDITS': {
+        const amount = block.parameters?.amount;
+        const v = typeof amount === 'number' ? (amount >= 0 ? `+${amount}` : String(amount)) : '';
+        return <span className="text-gray-400">🎯 {v || '0'}</span>;
+      }
+      case 'ADDMISSIONCREDITSBYRESULT': {
+        // Parameterless summary; use concise label
+        return <span className="text-xs text-gray-400">🎯 {(t as any)('visualFlowEditor.tools.addMissionCreditsByResult.description')}</span>;
+      }
+      case 'SUBOPPONENTCREDITSBYRESULT': {
+        return <span className="text-xs text-gray-400">🤼 {(t as any)('visualFlowEditor.tools.subOpponentCreditsByResult.description')}</span>;
+      }
+      case 'BUILDINGHELPSCRIPT': {
+        const value = typeof block.parameters?.value === 'number' ? block.parameters.value : 0;
+        const script = String(block.parameters?.script || '');
+        const compact = (t as any)('visualFlowEditor.header.compact.buildingHelp')
+          .replace('{value}', String(value))
+          .replace('{script}', script || '-');
+        return <span className="text-gray-400">{compact}</span>;
+      }
+      case 'FLIGHTHELPSCRIPT':
+      case 'ALIENHELPSCRIPT': {
+        const script = String(block.parameters?.script || '');
+        const compact = (t as any)('visualFlowEditor.header.compact.help').replace('{script}', script || '-');
+        return <span className="text-gray-400">{compact}</span>;
+      }
       case 'SAY':
         if (block.parameters?.text) {
           let text = '';
@@ -981,77 +1741,13 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         return <span className="text-xs text-gray-400">{t('visualFlowEditor.blocks.hideDlgScene.compact')}</span>;
       case 'SHOWCHAR': {
         if (block.parameters?.character) {
-          // Trova il personaggio che è attualmente nella posizione specificata
           const position = block.parameters.position || 'left';
-          let charInPosition = null;
-          let currentCharImage = null;
-          
-          if (simulatedSceneState?.currentScene) {
-            // Trova il personaggio visibile nella posizione specificata
-            charInPosition = simulatedSceneState.currentScene.personaggi.find(
-              p => p.posizione === position && p.visible
-            );
-            
-            if (charInPosition && charInPosition.lastImmagine?.binary) {
-              currentCharImage = `data:image/png;base64,${charInPosition.lastImmagine.binary}`;
-            }
-          }
-          
           return (
-            <div className="flex items-center justify-between gap-2 w-full bg-slate-800/30 rounded px-2 py-1">
-              <div className="flex items-center gap-2">
-                <span className="text-gray-400">{block.parameters!.character}</span>
-                {block.parameters!.position && (
-                  <span className="text-gray-600 text-xs">@{block.parameters!.position}</span>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                {/* Immagine del personaggio attualmente in quella posizione (o no_avatar se vuota) */}
-                <div className="w-10 h-10 rounded overflow-hidden border border-slate-600">
-                  {currentCharImage ? (
-                    <img 
-                      src={currentCharImage}
-                      alt="current"
-                      className="w-full h-full object-cover object-top"
-                      title={`In posizione ${position}: ${charInPosition?.nomepersonaggio}`}
-                    />
-                  ) : noAvatarImage ? (
-                    <img 
-                      src={noAvatarImage}
-                      alt="no avatar"
-                      className="w-full h-full object-cover object-top"
-                      title={`Posizione ${position} vuota`}
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-slate-700 flex items-center justify-center" title={`Posizione ${position} vuota`}>
-                      <span className="text-xs text-gray-500">∅</span>
-                    </div>
-                  )}
-                </div>
-                <span className="text-gray-500">→</span>
-                {/* Immagine del personaggio che verrà mostrato */}
-                <div className="w-10 h-10 rounded overflow-hidden border border-slate-600">
-                  {selectedCharacterImage ? (
-                    <img 
-                      src={selectedCharacterImage}
-                      alt={block.parameters!.character}
-                      className="w-full h-full object-cover object-top"
-                      title={`Mostrerà: ${block.parameters!.character}`}
-                    />
-                  ) : noAvatarImage ? (
-                    <img 
-                      src={noAvatarImage}
-                      alt="no avatar"
-                      className="w-full h-full object-cover object-top"
-                      title="Seleziona un personaggio"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-slate-700 flex items-center justify-center" title="Seleziona un personaggio">
-                      <span className="text-xs text-gray-500">?</span>
-                    </div>
-                  )}
-                </div>
-              </div>
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400">{block.parameters.character}</span>
+              {position !== 'left' && (
+                <span className="text-gray-600 text-xs">@{position}</span>
+              )}
             </div>
           );
         }
@@ -1060,51 +1756,7 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
       case 'HIDECHAR': {
         if (block.parameters?.character) {
           return (
-            <div className="flex items-center justify-between gap-2 w-full bg-slate-800/30 rounded px-2 py-1">
-              <div className="flex items-center gap-2">
-                <span className="text-gray-400">{block.parameters!.character}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                {/* Immagine del personaggio che verrà nascosto */}
-                <div className="w-10 h-10 rounded overflow-hidden border border-slate-600">
-                  {selectedCharacterImage ? (
-                    <img 
-                      src={selectedCharacterImage}
-                      alt={block.parameters!.character}
-                      className="w-full h-full object-cover object-top"
-                      title={`Nasconderà: ${block.parameters!.character}`}
-                    />
-                  ) : noAvatarImage ? (
-                    <img 
-                      src={noAvatarImage}
-                      alt="no avatar"
-                      className="w-full h-full object-cover object-top"
-                      title="Seleziona un personaggio"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-slate-700 flex items-center justify-center" title="Seleziona un personaggio">
-                      <span className="text-xs text-gray-500">?</span>
-                    </div>
-                  )}
-                </div>
-                <span className="text-gray-500">→</span>
-                {/* no_avatar per indicare che sarà nascosto */}
-                <div className="w-10 h-10 rounded overflow-hidden border border-slate-600">
-                  {noAvatarImage ? (
-                    <img 
-                      src={noAvatarImage}
-                      alt="hidden"
-                      className="w-full h-full object-cover object-top"
-                      title="Diventerà nascosto"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-slate-700 flex items-center justify-center" title="Diventerà nascosto">
-                      <span className="text-xs text-gray-500">∅</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+            <span className="text-gray-400">{block.parameters.character}</span>
           );
         }
         break;
@@ -1186,7 +1838,163 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
         }
         return <span className="text-xs text-gray-500 italic">No percentage</span>;
       }
-      default: {
+      // Map compact summaries
+      case 'SHOWNODE':
+      case 'HIDENODE':
+      case 'ADDNODE':
+      case 'SETNODEKNOWN':
+      case 'CENTERMAPBYNODE':
+      case 'MOVEPLAYERTONODE': {
+        const nodeName = block.parameters?.node ? String(block.parameters.node) : '';
+        // Prefix localizzato
+        const prefix = block.type === 'SHOWNODE' ? t('visualFlowEditor.blocks.map.compact.show') :
+          block.type === 'HIDENODE' ? t('visualFlowEditor.blocks.map.compact.hide') :
+          block.type === 'ADDNODE' ? t('visualFlowEditor.blocks.map.compact.add') :
+          block.type === 'SETNODEKNOWN' ? t('visualFlowEditor.blocks.map.compact.known') :
+          block.type === 'CENTERMAPBYNODE' ? t('visualFlowEditor.blocks.map.compact.center') :
+          t('visualFlowEditor.blocks.map.compact.move');
+
+        if (nodeName) {
+          // Etichetta localizzata del nodo, se disponibile
+          let displayLabel: string = nodeName;
+          const n = Array.isArray(sessionData?.nodes)
+            ? sessionData.nodes.find((x: any) => x?.name === nodeName)
+            : undefined;
+          if (n) {
+            displayLabel = getLocalizedString(n.localizedCaptions, currentLanguage, n.caption || n.name || nodeName);
+          }
+          return <span className="text-gray-400">{prefix}: {displayLabel}</span>;
+        }
+        return <span className="text-xs text-gray-500 italic">{t('visualFlowEditor.blocks.nodeSelector.none')}</span>;
+      }
+      case 'SHOWPATH':
+      case 'HIDEPATH':
+      case 'CENTERMAPBYPATH': {
+        const routeKey = block.parameters?.route ? String(block.parameters.route) : '';
+        const prefix = block.type === 'SHOWPATH' ? t('visualFlowEditor.blocks.map.compact.show') :
+          block.type === 'HIDEPATH' ? t('visualFlowEditor.blocks.map.compact.hide') :
+          t('visualFlowEditor.blocks.map.compact.center');
+
+        if (routeKey && missionsList) {
+          const mission = missionsList.find(m => m.name === routeKey);
+          const displayLabel = mission 
+            ? getLocalizedString(mission.localizedCaptions || {}, currentLanguage, mission.name)
+            : routeKey;
+          return <span className="text-gray-400">{prefix}: {displayLabel}</span>;
+        }
+        return <span className="text-xs text-gray-500 italic">{(t as any)('visualFlowEditor.command.selectRoute')}</span>;
+      }
+      case 'HIDEALLPATHS': {
+        const node1 = block.parameters?.node1 ? String(block.parameters.node1) : '';
+        const node2 = block.parameters?.node2 ? String(block.parameters.node2) : '';
+        
+        if (!node1 && !node2) {
+          return <span className="text-xs text-gray-500 italic">No locations selected</span>;
+        }
+        
+        const getNodeLabel = (nodeName: string) => {
+          if (!nodeName) return '';
+          const n = Array.isArray(sessionData?.nodes) 
+            ? sessionData.nodes.find((x: any) => x?.name === nodeName) 
+            : undefined;
+          return n ? getLocalizedString(n.localizedCaptions, currentLanguage, n.caption || n.name || nodeName) : nodeName;
+        };
+        
+        const label1 = getNodeLabel(node1);
+        const label2 = getNodeLabel(node2);
+        
+        if (label1 && label2) {
+          return <span className="text-gray-400">{(t as any)('visualFlowEditor.blocks.hideAllPaths.summary')}: {label1} → {label2}</span>;
+        } else if (label1) {
+          return <span className="text-gray-400">{(t as any)('visualFlowEditor.blocks.hideAllPaths.from')}: {label1}</span>;
+        } else if (label2) {
+          return <span className="text-gray-400">{(t as any)('visualFlowEditor.blocks.hideAllPaths.to')}: {label2}</span>;
+        }
+        
+        return <span className="text-xs text-gray-500 italic">{(t as any)('visualFlowEditor.blocks.hideAllPaths.selectLocations')}</span>;
+      }
+      case 'SHOWBUTTON':
+      case 'HIDEBUTTON':
+      case 'SETFOCUS':
+      case 'RESETFOCUS': {
+        const buttonId = block.parameters?.button ? String(block.parameters.button) : '';
+        let prefix;
+        switch (block.type) {
+          case 'SHOWBUTTON':
+            prefix = (t as any)('visualFlowEditor.blocks.map.compact.showButton');
+            break;
+          case 'HIDEBUTTON':
+            prefix = (t as any)('visualFlowEditor.blocks.map.compact.hideButton');
+            break;
+          case 'SETFOCUS':
+            prefix = (t as any)('visualFlowEditor.blocks.map.compact.setFocus');
+            break;
+          case 'RESETFOCUS':
+            prefix = (t as any)('visualFlowEditor.blocks.map.compact.resetFocus');
+            break;
+          default:
+            prefix = block.type;
+        }
+
+        if (buttonId) {
+          // Trova il pulsante corrispondente e recupera la label localizzata
+          const button = buttons.find(b => b.id === buttonId);
+          const buttonLabel = button 
+            ? (button.localizedLabels[currentLanguage] || button.localizedLabels['EN'] || button.id)
+            : buttonId;
+          
+          return <span className="text-gray-400">{prefix}: {buttonLabel}</span>;
+        }
+        return <span className="text-xs text-gray-500 italic">{(t as any)('visualFlowEditor.command.selectButton')}</span>;
+      }
+      case 'SETFOCUSIFCREDITS': {
+        const buttonId = block.parameters?.button ? String(block.parameters.button) : '';
+        const credits = block.parameters?.credits;
+        
+        if (buttonId && credits !== undefined) {
+          // Trova il pulsante corrispondente e recupera la label localizzata
+          const button = buttons.find(b => b.id === buttonId);
+          const buttonLabel = button 
+            ? (button.localizedLabels[currentLanguage] || button.localizedLabels['EN'] || button.id)
+            : buttonId;
+          
+          return (
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400">Focus Condizionale: {buttonLabel}</span>
+              <span className="text-yellow-400">≥{String(credits)}</span>
+            </div>
+          );
+        }
+        return <span className="text-xs text-gray-500 italic">Bottone e crediti non impostati</span>;
+      }
+      case 'ADDINFOWINDOW':
+      case 'SHOWINFOWINDOW': {
+        if (block.parameters?.image) {
+          return (
+            <div className="flex items-center gap-2">
+              <span className="text-gray-400">🖼️ {String(block.parameters.image)}</span>
+            </div>
+          );
+        }
+        return <span className="text-xs text-gray-500 italic">No image selected</span>;
+      }
+      case 'SHOWHELPIMAGE': {
+        const emoji = '🖼️';
+        const paramsValue = block.parameters?.params || '';
+        if (paramsValue.trim()) {
+          return (
+            <span className="text-gray-400" title={(t as any)('visualFlowEditor.blocks.showHelpImage.description')}>
+              {emoji} {paramsValue}
+            </span>
+          );
+        }
+        return (
+          <span className="text-xs text-gray-500 italic">
+            {(t as any)('visualFlowEditor.blocks.showHelpImage.noParameters') || 'Nessun parametro'}
+          </span>
+        );
+      }
+  default: {
         // Gestione generica per blocchi non implementati - mostra un riepilogo compatto dei parametri
         const params = block.parameters || {};
         const paramEntries = Object.entries(params);
@@ -1238,10 +2046,118 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
     return null;
   };
 
-  // Ottieni il personaggio per SAY/ASK
-  const avatarCharacter = (block.type === 'SAY' || block.type === 'ASK') && simulatedSceneState 
-    ? getLastModifiedVisibleCharacter(simulatedSceneState) 
-    : null;
+  // Calcola lo stato simulato PRIMA di questo blocco per i comandi che mostrano transizioni
+  const simulatedSceneStateBefore = useMemo(() => {
+    const needsBeforeState = ['SHOWCHAR', 'HIDECHAR', 'CHANGECHAR', 'SAYCHAR', 'ASKCHAR'].includes(block.type);
+    if (!needsBeforeState || !allBlocks || allBlocks.length === 0) return null;
+    return simulateSceneBeforeBlock(allBlocks, block.id, characters);
+  }, [allBlocks, block.id, block.type, characters]);
+  
+  // Avatar singolo per SAY/ASK (solo lastModified corrente, visibile)
+  const singleAvatar = useMemo(() => {
+    if (!['SAY', 'ASK'].includes(block.type)) return null;
+    return simulatedSceneState ? getLastModifiedVisibleCharacter(simulatedSceneState) : null;
+  }, [block.type, simulatedSceneState]);
+  
+  // Avatar doppi per comandi che modificano la scena (prima/dopo)
+  const doubleAvatars = useMemo(() => {
+    if (!['SHOWCHAR', 'HIDECHAR', 'CHANGECHAR', 'SAYCHAR', 'ASKCHAR'].includes(block.type)) {
+      return null;
+    }
+    
+    let beforeChar = null;
+    let afterChar = null;
+    
+    if (block.type === 'CHANGECHAR') {
+      // Per CHANGECHAR: mostra lastimage precedente => lastimage attuale dello STESSO personaggio
+      const selectedCharacterName = block.parameters?.character;
+      
+      if (selectedCharacterName && simulatedSceneState) {
+        // PRIMA: Il personaggio selezionato con la sua lastImmagine PRIMA del cambio
+        // Dobbiamo usare simulateSceneBeforeBlock per ottenere lo stato prima del CHANGECHAR
+        const beforeState = simulatedSceneStateBefore;
+        
+        if (beforeState?.currentScene) {
+          // Cerca il personaggio nello stato precedente
+          const charBefore = beforeState.currentScene.personaggi.find(
+            p => p.nomepersonaggio === selectedCharacterName
+          );
+          
+          if (charBefore) {
+            beforeChar = charBefore;
+          } else if (characters) {
+            // Se non era in scena, usa l'immagine base
+            const charData = characters.find((c: Character) => c.nomepersonaggio === selectedCharacterName);
+            if (charData) {
+              beforeChar = {
+                nomepersonaggio: selectedCharacterName,
+                lastImmagine: charData.immaginebase || (charData.listaimmagini?.[0] || null),
+                visible: false,
+                posizione: 'left'
+              };
+            }
+          }
+        }
+        
+        // DOPO: Il personaggio selezionato con la sua lastImmagine DOPO il cambio
+        const charInScene = simulatedSceneState.currentScene?.personaggi.find(
+          p => p.nomepersonaggio === selectedCharacterName
+        );
+        
+        if (charInScene) {
+          afterChar = charInScene;
+        }
+      }
+    } else {
+      // Per altri comandi: logica precedente
+      // PRIMA: lastModifiedCharacter attuale 
+      beforeChar = simulatedSceneState ? getLastModifiedCharacter(simulatedSceneState) : null;
+      
+      // DOPO: il personaggio che QUESTO comando sta modificando
+      if (['SHOWCHAR', 'SAYCHAR', 'ASKCHAR'].includes(block.type)) {
+        const selectedCharacterName = block.parameters?.character;
+        if (selectedCharacterName && simulatedSceneState) {
+          // Cerchiamo il personaggio nello stato simulato DOPO l'esecuzione del comando
+          const charInScene = simulatedSceneState.currentScene?.personaggi.find(
+            p => p.nomepersonaggio === selectedCharacterName
+          );
+          
+          if (charInScene) {
+            // Se è in scena, usa la sua lastImmagine attuale (può essere stata modificata)
+            afterChar = charInScene;
+          } else if (characters) {
+            // Se non è in scena, usa l'immagine base dai dati del personaggio
+            const charData = characters.find((c: Character) => c.nomepersonaggio === selectedCharacterName);
+            if (charData) {
+              afterChar = {
+                nomepersonaggio: selectedCharacterName,
+                lastImmagine: charData.immaginebase || (charData.listaimmagini?.[0] || null),
+                visible: ['SHOWCHAR', 'SAYCHAR', 'ASKCHAR'].includes(block.type),
+                posizione: block.parameters?.position || 'left'
+              };
+            }
+          }
+        }
+      }
+    }
+    
+    if (block.type === 'HIDECHAR') {
+      // Per HIDECHAR, "dopo" è il prossimo personaggio visibile (o null se non ce ne sono)
+      const hideCharName = block.parameters?.character;
+      if (simulatedSceneState?.currentScene && hideCharName) {
+        // Trova altro personaggio visibile che non sia quello che stiamo nascondendo
+        const otherVisible = simulatedSceneState.currentScene.personaggi.find(
+          p => p.visible && p.nomepersonaggio !== hideCharName
+        );
+        afterChar = otherVisible || null;
+      }
+    }
+    
+    return {
+      before: beforeChar,
+      after: afterChar
+    };
+  }, [block.type, block.parameters, simulatedSceneState, simulatedSceneStateBefore, characters]);
   
   // Ottieni il personaggio per ADDOPPONENT e adatta la struttura per CharacterAvatar
   const opponentCharacterRaw = block.type === 'ADDOPPONENT' && block.parameters?.character
@@ -1260,6 +2176,52 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
   const shipImagePath = shipType 
     ? `campaign/campaignMap/ship${shipType.replace('ST', '')}.cacheship.png`
     : null;
+
+  // Node avatar support for MAP commands
+  const selectedNodeName: string | null = (
+    ['SHOWNODE','HIDENODE','ADDNODE','SETNODEKNOWN','CENTERMAPBYNODE','MOVEPLAYERTONODE'] as any
+  ).includes(block.type) && block.parameters?.node ? String(block.parameters.node) : null;
+
+  // Try to pick node image from sessionData if available
+  const nodeImageBinary: string | null = selectedNodeName && Array.isArray(sessionData?.nodes)
+    ? (sessionData.nodes.find((n: any) => n?.name === selectedNodeName)?.imageBinary || null)
+    : null;
+  const nodeData = selectedNodeName && Array.isArray(sessionData?.nodes)
+    ? sessionData.nodes.find((n: any) => n?.name === selectedNodeName)
+    : null;
+  const nodeDisplayName = nodeData
+    ? getLocalizedString(nodeData.localizedCaptions, currentLanguage, nodeData.caption || nodeData.name || selectedNodeName!)
+    : selectedNodeName || null;
+  const nodeAvatar = selectedNodeName ? {
+    nomepersonaggio: nodeDisplayName || selectedNodeName,
+    lastImmagine: nodeImageBinary ? { nomefile: `${selectedNodeName}.png`, binary: nodeImageBinary } : null
+  } : null;
+
+  // Per HIDEALLPATHS - prepara gli avatar dei due nodi selezionati
+  const hideAllPathsAvatars = useMemo(() => {
+    if (block.type !== 'HIDEALLPATHS') return null;
+    
+    const node1Name = block.parameters?.node1;
+    const node2Name = block.parameters?.node2;
+    
+    const getNodeAvatar = (nodeName: string | undefined) => {
+      if (!nodeName || typeof nodeName !== 'string' || !sessionData?.nodes) return null;
+      
+      const node = sessionData.nodes.find((n: any) => n.nome === nodeName || n.name === nodeName);
+      if (!node) return null;
+      
+      return {
+        nomepersonaggio: node.displayName || node.localizedCaptions?.IT || node.caption || nodeName,
+        lastImmagine: node.imageBinary ? { nomefile: `${nodeName}.png`, binary: node.imageBinary } : 
+                     node.immagine?.binary ? { nomefile: `${nodeName}.png`, binary: node.immagine.binary } : null
+      };
+    };
+
+    return {
+      node1: getNodeAvatar(String(node1Name || '')),
+      node2: getNodeAvatar(String(node2Name || ''))
+    };
+  }, [block.type, block.parameters?.node1, block.parameters?.node2, sessionData?.nodes]);
 
   return (
     <div ref={containerRef}>
@@ -1281,20 +2243,57 @@ export const CommandBlock: React.FC<CommandBlockProps> = ({
             setIsCollapsed(true);
           }
         }}
-        className={`${getBlockClassName(block.type, isInvalid, validationType)} p-3 mb-2 transition-all hover:shadow-lg`}
+        className={`${getBlockClassName(
+          (['BUILDINGHELPSCRIPT','FLIGHTHELPSCRIPT','ALIENHELPSCRIPT'].includes(block.type) ? 'SHOWINFOWINDOW' : block.type) as any,
+          isInvalid,
+          validationType
+        )} p-3 mb-2 transition-all hover:shadow-lg`}
         isInvalid={isInvalid}
         validationType={validationType}
         extraControls={allBlocks.length > 0 && <SceneDebugButton block={block} allBlocks={allBlocks} characters={characters} />}
-        showAvatar={(block.type === 'SAY' || block.type === 'ASK' || block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE')}
+        headerActions={(
+          (() => {
+            const isScriptNavType = ['SUB_SCRIPT','BUILDINGHELPSCRIPT','FLIGHTHELPSCRIPT','ALIENHELPSCRIPT'].includes(block.type);
+            if (!isScriptNavType) return null;
+            const scriptValue = String(block.parameters?.script || '');
+            const disabled = !scriptValue;
+            return (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!disabled && onNavigateToSubScript) {
+                    onNavigateToSubScript(scriptValue, block);
+                  }
+                }}
+                disabled={disabled}
+                className="p-1 hover:bg-slate-700 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title={(t as any)('visualFlowEditor.blocks.subScript.navigate')}
+              >
+                <ArrowRight className="w-4 h-4 text-blue-400" />
+              </button>
+            );
+          })()
+        )}
+  showAvatar={(block.type === 'SAY' || block.type === 'ASK' || block.type === 'ADDOPPONENT' || block.type === 'SETSHIPTYPE' || block.type === 'HIDEALLPATHS' || ['SHOWNODE','HIDENODE','ADDNODE','SETNODEKNOWN','CENTERMAPBYNODE','MOVEPLAYERTONODE'].includes(block.type) || ['SETACHIEVEMENTPROGRESS', 'SETACHIEVEMENTATTEMPT', 'UNLOCKACHIEVEMENT'].includes(block.type) || ['SHOWCHAR', 'HIDECHAR', 'CHANGECHAR', 'SAYCHAR', 'ASKCHAR'].includes(block.type))}
         avatarCharacter={
+          // Avatar doppi per comandi che modificano la scena (prima/dopo)
+          ['SHOWCHAR', 'HIDECHAR', 'CHANGECHAR', 'SAYCHAR', 'ASKCHAR'].includes(block.type) ? doubleAvatars :
+          // Avatar singolo per SAY/ASK
+          ['SAY', 'ASK'].includes(block.type) ? singleAvatar :
+          // Altri tipi di avatar
+          block.type === 'HIDEALLPATHS' ? hideAllPathsAvatars :
           block.type === 'ADDOPPONENT' ? opponentCharacter : 
           block.type === 'SETSHIPTYPE' ? {
             nomepersonaggio: shipType || 'STI',
             lastImmagine: shipImagePath ? { nomefile: shipImagePath, percorso: shipImagePath } : null
-          } :
-          avatarCharacter
+          } : block.type && ['SHOWNODE','HIDENODE','ADDNODE','SETNODEKNOWN','CENTERMAPBYNODE','MOVEPLAYERTONODE'].includes(block.type) ? nodeAvatar :
+          null
         }
-        isShipType={block.type === 'SETSHIPTYPE'}
+  isShipType={block.type === 'SETSHIPTYPE'}
+  isNodeType={(['SHOWNODE','HIDENODE','ADDNODE','SETNODEKNOWN','CENTERMAPBYNODE','MOVEPLAYERTONODE'] as any).includes(block.type)}
+  isAchievementType={(['SETACHIEVEMENTPROGRESS', 'SETACHIEVEMENTATTEMPT', 'UNLOCKACHIEVEMENT'] as any).includes(block.type)}
+  achievementName={(['SETACHIEVEMENTPROGRESS', 'SETACHIEVEMENTATTEMPT', 'UNLOCKACHIEVEMENT'] as any).includes(block.type) ? String(block.parameters?.achievement || '') : undefined}
       >
         {/* Block parameters - visibili solo se expanded */}
         {renderParameters()}

@@ -1,63 +1,5 @@
 SCRIPTS
 
-MISSION roughMission
-  AddOpponent "roughTrucker"
-  SetDeckPreparationScript "meteor1Deck"
-  SetSpecCondition "bet"
-  INIT_BUILD
-  BuildingHelpScript 500 "tutorialAdditionalConcepts"
-  RESET shouldShowFlightTutorial
-  ModifyOpponentsBuildSpeed 75
-  SetShipType STI
-  SUB_SCRIPT stdParts
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  FlightHelpScript "tutorialAdditionalFlightConcepts"
-  EVALUATE_FLIGHT
-  ShowDlgScene
-  ShowChar roughtrucker left
-  Delay 500
-  IF wasBet
-    IfMissionResultIs 1
-      Say "* Soupir *"
-      Say "Ces paris vont me ruiner."
-      AddMissionCredits 3
-      AddOpponentsCredits 1 -3
-      Announce "Vous recevez 3 Crédits de l'autre pilote."
-      UnlockAchievement camp_bet
-    ELSE
-      IfMissionResultIs 0
-        Say "J'ai gagné. C'est l'heure de payer votre dette [g(l'ami|l'amie)]."
-        AddMissionCredits -3
-        AddOpponentsCredits 1 3
-        Announce "Vous devez payer 3 Crédits à l'autre pilote."
-      ELSE
-        Say "Ouf. Voilà qui est fait. Nous nous sommes tous les deux plantés."
-        Say "J'imagine que personne n'a gagné."
-        Say "Peut-être la prochaine fois."
-      END_OF_IF
-    END_OF_IF
-  ELSE
-    IfMissionResultIs 1
-      Say "Hum. Je suis content que vous ayez décliné ce pari."
-    ELSE
-      IfMissionResultIs 0
-        Say "Ah, j'ai gagné ! Dommage que nous n'ayons rien parié."
-      ELSE
-        Say "Euh. Voilà qui est fait. Nous nous sommes tous les deux plantés."
-      END_OF_IF
-    END_OF_IF
-  END_OF_IF
-  Delay 300
-  HideChar roughtrucker
-  Delay 200
-  HideDlgScene
-  END_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
 SCRIPT purpleSupportInfo
 
   ShowDlgScene
@@ -1370,6 +1312,64 @@ MISSION ingotDelivery
   END_OF_IF
   END_FLIGHT
   FINISH_MISSION
+END_OF_MISSION
+
+MISSION roughMission
+  AddOpponent "roughTrucker"
+  SetDeckPreparationScript "meteor1Deck"
+  SetSpecCondition "bet"
+  INIT_BUILD
+  BuildingHelpScript 500 tutorialAdditionalConcepts
+  RESET shouldShowFlightTutorial
+  ModifyOpponentsBuildSpeed 75
+  SetShipType STI
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  FlightHelpScript tutorialAdditionalFlightConcepts
+  EVALUATE_FLIGHT
+  ShowDlgScene
+  ShowChar roughtrucker left
+  Delay 500
+  IF wasBet
+    IfMissionResultIs 1
+      Say "* Soupir *"
+      Say "Ces paris vont me ruiner."
+      AddMissionCredits 3
+      AddOpponentsCredits 1 -3
+      Announce "Vous recevez 3 Crédits de l'autre pilote."
+      UnlockAchievement camp_bet
+    ELSE
+      IfMissionResultIs 0
+        Say "J'ai gagné. C'est l'heure de payer votre dette [g(l'ami|l'amie)]."
+        AddMissionCredits -3
+        AddOpponentsCredits 1 3
+        Announce "Vous devez payer 3 Crédits à l'autre pilote."
+      ELSE
+        Say "Ouf. Voilà qui est fait. Nous nous sommes tous les deux plantés."
+        Say "J'imagine que personne n'a gagné."
+        Say "Peut-être la prochaine fois."
+      END_OF_IF
+    END_OF_IF
+  ELSE
+    IfMissionResultIs 1
+      Say "Hum. Je suis content que vous ayez décliné ce pari."
+    ELSE
+      IfMissionResultIs 0
+        Say "Ah, j'ai gagné ! Dommage que nous n'ayons rien parié."
+      ELSE
+        Say "Euh. Voilà qui est fait. Nous nous sommes tous les deux plantés."
+      END_OF_IF
+    END_OF_IF
+  END_OF_IF
+  Delay 300
+  HideChar roughtrucker
+  Delay 200
+  HideDlgScene
+  END_FLIGHT
+FINISH_MISSION
 END_OF_MISSION
 
 END_OF_SCRIPTS

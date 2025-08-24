@@ -3,6 +3,44 @@
  */
 
 export const visualFlowEditorTranslations = {
+  // Deck tools
+  'visualFlowEditor.tools.deckAddCardType.description': 'Přidá specifické typy karet do balíčku. Parametry: jediný řetězec s id/typy karet a volitelnými kvalifikátory.',
+  'visualFlowEditor.tools.deckAddAllCards.description': 'Přidá všechny dostupné karty do balíčku.',
+  'visualFlowEditor.tools.deckAddCardRound.description': 'Přidá karty pro konkrétní kolo. Parametry: jediný řetězec.',
+  'visualFlowEditor.tools.deckAddRulePosition.description': 'Přidá pravidlo pozice pro balíček. Parametry: jediný řetězec.',
+  'visualFlowEditor.tools.deckAddRuleRange.description': 'Přidá pravidlo rozsahu pro balíček. Parametry: jediný řetězec.',
+  'visualFlowEditor.tools.deckShuffle.description': 'Zamíchá balíček.',
+  'visualFlowEditor.tools.setSuperCardsCnt.description': 'Nastaví počet super karet. Parametry: jediný řetězec (např. počet).',
+  // Společné
+  'visualFlowEditor.common.parameters': 'Parametry',
+
+  // Deck blocks UI
+  'visualFlowEditor.blocks.deckAddAllCards.description': 'Přidá všechny karty do balíčku v aktuálním kontextu.',
+  'visualFlowEditor.blocks.deckShuffle.description': 'Zamíchá aktuální balíček.',
+  'visualFlowEditor.blocks.deckAddAllCards.compact': 'Přidat všechny karty',
+  'visualFlowEditor.blocks.deckShuffle.compact': 'Zamíchat balíček',
+  'visualFlowEditor.blocks.deckAddCardType.label': 'Parametry',
+  'visualFlowEditor.blocks.deckAddCardType.placeholder': 'např. alienGun 2; merchant 1',
+  'visualFlowEditor.blocks.deckAddCardType.hint': 'Jediný řetězec, argumenty oddělené mezerou. Zachovejte syntaxi skriptů.',
+  'visualFlowEditor.blocks.deckAddCardRound.label': 'Parametry',
+  'visualFlowEditor.blocks.deckAddCardRound.placeholder': 'např. 2 alienGun 1',
+  'visualFlowEditor.blocks.deckAddCardRound.hint': 'Jediný řetězec pro konfiguraci kola.',
+  'visualFlowEditor.blocks.deckAddRulePosition.label': 'Parametry',
+  'visualFlowEditor.blocks.deckAddRulePosition.placeholder': 'např. pos 1-3',
+  'visualFlowEditor.blocks.deckAddRulePosition.hint': 'Jediný řetězec popisující pravidlo pozice.',
+  'visualFlowEditor.blocks.deckAddRuleRange.label': 'Parametry',
+  'visualFlowEditor.blocks.deckAddRuleRange.placeholder': 'např. range 2-5',
+  'visualFlowEditor.blocks.deckAddRuleRange.hint': 'Jediný řetězec popisující pravidlo rozsahu.',
+  'visualFlowEditor.blocks.setSuperCardsCnt.label': 'Parametry',
+  'visualFlowEditor.blocks.setSuperCardsCnt.placeholder': 'např. 3',
+  'visualFlowEditor.blocks.setSuperCardsCnt.hint': 'Počet super karet (jediný řetězec).',
+
+  // Deck validation
+  'visualFlowEditor.validation.DECKADDCARDTYPE_NO_PARAMS': 'Parametry jsou povinné. Zadejte hodnotu.',
+  'visualFlowEditor.validation.DECKADDCARDROUND_NO_PARAMS': 'Parametry jsou povinné. Zadejte hodnotu.',
+  'visualFlowEditor.validation.DECKADDRULEPOSITION_NO_PARAMS': 'Parametry jsou povinné. Zadejte hodnotu.',
+  'visualFlowEditor.validation.DECKADDRULERANGE_NO_PARAMS': 'Parametry jsou povinné. Zadejte hodnotu.',
+  'visualFlowEditor.validation.SETSUPERCARDSCNT_NO_PARAMS': 'Parametry jsou povinné. Zadejte hodnotu.',
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
   'visualFlowEditor.subtitle': 'Kompletní Vizuální Editor',
@@ -26,6 +64,14 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.toolbar.error': 'chyba',
   'visualFlowEditor.toolbar.errors': 'chyby',
   'visualFlowEditor.toolbar.fixErrorsBeforeSaving': 'Opravte {count} chyb před uložením',
+  'visualFlowEditor.toolbar.aiSuggestAll': 'Navrhnout vše (AI)',
+  'visualFlowEditor.toolbar.aiAll': 'AI Vše',
+  'visualFlowEditor.toolbar.aiAllTitle': 'Hromadné návrhy (AI)',
+  'visualFlowEditor.toolbar.aiAllSubtitle': 'Vygeneruje návrhy pro všechny prázdné texty z EN. Zachová metakódy.',
+  'visualFlowEditor.toolbar.targetLanguage': 'Cílový jazyk',
+  'visualFlowEditor.toolbar.aiAllApplied': 'Návrhy použity',
+  'visualFlowEditor.toolbar.generate': 'Vygenerovat',
+  'visualFlowEditor.toolbar.generating': 'Generování...',
   
   // New Script Dialog
   'visualFlowEditor.newScriptDialog.title': 'Nový prvek',
@@ -45,6 +91,31 @@ export const visualFlowEditorTranslations = {
   
   // Missions List
   'visualFlowEditor.missionsList.loadingMissions': 'Načítání misí...',
+  // Map blocks (flat keys)
+  'visualFlowEditor.blocks.nodeSelector.search': 'Hledat uzly...',
+  'visualFlowEditor.blocks.nodeSelector.none': 'Žádný',
+  'visualFlowEditor.validation.SHOWNODE_NO_NODE': 'Uzel je povinný. Vyberte prosím uzel.',
+  'visualFlowEditor.validation.HIDENODE_NO_NODE': 'Uzel je povinný. Vyberte prosím uzel.',
+  'visualFlowEditor.validation.ADDNODE_NO_NODE': 'Uzel je povinný. Vyberte prosím uzel.',
+  'visualFlowEditor.validation.SETNODEKNOWN_NO_NODE': 'Uzel je povinný. Vyberte prosím uzel.',
+  'visualFlowEditor.validation.CENTERMAPBYNODE_NO_NODE': 'Uzel je povinný. Vyberte prosím uzel.',
+  'visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE': 'Uzel je povinný. Vyberte prosím uzel.',
+  'visualFlowEditor.validation.SHOWBUTTON_NO_BUTTON': 'Tlačítko je povinné. Vyberte prosím tlačítko.',
+  'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Tlačítko je povinné. Vyberte prosím tlačítko.',
+  'visualFlowEditor.validation.SETFOCUS_NO_BUTTON': 'Tlačítko je povinné. Vyberte prosím tlačítko.',
+  'visualFlowEditor.validation.RESETFOCUS_NO_BUTTON': 'Tlačítko je povinné. Vyberte prosím tlačítko.',
+  'visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_BUTTON': 'Tlačítko je povinné. Vyberte prosím tlačítko.',
+  'visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_CREDITS': 'Kredity jsou povinné. Zadejte prosím minimální hodnotu kreditů.',
+  'visualFlowEditor.blocks.map.compact.show': 'Zobrazit',
+  'visualFlowEditor.blocks.map.compact.hide': 'Skrýt',
+  'visualFlowEditor.blocks.map.compact.add': 'Přidat',
+  'visualFlowEditor.blocks.map.compact.known': 'Známý',
+  'visualFlowEditor.blocks.map.compact.center': 'Centrovat',
+  'visualFlowEditor.blocks.map.compact.move': 'Přesunout',
+  'visualFlowEditor.blocks.map.compact.showButton': 'Zobrazit',
+  'visualFlowEditor.blocks.map.compact.hideButton': 'Skrýt',
+  'visualFlowEditor.blocks.map.compact.setFocus': 'Nastavit Fokus',
+  'visualFlowEditor.blocks.map.compact.resetFocus': 'Resetovat Fokus',
   
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Chyby validace',
@@ -60,6 +131,19 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.addOpponentNotInMission': 'ADDOPPONENT by měl být uvnitř bloku MISSION.',
   'visualFlowEditor.validation.setShipTypeNoType': 'Blok SETSHIPTYPE musí mít vybraný typ lodi.',
   'visualFlowEditor.validation.setShipTypeNotInMission': 'SETSHIPTYPE by měl být uvnitř bloku MISSION.',
+  'visualFlowEditor.validation.SHOWPATH_NO_ROUTE': 'Route is required. Please select a route.',
+  'visualFlowEditor.validation.HIDEPATH_NO_ROUTE': 'Route is required. Please select a route.',
+  'visualFlowEditor.validation.CENTERMAPBYPATH_NO_ROUTE': 'Route is required. Please select a route.',
+  'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE1': 'HIDEALLPATHS requires node1. Please select the first node or choose "None".',
+  'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE2': 'HIDEALLPATHS requires node2. Please select the second node or choose "None".',
+  'visualFlowEditor.blocks.map.node1': 'Místo Odjezdu',
+  'visualFlowEditor.blocks.map.node2': 'Místo Příjezdu',
+  'visualFlowEditor.blocks.map.route': 'Trasa',
+  'visualFlowEditor.blocks.map.button': 'Tlačítko',
+  'visualFlowEditor.blocks.hideAllPaths.summary': 'Skrýt cesty',
+  'visualFlowEditor.blocks.hideAllPaths.from': 'Z',
+  'visualFlowEditor.blocks.hideAllPaths.to': 'Do',
+  'visualFlowEditor.blocks.hideAllPaths.selectLocations': 'Vyberte místa',
   
   // Delay Block
   'visualFlowEditor.blocks.delay.duration': 'Doba trvání',
@@ -157,6 +241,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.characterSelector.noAvailable': 'Žádné dostupné postavy k zobrazení',
   'visualFlowEditor.blocks.characterSelector.noVisible': 'Žádné viditelné postavy ke skrytí',
   'visualFlowEditor.blocks.characterSelector.selected': 'Vybráno',
+  'visualFlowEditor.blocks.characterSelector.none': 'Žádné',
 
   // Mission Commands (parameterless)
   'visualFlowEditor.blocks.setTurnBased.compact': 'Nastavit tahový režim',
@@ -372,6 +457,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askNoScene': 'ASK vyžaduje aktivní scénu. Přidejte SHOWDLGSCENE před tento blok.',
   'visualFlowEditor.validation.askIfInvalidThen': 'Po ASK musí větev THEN bloku IF začínat MENU nebo GO.',
   'visualFlowEditor.validation.askIfInvalidElse': 'Po ASK musí větev ELSE bloku IF začínat MENU nebo GO.',
+  // HelpScript validation
+  'visualFlowEditor.validation.buildingHelpScriptParams': 'BUILDINGHELPSCRIPT vyžaduje value (číslo) a script.',
+  'visualFlowEditor.validation.helpScriptParams': 'Tento příkaz vyžaduje parametr script.',
+  // Bloky Info
+  'visualFlowEditor.validation.ADDINFOWINDOW_NO_IMAGE': 'Blok ADDINFOWINDOW musí mít vybraný obrázek. Vyberte obrázek.',
+  'visualFlowEditor.validation.SHOWINFOWINDOW_NO_IMAGE': 'Blok SHOWINFOWINDOW musí mít vybraný obrázek. Vyberte obrázek.',
   'visualFlowEditor.validation.consecutiveAskDetailed': '💡 Dva po sobě jdoucí bloky ASK nejsou povoleny. První ASK ({firstAsk}) je přímo následován tímto ASK. Vložte blok SAY, MENU nebo jiný příkaz mezi dva ASK bloky pro jejich oddělení.',
   'visualFlowEditor.validation.blockInBuildDetailed': '💡 Blok {blockType} je uvnitř oblasti "{area}" bloku BUILD. Bloky BUILD a FLIGHT nemohou být vnořené. Přesuňte tento blok mimo BUILD nebo použijte jiné typy bloků.',
   'visualFlowEditor.validation.blockInFlightDetailed': '💡 Blok {blockType} je uvnitř oblasti "{area}" bloku FLIGHT. Bloky BUILD a FLIGHT nemohou být vnořené. Přesuňte tento blok mimo FLIGHT.',
@@ -528,6 +619,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.multilingual.collapse': 'Sbalit',
   'visualFlowEditor.multilingual.copyToAll': 'Kopírovat do všech jazyků',
   'visualFlowEditor.multilingual.copyFromEN': 'Kopírovat z EN',
+  'visualFlowEditor.multilingual.aiSuggest': 'AI návrh',
   'visualFlowEditor.multilingual.languages.it': 'Italština',
   'visualFlowEditor.multilingual.languages.en': 'Angličtina',
   'visualFlowEditor.multilingual.languages.cs': 'Čeština',
@@ -573,6 +665,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.block.dragToMove': 'Přetáhněte pro přesunutí',
   
   // CommandBlock
+  // Command placeholders
+  'visualFlowEditor.command.selectRoute': 'Vybrat trasu',
+  'visualFlowEditor.command.selectButton': 'Vybrat tlačítko',
   'visualFlowEditor.command.dialogText': 'Text dialogu',
   'visualFlowEditor.command.dialogLabel': 'Dialog',
   'visualFlowEditor.command.questionText': 'Text otázky',
@@ -581,12 +676,14 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.selectLabel': 'Vybrat štítek...',
   'visualFlowEditor.command.labelName': 'Název štítku...',
   'visualFlowEditor.command.selectScript': 'Vybrat skript...',
+  'visualFlowEditor.command.selectVariable': 'Vybrat proměnnou...',
   'visualFlowEditor.command.selectCondition': 'Vybrat podmínku...',
   'visualFlowEditor.command.opponent': 'Postava Protivníka',
   'visualFlowEditor.command.opponentPlaceholder': 'obchodník, nepřítel, atd.',
   'visualFlowEditor.command.shipClassI': 'Třída I',
   'visualFlowEditor.command.shipClassII': 'Třída II',
   'visualFlowEditor.command.shipClassIII': 'Třída III',
+  'visualFlowEditor.command.statusText': 'Text stavu',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Název skriptu...',
@@ -747,12 +844,31 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.subOpponentCreditsByResult.description': 'Odečíst kredity',
   'visualFlowEditor.tools.addOpponentsCredits.description': 'Přidat kredity protivníka',
   
+  // Credits - Popisky UI
+  'visualFlowEditor.blocks.addOpponentsCredits.player': 'Hráč',
+  
+  // Credits - Chybové zprávy ověření
+  'visualFlowEditor.validation.ADDOPPONENTSCREDITS_INVALID_INDEX': 'ADDOPPONENTSCREDITS vyžaduje index hráče mezi 0 a 3.',
+  'visualFlowEditor.validation.ADDOPPONENTSCREDITS_NO_CREDITS': 'Hodnota kreditů je povinná. Zadejte číslo (kladné nebo záporné).',
+  'visualFlowEditor.validation.ADDCREDITS_NO_AMOUNT': 'Částka je povinná. Zadejte číslo (kladné nebo záporné).',
+  'visualFlowEditor.validation.SETCREDITS_NO_AMOUNT': 'Částka je povinná. Zadejte číslo.',
+  'visualFlowEditor.validation.ADDMISSIONCREDITS_NO_AMOUNT': 'Částka je povinná. Zadejte číslo (kladné nebo záporné).',
   // Tool Descriptions - Achievement
   'visualFlowEditor.tools.setAchievementProgress.description': 'Nastavit postup úspěchu',
   'visualFlowEditor.tools.setAchievementAttempt.description': 'Nastavit pokus o úspěch',
   'visualFlowEditor.tools.unlockAchievement.description': 'Odemknout úspěch',
   'visualFlowEditor.tools.unlockShipPlan.description': 'Odemknout plán lodi',
   'visualFlowEditor.tools.unlockShuttles.description': 'Odemknout raketoplány',
+  
+  // Achievement UI - Labels
+  'visualFlowEditor.blocks.achievement.selectAchievement': 'Úspěch:',
+  'visualFlowEditor.blocks.achievement.value': 'Hodnota',
+  'visualFlowEditor.blocks.achievement.objectives': 'Cíle:',
+  'visualFlowEditor.blocks.achievement.none': 'Žádné',
+  
+  // UnlockShipPlan - Labels
+  'visualFlowEditor.blocks.unlockShipPlan.label': 'Plán lodi:',
+  'visualFlowEditor.blocks.unlockShipPlan.short': 'plán',
   
   // Tool Descriptions - Characters
   'visualFlowEditor.tools.askChar.description': 'Otázka s postavou',
@@ -773,6 +889,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.saveState.description': 'Uložit stav hry',
   'visualFlowEditor.tools.loadState.description': 'Načíst stav hry',
   'visualFlowEditor.tools.quitCampaign.description': 'Ukončit kampaň',
+  'visualFlowEditor.blocks.saveState.compact': 'Uložit stav',
+  'visualFlowEditor.blocks.loadState.compact': 'Načíst stav',
+  'visualFlowEditor.blocks.quitCampaign.compact': 'Ukončit',
+  'visualFlowEditor.blocks.saveState.fullDescription': 'Uloží aktuální stav kampaně a umožní jej později obnovit pomocí LoadState. Užitečné pro vytváření bodů uložení během vyprávění.',
+  'visualFlowEditor.blocks.loadState.fullDescription': 'Načte dříve uložený stav kampaně. Obnoví situaci hráče, mise, postavy a proměnné v okamžiku uložení.',
+  'visualFlowEditor.blocks.quitCampaign.fullDescription': 'Okamžitě ukončí kampaň a vrátí hráče do hlavního menu. Používejte opatrně, protože definitivně přeruší tok vyprávění.',
   
   // Metacode Modal Translations
   'visualFlowEditor.metacode.playerReference': 'Reference hráče',
@@ -780,6 +902,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.metacode.selectPlayer': 'Vybrat hráče',
   'visualFlowEditor.metacode.current': 'Aktuální',
   'visualFlowEditor.metacode.playerNumber': 'Hráč {num}',
+  'visualFlowEditor.metacode.playerNumberShort': 'H{num}',
   'visualFlowEditor.metacode.generatedCode': 'Generovaný kód:',
   'visualFlowEditor.metacode.numericValue': 'Číselná hodnota',
   'visualFlowEditor.metacode.numericValueDescription': 'Vloží dynamickou nebo ordinální číselnou hodnotu.',
@@ -804,4 +927,57 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.metacode.plural': 'Množné číslo',
   'visualFlowEditor.metacode.singularExample': 'jednotné (např. bod)',
   'visualFlowEditor.metacode.pluralExample': 'množné (např. body)',
+  
+  // Validation Error Messages for SET_TO and ADD
+  'visualFlowEditor.validation.setToNoVariable': 'Blok SET_TO musí mít vybranou proměnnou. Vyberte proměnnou pro nastavení.',
+  'visualFlowEditor.validation.setToNoValue': 'Blok SET_TO musí mít nastavenou hodnotu. Zadejte číselnou hodnotu.',
+  'visualFlowEditor.validation.addNoVariable': 'Blok ADD musí mít vybranou proměnnou. Vyberte proměnnou pro přičtení.',
+  'visualFlowEditor.validation.addNoValue': 'Blok ADD musí mít nastavenou hodnotu. Zadejte číselnou hodnotu k přičtení.',
+  
+  // Command labels
+  'visualFlowEditor.command.variableLabel': 'Proměnná:',
+  'visualFlowEditor.command.buildingHelpScript': 'Skript nápovědy stavby',
+  'visualFlowEditor.command.flightHelpScript': 'Skript nápovědy letu',
+  'visualFlowEditor.command.alienHelpScript': 'Skript nápovědy mimozemšťanů',
+  'visualFlowEditor.command.script': 'Skript',
+  'visualFlowEditor.command.value': 'Zpoždění (ms)',
+  
+  // SET_TO Block
+  'visualFlowEditor.blocks.setTo.variableLabel': 'Proměnná',
+  'visualFlowEditor.blocks.setTo.valueLabel': 'Hodnota',
+  'visualFlowEditor.blocks.setTo.valuePlaceholder': 'Zadejte číselnou hodnotu...',
+  'visualFlowEditor.blocks.setTo.description': 'Nastaví proměnnou na zadanou hodnotu',
+  'visualFlowEditor.blocks.setTo.noVariable': 'Není vybrána žádná proměnná',
+  
+  // ADD Block
+  'visualFlowEditor.blocks.add.variableLabel': 'Proměnná',
+  'visualFlowEditor.blocks.add.valueLabel': 'Hodnota k přidání',
+  'visualFlowEditor.blocks.add.valuePlaceholder': 'Zadejte číselnou hodnotu...',
+  'visualFlowEditor.blocks.add.description': 'Přidá hodnotu k zadané proměnné',
+  'visualFlowEditor.blocks.add.noVariable': 'Není vybrána žádná proměnná',
+  
+  // SHOWHELPIMAGE Block
+  'visualFlowEditor.blocks.showHelpImage.parameters': 'Text',
+  'visualFlowEditor.blocks.showHelpImage.placeholder': 'Zadejte text nápovědy nebo cestu k obrázku...',
+  'visualFlowEditor.blocks.showHelpImage.hint': 'Text nebo cesta k obrázku nápovědy',
+  'visualFlowEditor.blocks.showHelpImage.noParameters': 'Žádný text nenastaven',
+  'visualFlowEditor.blocks.showHelpImage.params': 'Text',
+  
+  // Info & Help tools (labels)
+  'visualFlowEditor.tools.infoHelp': 'Info a nápověda',
+  'visualFlowEditor.tools.buildingHelpScript': 'Skript nápovědy stavby',
+  'visualFlowEditor.tools.flightHelpScript': 'Skript nápovědy letu',
+  'visualFlowEditor.tools.alienHelpScript': 'Skript nápovědy mimozemšťanů',
+  
+  // Headers compact / navigation
+  'visualFlowEditor.header.navigateToScript': 'Přejít na skript',
+  'visualFlowEditor.header.compact.buildingHelp': 'zpoždění: {value} • {script}',
+  'visualFlowEditor.header.compact.help': '{script}',
+
+  // ASKCHAR and FOCUSCHAR Validation
+  'visualFlowEditor.validation.ASKCHAR_NO_CHARACTER': 'ASKCHAR blok musí mít vybranou postavu. Vyberte postavu.',
+  'visualFlowEditor.validation.ASKCHAR_NO_TEXT': 'ASKCHAR blok musí mít zadaný text. Zadejte text pro postavu.',
+  'visualFlowEditor.validation.ASKCHAR_NO_SCENE': 'ASKCHAR blok musí být použit ve scéně. Přidejte blok do scény.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_CHARACTER': 'FOCUSCHAR blok musí mít vybranou postavu. Vyberte postavu.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_SCENE': 'FOCUSCHAR blok musí být použit ve scéně. Přidejte blok do scény.',
 } as const;

@@ -56,8 +56,12 @@ export const useInteractiveMap = (
   } = useMapData(setViewport);
 
   const handleMissionSelect = useCallback((mission: Mission) => {
-    // Per ora logghiamo solo la selezione della missione
-    // Mission selected
+    // Emissione evento globale per navigare al Visual Flow Editor e caricare la missione
+    const missionName = mission.name || mission.id || '';
+    if (missionName) {
+      const evt = new CustomEvent('navigateToVisualFlowMission', { detail: { missionName } });
+      window.dispatchEvent(evt);
+    }
   }, []);
 
   const {

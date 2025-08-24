@@ -41,7 +41,8 @@ router.get('/images', async (req, res) => {
     const thumbnailSize = parseInt(req.query.thumbnailSize) || 100;
     
     const images = [];
-    const imageRegex = /\.(jpe?g|png)$/i; // Case-insensitive
+  // Supporta più formati immagine (jpg, png, webp, gif, bmp)
+  const imageRegex = /\.(jpe?g|png|webp|gif|bmp)$/i; // Case-insensitive
     
     // Funzione ricorsiva per scansionare cartelle
     async function scanRecursive(dirPath, relativePath = '', depth = 0) {
@@ -58,7 +59,8 @@ router.get('/images', async (req, res) => {
             const stats = await fs.stat(fullPath);
             const ext = path.extname(entry.name);
             const nomefile = path.basename(entry.name, ext);
-            const percorsoNormalized = relPath.replace(/\\\\/g, '/');
+            // Normalizza i separatori di percorso (Windows -> slash)
+            const percorsoNormalized = relPath.replace(/\\/g, '/');
             
             // Classificazione intelligente tipo/sottotipo
             const { tipo, sottotipo } = classifyImage(percorsoNormalized);

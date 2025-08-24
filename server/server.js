@@ -13,6 +13,8 @@ const scriptsRoutes = require('./src/routes/scriptsRoutes');
 const missionsRoutes = require('./src/routes/missionsRoutes');
 const gameRoutes = require('./src/routes/gameRoutes');
 const metacodesRoutes = require('./src/routes/metacodesRoutes');
+const localizationRoutes = require('./src/routes/localizationRoutes');
+const exportRoutes = require('./src/routes/exportRoutes');
 
 const app = express();
 const PORT = config.SERVER_PORT;
@@ -30,7 +32,9 @@ app.use(helmet({
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'http://localhost:3002'
+    'http://localhost:3002',
+    'http://localhost',
+    'https://galaxytruckereditor.nasmerlinoalbus.cloud'
   ],
   credentials: true
 }));
@@ -78,6 +82,8 @@ app.use('/api/scripts', scriptsRoutes);
 app.use('/api/missions', missionsRoutes);
 app.use('/api/game', gameRoutes);
 app.use('/api/metacodes', metacodesRoutes);
+app.use('/api/localization', localizationRoutes);
+app.use('/api/export', exportRoutes);
 
 // File watcher per hot reload (development)
 if (process.env.NODE_ENV !== 'production') {

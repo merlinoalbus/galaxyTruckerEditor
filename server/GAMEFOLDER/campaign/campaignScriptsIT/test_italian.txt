@@ -1,3 +1,0 @@
-SCRIPTS
-COMMAND {"text":{"IT":"Questo è un test in italiano"}}
-END_OF_SCRIPTS

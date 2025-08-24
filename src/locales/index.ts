@@ -410,6 +410,20 @@ export type TranslationKey =
   | 'visualFlowEditor.scriptsList.noScriptsAvailable'
   | 'visualFlowEditor.missionsList.loadingMissions'
   
+  // Visual Flow Editor - Map Blocks (Node Selector & Compact labels)
+  | 'visualFlowEditor.blocks.nodeSelector.search'
+  | 'visualFlowEditor.blocks.nodeSelector.none'
+  | 'visualFlowEditor.blocks.map.compact.show'
+  | 'visualFlowEditor.blocks.map.compact.hide'
+  | 'visualFlowEditor.blocks.map.compact.add'
+  | 'visualFlowEditor.blocks.map.compact.known'
+  | 'visualFlowEditor.blocks.map.compact.center'
+  | 'visualFlowEditor.blocks.map.compact.move'
+  | 'visualFlowEditor.blocks.map.compact.showButton'
+  | 'visualFlowEditor.blocks.map.compact.hideButton'
+  | 'visualFlowEditor.blocks.map.compact.setFocus'
+  | 'visualFlowEditor.blocks.map.compact.resetFocus'
+  
   // Visual Flow Editor - Validation
   | 'visualFlowEditor.validation.title'
   | 'visualFlowEditor.validation.close'
@@ -423,6 +437,12 @@ export type TranslationKey =
   | 'visualFlowEditor.validation.error'
   | 'visualFlowEditor.validation.setSpecConditionNoCondition'
   | 'visualFlowEditor.validation.setSpecConditionOutsideContext'
+  // Credits validation keys
+  | 'visualFlowEditor.validation.ADDOPPONENTSCREDITS_INVALID_INDEX'
+  | 'visualFlowEditor.validation.ADDOPPONENTSCREDITS_NO_CREDITS'
+  | 'visualFlowEditor.validation.ADDCREDITS_NO_AMOUNT'
+  | 'visualFlowEditor.validation.SETCREDITS_NO_AMOUNT'
+  | 'visualFlowEditor.validation.ADDMISSIONCREDITS_NO_AMOUNT'
   | 'visualFlowEditor.validation.consecutiveAskError'
   | 'visualFlowEditor.validation.blockInBuildError'
   | 'visualFlowEditor.validation.blockInFlightError'
@@ -499,6 +519,20 @@ export type TranslationKey =
   | 'visualFlowEditor.validation.modifyOpponentsBuildSpeedNoPercentage'
   | 'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutOfRange'
   | 'visualFlowEditor.validation.modifyOpponentsBuildSpeedOutsideContext'
+  | 'visualFlowEditor.validation.setToNoVariable'
+  | 'visualFlowEditor.validation.setToNoValue'
+  | 'visualFlowEditor.validation.addNoVariable'
+  | 'visualFlowEditor.validation.addNoValue'
+  | 'visualFlowEditor.validation.SHOWNODE_NO_NODE'
+  | 'visualFlowEditor.validation.HIDENODE_NO_NODE'
+  | 'visualFlowEditor.validation.ADDNODE_NO_NODE'
+  | 'visualFlowEditor.validation.SETNODEKNOWN_NO_NODE'
+  | 'visualFlowEditor.validation.CENTERMAPBYNODE_NO_NODE'
+  | 'visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE'
+  | 'visualFlowEditor.validation.SHOWBUTTON_NO_BUTTON'
+  | 'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON'
+  | 'visualFlowEditor.validation.SETFOCUS_NO_BUTTON'
+  | 'visualFlowEditor.validation.RESETFOCUS_NO_BUTTON'
   
   // Visual Flow Editor - Error Modal
   | 'visualFlowEditor.errorModal.close'
@@ -520,6 +554,9 @@ export type TranslationKey =
   | 'visualFlowEditor.blocks.exitMenu.info'
   | 'visualFlowEditor.blocks.exitMenu.compact'
   | 'visualFlowEditor.blocks.exitMenu.fullDescription'
+  | 'visualFlowEditor.blocks.saveState.compact'
+  | 'visualFlowEditor.blocks.loadState.compact'
+  | 'visualFlowEditor.blocks.quitCampaign.compact'
   // Mission parameterless blocks
   | 'visualFlowEditor.blocks.setTurnBased.compact'
   | 'visualFlowEditor.blocks.setTurnBased.fullDescription'
@@ -550,6 +587,22 @@ export type TranslationKey =
   | 'visualFlowEditor.blocks.finishMission.compact'
   | 'visualFlowEditor.blocks.setSpecCondition.condition'
   | 'visualFlowEditor.blocks.modifyOpponentsBuildSpeed.percentage'
+  // Credits - UI labels
+  | 'visualFlowEditor.blocks.addOpponentsCredits.player'
+  
+  // SET_TO Block
+  | 'visualFlowEditor.blocks.setTo.variableLabel'
+  | 'visualFlowEditor.blocks.setTo.valueLabel'
+  | 'visualFlowEditor.blocks.setTo.valuePlaceholder'
+  | 'visualFlowEditor.blocks.setTo.description'
+  | 'visualFlowEditor.blocks.setTo.noVariable'
+  
+  // ADD Block  
+  | 'visualFlowEditor.blocks.add.variableLabel'
+  | 'visualFlowEditor.blocks.add.valueLabel'
+  | 'visualFlowEditor.blocks.add.valuePlaceholder'
+  | 'visualFlowEditor.blocks.add.description'
+  | 'visualFlowEditor.blocks.add.noVariable'
   
   // Visual Flow Editor - Tools
   | 'visualFlowEditor.tools.title'
@@ -708,6 +761,7 @@ export type TranslationKey =
   | 'visualFlowEditor.command.dialogLabel'
   | 'visualFlowEditor.command.questionText'
   | 'visualFlowEditor.command.questionLabel'
+  | 'visualFlowEditor.command.statusText'
   | 'visualFlowEditor.command.milliseconds'
   | 'visualFlowEditor.command.selectLabel'
   | 'visualFlowEditor.command.labelName'
@@ -718,6 +772,8 @@ export type TranslationKey =
   | 'visualFlowEditor.command.shipClassII'
   | 'visualFlowEditor.command.shipClassIII'
   | 'visualFlowEditor.command.selectCondition'
+  | 'visualFlowEditor.command.selectVariable'
+  | 'visualFlowEditor.command.variableLabel'
   
   // Visual Flow Editor - Script Block
   | 'visualFlowEditor.script.scriptName'
@@ -877,6 +933,7 @@ export type TranslationKey =
   | 'visualFlowEditor.metacode.selectPlayer'
   | 'visualFlowEditor.metacode.current'
   | 'visualFlowEditor.metacode.playerNumber'
+  | 'visualFlowEditor.metacode.playerNumberShort'
   | 'visualFlowEditor.metacode.generatedCode'
   | 'visualFlowEditor.metacode.numericValue'
   | 'visualFlowEditor.metacode.numericValueDescription'
@@ -915,6 +972,7 @@ export type TranslationKey =
   | 'visualFlowEditor.metacode.selectPlayer'
   | 'visualFlowEditor.metacode.current'
   | 'visualFlowEditor.metacode.playerNumber'
+  | 'visualFlowEditor.metacode.playerNumberShort'
   | 'visualFlowEditor.metacode.generatedCode'
   | 'visualFlowEditor.metacode.numericValue'
   | 'visualFlowEditor.metacode.numericValueDescription'
@@ -1041,6 +1099,10 @@ export type TranslationKey =
   | 'visualFlowEditor.blocks.characterSelector.noAvailable'
   | 'visualFlowEditor.blocks.characterSelector.noVisible'
   | 'visualFlowEditor.blocks.characterSelector.selected'
+  | 'visualFlowEditor.blocks.characterSelector.none'
+  | 'visualFlowEditor.header.navigateToScript'
+  | 'visualFlowEditor.header.compact.buildingHelp'
+  | 'visualFlowEditor.header.compact.help'
   
   // Visual Flow Editor - Tool Descriptions
   | 'visualFlowEditor.tools.delay.description'
@@ -1174,11 +1236,21 @@ export const translations: Translations = {
 // Custom hook for translations - maintains exact same functionality
 export function useTranslation() {
   const { currentLanguage } = useLanguage();
-  
-  const t = (key: TranslationKey): string => {
-    return translations[currentLanguage]?.[key] || translations.EN?.[key] || key;
+
+  // Simple interpolation: replaces {var} with provided values
+  const interpolate = (template: string, vars?: Record<string, string | number>): string => {
+    if (!vars) return template;
+    return template.replace(/\{(\w+)\}/g, (_, k: string) => {
+      const v = vars[k];
+      return v === undefined || v === null ? `{${k}}` : String(v);
+    });
   };
-  
+
+  const t = (key: TranslationKey, vars?: Record<string, string | number>): string => {
+    const base = translations[currentLanguage]?.[key] || translations.EN?.[key] || key;
+    return interpolate(base, vars);
+  };
+
   return { t };
 }
 

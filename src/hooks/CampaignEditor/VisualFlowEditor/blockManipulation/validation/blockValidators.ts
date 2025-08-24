@@ -16,7 +16,7 @@ export const blockEndsWithAsk = (block: any): boolean => {
   if (!block) return false;
   
   // Caso base: il blocco è ASK
-  if (block.type === 'ASK') {
+  if (block.type === 'ASK' || block.type === 'ASKCHAR') {
     return true;
   }
   

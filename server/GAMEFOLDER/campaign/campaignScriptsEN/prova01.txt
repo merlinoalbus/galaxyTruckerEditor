@@ -1,8 +1,0 @@
-SCRIPTS
-
-  SCRIPT aaa_pippo
-    ShowDlgScene
-    HideDlgScene
-  END_OF_SCRIPT
-
-END_OF_SCRIPTS
