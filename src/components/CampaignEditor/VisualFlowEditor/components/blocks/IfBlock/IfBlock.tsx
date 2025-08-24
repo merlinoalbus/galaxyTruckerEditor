@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { IfBlockParameters } from './IfBlockParameters';
 import { AnchorPoint } from '../../AnchorPoint/AnchorPoint';
 import { ContainerBlock } from '../ContainerBlock/ContainerBlock';
+import { ZoomControls } from '../../ZoomControls/ZoomControls';
 import { useTranslation } from '@/locales';
 
 const IF_TYPES = [
@@ -35,7 +36,7 @@ interface IfBlockProps {
   onDropElseAtIndex: (e: React.DragEvent, index: number) => void;
   renderChildren: (blocks: any[]) => React.ReactNode;
   isDragActive?: boolean;
-  onZoomIn?: () => void;
+  onZoomIn?: (blockId: string) => void;
   onZoomOut?: () => void;
   isZoomed?: boolean;
   sessionData?: any;
@@ -211,7 +212,7 @@ export const IfBlock: React.FC<IfBlockProps> = ({
         onDragStart={onDragStart}
         isCollapsed={isCollapsed}
         onToggleCollapse={handleToggleCollapse}
-        onZoomIn={onZoomIn}
+        onZoomIn={onZoomIn ? () => onZoomIn(block.id) : undefined}
         onZoomOut={onZoomOut}
         className={`bg-gradient-to-br from-gray-800/95 to-gray-900/95 rounded-xl border ${
           isInvalid 
@@ -275,7 +276,18 @@ export const IfBlock: React.FC<IfBlockProps> = ({
           <div className={`grid ${showElse ? 'grid-cols-2' : 'grid-cols-1'} gap-3 pl-8`}>
           {/* THEN Container */}
           <div className="relative bg-gradient-to-b from-emerald-950/90 to-emerald-950/95 border border-emerald-700/80 rounded-xl p-3 min-h-[100px] shadow-inner hover:border-emerald-700/90 transition-colors duration-200">
-            <div className="absolute top-2 left-3 text-[10px] text-emerald-400 font-bold uppercase tracking-wider bg-emerald-900/40 px-2 py-0.5 rounded-md backdrop-blur-sm">
+            {/* Controlli Zoom per THEN */}
+            {onZoomIn && block.thenBlocks && block.thenBlocks.length > 0 && (
+              <div className="absolute top-0.5 left-0.5 z-20">
+                <ZoomControls
+                  onZoomIn={() => onZoomIn(`${block.id}-then`)}
+                  size="small"
+                  className="opacity-80 hover:opacity-100"
+                />
+              </div>
+            )}
+            
+            <div className="absolute top-2 left-8 text-[10px] text-emerald-400 font-bold uppercase tracking-wider bg-emerald-900/40 px-2 py-0.5 rounded-md backdrop-blur-sm">
               Then • {block.numThen || 0}
             </div>
             <div className="mt-6 space-y-1">
@@ -305,7 +317,18 @@ export const IfBlock: React.FC<IfBlockProps> = ({
           {/* ELSE Container */}
           {showElse && (
             <div className="relative bg-gradient-to-b from-slate-800/90 to-slate-800/95 border border-slate-600/80 rounded-xl p-3 min-h-[100px] shadow-inner hover:border-slate-600/90 transition-colors duration-200">
-              <div className="absolute top-2 left-3 text-[10px] text-slate-400 font-bold uppercase tracking-wider bg-slate-700/40 px-2 py-0.5 rounded-md backdrop-blur-sm">
+              {/* Controlli Zoom per ELSE */}
+              {onZoomIn && block.elseBlocks && block.elseBlocks.length > 0 && (
+                <div className="absolute top-0.5 left-0.5 z-20">
+                  <ZoomControls
+                    onZoomIn={() => onZoomIn(`${block.id}-else`)}
+                    size="small"
+                    className="opacity-80 hover:opacity-100"
+                  />
+                </div>
+              )}
+              
+              <div className="absolute top-2 left-8 text-[10px] text-slate-400 font-bold uppercase tracking-wider bg-slate-700/40 px-2 py-0.5 rounded-md backdrop-blur-sm">
                 Else • {block.numElse || 0}
               </div>
               <div className="mt-6 space-y-1">
