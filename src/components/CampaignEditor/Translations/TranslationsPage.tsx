@@ -3,6 +3,8 @@ import { API_CONFIG, API_ENDPOINTS } from '@/config';
 import { useTranslation } from '@/locales';
 import { IFlowBlock } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 import { useLocalizationStrings } from '@/hooks/CampaignEditor/useLocalizationStrings';
+import { TranslationEditor } from './TranslationEditor';
+import { ScriptMetadataProvider } from '@/contexts/ScriptMetadataContext';
 
 // Minimal types for coverage API
 type PerLanguage = Record<string, { covered: number; missing: number; different: number; totalFields: number; percent: number }>;
@@ -1079,6 +1081,47 @@ export const TranslationsPage: React.FC = () => {
     return list;
   }, [missionsCoverage, selectedLang]);
 
+
+  // Funzione per calcolare la copertura dinamica considerando gli edits
+  const calculateDynamicCoverage = useCallback((itemName: string, basePercent: number, baseCovered: number, baseTotal: number) => {
+    if (selectedTab !== 'scripts' && selectedTab !== 'missions') {
+      return { percent: basePercent, covered: baseCovered, totalFields: baseTotal };
+    }
+
+    let dynamicCovered = baseCovered;
+    const relevantDetails = selectedTab === 'scripts' && selectedScript === itemName ? scriptDetails 
+                          : selectedTab === 'missions' && selectedMissions.has(itemName) ? missionDetails 
+                          : null;
+
+    if (relevantDetails?.details) {
+      // Per ogni campo nel dettaglio, controlla se c'è un edit
+      relevantDetails.details.forEach((detail: any, idx: number) => {
+        const editKey = `${itemName}|${idx}|${selectedLang}`;
+        const editValue = edits[editKey];
+        const originalValue = detail.values?.[selectedLang] || '';
+        const enValue = detail.en || '';
+
+        // Controlla stato originale
+        const wasTranslated = originalValue && originalValue.trim() !== '' && originalValue.trim() !== enValue.trim();
+        
+        // Controlla stato con edit
+        const currentValue = editValue !== undefined ? editValue : originalValue;
+        const isNowTranslated = currentValue && currentValue.trim() !== '' && currentValue.trim() !== enValue.trim();
+
+        if (wasTranslated !== isNowTranslated) {
+          if (isNowTranslated && !wasTranslated) {
+            dynamicCovered++; // Campo ora tradotto
+          } else if (!isNowTranslated && wasTranslated) {
+            dynamicCovered--; // Campo non più tradotto
+          }
+        }
+      });
+    }
+
+    const dynamicPercent = baseTotal > 0 ? Math.round((dynamicCovered / baseTotal) * 100) : 100;
+    return { percent: dynamicPercent, covered: dynamicCovered, totalFields: baseTotal };
+  }, [selectedTab, selectedScript, selectedMissions, scriptDetails, missionDetails, edits, selectedLang]);
+
   if (loading) return <div className="p-6 text-gray-300">{t('common.loading')}</div>;
   if (error) return <div className="p-6 text-red-400">{t('common.error')}: {error}</div>;
   
@@ -1579,9 +1622,239 @@ export const TranslationsPage: React.FC = () => {
                 <React.Fragment key={itemName}>
                   <tr className="hover:bg-slate-700/40">
                     <td className="px-3 py-2 text-gray-200">{itemName}</td>
-                    <td className="px-3 py-2 text-gray-300">{d.percent}% <span className="text-xs text-gray-500">({d.covered}/{d.totalFields})</span></td>
+                    <td className="px-3 py-2 text-gray-300">
+                      {(() => {
+                        const dynamicStats = calculateDynamicCoverage(itemName, d.percent, d.covered, d.totalFields);
+                        return (
+                          <>
+                            {dynamicStats.percent}% <span className="text-xs text-gray-500">({dynamicStats.covered}/{dynamicStats.totalFields})</span>
+                            {/* Copertura IT */}
+                            {selectedLang === 'IT' && (
+                              <div className="text-xs text-blue-400 mt-1">
+                                IT: {currentCoverage?.perLanguage?.['IT']?.percent || 0}%
+                              </div>
+                            )}
+                          </>
+                        );
+                      })()}
+                    </td>
                     <td className="px-3 py-2 text-gray-300">
                       <div className="flex items-center space-x-2">
+                        {/* Pulsanti SALVA e AI ALL - attivi solo se dettaglio aperto */}
+                        {isOpen && (
+                          <>
+                            <button
+                              disabled={saving || (selectedTab !== 'yaml-missions' && !currentDetails) || (selectedTab === 'yaml-missions' && selectedYamlMissions.size === 0)}
+                              className={`bg-slate-700 hover:bg-slate-600 text-white border border-slate-500 ${(saving || (selectedTab !== 'yaml-missions' && !currentDetails) || (selectedTab === 'yaml-missions' && selectedYamlMissions.size === 0)) ? 'opacity-60 cursor-not-allowed' : ''}`}
+                              title={saving ? 'Salvando...' : 'Salva Modifiche'}
+                              onClick={currentSaveFunction}
+                              style={{ fontSize: '35px', lineHeight: '35px', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                            >
+                              {saving ? '⏳' : '💾'}
+                            </button>
+                            <button
+                              disabled={saving || (selectedTab !== 'yaml-missions' && !currentDetails) || (selectedTab === 'yaml-missions' && selectedYamlMissions.size === 0)}
+                              className={`bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded transition-colors ${(saving || (selectedTab !== 'yaml-missions' && !currentDetails) || (selectedTab === 'yaml-missions' && selectedYamlMissions.size === 0)) ? 'opacity-60 cursor-not-allowed' : ''}`}
+                              title="Suggerimenti IA per tutti i campi"
+                              onClick={async () => {
+                                if (selectedTab !== 'yaml-missions' && !currentDetails) return;
+                                if (selectedTab === 'yaml-missions' && selectedYamlMissions.size === 0) return;
+                                try {
+                                  setSaving(true);
+                                  
+                                  if (selectedTab === 'strings' && selectedCategory) {
+                                    // Per le strings, usa la nuova API
+                                    const result = await translateCategory(selectedCategory.id, 'EN', selectedLang);
+                                    if (result.success && result.translations) {
+                                      // Applica le traduzioni sistemando il formato
+                                      result.translations.forEach((translation: any) => {
+                                        // Rimuovi tutti i possibili prefissi placeholder
+                                        let cleanTranslation = translation.translatedText || '';
+                                        
+                                        // Pattern di prefissi da rimuovere
+                                        const prefixPatterns = [
+                                          `[AI_TRANSLATED:${selectedLang}] `,
+                                          `[AI_TRANSLATED:${selectedLang.toLowerCase()}] `,
+                                          `[AI_TRANSLATED:${selectedLang.toUpperCase()}] `,
+                                          `[TRANSLATED:${selectedLang}] `,
+                                          `[TRANSLATED:${selectedLang.toLowerCase()}] `,
+                                          `[TRANSLATED:${selectedLang.toUpperCase()}] `
+                                        ];
+                                        
+                                        for (const prefix of prefixPatterns) {
+                                          if (cleanTranslation.startsWith(prefix)) {
+                                            cleanTranslation = cleanTranslation.substring(prefix.length);
+                                            break;
+                                          }
+                                        }
+                                        
+                                        // Rimuovi anche eventuali spazi iniziali/finali e newline
+                                        cleanTranslation = cleanTranslation.trim().replace(/[\r\n]/g, ' ');
+                                        
+                                        if (cleanTranslation) {
+                                          updateString(translation.key, selectedLang, cleanTranslation);
+                                        }
+                                      });
+                                      alert(`Tutte le stringhe sono state tradotte in ${selectedLang}!`);
+                                    }
+                                  } else if (selectedTab === 'nodes') {
+                                    // Per nodes, usa batch API come per scripts
+                                    const itemData = currentDetails;
+                                    const fieldsToTranslate = [
+                                      ...(itemData?.translations['EN']?.caption ? [{
+                                        field: 'caption',
+                                        text: itemData.translations['EN'].caption
+                                      }] : []),
+                                      ...(itemData?.translations['EN']?.description ? [{
+                                        field: 'description', 
+                                        text: itemData.translations['EN'].description
+                                      }] : []),
+                                      ...(itemData?.translations['EN']?.buttons && Array.isArray(itemData.translations['EN'].buttons) ? 
+                                        itemData.translations['EN'].buttons.map((button: any, buttonIndex: number) => ({
+                                          field: `button_${button.id}`,
+                                          text: button.text || ''
+                                        })).filter((button: any) => button.text) : [])
+                                    ];
+
+                                    if (fieldsToTranslate.length > 0) {
+                                      const items = fieldsToTranslate.map(field => ({
+                                        textEN: field.text,
+                                        metacodesDetected: (field.text.match(/\[[^\]]+\]/g) || [])
+                                      }));
+                                      
+                                      const resp = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE_BATCH}`, {
+                                        method: 'POST', 
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ items, langTarget: selectedLang })
+                                      });
+                                      
+                                      const j = await resp.json();
+                                      if (!resp.ok || !j?.success) throw new Error(j?.message || 'batch failed');
+                                      
+                                      const suggestions: string[] = j.data?.suggestions || [];
+                                      
+                                      // Popola tutte le textarea con le traduzioni (rimuovi prefissi numerati)
+                                      const updatedEdits: Record<string, string> = {};
+                                      fieldsToTranslate.forEach((field, idx) => {
+                                        if (suggestions[idx]) {
+                                          let cleanTranslation = suggestions[idx];
+                                          
+                                          // Rimuovi prefissi numerati tipo "1. ", "2. ", etc.
+                                          cleanTranslation = cleanTranslation.replace(/^\d+\.\s*/, '');
+                                          
+                                          // Rimuovi eventuali spazi iniziali/finali
+                                          cleanTranslation = cleanTranslation.trim();
+                                          
+                                          const key = `${selectedTab}|${currentDetails.id}|${selectedLang}_${field.field}`;
+                                          updatedEdits[key] = cleanTranslation;
+                                        }
+                                      });
+                                      
+                                      setEdits(prev => ({ ...prev, ...updatedEdits }));
+                                      alert(`Tutti i ${fieldsToTranslate.length} campi sono stati tradotti in ${selectedLang}!`);
+                                    }
+                                  } else if (selectedTab === 'yaml-missions') {
+                                    // Per yaml-missions, processa tutte le missioni selezionate
+                                    const allFields: any[] = [];
+                                    const fieldMapping: any[] = [];
+                                    
+                                    // Per ogni missione selezionata
+                                    for (const missionId of selectedYamlMissions) {
+                                      const missionData = yamlMissionsData?.items?.find((item: any) => item.id === missionId);
+                                      if (!missionData) continue;
+                                      
+                                      // Aggiungi caption se presente
+                                      if (missionData.translations['EN']?.caption) {
+                                        allFields.push({
+                                          textEN: missionData.translations['EN'].caption,
+                                          metacodesDetected: (missionData.translations['EN'].caption.match(/\[[^\]]+\]/g) || [])
+                                        });
+                                        fieldMapping.push({ missionId, field: 'caption' });
+                                      }
+                                      
+                                      // Aggiungi description se presente
+                                      if (missionData.translations['EN']?.description) {
+                                        allFields.push({
+                                          textEN: missionData.translations['EN'].description,
+                                          metacodesDetected: (missionData.translations['EN'].description.match(/\[[^\]]+\]/g) || [])
+                                        });
+                                        fieldMapping.push({ missionId, field: 'description' });
+                                      }
+                                      
+                                      // Aggiungi buttons se presenti
+                                      if (missionData.translations['EN']?.buttons && Array.isArray(missionData.translations['EN'].buttons)) {
+                                        missionData.translations['EN'].buttons.forEach((button: any, buttonIndex: number) => {
+                                          if (button.text) {
+                                            allFields.push({
+                                              textEN: button.text,
+                                              metacodesDetected: (button.text.match(/\[[^\]]+\]/g) || [])
+                                            });
+                                            fieldMapping.push({ missionId, field: 'button', buttonIndex });
+                                          }
+                                        });
+                                      }
+                                    }
+                                    
+                                    if (allFields.length > 0) {
+                                      const resp = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE_BATCH}`, {
+                                        method: 'POST', 
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ items: allFields, langTarget: selectedLang })
+                                      });
+                                      
+                                      const j = await resp.json();
+                                      if (!resp.ok || !j?.success) throw new Error(j?.message || 'batch failed');
+                                      
+                                      const suggestions: string[] = j.data?.suggestions || [];
+                                      
+                                      // Applica le traduzioni usando setEdits
+                                      const updatedEdits: Record<string, string> = {};
+                                      fieldMapping.forEach((mapping, idx) => {
+                                        if (suggestions[idx]) {
+                                          let cleanTranslation = suggestions[idx].replace(/^\d+\.\s*/, '').trim();
+                                          const key = `yaml-missions|${mapping.missionId}|${selectedLang}_${mapping.field}${mapping.buttonIndex !== undefined ? `_${mapping.buttonIndex}` : ''}`;
+                                          updatedEdits[key] = cleanTranslation;
+                                        }
+                                      });
+                                      
+                                      setEdits(prev => ({ ...prev, ...updatedEdits }));
+                                      alert(`Tutti i ${allFields.length} campi delle missioni selezionate sono stati tradotti in ${selectedLang}!`);
+                                    }
+                                  } else {
+                                    // Per scripts e missions, usa la logica esistente
+                                    const items = currentDetails.details.map((d: any) => ({
+                                      textEN: d.en,
+                                      metacodesDetected: (d.en.match(/\[[^\]]+\]/g) || [])
+                                    }));
+                                    const resp = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE_BATCH}`, {
+                                      method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ items, langTarget: selectedLang })
+                                    });
+                                    const j = await resp.json();
+                                    if (!resp.ok || !j?.success) throw new Error(j?.message || 'batch failed');
+                                    const suggestions: string[] = j.data?.suggestions || [];
+                                    // Popola tutte le inputbox
+                                    const newEdits: Record<string, string> = { ...edits };
+                                    currentDetails.details.forEach((_: any, idx: number) => {
+                                      const key = `${currentDetails.script}|${idx}|${selectedLang}`;
+                                      const sug = suggestions[idx];
+                                      if (typeof sug === 'string' && sug.length > 0) newEdits[key] = sug;
+                                    });
+                                    setEdits(newEdits);
+                                  }
+                                } catch (e: any) {
+                                  alert(e?.message || 'Impossibile generare suggerimenti in batch');
+                                } finally {
+                                  setSaving(false);
+                                }
+                              }}
+                              style={{ fontSize: '35px', lineHeight: '1', width: '100px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px', flexDirection: 'row' }}
+                            >
+                              <span>🪄</span>
+                              <span>✨</span>
+                            </button>
+                          </>
+                        )}
                         <button 
                           className="bg-slate-700 hover:bg-slate-600 text-white border border-slate-500" 
                         onClick={() => {
@@ -1656,267 +1929,6 @@ export const TranslationsPage: React.FC = () => {
                     <tr className="bg-slate-900/40">
                       <td colSpan={3} className="px-3 py-2">
                         <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <div className="text-gray-300 text-sm">
-                              Copertura {selectedLang}: {
-                                selectedTab === 'strings' && categoryStats 
-                                  ? Math.round(((categoryStats.translatedKeys[selectedLang] || 0) / categoryStats.totalKeys) * 100)
-                                  : selectedTab === 'nodes' || selectedTab === 'yaml-missions'
-                                    ? (() => {
-                                        // Per yaml-missions, trova i dati dalla fonte corretta
-                                        const itemData = selectedTab === 'yaml-missions' 
-                                          ? yamlMissionsData?.items?.find((item: any) => item.id === itemName)
-                                          : currentDetails;
-                                        const translations = itemData?.translations[selectedLang] || {};
-                                        const enTranslations = itemData?.translations['EN'] || {};
-                                        let covered = 0;
-                                        let total = 0;
-                                        
-                                        if (enTranslations.caption) {
-                                          total++;
-                                          if (translations.caption && translations.caption.trim() !== '' && translations.caption !== enTranslations.caption) {
-                                            covered++;
-                                          }
-                                        }
-                                        
-                                        if (enTranslations.description) {
-                                          total++;
-                                          if (translations.description && translations.description.trim() !== '' && translations.description !== enTranslations.description) {
-                                            covered++;
-                                          }
-                                        }
-                                        
-                                        // Conta buttons
-                                        if (enTranslations.buttons && Array.isArray(enTranslations.buttons)) {
-                                          enTranslations.buttons.forEach((enButton: any, buttonIndex: number) => {
-                                            if (enButton && enButton.text) {
-                                              total++;
-                                              const translatedButton = translations.buttons?.[buttonIndex];
-                                              if (translatedButton && translatedButton.text && translatedButton.text.trim() !== '' && translatedButton.text !== enButton.text) {
-                                                covered++;
-                                              }
-                                            }
-                                          });
-                                        }
-                                        
-                                        return total > 0 ? Math.round((covered / total) * 100) : 0;
-                                      })()
-                                    : currentDetails.summary[selectedLang]?.percent ?? 0
-                              }%
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <button
-                                disabled={saving || (selectedTab !== 'yaml-missions' && !currentDetails) || (selectedTab === 'yaml-missions' && selectedYamlMissions.size === 0)}
-                                className={`bg-slate-700 hover:bg-slate-600 text-white border border-slate-500 ${(saving || (selectedTab !== 'yaml-missions' && !currentDetails) || (selectedTab === 'yaml-missions' && selectedYamlMissions.size === 0)) ? 'opacity-60 cursor-not-allowed' : ''}`}
-                                title={saving ? 'Salvando...' : 'Salva Modifiche'}
-                                onClick={currentSaveFunction}
-                                style={{ fontSize: '35px', lineHeight: '35px', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                              >
-                                {saving ? '⏳' : '💾'}
-                              </button>
-                              <button
-                                disabled={saving || (selectedTab !== 'yaml-missions' && !currentDetails) || (selectedTab === 'yaml-missions' && selectedYamlMissions.size === 0)}
-                                className={`bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded transition-colors ${(saving || (selectedTab !== 'yaml-missions' && !currentDetails) || (selectedTab === 'yaml-missions' && selectedYamlMissions.size === 0)) ? 'opacity-60 cursor-not-allowed' : ''}`}
-                                title="Suggerimenti IA per tutti i campi"
-                                onClick={async () => {
-                                  if (selectedTab !== 'yaml-missions' && !currentDetails) return;
-                                  if (selectedTab === 'yaml-missions' && selectedYamlMissions.size === 0) return;
-                                  try {
-                                    setSaving(true);
-                                    
-                                    if (selectedTab === 'strings' && selectedCategory) {
-                                      // Per le strings, usa la nuova API
-                                      const result = await translateCategory(selectedCategory.id, 'EN', selectedLang);
-                                      if (result.success && result.translations) {
-                                        // Applica le traduzioni sistemando il formato
-                                        result.translations.forEach((translation: any) => {
-                                          // Rimuovi tutti i possibili prefissi placeholder
-                                          let cleanTranslation = translation.translatedText || '';
-                                          
-                                          // Pattern di prefissi da rimuovere
-                                          const prefixPatterns = [
-                                            `[AI_TRANSLATED:${selectedLang}] `,
-                                            `[AI_TRANSLATED:${selectedLang.toLowerCase()}] `,
-                                            `[AI_TRANSLATED:${selectedLang.toUpperCase()}] `,
-                                            `[TRANSLATED:${selectedLang}] `,
-                                            `[TRANSLATED:${selectedLang.toLowerCase()}] `,
-                                            `[TRANSLATED:${selectedLang.toUpperCase()}] `
-                                          ];
-                                          
-                                          for (const prefix of prefixPatterns) {
-                                            if (cleanTranslation.startsWith(prefix)) {
-                                              cleanTranslation = cleanTranslation.substring(prefix.length);
-                                              break;
-                                            }
-                                          }
-                                          
-                                          // Rimuovi anche eventuali spazi iniziali/finali e newline
-                                          cleanTranslation = cleanTranslation.trim().replace(/[\r\n]/g, ' ');
-                                          
-                                          if (cleanTranslation) {
-                                            updateString(translation.key, selectedLang, cleanTranslation);
-                                          }
-                                        });
-                                        alert(`Tutte le stringhe sono state tradotte in ${selectedLang}!`);
-                                      }
-                                    } else if (selectedTab === 'nodes') {
-                                      // Per nodes, usa batch API come per scripts
-                                      const itemData = currentDetails;
-                                      const fieldsToTranslate = [
-                                        ...(itemData?.translations['EN']?.caption ? [{
-                                          field: 'caption',
-                                          text: itemData.translations['EN'].caption
-                                        }] : []),
-                                        ...(itemData?.translations['EN']?.description ? [{
-                                          field: 'description', 
-                                          text: itemData.translations['EN'].description
-                                        }] : []),
-                                        ...(itemData?.translations['EN']?.buttons && Array.isArray(itemData.translations['EN'].buttons) ? 
-                                          itemData.translations['EN'].buttons.map((button: any, buttonIndex: number) => ({
-                                            field: `button_${button.id}`,
-                                            text: button.text || ''
-                                          })).filter((button: any) => button.text) : [])
-                                      ];
-
-                                      if (fieldsToTranslate.length > 0) {
-                                        const items = fieldsToTranslate.map(field => ({
-                                          textEN: field.text,
-                                          metacodesDetected: (field.text.match(/\[[^\]]+\]/g) || [])
-                                        }));
-                                        
-                                        const resp = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE_BATCH}`, {
-                                          method: 'POST', 
-                                          headers: { 'Content-Type': 'application/json' },
-                                          body: JSON.stringify({ items, langTarget: selectedLang })
-                                        });
-                                        
-                                        const j = await resp.json();
-                                        if (!resp.ok || !j?.success) throw new Error(j?.message || 'batch failed');
-                                        
-                                        const suggestions: string[] = j.data?.suggestions || [];
-                                        
-                                        // Popola tutte le textarea con le traduzioni (rimuovi prefissi numerati)
-                                        const updatedEdits: Record<string, string> = {};
-                                        fieldsToTranslate.forEach((field, idx) => {
-                                          if (suggestions[idx]) {
-                                            let cleanTranslation = suggestions[idx];
-                                            
-                                            // Rimuovi prefissi numerati tipo "1. ", "2. ", etc.
-                                            cleanTranslation = cleanTranslation.replace(/^\d+\.\s*/, '');
-                                            
-                                            // Rimuovi eventuali spazi iniziali/finali
-                                            cleanTranslation = cleanTranslation.trim();
-                                            
-                                            const key = `${selectedTab}|${currentDetails.id}|${selectedLang}_${field.field}`;
-                                            updatedEdits[key] = cleanTranslation;
-                                          }
-                                        });
-                                        
-                                        setEdits(prev => ({ ...prev, ...updatedEdits }));
-                                        alert(`Tutti i ${fieldsToTranslate.length} campi sono stati tradotti in ${selectedLang}!`);
-                                      }
-                                    } else if (selectedTab === 'yaml-missions') {
-                                      // Per yaml-missions, processa tutte le missioni selezionate
-                                      const allFields: any[] = [];
-                                      const fieldMapping: any[] = [];
-                                      
-                                      // Per ogni missione selezionata
-                                      for (const missionId of selectedYamlMissions) {
-                                        const missionData = yamlMissionsData?.items?.find((item: any) => item.id === missionId);
-                                        if (!missionData) continue;
-                                        
-                                        // Aggiungi caption se presente
-                                        if (missionData.translations['EN']?.caption) {
-                                          allFields.push({
-                                            textEN: missionData.translations['EN'].caption,
-                                            metacodesDetected: (missionData.translations['EN'].caption.match(/\[[^\]]+\]/g) || [])
-                                          });
-                                          fieldMapping.push({ missionId, field: 'caption' });
-                                        }
-                                        
-                                        // Aggiungi description se presente
-                                        if (missionData.translations['EN']?.description) {
-                                          allFields.push({
-                                            textEN: missionData.translations['EN'].description,
-                                            metacodesDetected: (missionData.translations['EN'].description.match(/\[[^\]]+\]/g) || [])
-                                          });
-                                          fieldMapping.push({ missionId, field: 'description' });
-                                        }
-                                        
-                                        // Aggiungi buttons se presenti
-                                        if (missionData.translations['EN']?.buttons && Array.isArray(missionData.translations['EN'].buttons)) {
-                                          missionData.translations['EN'].buttons.forEach((button: any, buttonIndex: number) => {
-                                            if (button.text) {
-                                              allFields.push({
-                                                textEN: button.text,
-                                                metacodesDetected: (button.text.match(/\[[^\]]+\]/g) || [])
-                                              });
-                                              fieldMapping.push({ missionId, field: 'button', buttonIndex });
-                                            }
-                                          });
-                                        }
-                                      }
-                                      
-                                      if (allFields.length > 0) {
-                                        const resp = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE_BATCH}`, {
-                                          method: 'POST', 
-                                          headers: { 'Content-Type': 'application/json' },
-                                          body: JSON.stringify({ items: allFields, langTarget: selectedLang })
-                                        });
-                                        
-                                        const j = await resp.json();
-                                        if (!resp.ok || !j?.success) throw new Error(j?.message || 'batch failed');
-                                        
-                                        const suggestions: string[] = j.data?.suggestions || [];
-                                        
-                                        // Applica le traduzioni usando setEdits
-                                        const updatedEdits: Record<string, string> = {};
-                                        fieldMapping.forEach((mapping, idx) => {
-                                          if (suggestions[idx]) {
-                                            let cleanTranslation = suggestions[idx].replace(/^\d+\.\s*/, '').trim();
-                                            const key = `yaml-missions|${mapping.missionId}|${selectedLang}_${mapping.field}${mapping.buttonIndex !== undefined ? `_${mapping.buttonIndex}` : ''}`;
-                                            updatedEdits[key] = cleanTranslation;
-                                          }
-                                        });
-                                        
-                                        setEdits(prev => ({ ...prev, ...updatedEdits }));
-                                        alert(`Tutti i ${allFields.length} campi delle missioni selezionate sono stati tradotti in ${selectedLang}!`);
-                                      }
-                                    } else {
-                                      // Per scripts e missions, usa la logica esistente
-                                      const items = currentDetails.details.map((d: any) => ({
-                                        textEN: d.en,
-                                        metacodesDetected: (d.en.match(/\[[^\]]+\]/g) || [])
-                                      }));
-                                      const resp = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE_BATCH}`, {
-                                        method: 'POST', headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ items, langTarget: selectedLang })
-                                      });
-                                      const j = await resp.json();
-                                      if (!resp.ok || !j?.success) throw new Error(j?.message || 'batch failed');
-                                      const suggestions: string[] = j.data?.suggestions || [];
-                                      // Popola tutte le inputbox
-                                      const newEdits: Record<string, string> = { ...edits };
-                                      currentDetails.details.forEach((_: any, idx: number) => {
-                                        const key = `${currentDetails.script}|${idx}|${selectedLang}`;
-                                        const sug = suggestions[idx];
-                                        if (typeof sug === 'string' && sug.length > 0) newEdits[key] = sug;
-                                      });
-                                      setEdits(newEdits);
-                                    }
-                                  } catch (e: any) {
-                                    alert(e?.message || 'Impossibile generare suggerimenti in batch');
-                                  } finally {
-                                    setSaving(false);
-                                  }
-                                }}
-                                style={{ fontSize: '35px', lineHeight: '1', width: '100px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px', flexDirection: 'row' }}
-                              >
-                                <span>🪄</span>
-                                <span>✨</span>
-                              </button>
-                            </div>
-                          </div>
                           <div className="border border-slate-700 rounded">
                             {selectedTab === 'strings' && selectedCategory ? (
                               // Rendering per localization strings
@@ -1924,14 +1936,12 @@ export const TranslationsPage: React.FC = () => {
                                 <table className="w-full text-left text-sm">
                                   <thead className="bg-slate-900 text-gray-300 sticky top-0 z-10">
                                     <tr>
-                                      <th className="px-3 py-2 w-[20%]">Key</th>
-                                      <th className="px-3 py-2 w-[30%]">EN</th>
-                                      <th className="px-3 py-2 w-[40%]">{selectedLang}</th>
-                                      <th className="px-3 py-2 w-[10%]">Azioni</th>
+                                      <th className="px-3 py-2 w-[30%]">Key</th>
+                                      <th className="px-3 py-2 w-[70%]">Valore</th>
                                     </tr>
                                   </thead>
                                 </table>
-                                <div className="max-h-72 overflow-auto">
+                                <div className="max-h-96 overflow-auto">
                                   <table className="w-full text-left text-sm">
                                     <tbody className="divide-y divide-slate-700">
                                   {filteredStrings.map((stringItem, idx) => {
@@ -1946,75 +1956,26 @@ export const TranslationsPage: React.FC = () => {
                                     
                                     return (
                                       <tr key={stringItem.id} className={`${isMissing ? 'bg-red-900/20' : 'bg-yellow-900/20'}`}>
-                                        <td className="px-3 py-2 text-gray-400 w-[20%] font-mono text-xs break-all">
+                                        <td className="px-3 py-2 text-gray-400 w-[30%] font-mono text-xs break-all">
                                           {stringItem.id}
                                         </td>
-                                        <td className="px-3 py-2 text-gray-200 w-[30%]">
-                                          {enValue}
-                                        </td>
-                                        <td className="px-3 py-2 text-gray-200 w-[40%]">
-                                          <textarea
-                                            className="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-gray-200 resize-y"
-                                            rows={2}
-                                            value={textareaValue}
-                                            onChange={(e) => {
-                                              // Rimuovi i newline per mantenere tutto su una singola riga
-                                              const singleLineValue = e.target.value.replace(/[\r\n]/g, ' ');
-                                              updateString(stringItem.id, selectedLang, singleLineValue);
-                                            }}
-                                            onKeyDown={(e) => {
-                                              // Impedisci Enter per evitare newline
-                                              if (e.key === 'Enter') {
-                                                e.preventDefault();
-                                              }
-                                            }}
-                                            placeholder={`Traduzione in ${selectedLang} (EN: ${enValue})`}
-                                            style={{ overflow: 'auto', minHeight: '3rem' }}
-                                          />
-                                        </td>
-                                        <td className="px-3 py-2 text-gray-300 w-[10%]">
-                                          <button 
-                                            className="bg-slate-700 hover:bg-slate-600 text-white border border-slate-500 text-lg hover:bg-slate-700 px-2 py-1" 
-                                            title="Suggerimento IA"
-                                            style={{ fontSize: '35px', lineHeight: '35px', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                                            onClick={async () => {
-                                              try {
-                                                const result = await translateString(enValue, 'EN', selectedLang, stringItem.id);
-                                                if (result.success && result.translatedText) {
-                                                  // Rimuovi tutti i possibili prefissi placeholder
-                                                  let cleanTranslation = result.translatedText;
-                                                  
-                                                  // Pattern di prefissi da rimuovere
-                                                  const prefixPatterns = [
-                                                    `[AI_TRANSLATED:${selectedLang}] `,
-                                                    `[AI_TRANSLATED:${selectedLang.toLowerCase()}] `,
-                                                    `[AI_TRANSLATED:${selectedLang.toUpperCase()}] `,
-                                                    `[TRANSLATED:${selectedLang}] `,
-                                                    `[TRANSLATED:${selectedLang.toLowerCase()}] `,
-                                                    `[TRANSLATED:${selectedLang.toUpperCase()}] `
-                                                  ];
-                                                  
-                                                  for (const prefix of prefixPatterns) {
-                                                    if (cleanTranslation.startsWith(prefix)) {
-                                                      cleanTranslation = cleanTranslation.substring(prefix.length);
-                                                      break;
-                                                    }
-                                                  }
-                                                  
-                                                  // Rimuovi anche eventuali spazi iniziali/finali e newline
-                                                  cleanTranslation = cleanTranslation.trim().replace(/[\r\n]/g, ' ');
-                                                  
-                                                  if (cleanTranslation) {
-                                                    updateString(stringItem.id, selectedLang, cleanTranslation);
-                                                  }
-                                                }
-                                              } catch (e) {
-                                                alert('Impossibile generare suggerimento');
-                                              }
-                                            }}
-                                          >
-                                            🪄
-                                          </button>
+                                        <td className="px-3 py-2 text-gray-200 w-[70%]">
+                                          <ScriptMetadataProvider>
+                                            <TranslationEditor
+                                              value={stringItem.values}
+                                              onChange={(newValue) => {
+                                                const updatedValue = newValue[selectedLang] || '';
+                                                // Rimuovi i newline per mantenere tutto su una singola riga
+                                                const singleLineValue = updatedValue.replace(/[\r\n]/g, ' ');
+                                                updateString(stringItem.id, selectedLang, singleLineValue);
+                                              }}
+                                              className="min-h-16"
+                                              availableLanguages={['EN', 'IT', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU']}
+                                              compactMode={true}
+                                              editableLanguages={[selectedLang]}
+                                              placeholder={`Traduzione in ${selectedLang}`}
+                                            />
+                                          </ScriptMetadataProvider>
                                         </td>
                                       </tr>
                                     );
@@ -2029,14 +1990,12 @@ export const TranslationsPage: React.FC = () => {
                                 <table className="w-full text-left text-sm">
                                   <thead className="bg-slate-900 text-gray-300 sticky top-0 z-10">
                                     <tr>
-                                      <th className="px-3 py-2 w-[10%]">Campo</th>
-                                      <th className="px-3 py-2 w-[40%]">EN</th>
-                                      <th className="px-3 py-2 w-[40%]">{selectedLang}</th>
-                                      <th className="px-3 py-2 w-[10%]">Azioni</th>
+                                      <th className="px-3 py-2 w-[20%]">Campo</th>
+                                      <th className="px-3 py-2 w-[80%]">Valore</th>
                                     </tr>
                                   </thead>
                                 </table>
-                                <div className="max-h-72 overflow-auto">
+                                <div className="max-h-96 overflow-auto">
                                   <table className="w-full text-left text-sm">
                                     <tbody className="divide-y divide-slate-700">
                                   {(() => {
@@ -2075,25 +2034,44 @@ export const TranslationsPage: React.FC = () => {
                                     
                                     return (
                                       <tr key={idx} className={`${isMissing ? 'bg-red-900/20' : isDifferent ? 'bg-yellow-900/20' : ''}`}>
-                                        <td className="px-3 py-2 text-gray-400 w-[10%] capitalize">{item.field}</td>
-                                        <td className="px-3 py-2 text-gray-200 w-[40%]">{item.en}</td>
-                                        <td className="px-3 py-2 text-gray-200 w-[40%]">
-                                          <textarea
-                                            className="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-gray-200 resize-y"
-                                            rows={2}
-                                            value={targetVal || ''}
-                                            onChange={(e) => {
-                                              const singleLineValue = e.target.value.replace(/[\r\n]/g, ' ');
-                                              setEdits(prev => ({ ...prev, [key]: singleLineValue }));
-                                            }}
-                                            onKeyDown={(e) => {
-                                              if (e.key === 'Enter') {
-                                                e.preventDefault();
-                                              }
-                                            }}
-                                            placeholder={`Traduzione ${item.field} in ${selectedLang}`}
-                                            style={{ overflow: 'auto', minHeight: '3rem' }}
-                                          />
+                                        <td className="px-3 py-2 text-gray-400 w-[20%] capitalize">{item.field}</td>
+                                        <td className="px-3 py-2 text-gray-200 w-[80%]">
+                                          <ScriptMetadataProvider>
+                                            <TranslationEditor
+                                              value={(() => {
+                                                const itemData = selectedTab === 'yaml-missions' 
+                                                  ? yamlMissionsData?.items?.find((i: any) => i.id === itemName)
+                                                  : currentDetails;
+                                                const allValues: Record<string, string> = {};
+                                                
+                                                // Aggiungi tutte le lingue disponibili
+                                                const availableLangs = ['EN', 'IT', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU'];
+                                                availableLangs.forEach(lang => {
+                                                  if (item.field.startsWith('button_')) {
+                                                    const buttonIndex = item.buttonIndex;
+                                                    allValues[lang] = itemData?.translations?.[lang]?.buttons?.[buttonIndex]?.text || '';
+                                                  } else {
+                                                    allValues[lang] = itemData?.translations?.[lang]?.[item.field] || '';
+                                                  }
+                                                });
+                                                
+                                                // Sovrascrivi con il valore corrente editato
+                                                allValues[selectedLang] = targetVal || '';
+                                                
+                                                return allValues;
+                                              })()}
+                                              onChange={(newValue) => {
+                                                const updatedValue = newValue[selectedLang] || '';
+                                                const singleLineValue = updatedValue.replace(/[\r\n]/g, ' ');
+                                                setEdits(prev => ({ ...prev, [key]: singleLineValue }));
+                                              }}
+                                              className="min-h-16"
+                                              availableLanguages={['EN', 'IT', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU']}
+                                              compactMode={true}
+                                              editableLanguages={[selectedLang]}
+                                              placeholder={`Traduzione ${item.field} in ${selectedLang}`}
+                                            />
+                                          </ScriptMetadataProvider>
                                         </td>
                                         <td className="px-3 py-2 text-gray-300 w-[10%]">
                                           <button 
@@ -2146,14 +2124,12 @@ export const TranslationsPage: React.FC = () => {
                                 <table className="w-full text-left text-sm">
                                   <thead className="bg-slate-900 text-gray-300 sticky top-0 z-10">
                                     <tr>
-                                      <th className="px-3 py-2 w-[10%]">Campo</th>
-                                      <th className="px-3 py-2 w-[40%]">EN</th>
-                                      <th className="px-3 py-2 w-[40%]">{selectedLang}</th>
-                                      <th className="px-3 py-2 w-[10%]">Azioni</th>
+                                      <th className="px-3 py-2 w-[20%]">Campo</th>
+                                      <th className="px-3 py-2 w-[80%]">Valore</th>
                                     </tr>
                                   </thead>
                                 </table>
-                                <div className="max-h-72 overflow-auto">
+                                <div className="max-h-96 overflow-auto">
                                   <table className="w-full text-left text-sm">
                                     <tbody className="divide-y divide-slate-700">
                                   {currentDetails.details.map((d: any, idx: number) => {
@@ -2164,49 +2140,27 @@ export const TranslationsPage: React.FC = () => {
                                   const isDifferent = !!targetVal && targetVal !== d.en;
                                   return (
                                     <tr key={idx} className={`${isMissing ? 'bg-red-900/20' : isDifferent ? 'bg-yellow-900/20' : ''}`}>
-                                      <td className="px-3 py-2 text-gray-400 w-[10%]">{d.type || d.field || '-'}</td>
-                                      <td className="px-3 py-2 text-gray-200 w-[40%]">{d.en}</td>
-                                      <td className="px-3 py-2 text-gray-200 w-[40%]">
-                                        <textarea
-                                          className="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-gray-200 resize-y"
-                                          rows={2}
-                                          value={targetVal || (d.values[selectedLang] || '')}
-                                          onChange={(e) => {
-                                            // Rimuovi i newline per mantenere tutto su una singola riga
-                                            const singleLineValue = e.target.value.replace(/[\r\n]/g, ' ');
-                                            setEdits(prev => ({ ...prev, [key]: singleLineValue }));
-                                          }}
-                                          onKeyDown={(e) => {
-                                            // Impedisci Enter per evitare newline
-                                            if (e.key === 'Enter') {
-                                              e.preventDefault();
-                                            }
-                                          }}
-                                          placeholder="Inserisci traduzione"
-                                          style={{ overflow: 'auto', minHeight: '3rem' }}
-                                        />
-                                      </td>
-                                      <td className="px-3 py-2 text-gray-300 w-[10%]">
-                                        <button 
-                                          className="bg-slate-700 hover:bg-slate-600 text-white border border-slate-500 text-lg hover:bg-slate-700 px-2 py-1" 
-                                          title="Suggerimento IA"
-                                          style={{ fontSize: '35px', lineHeight: '35px', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                                          onClick={async () => {
-                                          try {
-                                            const metacodes = (d.en.match(/\[[^\]]+\]/g) || []);
-                                            const res = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE}`, {
-                                              method: 'POST', headers: { 'Content-Type': 'application/json' },
-                                              body: JSON.stringify({ textEN: d.en, langTarget: selectedLang, metacodesDetected: metacodes })
-                                            });
-                                            const j = await res.json();
-                                            if (!j.success) throw new Error('ai translate failed');
-                                            const suggestion = j.data?.suggestion as string | undefined;
-                                            if (suggestion) setEdits(prev => ({ ...prev, [key]: suggestion }));
-                                            else alert('Nessun suggerimento disponibile');
-                                          } catch (e) {
-                                            alert('Impossibile generare suggerimento');
-                                          }
-                                        }}>🪄</button>
+                                      <td className="px-3 py-2 text-gray-400 w-[20%]">{d.type || d.field || '-'}</td>
+                                      <td className="px-3 py-2 text-gray-200 w-[80%]">
+                                        <ScriptMetadataProvider availableLanguages={['EN', 'IT', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU']}>
+                                          <TranslationEditor
+                                            value={{
+                                              ...d.values,
+                                              [selectedLang]: targetVal || (d.values[selectedLang] || '')
+                                            }}
+                                            onChange={(newValue) => {
+                                              const updatedValue = newValue[selectedLang] || '';
+                                              const singleLineValue = updatedValue.replace(/[\r\n]/g, ' ');
+                                              setEdits(prev => ({ ...prev, [key]: singleLineValue }));
+                                            }}
+                                            className="min-h-16"
+                                            scriptId={selectedScript || undefined}
+                                            availableLanguages={['EN', 'IT', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU']}
+                                            compactMode={true}
+                                            editableLanguages={[selectedLang]}
+                                            placeholder="Inserisci traduzione"
+                                          />
+                                        </ScriptMetadataProvider>
                                       </td>
                                     </tr>
                                   );

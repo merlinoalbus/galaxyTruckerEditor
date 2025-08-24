@@ -28,6 +28,7 @@ done
 
 # Start Frontend
 cd /c/Users/rober/OneDrive/Documenti/Repository/supportappgtedit
+export PORT=3000
 npm start > FE.log 2>&1 &
 disown
 

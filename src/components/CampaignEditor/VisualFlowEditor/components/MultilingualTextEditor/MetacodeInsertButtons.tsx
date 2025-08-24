@@ -10,40 +10,74 @@ interface MetacodeInsertButtonsProps {
   disabled?: boolean;
   focusedField?: string | null;
   currentLang?: string; // Lingua corrente del campo focalizzato
+  scriptId?: string; // ID dello script per forzare il refresh quando cambia
 }
 
-// Hook per ottenere i top 5 metacodici dal BE per lingua specifica
-const useTop5Metacodes = (language?: string) => {
+// Cache globale per i metacodes per evitare chiamate multiple
+const metacodesCache: Record<string, any> = {};
+const loadingLanguages = new Set<string>();
+
+// Hook per ottenere i top 5 metacodici dal BE per lingua specifica con cache per script
+const useTop5Metacodes = (language?: string, scriptId?: string) => {
   const [topMetacodes, setTopMetacodes] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const { currentLanguage } = useLanguage();
   
   // Usa la lingua passata o quella del contesto
   const activeLang = language || currentLanguage || 'IT';
+  // Crea una chiave di cache che include sia lingua che scriptId per forzare refresh per ogni script
+  const cacheKey = `${activeLang}_${scriptId || 'no-script'}`;
 
   useEffect(() => {
+    // Non caricare metacodes per EN (non editabile)
+    if (activeLang === 'EN') {
+      setTopMetacodes({ gender: [], number: [], image: [], name: [] });
+      setLoading(false);
+      return;
+    }
+
+    // Se già in cache per questo script specifico, usa i dati cached
+    if (metacodesCache[cacheKey]) {
+      setTopMetacodes(metacodesCache[cacheKey]);
+      setLoading(false);
+      return;
+    }
+
+    // Se già in caricamento per questa lingua, attendi
+    if (loadingLanguages.has(activeLang)) {
+      setLoading(true);
+      return;
+    }
+
     const fetchTopMetacodes = async () => {
+      loadingLanguages.add(activeLang);
       try {
         // Chiama l'API con la lingua specifica
         const response = await fetch(`${API_CONFIG.API_BASE_URL}/metacodes/top5/${activeLang}`);
         if (response.ok) {
           const result = await response.json();
+          metacodesCache[cacheKey] = result.data;
           setTopMetacodes(result.data);
         } else {
           // Nessun fallback - solo dati reali
-          setTopMetacodes({ gender: [], number: [], image: [], name: [] });
+          const emptyData = { gender: [], number: [], image: [], name: [] };
+          metacodesCache[cacheKey] = emptyData;
+          setTopMetacodes(emptyData);
         }
       } catch (error) {
         // Se il backend non è raggiungibile, lista vuota
         console.info(`Backend non disponibile - nessun top 5 per lingua ${activeLang}`);
-        setTopMetacodes({ gender: [], number: [], image: [], name: [] });
+        const emptyData = { gender: [], number: [], image: [], name: [] };
+        metacodesCache[cacheKey] = emptyData;
+        setTopMetacodes(emptyData);
       } finally {
+        loadingLanguages.delete(activeLang);
         setLoading(false);
       }
     };
 
     fetchTopMetacodes();
-  }, [activeLang]); // Ricarica quando cambia la lingua
+  }, [activeLang, cacheKey]); // Ricarica quando cambia la lingua o lo scriptId
 
   return { topMetacodes, loading };
 };
@@ -55,10 +89,11 @@ export const MetacodeInsertButtons: React.FC<MetacodeInsertButtonsProps> = ({
   onOpenModal,
   disabled = false,
   focusedField,
-  currentLang
+  currentLang,
+  scriptId
 }) => {
   const { t } = useTranslation();
-  const { topMetacodes, loading } = useTop5Metacodes(currentLang);
+  const { topMetacodes, loading } = useTop5Metacodes(currentLang, scriptId);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const genderButtonRef = useRef<HTMLButtonElement>(null);
