@@ -46,10 +46,7 @@ info1Title: "Tahová hra"
 info1Text0: "Upozornění: Tato nápověda shrnuje rozdíly mezi realtime a tahovou hrou. Pokud neznáš principy realtime hry, projdi si prosím nejdříve Výukovou misi. Děkujeme."
 info1Text1: "Během stavby se hráči střídají na tahu. Na začátku každého tahu dostane hráč určitý počet akčních bodů [img(buildScene/point.png)]. (V prvním kole dostane začínající hráč o něco méně)."
 info1Text2: "Za body můžeš:"
-info1Text3: "[img(buildScene/point.png)*n] Odkrýt nový dílek.<br />
-[img(buildScene/point.png)*n1] Umístit dílek na loď.<br />
-[img(buildScene/point.png)*n2] Odložit dílek do dočasného boxu.<br />
-[img(buildScene/point.png)*n3] Podívat se na hromádku karet. ([n4(1:Pro větší třídy lodí je cena vyšší.|2:Cena závisí na třídě lodí.|3:Pro menší třídy lodí je cena nižší.)])<br />"
+info1Text3: "[img(buildScene/point.png)*n] Odkrýt nový dílek.<br /> [img(buildScene/point.png)*n1] Umístit dílek na loď.<br /> [img(buildScene/point.png)*n2] Odložit dílek do dočasného boxu.<br /> [img(buildScene/point.png)*n3] Podívat se na hromádku karet. ([n4(1:Pro větší třídy lodí je cena vyšší.|2:Cena závisí na třídě lodí.|3:Pro menší třídy lodí je cena nižší.)])<br />"
 info2Title: "Tahová hra"
 info2Text1: "Dílek z hromádky otočíš [v(ťap|klik)]nutím. Odkrytí dílku stojí [n] [n(1:bod|2:body5:bodů)] [img(buildScene/point.png)*n]. Odkryté dílky se skládají do dopravních pásů nahoře."
 info2Text2: "Z [n] [n(1:bod|2:body|5:bodů)] [img(buildScene/point.png)*n] můžeš dílek (ať už otočený v tomto tahu, nebo kterýmkoliv hráčem dříve) přiložit za ke své lodi."
