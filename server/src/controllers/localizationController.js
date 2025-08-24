@@ -1230,6 +1230,308 @@ class LocalizationController {
       });
     }
   }
+
+  // ----------------------------------------------
+  // BATCH SEARCH METHODS
+  // ----------------------------------------------
+
+  /**
+   * Batch search in localization strings content
+   */
+  async batchSearchStrings(req, res) {
+    try {
+      const { categoryNames, searchTerm } = req.body;
+      
+      if (!Array.isArray(categoryNames) || !searchTerm || typeof searchTerm !== 'string') {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid request. Expected { categoryNames: string[], searchTerm: string }'
+        });
+      }
+      
+      logger.info(`Batch search for "${searchTerm}" in ${categoryNames.length} string categories`);
+      
+      const normalizedSearchTerm = searchTerm.toLowerCase().trim();
+      const matchingCategories = [];
+      
+      // Processa le categorie in parallelo per performance
+      const searchPromises = categoryNames.map(async (categoryName) => {
+        try {
+          const categoryFilePath = path.join(config.GAME_ROOT, 'localization_strings', `${categoryName}.yaml`);
+          
+          // Verifica se il file esiste
+          try {
+            await fs.access(categoryFilePath);
+          } catch {
+            return null; // File non esiste
+          }
+          
+          const categoryContent = await fs.readFile(categoryFilePath, 'utf8');
+          const categoryData = yaml.load(categoryContent);
+          
+          if (!categoryData || typeof categoryData !== 'object') {
+            return null;
+          }
+          
+          // Cerca il termine nelle strings della categoria
+          for (const [stringKey, translations] of Object.entries(categoryData)) {
+            if (!translations || typeof translations !== 'object') continue;
+            
+            // Cerca nel testo EN
+            if (translations.EN && translations.EN.toLowerCase().includes(normalizedSearchTerm)) {
+              return categoryName;
+            }
+            
+            // Cerca nei valori delle altre lingue
+            for (const lang in translations) {
+              if (lang !== 'EN') {
+                const text = translations[lang];
+                if (text && text.toLowerCase().includes(normalizedSearchTerm)) {
+                  return categoryName;
+                }
+              }
+            }
+            
+            // Cerca nella chiave stessa
+            if (stringKey.toLowerCase().includes(normalizedSearchTerm)) {
+              return categoryName;
+            }
+          }
+          
+        } catch (error) {
+          logger.warn(`Error searching strings category ${categoryName}: ${error.message}`);
+        }
+        return null;
+      });
+      
+      const results = await Promise.all(searchPromises);
+      const matchingCategoryNames = results.filter(name => name !== null);
+      
+      logger.info(`Found ${matchingCategoryNames.length} string categories matching "${searchTerm}"`);
+      
+      res.json({
+        success: true,
+        data: {
+          searchTerm,
+          totalSearched: categoryNames.length,
+          matchingCategories: matchingCategoryNames,
+          matchCount: matchingCategoryNames.length
+        }
+      });
+      
+    } catch (error) {
+      logger.error('Error in batch search strings:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to search strings',
+        message: error.message
+      });
+    }
+  }
+
+  /**
+   * Batch search in nodes content
+   */
+  async batchSearchNodes(req, res) {
+    try {
+      const { nodeNames, searchTerm } = req.body;
+      
+      if (!Array.isArray(nodeNames) || !searchTerm || typeof searchTerm !== 'string') {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid request. Expected { nodeNames: string[], searchTerm: string }'
+        });
+      }
+      
+      logger.info(`Batch search for "${searchTerm}" in ${nodeNames.length} nodes`);
+      
+      const normalizedSearchTerm = searchTerm.toLowerCase().trim();
+      const matchingNodes = [];
+      
+      // Carica tutti i nodes una volta
+      const nodesData = await this.getCampaignFileTranslations('nodes.yaml');
+      if (!nodesData || typeof nodesData !== 'object') {
+        return res.json({
+          success: true,
+          data: {
+            searchTerm,
+            totalSearched: nodeNames.length,
+            matchingNodes: [],
+            matchCount: 0
+          }
+        });
+      }
+      
+      // Processa i nodes in parallelo per performance
+      const searchPromises = nodeNames.map(async (nodeName) => {
+        try {
+          const nodeData = nodesData[nodeName];
+          if (!nodeData) {
+            return null;
+          }
+          
+          // Cerca nel nome del node
+          if (nodeName.toLowerCase().includes(normalizedSearchTerm)) {
+            return nodeName;
+          }
+          
+          // Cerca nelle traduzioni del node
+          for (const lang in nodeData) {
+            const translations = nodeData[lang];
+            if (!translations) continue;
+            
+            // Cerca in caption
+            if (translations.caption && translations.caption.toLowerCase().includes(normalizedSearchTerm)) {
+              return nodeName;
+            }
+            
+            // Cerca in description
+            if (translations.description && translations.description.toLowerCase().includes(normalizedSearchTerm)) {
+              return nodeName;
+            }
+            
+            // Cerca nei buttons
+            if (translations.buttons && Array.isArray(translations.buttons)) {
+              for (const button of translations.buttons) {
+                if (button && button.text && button.text.toLowerCase().includes(normalizedSearchTerm)) {
+                  return nodeName;
+                }
+              }
+            }
+          }
+          
+        } catch (error) {
+          logger.warn(`Error searching node ${nodeName}: ${error.message}`);
+        }
+        return null;
+      });
+      
+      const results = await Promise.all(searchPromises);
+      const matchingNodeNames = results.filter(name => name !== null);
+      
+      logger.info(`Found ${matchingNodeNames.length} nodes matching "${searchTerm}"`);
+      
+      res.json({
+        success: true,
+        data: {
+          searchTerm,
+          totalSearched: nodeNames.length,
+          matchingNodes: matchingNodeNames,
+          matchCount: matchingNodeNames.length
+        }
+      });
+      
+    } catch (error) {
+      logger.error('Error in batch search nodes:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to search nodes',
+        message: error.message
+      });
+    }
+  }
+
+  /**
+   * Batch search in missions YAML content
+   */
+  async batchSearchMissions(req, res) {
+    try {
+      const { missionNames, searchTerm } = req.body;
+      
+      if (!Array.isArray(missionNames) || !searchTerm || typeof searchTerm !== 'string') {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid request. Expected { missionNames: string[], searchTerm: string }'
+        });
+      }
+      
+      logger.info(`Batch search for "${searchTerm}" in ${missionNames.length} missions`);
+      
+      const normalizedSearchTerm = searchTerm.toLowerCase().trim();
+      const matchingMissions = [];
+      
+      // Carica tutti i missions una volta
+      const missionsData = await this.getCampaignFileTranslations('missions.yaml');
+      if (!missionsData || typeof missionsData !== 'object') {
+        return res.json({
+          success: true,
+          data: {
+            searchTerm,
+            totalSearched: missionNames.length,
+            matchingMissions: [],
+            matchCount: 0
+          }
+        });
+      }
+      
+      // Processa le missions in parallelo per performance
+      const searchPromises = missionNames.map(async (missionName) => {
+        try {
+          const missionData = missionsData[missionName];
+          if (!missionData) {
+            return null;
+          }
+          
+          // Cerca nel nome della mission
+          if (missionName.toLowerCase().includes(normalizedSearchTerm)) {
+            return missionName;
+          }
+          
+          // Cerca nelle traduzioni della mission
+          for (const lang in missionData) {
+            const translations = missionData[lang];
+            if (!translations) continue;
+            
+            // Cerca in caption
+            if (translations.caption && translations.caption.toLowerCase().includes(normalizedSearchTerm)) {
+              return missionName;
+            }
+            
+            // Cerca in description
+            if (translations.description && translations.description.toLowerCase().includes(normalizedSearchTerm)) {
+              return missionName;
+            }
+            
+            // Cerca nei buttons
+            if (translations.buttons && Array.isArray(translations.buttons)) {
+              for (const button of translations.buttons) {
+                if (button && button.text && button.text.toLowerCase().includes(normalizedSearchTerm)) {
+                  return missionName;
+                }
+              }
+            }
+          }
+          
+        } catch (error) {
+          logger.warn(`Error searching mission ${missionName}: ${error.message}`);
+        }
+        return null;
+      });
+      
+      const results = await Promise.all(searchPromises);
+      const matchingMissionNames = results.filter(name => name !== null);
+      
+      logger.info(`Found ${matchingMissionNames.length} missions matching "${searchTerm}"`);
+      
+      res.json({
+        success: true,
+        data: {
+          searchTerm,
+          totalSearched: missionNames.length,
+          matchingMissions: matchingMissionNames,
+          matchCount: matchingMissionNames.length
+        }
+      });
+      
+    } catch (error) {
+      logger.error('Error in batch search missions:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to search missions',
+        message: error.message
+      });
+    }
+  }
 }
 
 module.exports = new LocalizationController();

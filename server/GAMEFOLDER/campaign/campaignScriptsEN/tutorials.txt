@@ -182,40 +182,39 @@ END_OF_SCRIPT
     HideChar tutor
     HideDlgScene
   END_OF_SCRIPT
-SCRIPT tutorialFlightIntro
-
-  ShowDlgScene
-  Delay 200
-  ShowChar tutor left
-  Delay 200
-  IF_FROM_CAMPAIGN
-    Say "All right. We've built our ships. Now let's race to Port Newbie space station."
-  ELSE
-    Say "All right. We've built our ships. Now we get to race to our destination."
-  END_OF_IF
-  Say "We'll get paid if we deliver these pipes, but that's not a trucker's main source of income."
-  Say "With luck, we'll find more opportunities to make money along the way."
-  HideChar tutor
-  HideDlgScene
-  AddInfoWindow "tutorial/infoFlight.png"
-  ShowInfoWindow "tutorial/infoFlight.png"
-  ShowDlgScene
-  ShowChar tutor left
-  Say "You have a slight headstart on the flight track because you finished building first."
-  Delay 400
-  SetFlightStatusBar "Listen carefully to your instructor."
-  Delay 200
-  Say "Now listen. This is important. During the flight, always check that status bar up there ."
-  Ask "It tells you what you need to do next and what's going on. Not just in this tutorial, but also during the game."
-  SetFlightStatusBar "[v(Tap|Click)] the button to say you understand."
-  MENU
-    OPT "Okay, understood."
-      EXIT_MENU
-    END_OF_OPT
-  END_OF_MENU
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
+  SCRIPT tutorialFlightIntro
+    ShowDlgScene
+    Delay 200
+    ShowChar tutor left
+    Delay 200
+    IF_FROM_CAMPAIGN
+      Say "All right. We've built our ships. Now let's race to Port Newbie space station."
+    ELSE
+      Say "All right. We've built our ships. Now we get to race to our destination."
+    END_OF_IF
+    Say "We'll get paid if we deliver these pipes, but that's not a trucker's main source of income."
+    Say "With luck, we'll find more opportunities to make money along the way."
+    HideChar tutor
+    HideDlgScene
+    AddInfoWindow tutorial/infoFlight.png
+    ShowInfoWindow "tutorial/infoFlight.png"
+    ShowDlgScene
+    ShowChar tutor left
+    Say "You have a slight headstart on the flight track because you finished building first."
+    Delay 400
+    SetFlightStatusBar "Listen carefully to your instructor."
+    Delay 200
+    Say "Now listen. This is important. During the flight, always check that status bar up there ."
+    Ask "It tells you what you need to do next and what's going on. Not just in this tutorial, but also during the game."
+    SetFlightStatusBar "[v(Tap|Click)] the button to say you understand."
+    MENU
+      OPT "Okay, understood."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
 SCRIPT tutorialFlightViews
 
   AddInfoWindow "tutorial/infoFlightViews.png"

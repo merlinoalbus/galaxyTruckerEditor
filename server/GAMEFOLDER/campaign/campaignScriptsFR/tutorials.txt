@@ -184,40 +184,39 @@ END_OF_SCRIPT
     HideChar tutor
     HideDlgScene
   END_OF_SCRIPT
-SCRIPT tutorialFlightIntro
-
-  ShowDlgScene
-  Delay 200
-  ShowChar tutor left
-  Delay 200
-  IF_FROM_CAMPAIGN
-    Say "Très bien. Nous avons construit nos vaisseaux. Faisons maintenant une course jusqu'à la station spatiale de Port Novice."
-  ELSE
-    Say "Très bien. Nous avons construit nos vaisseaux. Faisons maintenant la course jusqu'à notre destination."
-  END_OF_IF
-  Say "Nous serons payés si nous livrons ces tuyaux, mais ce n'est pas la source principale de revenus d'un pilote."
-  Say "Avec un peu de chance, nous trouverons bien quelques opportunités de gagner un peu d'argent en chemin."
-  HideChar tutor
-  HideDlgScene
-  AddInfoWindow "tutorial/infoFlight.png"
-  ShowInfoWindow "tutorial/infoFlight.png"
-  ShowDlgScene
-  ShowChar tutor left
-  Say "Vous partez avec un peu d'avance sur le plan de vol, car vous avez terminé votre vaisseau en premier."
-  Delay 400
-  SetFlightStatusBar "Écoutez votre instructeur avec attention."
-  Delay 200
-  Say "Maintenant, écoutez-moi. C'est très important. Pendant le vol, prenez l'habitude de toujours consulter la barre de statut ci-dessus."
-  Ask "Elle vous indique ce que vous devez faire et ce qu'il se passe. Et pas seulement dans ce tutoriel, mais également durant le jeu."
-  SetFlightStatusBar "Cliquez sur le bouton pour confirmer que vous avez compris."
-  MENU
-    OPT "Bien compris."
-      EXIT_MENU
-    END_OF_OPT
-  END_OF_MENU
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
+  SCRIPT tutorialFlightIntro
+    ShowDlgScene
+    Delay 200
+    ShowChar tutor left
+    Delay 200
+    IF_FROM_CAMPAIGN
+      Say "Très bien. Nous avons construit nos vaisseaux. Faisons maintenant une course jusqu'à la station spatiale de Port Novice."
+    ELSE
+      Say "Très bien. Nous avons construit nos vaisseaux. Faisons maintenant la course jusqu'à notre destination."
+    END_OF_IF
+    Say "Nous serons payés si nous livrons ces tuyaux, mais ce n'est pas la source principale de revenus d'un pilote."
+    Say "Avec un peu de chance, nous trouverons bien quelques opportunités de gagner un peu d'argent en chemin."
+    HideChar tutor
+    HideDlgScene
+    AddInfoWindow tutorial/infoFlight.png
+    ShowInfoWindow "tutorial/infoFlight.png"
+    ShowDlgScene
+    ShowChar tutor left
+    Say "Vous partez avec un peu d'avance sur le plan de vol, car vous avez terminé votre vaisseau en premier."
+    Delay 400
+    SetFlightStatusBar "Écoutez votre instructeur avec attention."
+    Delay 200
+    Say "Maintenant, écoutez-moi. C'est très important. Pendant le vol, prenez l'habitude de toujours consulter la barre de statut ci-dessus."
+    Ask "Elle vous indique ce que vous devez faire et ce qu'il se passe. Et pas seulement dans ce tutoriel, mais également durant le jeu."
+    SetFlightStatusBar "Cliquez sur le bouton pour confirmer que vous avez compris."
+    MENU
+      OPT "Bien compris."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
 SCRIPT tutorialFlightViews
 
   AddInfoWindow "tutorial/infoFlightViews.png"

@@ -182,40 +182,39 @@ END_OF_SCRIPT
     HideChar tutor
     HideDlgScene
   END_OF_SCRIPT
-SCRIPT tutorialFlightIntro
-
-  ShowDlgScene
-  Delay 200
-  ShowChar tutor left
-  Delay 200
-  IF_FROM_CAMPAIGN
-    Say "Perfecto, ya tenemos nuestras naves. Ahora vamos a echar una carrera hasta Puerto Novato."
-  ELSE
-    Say "Perfecto, ya tenemos nuestras naves. Ahora vamos a echar una carrera."
-  END_OF_IF
-  Say "Nos darán unos cuantos créditos por las tuberías que entreguemos, pero esa no es la principal fuente de ingresos de un camionero."
-  Say "Con un poco de suerte, tendremos oportunidad de hacer dinero por el camino."
-  HideChar tutor
-  HideDlgScene
-  AddInfoWindow "tutorial/infoFlight.png"
-  ShowInfoWindow "tutorial/infoFlight.png"
-  ShowDlgScene
-  ShowChar tutor left
-  Say "Como has terminado de construir la nave antes que yo, empezarás con cierta ventaja en la pantalla de vuelo."
-  Delay 400
-  SetFlightStatusBar "Escucha atentamente lo que dice tu instructor."
-  Delay 200
-  Say "Escúchame bien. Esto es importante. Recuerda vigilar la barra de estado que hay en la parte superior de la pantalla durante todo el vuelo."
-  Ask "Te indicará lo que está pasando y lo que debes hacer a continuación. La verás en todas tus partidas, no solo en el tutorial."
-  SetFlightStatusBar "Pulsa el botón para indicar que lo has entendido."
-  MENU
-    OPT "Vale, entendido."
-      EXIT_MENU
-    END_OF_OPT
-  END_OF_MENU
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
+  SCRIPT tutorialFlightIntro
+    ShowDlgScene
+    Delay 200
+    ShowChar tutor left
+    Delay 200
+    IF_FROM_CAMPAIGN
+      Say "Perfecto, ya tenemos nuestras naves. Ahora vamos a echar una carrera hasta Puerto Novato."
+    ELSE
+      Say "Perfecto, ya tenemos nuestras naves. Ahora vamos a echar una carrera."
+    END_OF_IF
+    Say "Nos darán unos cuantos créditos por las tuberías que entreguemos, pero esa no es la principal fuente de ingresos de un camionero."
+    Say "Con un poco de suerte, tendremos oportunidad de hacer dinero por el camino."
+    HideChar tutor
+    HideDlgScene
+    AddInfoWindow tutorial/infoFlight.png
+    ShowInfoWindow "tutorial/infoFlight.png"
+    ShowDlgScene
+    ShowChar tutor left
+    Say "Como has terminado de construir la nave antes que yo, empezarás con cierta ventaja en la pantalla de vuelo."
+    Delay 400
+    SetFlightStatusBar "Escucha atentamente lo que dice tu instructor."
+    Delay 200
+    Say "Escúchame bien. Esto es importante. Recuerda vigilar la barra de estado que hay en la parte superior de la pantalla durante todo el vuelo."
+    Ask "Te indicará lo que está pasando y lo que debes hacer a continuación. La verás en todas tus partidas, no solo en el tutorial."
+    SetFlightStatusBar "Pulsa el botón para indicar que lo has entendido."
+    MENU
+      OPT "Vale, entendido."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
 SCRIPT tutorialFlightViews
 
   AddInfoWindow "tutorial/infoFlightViews.png"
