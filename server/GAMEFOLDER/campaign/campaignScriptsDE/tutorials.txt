@@ -182,40 +182,39 @@ END_OF_SCRIPT
     HideChar tutor
     HideDlgScene
   END_OF_SCRIPT
-SCRIPT tutorialFlightIntro
-
-  ShowDlgScene
-  Delay 200
-  ShowChar tutor left
-  Delay 200
-  IF_FROM_CAMPAIGN
-    Say "Na gut. Wir haben unsere Schiffe gebaut. Dann gibt es jetzt ein Rennen zur Raumstation Neulingshafen."
-  ELSE
-    Say "Na gut. Wir haben unsere Schiffe gebaut. Dann gibt es jetzt ein Rennen zu unserem Ziel."
-  END_OF_IF
-  Say "Wir bekommen Geld, wenn wir diese Abflussrohre ausliefern, was aber nicht die Haupteinkommensquelle eines Truckers ist."
-  Say "Mit ein bisschen Glück ergeben sich noch weitere Einnahmequellen während des Flugs."
-  HideChar tutor
-  HideDlgScene
-  AddInfoWindow "tutorial/infoFlight.png"
-  ShowInfoWindow "tutorial/infoFlight.png"
-  ShowDlgScene
-  ShowChar tutor left
-  Say "Du hast einen kleinen Vorsprung auf dem Flugplan, weil du zuerst mit dem Bau fertig warst."
-  Delay 400
-  SetFlightStatusBar "Höre deinem Ausbilder aufmerksam zu."
-  Delay 200
-  Say "Jetzt hör zu. Das ist wichtig. Checke beim Flug immer die Statusanzeige da oben."
-  Ask "Sie sagt dir, was du als nächstes tun sollst und was passiert. Nicht nur im Tutorial, sondern im ganzen Spiel."
-  SetFlightStatusBar "[v(Tipp|Klick)] auf den Button, wenn du das verstanden hast."
-  MENU
-    OPT "Okay, du hast verstanden."
-      EXIT_MENU
-    END_OF_OPT
-  END_OF_MENU
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
+  SCRIPT tutorialFlightIntro
+    ShowDlgScene
+    Delay 200
+    ShowChar tutor left
+    Delay 200
+    IF_FROM_CAMPAIGN
+      Say "Na gut. Wir haben unsere Schiffe gebaut. Dann gibt es jetzt ein Rennen zur Raumstation Neulingshafen."
+    ELSE
+      Say "Na gut. Wir haben unsere Schiffe gebaut. Dann gibt es jetzt ein Rennen zu unserem Ziel."
+    END_OF_IF
+    Say "Wir bekommen Geld, wenn wir diese Abflussrohre ausliefern, was aber nicht die Haupteinkommensquelle eines Truckers ist."
+    Say "Mit ein bisschen Glück ergeben sich noch weitere Einnahmequellen während des Flugs."
+    HideChar tutor
+    HideDlgScene
+    AddInfoWindow tutorial/infoFlight.png
+    ShowInfoWindow "tutorial/infoFlight.png"
+    ShowDlgScene
+    ShowChar tutor left
+    Say "Du hast einen kleinen Vorsprung auf dem Flugplan, weil du zuerst mit dem Bau fertig warst."
+    Delay 400
+    SetFlightStatusBar "Höre deinem Ausbilder aufmerksam zu."
+    Delay 200
+    Say "Jetzt hör zu. Das ist wichtig. Checke beim Flug immer die Statusanzeige da oben."
+    Ask "Sie sagt dir, was du als nächstes tun sollst und was passiert. Nicht nur im Tutorial, sondern im ganzen Spiel."
+    SetFlightStatusBar "[v(Tipp|Klick)] auf den Button, wenn du das verstanden hast."
+    MENU
+      OPT "Okay, du hast verstanden."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
 SCRIPT tutorialFlightViews
 
   AddInfoWindow "tutorial/infoFlightViews.png"

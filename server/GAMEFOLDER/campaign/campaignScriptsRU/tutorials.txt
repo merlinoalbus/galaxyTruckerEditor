@@ -182,40 +182,39 @@ END_OF_SCRIPT
     HideChar tutor
     HideDlgScene
   END_OF_SCRIPT
-SCRIPT tutorialFlightIntro
-
-  ShowDlgScene
-  Delay 200
-  ShowChar tutor left
-  Delay 200
-  IF_FROM_CAMPAIGN
-    Say "Отлично. Вот ты и построил[g(|a)] свой корабль. А теперь давай долетим до Нубо-порта."
-  ELSE
-    Say "Отлично. Вот ты и построил[g(|a)] свой корабль. А теперь давай полетаем."
-  END_OF_IF
-  Say "За доставку этих труб нам заплатят, но это не основной источник дохода дальнобойщика."
-  Say "Если повезет, мы найдем другие способы заработка."
-  HideChar tutor
-  HideDlgScene
-  AddInfoWindow "tutorial/infoFlight.png"
-  ShowInfoWindow "tutorial/infoFlight.png"
-  ShowDlgScene
-  ShowChar tutor left
-  Say "Обрати внимание, у тебя на старте есть небольшое преимущество, так как ты закончил[g(|а)] строительство раньше меня."
-  Delay 400
-  SetFlightStatusBar "Внимательно слушай своего инструктора."
-  Delay 200
-  Say "Теперь послушай, это важно. Во время полета всегда смотри на строчку статуса наверху экрана."
-  Ask "Она подскажет, что происходит и что делать дальше. И не только во время обучалки, но и в самой игре."
-  SetFlightStatusBar "Нажми на кнопку, если это понятно."
-  MENU
-    OPT "Да, понятно."
-      EXIT_MENU
-    END_OF_OPT
-  END_OF_MENU
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
+  SCRIPT tutorialFlightIntro
+    ShowDlgScene
+    Delay 200
+    ShowChar tutor left
+    Delay 200
+    IF_FROM_CAMPAIGN
+      Say "Отлично. Вот ты и построил[g(|a)] свой корабль. А теперь давай долетим до Нубо-порта."
+    ELSE
+      Say "Отлично. Вот ты и построил[g(|a)] свой корабль. А теперь давай полетаем."
+    END_OF_IF
+    Say "За доставку этих труб нам заплатят, но это не основной источник дохода дальнобойщика."
+    Say "Если повезет, мы найдем другие способы заработка."
+    HideChar tutor
+    HideDlgScene
+    AddInfoWindow tutorial/infoFlight.png
+    ShowInfoWindow "tutorial/infoFlight.png"
+    ShowDlgScene
+    ShowChar tutor left
+    Say "Обрати внимание, у тебя на старте есть небольшое преимущество, так как ты закончил[g(|а)] строительство раньше меня."
+    Delay 400
+    SetFlightStatusBar "Внимательно слушай своего инструктора."
+    Delay 200
+    Say "Теперь послушай, это важно. Во время полета всегда смотри на строчку статуса наверху экрана."
+    Ask "Она подскажет, что происходит и что делать дальше. И не только во время обучалки, но и в самой игре."
+    SetFlightStatusBar "Нажми на кнопку, если это понятно."
+    MENU
+      OPT "Да, понятно."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
 SCRIPT tutorialFlightViews
 
   AddInfoWindow "tutorial/infoFlightViews.png"

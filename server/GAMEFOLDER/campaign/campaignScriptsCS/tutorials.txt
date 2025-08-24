@@ -182,40 +182,39 @@ END_OF_SCRIPT
     HideChar tutor
     HideDlgScene
   END_OF_SCRIPT
-SCRIPT tutorialFlightIntro
-
-  ShowDlgScene
-  Delay 200
-  ShowChar tutor left
-  Delay 200
-  IF_FROM_CAMPAIGN
-    Say "Tak jsme postavili své lodě. Pojďme si dát závod na stanici Lama."
-  ELSE
-    Say "Tak jsme postavili své lodě. Pojďme si dát závod do cílové stanice."
-  END_OF_IF
-  Say "Dostanem nějakou odměnu za to, že tam ty trubky doručíme, ale to není hlavní zdroj truckerských příjmů."
-  Say "Truckeři doufají, že nějaké slušné peníze vydělají cestou."
-  HideChar tutor
-  HideDlgScene
-  AddInfoWindow "tutorial/infoFlight.png"
-  ShowInfoWindow "tutorial/infoFlight.png"
-  ShowDlgScene
-  ShowChar tutor left
-  Say "Všimni si, že máš na letové dráze trochu náskok. To proto, že jsi stavění dokončil[g(|a)] první."
-  Delay 400
-  SetFlightStatusBar "Pozorně poslouchej instruktora."
-  Delay 200
-  Say "A teď dobře poslouchej, tohle je důležité – během letu se vždy dívej na horní řádek [v(displeje|obrazovky)]."
-  Ask "Neustále ti říká, co se od tebe čeká (nejen během výukové mise, i později během hry)."
-  SetFlightStatusBar "[v(Ťap|Klik)]ni na tlačítko s odpovědí."
-  MENU
-    OPT "Dobrá, rozumím."
-      EXIT_MENU
-    END_OF_OPT
-  END_OF_MENU
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
+  SCRIPT tutorialFlightIntro
+    ShowDlgScene
+    Delay 200
+    ShowChar tutor left
+    Delay 200
+    IF_FROM_CAMPAIGN
+      Say "Tak jsme postavili své lodě. Pojďme si dát závod na stanici Lama."
+    ELSE
+      Say "Tak jsme postavili své lodě. Pojďme si dát závod do cílové stanice."
+    END_OF_IF
+    Say "Dostanem nějakou odměnu za to, že tam ty trubky doručíme, ale to není hlavní zdroj truckerských příjmů."
+    Say "Truckeři doufají, že nějaké slušné peníze vydělají cestou."
+    HideChar tutor
+    HideDlgScene
+    AddInfoWindow tutorial/infoFlight.png
+    ShowInfoWindow "tutorial/infoFlight.png"
+    ShowDlgScene
+    ShowChar tutor left
+    Say "Všimni si, že máš na letové dráze trochu náskok. To proto, že jsi stavění dokončil[g(|a)] první."
+    Delay 400
+    SetFlightStatusBar "Pozorně poslouchej instruktora."
+    Delay 200
+    Say "A teď dobře poslouchej, tohle je důležité – během letu se vždy dívej na horní řádek [v(displeje|obrazovky)]."
+    Ask "Neustále ti říká, co se od tebe čeká (nejen během výukové mise, i později během hry)."
+    SetFlightStatusBar "[v(Ťap|Klik)]ni na tlačítko s odpovědí."
+    MENU
+      OPT "Dobrá, rozumím."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
 SCRIPT tutorialFlightViews
 
   AddInfoWindow "tutorial/infoFlightViews.png"

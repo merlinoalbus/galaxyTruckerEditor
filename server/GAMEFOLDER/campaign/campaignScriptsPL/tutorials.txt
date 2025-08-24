@@ -182,40 +182,39 @@ END_OF_SCRIPT
     HideChar tutor
     HideDlgScene
   END_OF_SCRIPT
-SCRIPT tutorialFlightIntro
-
-  ShowDlgScene
-  Delay 200
-  ShowChar tutor left
-  Delay 200
-  IF_FROM_CAMPAIGN
-    Say "W porządku. Zbudowaliśmy nasze statki. Teraz ścigajmy się do stacji kosmicznej Port Żółtodziób."
-  ELSE
-    Say "W porządku. Zbudowaliśmy nasze statki. Teraz ścigajmy się do celu."
-  END_OF_IF
-  Say "Zapłacą nam za wszystkie dostarczone na miejsce rury. Ale to nie jest główne źródło dochodu pilota kosmicznej ciężarówki."
-  Say "Jeśli szczęście nam dopisze, po drodze trafią nam się okazje do zarobku."
-  HideChar tutor
-  HideDlgScene
-  AddInfoWindow "tutorial/infoFlight.png"
-  ShowInfoWindow "tutorial/infoFlight.png"
-  ShowDlgScene
-  ShowChar tutor left
-  Say "Na torze lotu masz trochę fory, bo pierwsz[g(y|a)] skończył[g(eś|aś)] budowę statku."
-  Delay 400
-  SetFlightStatusBar "Posłuchaj uważnie swojego instruktora."
-  Delay 200
-  Say "A teraz słuchaj, bo to ważne. Podczas lotu zawsze sprawdzaj tamten pasek statusu."
-  Ask "Dzięki niemu będziesz wiedzieć, co masz w danym momencie zrobić i co się aktualnie dzieje. Nie tylko podczas tego samouczka, ale również w prawdziwej grze."
-  SetFlightStatusBar "Stuknij w przycisk, aby potwierdzić, że zrozumiał[g(eś|aś)]."
-  MENU
-    OPT "Dobra, rozumiem."
-      EXIT_MENU
-    END_OF_OPT
-  END_OF_MENU
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
+  SCRIPT tutorialFlightIntro
+    ShowDlgScene
+    Delay 200
+    ShowChar tutor left
+    Delay 200
+    IF_FROM_CAMPAIGN
+      Say "W porządku. Zbudowaliśmy nasze statki. Teraz ścigajmy się do stacji kosmicznej Port Żółtodziób."
+    ELSE
+      Say "W porządku. Zbudowaliśmy nasze statki. Teraz ścigajmy się do celu."
+    END_OF_IF
+    Say "Zapłacą nam za wszystkie dostarczone na miejsce rury. Ale to nie jest główne źródło dochodu pilota kosmicznej ciężarówki."
+    Say "Jeśli szczęście nam dopisze, po drodze trafią nam się okazje do zarobku."
+    HideChar tutor
+    HideDlgScene
+    AddInfoWindow tutorial/infoFlight.png
+    ShowInfoWindow "tutorial/infoFlight.png"
+    ShowDlgScene
+    ShowChar tutor left
+    Say "Na torze lotu masz trochę fory, bo pierwsz[g(y|a)] skończył[g(eś|aś)] budowę statku."
+    Delay 400
+    SetFlightStatusBar "Posłuchaj uważnie swojego instruktora."
+    Delay 200
+    Say "A teraz słuchaj, bo to ważne. Podczas lotu zawsze sprawdzaj tamten pasek statusu."
+    Ask "Dzięki niemu będziesz wiedzieć, co masz w danym momencie zrobić i co się aktualnie dzieje. Nie tylko podczas tego samouczka, ale również w prawdziwej grze."
+    SetFlightStatusBar "Stuknij w przycisk, aby potwierdzić, że zrozumiał[g(eś|aś)]."
+    MENU
+      OPT "Dobra, rozumiem."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
 SCRIPT tutorialFlightViews
 
   AddInfoWindow "tutorial/infoFlightViews.png"

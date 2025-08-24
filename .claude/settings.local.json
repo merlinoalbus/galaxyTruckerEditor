@@ -12,7 +12,10 @@
       "stop",
       "restart",
       "consolidaCodice",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(cat:*)",
+      "Bash(curl:*)",
+      "Bash(bash:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",
