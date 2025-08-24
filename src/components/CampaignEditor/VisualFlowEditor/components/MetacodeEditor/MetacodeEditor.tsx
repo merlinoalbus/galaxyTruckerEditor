@@ -63,7 +63,6 @@ export const MetacodeEditor: React.FC<MetacodeEditorProps> = ({
       const parsed = parseMetacode(value);
       setParsedCodes(parsed);
       
-      console.log('Metacodes cache refreshed with fresh API data');
     } catch (error) {
       console.warn('Cache refresh failed:', error);
     }
