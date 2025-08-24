@@ -295,11 +295,7 @@ disconnect_by_oher_client: "You were disconnected, because your online account c
 lobby_offline_msg: "You need to be online to go to lobby!"
 lobby_offline_msg_title: "Info"
 gdpr_win_title: "Terms of Service <br /> & <br />Privacy Policy agreement"
-gdpr_win_text: "Hi, Player. As you might already know, with the advent of GDPR we need to ask for your agreement with the Terms of Service & Privacy Policy. <br /><br />
-
-Your CGE account needs to remember your login credentials and the progress of your online games (and your Single-player progress if you decide to save it). The data we collect are used for no other purpose than to provide a comfortable multiplayer experience where you can play Galaxy Trucker and your other CGE games with friends or strangers on different platforms.<br /><br />
-
-You can read about it in more detail here:"
+gdpr_win_text: "Hi, Player. As you might already know, with the advent of GDPR we need to ask for your agreement with the Terms of Service & Privacy Policy. <br /><br />\nYour CGE account needs to remember your login credentials and the progress of your online games (and your Single-player progress if you decide to save it). The data we collect are used for no other purpose than to provide a comfortable multiplayer experience where you can play Galaxy Trucker and your other CGE games with friends or strangers on different platforms.<br /><br />\nYou can read about it in more detail here:"
 gdpr_win_note: "This decision is reversible. You can always withdraw from the agreement by contacting our support using the Extras menu."
 gdpr_win_checkbox: "I have read and agree to the Terms of Service & Privacy Policy."
 gdpr_win_disagree: "Note that without agreeing to the Terms of Service & Privacy Policy, you won't be able to use those features of the game that are associated with your CGE account such as Online play. You can always change your mind by agreeing to the Terms of Service & Privacy policy using the Profile menu. For any further questions please contact our suport at appsupport@czechgames.com"

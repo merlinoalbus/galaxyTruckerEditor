@@ -33,3 +33,5 @@ DYK_hint_swaprotate: "[vplatform(win:|else:Puedes girar un componente mientras l
 DYK_hint_boardgametoo: "¿Sabías que Galaxy Trucker es también un formidable juego de mesa?"
 DYK_hint_overlay: "Si tienes dudas sobre el interfaz, puedes pulsar en el botón [img(common/help.png)] para acceder a la pantalla de ayuda."
 DYK_hint_enter: "[vplatform(else:|win:Did you know you can use enter as a \"continue\" button?)]"
+DYK_hint_setspeed: "[vplatform(else:|win:Did you know you can use settings to adjust the flight animation speed?)]"
+DYK_hint_spacebar: "[vplatform(else:|win:Did you know you can hold spacebar to speed up flight animations?)]"
