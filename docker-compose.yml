@@ -16,7 +16,7 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=3001
-      - GEMINI_API_KEY=${GEMINI_API_KEY:-AIzaSyDeOSoOtvXy14rM2M3lbH8LLdTiWgvOa2U}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
     command: npm run dev
     networks:
       - galaxy-trucker-dev

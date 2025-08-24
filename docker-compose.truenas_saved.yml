@@ -10,7 +10,7 @@ services:
           cpus: '0.2'
           memory: 256M
     environment:
-      GEMINI_API_KEY: AIzaSyDeOSoOtvXy14rM2M3lbH8LLdTiWgvOa2U
+      GEMINI_API_KEY: chiave_segreta_gemini
       NODE_ENV: production
       PORT: '3001'
       HOST_ADDRESS: 0.0.0.0
@@ -36,7 +36,7 @@ services:
           propagation: rprivate
         read_only: False
         source: /mnt/NASMilano/dati/galaxytrucker
-        target: /app/server/GAMEFOLDER
+        target: /app/GAMEFOLDER
         type: bind
 
   frontend:
