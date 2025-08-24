@@ -57,7 +57,15 @@
       "Bash(./scripts/stop-be.sh:*)",
       "Bash(restartFE)",
       "Bash(./scripts/restart-fe.sh:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(chmod:*)",
+      "Bash(docker-compose:*)",
+      "Bash(docker build:*)",
+      "Bash(./docker-init.sh:*)",
+      "Bash(./docker-deploy.sh:*)",
+      "Bash(tasklist)",
+      "Bash(timeout:*)",
+      "Bash(docker:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",
