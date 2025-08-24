@@ -295,11 +295,7 @@ disconnect_by_oher_client: "Du wurdest getrennt, weil dein Onlinekonto mit einem
 lobby_offline_msg: "Lobby darfst du nur dann eintreten, wenn du online bist."
 lobby_offline_msg_title: "Info"
 gdpr_win_title: "Vereinbarung über Nutzungsbedingungen & Datenschutzrichtlinien"
-gdpr_win_text: "Hallo Spieler! Wie du sicherlich bereits erfahren hast, müssen wir dich wegen der Einführung der DSGVO um deine Zustimmung zu unseren Nutzungsbedingungen und Datenschutzrichtlinien bitten.<br><br>
-
-Das CGE-Konto merkt sich deine Log-In-Angaben und den Fortschritt deiner Online-Spiele (solltest du die Konto-Synchronisierung nutzen, auch deinen Fortschritt im Solospiel). Die von uns gesammelten Daten werden zu keinem anderen Zweck gesammelt, als dir eine angenehme Multispieler-Erfahrung zu ermöglichen, sodass du Galaxy Trucker oder eines der anderen CGE-Spiele mit Freunden oder Fremden auf unterschiedlichen Hardware-Plattformen spielen kannst.<br /><br />
-
-Ausführlichere Informationen darüber kannst du hier nachlesen:"
+gdpr_win_text: "Hallo Spieler! Wie du sicherlich bereits erfahren hast, müssen wir dich wegen der Einführung der DSGVO um deine Zustimmung zu unseren Nutzungsbedingungen und Datenschutzrichtlinien bitten.<br><br>\nDas CGE-Konto merkt sich deine Log-In-Angaben und den Fortschritt deiner Online-Spiele (solltest du die Konto-Synchronisierung nutzen, auch deinen Fortschritt im Solospiel). Die von uns gesammelten Daten werden zu keinem anderen Zweck gesammelt, als dir eine angenehme Multispieler-Erfahrung zu ermöglichen, sodass du Galaxy Trucker oder eines der anderen CGE-Spiele mit Freunden oder Fremden auf unterschiedlichen Hardware-Plattformen spielen kannst.<br /><br />\nAusführlichere Informationen darüber kannst du hier nachlesen:"
 gdpr_win_note: "Du kannst deine Entscheidung auch zurücknehmen. Es ist dir jederzeit möglich, von dieser Vereinbarung zurückzutreten, indem du mithilfe des Extras-Menüs Kontakt zu unserem Support aufnimmst."
 gdpr_win_checkbox: "Ich habe die Nutzungsbedingungen & Datenschutzrichtlinien gelesen und stimme ihnen zu."
 gdpr_win_disagree: "Beachte, dass du, solltest du den Nutzungsbedingungen & Datenschutzrichtlinien nicht zustimmen, nicht alle Features des Spiels nutzen kannst, die mit deinem CGE-Konto verknüpft sind, wie z. B. das Online-Spiel. Diu kannst deine Meinung jederzeit ändern, indem du im Profil-Menü den Nutzungsbedingungen & Datenschutzrichtlinien zustimmst. Bei weiteren Fragen wende dich bitte an den Support bei appsupport@czechgames.com."
