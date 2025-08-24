@@ -1,8 +1,10 @@
 import { logger } from '@/utils/logger';
 import { useState, useCallback, useEffect } from 'react';
 import { variablesSystemApiService } from '@/services/CampaignEditor/VariablesSystem/variablesSystemApiService';
+import { interactiveMapService } from '@/services/CampaignEditor/InteractiveMap/interactiveMapService';
 import { gameDataService } from '@/services/CampaignEditor/GameDataService';
 import type { Character } from '@/types/CampaignEditor/VariablesSystem/VariablesSystem.types';
+import type { MapNode } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 
 interface SessionData {
   variables: string[];
@@ -11,6 +13,7 @@ interface SessionData {
   scripts: string[];
   missions: string[];
   characters: Character[];
+  nodes: MapNode[];
 }
 
 const STORAGE_KEY = 'visualFlowEditor_sessionData';
@@ -19,8 +22,10 @@ const STORAGE_KEY = 'visualFlowEditor_sessionData';
 type GlobalSessionCache = {
   missions?: string[];
   characters?: Character[];
+  nodes?: MapNode[];
   loadMissionsPromise?: Promise<string[]>;
   loadCharactersPromise?: Promise<Character[]>;
+  loadNodesPromise?: Promise<MapNode[]>;
 };
 
 const _globalSessionCache: GlobalSessionCache = {};
@@ -38,7 +43,8 @@ export const useSessionData = () => {
         return {
           ...parsed,
           missions: Array.isArray(parsed.missions) ? parsed.missions : [],
-          characters: [] // i personaggi vengono caricati da API e non persistiti su localStorage
+          characters: [], // i personaggi vengono caricati da API e non persistiti su localStorage
+          nodes: [] // i nodi vengono caricati da API e non persistiti su localStorage
         };
       } catch (e) {
   logger.error('Errore nel caricamento dati sessione:', e);
@@ -48,6 +54,7 @@ export const useSessionData = () => {
     // Dati di default
     return {
       characters: [], // Verranno caricati dall'API
+  nodes: [], // Verranno caricati dall'API
       variables: [
         'playerName',
         'playerLevel',
@@ -136,6 +143,42 @@ export const useSessionData = () => {
     return () => { isMounted = false; };
   }, []); // Esegui solo una volta all'avvio
 
+  // Carica i nodi mappa all'avvio (una sola volta per sessione tramite cache globale)
+  useEffect(() => {
+    let isMounted = true;
+    const debug = (window as any).__VFE_NAV_DEBUG__;
+    const log = (...args: any[]) => { if (debug) logger.debug('[SESSION] nodes', ...args); };
+
+    if (_globalSessionCache.nodes && _globalSessionCache.nodes.length) {
+      log('cache hit');
+      setSessionData(prev => ({ ...prev, nodes: _globalSessionCache.nodes! }));
+      return () => { isMounted = false; };
+    }
+
+    if (!_globalSessionCache.loadNodesPromise) {
+      log('fetch start');
+      _globalSessionCache.loadNodesPromise = interactiveMapService
+        .loadNodes()
+        .then(nodes => nodes || []);
+    } else {
+      log('await in-flight');
+    }
+
+    _globalSessionCache.loadNodesPromise
+      .then(nodes => {
+        _globalSessionCache.nodes = nodes;
+        if (isMounted) {
+          log('fetch done', nodes?.length);
+          setSessionData(prev => ({ ...prev, nodes }));
+        }
+      })
+      .catch(err => {
+        logger.error('Errore caricamento nodi mappa:', err);
+      });
+
+    return () => { isMounted = false; };
+  }, []);
+
   // Carica le missioni all'avvio (una sola volta per sessione tramite cache globale)
   useEffect(() => {
     let isMounted = true;
@@ -174,7 +217,7 @@ export const useSessionData = () => {
 
   // Salva in localStorage quando cambiano i dati (escludi characters e missions per evitare dati pesanti/obsoleti)
   useEffect(() => {
-    const { characters, missions, ...dataToStore } = sessionData;
+  const { characters, missions, nodes, ...dataToStore } = sessionData;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToStore));
   }, [sessionData]);
 
@@ -314,6 +357,7 @@ export const useSessionData = () => {
     scripts: sessionData.scripts,
     missions: sessionData.missions,
     characters: sessionData.characters,
+  nodes: sessionData.nodes,
     
     // Metodi di aggiunta
     addVariable,

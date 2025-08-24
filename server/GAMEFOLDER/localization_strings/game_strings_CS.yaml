@@ -295,11 +295,7 @@ disconnect_by_oher_client: "Byl jsi odpojen, protože se k tvému účtu připoj
 lobby_offline_msg: "Do lobby můžeš jen když jsi online!"
 lobby_offline_msg_title: "Info"
 gdpr_win_title: "Souhlas s podmínkami a se zpracováním osobních údajů"
-gdpr_win_text: "Ahoj hráči. Jak už nejspíš víš, s příchodem GDPR tě musíme požádat o souhlas s podmínkami a se zpracováním osobních údajů. <br /><br />
-
-CGE účet si potřebuje pamatovat tvoje přihlašovací jméno a akce v online hrách (a pokud používáš synchronizaci účtu, tak i tvůj postup v single-player hrách). Data, která sbíráme, nepoužíváme k ničemu jinému, než abychom ti zprostředkovali možnost pohodlně hrát Galaxy Truckera a další tvé CGE hry po síti napříč platformami, ať už s přáteli nebo s neznámými hráči.<br /><br />
-
-Další podrobnosti se dozvíš zde:"
+gdpr_win_text: "Ahoj hráči. Jak už nejspíš víš, s příchodem GDPR tě musíme požádat o souhlas s podmínkami a se zpracováním osobních údajů. <br /><br />\nCGE účet si potřebuje pamatovat tvoje přihlašovací jméno a akce v online hrách (a pokud používáš synchronizaci účtu, tak i tvůj postup v single-player hrách). Data, která sbíráme, nepoužíváme k ničemu jinému, než abychom ti zprostředkovali možnost pohodlně hrát Galaxy Truckera a další tvé CGE hry po síti napříč platformami, ať už s přáteli nebo s neznámými hráči.<br /><br />\nDalší podrobnosti se dozvíš zde:"
 gdpr_win_note: "Toto rozhodnutí lze vzít zpět. Svůj souhlas můžeš kdykoli odvolat tím, že kontaktuješ naši podporu přes nabídku Extras."
 gdpr_win_checkbox: "Po přečtení dokumentu souhlasím s podmínkami a se zpracováním osobních údajů."
 gdpr_win_disagree: "Pamatuj na to, že bez souhlasu s podmínkami a zpracováním osobních údajů nebudeš moci používat herní prvky, které jsou svázány s tvým CGE účtem, jako jsou například online hry. Rozmyslet se můžeš kdykoli, stačí vyjádřit souhlas s podmínkami a zpracováním osobních údajů skrze nabídku u tvého profilu. V případě jakýchkoli dalších dotazů neváhej kontaktovat naši podporu na adrese appsupport@czechgames.com"

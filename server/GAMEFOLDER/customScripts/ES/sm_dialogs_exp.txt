@@ -80,7 +80,6 @@ SCRIPT ship_random_Dlg
   RETURN
   RETURN
 END_OF_SCRIPT
-
 SCRIPT ship_random1_Success
 
   ShowDlgScene
@@ -95,7 +94,6 @@ SCRIPT ship_random1_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT ship_random2_Success
 
   ShowDlgScene
@@ -134,7 +132,6 @@ SCRIPT ship_random2_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT ship_random3_Success
 
   ShowDlgScene
@@ -145,7 +142,6 @@ SCRIPT ship_random3_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT ship_random_Failure
 
   IF_PROB 50
@@ -166,7 +162,6 @@ SCRIPT ship_random_Failure
     RETURN
   END_OF_IF
 END_OF_SCRIPT
-
 SCRIPT domination_Help
 
   ShowDlgScene
@@ -183,7 +178,6 @@ SCRIPT domination_Help
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT merchantLaughA
 
   ChangeChar merchant campaign/merch-laughA1.png
@@ -196,7 +190,6 @@ SCRIPT merchantLaughA
   Delay 300
   ChangeChar merchant campaign/merch-sitting.png
 END_OF_SCRIPT
-
 SCRIPT junkyard_Dlg
 
   ShowDlgScene
@@ -266,7 +259,6 @@ SCRIPT junkyard_Dlg
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT junkyard1_Success
 
   ShowDlgScene
@@ -280,7 +272,6 @@ SCRIPT junkyard1_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT junkyard2_Success
 
   ShowDlgScene
@@ -291,7 +282,6 @@ SCRIPT junkyard2_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT junkyard3_Success
 
   ShowDlgScene
@@ -302,7 +292,6 @@ SCRIPT junkyard3_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT junkyard_Failure
 
   IF_PROB 50
@@ -325,7 +314,6 @@ SCRIPT junkyard_Failure
     RETURN
   END_OF_IF
 END_OF_SCRIPT
-
 SCRIPT bidir_cannons_Dlg
 
   ShowDlgScene
@@ -394,7 +382,6 @@ SCRIPT bidir_cannons_Dlg
     END_OF_OPT
   END_OF_MENU
 END_OF_SCRIPT
-
 SCRIPT bidir_cannons1_Success
 
   ShowDlgScene
@@ -405,7 +392,6 @@ SCRIPT bidir_cannons1_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT bidir_cannons2_Success
 
   ShowDlgScene
@@ -416,7 +402,6 @@ SCRIPT bidir_cannons2_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT bidir_cannons3_Success
 
   ShowDlgScene
@@ -431,7 +416,6 @@ SCRIPT bidir_cannons3_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT bidir_cannons_Failure
 
   IF_PROB 50
@@ -452,7 +436,6 @@ SCRIPT bidir_cannons_Failure
     RETURN
   END_OF_IF
 END_OF_SCRIPT
-
 SCRIPT three_little_aliens_Dlg
 
   ShowDlgScene
@@ -557,7 +540,6 @@ SCRIPT three_little_aliens_Dlg
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT three_little_aliens1_Success
 
   ShowDlgScene
@@ -568,7 +550,6 @@ SCRIPT three_little_aliens1_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT three_little_aliens2_Success
 
   ShowDlgScene
@@ -579,7 +560,6 @@ SCRIPT three_little_aliens2_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT three_little_aliens3_Success
 
   ShowDlgScene
@@ -590,7 +570,6 @@ SCRIPT three_little_aliens3_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT three_little_aliens_Failure
 
   ShowDlgScene
@@ -605,7 +584,6 @@ SCRIPT three_little_aliens_Failure
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT ship_growing_Dlg
 
   ShowDlgScene
@@ -668,7 +646,6 @@ SCRIPT ship_growing_Dlg
     END_OF_OPT
   END_OF_MENU
 END_OF_SCRIPT
-
 SCRIPT ship_growing1_Success
 
   ShowDlgScene
@@ -679,7 +656,6 @@ SCRIPT ship_growing1_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT ship_growing2_Success
 
   ShowDlgScene
@@ -690,7 +666,6 @@ SCRIPT ship_growing2_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT ship_growing3_Success
 
   ShowDlgScene
@@ -701,7 +676,6 @@ SCRIPT ship_growing3_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT ship_growing_Failure
 
   ShowDlgScene
@@ -716,7 +690,6 @@ SCRIPT ship_growing_Failure
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT plating_Dlg
 
   ShowDlgScene
@@ -786,7 +759,6 @@ SCRIPT plating_Dlg
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT plating1_Success
 
   ShowDlgScene
@@ -797,7 +769,6 @@ SCRIPT plating1_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT plating2_Success
 
   ShowDlgScene
@@ -808,7 +779,6 @@ SCRIPT plating2_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT plating3_Success
 
   ShowDlgScene
@@ -819,7 +789,6 @@ SCRIPT plating3_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT plating_Failure
 
   ShowDlgScene
@@ -837,7 +806,6 @@ SCRIPT plating_Failure
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT space_billiards_Dlg
 
   ShowDlgScene
@@ -885,7 +853,6 @@ SCRIPT space_billiards_Dlg
     END_OF_OPT
   END_OF_MENU
 END_OF_SCRIPT
-
 SCRIPT space_billiards1_Success
 
   ShowDlgScene
@@ -904,7 +871,6 @@ SCRIPT space_billiards1_Success
     RETURN
   END_OF_MENU
 END_OF_SCRIPT
-
 SCRIPT space_billiards2_Success
 
   ShowDlgScene
@@ -915,7 +881,6 @@ SCRIPT space_billiards2_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT space_billiards3_Success
 
   ShowDlgScene
@@ -928,7 +893,6 @@ SCRIPT space_billiards3_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT space_billiards_Failure
 
   ShowDlgScene
@@ -949,7 +913,6 @@ SCRIPT space_billiards_Failure
     Say "¡Ánimo, chic[g(o|a)]! ¡Otra vez será!"
   END_OF_IF
 END_OF_SCRIPT
-
 SCRIPT black_hole_Dlg
 
   ShowDlgScene
@@ -1073,7 +1036,6 @@ SCRIPT black_hole_Dlg
     END_OF_OPT
   END_OF_MENU
 END_OF_SCRIPT
-
 SCRIPT black_hole1_Success
 
   ShowDlgScene
@@ -1092,7 +1054,6 @@ SCRIPT black_hole1_Success
     END_OF_OPT
   END_OF_MENU
 END_OF_SCRIPT
-
 SCRIPT black_hole2_Success
 
   ShowDlgScene
@@ -1103,7 +1064,6 @@ SCRIPT black_hole2_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT black_hole3_Success
 
   ShowDlgScene
@@ -1116,7 +1076,6 @@ SCRIPT black_hole3_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT black_hole_Failure
 
   IF_PROB 50
@@ -1147,7 +1106,6 @@ SCRIPT black_hole_Failure
     RETURN
   END_OF_IF
 END_OF_SCRIPT
-
 SCRIPT catapult_Dlg
 
   ShowDlgScene
@@ -1271,7 +1229,6 @@ SCRIPT catapult_Dlg
     END_OF_OPT
   END_OF_MENU
 END_OF_SCRIPT
-
 SCRIPT catapult1_Success
 
   ShowDlgScene
@@ -1284,7 +1241,6 @@ SCRIPT catapult1_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT catapult2_Success
 
   ShowDlgScene
@@ -1297,7 +1253,6 @@ SCRIPT catapult2_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT catapult3_Success
 
   ShowDlgScene
@@ -1312,7 +1267,6 @@ SCRIPT catapult3_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT catapult_Failure
 
   ShowDlgScene
@@ -1336,7 +1290,6 @@ SCRIPT catapult_Failure
     END_OF_OPT
   END_OF_MENU
 END_OF_SCRIPT
-
 SCRIPT ship_amoeba_Dlg
 
   ShowDlgScene
@@ -1390,7 +1343,6 @@ SCRIPT ship_amoeba_Dlg
     END_OF_OPT
   END_OF_MENU
 END_OF_SCRIPT
-
 SCRIPT ship_amoeba1_Success
 
   ShowDlgScene
@@ -1401,7 +1353,6 @@ SCRIPT ship_amoeba1_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT ship_amoeba2_Success
 
   ShowDlgScene
@@ -1412,7 +1363,6 @@ SCRIPT ship_amoeba2_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT ship_amoeba3_Success
 
   ShowDlgScene
@@ -1424,7 +1374,6 @@ SCRIPT ship_amoeba3_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT ship_amoeba_Failure
 
   ShowDlgScene
@@ -1441,7 +1390,6 @@ SCRIPT ship_amoeba_Failure
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT rescue_Dlg
 
   ShowDlgScene
@@ -1485,7 +1433,6 @@ SCRIPT rescue_Dlg
     END_OF_OPT
   END_OF_MENU
 END_OF_SCRIPT
-
 SCRIPT rescue1_Success
 
   ShowDlgScene
@@ -1512,7 +1459,6 @@ SCRIPT rescue1_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT rescue2_Success
 
   ShowDlgScene
@@ -1529,7 +1475,6 @@ SCRIPT rescue2_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT rescue3_Success
 
   ShowDlgScene
@@ -1547,7 +1492,6 @@ SCRIPT rescue3_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT rescue_Failure
 
   IF_PROB 50
@@ -1568,83 +1512,80 @@ SCRIPT rescue_Failure
     RETURN
   END_OF_IF
 END_OF_SCRIPT
-
-SCRIPT artifact_Dlg
-
-  ShowDlgScene
-  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head-hand-up.png
-  ShowChar artifact_runner left
-  Delay 400
-  Ask "Hola, necesito un transportista."
-  MENU
-    OPT "Felicidades, aquí tienes a [g(un camionero|una camionera)]."
-      EXIT_MENU
-    END_OF_OPT
-  END_OF_MENU
-  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
-  Ask "Me alegro, yo no vuelo demasiado. Tengo otra especialidad."
-  MENU
-    OPT "Deja que adivine: ¿eres arqueólogo?"
-      ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
-      Say "Bueno... es una forma bonita de llamarlo. Sí, se podría decir que soy arqueólogo."
-      EXIT_MENU
-    END_OF_OPT
-    OPT "Deja que adivine: ¿eres pastor de mulas?"
-      ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
-      Ask "Ehm... No... Soy un arqueólogo."
-      MENU
-        OPT "Vale, como digas, tú asegúrate de mantener ese látigo lejos de mí."
-          ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-hands-down.png
-          Delay 500
-          EXIT_MENU
-        END_OF_OPT
-      END_OF_MENU
-      EXIT_MENU
-    END_OF_OPT
-  END_OF_MENU
-  Say "Estaba llevando a cabo una... investigación... cuando he encontrado este aparato alienígena."
-  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
-  Ask "Necesito que lo lleves al museo. Debes tener mucho cuidado con él, ¿entiendes?"
-  MENU
-    OPT "Entiendo."
-      ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-happy.png
-      Say "¡Estupendo! Es un placer trabajar con alguien tan profesional."
-      HideDlgScene
-      RETURN
-    END_OF_OPT
-    OPT "¿Lo dices porque es frágil? ¿O peligroso?"
-      ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
-      Ask "Ni lo uno ni lo otro, siempre que sepas cómo se transporta uno de estos cacharros."
-      MENU
-        OPT "Vale, no parece muy complicado."
-          ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-happy.png
-          Say "¡Estupendo! Es un placer trabajar con alguien tan profesional."
-          HideDlgScene
-          RETURN
-        END_OF_OPT
-        OPT "¿Podrías decirme algo más concreto?"
-          ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-hands-down.png
-          Ask "Los rayos que emite el artefacto generan una zona muerta en la nave. Nada funciona dentro de esos límites, excepto los elementos puramente estructurales, como los conectores."
-          MENU
-            OPT "Parece complicado, pero lo intentaré."
-              ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
-              Say "Gracias, te deseo suerte."
-              HideDlgScene
-              RETURN
-            END_OF_OPT
-            OPT "Sería mejor que vinieras conmigo."
-              ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
-              Say "Lo siento, [g(amigo|encanto)], las antiguas civilizaciones no se descubren por arte de magia. Tengo que volver al trabajo."
-              HideDlgScene
-              RETURN
-            END_OF_OPT
-          END_OF_MENU
-        END_OF_OPT
-      END_OF_MENU
-    END_OF_OPT
-  END_OF_MENU
-END_OF_SCRIPT
-
+  SCRIPT artifact_Dlg
+    ShowDlgScene
+    ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head-hand-up.png
+    ShowChar artifact_runner left
+    Delay 400
+    Ask "Hola, necesito un transportista."
+    MENU
+      OPT "Felicidades, aquí tienes a [g(un camionero|una camionera)]."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
+    Ask "Me alegro, yo no vuelo demasiado. Tengo otra especialidad."
+    MENU
+      OPT "Deja que adivine: ¿eres arqueólogo?"
+        ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
+        Say "Bueno... es una forma bonita de llamarlo. Sí, se podría decir que soy arqueólogo."
+        EXIT_MENU
+      END_OF_OPT
+      OPT "Deja que adivine: ¿eres pastor de mulas?"
+        ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
+        Ask "Ehm... No... Soy un arqueólogo."
+        MENU
+          OPT "Vale, como digas, tú asegúrate de mantener ese látigo lejos de mí."
+            ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-hands-down.png
+            Delay 500
+            EXIT_MENU
+          END_OF_OPT
+        END_OF_MENU
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    Say "Estaba llevando a cabo una... investigación... cuando he encontrado este aparato alienígena."
+    ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
+    Ask "Necesito que lo lleves al museo. Debes tener mucho cuidado con él, ¿entiendes?"
+    MENU
+      OPT "Entiendo."
+        ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-happy.png
+        Say "¡Estupendo! Es un placer trabajar con alguien tan profesional."
+        HideDlgScene
+        RETURN
+      END_OF_OPT
+      OPT "¿Lo dices porque es frágil? ¿O peligroso?"
+        ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
+        Ask "Ni lo uno ni lo otro, siempre que sepas cómo se transporta uno de estos cacharros."
+        MENU
+          OPT "Vale, no parece muy complicado."
+            ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-happy.png
+            Say "¡Estupendo! Es un placer trabajar con alguien tan profesional."
+            HideDlgScene
+            RETURN
+          END_OF_OPT
+          OPT "¿Podrías decirme algo más concreto?"
+            ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-hands-down.png
+            Ask "Los rayos que emite el artefacto generan una zona muerta en la nave. Nada funciona dentro de esos límites, excepto los elementos puramente estructurales, como los conectores."
+            MENU
+              OPT "Parece complicado, pero lo intentaré."
+                ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
+                Say "Gracias, te deseo suerte."
+                HideDlgScene
+                RETURN
+              END_OF_OPT
+              OPT "Sería mejor que vinieras conmigo."
+                ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
+                Say "Lo siento, [g(amigo|encanto)], las antiguas civilizaciones no se descubren por arte de magia. Tengo que volver al trabajo."
+                HideDlgScene
+                RETURN
+              END_OF_OPT
+            END_OF_MENU
+          END_OF_OPT
+        END_OF_MENU
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_SCRIPT
 SCRIPT artifact1_Success
 
   ShowDlgScene
@@ -1663,7 +1604,6 @@ SCRIPT artifact1_Success
     END_OF_OPT
   END_OF_MENU
 END_OF_SCRIPT
-
 SCRIPT artifact2_Success
 
   ShowDlgScene
@@ -1686,7 +1626,6 @@ SCRIPT artifact2_Success
     END_OF_OPT
   END_OF_MENU
 END_OF_SCRIPT
-
 SCRIPT artifact3_Success
 
   ShowDlgScene
@@ -1711,7 +1650,6 @@ SCRIPT artifact3_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT artifact1_Failure
 
   ShowDlgScene
@@ -1729,7 +1667,6 @@ SCRIPT artifact1_Failure
     END_OF_OPT
   END_OF_MENU
 END_OF_SCRIPT
-
 SCRIPT artifact2_Failure
 
   ShowDlgScene
@@ -1746,7 +1683,6 @@ SCRIPT artifact2_Failure
     END_OF_OPT
   END_OF_MENU
 END_OF_SCRIPT
-
 SCRIPT artifact3_Failure
 
   ShowDlgScene
@@ -1763,7 +1699,6 @@ SCRIPT artifact3_Failure
     END_OF_OPT
   END_OF_MENU
 END_OF_SCRIPT
-
 SCRIPT deadly_race_Dlg
 
   RESET playerHasMetPresident
@@ -1884,7 +1819,6 @@ SCRIPT deadly_race_Dlg
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT deadly_race1_Success
 
   ShowDlgScene
@@ -1912,7 +1846,6 @@ SCRIPT deadly_race1_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT deadly_race2_Success
 
   ShowDlgScene
@@ -1938,7 +1871,6 @@ SCRIPT deadly_race2_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT deadly_race3_Success
 
   ShowDlgScene
@@ -1982,7 +1914,6 @@ SCRIPT deadly_race3_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT deadly_race_Failure
 
   ShowDlgScene
@@ -2045,7 +1976,6 @@ SCRIPT deadly_race_Failure
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT deadly_race3_Failure
 
   ShowDlgScene
@@ -2108,7 +2038,6 @@ SCRIPT deadly_race3_Failure
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT vip_rockband_Dlg
 
   ShowDlgScene
@@ -2227,7 +2156,6 @@ SCRIPT vip_rockband_Dlg
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT finale
 
   HideChar party
@@ -2271,7 +2199,6 @@ SCRIPT finale
   HideChar party_right
   RETURN
 END_OF_SCRIPT
-
 SCRIPT vip_rockband1_Success
 
   ShowDlgScene
@@ -2472,7 +2399,6 @@ SCRIPT vip_rockband1_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT vip_rockband2_Success
 
   ShowDlgScene
@@ -2614,7 +2540,6 @@ SCRIPT vip_rockband2_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT vip_rockband3_Success
 
   ShowDlgScene
@@ -2765,7 +2690,6 @@ SCRIPT vip_rockband3_Success
   HideDlgScene
   RETURN
 END_OF_SCRIPT
-
 SCRIPT vip_rockband_Failure
 
   ShowDlgScene

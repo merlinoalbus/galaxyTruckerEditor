@@ -285,6 +285,14 @@ class GameDataService {
     });
   }
 
+  // Ship Plans (list from ships/*.yaml)
+  async getShipPlans(): Promise<Array<{ id: string; type: string | null }>> {
+    const response = await this.request<{ success: boolean; data: Array<{ id: string; type: string | null }> }>(
+      '/game/ship-plans'
+    );
+    return response.data || [];
+  }
+
   // Validazione
   async validateContent(category: string, content: string): Promise<{
     valid: boolean;

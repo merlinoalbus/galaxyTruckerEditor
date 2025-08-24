@@ -1,16 +1,48 @@
+# Docker Compose per SVILUPPO LOCALE
+# Uso: docker-compose up -d
 version: '3.8'
 
 services:
-  galaxy-trucker-editor:
+  # Backend API Server (Development)
+  backend:
+    build: ./server
+    container_name: galaxy-trucker-backend-dev
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./server:/app
+      - ./server/GAMEFOLDER:/app/GAMEFOLDER
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    command: npm run dev
+    networks:
+      - galaxy-trucker-dev
+
+  # Frontend React App (Development)
+  frontend:
     build: .
+    container_name: galaxy-trucker-frontend-dev
     ports:
       - "3000:3000"
     volumes:
-      - ../:/app/game-data:rw
-      - ./src:/app/src:rw
-      - ./public:/app/public:rw
+      - ./src:/app/src
+      - ./public:/app/public
+      - /app/node_modules
     environment:
+      - NODE_ENV=development
+      - REACT_APP_API_URL=http://localhost:3001/api
       - CHOKIDAR_USEPOLLING=true
-      - REACT_APP_GAME_DATA_PATH=/app/game-data
+    command: npm start
     stdin_open: true
     tty: true
+    depends_on:
+      - backend
+    networks:
+      - galaxy-trucker-dev
+
+networks:
+  galaxy-trucker-dev:
+    driver: bridge

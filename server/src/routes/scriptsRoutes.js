@@ -13,6 +13,155 @@ const { initializeLanguage, isLanguageInitialized, getAvailableLanguages } = req
 const router = express.Router();
 const logger = getLogger();
 
+// ----------------------
+// Translations utilities
+// ----------------------
+
+// Walk merged multilingual blocks and compute fields coverage vs EN
+function computeCoverageFromBlocks(blocks, languages) {
+  const totals = { totalFields: 0 };
+  const perLang = {};
+  for (const lang of languages) perLang[lang] = { covered: 0, missing: 0, different: 0 };
+
+  const fields = []; // detailed fields with path and values
+
+  const norm = (s) => (typeof s === 'string' ? s.trim() : '');
+
+  function visit(list, pathStack, context) {
+    if (!Array.isArray(list)) return;
+    let lastLabel = context?.lastLabel || null;
+    for (let i = 0; i < list.length; i++) {
+      const b = list[i] || {};
+      const currentPath = [...pathStack, i];
+      // track nearest LABEL in same container
+      if (b.type === 'LABEL' && b.parameters && b.parameters.name) {
+        lastLabel = b.parameters.name;
+      }
+
+      // text field (object with langs)
+      if (b.text && typeof b.text === 'object' && !Array.isArray(b.text)) {
+        const enVal = norm(b.text.EN || Object.values(b.text)[0] || '');
+        if (enVal) {
+          totals.totalFields++;
+          const fieldRec = { blockPath: currentPath, field: 'text', en: enVal, values: {}, nearestLabel: lastLabel, type: b.type };
+          for (const lang of languages) {
+            const val = norm(b.text[lang]);
+            fieldRec.values[lang] = val || undefined;
+            if (lang === 'EN') continue;
+            if (!val) {
+              perLang[lang].missing++;
+            } else if (val === enVal) {
+              // Not translated (same as EN) → count as missing/not covered
+              perLang[lang].missing++;
+            } else {
+              // Proper translation: present and different
+              perLang[lang].covered++;
+              perLang[lang].different++;
+            }
+          }
+          fields.push(fieldRec);
+        }
+      }
+
+      // parameters with multilingual objects
+      if (b.parameters && typeof b.parameters === 'object') {
+        for (const [pName, pVal] of Object.entries(b.parameters)) {
+          if (pVal && typeof pVal === 'object' && !Array.isArray(pVal)) {
+            const enVal = norm(pVal.EN || Object.values(pVal)[0] || '');
+            if (!enVal) continue;
+            totals.totalFields++;
+            const fieldRec = { blockPath: currentPath, field: `parameters.${pName}`, en: enVal, values: {}, nearestLabel: lastLabel, type: b.type };
+            for (const lang of languages) {
+              const val = norm(pVal[lang]);
+              fieldRec.values[lang] = val || undefined;
+              if (lang === 'EN') continue;
+              if (!val) {
+                perLang[lang].missing++;
+              } else if (val === enVal) {
+                perLang[lang].missing++;
+              } else {
+                perLang[lang].covered++;
+                perLang[lang].different++;
+              }
+            }
+            fields.push(fieldRec);
+          }
+        }
+      }
+
+      // recurse
+      if (b.children) visit(b.children, [...currentPath, 'children'], { lastLabel });
+      if (b.thenBranch) visit(b.thenBranch, [...currentPath, 'thenBranch'], { lastLabel });
+      if (b.elseBranch) visit(b.elseBranch, [...currentPath, 'elseBranch'], { lastLabel });
+      if (b.thenBlocks) visit(b.thenBlocks, [...currentPath, 'thenBlocks'], { lastLabel });
+      if (b.elseBlocks) visit(b.elseBlocks, [...currentPath, 'elseBlocks'], { lastLabel });
+    }
+  }
+
+  visit(blocks, [], { lastLabel: null });
+  return { totals, perLang, fields };
+}
+
+// Helper: scan all scripts and return a list of names using the same logic as API 10
+async function listAllScriptNames() {
+  const allScripts = new Set();
+  const languages = SUPPORTED_LANGUAGES;
+  // campaign scripts per lang
+  for (const lang of languages) {
+    const scriptsPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`);
+    if (await fs.pathExists(scriptsPath)) {
+      const files = await fs.readdir(scriptsPath).catch(() => []);
+      for (const fileName of files.filter(f => f.endsWith('.txt'))) {
+        const filePath = path.join(scriptsPath, fileName);
+        const content = await fs.readFile(filePath, 'utf8').catch(() => '');
+        const lines = content.split('\n');
+        for (const line of lines) {
+          if (line.trim().startsWith('SCRIPT ')) {
+            const s = line.trim().replace('SCRIPT ', '').trim();
+            if (s) allScripts.add(s);
+          }
+        }
+      }
+    }
+  }
+  // customScripts per lang and root
+  const customScriptsPath = path.join(GAME_ROOT, 'customScripts');
+  if (await fs.pathExists(customScriptsPath)) {
+    // per-lang
+    for (const lang of languages) {
+      const langPath = path.join(customScriptsPath, lang);
+      if (await fs.pathExists(langPath)) {
+        const files = await fs.readdir(langPath).catch(() => []);
+        for (const fileName of files.filter(f => f.endsWith('.txt'))) {
+          const filePath = path.join(langPath, fileName);
+          const content = await fs.readFile(filePath, 'utf8').catch(() => '');
+          const lines = content.split('\n');
+          for (const line of lines) {
+            if (line.trim().startsWith('SCRIPT ')) {
+              const s = line.trim().replace('SCRIPT ', '').trim();
+              if (s) allScripts.add(s);
+            }
+          }
+        }
+      }
+    }
+    // root direct
+    const rootFiles = await fs.readdir(customScriptsPath).catch(() => []);
+    for (const fileName of rootFiles.filter(f => f.endsWith('.txt'))) {
+      const filePath = path.join(customScriptsPath, fileName);
+      const content = await fs.readFile(filePath, 'utf8').catch(() => '');
+      const lines = content.split('\n');
+      for (const line of lines) {
+        if (line.trim().startsWith('SCRIPT ')) {
+          const s = line.trim().replace('SCRIPT ', '').trim();
+          if (s) allScripts.add(s);
+        }
+      }
+    }
+  }
+  return Array.from(allScripts).sort();
+}
+
 // API 2.5: Lista lingue disponibili (dinamica)
 router.get('/languages', async (req, res) => {
   try {
@@ -449,6 +598,294 @@ router.get('/labels', async (req, res) => {
       error: 'Failed to retrieve labels',
       message: error.message 
     });
+  }
+});
+
+// ----------------------------------------------
+// NEW: Translations coverage - app level summary
+// GET /api/scripts/translations/coverage
+// Returns per-language coverage and per-script percentages
+router.get('/translations/coverage', async (req, res) => {
+  try {
+    logger.info('API call: GET /api/scripts/translations/coverage');
+
+    const languages = SUPPORTED_LANGUAGES;
+    const scriptNames = await listAllScriptNames();
+
+    const perScript = [];
+    const globalCounters = {};
+    for (const lang of languages) {
+      if (lang === 'EN') continue;
+      globalCounters[lang] = { covered: 0, missing: 0, different: 0, totalFields: 0 };
+    }
+
+    for (const sName of scriptNames) {
+      // Use existing multilingual merge on blocks
+      const merged = await parseScriptMultilingual(sName, 'blocks');
+      if (!merged || !Array.isArray(merged.blocks)) continue;
+      const { totals, perLang } = computeCoverageFromBlocks(merged.blocks, merged.availableLanguages || languages);
+
+      const scriptEntry = { script: sName, totalFields: totals.totalFields, languages: {} };
+      for (const lang of languages) {
+        if (lang === 'EN') continue;
+        const stats = perLang[lang] || { covered: 0, missing: 0, different: 0 };
+        // If script has no translatable fields, set percent to 0 (frontend filters 0-field scripts)
+        const percent = totals.totalFields > 0 ? Math.round((stats.covered / totals.totalFields) * 100) : 0;
+        scriptEntry.languages[lang] = {
+          covered: stats.covered,
+          missing: stats.missing,
+          different: stats.different,
+          totalFields: totals.totalFields,
+          percent
+        };
+        // Aggregate counts (for info)
+        globalCounters[lang].covered += stats.covered;
+        globalCounters[lang].missing += stats.missing;
+        globalCounters[lang].different += stats.different;
+        globalCounters[lang].totalFields += totals.totalFields;
+      }
+      perScript.push(scriptEntry);
+    }
+
+    // Global coverage per language
+    const perLanguage = {};
+    for (const lang of languages) {
+      if (lang === 'EN') continue;
+      const g = globalCounters[lang];
+      // Compute percent as aggregated ratio: total covered fields / total fields
+      const percent = g.totalFields > 0 ? Math.round((g.covered / g.totalFields) * 100) : 100;
+      perLanguage[lang] = {
+        covered: g.covered,
+        missing: g.missing,
+        different: g.different,
+        totalFields: g.totalFields,
+        percent
+      };
+    }
+
+    res.json({ success: true, data: { perLanguage, perScript }, count: perScript.length });
+  } catch (error) {
+    logger.error(`Error computing translations coverage: ${error.message}`);
+    res.status(500).json({ success: false, error: 'Failed to compute coverage', message: error.message });
+  }
+});
+
+// ------------------------------------------------------
+// NEW: Translations details for a script (diff by fields)
+// GET /api/scripts/translations/:scriptName
+router.get('/translations/:scriptName', async (req, res) => {
+  try {
+    const { scriptName } = req.params;
+    logger.info(`API call: GET /api/scripts/translations/${scriptName}`);
+
+    const merged = await parseScriptMultilingual(scriptName, 'blocks');
+    if (!merged || !Array.isArray(merged.blocks)) {
+      return res.status(404).json({ success: false, error: 'Script not found or unparsable', scriptName });
+    }
+
+    const languages = merged.availableLanguages || SUPPORTED_LANGUAGES;
+    const { totals, perLang, fields } = computeCoverageFromBlocks(merged.blocks, languages);
+
+    // Build detail list per field including nearest LABEL for deep-linking
+    const details = fields.map(f => ({
+      path: f.blockPath, // array-based path to block
+      field: f.field, // 'text' or 'parameters.xxx'
+      label: f.nearestLabel || null,
+      type: f.type || null,
+      en: f.en,
+      values: f.values
+    }));
+
+  const summary = {};
+    for (const lang of languages) {
+      if (lang === 'EN') continue;
+      const s = perLang[lang] || { covered: 0, missing: 0, different: 0 };
+      summary[lang] = {
+        covered: s.covered,
+        missing: s.missing,
+        different: s.different,
+        totalFields: totals.totalFields,
+        percent: totals.totalFields > 0 ? Math.round((s.covered / totals.totalFields) * 100) : 100
+      };
+    }
+
+    res.json({ success: true, data: { script: scriptName, totalFields: totals.totalFields, summary, details } });
+  } catch (error) {
+    logger.error(`Error computing script translations details: ${error.message}`);
+    res.status(500).json({ success: false, error: 'Failed to compute script details', message: error.message });
+  }
+});
+
+// ----------------------------------------------
+// NEW: AI translate suggestion (Gemini API)
+// POST /api/scripts/ai-translate
+// body: { textEN, langTarget, metacodesDetected?: string[] }
+router.post('/ai-translate', async (req, res) => {
+  try {
+    const { textEN, langTarget, metacodesDetected = [] } = req.body || {};
+    if (!textEN || !langTarget) {
+      return res.status(400).json({ success: false, error: 'textEN and langTarget are required' });
+    }
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ success: false, error: 'GEMINI_API_KEY missing in environment' });
+    }
+
+    // Build prompt enforcing metacode preservation
+    const metacodes = Array.isArray(metacodesDetected) ? metacodesDetected.filter(Boolean) : [];
+    const codesList = metacodes.length ? `Metacodes: ${metacodes.join(' ')}` : 'Metacodes: none';
+    const systemPrompt = [
+      'You are a professional game localizer. Translate from English to the target language preserving placeholders and metacodes.',
+      'Rules:',
+      '- Keep every metacode exactly as is, do not translate or remove them (e.g., [NAME], [IMG:something], [NUM], [GENDER:...]).',
+      '- Return only the translated string, no quotes, no commentary.',
+      '- Prefer idiomatic, natural phrasing for the target language.',
+      '- If the English text is already language-agnostic (e.g., only metacodes), still return a target-language appropriate phrasing around the codes when appropriate.',
+      '',
+      codesList
+    ].join('\n');
+
+    const body = {
+      contents: [
+        {
+          parts: [
+            { text: systemPrompt },
+            { text: `Target language: ${langTarget}` },
+            { text: `English: ${textEN}` }
+          ]
+        }
+      ]
+    };
+
+    // Minimal fetch without adding new deps
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+    const doCall = async () => {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 12000);
+      try {
+        const resp = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-goog-api-key': apiKey },
+          body: JSON.stringify(body),
+          signal: controller.signal
+        });
+        clearTimeout(timeout);
+        if (!resp.ok) {
+          const txt = await resp.text();
+          throw new Error(`Gemini HTTP ${resp.status}: ${txt}`);
+        }
+  const json = await resp.json();
+  const suggestion = json?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        return suggestion;
+      } catch (e) {
+        clearTimeout(timeout);
+        throw e;
+      }
+    };
+
+    // Retry with backoff
+    let suggestion = '';
+    const maxAttempts = 3;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        suggestion = await doCall();
+        if (suggestion) break;
+      } catch (e) {
+        if (attempt === maxAttempts) throw e;
+        await new Promise(r => setTimeout(r, attempt * 500));
+      }
+    }
+
+    // Validate metacodes preservation (presence check)
+    let preservedMetacodesOK = true;
+    for (const code of metacodes) {
+      if (typeof code === 'string' && code.trim().length > 0) {
+        if (!suggestion.includes(code)) { preservedMetacodesOK = false; break; }
+      }
+    }
+
+    res.json({ success: true, data: { suggestion, preservedMetacodesOK, diff: [] } });
+  } catch (error) {
+    logger.error(`Error in ai-translate: ${error.message}`);
+    res.status(500).json({ success: false, error: 'Failed to generate suggestion', message: error.message });
+  }
+});
+
+// ----------------------------------------------
+// NEW: AI translate suggestion (batch) - single Gemini call
+// POST /api/scripts/ai-translate-batch
+// body: { items: Array<{ textEN: string; metacodesDetected?: string[] }>, langTarget: string }
+router.post('/ai-translate-batch', async (req, res) => {
+  try {
+    const { items, langTarget } = req.body || {};
+    if (!Array.isArray(items) || !langTarget) {
+      return res.status(400).json({ success: false, error: 'items (array) and langTarget are required' });
+    }
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ success: false, error: 'GEMINI_API_KEY missing in environment' });
+    }
+
+    const systemPrompt = [
+      'You are a professional game localizer. Translate from English to the target language preserving placeholders and metacodes.',
+      '- Keep every metacode exactly as is, do not translate or remove them (e.g., [NAME], [IMG:something], [NUM], [GENDER:...]).',
+      '- Return only the translated string for each item, in order, nothing else.',
+      '- Prefer idiomatic, natural phrasing for the target language.'
+    ].join('\n');
+
+    // Compose a single request with numbered items to keep order stable
+    const numbered = items.map((it, i) => {
+      const codes = Array.isArray(it.metacodesDetected) && it.metacodesDetected.length ? ` Metacodes: ${it.metacodesDetected.join(' ')}` : '';
+      return `${i + 1}. ${it.textEN}${codes ? `\n${codes}` : ''}`;
+    }).join('\n\n');
+
+    const body = {
+      contents: [
+        {
+          parts: [
+            { text: systemPrompt },
+            { text: `Target language: ${langTarget}` },
+            { text: 'Translate the following entries preserving all metacodes. Reply with one line per entry in the same order, without numbers:' },
+            { text: numbered }
+          ]
+        }
+      ]
+    };
+
+    const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 20000);
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-goog-api-key': apiKey },
+      body: JSON.stringify(body),
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+    if (!resp.ok) {
+      const txt = await resp.text();
+      return res.status(resp.status).json({ success: false, error: `Gemini HTTP ${resp.status}: ${txt}` });
+    }
+    const json = await resp.json();
+    const fullText = json?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+    // Split lines mapping back to items; keep same length (pad if needed)
+    const lines = fullText.split(/\r?\n/).filter((l) => l.trim().length > 0);
+    const suggestions = items.map((_, i) => lines[i] || '');
+
+    // Basic metacode preservation validation per item
+    const preserved = items.map((it, i) => {
+      const out = suggestions[i] || '';
+      const codes = Array.isArray(it.metacodesDetected) ? it.metacodesDetected : [];
+      return codes.every(c => (typeof c === 'string' && c.trim().length > 0) ? out.includes(c) : true);
+    });
+
+    res.json({ success: true, data: { suggestions, preserved } });
+  } catch (error) {
+    logger.error(`Error in ai-translate-batch: ${error.message}`);
+    res.status(500).json({ success: false, error: 'Failed to generate batch suggestions', message: error.message });
   }
 });
 
@@ -2261,6 +2698,82 @@ function extractBlocksForLanguage(blocks, language) {
     return newBlock;
   });
 }
+
+// API Batch Search: Cerca un termine nel contenuto di tutti gli script specificati
+router.post('/translations/batch-search', async (req, res) => {
+  try {
+    const { scriptNames, searchTerm } = req.body;
+    
+    if (!Array.isArray(scriptNames) || !searchTerm || typeof searchTerm !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid request. Expected { scriptNames: string[], searchTerm: string }'
+      });
+    }
+    
+    logger.info(`Batch search for "${searchTerm}" in ${scriptNames.length} scripts`);
+    
+    const matchingScripts = [];
+    const normalizedSearchTerm = searchTerm.toLowerCase().trim();
+    
+    // Processa gli script in parallelo per performance
+    const searchPromises = scriptNames.map(async (scriptName) => {
+      try {
+        // Usa parseScriptMultilingual come l'endpoint esistente /translations/:scriptName
+        const merged = await parseScriptMultilingual(scriptName, 'blocks');
+        if (!merged || !Array.isArray(merged.blocks)) {
+          return null;
+        }
+        
+        const languages = merged.availableLanguages || SUPPORTED_LANGUAGES;
+        const { fields } = computeCoverageFromBlocks(merged.blocks, languages);
+        
+        // Cerca il termine nei campi traduttibili
+        for (const field of fields) {
+          // Cerca nel testo EN
+          if (field.en && field.en.toLowerCase().includes(normalizedSearchTerm)) {
+            return scriptName;
+          }
+          
+          // Cerca nei valori delle altre lingue
+          for (const lang in field.values) {
+            const text = field.values[lang];
+            if (text && text.toLowerCase().includes(normalizedSearchTerm)) {
+              return scriptName;
+            }
+          }
+        }
+        
+      } catch (error) {
+        logger.warn(`Error searching script ${scriptName}: ${error.message}`);
+      }
+      return null;
+    });
+    
+    const results = await Promise.all(searchPromises);
+    const matchingScriptNames = results.filter(name => name !== null);
+    
+    logger.info(`Found ${matchingScriptNames.length} scripts matching "${searchTerm}"`);
+    
+    res.json({
+      success: true,
+      data: {
+        searchTerm,
+        totalSearched: scriptNames.length,
+        matchingScripts: matchingScriptNames,
+        matchCount: matchingScriptNames.length
+      }
+    });
+    
+  } catch (error) {
+    logger.error(`Batch search error: ${error.message}`);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error during batch search',
+      message: error.message
+    });
+  }
+});
 
 // Mantieni compatibilità con export precedente
 module.exports = router;

@@ -3,6 +3,44 @@
  */
 
 export const visualFlowEditorTranslations = {
+  // Deck tools
+  'visualFlowEditor.tools.deckAddCardType.description': 'Добавляет определенные типы карт в колоду. Параметры: одна строка с id/типами карт и опциональными квалификаторами.',
+  'visualFlowEditor.tools.deckAddAllCards.description': 'Добавляет все доступные карты в колоду.',
+  'visualFlowEditor.tools.deckAddCardRound.description': 'Добавляет карты для указанного раунда. Параметры: одна строка.',
+  'visualFlowEditor.tools.deckAddRulePosition.description': 'Добавляет правило позиции для колоды. Параметры: одна строка.',
+  'visualFlowEditor.tools.deckAddRuleRange.description': 'Добавляет правило диапазона для колоды. Параметры: одна строка.',
+  'visualFlowEditor.tools.deckShuffle.description': 'Перемешивает колоду.',
+  'visualFlowEditor.tools.setSuperCardsCnt.description': 'Устанавливает количество супер-карт. Параметры: одна строка (например, число).',
+  // Общие
+  'visualFlowEditor.common.parameters': 'Параметры',
+
+  // Deck blocks UI
+  'visualFlowEditor.blocks.deckAddAllCards.description': 'Добавляет все карты в колоду в текущем контексте.',
+  'visualFlowEditor.blocks.deckShuffle.description': 'Перемешивает текущую колоду.',
+  'visualFlowEditor.blocks.deckAddAllCards.compact': 'Добавить все карты',
+  'visualFlowEditor.blocks.deckShuffle.compact': 'Перемешать колоду',
+  'visualFlowEditor.blocks.deckAddCardType.label': 'Параметры',
+  'visualFlowEditor.blocks.deckAddCardType.placeholder': 'напр. alienGun 2; merchant 1',
+  'visualFlowEditor.blocks.deckAddCardType.hint': 'Одна строка, аргументы через пробел. Сохраняйте синтаксис скриптов.',
+  'visualFlowEditor.blocks.deckAddCardRound.label': 'Параметры',
+  'visualFlowEditor.blocks.deckAddCardRound.placeholder': 'напр. 2 alienGun 1',
+  'visualFlowEditor.blocks.deckAddCardRound.hint': 'Одна строка для настройки раунда.',
+  'visualFlowEditor.blocks.deckAddRulePosition.label': 'Параметры',
+  'visualFlowEditor.blocks.deckAddRulePosition.placeholder': 'напр. pos 1-3',
+  'visualFlowEditor.blocks.deckAddRulePosition.hint': 'Одна строка, описывающая правило позиции.',
+  'visualFlowEditor.blocks.deckAddRuleRange.label': 'Параметры',
+  'visualFlowEditor.blocks.deckAddRuleRange.placeholder': 'напр. range 2-5',
+  'visualFlowEditor.blocks.deckAddRuleRange.hint': 'Одна строка, описывающая правило диапазона.',
+  'visualFlowEditor.blocks.setSuperCardsCnt.label': 'Параметры',
+  'visualFlowEditor.blocks.setSuperCardsCnt.placeholder': 'напр. 3',
+  'visualFlowEditor.blocks.setSuperCardsCnt.hint': 'Количество супер-карт (одна строка).',
+
+  // Deck validation
+  'visualFlowEditor.validation.DECKADDCARDTYPE_NO_PARAMS': 'Требуются параметры. Укажите значение.',
+  'visualFlowEditor.validation.DECKADDCARDROUND_NO_PARAMS': 'Требуются параметры. Укажите значение.',
+  'visualFlowEditor.validation.DECKADDRULEPOSITION_NO_PARAMS': 'Требуются параметры. Укажите значение.',
+  'visualFlowEditor.validation.DECKADDRULERANGE_NO_PARAMS': 'Требуются параметры. Укажите значение.',
+  'visualFlowEditor.validation.SETSUPERCARDSCNT_NO_PARAMS': 'Требуются параметры. Укажите значение.',
   // Main Editor
   'visualFlowEditor.title': 'Visual Flow Editor',
   'visualFlowEditor.subtitle': 'Полный Визуальный Редактор',
@@ -26,6 +64,15 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.toolbar.error': 'ошибка',
   'visualFlowEditor.toolbar.errors': 'ошибки',
   'visualFlowEditor.toolbar.fixErrorsBeforeSaving': 'Исправьте {count} ошибок перед сохранением',
+  // Toolbar & Модальное окно AI All
+  'visualFlowEditor.toolbar.aiSuggestAll': 'Предложить ИИ для всех текстов',
+  'visualFlowEditor.toolbar.aiAll': 'AI All',
+  'visualFlowEditor.toolbar.aiAllTitle': 'Предложить ИИ для всех текстов',
+  'visualFlowEditor.toolbar.aiAllSubtitle': 'Выберите целевой язык и сгенерируйте предложения для всех многоязычных полей на основе EN.',
+  'visualFlowEditor.toolbar.targetLanguage': 'Целевой язык',
+  'visualFlowEditor.toolbar.aiAllApplied': 'Применено предложений: {count}',
+  'visualFlowEditor.toolbar.generate': 'Сгенерировать',
+  'visualFlowEditor.toolbar.generating': 'Генерация…',
   
   // New Script Dialog
   'visualFlowEditor.newScriptDialog.title': 'Новый элемент',
@@ -45,6 +92,44 @@ export const visualFlowEditorTranslations = {
   
   // Missions List
   'visualFlowEditor.missionsList.loadingMissions': 'Загрузка миссий...',
+  // Map blocks (flat keys)
+  'visualFlowEditor.blocks.nodeSelector.search': 'Поиск узлов...',
+  'visualFlowEditor.blocks.nodeSelector.none': 'Нет',
+  'visualFlowEditor.validation.SHOWNODE_NO_NODE': 'Требуется узел. Пожалуйста, выберите узел.',
+  'visualFlowEditor.validation.HIDENODE_NO_NODE': 'Требуется узел. Пожалуйста, выберите узел.',
+  'visualFlowEditor.validation.ADDNODE_NO_NODE': 'Требуется узел. Пожалуйста, выберите узел.',
+  'visualFlowEditor.validation.SETNODEKNOWN_NO_NODE': 'Требуется узел. Пожалуйста, выберите узел.',
+  'visualFlowEditor.validation.CENTERMAPBYNODE_NO_NODE': 'Требуется узел. Пожалуйста, выберите узел.',
+  'visualFlowEditor.validation.MOVEPLAYERTONODE_NO_NODE': 'Требуется узел. Пожалуйста, выберите узел.',
+  'visualFlowEditor.validation.SHOWPATH_NO_ROUTE': 'Route is required. Please select a route.',
+  'visualFlowEditor.validation.HIDEPATH_NO_ROUTE': 'Route is required. Please select a route.',
+  'visualFlowEditor.validation.CENTERMAPBYPATH_NO_ROUTE': 'Route is required. Please select a route.',
+  'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE1': 'HIDEALLPATHS requires node1. Please select the first node or choose "None".',
+  'visualFlowEditor.validation.HIDEALLPATHS_NO_NODE2': 'HIDEALLPATHS requires node2. Please select the second node or choose "None".',
+  'visualFlowEditor.validation.SHOWBUTTON_NO_BUTTON': 'Требуется кнопка. Пожалуйста, выберите кнопку.',
+  'visualFlowEditor.validation.HIDEBUTTON_NO_BUTTON': 'Требуется кнопка. Пожалуйста, выберите кнопку.',
+  'visualFlowEditor.validation.SETFOCUS_NO_BUTTON': 'Требуется кнопка. Пожалуйста, выберите кнопку.',
+  'visualFlowEditor.validation.RESETFOCUS_NO_BUTTON': 'Требуется кнопка. Пожалуйста, выберите кнопку.',
+  'visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_BUTTON': 'Требуется кнопка. Пожалуйста, выберите кнопку.',
+  'visualFlowEditor.validation.SETFOCUSIFCREDITS_NO_CREDITS': 'Требуются кредиты. Пожалуйста, укажите минимальное значение кредитов.',
+  'visualFlowEditor.blocks.map.node1': 'Место Отправления',
+  'visualFlowEditor.blocks.map.node2': 'Место Прибытия',
+  'visualFlowEditor.blocks.map.route': 'Маршрут',
+  'visualFlowEditor.blocks.map.button': 'Кнопка',
+  'visualFlowEditor.blocks.hideAllPaths.summary': 'Скрыть пути',
+  'visualFlowEditor.blocks.hideAllPaths.from': 'Из',
+  'visualFlowEditor.blocks.hideAllPaths.to': 'В',
+  'visualFlowEditor.blocks.hideAllPaths.selectLocations': 'Выберите места',
+  'visualFlowEditor.blocks.map.compact.show': 'Показать',
+  'visualFlowEditor.blocks.map.compact.hide': 'Скрыть',
+  'visualFlowEditor.blocks.map.compact.add': 'Добавить',
+  'visualFlowEditor.blocks.map.compact.known': 'Известный',
+  'visualFlowEditor.blocks.map.compact.center': 'Центрировать',
+  'visualFlowEditor.blocks.map.compact.move': 'Переместить',
+  'visualFlowEditor.blocks.map.compact.showButton': 'Показать',
+  'visualFlowEditor.blocks.map.compact.hideButton': 'Скрыть',
+  'visualFlowEditor.blocks.map.compact.setFocus': 'Установить Фокус',
+  'visualFlowEditor.blocks.map.compact.resetFocus': 'Сбросить Фокус',
   
   // Validation Errors Modal
   'visualFlowEditor.validation.title': 'Ошибки валидации',
@@ -209,6 +294,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.metacode.specialPluralPlaceholder': 'напр. очков',
   'visualFlowEditor.metacode.imageSizePlaceholder': 'напр. n, 3, playerCount',
   'visualFlowEditor.metacode.imagePathPlaceholder': 'путь/изображение.png',
+
+  // Multilingual editor
+  'visualFlowEditor.multilingual.aiSuggest': 'Предложение ИИ',
   
   // Dialog Scene Commands
   'visualFlowEditor.blocks.showDlgScene.title': 'Показать Сцену Диалога',
@@ -227,6 +315,8 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.validation.askNoText': 'Блок ASK должен иметь текст. Добавьте хотя бы английский текст.',
   'visualFlowEditor.validation.goNoLabel': 'Блок GO должен иметь выбранную метку. Выберите целевую метку.',
   'visualFlowEditor.validation.labelNoName': 'Блок LABEL должен иметь имя. Установите имя якоря.',
+  'visualFlowEditor.validation.ADDINFOWINDOW_NO_IMAGE': 'Блок ADDINFOWINDOW должен иметь выбранное изображение. Выберите изображение.',
+  'visualFlowEditor.validation.SHOWINFOWINDOW_NO_IMAGE': 'Блок SHOWINFOWINDOW должен иметь выбранное изображение. Выберите изображение.',
   'visualFlowEditor.validation.consecutiveAskError': '🚫 Два последовательных блока ASK не разрешены. Вставьте другой тип блока между двумя блоками ASK.',
   'visualFlowEditor.validation.blockInBuildError': '🚫 Блок {blockType} не может быть вставлен внутри блока BUILD. Блоки BUILD и FLIGHT не могут быть вложенными.',
   'visualFlowEditor.validation.blockInFlightError': '🚫 Блок {blockType} не может быть вставлен внутри блока FLIGHT. Блоки BUILD и FLIGHT не могут быть вложенными.',
@@ -449,6 +539,9 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.command.shipClassI': 'Класс I',
   'visualFlowEditor.command.shipClassII': 'Класс II',
   'visualFlowEditor.command.shipClassIII': 'Класс III',
+  'visualFlowEditor.command.statusText': 'Текст статуса',
+  'visualFlowEditor.command.selectRoute': 'Выбрать маршрут...',
+  'visualFlowEditor.command.selectButton': 'Выбрать кнопку...',
   
   // ScriptBlock
   'visualFlowEditor.script.scriptName': 'Имя скрипта...',
@@ -610,12 +703,31 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.subOpponentCreditsByResult.description': 'Вычесть кредиты',
   'visualFlowEditor.tools.addOpponentsCredits.description': 'Добавить кредиты противника',
   
+  // Credits - Метки UI
+  'visualFlowEditor.blocks.addOpponentsCredits.player': 'Игрок',
+  
+  // Credits - Сообщения проверки
+  'visualFlowEditor.validation.ADDOPPONENTSCREDITS_INVALID_INDEX': 'ADDOPPONENTSCREDITS требует индекс игрока от 0 до 3.',
+  'visualFlowEditor.validation.ADDOPPONENTSCREDITS_NO_CREDITS': 'Требуется значение кредитов. Укажите число (положительное или отрицательное).',
+  'visualFlowEditor.validation.ADDCREDITS_NO_AMOUNT': 'Требуется сумма. Укажите число (положительное или отрицательное).',
+  'visualFlowEditor.validation.SETCREDITS_NO_AMOUNT': 'Требуется сумма. Укажите число.',
+  'visualFlowEditor.validation.ADDMISSIONCREDITS_NO_AMOUNT': 'Требуется сумма. Укажите число (положительное или отрицательное).',
   // Tool Descriptions - Achievement
   'visualFlowEditor.tools.setAchievementProgress.description': 'Установить прогресс достижения',
   'visualFlowEditor.tools.setAchievementAttempt.description': 'Установить попытку достижения',
   'visualFlowEditor.tools.unlockAchievement.description': 'Разблокировать достижение',
   'visualFlowEditor.tools.unlockShipPlan.description': 'Разблокировать план корабля',
   'visualFlowEditor.tools.unlockShuttles.description': 'Разблокировать шаттлы',
+  
+  // Achievement UI - Labels
+  'visualFlowEditor.blocks.achievement.selectAchievement': 'Достижение:',
+  'visualFlowEditor.blocks.achievement.value': 'Значение',
+  'visualFlowEditor.blocks.achievement.objectives': 'Цели:',
+  'visualFlowEditor.blocks.achievement.none': 'Нет',
+  
+  // UnlockShipPlan - Labels
+  'visualFlowEditor.blocks.unlockShipPlan.label': 'План корабля:',
+  'visualFlowEditor.blocks.unlockShipPlan.short': 'план',
   
   // Tool Descriptions - Characters
   'visualFlowEditor.tools.askChar.description': 'Вопрос с персонажем',
@@ -636,6 +748,12 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.tools.saveState.description': 'Сохранить состояние игры',
   'visualFlowEditor.tools.loadState.description': 'Загрузить состояние игры',
   'visualFlowEditor.tools.quitCampaign.description': 'Выйти из кампании',
+  'visualFlowEditor.blocks.saveState.compact': 'Сохранить',
+  'visualFlowEditor.blocks.loadState.compact': 'Загрузить',
+  'visualFlowEditor.blocks.quitCampaign.compact': 'Выйти',
+  'visualFlowEditor.blocks.saveState.fullDescription': 'Сохраняет текущее состояние кампании, позволяя восстановить его позже с помощью LoadState. Полезно для создания точек сохранения во время повествования.',
+  'visualFlowEditor.blocks.loadState.fullDescription': 'Загружает ранее сохранённое состояние кампании. Восстанавливает ситуацию игрока, миссии, персонажей и переменные на момент сохранения.',
+  'visualFlowEditor.blocks.quitCampaign.fullDescription': 'Немедленно завершает кампанию и возвращает игрока в главное меню. Используйте осторожно, так как это окончательно прерывает поток повествования.',
   
   // Metacode Modal Translations
   'visualFlowEditor.metacode.playerReference': 'Ссылка на Игрока',
@@ -643,6 +761,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.metacode.selectPlayer': 'Выбрать игрока',
   'visualFlowEditor.metacode.current': 'Текущий',
   'visualFlowEditor.metacode.playerNumber': 'Игрок {num}',
+  'visualFlowEditor.metacode.playerNumberShort': 'И{num}',
   'visualFlowEditor.metacode.generatedCode': 'Сгенерированный код:',
   'visualFlowEditor.metacode.numericValue': 'Числовое Значение',
   'visualFlowEditor.metacode.numericValueDescription': 'Вставляет динамическое или порядковое числовое значение.',
@@ -746,6 +865,7 @@ export const visualFlowEditorTranslations = {
   'visualFlowEditor.blocks.characterSelector.noAvailable': 'Нет доступных персонажей для показа',
   'visualFlowEditor.blocks.characterSelector.noVisible': 'Нет видимых персонажей для скрытия',
   'visualFlowEditor.blocks.characterSelector.selected': 'Выбрано',
+  'visualFlowEditor.blocks.characterSelector.none': 'Нет',
 
   // SETADVPILE Block
   'visualFlowEditor.blocks.setAdvPile.parameters': 'Параметры',
@@ -809,4 +929,66 @@ export const visualFlowEditorTranslations = {
 
   // Multilingual - add missing language
   'visualFlowEditor.multilingual.languages.it': 'Итальянский',
+  
+  // Variable Commands
+  'visualFlowEditor.command.selectVariable': 'Выбрать переменную...',
+  
+  // Validation Error Messages for SET_TO and ADD
+  'visualFlowEditor.validation.setToNoVariable': 'Блок SET_TO должен иметь выбранную переменную. Выберите переменную для установки.',
+  'visualFlowEditor.validation.setToNoValue': 'Блок SET_TO должен иметь установленное значение. Введите числовое значение.',
+  'visualFlowEditor.validation.addNoVariable': 'Блок ADD должен иметь выбранную переменную. Выберите переменную для сложения.',
+  'visualFlowEditor.validation.addNoValue': 'Блок ADD должен иметь установленное значение. Введите числовое значение для сложения.',
+  
+  // Command labels
+  'visualFlowEditor.command.variableLabel': 'Переменная:',
+  
+  // SET_TO Block
+  'visualFlowEditor.blocks.setTo.variableLabel': 'Переменная',
+  'visualFlowEditor.blocks.setTo.valueLabel': 'Значение',
+  'visualFlowEditor.blocks.setTo.valuePlaceholder': 'Введите числовое значение...',
+  'visualFlowEditor.blocks.setTo.description': 'Устанавливает переменную в указанное значение',
+  'visualFlowEditor.blocks.setTo.noVariable': 'Переменная не выбрана',
+  
+  // ADD Block
+  'visualFlowEditor.blocks.add.variableLabel': 'Переменная',
+  'visualFlowEditor.blocks.add.valueLabel': 'Значение для сложения',
+  'visualFlowEditor.blocks.add.valuePlaceholder': 'Введите числовое значение...',
+  'visualFlowEditor.blocks.add.description': 'Добавляет значение к указанной переменной',
+  'visualFlowEditor.blocks.add.noVariable': 'Переменная не выбрана',
+
+  // SHOWHELPIMAGE Block
+  'visualFlowEditor.blocks.showHelpImage.parameters': 'Текст',
+  'visualFlowEditor.blocks.showHelpImage.placeholder': 'Введите справочный текст или путь к изображению...',
+  'visualFlowEditor.blocks.showHelpImage.hint': 'Текст или путь к изображению помощи',
+  'visualFlowEditor.blocks.showHelpImage.noParameters': 'Текст не настроен',
+  'visualFlowEditor.blocks.showHelpImage.params': 'Текст',
+
+  // HelpScript validation
+  'visualFlowEditor.validation.buildingHelpScriptParams': 'BUILDINGHELPSCRIPT требует значение (число) и скрипт.',
+  'visualFlowEditor.validation.helpScriptParams': 'Эта команда требует параметр "скрипт".',
+
+  // Info & Help tools (labels)
+  'visualFlowEditor.tools.infoHelp': 'Инфо и помощь',
+  'visualFlowEditor.tools.buildingHelpScript': 'Скрипт помощи постройки',
+  'visualFlowEditor.tools.flightHelpScript': 'Скрипт помощи полета',
+  'visualFlowEditor.tools.alienHelpScript': 'Скрипт помощи пришельцев',
+
+  // HelpScript commands
+  'visualFlowEditor.command.buildingHelpScript': 'Скрипт помощи постройки',
+  'visualFlowEditor.command.flightHelpScript': 'Скрипт помощи полета',
+  'visualFlowEditor.command.alienHelpScript': 'Скрипт помощи пришельцев',
+  'visualFlowEditor.command.script': 'Скрипт',
+  'visualFlowEditor.command.value': 'Задержка (мс)',
+
+  // Headers compact / navigation
+  'visualFlowEditor.header.navigateToScript': 'Перейти к скрипту',
+  'visualFlowEditor.header.compact.buildingHelp': 'задержка: {value} • {script}',
+  'visualFlowEditor.header.compact.help': '{script}',
+
+  // ASKCHAR and FOCUSCHAR Validation
+  'visualFlowEditor.validation.ASKCHAR_NO_CHARACTER': 'Блок ASKCHAR должен иметь выбранного персонажа. Выберите персонажа.',
+  'visualFlowEditor.validation.ASKCHAR_NO_TEXT': 'Блок ASKCHAR должен иметь введённый текст. Введите текст для персонажа.',
+  'visualFlowEditor.validation.ASKCHAR_NO_SCENE': 'Блок ASKCHAR должен использоваться в сцене. Добавьте блок внутри сцены.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_CHARACTER': 'Блок FOCUSCHAR должен иметь выбранного персонажа. Выберите персонажа.',
+  'visualFlowEditor.validation.FOCUSCHAR_NO_SCENE': 'Блок FOCUSCHAR должен использоваться в сцене. Добавьте блок внутри сцены.',
 } as const;

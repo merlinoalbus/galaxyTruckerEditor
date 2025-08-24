@@ -3,12 +3,18 @@ import { createPortal } from 'react-dom';
 import { Search, Plus, X, Check, Variable, Flag, Tag, FileCode, ChevronDown, Package } from 'lucide-react';
 import { useTranslation } from '@/locales';
 
+interface StructuredItem {
+  key: string;
+  label: string;
+}
+
 interface SelectWithModalProps {
   type: 'variable' | 'semaphore' | 'label' | 'script' | 'mission' | 'parts';
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  availableItems: string[];
+  // backward-compatible: accept array of strings or array of structured items
+  availableItems: Array<string | StructuredItem>;
   onAddItem?: (item: string) => void;
   className?: string;
 }
@@ -26,7 +32,12 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [newItemName, setNewItemName] = useState('');
-  const [filteredItems, setFilteredItems] = useState<string[]>(availableItems);
+  // normalize available items into structured items for internal use
+  const normalize = (items: Array<string | StructuredItem>): StructuredItem[] => {
+    return items.map(it => (typeof it === 'string' ? { key: it, label: it } : it));
+  };
+
+  const [filteredItems, setFilteredItems] = useState<StructuredItem[]>(normalize(availableItems));
   const [showNewItemInput, setShowNewItemInput] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [dropdownWidth, setDropdownWidth] = useState(280);
@@ -35,8 +46,9 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
 
   // Filtra gli elementi in base al termine di ricerca
   useEffect(() => {
-    const filtered = availableItems.filter(item =>
-      item.toLowerCase().includes(searchTerm.toLowerCase())
+    const all = normalize(availableItems);
+    const filtered = all.filter(item =>
+      item.label.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredItems(filtered);
   }, [searchTerm, availableItems]);
@@ -142,8 +154,8 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
   };
 
   // Gestisci la selezione di un elemento
-  const handleSelect = (item: string) => {
-    onChange(item);
+  const handleSelect = (itemKey: string) => {
+    onChange(itemKey);
     setIsModalOpen(false);
     setSearchTerm('');
     setShowNewItemInput(false);
@@ -167,6 +179,15 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
     }
   };
 
+  // Trova la label da mostrare per il value selezionato
+  const getDisplayLabel = () => {
+    if (!value) return placeholder || t('visualFlowEditor.select.selectPlaceholder');
+    
+    const allItems = normalize(availableItems);
+    const selectedItem = allItems.find(item => item.key === value);
+    return selectedItem ? selectedItem.label : value; // fallback al value se non trovato
+  };
+
   return (
     <>
       {/* Input field con icona */}
@@ -186,7 +207,7 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
         >
           {getIcon()}
           <span className={`flex-1 truncate ${value ? 'text-white' : 'text-gray-400'}`}>
-            {value || placeholder || t('visualFlowEditor.select.selectPlaceholder')}
+            {getDisplayLabel()}
           </span>
           <ChevronDown className={`w-3 h-3 text-gray-400 transition-transform duration-200 ${isModalOpen ? 'rotate-180' : ''}`} />
         </button>
@@ -234,36 +255,36 @@ export const SelectWithModal: React.FC<SelectWithModalProps> = ({
 
           {/* Lista elementi scrollabile */}
           <div className="max-h-[200px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-800">
-            {filteredItems.length > 0 ? (
+              {filteredItems.length > 0 ? (
               <div className="p-1">
                 {filteredItems.map((item) => (
                   <button
-                    key={item}
-                    onClick={() => handleSelect(item)}
+                    key={item.key}
+                    onClick={() => handleSelect(item.key)}
                     className={`w-full text-left px-2 py-1.5 rounded text-xs transition-all duration-150 flex items-center justify-between group
-                      ${value === item 
+                      ${value === item.key 
                         ? 'bg-blue-600 text-white' 
                         : 'hover:bg-slate-700 text-gray-300 hover:text-white'}`}
                   >
-                    <span className="truncate">{item}</span>
-                    {value === item && <Check className="w-3 h-3 flex-shrink-0 ml-2" />}
+                    <span className="truncate">{item.label}</span>
+                    {value === item.key && <Check className="w-3 h-3 flex-shrink-0 ml-2" />}
                   </button>
                 ))}
               </div>
             ) : (
               <div className="text-center py-4 text-gray-500">
                 <p className="text-xs px-4">
-                  {searchTerm 
-                    ? t('visualFlowEditor.select.nothingFound').replace('{type}', 
-                        type === 'variable' ? t('visualFlowEditor.select.variableType') : 
-                        type === 'semaphore' ? t('visualFlowEditor.select.semaphoreType') :
-                        type === 'label' ? t('visualFlowEditor.select.labelType') :
-                        type === 'script' ? t('visualFlowEditor.select.scriptType') : t('visualFlowEditor.select.missionType'))
-                    : t('visualFlowEditor.select.nothingAvailable').replace('{type}', 
-                        type === 'variable' ? t('visualFlowEditor.select.variableType') : 
-                        type === 'semaphore' ? t('visualFlowEditor.select.semaphoreType') :
-                        type === 'label' ? t('visualFlowEditor.select.labelType') :
-                        type === 'script' ? t('visualFlowEditor.select.scriptType') : t('visualFlowEditor.select.missionType'))}
+          {searchTerm 
+            ? t('visualFlowEditor.select.nothingFound').replace('{type}', 
+              type === 'variable' ? t('visualFlowEditor.select.variableType') : 
+              type === 'semaphore' ? t('visualFlowEditor.select.semaphoreType') :
+              type === 'label' ? t('visualFlowEditor.select.labelType') :
+              type === 'script' ? t('visualFlowEditor.select.scriptType') : t('visualFlowEditor.select.missionType'))
+            : t('visualFlowEditor.select.nothingAvailable').replace('{type}', 
+              type === 'variable' ? t('visualFlowEditor.select.variableType') : 
+              type === 'semaphore' ? t('visualFlowEditor.select.semaphoreType') :
+              type === 'label' ? t('visualFlowEditor.select.labelType') :
+              type === 'script' ? t('visualFlowEditor.select.scriptType') : t('visualFlowEditor.select.missionType'))}
                 </p>
               </div>
             )}

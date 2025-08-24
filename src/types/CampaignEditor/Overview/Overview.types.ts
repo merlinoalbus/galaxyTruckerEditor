@@ -12,6 +12,9 @@ export interface LanguageCoverage {
     medium: string[];
     low: string[];
   };
+  // Nuovi campi per multilanguage
+  totalMultilanguage: number;
+  translatedMultilanguage: number;
 }
 
 export interface ScriptComplexity {

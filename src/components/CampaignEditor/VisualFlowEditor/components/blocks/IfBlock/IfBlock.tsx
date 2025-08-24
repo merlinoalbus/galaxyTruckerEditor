@@ -15,8 +15,10 @@ const IF_TYPES = [
   { value: 'IF_MIN', label: 'IF MIN' },
   { value: 'IF_MISSION_WON', label: 'IF MISSION WON' },
   { value: 'IF_ORDER', label: 'IF ORDER' },
+  { value: 'IF_POSITION_ORDER', label: 'IF POSITION ORDER' },
   { value: 'IF_PROB', label: 'IF PROBABILITY' },
   { value: 'IF_TUTORIAL_SEEN', label: 'IF TUTORIAL SEEN' },
+  { value: 'IF_ALL_RESIGNED', label: 'IF ALL RESIGNED' },
   { value: 'IFMISSIONRESULTIS', label: 'IF MISSION RESULT IS' },
   { value: 'IFMISSIONRESULTMIN', label: 'IF MISSION RESULT MIN' }
 ];

@@ -13,12 +13,14 @@ import { AnnounceBlock } from '../blocks/AnnounceBlock/AnnounceBlock';
 import { ReturnBlock } from '../blocks/ReturnBlock/ReturnBlock';
 import { SetBlock } from '../blocks/SetBlock/SetBlock';
 import { ResetBlock } from '../blocks/ResetBlock/ResetBlock';
+import { SetToBlock } from '../blocks/SetToBlock/SetToBlock';
+import { AddBlock } from '../blocks/AddBlock/AddBlock';
+import { SetFocusIfCreditsBlock } from '../blocks/SetFocusIfCreditsBlock/SetFocusIfCreditsBlock';
 import { AddPartToShipBlock } from '../blocks/AddPartToShipBlock/AddPartToShipBlock';
 import { AddPartToAsideSlotBlock } from '../blocks/AddPartToAsideSlotBlock/AddPartToAsideSlotBlock';
 import { AddShipPartsBlock } from '../blocks/AddShipPartsBlock/AddShipPartsBlock';
 import { FinishMissionBlock } from '../blocks/FinishMissionBlock/FinishMissionBlock';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
-
 interface BlockRendererProps {
   block: IFlowBlock;
   depth?: number;
@@ -452,6 +454,69 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
     );
   }
 
+  // Render SET_TO block
+  if (block.type === 'SET_TO') {
+    return (
+      <div data-block-id={block.id}>
+        <SetToBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
+        />
+      </div>
+    );
+  }
+
+  // Render ADD block
+  if (block.type === 'ADD') {
+    return (
+      <div data-block-id={block.id}>
+        <AddBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
+        />
+      </div>
+    );
+  }
+
+  // Render SETFOCUSIFCREDITS block
+  if (block.type === 'SETFOCUSIFCREDITS') {
+    return (
+      <div data-block-id={block.id}>
+        <SetFocusIfCreditsBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
+        />
+      </div>
+    );
+  }
+
   // Render ADDPARTTOSHIP block
   if (block.type === 'ADDPARTTOSHIP') {
     return (
@@ -530,6 +595,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
     );
   }
 
+
   // Render SETSECRETADVPILE block (same UI pattern as ADDPARTTOSHIP)
   if (block.type === 'SETSECRETADVPILE') {
     return (
@@ -548,6 +614,34 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
       </div>
     );
   }
+
+  // Render SHOWHELPIMAGE block come CommandBlock (come tutti i blocchi comando)
+  if (block.type === 'SHOWHELPIMAGE') {
+    return (
+      <div data-block-id={block.id}>
+        <CommandBlock
+          block={block}
+          onUpdate={updateBlock}
+          onRemove={isRootInZoom ? undefined : removeBlock}
+          onDragStart={(e) => onDragStart(e, block)}
+          sessionData={sessionData}
+          isInvalid={isInvalid}
+          validationType={validationType}
+          onGoToLabel={sessionData?.goToLabel}
+          onNavigateToSubScript={sessionData?.onNavigateToSubScript}
+          onNavigateToMission={sessionData?.onNavigateToMission}
+          allBlocks={allBlocks}
+          collapseAllTrigger={collapseAllTrigger}
+          expandAllTrigger={expandAllTrigger}
+          globalCollapseState={globalCollapseState}
+          isCustom={isCustom}
+          availableLanguages={availableLanguages}
+        />
+      </div>
+    );
+  }
+
+  // HelpScript blocks are rendered by CommandBlock (fallback)
 
   // Render FINISH_MISSION block
   if (block.type === 'FINISH_MISSION') {

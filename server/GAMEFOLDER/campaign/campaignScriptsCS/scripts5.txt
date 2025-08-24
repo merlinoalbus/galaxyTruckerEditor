@@ -143,7 +143,6 @@ SCRIPT tutorClass3Dlg
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorShuttleSubdlg
 
   MENU
@@ -183,7 +182,6 @@ SCRIPT tutorShuttleSubdlg
   Say "Každopádně – když jsi ve stanici s kosmodromem, můžeš si koupit let do jakékoliv jiné stanice s kosmodromem."
   Say "Jen [v(ťap|klik)]ni na cílovou stanici a řekni, že se tam chceš dostat."
 END_OF_SCRIPT
-
 SCRIPT guruDlg
 
   ShowDlgScene
@@ -310,7 +308,6 @@ SCRIPT guruDlg
   HideChar guru
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT clubDlg
 
   ShowDlgScene
@@ -594,7 +591,6 @@ SCRIPT clubDlg
   HideChar chairman
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT merchCyanDlg
 
   IFNOT wasAtCyan
@@ -713,7 +709,6 @@ SCRIPT merchCyanDlg
   HideChar merchant
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT labDlg
 
   ShowDlgScene
@@ -1244,7 +1239,6 @@ SCRIPT labDlg
   HideChar designer
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT raceDlg
 
   ShowDlgScene
@@ -1263,317 +1257,313 @@ SCRIPT raceDlg
   HideChar chairman
   HideDlgScene
 END_OF_SCRIPT
-
-SCRIPT FinalRaceDlg
-
-  ShowDlgScene
-  ADD frRound 1
-  IF_IS frRound 3
-    GO frRound3
-  END_OF_IF
-  IF_IS frRound 2
-    GO frRound2
-  END_OF_IF
-  IF_ORDER 0 1
-    IF_ORDER 1 2
-      ShowChar tutor left
-      Say "Hej, vedeš si opravdu dobře. Na začátečn[g(íka|nici)]."
-      Say "Dal jsem ti drobný náskok, ale dál už tě šetřit nebudu."
-      ShowChar richgirl right
-      Say "Pche. Vy dva. V dalších letech vás smetu, že se nebudete stačit divit."
-      SayChar tutor "Řeči, řeči... Raději se pusťme do dalšího kola..."
-      HideChar tutor
-      HideChar richgirl
-    ELSE
-      IF_ORDER 2 2
-        ShowChar richgirl left
-        Say "Jen abys nemyslel[g(|a)], držet se na druhé pozici byl od začátku můj plán."
-        Say "Nerada bych přepálila začátek."
-        ShowChar tutor right
-        Say "Řeči, řeči... Raději se pusťme do dalšího kola..."
+  SCRIPT FinalRaceDlg
+    ShowDlgScene
+    ADD frRound 1
+    IF_IS frRound 3
+      GO frRound3
+    END_OF_IF
+    IF_IS frRound 2
+      GO frRound2
+    END_OF_IF
+    IF_ORDER 0 1
+      IF_ORDER 1 2
+        ShowChar tutor left
+        Say "Hej, vedeš si opravdu dobře. Na začátečn[g(íka|nici)]."
+        Say "Dal jsem ti drobný náskok, ale dál už tě šetřit nebudu."
+        ShowChar richgirl right
+        Say "Pche. Vy dva. V dalších letech vás smetu, že se nebudete stačit divit."
+        SayChar tutor "Řeči, řeči... Raději se pusťme do dalšího kola..."
         HideChar tutor
         HideChar richgirl
       ELSE
-        IF_ORDER 3 2
-          ShowChar tutor left
-          ShowChar richgirl right
-          SayChar tutor "To to tedy začíná. [g(Nováček|Začátečnice)] a strakatej ve vedení."
-          SayChar richgirl "Hele, jestli sis nevšiml, tak já to tak chtěla. Moje strategie je zaútočit ze zadních pozic."
-          SayChar tutor "Řeči, řeči... Raději se pusťme do dalšího kola..."
+        IF_ORDER 2 2
+          ShowChar richgirl left
+          Say "Jen abys nemyslel[g(|a)], držet se na druhé pozici byl od začátku můj plán."
+          Say "Nerada bych přepálila začátek."
+          ShowChar tutor right
+          Say "Řeči, řeči... Raději se pusťme do dalšího kola..."
           HideChar tutor
           HideChar richgirl
+        ELSE
+          IF_ORDER 3 2
+            ShowChar tutor left
+            ShowChar richgirl right
+            SayChar tutor "To to tedy začíná. [g(Nováček|Začátečnice)] a strakatej ve vedení."
+            SayChar richgirl "Hele, jestli sis nevšiml, tak já to tak chtěla. Moje strategie je zaútočit ze zadních pozic."
+            SayChar tutor "Řeči, řeči... Raději se pusťme do dalšího kola..."
+            HideChar tutor
+            HideChar richgirl
+          END_OF_IF
         END_OF_IF
       END_OF_IF
-    END_OF_IF
-  ELSE
-    IF_ORDER 1 1
-      ShowChar tutor left
-      Say "Ha. Teď už jen udržet a zvyšovat náskok."
-      IF_ORDER 0 2
-        Say "Ale ty se taky držíš, [g(nováčku|začátečnice)]!"
-      END_OF_IF
-      IF_ORDER 2 2
-        ShowChar richgirl right
-        Say "Tomu říkáš náskok? Smáznu ho hned ve druhém kole."
-        HideChar richgirl
-      END_OF_IF
-      IF_ORDER 3 2
-        ShowChar halfbreed right
-        Say "Kh."
-        HideChar halfbreed
-      END_OF_IF
-      HideChar tutor
     ELSE
-      IF_ORDER 2 1
-        ShowChar richgirl left
-        Say "Takže dle očekávání, ujímám se vedení."
+      IF_ORDER 1 1
+        ShowChar tutor left
+        Say "Ha. Teď už jen udržet a zvyšovat náskok."
         IF_ORDER 0 2
-          ShowChar tutor right
-          Say "Moc se nevytahuj, dámo. Tady [g(nováček|začátečnice)] ti docela šlape na paty."
-          HideChar tutor
+          Say "Ale ty se taky držíš, [g(nováčku|začátečnice)]!"
         END_OF_IF
-        IF_ORDER 1 2
-          ShowChar tutor right
-          Say "Tohle byl teprve první let, dámo. Uvidíme po druhém."
-          SayChar richgirl "Tak především uvidíme po třetím. Ale stejně všichni víme co, že?"
-          HideChar tutor
+        IF_ORDER 2 2
+          ShowChar richgirl right
+          Say "Tomu říkáš náskok? Smáznu ho hned ve druhém kole."
+          HideChar richgirl
         END_OF_IF
         IF_ORDER 3 2
           ShowChar halfbreed right
-          Say "Kh. Fwr'z."
+          Say "Kh."
           HideChar halfbreed
         END_OF_IF
-        HideChar richgirl
+        HideChar tutor
       ELSE
-        IF_ORDER 3 1
-          ShowChar halfbreed left
-          Say "...!"
+        IF_ORDER 2 1
+          ShowChar richgirl left
+          Say "Takže dle očekávání, ujímám se vedení."
           IF_ORDER 0 2
             ShowChar tutor right
-            Say "Dobrá práce, strakatej. Ale tady [g(nováček|začátečnice)] ti docela šlape na paty."
+            Say "Moc se nevytahuj, dámo. Tady [g(nováček|začátečnice)] ti docela šlape na paty."
             HideChar tutor
           END_OF_IF
           IF_ORDER 1 2
             ShowChar tutor right
-            Say "Dobrá práce, strakatej. Ale závod ještě neskončil!"
+            Say "Tohle byl teprve první let, dámo. Uvidíme po druhém."
+            SayChar richgirl "Tak především uvidíme po třetím. Ale stejně všichni víme co, že?"
             HideChar tutor
           END_OF_IF
-          IF_ORDER 2 2
-            ShowChar richgirl right
-            Say "To jsou silný řeči, ufonku. Šetři síly na další kola."
-            HideChar richgirl
+          IF_ORDER 3 2
+            ShowChar halfbreed right
+            Say "Kh. Fwr'z."
+            HideChar halfbreed
           END_OF_IF
-          HideChar halfbreed
+          HideChar richgirl
+        ELSE
+          IF_ORDER 3 1
+            ShowChar halfbreed left
+            Say "...!"
+            IF_ORDER 0 2
+              ShowChar tutor right
+              Say "Dobrá práce, strakatej. Ale tady [g(nováček|začátečnice)] ti docela šlape na paty."
+              HideChar tutor
+            END_OF_IF
+            IF_ORDER 1 2
+              ShowChar tutor right
+              Say "Dobrá práce, strakatej. Ale závod ještě neskončil!"
+              HideChar tutor
+            END_OF_IF
+            IF_ORDER 2 2
+              ShowChar richgirl right
+              Say "To jsou silný řeči, ufonku. Šetři síly na další kola."
+              HideChar richgirl
+            END_OF_IF
+            HideChar halfbreed
+          END_OF_IF
         END_OF_IF
       END_OF_IF
     END_OF_IF
-  END_OF_IF
-  HideDlgScene
-  RETURN
-
-  LABEL frRound2
-  IF_ORDER 0 1
-    IF_ORDER 1 2
-      ShowChar tutor left
-      Say "Ty teda dneska válíš, [g(nováčku|začátečnice)]."
-      Say "Ale jsem ti v patách. Ve třetím kole tě šetřit nebudu!"
-      ShowChar richgirl right
-      Say "Jen se dohadujte... Třetí kolo bude moje, ten náskok jsem vám nechala, jen aby to bylo zajímavější!"
-      SayChar tutor "Ha, tak pojďme na to třetí kolo!"
-      HideChar tutor
-      HideChar richgirl
-    ELSE
-      IF_ORDER 2 2
-        ShowChar richgirl left
-        Say "Ha, vše jde podle plánu: držet se takticky na druhé pozici a v posledním letu tě ladně předehnat."
-        ShowChar tutor right
-        Say "Neposlouchej ji, [g(nováčku|začátečnice)], jde ti to dneska výborně!"
+    HideDlgScene
+    RETURN
+    LABEL frRound2
+    IF_ORDER 0 1
+      IF_ORDER 1 2
+        ShowChar tutor left
+        Say "Ty teda dneska válíš, [g(nováčku|začátečnice)]."
+        Say "Ale jsem ti v patách. Ve třetím kole tě šetřit nebudu!"
+        ShowChar richgirl right
+        Say "Jen se dohadujte... Třetí kolo bude moje, ten náskok jsem vám nechala, jen aby to bylo zajímavější!"
+        SayChar tutor "Ha, tak pojďme na to třetí kolo!"
         HideChar tutor
         HideChar richgirl
       ELSE
-        IF_ORDER 3 2
-          ShowChar tutor left
-          ShowChar richgirl right
-          SayChar tutor "[g(Ten nováček|Ta začátečnice)] je fakt dobr[g(ej|á)]. A ten strakatej ufon si taky nevede špatně."
-          SayChar richgirl "Řekla bych tak lepší průměr. Až já to rozbalím ve třetím kole, hravě je oba dám."
-          SayChar tutor "Řeči, řeči... Raději to ukaž."
+        IF_ORDER 2 2
+          ShowChar richgirl left
+          Say "Ha, vše jde podle plánu: držet se takticky na druhé pozici a v posledním letu tě ladně předehnat."
+          ShowChar tutor right
+          Say "Neposlouchej ji, [g(nováčku|začátečnice)], jde ti to dneska výborně!"
           HideChar tutor
           HideChar richgirl
+        ELSE
+          IF_ORDER 3 2
+            ShowChar tutor left
+            ShowChar richgirl right
+            SayChar tutor "[g(Ten nováček|Ta začátečnice)] je fakt dobr[g(ej|á)]. A ten strakatej ufon si taky nevede špatně."
+            SayChar richgirl "Řekla bych tak lepší průměr. Až já to rozbalím ve třetím kole, hravě je oba dám."
+            SayChar tutor "Řeči, řeči... Raději to ukaž."
+            HideChar tutor
+            HideChar richgirl
+          END_OF_IF
         END_OF_IF
       END_OF_IF
-    END_OF_IF
-  ELSE
-    IF_ORDER 1 1
-      ShowChar tutor left
-      Say "Ha, cítím svoji velkou příležitost."
-      IF_ORDER 0 2
-        Say "Bude ti muset stačit druhé místo, [g(nováčku|začátečnice)]!"
-      END_OF_IF
-      IF_ORDER 2 2
-        ShowChar richgirl right
-        Say "Jo. Možná budeš druhý, pokud se ti dva vzadu nevzpamatují."
-        Say "Na první místo ani nepomýšlej, já ti dala trochu náskok, aby to bylo zajímavější, ale ve třetím kole jedu naplno."
-        HideChar richgirl
-      END_OF_IF
-      IF_ORDER 3 2
-        ShowChar halfbreed right
-        Say "Kh."
-        HideChar halfbreed
-      END_OF_IF
-      HideChar tutor
     ELSE
-      IF_ORDER 2 1
-        ShowChar richgirl left
-        Say "Teda pánové, já to ještě ani nerozjela naplno, a už mi nestačíte?"
+      IF_ORDER 1 1
+        ShowChar tutor left
+        Say "Ha, cítím svoji velkou příležitost."
         IF_ORDER 0 2
-          ShowChar tutor right
-          Say "Hele, [g(nováčku|začátečnice)], nemáš na ni zas takovou ztrátu. Dotáhni ji, ať sklapne."
-          HideChar tutor
+          Say "Bude ti muset stačit druhé místo, [g(nováčku|začátečnice)]!"
         END_OF_IF
-        IF_ORDER 1 2
-          ShowChar tutor right
-          Say "Mě nevyprovokuješ, dámo. Mluvíš, protože máš strach."
-          SayChar richgirl "Jo, mám strach, že to bude až skoro nuda. Tak si pojďte pro ten závěrečnej výprask."
-          HideChar tutor
+        IF_ORDER 2 2
+          ShowChar richgirl right
+          Say "Jo. Možná budeš druhý, pokud se ti dva vzadu nevzpamatují."
+          Say "Na první místo ani nepomýšlej, já ti dala trochu náskok, aby to bylo zajímavější, ale ve třetím kole jedu naplno."
+          HideChar richgirl
         END_OF_IF
         IF_ORDER 3 2
           ShowChar halfbreed right
-          Say "Kh. Kh fwr'z."
+          Say "Kh."
           HideChar halfbreed
         END_OF_IF
-        HideChar richgirl
+        HideChar tutor
       ELSE
-        IF_ORDER 3 1
-          ShowChar halfbreed left
-          Say "...!"
+        IF_ORDER 2 1
+          ShowChar richgirl left
+          Say "Teda pánové, já to ještě ani nerozjela naplno, a už mi nestačíte?"
           IF_ORDER 0 2
             ShowChar tutor right
-            Say "Ten strakatej nám nějak utíká. Ale támhle [g(nováček|začátečnice)] taky."
+            Say "Hele, [g(nováčku|začátečnice)], nemáš na ni zas takovou ztrátu. Dotáhni ji, ať sklapne."
             HideChar tutor
-            ShowChar richgirl right
-            Say "Tobě možná utíkají. Já je bez problémů doženu ve třetím kole."
-            HideChar richgirl
           END_OF_IF
           IF_ORDER 1 2
             ShowChar tutor right
-            Say "To možná, strakatej, ale já jsem ještě neřekl poslední slovo!"
+            Say "Mě nevyprovokuješ, dámo. Mluvíš, protože máš strach."
+            SayChar richgirl "Jo, mám strach, že to bude až skoro nuda. Tak si pojďte pro ten závěrečnej výprask."
             HideChar tutor
           END_OF_IF
-          IF_ORDER 2 2
-            ShowChar richgirl right
-            Say "Moc si to nemaluj, ufonku. Třetí kolo tě smetu, že nebudeš vědět, kterou barvu máš!"
-            HideChar richgirl
+          IF_ORDER 3 2
+            ShowChar halfbreed right
+            Say "Kh. Kh fwr'z."
+            HideChar halfbreed
           END_OF_IF
-          HideChar halfbreed
+          HideChar richgirl
+        ELSE
+          IF_ORDER 3 1
+            ShowChar halfbreed left
+            Say "...!"
+            IF_ORDER 0 2
+              ShowChar tutor right
+              Say "Ten strakatej nám nějak utíká. Ale támhle [g(nováček|začátečnice)] taky."
+              HideChar tutor
+              ShowChar richgirl right
+              Say "Tobě možná utíkají. Já je bez problémů doženu ve třetím kole."
+              HideChar richgirl
+            END_OF_IF
+            IF_ORDER 1 2
+              ShowChar tutor right
+              Say "To možná, strakatej, ale já jsem ještě neřekl poslední slovo!"
+              HideChar tutor
+            END_OF_IF
+            IF_ORDER 2 2
+              ShowChar richgirl right
+              Say "Moc si to nemaluj, ufonku. Třetí kolo tě smetu, že nebudeš vědět, kterou barvu máš!"
+              HideChar richgirl
+            END_OF_IF
+            HideChar halfbreed
+          END_OF_IF
         END_OF_IF
       END_OF_IF
     END_OF_IF
-  END_OF_IF
-  HideDlgScene
-  RETURN
-
-  LABEL frRound3
-  RESET frHBfirst
-  RESET frRGfirst
-  SET finalRaceFinished
-  IF_ORDER 2 1
-    SET frRGfirst
-    ChangeChar richgirl campaign/rich-smile.png
-    ShowChar richgirl left
-    Say "Jupí, paráda!"
-    Delay 500
-    ChangeChar richgirl campaign/rich-bored.png
-    Delay 200
-    Say "Chci říct... Dle očekávání..."
-    Say "Docela vám to šlo, kluci... Ještě pár roků, a bude to s vámi trochu i výzva..."
-    Delay 200
-    ChangeChar richgirl campaign/rich-smile.png
-    Delay 600
-    ChangeChar richgirl campaign/rich-smile-cheer.png
-    Delay 400
-    ChangeChar richgirl campaign/rich-smile.png
-  ELSE
-    IF_ORDER 3 1
-      SET frHBfirst
-      ShowChar halfbreed left
-      Say "... ...!"
-      Say "H' khwk!"
-      Say "Já vyhráti/zvítěziti/získati cenu!"
-    END_OF_IF
-  END_OF_IF
-  ShowChar tutor right
-  IF_ORDER 0 1
-    IF_ORDER 1 2
-      Say "Gratuluju, [g(nováčku|začátečnice)]!"
-      Say "Vyšlo nám to oběma, ale tobě o trochu lépe."
+    HideDlgScene
+    RETURN
+    LABEL frRound3
+    RESET frHBfirst
+    RESET frRGfirst
+    SET finalRaceFinished
+    IF_ORDER 2 1
+      SET frRGfirst
+      ChangeChar richgirl campaign/rich-smile.png
+      ShowChar richgirl left
+      Say "Jupí, paráda!"
+      Delay 500
+      ChangeChar richgirl campaign/rich-bored.png
+      Delay 200
+      Say "Chci říct... Dle očekávání..."
+      Say "Docela vám to šlo, kluci... Ještě pár roků, a bude to s vámi trochu i výzva..."
+      Delay 200
+      ChangeChar richgirl campaign/rich-smile.png
+      Delay 600
+      ChangeChar richgirl campaign/rich-smile-cheer.png
+      Delay 400
+      ChangeChar richgirl campaign/rich-smile.png
     ELSE
-      Say "Gratuluju, [g(nováčku|začátečnice)]!"
-      Say "Mě to tentokrát moc nevyšlo, ale ty jsi nám všem ukázal[g(|a)]!"
-    END_OF_IF
-    SET finalRaceWon
-  ELSE
-    IF_ORDER 0 2
-      IF_ORDER 1 1
-        Say "Bezva! Konečně jsem vyhrál!"
-        Say "Tobě to taky pěkně vyšlo, [g(nováčku|začátečnice)], ale mně přece jen o trochu lépe."
-      ELSE
-        Say "No jo, gratuluju..."
-        Say "Ale tady [g(nováček|začátečnice)] si taky vedl[g(|a)] dobře. Moc hezké druhé místo."
+      IF_ORDER 3 1
+        SET frHBfirst
+        ShowChar halfbreed left
+        Say "... ...!"
+        Say "H' khwk!"
+        Say "Já vyhráti/zvítěziti/získati cenu!"
       END_OF_IF
-    ELSE
-      IF_ORDER 1 1
-        Say "Bezva! Konečně jsem vyhrál!"
-        Say "Škoda, že [g(našemu nováčkovi|naší začátečnici)] to moc nevyšlo. Ale nevěš hlavu, napoprvé to nebylo špatný."
+    END_OF_IF
+    ShowChar tutor right
+    IF_ORDER 0 1
+      IF_ORDER 1 2
+        Say "Gratuluju, [g(nováčku|začátečnice)]!"
+        Say "Vyšlo nám to oběma, ale tobě o trochu lépe."
       ELSE
-        IF_ORDER 1 2
-          Say "Sakryš, tohle jsem měl vyhrát já. Ale gratuluju, samozřejmě."
-          Say "Škoda, že [g(našemu nováčkovi|naší začátečnici)] to moc nevyšlo. Ale nevěš hlavu, napoprvé to nebylo špatný."
+        Say "Gratuluju, [g(nováčku|začátečnice)]!"
+        Say "Mě to tentokrát moc nevyšlo, ale ty jsi nám všem ukázal[g(|a)]!"
+      END_OF_IF
+      SET finalRaceWon
+    ELSE
+      IF_ORDER 0 2
+        IF_ORDER 1 1
+          Say "Bezva! Konečně jsem vyhrál!"
+          Say "Tobě to taky pěkně vyšlo, [g(nováčku|začátečnice)], ale mně přece jen o trochu lépe."
         ELSE
           Say "No jo, gratuluju..."
-          Say "Nám tady s [g(nováčkem|začátečnicí)] to tentorkát nevyšlo, co?"
+          Say "Ale tady [g(nováček|začátečnice)] si taky vedl[g(|a)] dobře. Moc hezké druhé místo."
+        END_OF_IF
+      ELSE
+        IF_ORDER 1 1
+          Say "Bezva! Konečně jsem vyhrál!"
+          Say "Škoda, že [g(našemu nováčkovi|naší začátečnici)] to moc nevyšlo. Ale nevěš hlavu, napoprvé to nebylo špatný."
+        ELSE
+          IF_ORDER 1 2
+            Say "Sakryš, tohle jsem měl vyhrát já. Ale gratuluju, samozřejmě."
+            Say "Škoda, že [g(našemu nováčkovi|naší začátečnici)] to moc nevyšlo. Ale nevěš hlavu, napoprvé to nebylo špatný."
+          ELSE
+            Say "No jo, gratuluju..."
+            Say "Nám tady s [g(nováčkem|začátečnicí)] to tentorkát nevyšlo, co?"
+          END_OF_IF
         END_OF_IF
       END_OF_IF
     END_OF_IF
-  END_OF_IF
-  IF frHBfirst
+    IF frHBfirst
+      Delay 300
+      HideChar halfbreed
+      Delay 300
+    END_OF_IF
+    IFNOT frRGfirst
+      ShowChar richgirl left
+    END_OF_IF
+    IF_ORDER 2 2
+      Say "Tak jo, gratuluju. Říkala jsem si, že tentokrát zkusím druhé místo a přenechám radost z vítězství někomu jinému. Vyšlo to."
+    END_OF_IF
+    IF_ORDER 2 3
+      Say "Gratuluju. Já to samozřejmě tentokrát brala jen tak rekreačně."
+      Say "Vlastně jsem chtěla skončit poslední. Ale asi už jsem tak dobrá, že i když se vůbec nesnažím, tak někdo skončí za mnou."
+    END_OF_IF
+    IF_ORDER 2 4
+      Say "Já se samozřejmě rozhodla držet stranou, abyste si to vy kluci mohli rozdat [g(mezi sebou|tady s děvčetem)]."
+      Say "A dopadlo to přesně tak, jak jsem si tipovala. Tak gratuluju."
+    END_OF_IF
+    IFNOT frHBfirst
+      HideChar richgirl
+      Delay 300
+      ShowChar halfbreed left
+      Say "Grtl'j!"
+      Say "..."
+    END_OF_IF
+    Delay 800
+    SayChar tutor "Ale byl to hezký závod."
+    SayChar tutor "Tak sláva vítězům, čest poraženým..."
+    SayChar tutor "...a já pro všechny objednám pizzu!"
     Delay 300
-    HideChar halfbreed
+    HideChar tutor
     Delay 300
-  END_OF_IF
-  IFNOT frRGfirst
-    ShowChar richgirl left
-  END_OF_IF
-  IF_ORDER 2 2
-    Say "Tak jo, gratuluju. Říkala jsem si, že tentokrát zkusím druhé místo a přenechám radost z vítězství někomu jinému. Vyšlo to."
-  END_OF_IF
-  IF_ORDER 2 3
-    Say "Gratuluju. Já to samozřejmě tentokrát brala jen tak rekreačně."
-    Say "Vlastně jsem chtěla skončit poslední. Ale asi už jsem tak dobrá, že i když se vůbec nesnažím, tak někdo skončí za mnou."
-  END_OF_IF
-  IF_ORDER 2 4
-    Say "Já se samozřejmě rozhodla držet stranou, abyste si to vy kluci mohli rozdat [g(mezi sebou|tady s děvčetem)]."
-    Say "A dopadlo to přesně tak, jak jsem si tipovala. Tak gratuluju."
-  END_OF_IF
-  IFNOT frHBfirst
-    HideChar richgirl
-    Delay 300
-    ShowChar halfbreed left
-    Say "Grtl'j!"
-    Say "..."
-  END_OF_IF
-  Delay 800
-  SayChar tutor "Ale byl to hezký závod."
-  SayChar tutor "Tak sláva vítězům, čest poraženým..."
-  SayChar tutor "...a já pro všechny objednám pizzu!"
-  Delay 300
-  HideChar tutor
-  Delay 300
-  IFNOT frHBfirst
-    HideChar halfbreed
-  ELSE
-    HideChar richgirl
-  END_OF_IF
-  HideDlgScene
-END_OF_SCRIPT
+    IFNOT frHBfirst
+      HideChar halfbreed
+    ELSE
+      HideChar richgirl
+    END_OF_IF
+    HideDlgScene
+  END_OF_SCRIPT
 
 END_OF_SCRIPTS

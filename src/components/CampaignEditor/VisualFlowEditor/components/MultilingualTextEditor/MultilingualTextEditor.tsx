@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Copy, CopyCheck, Globe, Users } from 'lucide-react';
+import { ChevronDown, ChevronUp, Copy, CopyCheck, Globe, Users, Wand2 } from 'lucide-react';
 import { useTranslation } from '@/locales';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useScriptMetadata } from '@/contexts/ScriptMetadataContext';
@@ -10,6 +10,7 @@ import { MetacodeInsertButtons } from './MetacodeInsertButtons';
 import { GenderMetacodeModal } from './modals/GenderMetacodeModal';
 import { NumberMetacodeModal } from './modals/NumberMetacodeModal';
 import { ImageMetacodeModal } from './modals/ImageMetacodeModal';
+import { API_CONFIG, API_ENDPOINTS } from '@/config';
 
 // Funzione helper per ottenere le lingue con traduzioni
 const getLanguages = (t: any) => [
@@ -55,10 +56,14 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
   const LANGUAGES = React.useMemo(() => {
     // Se è custom non multilingua, mostra solo EN
     if (effectiveIsCustom && effectiveAvailableLanguages && effectiveAvailableLanguages.length === 1) {
+  return allLanguages.filter(lang => lang.code === 'EN');
     }
     // Se ci sono lingue disponibili specificate, usa quelle
     if (effectiveAvailableLanguages && effectiveAvailableLanguages.length > 0) {
-      return allLanguages.filter(lang => effectiveAvailableLanguages.includes(lang.code));
+  // Assicura che IT sia inclusa se supportata globalmente ma mancante accidentalmente dai metadati
+  const set = new Set(effectiveAvailableLanguages);
+  if (!set.has('IT')) set.add('IT');
+  return allLanguages.filter(lang => set.has(lang.code));
     }
     // Altrimenti usa tutte le lingue
     return allLanguages;
@@ -67,6 +72,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [copiedLang, setCopiedLang] = useState<string | null>(null);
   const [copiedAll, setCopiedAll] = useState(false);
+  const [loadingLang, setLoadingLang] = useState<string | null>(null);
   
   // Stati per gli interruttori
   const [genderState, setGenderState] = useState<'male' | 'female' | 'disabled'>('disabled');
@@ -228,6 +234,29 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
       onChange(updated);
       setCopiedAll(true);
       setTimeout(() => setCopiedAll(false), TIMEOUT_CONSTANTS.NOTIFICATION_DURATION);
+    }
+  };
+
+  // Suggerimento AI per una singola lingua specifica, usando il testo EN come sorgente
+  const suggestForLanguage = async (targetLang: string) => {
+    const textEN = normalizedValue.EN || '';
+    if (!textEN.trim()) return;
+    try {
+      setLoadingLang(targetLang);
+      const metacodesDetected = textEN.match(/\[[^\]]+\]/g) || [];
+      const res = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE}` , {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ textEN, langTarget: targetLang, metacodesDetected })
+      });
+      const j = await res.json();
+      if (!res.ok || !j?.success) throw new Error(j?.message || 'AI translate failed');
+      const suggestion = j.data?.suggestion as string | undefined;
+      if (suggestion) handleChange(targetLang, suggestion);
+    } catch (e) {
+      // Silenzioso: evitiamo modali invasive qui
+    } finally {
+      setLoadingLang(null);
     }
   };
 
@@ -440,7 +469,7 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
                     value={normalizedValue[lang.code]}
                     onChange={(text) => handleChange(lang.code, text)}
                     placeholder={`${placeholder} (${lang.label})`}
-                    className="w-full bg-slate-700/50 text-white px-2 py-1 pr-7 rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none resize-y"
+                    className="w-full bg-slate-700/50 text-white px-2 py-1 pr-16 rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none resize-y"
                     genderState={genderState}
                     numberState={numberState}
                     onMetacodeClick={(metacode, mousePos) => handleMetacodeClick(metacode, lang.code, mousePos)}
@@ -448,21 +477,34 @@ export const MultilingualTextEditor: React.FC<MultilingualTextEditorProps> = ({
                     onBlur={handleFieldBlur}
                     onCursorChange={setCursorPosition}
                   />
-                  {/* Pulsante copia singola piccolo e compatto dentro la textarea */}
-                  {normalizedValue.EN && (
+                  {/* Pulsanti azione compatti (AI + copia) */}
+                  <div className="absolute top-1 right-1 flex gap-1">
+                    {/* AI Suggest per lingua */}
                     <button
                       type="button"
-                      onClick={() => copyToLanguage(lang.code)}
-                      className="absolute top-1 right-1 p-0.5 hover:bg-slate-600 rounded transition-colors"
-                      title={t('visualFlowEditor.multilingual.copyFromEN')}
+                      onClick={() => suggestForLanguage(lang.code)}
+                      className={`p-0.5 rounded transition-colors ${normalizedValue.EN ? 'hover:bg-slate-600' : 'opacity-40 cursor-not-allowed'}`}
+                      title={(t as any)('visualFlowEditor.multilingual.aiSuggest') || 'Suggerisci (AI)'}
+                      disabled={!normalizedValue.EN || !!loadingLang}
                     >
-                      {copiedLang === lang.code ? (
-                        <CopyCheck className="w-2.5 h-2.5 text-green-400" />
-                      ) : (
-                        <Copy className="w-2.5 h-2.5 text-gray-400" />
-                      )}
+                      <Wand2 className={`w-2.5 h-2.5 ${loadingLang === lang.code ? 'animate-pulse text-blue-300' : 'text-purple-300'}`} />
                     </button>
-                  )}
+                    {/* Copia da EN */}
+                    {normalizedValue.EN && (
+                      <button
+                        type="button"
+                        onClick={() => copyToLanguage(lang.code)}
+                        className="p-0.5 hover:bg-slate-600 rounded transition-colors"
+                        title={t('visualFlowEditor.multilingual.copyFromEN')}
+                      >
+                        {copiedLang === lang.code ? (
+                          <CopyCheck className="w-2.5 h-2.5 text-green-400" />
+                        ) : (
+                          <Copy className="w-2.5 h-2.5 text-gray-400" />
+                        )}
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

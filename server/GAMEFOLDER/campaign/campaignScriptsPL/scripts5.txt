@@ -143,7 +143,6 @@ SCRIPT tutorClass3Dlg
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT tutorShuttleSubdlg
 
   MENU
@@ -183,7 +182,6 @@ SCRIPT tutorShuttleSubdlg
   Say "W każdym razie jeśli znajdziesz się na stacji, która posiada port wahadłowców, możesz zakupić bilet do innego portu wahadłowców."
   Say "Po prostu stuknij w stację docelową i powiedz, że chcesz tam lecieć. Proste jak bułka z masłem, żółtodziobie."
 END_OF_SCRIPT
-
 SCRIPT guruDlg
 
   ShowDlgScene
@@ -310,7 +308,6 @@ SCRIPT guruDlg
   HideChar guru
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT clubDlg
 
   ShowDlgScene
@@ -594,7 +591,6 @@ SCRIPT clubDlg
   HideChar chairman
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT merchCyanDlg
 
   IFNOT wasAtCyan
@@ -713,7 +709,6 @@ SCRIPT merchCyanDlg
   HideChar merchant
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT labDlg
 
   ShowDlgScene
@@ -1244,7 +1239,6 @@ SCRIPT labDlg
   HideChar designer
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT raceDlg
 
   ShowDlgScene
@@ -1263,317 +1257,313 @@ SCRIPT raceDlg
   HideChar chairman
   HideDlgScene
 END_OF_SCRIPT
-
-SCRIPT FinalRaceDlg
-
-  ShowDlgScene
-  ADD frRound 1
-  IF_IS frRound 3
-    GO frRound3
-  END_OF_IF
-  IF_IS frRound 2
-    GO frRound2
-  END_OF_IF
-  IF_ORDER 0 1
-    IF_ORDER 1 2
-      ShowChar tutor left
-      Say "Hej, nieźle ci poszło. Jak na żółtodzioba."
-      Say "Dałem ci trochę fory na starcie, ale teraz lepiej uważaj."
-      ShowChar richgirl right
-      Say "Pfff. [g(Wy dwaj|Wy dwoje)]. Podczas następnym dwóch lotów rozwalę was w drobny mak."
-      SayChar tutor "Gadać każdy może. Zobaczymy się w przestrzeni kosmicznej."
-      HideChar tutor
-      HideChar richgirl
-    ELSE
-      IF_ORDER 2 2
-        ShowChar richgirl left
-        Say "Dla twojej wiadomości, zajęcie drugiego miejsca jest częścią mojego planu."
-        Say "To długi wyścig. Nie ma co tracić za dużo energii na starcie."
-        ShowChar tutor right
-        Say "Gadka szmatka. Zobaczymy, co wydarzy się podczas rundy drugiej."
+  SCRIPT FinalRaceDlg
+    ShowDlgScene
+    ADD frRound 1
+    IF_IS frRound 3
+      GO frRound3
+    END_OF_IF
+    IF_IS frRound 2
+      GO frRound2
+    END_OF_IF
+    IF_ORDER 0 1
+      IF_ORDER 1 2
+        ShowChar tutor left
+        Say "Hej, nieźle ci poszło. Jak na żółtodzioba."
+        Say "Dałem ci trochę fory na starcie, ale teraz lepiej uważaj."
+        ShowChar richgirl right
+        Say "Pfff. [g(Wy dwaj|Wy dwoje)]. Podczas następnym dwóch lotów rozwalę was w drobny mak."
+        SayChar tutor "Gadać każdy może. Zobaczymy się w przestrzeni kosmicznej."
         HideChar tutor
         HideChar richgirl
       ELSE
-        IF_ORDER 3 2
-          ShowChar tutor left
-          ShowChar richgirl right
-          SayChar tutor "Patrzcie państwo! Zółtodziób i pstrokaciak na przedzie!"
-          SayChar richgirl "To część mojego planu. Lubię atakować od tyłu."
-          SayChar tutor "Gadka szmatka. Zobaczymy, co wydarzy się podczas rundy drugiej."
+        IF_ORDER 2 2
+          ShowChar richgirl left
+          Say "Dla twojej wiadomości, zajęcie drugiego miejsca jest częścią mojego planu."
+          Say "To długi wyścig. Nie ma co tracić za dużo energii na starcie."
+          ShowChar tutor right
+          Say "Gadka szmatka. Zobaczymy, co wydarzy się podczas rundy drugiej."
           HideChar tutor
           HideChar richgirl
+        ELSE
+          IF_ORDER 3 2
+            ShowChar tutor left
+            ShowChar richgirl right
+            SayChar tutor "Patrzcie państwo! Zółtodziób i pstrokaciak na przedzie!"
+            SayChar richgirl "To część mojego planu. Lubię atakować od tyłu."
+            SayChar tutor "Gadka szmatka. Zobaczymy, co wydarzy się podczas rundy drugiej."
+            HideChar tutor
+            HideChar richgirl
+          END_OF_IF
         END_OF_IF
       END_OF_IF
-    END_OF_IF
-  ELSE
-    IF_ORDER 1 1
-      ShowChar tutor left
-      Say "Ha. Świetny start! Teraz muszę tylko zwiększyć swoją przewagę."
-      IF_ORDER 0 2
-        Say "Tobie też idzie nienajgorzej, żółtodziobie!"
-      END_OF_IF
-      IF_ORDER 2 2
-        ShowChar richgirl right
-        Say "To ma być przewaga? Nadrobię to podczas rundy drugiej – jeszcze zanim zdążysz opuścić magazyn."
-        HideChar richgirl
-      END_OF_IF
-      IF_ORDER 3 2
-        ShowChar halfbreed right
-        Say "Kh."
-        HideChar halfbreed
-      END_OF_IF
-      HideChar tutor
     ELSE
-      IF_ORDER 2 1
-        ShowChar richgirl left
-        Say "Zdaje się, że prowadzę. Jak zwykle."
+      IF_ORDER 1 1
+        ShowChar tutor left
+        Say "Ha. Świetny start! Teraz muszę tylko zwiększyć swoją przewagę."
         IF_ORDER 0 2
-          ShowChar tutor right
-          Say "Nie bądź taka pewna siebie, paniusiu. Mój żółtodziób jest tuż za tobą."
-          HideChar tutor
+          Say "Tobie też idzie nienajgorzej, żółtodziobie!"
         END_OF_IF
-        IF_ORDER 1 2
-          ShowChar tutor right
-          Say "To była dopiero pierwsza runda, paniusiu. Zobaczymy jak się sprawy będą miały po zakończeniu rundy drugiej."
-          SayChar richgirl "Jest jeszcze runda trzecia. I tak wszyscy wiemy, jak to się skończy."
-          HideChar tutor
+        IF_ORDER 2 2
+          ShowChar richgirl right
+          Say "To ma być przewaga? Nadrobię to podczas rundy drugiej – jeszcze zanim zdążysz opuścić magazyn."
+          HideChar richgirl
         END_OF_IF
         IF_ORDER 3 2
           ShowChar halfbreed right
-          Say "Kh. Fwr'z."
+          Say "Kh."
           HideChar halfbreed
         END_OF_IF
-        HideChar richgirl
+        HideChar tutor
       ELSE
-        IF_ORDER 3 1
-          ShowChar halfbreed left
-          Say "…!"
+        IF_ORDER 2 1
+          ShowChar richgirl left
+          Say "Zdaje się, że prowadzę. Jak zwykle."
           IF_ORDER 0 2
             ShowChar tutor right
-            Say "Dobra robota, pstrokaciaku. Ale mój żółtodziób już depcze ci po mackach."
+            Say "Nie bądź taka pewna siebie, paniusiu. Mój żółtodziób jest tuż za tobą."
             HideChar tutor
           END_OF_IF
           IF_ORDER 1 2
             ShowChar tutor right
-            Say "Dobra robota, pstrokaciaku, ale wyścig się jeszcze nie skończył."
+            Say "To była dopiero pierwsza runda, paniusiu. Zobaczymy jak się sprawy będą miały po zakończeniu rundy drugiej."
+            SayChar richgirl "Jest jeszcze runda trzecia. I tak wszyscy wiemy, jak to się skończy."
             HideChar tutor
           END_OF_IF
-          IF_ORDER 2 2
-            ShowChar richgirl right
-            Say "Mocne słowa, ufoku. Nie podniecaj się tak. Oszczędzaj się na kolejne rundy."
-            HideChar richgirl
+          IF_ORDER 3 2
+            ShowChar halfbreed right
+            Say "Kh. Fwr'z."
+            HideChar halfbreed
           END_OF_IF
-          HideChar halfbreed
+          HideChar richgirl
+        ELSE
+          IF_ORDER 3 1
+            ShowChar halfbreed left
+            Say "…!"
+            IF_ORDER 0 2
+              ShowChar tutor right
+              Say "Dobra robota, pstrokaciaku. Ale mój żółtodziób już depcze ci po mackach."
+              HideChar tutor
+            END_OF_IF
+            IF_ORDER 1 2
+              ShowChar tutor right
+              Say "Dobra robota, pstrokaciaku, ale wyścig się jeszcze nie skończył."
+              HideChar tutor
+            END_OF_IF
+            IF_ORDER 2 2
+              ShowChar richgirl right
+              Say "Mocne słowa, ufoku. Nie podniecaj się tak. Oszczędzaj się na kolejne rundy."
+              HideChar richgirl
+            END_OF_IF
+            HideChar halfbreed
+          END_OF_IF
         END_OF_IF
       END_OF_IF
     END_OF_IF
-  END_OF_IF
-  HideDlgScene
-  RETURN
-
-  LABEL frRound2
-  IF_ORDER 0 1
-    IF_ORDER 1 2
-      ShowChar tutor left
-      Say "Masz dobry dzień, żółtodziobie."
-      Say "Ale ja jestem tuż za tobą. Nie oczekuj, że obejdę się z tobą lekko podczas ostatniej rundy."
-      ShowChar richgirl right
-      Say "Hm. Pozwoliłam wam objąć prowadzenie, żeby trochę urozmaicić ostatnią rundę."
-      SayChar tutor "Ha, zobaczymy!"
-      HideChar tutor
-      HideChar richgirl
-    ELSE
-      IF_ORDER 2 2
-        ShowChar richgirl left
-        Say "Wszystko idzie zgodnie z planem. Teraz zajmuję drugie miejsce, ale jeszcze wyjdę na prowadzenie przed metą."
-        ShowChar tutor right
-        Say "Nie słuchaj jej, żółtodziobie! Nieźle dziś pilotujesz!"
+    HideDlgScene
+    RETURN
+    LABEL frRound2
+    IF_ORDER 0 1
+      IF_ORDER 1 2
+        ShowChar tutor left
+        Say "Masz dobry dzień, żółtodziobie."
+        Say "Ale ja jestem tuż za tobą. Nie oczekuj, że obejdę się z tobą lekko podczas ostatniej rundy."
+        ShowChar richgirl right
+        Say "Hm. Pozwoliłam wam objąć prowadzenie, żeby trochę urozmaicić ostatnią rundę."
+        SayChar tutor "Ha, zobaczymy!"
         HideChar tutor
         HideChar richgirl
       ELSE
-        IF_ORDER 3 2
-          ShowChar tutor left
-          ShowChar richgirl right
-          SayChar tutor "Mojemu żółtodziobowi idzie bardzo dobrze. Pstrokaciak też jest nienajgorszy."
-          SayChar richgirl "[g(Obaj|Oboje)] są w porządku, ale nie mają ze mną szans w rundzie trzeciej."
-          SayChar tutor "Tak? Muszę to zobaczyć, paniusiu."
+        IF_ORDER 2 2
+          ShowChar richgirl left
+          Say "Wszystko idzie zgodnie z planem. Teraz zajmuję drugie miejsce, ale jeszcze wyjdę na prowadzenie przed metą."
+          ShowChar tutor right
+          Say "Nie słuchaj jej, żółtodziobie! Nieźle dziś pilotujesz!"
           HideChar tutor
           HideChar richgirl
+        ELSE
+          IF_ORDER 3 2
+            ShowChar tutor left
+            ShowChar richgirl right
+            SayChar tutor "Mojemu żółtodziobowi idzie bardzo dobrze. Pstrokaciak też jest nienajgorszy."
+            SayChar richgirl "[g(Obaj|Oboje)] są w porządku, ale nie mają ze mną szans w rundzie trzeciej."
+            SayChar tutor "Tak? Muszę to zobaczyć, paniusiu."
+            HideChar tutor
+            HideChar richgirl
+          END_OF_IF
         END_OF_IF
       END_OF_IF
-    END_OF_IF
-  ELSE
-    IF_ORDER 1 1
-      ShowChar tutor left
-      Say "Ha, to moja wielka szansa!"
-      IF_ORDER 0 2
-        Say "Mam nadzieję, że podoba ci się drugie miejsce, żółtodziobie!"
-      END_OF_IF
-      IF_ORDER 2 2
-        ShowChar richgirl right
-        Say "Tak. Przypadnie ci drugie miejsce, jeśli ci z tyłu się nie pospieszą."
-        Say "Pozwoliłam ci wyjść na prowadzenie, żeby trzecia runda była bardziej interesująca, ale mimo to zwycięstwo nie będzie dla mnie zbyt dużym wyzwaniem."
-        HideChar richgirl
-      END_OF_IF
-      IF_ORDER 3 2
-        ShowChar halfbreed right
-        Say "Kh."
-        HideChar halfbreed
-      END_OF_IF
-      HideChar tutor
     ELSE
-      IF_ORDER 2 1
-        ShowChar richgirl left
-        Say "Wygrywam z rękami za głową. To wszystko na co was stać?"
+      IF_ORDER 1 1
+        ShowChar tutor left
+        Say "Ha, to moja wielka szansa!"
         IF_ORDER 0 2
-          ShowChar tutor right
-          Say "Hej, żółtodziobie, nie jesteś znowu tak w tyle. Dogoń ją!"
-          HideChar tutor
+          Say "Mam nadzieję, że podoba ci się drugie miejsce, żółtodziobie!"
         END_OF_IF
-        IF_ORDER 1 2
-          ShowChar tutor right
-          Say "Nie prowokuj mnie, paniusiu. Myślę, że strach cię obleciał."
-          SayChar richgirl "Tak, boję się, że zanudzę się na śmierć. Przejdźmy już do rundy trzeciej."
-          HideChar tutor
+        IF_ORDER 2 2
+          ShowChar richgirl right
+          Say "Tak. Przypadnie ci drugie miejsce, jeśli ci z tyłu się nie pospieszą."
+          Say "Pozwoliłam ci wyjść na prowadzenie, żeby trzecia runda była bardziej interesująca, ale mimo to zwycięstwo nie będzie dla mnie zbyt dużym wyzwaniem."
+          HideChar richgirl
         END_OF_IF
         IF_ORDER 3 2
           ShowChar halfbreed right
-          Say "Kh. Kh fwr'z."
+          Say "Kh."
           HideChar halfbreed
         END_OF_IF
-        HideChar richgirl
+        HideChar tutor
       ELSE
-        IF_ORDER 3 1
-          ShowChar halfbreed left
-          Say "…!"
+        IF_ORDER 2 1
+          ShowChar richgirl left
+          Say "Wygrywam z rękami za głową. To wszystko na co was stać?"
           IF_ORDER 0 2
             ShowChar tutor right
-            Say "Pstrokaciak zostawia nas w tyle. Przynajmniej mojemu żółtodziobowi jakoś jeszcze idzie."
+            Say "Hej, żółtodziobie, nie jesteś znowu tak w tyle. Dogoń ją!"
             HideChar tutor
-            ShowChar richgirl right
-            Say "Może ciebie zostawia w tyle. Ja prześcignę [g(obu|oboje)] podczas rundy trzeciej."
-            HideChar richgirl
           END_OF_IF
           IF_ORDER 1 2
             ShowChar tutor right
-            Say "Może tak, pstrokaciaku, ale nie powiedziałem jeszcze ostatniego słowa!"
+            Say "Nie prowokuj mnie, paniusiu. Myślę, że strach cię obleciał."
+            SayChar richgirl "Tak, boję się, że zanudzę się na śmierć. Przejdźmy już do rundy trzeciej."
             HideChar tutor
           END_OF_IF
-          IF_ORDER 2 2
-            ShowChar richgirl right
-            Say "Nie przesadzajmy, kosmito. Tak szybko cię minę, że zapomnisz jakiego jesteś koloru."
-            HideChar richgirl
+          IF_ORDER 3 2
+            ShowChar halfbreed right
+            Say "Kh. Kh fwr'z."
+            HideChar halfbreed
           END_OF_IF
-          HideChar halfbreed
+          HideChar richgirl
+        ELSE
+          IF_ORDER 3 1
+            ShowChar halfbreed left
+            Say "…!"
+            IF_ORDER 0 2
+              ShowChar tutor right
+              Say "Pstrokaciak zostawia nas w tyle. Przynajmniej mojemu żółtodziobowi jakoś jeszcze idzie."
+              HideChar tutor
+              ShowChar richgirl right
+              Say "Może ciebie zostawia w tyle. Ja prześcignę [g(obu|oboje)] podczas rundy trzeciej."
+              HideChar richgirl
+            END_OF_IF
+            IF_ORDER 1 2
+              ShowChar tutor right
+              Say "Może tak, pstrokaciaku, ale nie powiedziałem jeszcze ostatniego słowa!"
+              HideChar tutor
+            END_OF_IF
+            IF_ORDER 2 2
+              ShowChar richgirl right
+              Say "Nie przesadzajmy, kosmito. Tak szybko cię minę, że zapomnisz jakiego jesteś koloru."
+              HideChar richgirl
+            END_OF_IF
+            HideChar halfbreed
+          END_OF_IF
         END_OF_IF
       END_OF_IF
     END_OF_IF
-  END_OF_IF
-  HideDlgScene
-  RETURN
-
-  LABEL frRound3
-  RESET frHBfirst
-  RESET frRGfirst
-  SET finalRaceFinished
-  IF_ORDER 2 1
-    SET frRGfirst
-    ChangeChar richgirl campaign/rich-smile.png
-    ShowChar richgirl left
-    Say "Taaaak, udało mi się!"
-    Delay 500
-    ChangeChar richgirl campaign/rich-bored.png
-    Delay 200
-    Say "To znaczy… oczywiście, że się tego spodziewałam."
-    Say "Wam też nie poszło najgorzej. Poćwiczcie jeszcze kilka lat i może będziecie w stanie zagwarantować mi jakieś wyzwanie."
-    Delay 200
-    ChangeChar richgirl campaign/rich-smile.png
-    Delay 600
-    ChangeChar richgirl campaign/rich-smile-cheer.png
-    Delay 400
-    ChangeChar richgirl campaign/rich-smile.png
-  ELSE
-    IF_ORDER 3 1
-      SET frHBfirst
-      ShowChar halfbreed left
-      Say "… …!"
-      Say "H' khwk!"
-      Say "Ja wygrać /Ja być zwycięzca / ja zająć pierwsze miejsce!"
-    END_OF_IF
-  END_OF_IF
-  ShowChar tutor right
-  IF_ORDER 0 1
-    IF_ORDER 1 2
-      Say "Gratuluję, żółtodziobie!"
-      Say "[g(Obaj|Oboje)] odnieśliśmy sukces, tylko ty trochę wiekszy."
+    HideDlgScene
+    RETURN
+    LABEL frRound3
+    RESET frHBfirst
+    RESET frRGfirst
+    SET finalRaceFinished
+    IF_ORDER 2 1
+      SET frRGfirst
+      ChangeChar richgirl campaign/rich-smile.png
+      ShowChar richgirl left
+      Say "Taaaak, udało mi się!"
+      Delay 500
+      ChangeChar richgirl campaign/rich-bored.png
+      Delay 200
+      Say "To znaczy… oczywiście, że się tego spodziewałam."
+      Say "Wam też nie poszło najgorzej. Poćwiczcie jeszcze kilka lat i może będziecie w stanie zagwarantować mi jakieś wyzwanie."
+      Delay 200
+      ChangeChar richgirl campaign/rich-smile.png
+      Delay 600
+      ChangeChar richgirl campaign/rich-smile-cheer.png
+      Delay 400
+      ChangeChar richgirl campaign/rich-smile.png
     ELSE
-      Say "Gratuluję, żółtodziobie!"
-      Say "Mi nie poszło najlepiej, ale ty nam pokazałeś!"
-    END_OF_IF
-    SET finalRaceWon
-  ELSE
-    IF_ORDER 0 2
-      IF_ORDER 1 1
-        Say "Tak! Wreszcie wygrałem!"
-        Say "Tobie też poszło całkiem nieźle, żółtodziobie. Ale mi jednak trochę lepiej."
-      ELSE
-        Say "No, gratuluję…"
-        Say "Mojemu żółtodziobowi też poszło nienajgorzej. Drugie miejsce nie jest złe!"
+      IF_ORDER 3 1
+        SET frHBfirst
+        ShowChar halfbreed left
+        Say "… …!"
+        Say "H' khwk!"
+        Say "Ja wygrać /Ja być zwycięzca / ja zająć pierwsze miejsce!"
       END_OF_IF
-    ELSE
-      IF_ORDER 1 1
-        Say "Tak! Wreszcie wygrałem!"
-        Say "Przykro mi, że nie poszło ci tak dobrze jak na to liczyłeś, żółtodziobie. I tak było nieźle jak na pierwszy raz."
+    END_OF_IF
+    ShowChar tutor right
+    IF_ORDER 0 1
+      IF_ORDER 1 2
+        Say "Gratuluję, żółtodziobie!"
+        Say "[g(Obaj|Oboje)] odnieśliśmy sukces, tylko ty trochę wiekszy."
       ELSE
-        IF_ORDER 1 2
-          Say "Ach! Byłem tak blisko. No nic. Gratulacje."
-          Say "Przykro mi, że nie poszło ci tak dobrze jak na to liczyłeś, żółtodziobie. I tak było nieźle jak na pierwszy raz."
+        Say "Gratuluję, żółtodziobie!"
+        Say "Mi nie poszło najlepiej, ale ty nam pokazałeś!"
+      END_OF_IF
+      SET finalRaceWon
+    ELSE
+      IF_ORDER 0 2
+        IF_ORDER 1 1
+          Say "Tak! Wreszcie wygrałem!"
+          Say "Tobie też poszło całkiem nieźle, żółtodziobie. Ale mi jednak trochę lepiej."
         ELSE
           Say "No, gratuluję…"
-          Say "Wygląda na to, że i mi, i żółtodziobowi nie poszło najlepiej."
+          Say "Mojemu żółtodziobowi też poszło nienajgorzej. Drugie miejsce nie jest złe!"
+        END_OF_IF
+      ELSE
+        IF_ORDER 1 1
+          Say "Tak! Wreszcie wygrałem!"
+          Say "Przykro mi, że nie poszło ci tak dobrze jak na to liczyłeś, żółtodziobie. I tak było nieźle jak na pierwszy raz."
+        ELSE
+          IF_ORDER 1 2
+            Say "Ach! Byłem tak blisko. No nic. Gratulacje."
+            Say "Przykro mi, że nie poszło ci tak dobrze jak na to liczyłeś, żółtodziobie. I tak było nieźle jak na pierwszy raz."
+          ELSE
+            Say "No, gratuluję…"
+            Say "Wygląda na to, że i mi, i żółtodziobowi nie poszło najlepiej."
+          END_OF_IF
         END_OF_IF
       END_OF_IF
     END_OF_IF
-  END_OF_IF
-  IF frHBfirst
+    IF frHBfirst
+      Delay 300
+      HideChar halfbreed
+      Delay 300
+    END_OF_IF
+    IFNOT frRGfirst
+      ShowChar richgirl left
+    END_OF_IF
+    IF_ORDER 2 2
+      Say "Tak. Moje gratulacje. Tym razem postanowiłam zająć drugie miejsce – żeby ktoś inny mógł się przekonać jak smakuje zwycięstwo."
+    END_OF_IF
+    IF_ORDER 2 3
+      Say "Moje gratulacje. Tym razem leciałam wyłącznie dla zabawy."
+      Say "Tak naprawdę mierzyłam w ostatnie miejsce, ale jestem tak dobra, że nawet nie próbując, finiszuję na wyższej pozycji."
+    END_OF_IF
+    IF_ORDER 2 4
+      Say "W tym roku postanowiłam dać wam fory, żeby zobaczyć, jak sobie beze mnie poradzicie."
+      Say "No i oczywiście wszystko skończyło się tak jak zakładałam. Moje gratulacje."
+    END_OF_IF
+    IFNOT frHBfirst
+      HideChar richgirl
+      Delay 300
+      ShowChar halfbreed left
+      Say "Grtl'j!"
+      Say "…"
+    END_OF_IF
+    Delay 800
+    SayChar tutor "To był świetny wyścig."
+    SayChar tutor "Nieźli z was piloci. W zasadzie jesteście tak dobrzy…"
+    SayChar tutor "…że stawiam każdemu pizzę!"
     Delay 300
-    HideChar halfbreed
+    HideChar tutor
     Delay 300
-  END_OF_IF
-  IFNOT frRGfirst
-    ShowChar richgirl left
-  END_OF_IF
-  IF_ORDER 2 2
-    Say "Tak. Moje gratulacje. Tym razem postanowiłam zająć drugie miejsce – żeby ktoś inny mógł się przekonać jak smakuje zwycięstwo."
-  END_OF_IF
-  IF_ORDER 2 3
-    Say "Moje gratulacje. Tym razem leciałam wyłącznie dla zabawy."
-    Say "Tak naprawdę mierzyłam w ostatnie miejsce, ale jestem tak dobra, że nawet nie próbując, finiszuję na wyższej pozycji."
-  END_OF_IF
-  IF_ORDER 2 4
-    Say "W tym roku postanowiłam dać wam fory, żeby zobaczyć, jak sobie beze mnie poradzicie."
-    Say "No i oczywiście wszystko skończyło się tak jak zakładałam. Moje gratulacje."
-  END_OF_IF
-  IFNOT frHBfirst
-    HideChar richgirl
-    Delay 300
-    ShowChar halfbreed left
-    Say "Grtl'j!"
-    Say "…"
-  END_OF_IF
-  Delay 800
-  SayChar tutor "To był świetny wyścig."
-  SayChar tutor "Nieźli z was piloci. W zasadzie jesteście tak dobrzy…"
-  SayChar tutor "…że stawiam każdemu pizzę!"
-  Delay 300
-  HideChar tutor
-  Delay 300
-  IFNOT frHBfirst
-    HideChar halfbreed
-  ELSE
-    HideChar richgirl
-  END_OF_IF
-  HideDlgScene
-END_OF_SCRIPT
+    IFNOT frHBfirst
+      HideChar halfbreed
+    ELSE
+      HideChar richgirl
+    END_OF_IF
+    HideDlgScene
+  END_OF_SCRIPT
 
 END_OF_SCRIPTS

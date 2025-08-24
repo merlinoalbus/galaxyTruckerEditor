@@ -106,7 +106,8 @@ const COMMAND_CATALOG = {
   'SETFLIGHTSTATUSBAR': { params: ['text:multilingual'], pattern: /^SetFlightStatusBar\s+"(.+)"$/ },
   
   // PERSONAGGI
-  'SHOWCHAR': { params: ['character', 'position:enum'], pattern: /^ShowChar\s+(\w+)\s+(left|center|right)$/ },
+  // Reso case-insensitive, esteso a tutte le posizioni note e con immagine opzionale (terzo parametro)
+  'SHOWCHAR': { params: ['character', 'position:enum', 'image'], pattern: /^ShowChar\s+(\w+)\s+(left|center|right|top|bottom|lefttop|leftbottom|righttop|rightbottom)(?:\s+(.+))?$/i },
   'HIDECHAR': { params: ['character'], pattern: /^HideChar\s+(\w+)$/ },
   'CHANGECHAR': { params: ['character', 'image'], pattern: /^ChangeChar\s+(\w+)\s+(.+)$/ },
   'FOCUSCHAR': { params: ['character'], pattern: /^FocusChar\s+(\w+)$/i },
@@ -170,11 +171,11 @@ const COMMAND_CATALOG = {
   'SETACHIEVEMENTPROGRESS': { params: ['achievement', 'value:number'], pattern: /^SetAchievementProgress\s+([\w_]+)\s+(\d+)$/i },
   'SETACHIEVEMENTATTEMPT': { params: ['achievement', 'value:number'], pattern: /^SetAchievementAttempt\s+([\w_]+)\s+(\d+)$/i },
   'UNLOCKACHIEVEMENT': { params: ['achievement'], pattern: /^UnlockAchievement\s+([\w_]+)$/i },
-  'UNLOCKSHIPPLAN': { params: ['plan'], pattern: /^UnlockShipPlan\s+(\w+)$/i },
+  'UNLOCKSHIPPLAN': { params: ['plan'], pattern: /^UnlockShipPlan\s+"?([^"]+)"?$/i },
   'UNLOCKSHUTTLES': { params: [], pattern: /^UnlockShuttles$/i },
   
   // HELP SCRIPTS
-  'BUILDINGHELPSCRIPT': { params: [], pattern: /^BuildingHelpScript$/i },
+  'BUILDINGHELPSCRIPT': { params: ['value:number', 'script:string'], pattern: /^BuildingHelpScript\s+(\d+)\s+"?([\\/\w-]+)"?$/i },
   'FLIGHTHELPSCRIPT': { params: ['script:string'], pattern: /^FlightHelpScript\s+"?(\w+)"?$/ },
   'ALIENHELPSCRIPT': { params: ['script:string'], pattern: /^AlienHelpScript\s+"?(\w+)"?$/ },
   
@@ -197,7 +198,16 @@ const COMMAND_CATALOG = {
   'SETADVPILE': { params: ['params:complex'], pattern: /^SetAdvPile\s+(.+)$/i, example: '1 3' },
   'SETSECRETADVPILE': { params: ['params:complex'], pattern: /^SetSecretAdvPile\s+(.+)$/i, example: '2 1' },
   'ADDSHIPPARTS': { params: ['params:string'], pattern: /^AddShipParts\s+(.+)$/i, example: 'parts/allParts.yaml' },
-  'SHOWHELPIMAGE': { params: ['params:complex'], pattern: /^SHOWHELPIMAGE\s+(.+)$/i, example: '40 50 70 campaign/tutorial-purple.png' }
+  'SHOWHELPIMAGE': { params: ['params:complex'], pattern: /^SHOWHELPIMAGE\s+(.+)$/i, example: '40 50 70 campaign/tutorial-purple.png' },
+
+  // DECK MANAGEMENT (gestiti principalmente come stringa unica per massima compatibilità)
+  'DECKADDCARDTYPE': { params: ['params:complex'], pattern: /^DeckAddCardType\s+(.+)$/i },
+  'DECKADDALLCARDS': { params: [], pattern: /^DeckAddAllCards$/i },
+  'DECKADDCARDROUND': { params: ['params:complex'], pattern: /^DeckAddCardRound\s+(.+)$/i },
+  'DECKADDRULEPOSITION': { params: ['params:complex'], pattern: /^DeckAddRulePosition\s+(.+)$/i },
+  'DECKADDRULERANGE': { params: ['params:complex'], pattern: /^DeckAddRuleRange\s+(.+)$/i },
+  'DECKSHUFFLE': { params: [], pattern: /^DeckShuffle$/i },
+  'SETSUPERCARDSCNT': { params: ['params:complex'], pattern: /^SetSuperCardsCnt\s+(.+)$/i }
 };
 
 /**
@@ -1043,6 +1053,14 @@ function parseCommand(line, commandMatch, language, lineIndex) {
       });
     }
     
+    // Alias e normalizzazioni post-mapping
+    if (commandName === 'UNLOCKSHIPPLAN') {
+      // Normalizza: esponi anche 'shipPlan' come alias di 'plan'
+      if (commandObject.parameters && commandObject.parameters.plan && commandObject.parameters.shipPlan === undefined) {
+        commandObject.parameters.shipPlan = commandObject.parameters.plan;
+      }
+    }
+
     return {
       nextIndex: lineIndex + 1,
       object: commandObject,
@@ -1453,7 +1471,16 @@ const COMMAND_SYNTAX_MAP = {
   'SETADVPILE': 'SetAdvPile',
   'SETSECRETADVPILE': 'SetSecretAdvPile',
   'ADDSHIPPARTS': 'AddShipParts',
-  'SHOWHELPIMAGE': 'ShowHelpImage'
+  'SHOWHELPIMAGE': 'ShowHelpImage',
+
+  // Deck commands
+  'DECKADDCARDTYPE': 'DeckAddCardType',
+  'DECKADDALLCARDS': 'DeckAddAllCards',
+  'DECKADDCARDROUND': 'DeckAddCardRound',
+  'DECKADDRULEPOSITION': 'DeckAddRulePosition',
+  'DECKADDRULERANGE': 'DeckAddRuleRange',
+  'DECKSHUFFLE': 'DeckShuffle',
+  'SETSUPERCARDSCNT': 'SetSuperCardsCnt'
 };
 
 /**
@@ -1481,6 +1508,10 @@ function serializeCommand(element, targetLanguage = 'EN') {
       
       // Prima cerca in element.parameters, poi direttamente in element
       let paramValue = element.parameters ? element.parameters[paramName] : undefined;
+      // Compatibilità: accetta 'shipPlan' come alias di 'plan'
+      if (paramValue === undefined && paramName === 'plan' && element.parameters && element.parameters.shipPlan !== undefined) {
+        paramValue = element.parameters.shipPlan;
+      }
       if (paramValue === undefined && element[paramName] !== undefined) {
         paramValue = element[paramName];
       }
@@ -1510,7 +1541,7 @@ function serializeCommand(element, targetLanguage = 'EN') {
           // Per parametri stringa che necessitano virgolette
           // NON aggiungere virgolette per: achievement, shiptype, condition, pile, progress, node, image, script
           const noQuoteParams = ['achievement', 'shiptype', 'pile', 'progress', 'node', 'image', 'script'];
-          const needQuoteParams = ['path', 'file']; // Parametri che necessitano sempre virgolette
+          const needQuoteParams = ['path', 'file', 'plan']; // Parametri che necessitano sempre virgolette
           
           // Eccezione: per SetDeckPreparationScript e SetFlightDeckPreparationScript, il parametro 'script' deve SEMPRE essere tra virgolette
           if ((element.type === 'SETDECKPREPARATIONSCRIPT' || element.type === 'SETFLIGHTDECKPREPARATIONSCRIPT') && paramName === 'script') {

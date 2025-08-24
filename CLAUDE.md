@@ -2,187 +2,220 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Architettura del Progetto
+## Project Architecture
 
-Editor visuale completo per Galaxy Trucker con gestione real-time di script, missioni e sistemi di gioco.
+Full Visual Editor for Galaxy Trucker with real-time management of scripts, missions, and game systems.
 
-### Stack Tecnologico
-- **Frontend**: React 18, TypeScript, Tailwind CSS, Context API
-- **Backend**: Express.js, Node.js, gestione file reali YAML/TXT  
-- **Editor**: Monaco Editor, drag-and-drop nativo, validazione real-time
+### Tech Stack
+- **Frontend**: React 18, TypeScript, Tailwind CSS, Context API, Monaco Editor
+- **Backend**: Express.js, Node.js, real-time YAML/TXT file management  
+- **Build**: Craco (CRA wrapper), custom path aliases with `@/`
 
-### Struttura Modularizzata
+### Core Architecture Patterns
+
+**Hooks Composition Pattern**: All business logic encapsulated in modular hooks
+- `useBlockManipulation`: Block CRUD operations with validation
+- `useDragAndDrop`: Drag-drop state and handlers
+- `useZoomNavigation`: Viewport and zoom controls
+- `useScriptManagement`: Script loading/saving/parsing
+- `useJsonConversion`: Bidirectional JSON↔Block conversion
+
+**Service Layer Pattern**: Parser services handle complex transformations
+- `CampaignScriptParserService`: Main parser orchestrator
+- `scriptParserService`: Nested block parsing (1222 lines)
+- `scriptLoaderService`: File I/O operations
+- Preserves formatting, comments, empty lines
+
+**Context Providers**: Global state management
+- `SceneContext`: Dialog scene state management
+- `LanguageContext`: Multi-language support
+- `FullscreenContext`: Fullscreen mode control
+- `AchievementsImagesContext`: Achievement images caching
+
+### Modular Structure
 
 ```
 src/
 ├── components/CampaignEditor/
-│   ├── VisualFlowEditor/     # Editor drag-and-drop blocchi script
-│   ├── InteractiveMap/        # Grafo interattivo missioni
-│   ├── VariablesSystem/       # Gestione variabili/achievement
-│   └── Overview/              # Dashboard metriche qualità
-├── hooks/                     # Custom hooks React
-├── services/                  # Parser e business logic
-├── types/                     # TypeScript types
-└── contexts/                  # Context providers globali
+│   ├── VisualFlowEditor/      # Drag-and-drop script block editor
+│   ├── InteractiveMap/         # Interactive mission graph
+│   ├── VariablesSystem/        # Variables/achievements management
+│   └── Overview/               # Quality metrics dashboard
+├── hooks/                      # Custom React hooks (use* pattern)
+├── services/                   # Parsers and business logic
+├── types/                      # TypeScript definitions (I* prefix for interfaces)
+└── contexts/                   # Global context providers
 
 server/
-├── GAMEFOLDER/               # File reali del gioco
-│   ├── campaignScripts*/     # Script per lingua
-│   ├── missions/             # Missioni YAML
-│   └── localization_strings/ # Traduzioni
-├── routes/                   # API endpoints
-└── server.js                 # Entry point backend
+├── GAMEFOLDER/                # Real game files (CAUTION: direct modifications)
+│   ├── campaignScripts*/      # Scripts per language (EN/DE/FR/ES/PL/CS/RU)
+│   ├── missions/              # YAML missions
+│   └── localization_strings/  # Translations
+└── server.js                  # Express entry point (port 3001)
 ```
 
-## Comandi di Sviluppo
+## Development Commands
 
-### Gestione Server
+### Server Management
 
 ```bash
-# Backend (porta 3001) - Richiede restart manuale dopo modifiche
-startBE     # Avvia Backend con verifica
-stopBE      # Ferma Backend
-restartBE   # Riavvia Backend
+# Backend (port 3001) - NO hot reload, requires manual restart
+startBE      # Start Backend with verification (scripts/start-be.sh)
+stopBE       # Stop Backend (scripts/stop-be.sh)
+restartBE    # Restart Backend (scripts/restart-be.sh)
 
-# Frontend (porta 3000) - Hot reload automatico
-startFE     # Avvia Frontend con verifica
-stopFE      # Ferma Frontend  
-restartFE   # Riavvia Frontend
+# Frontend (port 3000) - Auto hot reload
+startFE      # Start Frontend with verification (scripts/start-fe.sh)
+stopFE       # Stop Frontend (scripts/stop-fe.sh)
+restartFE    # Restart Frontend (scripts/restart-fe.sh)
 
-# Gestione combinata
-start       # Avvia entrambi in sequenza
-stop        # Ferma entrambi
-restart     # Riavvia entrambi
+# Combined management
+start        # Start both sequentially (scripts/start-all.sh)
+stop         # Stop both (scripts/stop-all.sh)
+restart      # Restart both (scripts/restart-all.sh)
 ```
 
-**IMPORTANTE**: Backend NON ha hot reload. Dopo modifiche in `server/`, sempre `restartBE`.
+**CRITICAL**: 
+- Backend requires `restartBE` after any `server/` modifications
+- Logs saved to `BE.log` (backend) and `FE.log` (frontend) in project root
+- All scripts verify service startup with 60-second timeout
 
-### Build e Test
+### Build & Test
 
 ```bash
-# Frontend
-npm run build    # Build produzione con Craco
-npm test         # Test Jest
+npm run build        # Production build with Craco
+npm test            # Jest tests with React Testing Library
 
-# Backend
-cd server && npm start    # Produzione
-cd server && npm run dev  # Development con nodemon
+# Backend specific
+cd server && npm run dev    # Development mode with nodemon (auto-restart)
+cd server && npm test       # Backend Jest tests
 ```
 
-## Visual Flow Editor - Sistema Blocchi
+## Visual Flow Editor - Block System
 
-### Tipologie Blocchi Supportati
+### Supported Block Types
 
-- **Comandi Base**: TEXT, SAY, GO, EXIT_MENU, LAUNCH_MISSION
-- **Contenitori**: MENU (con OPT figli), IF (con THEN/ELSE)
-- **Scene**: SHOW_SCENE, HIDE_SCENE
-- **Personaggi**: SHOW_CHAR, HIDE_CHAR
-- **Costruzione**: BUILD, FLIGHT
+Core blocks defined in `types/CampaignEditor/VisualFlowEditor/blocks.types.ts`:
+- **Basic**: TEXT, SAY, GO, EXIT_MENU, LAUNCH_MISSION
+- **Containers**: MENU (with OPT children), IF (with THEN/ELSE)
+- **Scenes**: SHOW_SCENE, HIDE_SCENE, SHOWDLGSCENE, HIDEDLGSCENE
+- **Characters**: SHOW_CHAR, HIDE_CHAR, CHANGECHAR, SAYCHAR
+- **Construction**: BUILD, FLIGHT (with init/start/evaluate sub-blocks)
 
-### Aggiunta Nuovo Blocco
+### Adding New Block
 
-1. **Definire tipo** in `types/CampaignEditor/VisualFlowEditor/blocks.types.ts`
-2. **Creare componente** in `components/.../blocks/NuovoBlocco/`
-3. **Registrare rendering** in `BlockRenderer.tsx`
-4. **Aggiungere colore** in `utils/.../blockColors.ts`
-5. **Implementare validazione** in `hooks/.../validation/`
-6. **Estendere parser** in `CampaignScriptParserService.ts`
+1. **Define type** in `blocks.types.ts`
+2. **Create component** in `components/.../blocks/NewBlock/`
+3. **Register renderer** in `BlockRenderer.tsx`
+4. **Add color** in `utils/.../blockColors.ts`
+5. **Implement validation** in `hooks/.../validation/`
+6. **Extend parser** in `CampaignScriptParserService.ts`
 
-## Sistema Parsing Bidirezionale
+## Bidirectional Parsing System
 
-Parser specializzati per conversione script ↔ blocchi:
+Key services:
+- **CampaignScriptParserService**: Main campaign script parser
+- **scriptParserService**: Nested blocks and metacode parsing
+- Preserves: comments, empty lines, original formatting
 
-- **CampaignScriptParserService**: Parser principale script campagna
-- **scriptParserService**: Parsing blocchi annidati e metacodici
-- **Preserva**: Commenti, linee vuote, formattazione originale
+## Multilingua & Metacodes
 
-## Multilingua e Metacodici
-
-### Lingue Supportate
+### Supported Languages
 EN, DE, FR, ES, PL, CS, RU
 
-### Metacodici Principali (50+ pattern)
-- `[player]`, `[credits]`, `[flight]`, `[ship]`
-- `[mission_result:ID]`, `[string:KEY]`
-- `[gender:M|F|N:testo]`, `[plural:N|S:testo]`
-- `[image:character:NAME]`
+### Main Metacodes (50+ patterns)
+- Variables: `[player]`, `[credits]`, `[flight]`, `[ship]`
+- Results: `[mission_result:ID]`, `[string:KEY]`
+- Conditional: `[gender:M|F|N:text]`, `[plural:N|S:text]`
+- Images: `[image:character:NAME]`
 
-### Sincronizzazione
-Modifiche strutturali propagate automaticamente tra lingue mantenendo traduzioni esistenti.
+Structural changes auto-propagate across languages preserving existing translations.
 
-## API Backend
+## Backend API
 
+Base URL: `http://localhost:3001/api` (configured in `src/config/constants.ts`)
+
+```javascript
+// Scripts endpoints
+/api/scripts                          # GET all scripts, POST new script
+/api/scripts/:name                    # GET script by name
+/api/scripts/:name/save              # POST save script
+/api/scripts/variables               # GET all variables
+/api/scripts/semaphores              # GET all semaphores
+/api/scripts/labels                  # GET all labels
+
+// Translations
+/api/scripts/translations/coverage    # GET translation coverage stats
+/api/scripts/translations/:name      # GET translation details for script
+/api/scripts/ai-translate            # POST AI translation request
+/api/scripts/ai-translate-batch      # POST batch AI translation
+
+// Missions
+/api/missions                        # GET all missions
+/api/missions/:name                  # GET mission by name
+/api/missions/:name/save            # POST save mission
+/api/missions/routes                 # GET mission routes
+
+// Game elements
+/api/game/characters                 # GET character definitions
+/api/game/nodes                     # GET map nodes
+/api/game/achievements              # GET achievements
+/api/images                         # GET character images
+/api/images/binary                  # GET binary image data
 ```
-/api/scripts      # CRUD script campagna
-/api/missions     # Gestione missioni multiplayer
-/api/variables    # Sistema variabili/achievement
-/api/images       # Immagini personaggi
-/api/validation   # Validazione real-time
-```
 
-Tutti gli endpoint validano input con `jsonschema` e sanitizzano path.
+All endpoints validate with `jsonschema` and sanitize paths.
 
-## Convenzioni Codice
+## Code Conventions
 
 ### TypeScript
-- Types in file `.types.ts` dedicati
-- Interfacce prefisso `I` (es. `IFlowBlock`)
-- Discriminated unions per varianti
-- Strict mode abilitato
+- Types in dedicated `.types.ts` files
+- Interfaces with `I` prefix
+- Discriminated unions for variants
+- Strict mode enabled
+- Path alias `@/` maps to `src/`
 
 ### React
 - Functional components + hooks
-- Custom hooks prefisso `use`
-- React.memo per ottimizzazione
-- Context API per stato globale
+- Custom hooks with `use` prefix
+- React.memo for optimization
+- Context API for global state
 
 ### Styling
 - Tailwind CSS utilities-first
-- Theme custom `gt-*` per Galaxy Trucker
-- Animazioni CSS native
-- Dark mode non supportato
+- Custom `gt-*` theme for Galaxy Trucker
+- Native CSS animations
 
-## Validazione e Testing
+## Validation & Testing
 
-### Validazione Automatica
-- Sintassi comandi e struttura nidificata
-- Esistenza file referenziati (missioni, immagini)
-- Coerenza metacodici multilingua
-- Limiti caratteri per localizzazione
+### Automatic Validation
+- Command syntax and nested structure
+- Referenced file existence (missions, images)
+- Multilingua metacode consistency
+- Localization character limits
 
-### Checklist Pre-Commit
-1. `npm run build` senza errori
-2. `restartBE` avvio corretto
-3. Validazione editor pulita
-4. Test drag-and-drop preserva struttura
-5. Parsing round-trip mantiene contenuto
+### Pre-Commit Checklist
+1. `npm run build` without errors
+2. `restartBE` starts correctly
+3. Clean editor validation
+4. Drag-and-drop preserves structure
+5. Round-trip parsing maintains content
 
-## Note Critiche
+## Critical Notes
 
-- **File Reali**: Backend modifica direttamente `server/GAMEFOLDER/`
-- **Backup**: Obbligatorio prima modifiche massive
-- **Performance**: Virtualizzare script >2000 righe
-- **Parser**: Mai modificare logica preservazione commenti
-- **Multilingua**: Sempre sincronizzare struttura tra lingue
-- **Hot Reload**: Solo Frontend, Backend richiede restart
-- **Browser**: Chrome/Edge ottimali, Firefox può avere issue drag-and-drop
-## Communication Guidelines
-- Always communicate in Italian language
-- Interactions must be fully understood and respected word by word, syllable by syllable
-- Prohibited from ignoring or pretending not to have read any part of messages
-- Must maintain the most professional approach
-- No use of mockups, placeholders, or regressions without explicit prior authorization
-- prima di eseguire modifiche al codice devi fare analisi del codice esistente
-- identificare la soluzione migliore significa trovare la soluzione più robusta ed efficace a prescindere dalle risorse computazionali necessarie per realizzarla.
-- qualsiasi modifica di codice eseguita deve comprendere da parte tua verifica che il codice non presenti errori di build o Runtime
-- ogni modifica che fai devi rivalidarla tu stesso per 3 volte... controllando se ti sei dimenticato qualcosa.
-- devi verificare che le modifiche che hai apportato non abbiano portato regressioni.
-- TI è FATTO DIVIETO di cercare la via più facile... devi applicare la via più efficiente a prescindere dal costo computazionale per raggiungerla.
+- **Real Files**: Backend modifies `server/GAMEFOLDER/` directly - BACKUP REQUIRED
+- **Performance**: Virtualize scripts >2000 lines for optimal rendering
+- **Parser**: Never modify comment preservation logic - critical for game compatibility
+- **Multilingua**: Always sync structure across all 7 languages when modifying scripts
+- **Hot Reload**: Frontend only, Backend requires manual `restartBE` after changes
+- **Browser**: Chrome/Edge optimal, Firefox may have drag-and-drop issues
+- **Block IDs**: Generated with UUID v4, must be unique across entire script tree
+- **Validation**: Two-tier system - errors (blocking) and warnings (non-blocking)
+- **Script Parsing**: Bidirectional conversion must be lossless (script→blocks→script)
 
-##IMPORTANTE##
-- DOPO AVER SVOLTO MINUZIOSAMENTE PER OGNI PUNTO DELLA TODOS, PRIMA DI PASSARE AL PUNTO SUCCESSIVO DEVI eseguire la validazione dello step richiamando l'agent: galaxy-task-validator che potrà approvare il completamento dell'attività o rigettarla. 
-- galaxy-task-validator NON è TENUTO ED HA IL DIVIETO ASSOLUTO DI ESEGUIRE MODIFICHE AL CODICE. IL SUO COMPITO è SOLO VERIFICARE CHE TU HAI SVOLTO BENE.
-- L'AUTORITà del galaxy-task-validator è PARI ALLA MIA E TU NON HAI IL DIRITTO DI NEGOZIARE O RIFIUTARTI DI ESEGUIRE LE SUE RICHIESTE MINUZIOSAMENTE.
-- SE SOSPETTI UN POSSIBILE ERRORE DELL'AGENT PUOI APPELLARTI A ME CHE VALIDERò IL DA FARSI RIPORTANDOMI ESATTAMENTE LA RICHIESTA DELL'AGENT E I TUOI DUBBI.
-- SE L'AGENT DECIDE CHE NON HAI SVOLTO BENE L'ATTIVITà NON PUOI SEGNARE VALIDATO IL PUNTO, NON PUOI PASSARE A PUNTI SUCCESSIVI NON PUOI FARE ALTRO SE NON CORREGGERE OTTEMPERANDO ALLE SUE RICHIESTE O APPELLARTI AL MIO GIUDIZIO.
-- QUALSIASI INADEMPIENZA A QUESTA PROCEDURA VERRà PUNITA CON UNA SEGNALAZIONE DI BUG.
+## Known Issues & Workarounds
+
+- **Large Scripts**: Scripts over 2000 lines may cause performance issues - use virtualization
+- **Drag-Drop Firefox**: Use Chrome/Edge for reliable drag-and-drop operations
+- **Backend Restart**: Always restart backend after modifying server files - no hot reload
+- **Translation Sync**: Structural changes require manual sync across all language files

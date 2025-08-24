@@ -13,6 +13,59 @@ const router = express.Router();
 const logger = getLogger();
 const { findAllRelatedScripts } = require('../utils/scriptAnalyzer');
 
+// API: Lista ship plans da GAME_ROOT/ships (name/type)
+router.get('/ship-plans', async (req, res) => {
+  try {
+    logger.info('API call: GET /api/game/ship-plans - Listing ship plans from ships/*.yaml');
+
+    const shipsDir = path.join(GAME_ROOT, 'ships');
+    if (!await fs.pathExists(shipsDir)) {
+      logger.warn('ships directory not found');
+      return res.json({ success: true, data: [], count: 0 });
+    }
+
+  const entries = await fs.readdir(shipsDir, { withFileTypes: true });
+  const plans = [];
+
+    for (const entry of entries) {
+      if (entry.isFile() && /\.ya?ml$/i.test(entry.name)) {
+        const fullPath = path.join(shipsDir, entry.name);
+        try {
+          const content = await fs.readFile(fullPath, 'utf8');
+          const data = yaml.load(content);
+          // Some YAML files are arrays of plans, others single objects
+          if (Array.isArray(data)) {
+            for (const item of data) {
+              if (item && typeof item === 'object' && item.name) {
+                plans.push({ id: String(item.name), type: item.type ?? null });
+              }
+            }
+          } else if (data && typeof data === 'object') {
+            if (data.name) {
+              plans.push({ id: String(data.name), type: data.type ?? null });
+            } else {
+              // no name -> skip (we don't use filename-derived ids per spec)
+              logger.warn(`Ship plan file ${entry.name} missing 'name' field, skipping.`);
+            }
+          } else {
+            logger.warn(`Ship plan file ${entry.name} has unsupported YAML structure`);
+          }
+        } catch (e) {
+          logger.warn(`Failed to parse ship plan ${entry.name}: ${e.message}`);
+        }
+      }
+    }
+
+  // Ordina per id
+  plans.sort((a, b) => (a.id || '').localeCompare(b.id || ''));
+
+  res.json({ success: true, data: plans, count: plans.length });
+  } catch (error) {
+    logger.error(`Error retrieving ship plans: ${error.message}`);
+    res.status(500).json({ success: false, error: 'Failed to retrieve ship plans', message: error.message });
+  }
+});
+
 // API 6: Lista personaggi secondo specifica
 router.get('/characters', async (req, res) => {
   try {
@@ -473,9 +526,24 @@ async function findAllImagesRecursive(dir, targetName, foundPaths = new Set(), m
 // Trova tutte le immagini possibili per un personaggio
 async function findAllCharacterImages(nomepersonaggio, imagePath = null) {
   const images = [];
-  const foundPaths = new Set(); // Per evitare duplicati
-  
-  // Cerca in più cartelle dove potrebbero essere le immagini dei personaggi
+  const foundPaths = new Set();
+  const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif'];
+  // Estrai prefisso base
+  let basePrefix = null;
+  let baseDirs = [];
+  if (imagePath) {
+    const ext = path.extname(imagePath);
+    const fileName = path.basename(imagePath, ext);
+    // Prendi solo la parte prima del primo trattino (es: archeologist-hands-down -> archeologist)
+    const baseMatch = fileName.match(/^([a-zA-Z0-9]+)/);
+    basePrefix = baseMatch ? baseMatch[1] : fileName;
+    // Cartella specifica dell'immagine base
+    const baseDir = path.join(GAME_ROOT, path.dirname(imagePath));
+    baseDirs.push(baseDir);
+  } else {
+    basePrefix = nomepersonaggio;
+  }
+  // Cartelle standard
   const searchPaths = [
     path.join(GAME_ROOT, 'campaign'),
     path.join(GAME_ROOT, 'campaign', 'campaignMap', 'big'),
@@ -484,128 +552,68 @@ async function findAllCharacterImages(nomepersonaggio, imagePath = null) {
     path.join(GAME_ROOT, 'avatars', 'common'),
     path.join(GAME_ROOT, 'expansions', '01_alien_technologies', 'images')
   ];
-  
-  let foundAnyImage = false;
-  
-  // PRIMA: Se c'è un imagePath specificato, cerca esattamente quello
-  if (imagePath) {
-    const fullImagePath = path.join(GAME_ROOT, imagePath);
-    if (await fs.pathExists(fullImagePath)) {
-      try {
-        const buffer = await fs.readFile(fullImagePath);
-        const ext = path.extname(imagePath);
-        const nomefile = path.basename(imagePath, ext);
-        
-        images.push({
-          nomefile: nomefile,
-          percorso: imagePath,
-          binary: buffer.toString('base64')
-        });
-        foundPaths.add(fullImagePath);
-        foundAnyImage = true;
-        logger.info(`Found specified image for ${nomepersonaggio}: ${imagePath}`);
-      } catch (error) {
-        logger.warn(`Cannot read specified image ${imagePath}: ${error.message}`);
-      }
-    }
+  // Unisci cartelle, evitando duplicati
+  for (const dir of searchPaths) {
+    if (!baseDirs.includes(dir)) baseDirs.push(dir);
   }
-  
-  // SECONDO: Cerca immagini che corrispondono al nome del personaggio nelle cartelle comuni
-  try {
-    for (const searchPath of searchPaths) {
-      if (await fs.pathExists(searchPath)) {
-        const files = await fs.readdir(searchPath);
-        const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif'];
-        
-        for (const file of files) {
-          const ext = path.extname(file).toLowerCase();
-          if (imageExtensions.includes(ext)) {
-            const baseName = path.basename(file, ext).toLowerCase();
-            const characterNameLower = nomepersonaggio.toLowerCase();
-            
-            // Controlla se è un'immagine del personaggio con match più flessibile
-            if (baseName === characterNameLower || 
-                baseName.startsWith(characterNameLower + '-') ||
-                baseName.startsWith(characterNameLower + '_') ||
-                baseName.startsWith(characterNameLower + ' ') ||
-                (baseName.startsWith(characterNameLower) && baseName.length <= characterNameLower.length + 2)) {
-              const fullPath = path.join(searchPath, file);
-              
-              // Evita duplicati usando il Set
-              if (foundPaths.has(fullPath)) continue;
-              
-              try {
-                const stats = await fs.stat(fullPath);
-                // Salta file troppo grandi (>5MB)
-                if (stats.size > 5 * 1024 * 1024) {
-                  logger.warn(`Skipping large image file: ${file} (${stats.size} bytes)`);
-                  continue;
-                }
-                
-                const buffer = await fs.readFile(fullPath);
-                
-                // Determina il percorso relativo corretto
-                const relativePath = path.relative(GAME_ROOT, fullPath).replace(/\\/g, '/');
-                
-                // Nome display più pulito
-                const displayName = path.basename(file, ext);
-                
-                images.push({
-                  nomefile: displayName,
-                  percorso: relativePath,
-                  binary: buffer.toString('base64')
-                });
-                foundPaths.add(fullPath);
-                foundAnyImage = true;
-              } catch (fileError) {
-                logger.warn(`Cannot read image file ${file}: ${fileError.message}`);
-              }
-            }
+  // Ricerca ricorsiva in tutte le cartelle
+  async function findImagesRecursive(currentDir) {
+    if (!(await fs.pathExists(currentDir))) return;
+    const entries = await fs.readdir(currentDir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(currentDir, entry.name);
+      if (entry.isDirectory()) {
+        await findImagesRecursive(fullPath);
+      } else if (entry.isFile()) {
+        const ext = path.extname(entry.name).toLowerCase();
+        if (!imageExtensions.includes(ext)) continue;
+        const baseName = path.basename(entry.name, ext);
+        // Considera solo l'immagine base (<nomebase>.png) e le varianti (<nomebase>-qualcosa.png)
+        if (
+          baseName === basePrefix ||
+          baseName.startsWith(basePrefix + '-')
+        ) {
+          if (foundPaths.has(fullPath)) continue;
+          try {
+            const stats = await fs.stat(fullPath);
+            if (stats.size > 5 * 1024 * 1024) continue;
+            const buffer = await fs.readFile(fullPath);
+            const relativePath = path.relative(GAME_ROOT, fullPath).replace(/\\/g, '/');
+            images.push({
+              nomefile: baseName,
+              percorso: relativePath,
+              binary: buffer.toString('base64')
+            });
+            foundPaths.add(fullPath);
+            if (images.length >= 20) return; // Limite sicurezza
+          } catch (fileError) {
+            // logga ma continua
           }
         }
       }
     }
-  } catch (error) {
-    logger.warn(`Cannot scan for character images for ${nomepersonaggio}: ${error.message}`);
   }
-  
-  // TERZO: Se ancora non abbiamo trovato abbastanza immagini, cerca ricorsivamente
-  if (images.length < 10) { // Limita per evitare troppe immagini
-    logger.info(`Searching recursively for more images of ${nomepersonaggio}...`);
-    const recursiveResults = await findAllImagesRecursive(GAME_ROOT, nomepersonaggio, foundPaths);
-    
-    for (const fullPath of recursiveResults) {
-      // Salta se già aggiunto
-      if (foundPaths.has(fullPath)) continue;
-      
-      try {
-        const stats = await fs.stat(fullPath);
-        // Salta file troppo grandi (>5MB)
-        if (stats.size > 5 * 1024 * 1024) {
-          logger.warn(`Skipping large image file: ${fullPath} (${stats.size} bytes)`);
-          continue;
-        }
-        
-        const buffer = await fs.readFile(fullPath);
-        const relativePath = path.relative(GAME_ROOT, fullPath).replace(/\\/g, '/');
-        const ext = path.extname(fullPath);
-        const nomefile = path.basename(fullPath, ext);
-        
+  for (const dir of baseDirs) {
+    if (images.length >= 20) break;
+    await findImagesRecursive(dir);
+  }
+  // Se non è stata trovata nessuna immagine, aggiungi la fallback
+  if (images.length === 0) {
+    const fallbackPath = path.join(GAME_ROOT, 'avatars', 'common', 'avatar_no_avatar.png');
+    try {
+      if (await fs.pathExists(fallbackPath)) {
+        const fallbackBuffer = await fs.readFile(fallbackPath);
         images.push({
-          nomefile: nomefile,
-          percorso: relativePath,
-          binary: buffer.toString('base64')
+          nomefile: 'no_avatar',
+          percorso: 'avatars/common/avatar_no_avatar.png',
+          binary: fallbackBuffer.toString('base64')
         });
-        foundPaths.add(fullPath);
-        foundAnyImage = true;
-        
-        // Limita il numero totale di immagini
-        if (images.length >= 20) break;
-      } catch (error) {
-        logger.warn(`Cannot read recursive image ${fullPath}: ${error.message}`);
       }
-    }
+    } catch (fallbackError) {}
   }
+  // Ordina per nome file, mettendo prima l'immagine base (se c'è)
+  images.sort((a, b) => a.nomefile.localeCompare(b.nomefile));
+  return images;
   
   // Se non è stata trovata nessuna immagine, aggiungi la fallback
   if (!foundAnyImage) {

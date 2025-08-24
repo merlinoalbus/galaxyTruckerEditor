@@ -118,29 +118,20 @@ export function simulateSceneExecution(
             p => p.nomepersonaggio === block.parameters!.character
           );
           
-          // Determina l'immagine da usare
-          let imageToUse: SimulatedImage | null = null;
           if (existingCharIndex >= 0) {
-            // Se il personaggio esiste già, usa la sua lastImmagine
-            imageToUse = currentScene.personaggi[existingCharIndex].lastImmagine;
+            // Se il personaggio esiste già, aggiorna visible e posizione
+            // MA mantieni la lastImmagine esistente (potrebbe essere stata modificata da CHANGECHAR)
+            currentScene.personaggi[existingCharIndex].visible = true;
+            currentScene.personaggi[existingCharIndex].posizione = position;
           } else {
-            // Altrimenti usa l'immagine base
-            imageToUse = getCharacterBaseImage(block.parameters.character);
-          }
-          
-          const newChar: SimulatedCharacter = {
-            nomepersonaggio: block.parameters.character,
-            lastImmagine: imageToUse,
-            visible: true,
-            posizione: position
-          };
-          
-          if (existingCharIndex >= 0) {
-            // Aggiorna il personaggio esistente
-            currentScene.personaggi[existingCharIndex] = newChar;
-          } else {
-            // Aggiungi il nuovo personaggio
-            currentScene.personaggi.push(newChar);
+            // Se non esiste, crea con immagine base
+            const baseImage = getCharacterBaseImage(block.parameters.character);
+            currentScene.personaggi.push({
+              nomepersonaggio: block.parameters.character,
+              lastImmagine: baseImage,
+              visible: true,
+              posizione: position
+            });
           }
           
           lastModifiedCharacter = block.parameters.character;
@@ -148,52 +139,91 @@ export function simulateSceneExecution(
       } else if (block.type === 'HIDECHAR' && block.parameters?.character) {
         if (sceneStack.length > 0) {
           const currentScene = sceneStack[sceneStack.length - 1];
-          const charIndex = currentScene.personaggi.findIndex(
+          let charIndex = currentScene.personaggi.findIndex(
             p => p.nomepersonaggio === block.parameters!.character
           );
-          if (charIndex >= 0) {
-            // Nascondi il personaggio
-            currentScene.personaggi[charIndex].visible = false;
-            
-            // Trova il primo personaggio ancora visibile e impostalo come lastModifiedCharacter
-            const firstVisible = currentScene.personaggi.find(p => p.visible);
-            lastModifiedCharacter = firstVisible ? firstVisible.nomepersonaggio : null;
+          
+          // Se il personaggio non esiste in scena, lo aggiungiamo con visible: false
+          if (charIndex < 0) {
+            const baseImage = getCharacterBaseImage(block.parameters.character);
+            currentScene.personaggi.push({
+              nomepersonaggio: block.parameters.character,
+              lastImmagine: baseImage,
+              visible: false,
+              posizione: 'left'
+            });
+            charIndex = currentScene.personaggi.length - 1;
           }
+          
+          // Nascondi il personaggio
+          currentScene.personaggi[charIndex].visible = false;
+          
+          // Trova un altro personaggio visibile in scena e impostalo come lastModifiedCharacter
+          // Se non ci sono personaggi visibili, imposta null
+          const otherVisible = currentScene.personaggi.find(p => p.visible && p.nomepersonaggio !== block.parameters!.character);
+          lastModifiedCharacter = otherVisible ? otherVisible.nomepersonaggio : null;
         }
       } else if (block.type === 'CHANGECHAR' && block.parameters?.character && block.parameters?.image) {
         if (sceneStack.length > 0) {
           const currentScene = sceneStack[sceneStack.length - 1];
-          const charIndex = currentScene.personaggi.findIndex(
-            p => p.nomepersonaggio === block.parameters!.character && p.visible
+          // Cerca il personaggio in scena (anche se non visibile)
+          let charIndex = currentScene.personaggi.findIndex(
+            p => p.nomepersonaggio === block.parameters!.character
           );
-          if (charIndex >= 0) {
-            // Trova l'immagine selezionata dai dati del personaggio
-            if (charactersData) {
-              const charData = charactersData.find(c => c.nomepersonaggio === block.parameters!.character);
-              if (charData && charData.listaimmagini) {
-                const selectedImage = charData.listaimmagini.find(img => 
-                  img.percorso === block.parameters!.image ||
-                  img.nomefile === block.parameters!.image // fallback per compatibilità
-                );
-                
-                if (selectedImage) {
-                  // Aggiorna la lastImmagine del personaggio
-                  currentScene.personaggi[charIndex].lastImmagine = {
-                    nomefile: selectedImage.nomefile || '',
-                    percorso: selectedImage.percorso,
-                    binary: selectedImage.binary
-                  };
-                  
-                  // Imposta questo personaggio come lastModifiedCharacter
-                  lastModifiedCharacter = block.parameters.character;
-                }
+          // Se non esiste ancora in scena, crealo come non visibile con posizione di default
+          if (charIndex < 0) {
+            const baseImage = getCharacterBaseImage(block.parameters.character);
+            currentScene.personaggi.push({
+              nomepersonaggio: block.parameters.character,
+              lastImmagine: baseImage, // Usa immagine base inizialmente
+              visible: false,
+              posizione: 'left'
+            });
+            charIndex = currentScene.personaggi.length - 1;
+          }
+          // Trova l'immagine selezionata dai dati del personaggio, se disponibile
+          let newImage: SimulatedImage | null = null;
+          if (charactersData) {
+            const charData = charactersData.find(c => c.nomepersonaggio === block.parameters!.character);
+            if (charData && charData.listaimmagini) {
+              const selectedImage = charData.listaimmagini.find(img => 
+                img.percorso === block.parameters!.image ||
+                img.nomefile === block.parameters!.image // fallback per compatibilità
+              );
+              if (selectedImage) {
+                newImage = {
+                  nomefile: selectedImage.nomefile || '',
+                  percorso: selectedImage.percorso,
+                  binary: selectedImage.binary
+                };
               }
             }
           }
+          // Se non trovata nei dati, crea un riferimento di fallback usando percorso/nome
+          if (!newImage) {
+            const path = String(block.parameters.image);
+            const fileName = path.split('/').pop() || path;
+            newImage = { nomefile: fileName, percorso: path };
+          }
+          // Aggiorna lastImmagine anche se il personaggio non è visibile
+          currentScene.personaggi[charIndex].lastImmagine = newImage;
+          // Aggiorna lastModifiedCharacter
+          lastModifiedCharacter = block.parameters.character;
         }
       } else if (block.type === 'SAYCHAR' && block.parameters?.character) {
         if (sceneStack.length > 0) {
           const currentScene = sceneStack[sceneStack.length - 1];
+          const position = block.parameters.position || 'left';
+          
+          // Trova se c'è già un personaggio visibile nella stessa posizione
+          const charInSamePosition = currentScene.personaggi.find(
+            p => p.posizione === position && p.visible
+          );
+          
+          // Se c'è un personaggio nella stessa posizione, nascondilo
+          if (charInSamePosition) {
+            charInSamePosition.visible = false;
+          }
           
           // Trova se il personaggio è già presente nella scena
           const existingCharIndex = currentScene.personaggi.findIndex(
@@ -201,31 +231,74 @@ export function simulateSceneExecution(
           );
           
           if (existingCharIndex >= 0) {
-            // Se il personaggio esiste già, rendilo visibile
+            // Se il personaggio esiste già, rendilo visibile e aggiorna posizione
             currentScene.personaggi[existingCharIndex].visible = true;
+            currentScene.personaggi[existingCharIndex].posizione = position;
           } else {
-            // Se il personaggio non esiste, aggiungilo alla scena a sinistra (comportamento default)
-            const imageToUse = getCharacterBaseImage(block.parameters.character);
-            
-            const newChar: SimulatedCharacter = {
+            // Se il personaggio non esiste, aggiungilo alla scena
+            const baseImage = getCharacterBaseImage(block.parameters.character);
+            currentScene.personaggi.push({
               nomepersonaggio: block.parameters.character,
-              lastImmagine: imageToUse,
+              lastImmagine: baseImage,
               visible: true,
-              posizione: 'left' // SAYCHAR mette sempre il personaggio a sinistra per default
-            };
-            
-            // Nascondi eventuali personaggi nella stessa posizione
-            const charInSamePosition = currentScene.personaggi.find(
-              p => p.posizione === 'left' && p.visible
-            );
-            if (charInSamePosition) {
-              charInSamePosition.visible = false;
-            }
-            
-            currentScene.personaggi.push(newChar);
+              posizione: position
+            });
           }
           
           // Imposta come ultimo personaggio modificato
+          lastModifiedCharacter = block.parameters.character;
+        }
+      } else if (block.type === 'ASKCHAR' && block.parameters?.character) {
+        // Comportamento analogo a SAYCHAR: assicura presenza/visibilità del personaggio e aggiorna lastModified
+        if (sceneStack.length > 0) {
+          const currentScene = sceneStack[sceneStack.length - 1];
+          const position = block.parameters.position || 'left';
+          
+          // Trova se c'è già un personaggio visibile nella stessa posizione
+          const charInSamePosition = currentScene.personaggi.find(
+            p => p.posizione === position && p.visible
+          );
+          
+          // Se c'è un personaggio nella stessa posizione, nascondilo
+          if (charInSamePosition) {
+            charInSamePosition.visible = false;
+          }
+          
+          const existingCharIndex = currentScene.personaggi.findIndex(
+            p => p.nomepersonaggio === block.parameters!.character
+          );
+          
+          if (existingCharIndex >= 0) {
+            currentScene.personaggi[existingCharIndex].visible = true;
+            currentScene.personaggi[existingCharIndex].posizione = position;
+          } else {
+            const baseImage = getCharacterBaseImage(block.parameters.character);
+            currentScene.personaggi.push({
+              nomepersonaggio: block.parameters.character,
+              lastImmagine: baseImage,
+              visible: true,
+              posizione: position
+            });
+          }
+          lastModifiedCharacter = block.parameters.character;
+        }
+      } else if (block.type === 'FOCUSCHAR' && block.parameters?.character) {
+        // Porta il personaggio selezionato in focus: mantieni visibile, aggiorna lastModified e opzionalmente porta in primo piano la posizione corrente
+        if (sceneStack.length > 0) {
+          const currentScene = sceneStack[sceneStack.length - 1];
+          const charIndex = currentScene.personaggi.findIndex(p => p.nomepersonaggio === block.parameters!.character);
+          if (charIndex >= 0) {
+            currentScene.personaggi[charIndex].visible = true;
+            // Mantieni la posizione esistente. Se non esiste, aggiungi a sinistra con immagine base
+          } else {
+            const imageToUse = getCharacterBaseImage(block.parameters.character);
+            currentScene.personaggi.push({
+              nomepersonaggio: block.parameters.character,
+              lastImmagine: imageToUse,
+              visible: true,
+              posizione: 'left'
+            });
+          }
           lastModifiedCharacter = block.parameters.character;
         }
       }
@@ -275,4 +348,68 @@ export function getLastModifiedVisibleCharacter(state: SimulatedSceneState): Sim
   );
   
   return char || null;
+}
+
+/**
+ * Ottiene l'ultimo personaggio modificato (anche se non visibile)
+ */
+export function getLastModifiedCharacter(state: SimulatedSceneState): SimulatedCharacter | null {
+  if (!state.lastModifiedCharacter || !state.currentScene) return null;
+  
+  const char = state.currentScene.personaggi.find(
+    p => p.nomepersonaggio === state.lastModifiedCharacter
+  );
+  
+  return char || null;
+}
+
+/**
+ * Simula l'esecuzione fino al blocco PRECEDENTE e ritorna lo stato
+ * Utile per ottenere lo stato "prima" di un blocco per mostrare le transizioni
+ * 
+ * NOTA: Questa è una implementazione semplificata che funziona solo per blocchi al livello root
+ * Per una implementazione completa, serve refactoring per passare l'indice del blocco
+ */
+export function simulateSceneBeforeBlock(
+  allBlocks: IFlowBlock[], 
+  targetBlockId: string,
+  charactersData?: Character[]
+): SimulatedSceneState {
+  // Strategia alternativa: cerchiamo il blocco per content matching se l'ID non funziona
+  let targetIndex = -1;
+  
+  // Prima prova con ID esatto
+  for (let i = 0; i < allBlocks.length; i++) {
+    if (allBlocks[i].id === targetBlockId) {
+      targetIndex = i;
+      break;
+    }
+  }
+  
+  // Se il primo metodo fallisce, è probabile che il targetBlockId sia diverso 
+  // dall'ID reale nell'array allBlocks. In questo caso, per ora ritorniamo 
+  // uno stato "sicuro" che non rompa l'interfaccia.
+  if (targetIndex < 0) {
+    // Fallback: ritorna stato vuoto per evitare errori
+    return {
+      sceneStack: [],
+      isInDialogScene: false,
+      lastModifiedCharacter: null,
+      currentScene: null
+    };
+  }
+  
+  // Se è il primo blocco, ritorna stato vuoto
+  if (targetIndex === 0) {
+    return {
+      sceneStack: [],
+      isInDialogScene: false,
+      lastModifiedCharacter: null,
+      currentScene: null
+    };
+  }
+  
+  // Simula tutti i blocchi fino a quello precedente al target
+  const blocksBefore = allBlocks.slice(0, targetIndex);
+  return simulateSceneExecution(blocksBefore, 'dummy-never-found', charactersData);
 }

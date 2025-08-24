@@ -1,6 +1,6 @@
 {
   "name": "galaxy-trucker-editor-server",
-  "version": "1.0.0",
+  "version": "2.0.2",
   "description": "Backend server for Galaxy Trucker Editor - Real file management",
   "main": "server.js",
   "scripts": {
@@ -9,6 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "archiver": "^7.0.1",
     "chokidar": "^3.5.3",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",

@@ -190,22 +190,25 @@ export const useScriptManagement = ({
       if (result.success && result.data) {
         setCurrentScript(result.data);
         
-        // Aggiungi ID univoci e flag container
+        // Usa addUniqueIds dal blockIdManager che gestisce tutti i tipi di contenitori
+        // Processa blocksMission e blocksFinish con addUniqueIds
+        const blocksMission = result.data.blocksMission ? addUniqueIds(result.data.blocksMission) : [];
+        const blocksFinish = result.data.blocksFinish ? addUniqueIds(result.data.blocksFinish) : [];
+        
+        // Aggiungi flag container dopo aver aggiunto gli ID
         const addContainerFlags = (blocks: any[]): any[] => {
           return blocks.map(block => {
             const newBlock = { ...block };
             
-            // Aggiungi ID se manca
-            if (!newBlock.id) {
-              newBlock.id = generateBlockId(block.type || 'BLOCK');
-            }
-            
-            // Un blocco è container se ha children, thenBlocks, elseBlocks, blocksMission o blocksFinish
-            if (block.children || block.thenBlocks || block.elseBlocks || block.blocksMission || block.blocksFinish) {
+            // Un blocco è container se ha children, thenBlocks, elseBlocks, blocksMission, blocksFinish, blockInit, blockStart, blockEvaluate o finishSection
+            if (block.children || block.thenBlocks || block.elseBlocks || 
+                block.blocksMission || block.blocksFinish || 
+                block.blockInit || block.blockStart || block.blockEvaluate || 
+                block.finishSection) {
               newBlock.isContainer = true;
             }
             
-            // Ricorsivamente processa i children
+            // Ricorsivamente processa tutti i tipi di children
             if (newBlock.children) {
               newBlock.children = addContainerFlags(newBlock.children);
             }
@@ -221,14 +224,26 @@ export const useScriptManagement = ({
             if (newBlock.blocksFinish) {
               newBlock.blocksFinish = addContainerFlags(newBlock.blocksFinish);
             }
+            if (newBlock.blockInit) {
+              newBlock.blockInit = addContainerFlags(newBlock.blockInit);
+            }
+            if (newBlock.blockStart) {
+              newBlock.blockStart = addContainerFlags(newBlock.blockStart);
+            }
+            if (newBlock.blockEvaluate) {
+              newBlock.blockEvaluate = addContainerFlags(newBlock.blockEvaluate);
+            }
+            if (newBlock.finishSection) {
+              newBlock.finishSection = addContainerFlags(newBlock.finishSection);
+            }
             
             return newBlock;
           });
         };
         
-        // Processa blocksMission e blocksFinish
-        const blocksMission = result.data.blocksMission ? addContainerFlags(result.data.blocksMission) : [];
-        const blocksFinish = result.data.blocksFinish ? addContainerFlags(result.data.blocksFinish) : [];
+        // Applica i flag container ai blocchi già processati con ID
+        const blocksMissionWithFlags = addContainerFlags(blocksMission);
+        const blocksFinishWithFlags = addContainerFlags(blocksFinish);
         
         // Crea il blocco MISSION principale
         const missionBlock: IFlowBlock = {
@@ -236,8 +251,8 @@ export const useScriptManagement = ({
           type: 'MISSION',
           position: { x: UI_CONSTANTS.DEFAULT_POSITION_X, y: UI_CONSTANTS.DEFAULT_POSITION_Y },
           isContainer: true,
-          blocksMission: blocksMission,
-          blocksFinish: blocksFinish,
+          blocksMission: blocksMissionWithFlags,
+          blocksFinish: blocksFinishWithFlags,
           name: result.data.name,
           missionName: result.data.name, // Aggiungi anche missionName per compatibilità con MissionBlock
           fileName: result.data.fileName,
@@ -390,13 +405,21 @@ export const useScriptManagement = ({
           }
           
           if (scriptJson && !savedScriptNames.has(scriptJson.name)) {
-            // Aggiungi i metadati custom se esistono
+            // Determina metadati/flag per salvataggio coerente multilingua
+            const isCustom = (scriptData.isCustom !== undefined ? scriptData.isCustom : (currentScript?.isCustom ?? false)) as boolean;
+            const availableLangs = (scriptData.availableLanguages && scriptData.availableLanguages.length > 0)
+              ? scriptData.availableLanguages
+              : (currentScript?.availableLanguages && currentScript.availableLanguages.length > 0)
+                ? currentScript.availableLanguages
+                : (isCustom ? ['EN'] : [...SUPPORTED_LANGUAGES]);
+            // Regola: Standard sempre multilingua; Custom solo se multilingua
+            const isMultilingual = isCustom ? (availableLangs?.length > 1) : true;
+
             const scriptWithMetadata = {
               ...scriptJson,
-              ...(scriptData.isCustom !== undefined && { isCustom: scriptData.isCustom }),
-              ...(scriptData.customPath !== undefined && { customPath: scriptData.customPath }),
-              // Aggiungi flag per indicare se è multilingua (il backend ne ha bisogno per sapere dove salvare)
-              ...(scriptData.isCustom && scriptData.availableLanguages?.length > 1 && { isMultilingual: true })
+              isCustom,
+              ...(scriptData.customPath !== undefined ? { customPath: scriptData.customPath } : (currentScript?.customPath !== undefined ? { customPath: currentScript.customPath } : {})),
+              ...(isMultilingual ? { isMultilingual: true, availableLanguages: availableLangs } : {})
             };
             scriptsToSave.push(scriptWithMetadata);
             savedScriptNames.add(scriptJson.name);
@@ -413,14 +436,19 @@ export const useScriptManagement = ({
           const scriptBlock = mainBlocks.find(b => b.type === 'SCRIPT');
           
           // Aggiungi i metadati custom dal blocco SCRIPT o da currentScript
+          const computedIsCustom = (scriptBlock?.isCustom !== undefined ? scriptBlock.isCustom : (currentScript?.isCustom ?? false)) as boolean;
+          const computedAvailableLangs = (currentScript?.availableLanguages && currentScript.availableLanguages.length > 0)
+            ? currentScript.availableLanguages
+            : (computedIsCustom ? ['EN'] : [...SUPPORTED_LANGUAGES]);
+          const computedIsMultilingual = computedIsCustom ? (computedAvailableLangs.length > 1) : true;
+
           const scriptWithMetadata = {
             ...mainScriptJson,
-            ...((scriptBlock?.isCustom !== undefined || currentScript?.isCustom !== undefined) && { 
-              isCustom: scriptBlock?.isCustom ?? currentScript?.isCustom 
-            }),
+            isCustom: computedIsCustom,
             ...((scriptBlock?.customPath !== undefined || currentScript?.customPath !== undefined) && { 
               customPath: scriptBlock?.customPath ?? currentScript?.customPath 
-            })
+            }),
+            ...(computedIsMultilingual ? { isMultilingual: true, availableLanguages: computedAvailableLangs } : {})
           };
           scriptsToSave.push(scriptWithMetadata);
           savedScriptNames.add(mainScriptJson.name);
@@ -493,16 +521,20 @@ export const useScriptManagement = ({
     const missionBlock = blocksToSave.find(b => b.type === 'MISSION');
     
     // Aggiungi i metadati custom se presenti
+    const computedIsCustom = (missionBlock?.isCustom !== undefined ? missionBlock.isCustom : (currentScript?.isCustom ?? false)) as boolean;
+    const computedAvailableLangs = (currentScript?.availableLanguages && currentScript.availableLanguages.length > 0)
+      ? currentScript.availableLanguages
+      : (computedIsCustom ? ['EN'] : [...SUPPORTED_LANGUAGES]);
+    // Regola: Standard sempre multilingua; Custom solo se multilingua
+    const computedIsMultilingual = computedIsCustom ? (computedAvailableLangs.length > 1) : true;
+
     const missionWithMetadata = {
       ...missionJson,
-      ...((missionBlock?.isCustom !== undefined || currentScript?.isCustom !== undefined) && { 
-        isCustom: missionBlock?.isCustom ?? currentScript?.isCustom 
-      }),
+      isCustom: computedIsCustom,
       ...((missionBlock?.customPath !== undefined || currentScript?.customPath !== undefined) && { 
         customPath: missionBlock?.customPath ?? currentScript?.customPath 
       }),
-      // Aggiungi flag per indicare se è multilingua
-      ...(currentScript?.isCustom && currentScript?.availableLanguages?.length > 1 && { isMultilingual: true })
+      ...(computedIsMultilingual ? { isMultilingual: true, availableLanguages: computedAvailableLangs } : {})
     };
 
     // L'API si aspetta un array di mission

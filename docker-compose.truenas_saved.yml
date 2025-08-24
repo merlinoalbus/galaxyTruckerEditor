@@ -1,0 +1,103 @@
+services:
+  backend:
+    container_name: galaxy-trucker-backend
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1024M
+        reservations:
+          cpus: '0.2'
+          memory: 256M
+    environment:
+      GEMINI_API_KEY: chiave_segreta_gemini
+      NODE_ENV: production
+      PORT: '3001'
+      HOST_ADDRESS: 0.0.0.0
+      TZ: Europe/Rome
+      USER: apps
+    hostname: galaxy-backend
+    image: ghcr.io/merlinoalbus/galaxy-trucker-backend:latest
+    platform: linux/amd64
+    ports:
+      - mode: ingress
+        protocol: tcp
+        published: 13001
+        target: 3001
+    privileged: False
+    pull_policy: missing
+    restart: unless-stopped
+    stdin_open: False
+    tty: False
+    user: '0:0'
+    volumes:
+      - bind:
+          create_host_path: False
+          propagation: rprivate
+        read_only: False
+        source: /mnt/NASMilano/dati/galaxytrucker
+        target: /app/GAMEFOLDER
+        type: bind
+
+  frontend:
+    container_name: galaxy-trucker-frontend
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+    environment:
+      NODE_ENV: production
+      TZ: Europe/Rome
+      USER: apps
+    hostname: galaxy-frontend
+    image: ghcr.io/merlinoalbus/galaxy-trucker-frontend:latest
+    platform: linux/amd64
+    ports:
+      - mode: ingress
+        protocol: tcp
+        published: 13000
+        target: 80
+    privileged: False
+    pull_policy: missing
+    restart: unless-stopped
+    stdin_open: False
+    tty: False
+    user: '0:0'
+
+volumes: {}
+
+x-notes: >+
+  # iX App
+
+
+  ## Galaxy Trucker Editor
+
+
+  ### Container: [backend]
+
+  - Backend API server for Galaxy Trucker Editor
+  - Running on port 13001
+  - Requires GAMEFOLDER volume mount
+
+
+  ### Container: [frontend]
+
+  - Frontend React application
+  - Running on port 13000
+  - Connects to backend API
+
+
+  ## Bug Reports and Feature Requests
+
+  If you find a bug in this app or have an idea for a new feature, please file
+  an issue at https://github.com/merlinoalbus/galaxy-trucker-editor
+
+
+x-portals: 
+  - name: Galaxy Trucker Editor
+    protocol: http
+    port: 13000

@@ -135,11 +135,17 @@ export interface DeckScript {
 }
 
 export interface DeckCommand {
-  type: 'TmpDeckLoad' | 'DeckAddCardType' | 'DeckRemoveCardType';
-  flight?: number;
-  cardType?: string;
-  count?: number;
-  deckFile?: string;
+  type:
+    | 'DeckAddCardType'
+    | 'DeckRemoveCardType'
+    | 'DeckAddAllCards'
+    | 'DeckAddCardRound'
+    | 'DeckAddRulePosition'
+    | 'DeckAddRuleRange'
+    | 'DeckShuffle'
+    | 'SetSuperCardsCnt';
+  // Unico parametro generico che contiene tutti gli argomenti oppure è assente
+  params?: string;            // es.: "1 slavers 2" oppure "\"deck.yaml\""; vuoto per comandi senza parametri
 }
 
 // Metacodici supportati
