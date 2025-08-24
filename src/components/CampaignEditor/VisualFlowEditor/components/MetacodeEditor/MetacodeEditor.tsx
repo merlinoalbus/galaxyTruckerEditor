@@ -12,6 +12,7 @@ import {
 } from './utils/metacodeParser';
 import { MetacodeEditorProps, ParsedMetacode, MetacodePattern } from './types';
 import { useTranslation } from '@/locales';
+import { refreshMetacodesCache } from '../MultilingualTextEditor/MetacodeInsertButtons';
 
 /**
  * Editor avanzato con supporto metacodice visuale
@@ -26,7 +27,7 @@ export const MetacodeEditor: React.FC<MetacodeEditorProps> = ({
 }) => {
   const { t } = useTranslation();
   const [cursorPosition, setCursorPosition] = useState(0);
-  const [selectedPattern, setSelectedPattern] = useState<string | undefined>(undefined);
+  const [selectedPattern, setSelectedPattern] = useState<string | null>(null);
   const [modalType, setModalType] = useState<string | null>(null);
   const [editingMetacode, setEditingMetacode] = useState<ParsedMetacode | null>(null);
   const [parsedCodes, setParsedCodes] = useState<ParsedMetacode[]>([]);
@@ -37,6 +38,36 @@ export const MetacodeEditor: React.FC<MetacodeEditorProps> = ({
     const parsed = parseMetacode(value);
     setParsedCodes(parsed);
   }, [value]);
+
+  // Reset dello stato dopo chiusura modal per evitare problemi con i pulsanti
+  useEffect(() => {
+    if (!modalType && editingMetacode) {
+      // Modal chiusa, reset completo dello stato
+      setEditingMetacode(null);
+      setSelectedPattern(null);
+    }
+  }, [modalType, editingMetacode]);
+
+  // Refresh delle cache per metacode
+  const handleRefreshCache = async () => {
+    try {
+      // Fa effettivamente la chiamata API per aggiornare la cache
+      await refreshMetacodesCache(language || 'IT');
+      
+      // Reset degli stati modali per forzare re-render
+      setSelectedPattern(null);
+      setModalType(null);
+      setEditingMetacode(null);
+      
+      // Re-parse del contenuto attuale per refresh completo
+      const parsed = parseMetacode(value);
+      setParsedCodes(parsed);
+      
+      console.log('Metacodes cache refreshed with fresh API data');
+    } catch (error) {
+      console.warn('Cache refresh failed:', error);
+    }
+  };
 
   // Gestione click su pattern
   const handlePatternClick = (pattern: MetacodePattern) => {
@@ -94,7 +125,14 @@ export const MetacodeEditor: React.FC<MetacodeEditorProps> = ({
       insertAtCursor(code);
     }
     setModalType(null);
-    setSelectedPattern(undefined);
+    setSelectedPattern(null);
+    
+    // Force focus back to textarea to ensure state is correctly updated
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
+    }, 100);
   };
 
   // Gestione click su metacodice nel testo
@@ -169,6 +207,7 @@ export const MetacodeEditor: React.FC<MetacodeEditorProps> = ({
           onPatternClick={handlePatternClick}
           activePattern={selectedPattern}
           visiblePatterns={['gender', 'verb', 'name', 'image', 'icon']}
+          onRefreshCache={handleRefreshCache}
         />
       )}
 

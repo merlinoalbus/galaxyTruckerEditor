@@ -717,6 +717,49 @@ router.get('/translations/:scriptName', async (req, res) => {
 });
 
 // ----------------------------------------------
+// AI Response Cleaning Utility
+// ----------------------------------------------
+
+/**
+ * Cleans AI response by removing unwanted formatting, numbering, and invalid characters
+ */
+function cleanAIResponse(response) {
+  if (!response || typeof response !== 'string') return '';
+  
+  let cleaned = response.trim();
+  
+  // Remove numbered lists at the beginning (1. 2. 3. etc.)
+  cleaned = cleaned.replace(/^\d+\.\s*/gm, '');
+  
+  // Remove bullet points at the beginning (- * + etc.)
+  cleaned = cleaned.replace(/^[-*+]\s*/gm, '');
+  
+  // Remove leading/trailing quotes that might be added by AI
+  cleaned = cleaned.replace(/^["'`]|["'`]$/g, '');
+  
+  // Clean up newlines and carriage returns (normalize to single spaces)
+  cleaned = cleaned.replace(/[\r\n]+/g, ' ');
+  
+  // Remove multiple spaces
+  cleaned = cleaned.replace(/\s+/g, ' ');
+  
+  // Remove common AI prefixes/suffixes
+  const prefixes = [
+    /^(Translation|Translated|Result|Output):\s*/i,
+    /^(Here is the|Here's the|The)\s+translation:\s*/i,
+    /^\s*-\s*/,
+    /^\s*>\s*/
+  ];
+  
+  for (const prefix of prefixes) {
+    cleaned = cleaned.replace(prefix, '');
+  }
+  
+  // Final trim
+  return cleaned.trim();
+}
+
+// ----------------------------------------------
 // NEW: AI translate suggestion (Gemini API)
 // POST /api/scripts/ai-translate
 // body: { textEN, langTarget, metacodesDetected?: string[] }
@@ -736,11 +779,16 @@ router.post('/ai-translate', async (req, res) => {
     const metacodes = Array.isArray(metacodesDetected) ? metacodesDetected.filter(Boolean) : [];
     const codesList = metacodes.length ? `Metacodes: ${metacodes.join(' ')}` : 'Metacodes: none';
     const systemPrompt = [
-      'You are a professional game localizer. Translate from English to the target language preserving placeholders and metacodes.',
-      'Rules:',
-      '- Keep every metacode exactly as is, do not translate or remove them (e.g., [NAME], [IMG:something], [NUM], [GENDER:...]).',
-      '- Return only the translated string, no quotes, no commentary.',
-      '- Prefer idiomatic, natural phrasing for the target language.',
+      'You are a professional game localizer for "Galaxy Trucker", an ironic and humorous space trading game.',
+      'Context: This is a comedic game with witty dialogues, space trading adventures, and quirky characters.',
+      'Translation Rules:',
+      '- Keep every metacode exactly as is, do not translate or remove them. Metacodes are identified by [] brackets.',
+      '- Common metacodes: [g(maschile|femminile|neutro)] for gender, [n(1:singolare|2:plurale)] or [n(1:un gatto|2:due gatti|3:una colonia)] for numbers, [v(Tap|Click)] for device format, [NAME] for player name.',
+      '- When translating, consider how these metacodes will be used in the target language context.',
+      '- Return ONLY the translated string, no quotes, no commentary, no numbering, no prefixes.',
+      '- Maintain the ironic and humorous tone of the original game.',
+      '- Use idiomatic expressions and colloquialisms appropriate for the target language.',
+      '- Preserve the comedic spirit and witty style of Galaxy Trucker.',
       '- If the English text is already language-agnostic (e.g., only metacodes), still return a target-language appropriate phrasing around the codes when appropriate.',
       '',
       codesList
@@ -797,6 +845,9 @@ router.post('/ai-translate', async (req, res) => {
       }
     }
 
+    // Clean up the suggestion (remove numbering, invalid characters, etc.)
+    suggestion = cleanAIResponse(suggestion);
+
     // Validate metacodes preservation (presence check)
     let preservedMetacodesOK = true;
     for (const code of metacodes) {
@@ -829,17 +880,29 @@ router.post('/ai-translate-batch', async (req, res) => {
     }
 
     const systemPrompt = [
-      'You are a professional game localizer. Translate from English to the target language preserving placeholders and metacodes.',
-      '- Keep every metacode exactly as is, do not translate or remove them (e.g., [NAME], [IMG:something], [NUM], [GENDER:...]).',
-      '- Return only the translated string for each item, in order, nothing else.',
-      '- Prefer idiomatic, natural phrasing for the target language.'
+      'You are a professional game localizer for "Galaxy Trucker", an ironic and humorous space trading game.',
+      'Context: This is a comedic game with witty dialogues, space trading adventures, and quirky characters.',
+      'Translation Rules:',
+      '- Keep every metacode exactly as is, do not translate or remove them. Metacodes are identified by [] brackets.',
+      '- Common metacodes: [g(maschile|femminile|neutro)] for gender, [n(1:singolare|2:plurale)] or [n(1:un gatto|2:due gatti|3:una colonia)] for numbers, [v(Tap|Click)] for device format, [NAME] for player name.',
+      '- When translating, consider how these metacodes will be used in the target language context.',
+      '- Maintain the ironic and humorous tone of the original game.',
+      '- Use idiomatic expressions and colloquialisms appropriate for the target language.',
+      '- Preserve the comedic spirit and witty style of Galaxy Trucker.',
+      '- IMPORTANT: Return ONLY a valid JSON array, no other text before or after.'
     ].join('\n');
 
-    // Compose a single request with numbered items to keep order stable
-    const numbered = items.map((it, i) => {
-      const codes = Array.isArray(it.metacodesDetected) && it.metacodesDetected.length ? ` Metacodes: ${it.metacodesDetected.join(' ')}` : '';
-      return `${i + 1}. ${it.textEN}${codes ? `\n${codes}` : ''}`;
-    }).join('\n\n');
+    // Create structured JSON request with IDs for reliable association
+    const structuredItems = items.map((it, i) => ({
+      id: String(i).padStart(3, '0'),
+      text: it.textEN,
+      metacodes: Array.isArray(it.metacodesDetected) ? it.metacodesDetected : []
+    }));
+
+    const jsonRequest = {
+      target: langTarget,
+      items: structuredItems
+    };
 
     const body = {
       contents: [
@@ -847,8 +910,11 @@ router.post('/ai-translate-batch', async (req, res) => {
           parts: [
             { text: systemPrompt },
             { text: `Target language: ${langTarget}` },
-            { text: 'Translate the following entries preserving all metacodes. Reply with one line per entry in the same order, without numbers:' },
-            { text: numbered }
+            { text: 'You will receive a JSON object with texts to translate. Return a JSON array with translations.' },
+            { text: 'Each item in your response must have: {"id": "same_id_from_input", "original": "original_text", "translated": "your_translation"}' },
+            { text: 'Example response: [{"id":"001","original":"Hello","translated":"Ciao"},{"id":"002","original":"Goodbye","translated":"Arrivederci"}]' },
+            { text: 'Input JSON:' },
+            { text: JSON.stringify(jsonRequest) }
           ]
         }
       ]
@@ -871,11 +937,118 @@ router.post('/ai-translate-batch', async (req, res) => {
     const json = await resp.json();
     const fullText = json?.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
-    // Split lines mapping back to items; keep same length (pad if needed)
-    const lines = fullText.split(/\r?\n/).filter((l) => l.trim().length > 0);
-    const suggestions = items.map((_, i) => lines[i] || '');
+    // Parse JSON response
+    let translatedItems = [];
+    try {
+      // Clean response to extract JSON (remove any text before/after)
+      const jsonMatch = fullText.match(/\[[\s\S]*\]/);
+      if (!jsonMatch) {
+        throw new Error('No JSON array found in response');
+      }
+      translatedItems = JSON.parse(jsonMatch[0]);
+    } catch (parseError) {
+      logger.error(`Failed to parse AI JSON response: ${parseError.message}`);
+      // Fallback to line-based parsing
+      const lines = fullText.split(/\r?\n/).filter((l) => l.trim().length > 0);
+      translatedItems = items.map((it, i) => ({
+        id: String(i).padStart(3, '0'),
+        original: it.textEN,
+        translated: cleanAIResponse(lines[i] || it.textEN)
+      }));
+    }
 
-    // Basic metacode preservation validation per item
+    // Create ID map for quick lookup
+    const translationMap = new Map();
+    translatedItems.forEach(item => {
+      if (item && item.id) {
+        translationMap.set(item.id, cleanAIResponse(item.translated || ''));
+      }
+    });
+
+    // Map back to original order using IDs
+    const suggestions = items.map((it, i) => {
+      const id = String(i).padStart(3, '0');
+      return translationMap.get(id) || it.textEN; // Fallback to original
+    });
+
+    // Calculate missing translations
+    const missingCount = suggestions.filter((s, i) => !s || s === items[i].textEN).length;
+    const missingPercentage = (missingCount / items.length) * 100;
+
+    // Retry logic for missing translations
+    if (missingPercentage > 30 && missingPercentage < 80) {
+      logger.info(`Retrying ${missingCount} missing translations (${missingPercentage.toFixed(1)}%)`);
+      
+      // Prepare items for retry
+      const retryItems = [];
+      const retryIndices = [];
+      items.forEach((it, i) => {
+        if (!suggestions[i] || suggestions[i] === it.textEN) {
+          retryItems.push(it);
+          retryIndices.push(i);
+        }
+      });
+
+      // Make retry request (simplified, single attempt)
+      try {
+        const retryBody = {
+          contents: [{
+            parts: [
+              { text: systemPrompt },
+              { text: `Target language: ${langTarget}` },
+              { text: 'Translate these specific items that were missing. Return JSON array:' },
+              { text: JSON.stringify({
+                target: langTarget,
+                items: retryItems.map((it, idx) => ({
+                  id: String(retryIndices[idx]).padStart(3, '0'),
+                  text: it.textEN,
+                  metacodes: it.metacodesDetected || []
+                }))
+              })}
+            ]
+          }]
+        };
+
+        const retryResp = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-goog-api-key': apiKey },
+          body: JSON.stringify(retryBody)
+        });
+
+        if (retryResp.ok) {
+          const retryJson = await retryResp.json();
+          const retryText = retryJson?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          
+          try {
+            const retryMatch = retryText.match(/\[[\s\S]*\]/);
+            if (retryMatch) {
+              const retryTranslations = JSON.parse(retryMatch[0]);
+              retryTranslations.forEach(item => {
+                if (item && item.id) {
+                  const index = parseInt(item.id);
+                  if (!isNaN(index) && index < suggestions.length) {
+                    suggestions[index] = cleanAIResponse(item.translated || items[index].textEN);
+                  }
+                }
+              });
+            }
+          } catch (retryParseError) {
+            logger.warn(`Retry parse failed: ${retryParseError.message}`);
+          }
+        }
+      } catch (retryError) {
+        logger.warn(`Retry request failed: ${retryError.message}`);
+      }
+    } else if (missingPercentage >= 80) {
+      logger.error(`Too many missing translations: ${missingPercentage.toFixed(1)}%`);
+      return res.status(500).json({ 
+        success: false, 
+        error: 'Translation failed - too many missing items',
+        missingPercentage: missingPercentage.toFixed(1)
+      });
+    }
+
+    // Validate metacode preservation
     const preserved = items.map((it, i) => {
       const out = suggestions[i] || '';
       const codes = Array.isArray(it.metacodesDetected) ? it.metacodesDetected : [];

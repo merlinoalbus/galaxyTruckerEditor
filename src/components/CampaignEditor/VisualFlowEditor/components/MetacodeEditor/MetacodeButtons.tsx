@@ -1,4 +1,5 @@
 import React from 'react';
+import { RefreshCw } from 'lucide-react';
 import { MetacodePattern, MetacodeButtonProps } from './types';
 import { useMetacodePatterns, getFrequencyColor, getPatternColor } from './MetacodePatterns';
 
@@ -45,14 +46,16 @@ export const MetacodeButton: React.FC<MetacodeButtonProps> = ({
  */
 interface MetacodeButtonBarProps {
   onPatternClick: (pattern: MetacodePattern) => void;
-  activePattern?: string;
+  activePattern?: string | null;
   visiblePatterns?: string[];
+  onRefreshCache?: () => void;
 }
 
 export const MetacodeButtonBar: React.FC<MetacodeButtonBarProps> = ({
   onPatternClick,
   activePattern,
-  visiblePatterns
+  visiblePatterns,
+  onRefreshCache
 }) => {
   const patternInfos = useMetacodePatterns();
   const patterns: MetacodePattern[] = patternInfos.map(p => ({
@@ -103,6 +106,20 @@ export const MetacodeButtonBar: React.FC<MetacodeButtonBarProps> = ({
           isActive={activePattern === pattern.id}
         />
       ))}
+      
+      {/* Pulsante refresh cache */}
+      {onRefreshCache && (
+        <div className="ml-1 border-l border-slate-600 pl-1">
+          <button
+            type="button"
+            onClick={onRefreshCache}
+            className="px-2 py-1.5 rounded text-xs transition-colors flex items-center justify-center min-w-[28px] bg-slate-700 hover:bg-slate-600 text-gray-300 hover:text-white"
+            title="Aggiorna cache metacode"
+          >
+            <RefreshCw className="w-3 h-3" />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

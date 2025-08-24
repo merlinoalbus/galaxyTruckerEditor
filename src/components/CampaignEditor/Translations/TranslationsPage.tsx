@@ -1121,6 +1121,62 @@ export const TranslationsPage: React.FC = () => {
     return { percent: dynamicPercent, covered: dynamicCovered, totalFields: baseTotal };
   }, [selectedTab, selectedScript, selectedMission, scriptDetails, missionDetails, edits, selectedLang]);
 
+  // Chiudi i dettagli se gli script selezionati non sono più visibili nel filtro
+  useEffect(() => {
+    // Solo se abbiamo dati di coverage (almeno uno)
+    if (!coverage && !missionsCoverage && !nodesData && !yamlMissionsData) return;
+
+    // Calcola gli elementi visibili applicando i filtri
+    let currentSorted: any[] = [];
+    if (selectedTab === 'scripts') {
+      currentSorted = scriptsSorted;
+    } else if (selectedTab === 'missions') {
+      currentSorted = missionsSorted;
+    } else {
+      // Per strings, nodes, yaml-missions non abbiamo ancora sorted arrays
+      // Salta il controllo per queste sezioni per ora
+      return;
+    }
+
+    const filtered = filterItems(currentSorted, globalSearchTerm);
+    const visibleItems = filtered.filter((item: any) => {
+      const d = item.languages?.[selectedLang];
+      if (!d) return false;
+      const dynamicStats = calculateDynamicCoverage(item.script || item.mission || item.category || item.node || '', d.percent, d.covered, d.totalFields);
+      return !onlyMissing || dynamicStats.percent < 100;
+    });
+
+    const visibleNames = new Set(visibleItems.map((item: any) => item.script || item.mission || item.category || item.node || ''));
+    
+    // Chiudi script se non più visibile
+    if (selectedScript && !visibleNames.has(selectedScript)) {
+      setSelectedScript(null);
+    }
+    
+    // Chiudi mission se non più visibile 
+    if (selectedMission && !visibleNames.has(selectedMission)) {
+      setSelectedMission(null);
+    }
+    
+    // Chiudi node se non più visibile
+    if (selectedNode && !visibleNames.has(selectedNode)) {
+      setSelectedNode(null);
+    }
+    
+    // Chiudi category se non più visibile
+    if (selectedCategory && !visibleNames.has(selectedCategory.nome)) {
+      setSelectedCategory(null);
+    }
+    
+    // Per yaml-missions, rimuovi quelli non più visibili
+    if (selectedYamlMissions.size > 0) {
+      const newYamlMissions = new Set(Array.from(selectedYamlMissions).filter(name => visibleNames.has(name)));
+      if (newYamlMissions.size !== selectedYamlMissions.size) {
+        setSelectedYamlMissions(newYamlMissions);
+      }
+    }
+  }, [coverage, missionsCoverage, selectedTab, globalSearchTerm, selectedLang, onlyMissing, selectedScript, selectedMission, scriptsSorted, missionsSorted, filterItems, calculateDynamicCoverage]);
+
   if (loading) return <div className="p-6 text-gray-300">{t('common.loading')}</div>;
   if (error) return <div className="p-6 text-red-400">{t('common.error')}: {error}</div>;
   
@@ -1595,8 +1651,9 @@ export const TranslationsPage: React.FC = () => {
             {filteredSorted.map((item: any) => {
               const d = item.languages[selectedLang];
               if (!d) return null;
-              // Show in Solo mancanti only if completion < 100
-              if (onlyMissing && (d.percent >= 100)) return null;
+              // Show in Solo mancanti only if completion < 100 (usando calcolo dinamico)
+              const dynamicStats = calculateDynamicCoverage(item.script || item.mission || item.category || item.node || '', d.percent, d.covered, d.totalFields);
+              if (onlyMissing && (dynamicStats.percent >= 100)) return null;
               
               let itemName: string = '';
               let isOpen: boolean = false;
