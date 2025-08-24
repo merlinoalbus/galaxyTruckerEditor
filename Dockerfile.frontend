@@ -1,0 +1,83 @@
+# Multi-stage build per Frontend con API universali
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# Copia i file di configurazione
+COPY package*.json ./
+COPY craco.config.js ./
+COPY tailwind.config.js ./
+COPY tsconfig.json ./
+
+# Installa le dipendenze
+RUN npm ci
+
+# Copia il codice sorgente
+COPY public/ ./public/
+COPY src/ ./src/
+
+# Modifica constants.ts per usare SOLO URL relativi (senza host:port)
+RUN sed -i "s|BE_HOST: 'http://localhost'|BE_HOST: ''|g" src/config/constants.ts && \
+    sed -i "s|BE_PORT: 3001|BE_PORT: ''|g" src/config/constants.ts && \
+    sed -i "s|FE_HOST: 'http://localhost'|FE_HOST: ''|g" src/config/constants.ts && \
+    sed -i "s|FE_PORT: 3000|FE_PORT: ''|g" src/config/constants.ts && \
+    sed -i 's/return `${this.BE_HOST}:${this.BE_PORT}`;/return "";/g' src/config/constants.ts && \
+    sed -i 's/return `${this.FE_HOST}:${this.FE_PORT}`;/return "";/g' src/config/constants.ts
+
+# Verifica la modifica
+RUN cat src/config/constants.ts | head -20
+
+# Build con configurazione API relativa
+ENV REACT_APP_API_URL=/api
+RUN npm run build
+
+# Stage finale con nginx
+FROM nginx:alpine
+
+# Installa curl
+RUN apk add --no-cache curl
+
+# Configurazione nginx semplice - solo serve i file statici
+COPY <<EOF /etc/nginx/conf.d/default.conf
+server {
+    listen 80;
+    server_name _;
+
+    # Serve i file statici
+    location / {
+        root /usr/share/nginx/html;
+        index index.html;
+        try_files \$uri \$uri/ /index.html;
+        
+        # CORS headers per tutti i domini
+        add_header 'Access-Control-Allow-Origin' '*' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
+        add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization' always;
+    }
+
+    # File statici con cache
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+        root /usr/share/nginx/html;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        add_header 'Access-Control-Allow-Origin' '*' always;
+    }
+
+    # Health check endpoint
+    location /health {
+        access_log off;
+        return 200 'healthy\n';
+        add_header Content-Type text/plain;
+    }
+}
+EOF
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost/health || exit 1
+
+# Copia i file build dal primo stage
+COPY --from=builder /app/build /usr/share/nginx/html
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
