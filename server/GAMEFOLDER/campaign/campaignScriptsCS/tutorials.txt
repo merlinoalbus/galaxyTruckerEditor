@@ -150,17 +150,16 @@ END_OF_SCRIPT
     Delay 300
     HideDlgScene
   END_OF_SCRIPT
-SCRIPT tutorialEngineWrong
-
-  ShowDlgScene
-  ShowChar tutor right
-  Delay 100
-  Say "Počkej, zadrž! Pokud bys teď odhalil[g(|a)] nový dílek, motor by se na tu pozici přivařil."
-  Say "A kdyby se tam přivařil, celá prává část lodi by už byla nedostupná."
-  Delay 300
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
+  SCRIPT tutorialEngineWrong
+    ShowDlgScene
+    ShowChar tutor right
+    Delay 100
+    Say "Počkej, zadrž! Pokud bys teď odhalil[g(|a)] nový dílek, motor by se na tu pozici přivařil."
+    Say "A kdyby se tam přivařil, celá prává část lodi by už byla nedostupná."
+    Delay 300
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
   SCRIPT tutorialEngineClever
     ShowDlgScene
     Delay 500

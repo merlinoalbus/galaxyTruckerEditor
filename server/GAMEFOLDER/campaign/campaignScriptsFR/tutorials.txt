@@ -152,17 +152,16 @@ END_OF_SCRIPT
     Delay 300
     HideDlgScene
   END_OF_SCRIPT
-SCRIPT tutorialEngineWrong
-
-  ShowDlgScene
-  ShowChar tutor right
-  Delay 100
-  Say "Stop ! Si vous révélez un nouveau composant, le moteur sera soudé à votre vaisseau dans cette position."
-  Say "Et si vous le soudez ici, toute la moitié droite de votre vaisseau sera inaccessible !"
-  Delay 300
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
+  SCRIPT tutorialEngineWrong
+    ShowDlgScene
+    ShowChar tutor right
+    Delay 100
+    Say "Stop ! Si vous révélez un nouveau composant, le moteur sera soudé à votre vaisseau dans cette position."
+    Say "Et si vous le soudez ici, toute la moitié droite de votre vaisseau sera inaccessible !"
+    Delay 300
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
   SCRIPT tutorialEngineClever
     ShowDlgScene
     Delay 500

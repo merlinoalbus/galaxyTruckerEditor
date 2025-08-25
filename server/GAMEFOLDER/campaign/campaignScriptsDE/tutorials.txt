@@ -150,17 +150,16 @@ END_OF_SCRIPT
     Delay 300
     HideDlgScene
   END_OF_SCRIPT
-SCRIPT tutorialEngineWrong
-
-  ShowDlgScene
-  ShowChar tutor right
-  Delay 100
-  Say "Warte mal! Wenn du ein neues Teil aufdeckst, wird der Antriebsmotor festgeschweißt."
-  Say "Und wenn er dort festgeschweißt würde, wäre die rechte Seite deines Schiffs unbrauchbar."
-  Delay 300
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
+  SCRIPT tutorialEngineWrong
+    ShowDlgScene
+    ShowChar tutor right
+    Delay 100
+    Say "Warte mal! Wenn du ein neues Teil aufdeckst, wird der Antriebsmotor festgeschweißt."
+    Say "Und wenn er dort festgeschweißt würde, wäre die rechte Seite deines Schiffs unbrauchbar."
+    Delay 300
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
   SCRIPT tutorialEngineClever
     ShowDlgScene
     Delay 500
