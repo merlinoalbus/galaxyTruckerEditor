@@ -1,7 +1,0 @@
-idName: "at__rand-hard-man1"
-avatar: avatars/campaign/common/medium-man5.png
-color: "byrg"
-preferencesSettings: aiConfigs/settingBase.aipref
-speedSettings: aiConfigs/settingBase.aispeed
-difficulty: hard  #hard, medium, easy
-stupidity: 20

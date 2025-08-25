@@ -1,8 +1,0 @@
-idName: "at__rand-medium-woman4"
-gender: female
-avatar: avatars/campaign/common/medium-woman4.png
-color: "yrbg"
-preferencesSettings: aiConfigs/settingAngry.aipref
-speedSettings: aiConfigs/settingBaseMedium.aispeed
-difficulty: medium  #hard, medium, easy
-stupidity: 60
