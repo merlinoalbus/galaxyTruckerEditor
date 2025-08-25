@@ -1,8 +1,0 @@
-idName: "alterEgo"
-character: basic
-avatar: campaign/alterEgo.png
-color: "rygb"
-preferencesSettings: aiConfigs/settingBase.aipref
-speedSettings: aiConfigs/settingBase.aispeed
-difficulty: hard  #hard, medium, easy
-stupidity: 20

@@ -1,8 +1,0 @@
-idName: "medium_safe"
-character: safe
-avatar: avatars/ai/medium_safe.png
-color: "ygbr"
-preferencesSettings: aiConfigs/settingSafe.aipref
-speedSettings: aiConfigs/settingBaseMedium.aispeed
-difficulty: medium  #hard, medium, easy
-stupidity: 80

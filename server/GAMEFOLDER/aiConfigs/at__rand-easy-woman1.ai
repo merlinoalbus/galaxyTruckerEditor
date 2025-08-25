@@ -1,8 +1,0 @@
-idName: "at__rand-easy-woman1"
-gender: female
-avatar: avatars/campaign/common/easy-woman1.png
-color: "rygb"
-preferencesSettings: aiConfigs/settingBase.aipref
-speedSettings: aiConfigs/settingBaseEasy.aispeed
-difficulty: easy  #hard, medium, easy
-stupidity: 120
