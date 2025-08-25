@@ -43,9 +43,10 @@ const useTop5Metacodes = (language?: string, scriptId?: string) => {
       return;
     }
 
-    // Se già in caricamento per questa lingua, attendi
+    // Se già in caricamento per questa lingua, non bloccare (permetti a tutti di inizializzarsi)
     if (loadingLanguages.has(activeLang)) {
-      setLoading(true);
+      setLoading(false); // Non bloccare, sarà aggiornato quando il primo finisce
+      setTopMetacodes(metacodesCache[cacheKey] || { gender: [], number: [], image: [], name: [] });
       return;
     }
 

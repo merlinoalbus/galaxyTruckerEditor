@@ -79,6 +79,10 @@ export const TranslationsPage: React.FC = () => {
   // Campo di ricerca globale
   const [globalSearchTerm, setGlobalSearchTerm] = useState<string>('');
   const [filteredScriptNames, setFilteredScriptNames] = useState<Set<string>>(new Set());
+  const [filteredStringCategories, setFilteredStringCategories] = useState<Set<string>>(new Set());
+  const [filteredNodesNames, setFilteredNodesNames] = useState<Set<string>>(new Set());
+  const [filteredMissionsNames, setFilteredMissionsNames] = useState<Set<string>>(new Set());
+  const [filteredRegularMissions, setFilteredRegularMissions] = useState<Set<string>>(new Set());
   const [isSearching, setIsSearching] = useState<boolean>(false);
 
   // Hook per localization strings
@@ -120,13 +124,33 @@ export const TranslationsPage: React.FC = () => {
       if (selectedTab === 'scripts' && item.script) {
         return filteredScriptNames.has(item.script) || item.script.toLowerCase().includes(normalizedSearch);
       }
+
+      // Per le strings, usa i risultati della ricerca asincrona nel contenuto
+      if (selectedTab === 'strings' && item.category) {
+        return filteredStringCategories.has(item.category) || item.category.toLowerCase().includes(normalizedSearch);
+      }
+
+      // Per i nodes, usa i risultati della ricerca asincrona nel contenuto
+      if (selectedTab === 'nodes' && item.node) {
+        return filteredNodesNames.has(item.node) || item.node.toLowerCase().includes(normalizedSearch);
+      }
+
+      // Per le missions YAML, usa i risultati della ricerca asincrona nel contenuto
+      if (selectedTab === 'yaml-missions' && item.mission) {
+        return filteredMissionsNames.has(item.mission) || item.mission.toLowerCase().includes(normalizedSearch);
+      }
+
+      // Per le missions regolari, usa i risultati della ricerca asincrona nel contenuto
+      if (selectedTab === 'missions' && item.mission) {
+        return filteredRegularMissions.has(item.mission) || item.mission.toLowerCase().includes(normalizedSearch);
+      }
       
       // Per altri tab, continua con la logica standard
       if (itemName.toLowerCase().includes(normalizedSearch)) {
         return true;
       }
       
-      // For strings tab, check EN and current language values
+      // Legacy fallback for strings tab (keep for backward compatibility)
       if (selectedTab === 'strings' && item.category && selectedCategory && selectedCategory.nome === item.category) {
         const categoryWithStrings = selectedCategory as any;
         // Check EN values
@@ -184,7 +208,7 @@ export const TranslationsPage: React.FC = () => {
       
       return false;
     });
-  }, [selectedTab, selectedLang, categories, selectedCategory, nodesData, yamlMissionsData, filteredScriptNames]);
+  }, [selectedTab, selectedLang, categories, selectedCategory, nodesData, yamlMissionsData, filteredScriptNames, filteredStringCategories, filteredNodesNames, filteredMissionsNames, filteredRegularMissions]);
   
   // Funzione batch per cercare un termine nel contenuto di tutti gli script
   const batchSearchInScripts = useCallback(async (scriptNames: string[], searchTerm: string): Promise<string[]> => {
@@ -203,6 +227,130 @@ export const TranslationsPage: React.FC = () => {
       const result = await response.json();
       if (result.success) {
         return result.data.matchingScripts || [];
+      } else {
+        console.error('Batch search failed:', result.error);
+        return [];
+      }
+    } catch (error) {
+      console.error('Error in batch search:', error);
+      return [];
+    }
+  }, []);
+
+  // Funzione batch per cercare un termine nel contenuto di tutte le categorie strings
+  const batchSearchInStrings = useCallback(async (categoryNames: string[], searchTerm: string): Promise<string[]> => {
+    try {
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}/localization/strings/batch-search`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          categoryNames,
+          searchTerm
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      if (result.success) {
+        return result.data.matchingCategories || [];
+      } else {
+        console.error('Batch search failed:', result.error);
+        return [];
+      }
+    } catch (error) {
+      console.error('Error in batch search:', error);
+      return [];
+    }
+  }, []);
+
+  // Funzione batch per cercare un termine nel contenuto di tutti i nodes
+  const batchSearchInNodes = useCallback(async (nodeNames: string[], searchTerm: string): Promise<string[]> => {
+    try {
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}/localization/nodes/batch-search`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          nodeNames,
+          searchTerm
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      if (result.success) {
+        return result.data.matchingNodes || [];
+      } else {
+        console.error('Batch search failed:', result.error);
+        return [];
+      }
+    } catch (error) {
+      console.error('Error in batch search:', error);
+      return [];
+    }
+  }, []);
+
+  // Funzione batch per cercare un termine nel contenuto di tutte le missions YAML
+  const batchSearchInMissions = useCallback(async (missionNames: string[], searchTerm: string): Promise<string[]> => {
+    try {
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}/localization/missions/batch-search`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          missionNames,
+          searchTerm
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      if (result.success) {
+        return result.data.matchingMissions || [];
+      } else {
+        console.error('Batch search failed:', result.error);
+        return [];
+      }
+    } catch (error) {
+      console.error('Error in batch search:', error);
+      return [];
+    }
+  }, []);
+
+  // Funzione batch per cercare un termine nel contenuto di tutte le missions regolari
+  const batchSearchInRegularMissions = useCallback(async (missionNames: string[], searchTerm: string): Promise<string[]> => {
+    try {
+      const response = await fetch(`${API_CONFIG.API_BASE_URL}/missions/translations/batch-search`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          missionNames,
+          searchTerm
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      if (result.success) {
+        return result.data.matchingMissions || [];
       } else {
         console.error('Batch search failed:', result.error);
         return [];
@@ -259,6 +407,182 @@ export const TranslationsPage: React.FC = () => {
     setFilteredScriptNames(matchingScripts);
     setIsSearching(false);
   }, [globalSearchTerm, selectedTab, coverage, batchSearchInScripts]);
+
+  // Funzione manuale per cercare nel contenuto delle categorie strings
+  const performStringContentSearch = useCallback(async () => {
+    if (!globalSearchTerm.trim() || selectedTab !== 'strings') {
+      setFilteredStringCategories(new Set());
+      setIsSearching(false);
+      return;
+    }
+
+    if (!categories || categories.length === 0) {
+      setFilteredStringCategories(new Set());
+      setIsSearching(false);
+      return;
+    }
+
+    setIsSearching(true);
+    const matchingCategories = new Set<string>();
+
+    try {
+      const categoryNames = categories.map(cat => cat.nome);
+
+      // Prima cerca nei nomi delle categorie (veloce)
+      for (const categoryName of categoryNames) {
+        if (categoryName.toLowerCase().includes(globalSearchTerm.toLowerCase())) {
+          matchingCategories.add(categoryName);
+        }
+      }
+
+      // Poi cerca nel contenuto usando batch endpoint
+      const remainingCategories = categoryNames.filter(name => !matchingCategories.has(name));
+
+      if (remainingCategories.length > 0) {
+        const contentMatches = await batchSearchInStrings(remainingCategories, globalSearchTerm);
+        contentMatches.forEach(categoryName => matchingCategories.add(categoryName));
+      }
+
+    } catch (error) {
+      console.error('Errore durante la ricerca:', error);
+      alert('Errore durante la ricerca nel contenuto delle string categories');
+    }
+
+    setFilteredStringCategories(matchingCategories);
+    setIsSearching(false);
+  }, [globalSearchTerm, selectedTab, categories, batchSearchInStrings]);
+
+  // Funzione manuale per cercare nel contenuto dei nodes
+  const performNodeContentSearch = useCallback(async () => {
+    if (!globalSearchTerm.trim() || selectedTab !== 'nodes') {
+      setFilteredNodesNames(new Set());
+      setIsSearching(false);
+      return;
+    }
+
+    if (!nodesData) {
+      setFilteredNodesNames(new Set());
+      setIsSearching(false);
+      return;
+    }
+
+    setIsSearching(true);
+    const matchingNodes = new Set<string>();
+
+    try {
+      const nodeNames = nodesData.items ? nodesData.items.map((item: any) => item.id) : [];
+
+      // Prima cerca nei nomi dei nodes (veloce)
+      for (const nodeName of nodeNames) {
+        if (nodeName.toLowerCase().includes(globalSearchTerm.toLowerCase())) {
+          matchingNodes.add(nodeName);
+        }
+      }
+
+      // Poi cerca nel contenuto usando batch endpoint
+      const remainingNodes = nodeNames.filter((name: string) => !matchingNodes.has(name));
+
+      if (remainingNodes.length > 0) {
+        const contentMatches = await batchSearchInNodes(remainingNodes, globalSearchTerm);
+        contentMatches.forEach(nodeName => matchingNodes.add(nodeName));
+      }
+
+    } catch (error) {
+      console.error('Errore durante la ricerca:', error);
+      alert('Errore durante la ricerca nel contenuto dei nodes');
+    }
+
+    setFilteredNodesNames(matchingNodes);
+    setIsSearching(false);
+  }, [globalSearchTerm, selectedTab, nodesData, batchSearchInNodes]);
+
+  // Funzione manuale per cercare nel contenuto delle missions YAML
+  const performMissionContentSearch = useCallback(async () => {
+    if (!globalSearchTerm.trim() || selectedTab !== 'yaml-missions') {
+      setFilteredMissionsNames(new Set());
+      setIsSearching(false);
+      return;
+    }
+
+    if (!yamlMissionsData) {
+      setFilteredMissionsNames(new Set());
+      setIsSearching(false);
+      return;
+    }
+
+    setIsSearching(true);
+    const matchingMissions = new Set<string>();
+
+    try {
+      const missionNames = yamlMissionsData.items ? yamlMissionsData.items.map((item: any) => item.id) : [];
+
+      // Prima cerca nei nomi delle missions (veloce)
+      for (const missionName of missionNames) {
+        if (missionName.toLowerCase().includes(globalSearchTerm.toLowerCase())) {
+          matchingMissions.add(missionName);
+        }
+      }
+
+      // Poi cerca nel contenuto usando batch endpoint
+      const remainingMissions = missionNames.filter((name: string) => !matchingMissions.has(name));
+
+      if (remainingMissions.length > 0) {
+        const contentMatches = await batchSearchInMissions(remainingMissions, globalSearchTerm);
+        contentMatches.forEach(missionName => matchingMissions.add(missionName));
+      }
+
+    } catch (error) {
+      console.error('Errore durante la ricerca:', error);
+      alert('Errore durante la ricerca nel contenuto delle missions YAML');
+    }
+
+    setFilteredMissionsNames(matchingMissions);
+    setIsSearching(false);
+  }, [globalSearchTerm, selectedTab, yamlMissionsData, batchSearchInMissions]);
+
+  // Funzione manuale per cercare nel contenuto delle missions regolari
+  const performRegularMissionContentSearch = useCallback(async () => {
+    if (!globalSearchTerm.trim() || selectedTab !== 'missions') {
+      setFilteredRegularMissions(new Set());
+      setIsSearching(false);
+      return;
+    }
+
+    if (!missionsCoverage?.perMission || missionsCoverage.perMission.length === 0) {
+      setFilteredRegularMissions(new Set());
+      setIsSearching(false);
+      return;
+    }
+
+    setIsSearching(true);
+    const matchingMissions = new Set<string>();
+
+    try {
+      const missionNames = missionsCoverage.perMission.map((mission: any) => mission.mission);
+
+      // Prima cerca nei nomi delle missions (veloce)
+      for (const missionName of missionNames) {
+        if (missionName.toLowerCase().includes(globalSearchTerm.toLowerCase())) {
+          matchingMissions.add(missionName);
+        }
+      }
+
+      // Poi cerca nel contenuto usando batch endpoint
+      const remainingMissions = missionNames.filter((name: string) => !matchingMissions.has(name));
+
+      if (remainingMissions.length > 0) {
+        const contentMatches = await batchSearchInRegularMissions(remainingMissions, globalSearchTerm);
+        contentMatches.forEach(missionName => matchingMissions.add(missionName));
+      }
+
+    } catch (error) {
+      console.error('Errore durante la ricerca:', error);
+      alert('Errore durante la ricerca nel contenuto delle missions');
+    }
+
+    setFilteredRegularMissions(matchingMissions);
+    setIsSearching(false);
+  }, [globalSearchTerm, selectedTab, missionsCoverage, batchSearchInRegularMissions]);
 
   // Carica la coverage degli scripts solo quando necessario
   const loadScriptsCoverage = useCallback(async () => {
@@ -1554,7 +1878,7 @@ export const TranslationsPage: React.FC = () => {
       <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
         <div className="flex items-center gap-4">
           <label className="text-white font-semibold">
-            🔍 Ricerca: {isSearching && selectedTab === 'scripts' && (
+            🔍 Ricerca: {isSearching && (
               <span className="text-yellow-400 ml-2">⏳ Cercando nel contenuto...</span>
             )}
           </label>
@@ -1565,8 +1889,18 @@ export const TranslationsPage: React.FC = () => {
             value={globalSearchTerm}
             onChange={(e) => setGlobalSearchTerm(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && selectedTab === 'scripts' && globalSearchTerm.trim()) {
-                performScriptContentSearch();
+              if (e.key === 'Enter' && globalSearchTerm.trim()) {
+                if (selectedTab === 'scripts') {
+                  performScriptContentSearch();
+                } else if (selectedTab === 'strings') {
+                  performStringContentSearch();
+                } else if (selectedTab === 'nodes') {
+                  performNodeContentSearch();
+                } else if (selectedTab === 'yaml-missions') {
+                  performMissionContentSearch();
+                } else if (selectedTab === 'missions') {
+                  performRegularMissionContentSearch();
+                }
               }
             }}
           />
@@ -1579,12 +1913,52 @@ export const TranslationsPage: React.FC = () => {
               {isSearching ? '⏳' : '🔍'} Cerca nel contenuto
             </button>
           )}
+          {selectedTab === 'strings' && globalSearchTerm && (
+            <button
+              className="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white border border-blue-500 rounded disabled:opacity-50"
+              onClick={performStringContentSearch}
+              disabled={isSearching}
+            >
+              {isSearching ? '⏳' : '🔍'} Cerca nel contenuto
+            </button>
+          )}
+          {selectedTab === 'nodes' && globalSearchTerm && (
+            <button
+              className="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white border border-blue-500 rounded disabled:opacity-50"
+              onClick={performNodeContentSearch}
+              disabled={isSearching}
+            >
+              {isSearching ? '⏳' : '🔍'} Cerca nel contenuto
+            </button>
+          )}
+          {selectedTab === 'yaml-missions' && globalSearchTerm && (
+            <button
+              className="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white border border-blue-500 rounded disabled:opacity-50"
+              onClick={performMissionContentSearch}
+              disabled={isSearching}
+            >
+              {isSearching ? '⏳' : '🔍'} Cerca nel contenuto
+            </button>
+          )}
+          {selectedTab === 'missions' && globalSearchTerm && (
+            <button
+              className="px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white border border-blue-500 rounded disabled:opacity-50"
+              onClick={performRegularMissionContentSearch}
+              disabled={isSearching}
+            >
+              {isSearching ? '⏳' : '🔍'} Cerca nel contenuto
+            </button>
+          )}
           {globalSearchTerm && (
             <button
               className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white border border-slate-600 rounded"
               onClick={() => {
                 setGlobalSearchTerm('');
                 setFilteredScriptNames(new Set());
+                setFilteredStringCategories(new Set());
+                setFilteredNodesNames(new Set());
+                setFilteredMissionsNames(new Set());
+                setFilteredRegularMissions(new Set());
               }}
             >
               ✕ Clear

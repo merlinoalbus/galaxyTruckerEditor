@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { RefreshCw } from 'lucide-react';
 import { MetacodePattern, MetacodeButtonProps } from './types';
 import { useMetacodePatterns, getFrequencyColor, getPatternColor } from './MetacodePatterns';
@@ -51,35 +51,36 @@ interface MetacodeButtonBarProps {
   onRefreshCache?: () => void;
 }
 
-export const MetacodeButtonBar: React.FC<MetacodeButtonBarProps> = ({
+export const MetacodeButtonBar: React.FC<MetacodeButtonBarProps> = React.memo(({
   onPatternClick,
   activePattern,
   visiblePatterns,
   onRefreshCache
 }) => {
   const patternInfos = useMetacodePatterns();
-  const patterns: MetacodePattern[] = patternInfos.map(p => ({
+  
+  const patterns: MetacodePattern[] = useMemo(() => patternInfos.map(p => ({
     id: p.id,
     type: p.id,
     icon: p.icon,
     tooltip: p.tooltip,
     hasModal: p.hasModal
-  }));
+  })), [patternInfos]);
 
-  const filteredPatterns = visiblePatterns 
+  const filteredPatterns = useMemo(() => visiblePatterns 
     ? patterns.filter(p => visiblePatterns.includes(p.id))
-    : patterns;
+    : patterns, [patterns, visiblePatterns]);
 
   // Trova i pattern info per raggruppamento
-  const localizationPatterns = filteredPatterns.filter(p => {
+  const localizationPatterns = useMemo(() => filteredPatterns.filter(p => {
     const info = patternInfos.find(i => i.id === p.id);
     return info?.category === 'localization';
-  });
+  }), [filteredPatterns, patternInfos]);
   
-  const otherPatterns = filteredPatterns.filter(p => {
+  const otherPatterns = useMemo(() => filteredPatterns.filter(p => {
     const info = patternInfos.find(i => i.id === p.id);
     return info?.category !== 'localization';
-  });
+  }), [filteredPatterns, patternInfos]);
 
   return (
     <div className="flex items-center gap-1 p-1 bg-slate-800/50 rounded">
@@ -122,4 +123,4 @@ export const MetacodeButtonBar: React.FC<MetacodeButtonBarProps> = ({
       )}
     </div>
   );
-};
+});
