@@ -45,6 +45,7 @@ export const TranslationEditor: React.FC<TranslationEditorProps> = ({
   scriptId
 }) => {
   const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
   const allLanguages = getLanguages(t);
   
   // Determina quali lingue sono disponibili con ordine corretto: TARGET, EN, altre
@@ -234,10 +235,11 @@ export const TranslationEditor: React.FC<TranslationEditorProps> = ({
     try {
       setLoadingLang(targetLang);
       const metacodesDetected = textEN.match(/\[[^\]]+\]/g) || [];
+      // Usa la lingua globale dell'interfaccia invece del parametro targetLang
       const res = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE}` , {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ textEN, langTarget: targetLang, metacodesDetected })
+        body: JSON.stringify({ textEN, langTarget: currentLanguage, metacodesDetected })
       });
       const j = await res.json();
       if (!res.ok || !j?.success) throw new Error(j?.message || 'AI translate failed');
