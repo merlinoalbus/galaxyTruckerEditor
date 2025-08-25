@@ -1872,4 +1872,189 @@ function calculateMissionCoverageStats(enFields, targetLang, langFields = null) 
   return { covered, missing, total, percent };
 }
 
+// API Batch Search: Cerca un termine nel contenuto di tutte le missions specificate
+router.post('/translations/batch-search', async (req, res) => {
+  try {
+    const { missionNames, searchTerm } = req.body;
+    
+    if (!Array.isArray(missionNames) || !searchTerm || typeof searchTerm !== 'string') {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid request. Expected { missionNames: string[], searchTerm: string }'
+      });
+    }
+    
+    logger.info(`Batch search for "${searchTerm}" in ${missionNames.length} missions`);
+    
+    const matchingMissions = [];
+    const normalizedSearchTerm = searchTerm.toLowerCase().trim();
+    const allMissionsData = new Map();
+    
+    // Carica tutte le missions da tutte le lingue (simile all'endpoint GET / esistente)
+    const languages = SUPPORTED_LANGUAGES;
+    for (const lang of languages) {
+      const missionsPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`);
+      
+      if (await fs.pathExists(missionsPath)) {
+        try {
+          const files = await fs.readdir(missionsPath);
+          const txtFiles = files.filter(f => f.endsWith('.txt'));
+          
+          for (const fileName of txtFiles) {
+            const filePath = path.join(missionsPath, fileName);
+            await parseMissionFileForAPI12(filePath, fileName, lang, allMissionsData);
+          }
+        } catch (error) {
+          logger.warn(`Error scanning missions for ${lang}: ${error.message}`);
+        }
+      }
+      
+      // Carica anche customScripts per missions custom
+      const customScriptsPath = path.join(GAME_ROOT, 'customScripts');
+      const langPath = path.join(customScriptsPath, lang);
+      if (await fs.pathExists(langPath)) {
+        try {
+          const files = await fs.readdir(langPath);
+          const txtFiles = files.filter(f => f.endsWith('.txt'));
+          
+          for (const fileName of txtFiles) {
+            const filePath = path.join(langPath, fileName);
+            await parseMissionFileForAPI12(filePath, fileName, lang, allMissionsData, true);
+          }
+        } catch (error) {
+          logger.warn(`Error scanning custom missions for ${lang}: ${error.message}`);
+        }
+      }
+    }
+    
+    // Carica missions custom dirette in root
+    const customScriptsPath = path.join(GAME_ROOT, 'customScripts');
+    if (await fs.pathExists(customScriptsPath)) {
+      try {
+        const files = await fs.readdir(customScriptsPath);
+        const txtFiles = files.filter(f => f.endsWith('.txt') && f !== 'README.txt');
+        for (const fileName of txtFiles) {
+          const filePath = path.join(customScriptsPath, fileName);
+          const stat = await fs.stat(filePath);
+          if (stat.isFile()) {
+            await parseMissionFileForAPI12(filePath, fileName, 'EN', allMissionsData, true);
+          }
+        }
+      } catch (error) {
+        logger.warn(`Error scanning custom scripts root: ${error.message}`);
+      }
+    }
+    
+    // Processa le missions specificate in parallelo per performance
+    const searchPromises = missionNames.map(async (missionName) => {
+      try {
+        const missionData = allMissionsData.get(missionName);
+        if (!missionData) {
+          return null;
+        }
+        
+        // Cerca nel nome della mission
+        if (missionName.toLowerCase().includes(normalizedSearchTerm)) {
+          return missionName;
+        }
+        
+        // Cerca nei file di testo per tutte le lingue disponibili
+        if (missionData.languages && Array.isArray(missionData.languages)) {
+          for (const lang of missionData.languages) {
+            const fileName = missionData.fileNames[lang];
+            if (!fileName) continue;
+            
+            // Costruisci il percorso del file
+            let filePath;
+            if (missionData.isCustom && missionData.customPath) {
+              filePath = missionData.customPath;
+            } else {
+              filePath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`, fileName);
+            }
+            
+            try {
+              // Cerca nel contenuto del file di quella lingua
+              if (await searchInMissionFile(filePath, missionName, normalizedSearchTerm)) {
+                return missionName;
+              }
+            } catch (fileError) {
+              logger.warn(`Error searching mission file ${filePath}: ${fileError.message}`);
+              continue;
+            }
+          }
+        }
+        
+      } catch (error) {
+        logger.warn(`Error searching mission ${missionName}: ${error.message}`);
+      }
+      return null;
+    });
+    
+    const results = await Promise.all(searchPromises);
+    const matchingMissionNames = results.filter(name => name !== null);
+    
+    logger.info(`Found ${matchingMissionNames.length} missions matching "${searchTerm}"`);
+    
+    res.json({
+      success: true,
+      data: {
+        searchTerm,
+        totalSearched: missionNames.length,
+        matchingMissions: matchingMissionNames,
+        matchCount: matchingMissionNames.length
+      }
+    });
+    
+  } catch (error) {
+    logger.error('Error in batch search missions:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to search missions',
+      message: error.message
+    });
+  }
+});
+
+// Helper function per cercare in un file di mission
+async function searchInMissionFile(filePath, missionName, searchTerm) {
+  try {
+    const content = await fs.readFile(filePath, 'utf8');
+    const lines = content.split('\n');
+    
+    let insideMission = false;
+    let currentMission = null;
+    
+    for (const line of lines) {
+      const trimmedLine = line.trim();
+      
+      // Rileva inizio mission
+      if (trimmedLine.startsWith('MISSION ')) {
+        currentMission = trimmedLine.replace('MISSION ', '').trim();
+        insideMission = (currentMission === missionName);
+        continue;
+      }
+      
+      // Rileva fine mission
+      if (trimmedLine === 'END_OF_MISSION') {
+        if (insideMission) {
+          return false; // Mission finita, termine non trovato
+        }
+        insideMission = false;
+        currentMission = null;
+        continue;
+      }
+      
+      // Se siamo nella mission corretta, cerca il termine
+      if (insideMission && trimmedLine.toLowerCase().includes(searchTerm)) {
+        return true;
+      }
+    }
+    
+    return false;
+  } catch (error) {
+    logger.warn(`Error reading mission file ${filePath}: ${error.message}`);
+    return false;
+  }
+}
+
 module.exports = router;

@@ -1238,7 +1238,7 @@ class LocalizationController {
   /**
    * Batch search in localization strings content
    */
-  async batchSearchStrings(req, res) {
+  batchSearchStrings = async (req, res) => {
     try {
       const { categoryNames, searchTerm } = req.body;
       
@@ -1257,43 +1257,55 @@ class LocalizationController {
       // Processa le categorie in parallelo per performance
       const searchPromises = categoryNames.map(async (categoryName) => {
         try {
-          const categoryFilePath = path.join(config.GAME_ROOT, 'localization_strings', `${categoryName}.yaml`);
+          const localizationPath = path.join(config.GAME_ROOT, 'localization_strings');
           
-          // Verifica se il file esiste
-          try {
-            await fs.access(categoryFilePath);
-          } catch {
-            return null; // File non esiste
-          }
+          // Scansiona i file per quella categoria in tutte le lingue
+          const files = await fs.readdir(localizationPath);
+          const categoryFiles = files.filter(file => {
+            const match = file.match(/^(.+)_([A-Z]{2})\.yaml$/);
+            return match && match[1] === categoryName;
+          });
           
-          const categoryContent = await fs.readFile(categoryFilePath, 'utf8');
-          const categoryData = yaml.load(categoryContent);
-          
-          if (!categoryData || typeof categoryData !== 'object') {
+          if (categoryFiles.length === 0) {
+            // Prova anche nelle sottocartelle (come credits)
+            try {
+              const subDirs = files.filter(async (item) => {
+                const fullPath = path.join(localizationPath, item);
+                const stat = await fs.stat(fullPath);
+                return stat.isDirectory();
+              });
+              
+              for (const subDir of subDirs) {
+                const subDirPath = path.join(localizationPath, subDir);
+                try {
+                  const subFiles = await fs.readdir(subDirPath);
+                  const subCategoryFiles = subFiles.filter(file => {
+                    const match = file.match(/^(.+)_([A-Z]{2})\.yaml$/);
+                    return match && `${subDir}/${match[1]}` === categoryName;
+                  });
+                  if (subCategoryFiles.length > 0) {
+                    // Cerca nei file della sottocartella
+                    for (const file of subCategoryFiles) {
+                      const filePath = path.join(subDirPath, file);
+                      if (await this.searchInYamlFile(filePath, normalizedSearchTerm)) {
+                        return categoryName;
+                      }
+                    }
+                  }
+                } catch (subError) {
+                  // Continua con le altre sottocartelle
+                }
+              }
+            } catch (dirError) {
+              // Se fallisce la scansione delle sottocartelle, continua
+            }
             return null;
           }
           
-          // Cerca il termine nelle strings della categoria
-          for (const [stringKey, translations] of Object.entries(categoryData)) {
-            if (!translations || typeof translations !== 'object') continue;
-            
-            // Cerca nel testo EN
-            if (translations.EN && translations.EN.toLowerCase().includes(normalizedSearchTerm)) {
-              return categoryName;
-            }
-            
-            // Cerca nei valori delle altre lingue
-            for (const lang in translations) {
-              if (lang !== 'EN') {
-                const text = translations[lang];
-                if (text && text.toLowerCase().includes(normalizedSearchTerm)) {
-                  return categoryName;
-                }
-              }
-            }
-            
-            // Cerca nella chiave stessa
-            if (stringKey.toLowerCase().includes(normalizedSearchTerm)) {
+          // Cerca il termine in tutti i file linguistici di questa categoria
+          for (const file of categoryFiles) {
+            const filePath = path.join(localizationPath, file);
+            if (await this.searchInYamlFile(filePath, normalizedSearchTerm)) {
               return categoryName;
             }
           }
@@ -1330,9 +1342,51 @@ class LocalizationController {
   }
 
   /**
+   * Helper method per cercare un termine in un file YAML
+   */
+  async searchInYamlFile(filePath, normalizedSearchTerm) {
+    try {
+      const content = await fs.readFile(filePath, 'utf8');
+      const data = yaml.load(content);
+      
+      if (!data || typeof data !== 'object') {
+        return false;
+      }
+      
+      // Cerca il termine nelle strings del file
+      for (const [stringKey, value] of Object.entries(data)) {
+        // Cerca nella chiave stessa
+        if (stringKey.toLowerCase().includes(normalizedSearchTerm)) {
+          return true;
+        }
+        
+        // Se il valore è una stringa
+        if (typeof value === 'string') {
+          if (value.toLowerCase().includes(normalizedSearchTerm)) {
+            return true;
+          }
+        }
+        // Se il valore è un oggetto con traduzioni multiple
+        else if (value && typeof value === 'object') {
+          for (const text of Object.values(value)) {
+            if (typeof text === 'string' && text.toLowerCase().includes(normalizedSearchTerm)) {
+              return true;
+            }
+          }
+        }
+      }
+      
+      return false;
+    } catch (error) {
+      logger.warn(`Error searching in YAML file ${filePath}: ${error.message}`);
+      return false;
+    }
+  }
+
+  /**
    * Batch search in nodes content
    */
-  async batchSearchNodes(req, res) {
+  batchSearchNodes = async (req, res) => {
     try {
       const { nodeNames, searchTerm } = req.body;
       
@@ -1348,25 +1402,31 @@ class LocalizationController {
       const normalizedSearchTerm = searchTerm.toLowerCase().trim();
       const matchingNodes = [];
       
-      // Carica tutti i nodes una volta
-      const nodesData = await this.getCampaignFileTranslations('nodes.yaml');
-      if (!nodesData || typeof nodesData !== 'object') {
-        return res.json({
-          success: true,
-          data: {
-            searchTerm,
-            totalSearched: nodeNames.length,
-            matchingNodes: [],
-            matchCount: 0
+      // Lingue supportate per nodes
+      const languages = ['EN', 'DE', 'FR', 'ES', 'PL', 'CS', 'RU', 'IT'];
+      
+      // Carica e combina tutti i files nodes.yaml da tutte le lingue
+      const allNodesData = [];
+      for (const lang of languages) {
+        try {
+          const filePath = path.join(__dirname, '../../GAMEFOLDER/campaign/campaignScripts' + lang + '/nodes.yaml');
+          const fileContent = await fs.readFile(filePath, 'utf8');
+          const yamlData = yaml.load(fileContent);
+          
+          if (Array.isArray(yamlData)) {
+            allNodesData.push(...yamlData.map(node => ({ ...node, language: lang })));
           }
-        });
+        } catch (error) {
+          logger.warn(`Could not load nodes for language ${lang}: ${error.message}`);
+        }
       }
       
       // Processa i nodes in parallelo per performance
       const searchPromises = nodeNames.map(async (nodeName) => {
         try {
-          const nodeData = nodesData[nodeName];
-          if (!nodeData) {
+          // Cerca il node in tutti i dati caricati
+          const nodeItems = allNodesData.filter(node => node.name === nodeName);
+          if (nodeItems.length === 0) {
             return null;
           }
           
@@ -1375,26 +1435,26 @@ class LocalizationController {
             return nodeName;
           }
           
-          // Cerca nelle traduzioni del node
-          for (const lang in nodeData) {
-            const translations = nodeData[lang];
-            if (!translations) continue;
-            
+          // Cerca in tutti i nodi di tutte le lingue
+          for (const nodeItem of nodeItems) {
             // Cerca in caption
-            if (translations.caption && translations.caption.toLowerCase().includes(normalizedSearchTerm)) {
+            if (nodeItem.caption && nodeItem.caption.toLowerCase().includes(normalizedSearchTerm)) {
               return nodeName;
             }
             
             // Cerca in description
-            if (translations.description && translations.description.toLowerCase().includes(normalizedSearchTerm)) {
+            if (nodeItem.description && nodeItem.description.toLowerCase().includes(normalizedSearchTerm)) {
               return nodeName;
             }
             
             // Cerca nei buttons
-            if (translations.buttons && Array.isArray(translations.buttons)) {
-              for (const button of translations.buttons) {
-                if (button && button.text && button.text.toLowerCase().includes(normalizedSearchTerm)) {
-                  return nodeName;
+            if (nodeItem.buttons && Array.isArray(nodeItem.buttons)) {
+              for (const button of nodeItem.buttons) {
+                if (Array.isArray(button) && button.length >= 3 && button[2]) {
+                  const buttonText = button[2].toString();
+                  if (buttonText.toLowerCase().includes(normalizedSearchTerm)) {
+                    return nodeName;
+                  }
                 }
               }
             }
@@ -1434,7 +1494,7 @@ class LocalizationController {
   /**
    * Batch search in missions YAML content
    */
-  async batchSearchMissions(req, res) {
+  batchSearchMissions = async (req, res) => {
     try {
       const { missionNames, searchTerm } = req.body;
       
@@ -1450,25 +1510,31 @@ class LocalizationController {
       const normalizedSearchTerm = searchTerm.toLowerCase().trim();
       const matchingMissions = [];
       
-      // Carica tutti i missions una volta
-      const missionsData = await this.getCampaignFileTranslations('missions.yaml');
-      if (!missionsData || typeof missionsData !== 'object') {
-        return res.json({
-          success: true,
-          data: {
-            searchTerm,
-            totalSearched: missionNames.length,
-            matchingMissions: [],
-            matchCount: 0
+      // Lingue supportate per missions
+      const languages = ['EN', 'DE', 'FR', 'ES', 'PL', 'CS', 'RU', 'IT'];
+      
+      // Carica e combina tutti i files missions.yaml da tutte le lingue
+      const allMissionsData = [];
+      for (const lang of languages) {
+        try {
+          const filePath = path.join(__dirname, '../../GAMEFOLDER/campaign/campaignScripts' + lang + '/missions.yaml');
+          const fileContent = await fs.readFile(filePath, 'utf8');
+          const yamlData = yaml.load(fileContent);
+          
+          if (Array.isArray(yamlData)) {
+            allMissionsData.push(...yamlData.map(mission => ({ ...mission, language: lang })));
           }
-        });
+        } catch (error) {
+          logger.warn(`Could not load missions for language ${lang}: ${error.message}`);
+        }
       }
       
       // Processa le missions in parallelo per performance
       const searchPromises = missionNames.map(async (missionName) => {
         try {
-          const missionData = missionsData[missionName];
-          if (!missionData) {
+          // Cerca la mission in tutti i dati caricati
+          const missionItems = allMissionsData.filter(mission => mission.name === missionName);
+          if (missionItems.length === 0) {
             return null;
           }
           
@@ -1477,25 +1543,32 @@ class LocalizationController {
             return missionName;
           }
           
-          // Cerca nelle traduzioni della mission
-          for (const lang in missionData) {
-            const translations = missionData[lang];
-            if (!translations) continue;
-            
+          // Cerca in tutte le missions di tutte le lingue
+          for (const missionItem of missionItems) {
             // Cerca in caption
-            if (translations.caption && translations.caption.toLowerCase().includes(normalizedSearchTerm)) {
+            if (missionItem.caption && missionItem.caption.toLowerCase().includes(normalizedSearchTerm)) {
               return missionName;
             }
             
             // Cerca in description
-            if (translations.description && translations.description.toLowerCase().includes(normalizedSearchTerm)) {
+            if (missionItem.description && missionItem.description.toLowerCase().includes(normalizedSearchTerm)) {
               return missionName;
             }
             
-            // Cerca nei buttons
-            if (translations.buttons && Array.isArray(translations.buttons)) {
-              for (const button of translations.buttons) {
-                if (button && button.text && button.text.toLowerCase().includes(normalizedSearchTerm)) {
+            // Cerca in source
+            if (missionItem.source && missionItem.source.toLowerCase().includes(normalizedSearchTerm)) {
+              return missionName;
+            }
+            
+            // Cerca in destination
+            if (missionItem.destination && missionItem.destination.toLowerCase().includes(normalizedSearchTerm)) {
+              return missionName;
+            }
+            
+            // Cerca nel button (array format)
+            if (missionItem.button && Array.isArray(missionItem.button)) {
+              for (const buttonPart of missionItem.button) {
+                if (buttonPart && buttonPart.toString().toLowerCase().includes(normalizedSearchTerm)) {
                   return missionName;
                 }
               }

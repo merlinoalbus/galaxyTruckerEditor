@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { MetacodeButtonBar } from './MetacodeButtons';
 import { useMetacodePatterns } from './MetacodePatterns';
 import { GenderModal } from './modals/GenderModal';
@@ -49,7 +49,7 @@ export const MetacodeEditor: React.FC<MetacodeEditorProps> = ({
   }, [modalType, editingMetacode]);
 
   // Refresh delle cache per metacode
-  const handleRefreshCache = async () => {
+  const handleRefreshCache = useCallback(async () => {
     try {
       // Fa effettivamente la chiamata API per aggiornare la cache
       await refreshMetacodesCache(language || 'IT');
@@ -66,7 +66,7 @@ export const MetacodeEditor: React.FC<MetacodeEditorProps> = ({
     } catch (error) {
       console.warn('Cache refresh failed:', error);
     }
-  };
+  }, [language, value]);
 
   // Gestione click su pattern
   const handlePatternClick = (pattern: MetacodePattern) => {

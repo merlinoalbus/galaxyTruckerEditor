@@ -114,6 +114,17 @@ export const TranslationEditor: React.FC<TranslationEditorProps> = ({
     return editableLanguages.includes(langCode);
   };
 
+  // Inizializza focusedField al primo campo editabile disponibile
+  useEffect(() => {
+    if (!focusedField && editableLanguages.length > 0) {
+      const firstEditableLanguage = LANGUAGES.find(lang => isLanguageEditable(lang.code))?.code;
+      if (firstEditableLanguage) {
+        setFocusedField(firstEditableLanguage);
+        setEditingLanguage(firstEditableLanguage);
+      }
+    }
+  }, [focusedField, editableLanguages, LANGUAGES]);
+
   // Gestisce il cambio di valore per una lingua specifica
   const handleChange = (langCode: string, text: string) => {
     onChange({
