@@ -150,17 +150,16 @@ END_OF_SCRIPT
     Delay 300
     HideDlgScene
   END_OF_SCRIPT
-SCRIPT tutorialEngineWrong
-
-  ShowDlgScene
-  ShowChar tutor right
-  Delay 100
-  Say "Czekaj, czekaj! Jeśli teraz odkryjesz nową część, silnik zostanie automatycznie przyspawany."
-  Say "A jeśli przyspawasz go w miejscu, w którym teraz się znajduje, prawa strona twojego statku stanie się całkowicie niedostępna!"
-  Delay 300
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
+  SCRIPT tutorialEngineWrong
+    ShowDlgScene
+    ShowChar tutor right
+    Delay 100
+    Say "Czekaj, czekaj! Jeśli teraz odkryjesz nową część, silnik zostanie automatycznie przyspawany."
+    Say "A jeśli przyspawasz go w miejscu, w którym teraz się znajduje, prawa strona twojego statku stanie się całkowicie niedostępna!"
+    Delay 300
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
   SCRIPT tutorialEngineClever
     ShowDlgScene
     Delay 500

@@ -150,17 +150,16 @@ END_OF_SCRIPT
     Delay 300
     HideDlgScene
   END_OF_SCRIPT
-SCRIPT tutorialEngineWrong
-
-  ShowDlgScene
-  ShowChar tutor right
-  Delay 100
-  Say "¡Alto ahí! Si revelas un nuevo componente, el motor quedará soldado."
-  Say "Cambialo de sitio o no podrás acceder a la parte derecha de la nave."
-  Delay 300
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
+  SCRIPT tutorialEngineWrong
+    ShowDlgScene
+    ShowChar tutor right
+    Delay 100
+    Say "¡Alto ahí! Si revelas un nuevo componente, el motor quedará soldado."
+    Say "Cambialo de sitio o no podrás acceder a la parte derecha de la nave."
+    Delay 300
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
   SCRIPT tutorialEngineClever
     ShowDlgScene
     Delay 500

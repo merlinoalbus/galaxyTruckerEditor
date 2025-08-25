@@ -150,17 +150,16 @@ END_OF_SCRIPT
     Delay 300
     HideDlgScene
   END_OF_SCRIPT
-SCRIPT tutorialEngineWrong
-
-  ShowDlgScene
-  ShowChar tutor right
-  Delay 100
-  Say "Погоди-ка! Если ты откроешь новый компонент, двигатель приварится к кораблю."
-  Say "А если он приварится в этом месте, то правая сторона корабля станет недоступной!"
-  Delay 300
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
+  SCRIPT tutorialEngineWrong
+    ShowDlgScene
+    ShowChar tutor right
+    Delay 100
+    Say "Погоди-ка! Если ты откроешь новый компонент, двигатель приварится к кораблю."
+    Say "А если он приварится в этом месте, то правая сторона корабля станет недоступной!"
+    Delay 300
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
   SCRIPT tutorialEngineClever
     ShowDlgScene
     Delay 500

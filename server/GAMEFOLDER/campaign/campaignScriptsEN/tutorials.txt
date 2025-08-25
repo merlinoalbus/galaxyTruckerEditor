@@ -150,17 +150,16 @@ END_OF_SCRIPT
     Delay 300
     HideDlgScene
   END_OF_SCRIPT
-SCRIPT tutorialEngineWrong
-
-  ShowDlgScene
-  ShowChar tutor right
-  Delay 100
-  Say "Wait a moment! If you reveal a new component, the engine gets welded in place."
-  Say "And if you welded it there, it would make the right side of your ship inaccessible!"
-  Delay 300
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
+  SCRIPT tutorialEngineWrong
+    ShowDlgScene
+    ShowChar tutor right
+    Delay 100
+    Say "Wait a moment! If you reveal a new component, the engine gets welded in place."
+    Say "And if you welded it there, it would make the right side of your ship inaccessible!"
+    Delay 300
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
   SCRIPT tutorialEngineClever
     ShowDlgScene
     Delay 500
