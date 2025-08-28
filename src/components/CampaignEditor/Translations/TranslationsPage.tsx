@@ -2070,277 +2070,281 @@ export const TranslationsPage: React.FC = () => {
                     </td>
                     <td className="px-3 py-2 text-gray-300 w-[20%]">
                       <div className="flex items-center space-x-2">
-                        {/* Pulsanti SALVA e AI ALL - attivi solo se dettaglio aperto */}
-                        {isOpen && (
-                          <>
-                            <button
-                              disabled={saving || (selectedTab !== 'yaml-missions' && !currentDetails) || (selectedTab === 'yaml-missions' && selectedYamlMissions.size === 0)}
-                              className={`bg-slate-700 hover:bg-slate-600 text-white border border-slate-500 ${(saving || (selectedTab !== 'yaml-missions' && !currentDetails) || (selectedTab === 'yaml-missions' && selectedYamlMissions.size === 0)) ? 'opacity-60 cursor-not-allowed' : ''}`}
-                              title={saving ? 'Salvando...' : 'Salva Modifiche'}
-                              onClick={currentSaveFunction}
-                              style={{ fontSize: '35px', lineHeight: '35px', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                            >
-                              {saving ? '⏳' : '💾'}
-                            </button>
-                            <button
-                              disabled={saving || (selectedTab !== 'yaml-missions' && !currentDetails) || (selectedTab === 'yaml-missions' && selectedYamlMissions.size === 0)}
-                              className={`bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded transition-colors ${(saving || (selectedTab !== 'yaml-missions' && !currentDetails) || (selectedTab === 'yaml-missions' && selectedYamlMissions.size === 0)) ? 'opacity-60 cursor-not-allowed' : ''}`}
-                              title="Suggerimenti IA per tutti i campi"
-                              onClick={async () => {
-                                if (selectedTab !== 'yaml-missions' && !currentDetails) return;
-                                if (selectedTab === 'yaml-missions' && selectedYamlMissions.size === 0) return;
-                                try {
-                                  setSaving(true);
-                                  
-                                  if (selectedTab === 'strings' && selectedCategory) {
-                                    // Per le strings, usa la nuova API
-                                    const result = await translateCategory(selectedCategory.id, 'EN', selectedLang);
-                                    if (result.success && result.translations) {
-                                      // Applica le traduzioni sistemando il formato
-                                      result.translations.forEach((translation: any) => {
-                                        // Rimuovi tutti i possibili prefissi placeholder
-                                        let cleanTranslation = translation.translatedText || '';
-                                        
-                                        // Pattern di prefissi da rimuovere
-                                        const prefixPatterns = [
-                                          `[AI_TRANSLATED:${selectedLang}] `,
-                                          `[AI_TRANSLATED:${selectedLang.toLowerCase()}] `,
-                                          `[AI_TRANSLATED:${selectedLang.toUpperCase()}] `,
-                                          `[TRANSLATED:${selectedLang}] `,
-                                          `[TRANSLATED:${selectedLang.toLowerCase()}] `,
-                                          `[TRANSLATED:${selectedLang.toUpperCase()}] `
-                                        ];
-                                        
-                                        for (const prefix of prefixPatterns) {
-                                          if (cleanTranslation.startsWith(prefix)) {
-                                            cleanTranslation = cleanTranslation.substring(prefix.length);
-                                            break;
-                                          }
-                                        }
-                                        
-                                        // Rimuovi anche eventuali spazi iniziali/finali e newline
-                                        cleanTranslation = cleanTranslation.trim().replace(/[\r\n]/g, ' ');
-                                        
-                                        if (cleanTranslation) {
-                                          updateString(translation.key, selectedLang, cleanTranslation);
-                                        }
-                                      });
-                                      alert(`Tutte le stringhe sono state tradotte in ${selectedLang}!`);
-                                    }
-                                  } else if (selectedTab === 'nodes') {
-                                    // Per nodes, usa batch API come per scripts
-                                    const itemData = currentDetails;
-                                    const fieldsToTranslate = [
-                                      ...(itemData?.translations['EN']?.caption ? [{
-                                        field: 'caption',
-                                        text: itemData.translations['EN'].caption
-                                      }] : []),
-                                      ...(itemData?.translations['EN']?.description ? [{
-                                        field: 'description', 
-                                        text: itemData.translations['EN'].description
-                                      }] : []),
-                                      ...(itemData?.translations['EN']?.buttons && Array.isArray(itemData.translations['EN'].buttons) ? 
-                                        itemData.translations['EN'].buttons.map((button: any, buttonIndex: number) => ({
-                                          field: `button_${button.id}`,
-                                          text: button.text || ''
-                                        })).filter((button: any) => button.text) : [])
-                                    ];
-
-                                    if (fieldsToTranslate.length > 0) {
-                                      const items = fieldsToTranslate.map(field => ({
-                                        textEN: field.text,
-                                        metacodesDetected: (field.text.match(/\[[^\]]+\]/g) || [])
-                                      }));
-                                      
-                                      const resp = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE_BATCH}`, {
-                                        method: 'POST', 
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ items, langTarget: selectedLang })
-                                      });
-                                      
-                                      const j = await resp.json();
-                                      if (!resp.ok || !j?.success) throw new Error(j?.message || 'batch failed');
-                                      
-                                      const suggestions: string[] = j.data?.suggestions || [];
-                                      
-                                      // Popola tutte le textarea con le traduzioni (rimuovi prefissi numerati)
-                                      const updatedEdits: Record<string, string> = {};
-                                      fieldsToTranslate.forEach((field, idx) => {
-                                        if (suggestions[idx]) {
-                                          let cleanTranslation = suggestions[idx];
-                                          
-                                          // Rimuovi prefissi numerati tipo "1. ", "2. ", etc.
-                                          cleanTranslation = cleanTranslation.replace(/^\d+\.\s*/, '');
-                                          
-                                          // Rimuovi eventuali spazi iniziali/finali
-                                          cleanTranslation = cleanTranslation.trim();
-                                          
-                                          const key = `${selectedTab}|${currentDetails.id}|${selectedLang}_${field.field}`;
-                                          updatedEdits[key] = cleanTranslation;
-                                        }
-                                      });
-                                      
-                                      setEdits(prev => ({ ...prev, ...updatedEdits }));
-                                      alert(`Tutti i ${fieldsToTranslate.length} campi sono stati tradotti in ${selectedLang}!`);
-                                    }
-                                  } else if (selectedTab === 'yaml-missions') {
-                                    // Per yaml-missions, processa tutte le missioni selezionate
-                                    const allFields: any[] = [];
-                                    const fieldMapping: any[] = [];
-                                    
-                                    // Per ogni missione selezionata
-                                    for (const missionId of selectedYamlMissions) {
-                                      const missionData = yamlMissionsData?.items?.find((item: any) => item.id === missionId);
-                                      if (!missionData) continue;
-                                      
-                                      // Aggiungi caption se presente
-                                      if (missionData.translations['EN']?.caption) {
-                                        allFields.push({
-                                          textEN: missionData.translations['EN'].caption,
-                                          metacodesDetected: (missionData.translations['EN'].caption.match(/\[[^\]]+\]/g) || [])
-                                        });
-                                        fieldMapping.push({ missionId, field: 'caption' });
-                                      }
-                                      
-                                      // Aggiungi description se presente
-                                      if (missionData.translations['EN']?.description) {
-                                        allFields.push({
-                                          textEN: missionData.translations['EN'].description,
-                                          metacodesDetected: (missionData.translations['EN'].description.match(/\[[^\]]+\]/g) || [])
-                                        });
-                                        fieldMapping.push({ missionId, field: 'description' });
-                                      }
-                                      
-                                      // Aggiungi buttons se presenti
-                                      if (missionData.translations['EN']?.buttons && Array.isArray(missionData.translations['EN'].buttons)) {
-                                        missionData.translations['EN'].buttons.forEach((button: any, buttonIndex: number) => {
-                                          if (button.text) {
-                                            allFields.push({
-                                              textEN: button.text,
-                                              metacodesDetected: (button.text.match(/\[[^\]]+\]/g) || [])
-                                            });
-                                            fieldMapping.push({ missionId, field: 'button', buttonIndex });
-                                          }
-                                        });
-                                      }
-                                    }
-                                    
-                                    if (allFields.length > 0) {
-                                      const resp = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE_BATCH}`, {
-                                        method: 'POST', 
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ items: allFields, langTarget: selectedLang })
-                                      });
-                                      
-                                      const j = await resp.json();
-                                      if (!resp.ok || !j?.success) throw new Error(j?.message || 'batch failed');
-                                      
-                                      const suggestions: string[] = j.data?.suggestions || [];
-                                      
-                                      // Applica le traduzioni usando setEdits
-                                      const updatedEdits: Record<string, string> = {};
-                                      fieldMapping.forEach((mapping, idx) => {
-                                        if (suggestions[idx]) {
-                                          let cleanTranslation = suggestions[idx].replace(/^\d+\.\s*/, '').trim();
-                                          const key = `yaml-missions|${mapping.missionId}|${selectedLang}_${mapping.field}${mapping.buttonIndex !== undefined ? `_${mapping.buttonIndex}` : ''}`;
-                                          updatedEdits[key] = cleanTranslation;
-                                        }
-                                      });
-                                      
-                                      setEdits(prev => ({ ...prev, ...updatedEdits }));
-                                      alert(`Tutti i ${allFields.length} campi delle missioni selezionate sono stati tradotti in ${selectedLang}!`);
-                                    }
-                                  } else {
-                                    // Per scripts e missions, usa la logica esistente
-                                    const items = currentDetails.details.map((d: any) => ({
-                                      textEN: d.en,
-                                      metacodesDetected: (d.en.match(/\[[^\]]+\]/g) || [])
-                                    }));
-                                    const resp = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE_BATCH}`, {
-                                      method: 'POST', headers: { 'Content-Type': 'application/json' },
-                                      body: JSON.stringify({ items, langTarget: selectedLang })
-                                    });
-                                    const j = await resp.json();
-                                    if (!resp.ok || !j?.success) throw new Error(j?.message || 'batch failed');
-                                    const suggestions: string[] = j.data?.suggestions || [];
-                                    // Popola tutte le inputbox
-                                    const newEdits: Record<string, string> = { ...edits };
-                                    currentDetails.details.forEach((_: any, idx: number) => {
-                                      const key = `${currentDetails.script}|${idx}|${selectedLang}`;
-                                      const sug = suggestions[idx];
-                                      if (typeof sug === 'string' && sug.length > 0) newEdits[key] = sug;
-                                    });
-                                    setEdits(newEdits);
-                                  }
-                                } catch (e: any) {
-                                  alert(e?.message || 'Impossibile generare suggerimenti in batch');
-                                } finally {
-                                  setSaving(false);
-                                }
-                              }}
-                              style={{ fontSize: '35px', lineHeight: '1', width: '100px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px', flexDirection: 'row' }}
-                            >
-                              <span>🪄</span>
-                              <span>✨</span>
-                            </button>
-                          </>
-                        )}
+                        {/* 1) Mostra Dettagli/Nascondi Dettagli */}
                         <button 
                           className="bg-slate-700 hover:bg-slate-600 text-white border border-slate-500" 
-                        onClick={() => {
-                          if (selectedTab === 'scripts') {
-                            setSelectedScript(isOpen ? null : itemName);
-                          } else if (selectedTab === 'missions') {
-                            setSelectedMission(isOpen ? null : itemName);
-                          } else if (selectedTab === 'strings') {
-                            // Per le strings, carichiamo la categoria
-                            if (isOpen) {
-                              // Se è già aperta, chiudiamo la categoria
-                              setSelectedCategory(null);
-                            } else {
-                              // Carichiamo la categoria
-                              loadCategory(itemName);
-                            }
-                          } else if (selectedTab === 'nodes') {
-                            setSelectedNode(isOpen ? null : itemName);
-                          } else if (selectedTab === 'yaml-missions') {
-                            const newSet = new Set(selectedYamlMissions);
-                            if (isOpen) {
-                              newSet.delete(itemName);
-                            } else {
-                              newSet.add(itemName);
-                            }
-                            setSelectedYamlMissions(newSet);
-                          }
-                        }}
-                        style={{ fontSize: '35px', lineHeight: '35px', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                      >
-                        {isOpen ? '👁️‍🗨️' : '👁️'}
-                      </button>
-                      {selectedTab === 'scripts' && (
-                        <button 
-                          className="bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded transition-colors"
-                          title="Apri in Visual Flow Editor"
+                          title={isOpen ? 'Nascondi Dettagli' : 'Mostra Dettagli'}
                           onClick={() => {
-                            window.dispatchEvent(new CustomEvent('navigateToVisualFlow', { detail: { scriptName: itemName } as any }));
+                            if (selectedTab === 'scripts') {
+                              setSelectedScript(isOpen ? null : itemName);
+                            } else if (selectedTab === 'missions') {
+                              setSelectedMission(isOpen ? null : itemName);
+                            } else if (selectedTab === 'strings') {
+                              // Per le strings, carichiamo la categoria
+                              if (isOpen) {
+                                // Se è già aperta, chiudiamo la categoria
+                                setSelectedCategory(null);
+                              } else {
+                                // Carichiamo la categoria
+                                loadCategory(itemName);
+                              }
+                            } else if (selectedTab === 'nodes') {
+                              setSelectedNode(isOpen ? null : itemName);
+                            } else if (selectedTab === 'yaml-missions') {
+                              const newSet = new Set(selectedYamlMissions);
+                              if (isOpen) {
+                                newSet.delete(itemName);
+                              } else {
+                                newSet.add(itemName);
+                              }
+                              setSelectedYamlMissions(newSet);
+                            }
                           }}
                           style={{ fontSize: '35px', lineHeight: '35px', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                         >
-                          🎯
+                          {isOpen ? '👁️‍🗨️' : '👁️'}
                         </button>
-                      )}
-                      {selectedTab === 'missions' && (
-                        <button 
-                          className="bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded transition-colors"
-                          title="Apri in Visual Flow Editor"
-                          onClick={() => {
-                            window.dispatchEvent(new CustomEvent('navigateToVisualFlowMission', { detail: { missionName: itemName } as any }));
-                          }}
-                          style={{ fontSize: '35px', lineHeight: '35px', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                        >
-                          🎯
-                        </button>
-                      )}
+                        {/* 2) Se presente Apri Visual Flow */}
+                        {selectedTab === 'scripts' && (
+                          <button 
+                            className="bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded transition-colors"
+                            title="Apri in Visual Flow Editor"
+                            onClick={() => {
+                              window.dispatchEvent(new CustomEvent('navigateToVisualFlow', { detail: { scriptName: itemName } as any }));
+                            }}
+                            style={{ fontSize: '35px', lineHeight: '35px', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          >
+                            🎯
+                          </button>
+                        )}
+                        {selectedTab === 'missions' && (
+                          <button 
+                            className="bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded transition-colors"
+                            title="Apri in Visual Flow Editor"
+                            onClick={() => {
+                              window.dispatchEvent(new CustomEvent('navigateToVisualFlowMission', { detail: { missionName: itemName } as any }));
+                            }}
+                            style={{ fontSize: '35px', lineHeight: '35px', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          >
+                            🎯
+                          </button>
+                        )}
+                        {/* 3) Salva - attivo solo se dettaglio aperto */}
+                        {isOpen && (
+                          <button
+                            disabled={saving || (selectedTab !== 'yaml-missions' && !currentDetails) || (selectedTab === 'yaml-missions' && selectedYamlMissions.size === 0)}
+                            className={`bg-slate-700 hover:bg-slate-600 text-white border border-slate-500 ${(saving || (selectedTab !== 'yaml-missions' && !currentDetails) || (selectedTab === 'yaml-missions' && selectedYamlMissions.size === 0)) ? 'opacity-60 cursor-not-allowed' : ''}`}
+                            title={saving ? 'Salvando...' : 'Salva Modifiche'}
+                            onClick={currentSaveFunction}
+                            style={{ fontSize: '35px', lineHeight: '35px', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          >
+                            {saving ? '⏳' : '💾'}
+                          </button>
+                        )}
+                        {/* 4) AI All - attivo solo se dettaglio aperto */}
+                        {isOpen && (
+                          <button
+                            disabled={saving || (selectedTab !== 'yaml-missions' && !currentDetails) || (selectedTab === 'yaml-missions' && selectedYamlMissions.size === 0)}
+                            className={`bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded transition-colors ${(saving || (selectedTab !== 'yaml-missions' && !currentDetails) || (selectedTab === 'yaml-missions' && selectedYamlMissions.size === 0)) ? 'opacity-60 cursor-not-allowed' : ''}`}
+                            title="Suggerimenti IA per tutti i campi"
+                            onClick={async () => {
+                              if (selectedTab !== 'yaml-missions' && !currentDetails) return;
+                              if (selectedTab === 'yaml-missions' && selectedYamlMissions.size === 0) return;
+                              try {
+                                setSaving(true);
+                                
+                                if (selectedTab === 'strings' && selectedCategory) {
+                                  // Per le strings, usa la nuova API
+                                  const result = await translateCategory(selectedCategory.id, 'EN', selectedLang);
+                                  if (result.success && result.translations) {
+                                    // Applica le traduzioni sistemando il formato
+                                    result.translations.forEach((translation: any) => {
+                                      // Rimuovi tutti i possibili prefissi placeholder
+                                      let cleanTranslation = translation.translatedText || '';
+                                      
+                                      // Pattern di prefissi da rimuovere
+                                      const prefixPatterns = [
+                                        `[AI_TRANSLATED:${selectedLang}] `,
+                                        `[AI_TRANSLATED:${selectedLang.toLowerCase()}] `,
+                                        `[AI_TRANSLATED:${selectedLang.toUpperCase()}] `,
+                                        `[TRANSLATED:${selectedLang}] `,
+                                        `[TRANSLATED:${selectedLang.toLowerCase()}] `,
+                                        `[TRANSLATED:${selectedLang.toUpperCase()}] `
+                                      ];
+                                      
+                                      for (const prefix of prefixPatterns) {
+                                        if (cleanTranslation.startsWith(prefix)) {
+                                          cleanTranslation = cleanTranslation.substring(prefix.length);
+                                          break;
+                                        }
+                                      }
+                                      
+                                      // Rimuovi anche eventuali spazi iniziali/finali e newline
+                                      cleanTranslation = cleanTranslation.trim().replace(/[\r\n]/g, ' ');
+                                      
+                                      if (cleanTranslation) {
+                                        updateString(translation.key, selectedLang, cleanTranslation);
+                                      }
+                                    });
+                                    alert(`Tutte le stringhe sono state tradotte in ${selectedLang}!`);
+                                  }
+                                } else if (selectedTab === 'nodes') {
+                                  // Per nodes, usa batch API come per scripts
+                                  const itemData = currentDetails;
+                                  const fieldsToTranslate = [
+                                    ...(itemData?.translations['EN']?.caption ? [{
+                                      field: 'caption',
+                                      text: itemData.translations['EN'].caption
+                                    }] : []),
+                                    ...(itemData?.translations['EN']?.description ? [{
+                                      field: 'description', 
+                                      text: itemData.translations['EN'].description
+                                    }] : []),
+                                    ...(itemData?.translations['EN']?.buttons && Array.isArray(itemData.translations['EN'].buttons) ? 
+                                      itemData.translations['EN'].buttons.map((button: any, buttonIndex: number) => ({
+                                        field: `button_${button.id}`,
+                                        text: button.text || ''
+                                      })).filter((button: any) => button.text) : [])
+                                  ];
+
+                                  if (fieldsToTranslate.length > 0) {
+                                    const items = fieldsToTranslate.map(field => ({
+                                      textEN: field.text,
+                                      metacodesDetected: (field.text.match(/\[[^\]]+\]/g) || [])
+                                    }));
+                                    
+                                    const resp = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE_BATCH}`, {
+                                      method: 'POST', 
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ items, langTarget: selectedLang })
+                                    });
+                                    
+                                    const j = await resp.json();
+                                    if (!resp.ok || !j?.success) throw new Error(j?.message || 'batch failed');
+                                    
+                                    const suggestions: string[] = j.data?.suggestions || [];
+                                    
+                                    // Popola tutte le textarea con le traduzioni (rimuovi prefissi numerati)
+                                    const updatedEdits: Record<string, string> = {};
+                                    fieldsToTranslate.forEach((field, idx) => {
+                                      if (suggestions[idx]) {
+                                        let cleanTranslation = suggestions[idx];
+                                        
+                                        // Rimuovi prefissi numerati tipo "1. ", "2. ", etc.
+                                        cleanTranslation = cleanTranslation.replace(/^\d+\.\s*/, '');
+                                        
+                                        // Rimuovi eventuali spazi iniziali/finali
+                                        cleanTranslation = cleanTranslation.trim();
+                                        
+                                        const key = `${selectedTab}|${currentDetails.id}|${selectedLang}_${field.field}`;
+                                        updatedEdits[key] = cleanTranslation;
+                                      }
+                                    });
+                                    
+                                    setEdits(prev => ({ ...prev, ...updatedEdits }));
+                                    alert(`Tutti i ${fieldsToTranslate.length} campi sono stati tradotti in ${selectedLang}!`);
+                                  }
+                                } else if (selectedTab === 'yaml-missions') {
+                                  // Per yaml-missions, processa tutte le missioni selezionate
+                                  const allFields: any[] = [];
+                                  const fieldMapping: any[] = [];
+                                  
+                                  // Per ogni missione selezionata
+                                  for (const missionId of selectedYamlMissions) {
+                                    const missionData = yamlMissionsData?.items?.find((item: any) => item.id === missionId);
+                                    if (!missionData) continue;
+                                    
+                                    // Aggiungi caption se presente
+                                    if (missionData.translations['EN']?.caption) {
+                                      allFields.push({
+                                        textEN: missionData.translations['EN'].caption,
+                                        metacodesDetected: (missionData.translations['EN'].caption.match(/\[[^\]]+\]/g) || [])
+                                      });
+                                      fieldMapping.push({ missionId, field: 'caption' });
+                                    }
+                                    
+                                    // Aggiungi description se presente
+                                    if (missionData.translations['EN']?.description) {
+                                      allFields.push({
+                                        textEN: missionData.translations['EN'].description,
+                                        metacodesDetected: (missionData.translations['EN'].description.match(/\[[^\]]+\]/g) || [])
+                                      });
+                                      fieldMapping.push({ missionId, field: 'description' });
+                                    }
+                                    
+                                    // Aggiungi buttons se presenti
+                                    if (missionData.translations['EN']?.buttons && Array.isArray(missionData.translations['EN'].buttons)) {
+                                      missionData.translations['EN'].buttons.forEach((button: any, buttonIndex: number) => {
+                                        if (button.text) {
+                                          allFields.push({
+                                            textEN: button.text,
+                                            metacodesDetected: (button.text.match(/\[[^\]]+\]/g) || [])
+                                          });
+                                          fieldMapping.push({ missionId, field: 'button', buttonIndex });
+                                        }
+                                      });
+                                    }
+                                  }
+                                  
+                                  if (allFields.length > 0) {
+                                    const resp = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE_BATCH}`, {
+                                      method: 'POST', 
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ items: allFields, langTarget: selectedLang })
+                                    });
+                                    
+                                    const j = await resp.json();
+                                    if (!resp.ok || !j?.success) throw new Error(j?.message || 'batch failed');
+                                    
+                                    const suggestions: string[] = j.data?.suggestions || [];
+                                    
+                                    // Applica le traduzioni usando setEdits
+                                    const updatedEdits: Record<string, string> = {};
+                                    fieldMapping.forEach((mapping, idx) => {
+                                      if (suggestions[idx]) {
+                                        let cleanTranslation = suggestions[idx].replace(/^\d+\.\s*/, '').trim();
+                                        const key = `yaml-missions|${mapping.missionId}|${selectedLang}_${mapping.field}${mapping.buttonIndex !== undefined ? `_${mapping.buttonIndex}` : ''}`;
+                                        updatedEdits[key] = cleanTranslation;
+                                      }
+                                    });
+                                    
+                                    setEdits(prev => ({ ...prev, ...updatedEdits }));
+                                    alert(`Tutti i ${allFields.length} campi delle missioni selezionate sono stati tradotti in ${selectedLang}!`);
+                                  }
+                                } else {
+                                  // Per scripts e missions, usa la logica esistente
+                                  const items = currentDetails.details.map((d: any) => ({
+                                    textEN: d.en,
+                                    metacodesDetected: (d.en.match(/\[[^\]]+\]/g) || [])
+                                  }));
+                                  const resp = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE_BATCH}`, {
+                                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ items, langTarget: selectedLang })
+                                  });
+                                  const j = await resp.json();
+                                  if (!resp.ok || !j?.success) throw new Error(j?.message || 'batch failed');
+                                  const suggestions: string[] = j.data?.suggestions || [];
+                                  // Popola tutte le inputbox
+                                  const newEdits: Record<string, string> = { ...edits };
+                                  currentDetails.details.forEach((_: any, idx: number) => {
+                                    const key = `${currentDetails.script}|${idx}|${selectedLang}`;
+                                    const sug = suggestions[idx];
+                                    if (typeof sug === 'string' && sug.length > 0) newEdits[key] = sug;
+                                  });
+                                  setEdits(newEdits);
+                                }
+                              } catch (e: any) {
+                                alert(e?.message || 'Impossibile generare suggerimenti in batch');
+                              } finally {
+                                setSaving(false);
+                              }
+                            }}
+                            style={{ fontSize: '35px', lineHeight: '1', width: '100px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px', flexDirection: 'row' }}
+                          >
+                            <span>🪄</span>
+                            <span>✨</span>
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
