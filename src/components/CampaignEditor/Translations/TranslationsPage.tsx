@@ -5,6 +5,7 @@ import { IFlowBlock } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types
 import { useLocalizationStrings } from '@/hooks/CampaignEditor/useLocalizationStrings';
 import { TranslationEditor } from './TranslationEditor';
 import { ScriptMetadataProvider } from '@/contexts/ScriptMetadataContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Minimal types for coverage API
 type PerLanguage = Record<string, { covered: number; missing: number; different: number; totalFields: number; percent: number }>;
@@ -49,6 +50,7 @@ type TranslationField = {
 
 export const TranslationsPage: React.FC = () => {
   const { t } = useTranslation();
+  const { currentLanguage } = useLanguage(); // Lingua globale dell'app
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [coverage, setCoverage] = useState<CoverageResponse['data'] | null>(null);
@@ -2406,7 +2408,7 @@ export const TranslationsPage: React.FC = () => {
                                 
                                 if (selectedTab === 'strings' && selectedCategory) {
                                   // Per le strings, usa la nuova API
-                                  const result = await translateCategory(selectedCategory.id, 'EN', selectedLang);
+                                  const result = await translateCategory(selectedCategory.id, 'EN', currentLanguage);
                                   if (result.success && result.translations) {
                                     // Applica le traduzioni sistemando il formato
                                     result.translations.forEach((translation: any) => {
@@ -2467,7 +2469,7 @@ export const TranslationsPage: React.FC = () => {
                                     const resp = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE_BATCH}`, {
                                       method: 'POST', 
                                       headers: { 'Content-Type': 'application/json' },
-                                      body: JSON.stringify({ items, langTarget: selectedLang })
+                                      body: JSON.stringify({ items, langTarget: currentLanguage })
                                     });
                                     
                                     const j = await resp.json();
@@ -2541,7 +2543,7 @@ export const TranslationsPage: React.FC = () => {
                                     const resp = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE_BATCH}`, {
                                       method: 'POST', 
                                       headers: { 'Content-Type': 'application/json' },
-                                      body: JSON.stringify({ items: allFields, langTarget: selectedLang })
+                                      body: JSON.stringify({ items: allFields, langTarget: currentLanguage })
                                     });
                                     
                                     const j = await resp.json();
@@ -2570,7 +2572,7 @@ export const TranslationsPage: React.FC = () => {
                                   }));
                                   const resp = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_AI_TRANSLATE_BATCH}`, {
                                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ items, langTarget: selectedLang })
+                                    body: JSON.stringify({ items, langTarget: currentLanguage })
                                   });
                                   const j = await resp.json();
                                   if (!resp.ok || !j?.success) throw new Error(j?.message || 'batch failed');
@@ -2930,7 +2932,7 @@ export const TranslationsPage: React.FC = () => {
                                                   body: JSON.stringify({
                                                     text: item.en,
                                                     fromLanguage: 'EN',
-                                                    toLanguage: selectedLang,
+                                                    toLanguage: currentLanguage,
                                                     context: `${selectedTab === 'nodes' ? 'Node' : 'Mission'} ${item.field}`
                                                   })
                                                 });
