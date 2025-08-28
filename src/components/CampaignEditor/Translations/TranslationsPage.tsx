@@ -2565,8 +2565,9 @@ export const TranslationsPage: React.FC = () => {
                                     alert(`Tutti i ${allFields.length} campi delle missioni selezionate sono stati tradotti in ${selectedLang}!`);
                                   }
                                 } else {
-                                  // Per scripts e missions, usa la logica esistente
-                                  const items = currentDetails.details.map((d: any) => ({
+                                  // Per scripts e missions, usa tutti gli elementi visibili rispettando il filtro
+                                  const detailsToUse = filterEnabled ? currentDetails.details : (allScriptDetails?.details || currentDetails.details);
+                                  const items = detailsToUse.map((d: any) => ({
                                     textEN: d.en,
                                     metacodesDetected: (d.en.match(/\[[^\]]+\]/g) || [])
                                   }));
@@ -2579,7 +2580,7 @@ export const TranslationsPage: React.FC = () => {
                                   const suggestions: string[] = j.data?.suggestions || [];
                                   // Popola tutte le inputbox
                                   const newEdits: Record<string, string> = { ...edits };
-                                  currentDetails.details.forEach((_: any, idx: number) => {
+                                  detailsToUse.forEach((_: any, idx: number) => {
                                     const key = `${currentDetails.script}|${idx}|${selectedLang}`;
                                     const sug = suggestions[idx];
                                     if (typeof sug === 'string' && sug.length > 0) newEdits[key] = sug;
