@@ -60,6 +60,7 @@ export const TranslationsPage: React.FC = () => {
   const [scriptDetails, setScriptDetails] = useState<ScriptDetailsResponse['data'] | null>(null);
   const [edits, setEdits] = useState<Record<string, string>>({});
   const [mergedBlocks, setMergedBlocks] = useState<IFlowBlock[] | null>(null);
+  const [originalBlocks, setOriginalBlocks] = useState<IFlowBlock[] | null>(null); // Blocchi originali completi per il salvataggio
   const [translationFields, setTranslationFields] = useState<TranslationField[]>([]);
   const [allTranslationFields, setAllTranslationFields] = useState<TranslationField[]>([]); // Campi completi non filtrati
   const [allScriptDetails, setAllScriptDetails] = useState<any>(null); // Dettagli script completi non filtrati
@@ -840,6 +841,7 @@ export const TranslationsPage: React.FC = () => {
       if (!selectedScript) {
         setScriptDetails(null);
         setMergedBlocks(null);
+        setOriginalBlocks(null);
         setTranslationFields([]);
         setScriptContent(null);
         setEdits({});
@@ -857,16 +859,25 @@ export const TranslationsPage: React.FC = () => {
         
   let blocks = json.data.blocks;
         const availableLanguages = json.data.availableLanguages || ['EN', 'DE', 'FR', 'ES', 'PL', 'CS', 'RU'];
-        // Applica filtro blocchi se ricerca attiva
+        
+        // Salva sempre i blocchi originali completi
+        setOriginalBlocks(blocks);
+        
+        // Applica filtro blocchi per la visualizzazione se ricerca attiva
         let filteredBlocks = blocks;
         if (globalSearchTerm && globalSearchTerm.trim()) {
           filteredBlocks = filterBlocksBySearchTerm(blocks, globalSearchTerm);
         }
-  setMergedBlocks(filteredBlocks);
-  setScriptContent(json.data);
-  // Estrai i campi di traduzione dai blocchi filtrati
-  const fields = extractTranslationFields(filteredBlocks, availableLanguages);
-  setTranslationFields(fields);
+        setMergedBlocks(filteredBlocks);
+        setScriptContent(json.data);
+        
+        // IMPORTANTE: Estrai i campi di traduzione dai blocchi ORIGINALI completi
+        // così i blockPath sono sempre coerenti con lo script completo
+        const fields = extractTranslationFields(blocks, availableLanguages);
+        setTranslationFields(fields);
+        
+        // Per compatibilità, mantieni anche allTranslationFields
+        setAllTranslationFields(fields);
   
   // Estrai ANCHE i campi da TUTTI i blocchi per il toggle
   const allFields = extractTranslationFields(blocks, availableLanguages);
@@ -941,6 +952,7 @@ export const TranslationsPage: React.FC = () => {
         console.error('Error loading script details:', e);
         setScriptDetails(null);
         setMergedBlocks(null);
+        setOriginalBlocks(null);
         setTranslationFields([]);
         setScriptContent(null);
       }
@@ -1002,7 +1014,7 @@ export const TranslationsPage: React.FC = () => {
 
   // Funzione per salvare le modifiche
   const saveTranslations = useCallback(async () => {
-    if (!selectedScript || !mergedBlocks || !scriptContent) {
+    if (!selectedScript || !originalBlocks || !scriptContent) {
       alert('Errore: dati dello script non disponibili');
       return;
     }
@@ -1010,8 +1022,9 @@ export const TranslationsPage: React.FC = () => {
     try {
       setSaving(true);
       
-      // Applica tutte le modifiche ai blocchi per la lingua selezionata
-      const updatedBlocks = applyEditsToBlocks(mergedBlocks, translationFields, edits, selectedLang);
+      // CORREZIONE CRITICA: Applica le modifiche ai blocchi ORIGINALI completi
+      // non a quelli filtrati per preservare l'intero script
+      const updatedBlocks = applyEditsToBlocks(originalBlocks, translationFields, edits, selectedLang);
       
       // Crea il payload nel formato corretto per /scripts/saveScript
       const payload = {
@@ -1041,8 +1054,15 @@ export const TranslationsPage: React.FC = () => {
         throw new Error(result.message || 'Save failed');
       }
       
-      // Aggiorna i dati locali
-      setMergedBlocks(updatedBlocks);
+      // Aggiorna i dati locali: sia blocchi originali che filtrati
+      setOriginalBlocks(updatedBlocks);
+      
+      // Aggiorna anche i blocchi filtrati per la visualizzazione
+      let updatedFilteredBlocks = updatedBlocks;
+      if (globalSearchTerm && globalSearchTerm.trim()) {
+        updatedFilteredBlocks = filterBlocksBySearchTerm(updatedBlocks, globalSearchTerm);
+      }
+      setMergedBlocks(updatedFilteredBlocks);
       
       // Ricalcola le statistiche con i nuovi valori
       const updatedFields = extractTranslationFields(updatedBlocks, scriptContent.availableLanguages || ['EN', 'DE', 'FR', 'ES', 'PL', 'CS', 'RU']);
@@ -1083,7 +1103,7 @@ export const TranslationsPage: React.FC = () => {
     } finally {
       setSaving(false);
     }
-  }, [selectedScript, mergedBlocks, scriptContent, translationFields, edits, selectedLang, applyEditsToBlocks, extractTranslationFields, calculateCoverageStats, scriptDetails]);
+  }, [selectedScript, originalBlocks, scriptContent, translationFields, edits, selectedLang, applyEditsToBlocks, extractTranslationFields, calculateCoverageStats, scriptDetails, globalSearchTerm, filterBlocksBySearchTerm]);
 
   // Funzione per filtrare ricorsivamente i blocchi delle missions
   const filterBlocksRecursively = useCallback((blocks: IFlowBlock[], searchTerm: string): IFlowBlock[] => {
