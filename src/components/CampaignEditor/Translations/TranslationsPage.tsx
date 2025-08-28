@@ -6,6 +6,7 @@ import { useLocalizationStrings } from '@/hooks/CampaignEditor/useLocalizationSt
 import { TranslationEditor } from './TranslationEditor';
 import { ScriptMetadataProvider } from '@/contexts/ScriptMetadataContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { BackupErrorModal } from '@/components/UI/BackupErrorModal';
 
 // Minimal types for coverage API
 type PerLanguage = Record<string, { covered: number; missing: number; different: number; totalFields: number; percent: number }>;
@@ -49,11 +50,34 @@ type TranslationField = {
 };
 
 export const TranslationsPage: React.FC = () => {
+  
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage(); // Lingua globale dell'app
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [coverage, setCoverage] = useState<CoverageResponse['data'] | null>(null);
+  const [coverageLoaded, setCoverageLoaded] = useState(false);
+  const [preventReload, setPreventReload] = useState(false);
+  
+  // State interno per coverage con protezione diretta
+  const [coverageInternal, setCoverageInternalRaw] = useState<CoverageResponse['data'] | null>(null);
+  
+  // Wrapper protetto che blocca TUTTE le chiamate durante preventReload
+  const setCoverageInternal = useCallback((newCoverage: CoverageResponse['data'] | null) => {
+    if (preventReload) {
+      return; // Blocca silenziosamente durante preventReload
+    }
+    setCoverageInternalRaw(newCoverage);
+  }, [preventReload]);
+  
+  // Funzione per forzare aggiornamenti durante preventReload (solo per aggiornamento ottimistico)
+  const setCoverageForced = useCallback((newCoverage: CoverageResponse['data'] | null) => {
+    setCoverageInternalRaw(newCoverage);
+  }, []);
+  
+  // Alias per compatibilità
+  const setCoverage = setCoverageInternal;
+  const coverage = coverageInternal;
+  
   const [selectedLang, setSelectedLang] = useState<string>('IT');
   const [onlyMissing, setOnlyMissing] = useState<boolean>(false);
   const [selectedScript, setSelectedScript] = useState<string | null>(null);
@@ -91,6 +115,11 @@ export const TranslationsPage: React.FC = () => {
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [contentSearchActive, setContentSearchActive] = useState<boolean>(false);
   const [filterEnabled, setFilterEnabled] = useState<boolean>(true);  // Toggle per attivare/disattivare il filtro
+  
+  // Stati per gestire errori di backup
+  const [showBackupErrorModal, setShowBackupErrorModal] = useState<boolean>(false);
+  const [backupErrorMessage, setBackupErrorMessage] = useState<string>('');
+  const [backupErrorDetails, setBackupErrorDetails] = useState<any>(null);
 
   // Hook per localization strings
   const {
@@ -596,6 +625,10 @@ export const TranslationsPage: React.FC = () => {
 
   // Carica la coverage degli scripts solo quando necessario
   const loadScriptsCoverage = useCallback(async () => {
+    if (preventReload) {
+      return; // Blocca silenziosamente durante preventReload
+    }
+    
     try {
       setLoading(true);
       
@@ -604,6 +637,7 @@ export const TranslationsPage: React.FC = () => {
       const scriptsJson: CoverageResponse = await scriptsRes.json();
       if (!scriptsJson.success) throw new Error('scripts coverage failed');
       setCoverage(scriptsJson.data);
+      setCoverageLoaded(true);
       
       setError(null);
     } catch (e: any) {
@@ -611,7 +645,7 @@ export const TranslationsPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [preventReload]);
 
   // Carica dati nodes.yaml
   const loadNodesData = useCallback(async () => {
@@ -647,8 +681,13 @@ export const TranslationsPage: React.FC = () => {
 
   // Carica coverage solo per il tab selezionato
   useEffect(() => {
-    if (selectedTab === 'scripts' && !coverage) {
-      loadScriptsCoverage();
+    if (selectedTab === 'scripts') {
+      // Carica coverage solo se non è già stata caricata
+      if (!coverageLoaded) {
+        loadScriptsCoverage();
+      } else {
+        setLoading(false);
+      }
     } else if (selectedTab === 'nodes' && !nodesData) {
       loadNodesData();
     } else if (selectedTab === 'yaml-missions' && !yamlMissionsData) {
@@ -657,7 +696,7 @@ export const TranslationsPage: React.FC = () => {
       // Per strings e missions, imposta loading a false immediatamente
       setLoading(false);
     }
-  }, [selectedTab, coverage, nodesData, yamlMissionsData, loadScriptsCoverage, loadNodesData, loadYamlMissionsData]);
+  }, [selectedTab, coverageLoaded, nodesData, yamlMissionsData, loadScriptsCoverage, loadNodesData, loadYamlMissionsData]);
 
 
   // Funzione per estrarre i campi multilingua dai blocchi (come prima)
@@ -837,6 +876,11 @@ export const TranslationsPage: React.FC = () => {
   }, [selectedTab, contentSearchActive]); // Solo selectedTab e contentSearchActive come dipendenze
 
   useEffect(() => {
+    // Riabilita reload quando cambia script (l'utente naviga verso un nuovo script)
+    if (preventReload && selectedScript) {
+      setPreventReload(false);
+    }
+    
     const loadDetails = async () => {
       if (!selectedScript) {
         setScriptDetails(null);
@@ -1021,6 +1065,7 @@ export const TranslationsPage: React.FC = () => {
     
     try {
       setSaving(true);
+      setPreventReload(true); // Blocca qualsiasi ricaricamento durante il salvataggio
       
       // CORREZIONE CRITICA: Applica le modifiche ai blocchi ORIGINALI completi
       // non a quelli filtrati per preservare l'intero script
@@ -1070,7 +1115,39 @@ export const TranslationsPage: React.FC = () => {
       
       const stats = calculateCoverageStats(updatedFields, selectedLang);
       
-      // Aggiorna scriptDetails
+      // Aggiornamento ottimistico della coverage nella tabella principale - SPOSTATO PRIMA
+      if (coverage && selectedScript && typeof stats.covered === 'number' && stats.covered >= 0) {
+        const updatedCoverage = { ...coverage };
+        const scriptInCoverage = updatedCoverage.perScript.find(s => s.script === selectedScript);
+        if (scriptInCoverage && scriptInCoverage.languages[selectedLang]) {
+          // Salva il valore vecchio PRIMA di modificare
+          const oldCovered = scriptInCoverage.languages[selectedLang].covered;
+          
+          // Aggiorna i valori per il singolo script
+          scriptInCoverage.languages[selectedLang] = {
+            ...scriptInCoverage.languages[selectedLang],
+            covered: stats.covered,
+            missing: stats.total - stats.covered,
+            percent: stats.percent
+          };
+          
+          // Aggiorna anche i totali per lingua se necessario
+          if (updatedCoverage.perLanguage[selectedLang] && typeof oldCovered === 'number') {
+            const coverageDelta = stats.covered - oldCovered;
+            updatedCoverage.perLanguage[selectedLang].covered += coverageDelta;
+            updatedCoverage.perLanguage[selectedLang].missing -= coverageDelta;
+            
+            const totalFields = updatedCoverage.perLanguage[selectedLang].totalFields;
+            if (totalFields > 0) {
+              updatedCoverage.perLanguage[selectedLang].percent = Math.round((updatedCoverage.perLanguage[selectedLang].covered / totalFields) * 100);
+            }
+          }
+          
+          setCoverageForced(updatedCoverage); // Aggiorna coverage ottimisticamente
+        }
+      }
+      
+      // Aggiorna scriptDetails DOPO l'aggiornamento ottimistico
       if (scriptDetails) {
         const updatedSummary = { ...scriptDetails.summary };
         updatedSummary[selectedLang] = {
@@ -1095,13 +1172,41 @@ export const TranslationsPage: React.FC = () => {
         });
       }
       
+      // Riabilita i ricaricamenti dopo 10 secondi (tempo sufficiente per vedere l'aggiornamento)
+      setTimeout(() => {
+        setPreventReload(false);
+        console.log('[SAVE DEBUG] preventReload set to false after 10 seconds - reloads enabled');
+      }, 10000);
+      
       alert(`Script salvato con successo! Copertura ${selectedLang}: ${stats.percent}%`);
       
     } catch (error: any) {
       console.error('Error saving script:', error);
+      
+      // Gestione speciale per errori con dettagli di backup
+      if (error.response?.data?.scriptResults) {
+        const failedLanguages = error.response.data.scriptResults.filter((result: any) => 
+          result.status !== 'success' && result.backupDetails
+        );
+        
+        if (failedLanguages.length > 0) {
+          const firstFailed = failedLanguages[0];
+          setBackupErrorMessage(error.message || 'Errore durante il salvataggio');
+          setBackupErrorDetails(firstFailed.backupDetails);
+          setShowBackupErrorModal(true);
+          return;
+        }
+      }
+      
+      // Fallback per errori senza dettagli di backup
       alert(`Errore durante il salvataggio: ${error.message}`);
     } finally {
       setSaving(false);
+      // In caso di errore, riabilita i ricaricamenti immediatamente
+      if (preventReload) {
+        setPreventReload(false);
+        console.log('[SAVE DEBUG] preventReload reset to false due to error');
+      }
     }
   }, [selectedScript, originalBlocks, scriptContent, translationFields, edits, selectedLang, applyEditsToBlocks, extractTranslationFields, calculateCoverageStats, scriptDetails, globalSearchTerm, filterBlocksBySearchTerm]);
 
@@ -1470,6 +1575,51 @@ export const TranslationsPage: React.FC = () => {
             values: f.values
           }))
         });
+      }
+      
+      // Aggiornamento ottimistico della coverage nella tabella principale per le missioni - SPOSTATO ALLA FINE
+      if (missionsCoverage && selectedMission && typeof stats.covered === 'number' && stats.covered >= 0) {
+        const updatedMissionsCoverage = { ...missionsCoverage };
+        const missionInCoverage = updatedMissionsCoverage.perMission.find((m: any) => m.mission === selectedMission);
+        if (missionInCoverage && missionInCoverage.languages[selectedLang]) {
+          // Salva il valore vecchio PRIMA di modificare
+          const oldCovered = missionInCoverage.languages[selectedLang].covered;
+          
+          console.log(`[COVERAGE DEBUG] Mission: ${selectedMission}, Lang: ${selectedLang}`);
+          console.log(`[COVERAGE DEBUG] Old covered: ${oldCovered}, New covered: ${stats.covered}`);
+          console.log(`[COVERAGE DEBUG] Current perLanguage[${selectedLang}]:`, updatedMissionsCoverage.perLanguage[selectedLang]);
+          
+          // Aggiorna i valori per la singola missione
+          missionInCoverage.languages[selectedLang] = {
+            ...missionInCoverage.languages[selectedLang],
+            covered: stats.covered,
+            missing: stats.total - stats.covered,
+            percent: stats.percent
+          };
+          
+          // Aggiorna anche i totali per lingua se necessario
+          if (updatedMissionsCoverage.perLanguage[selectedLang] && typeof oldCovered === 'number') {
+            const coverageDelta = stats.covered - oldCovered;
+            console.log(`[COVERAGE DEBUG] Coverage delta: ${coverageDelta}`);
+            
+            const oldPerLanguageCovered = updatedMissionsCoverage.perLanguage[selectedLang].covered;
+            const oldPerLanguageMissing = updatedMissionsCoverage.perLanguage[selectedLang].missing;
+            
+            updatedMissionsCoverage.perLanguage[selectedLang].covered += coverageDelta;
+            updatedMissionsCoverage.perLanguage[selectedLang].missing -= coverageDelta;
+            
+            console.log(`[COVERAGE DEBUG] PerLanguage before: covered=${oldPerLanguageCovered}, missing=${oldPerLanguageMissing}`);
+            console.log(`[COVERAGE DEBUG] PerLanguage after: covered=${updatedMissionsCoverage.perLanguage[selectedLang].covered}, missing=${updatedMissionsCoverage.perLanguage[selectedLang].missing}`);
+            
+            const totalFields = updatedMissionsCoverage.perLanguage[selectedLang].totalFields;
+            if (totalFields > 0) {
+              updatedMissionsCoverage.perLanguage[selectedLang].percent = Math.round((updatedMissionsCoverage.perLanguage[selectedLang].covered / totalFields) * 100);
+              console.log(`[COVERAGE DEBUG] PerLanguage new percent: ${updatedMissionsCoverage.perLanguage[selectedLang].percent}%`);
+            }
+          }
+          
+          setMissionsCoverage(updatedMissionsCoverage);
+        }
       }
       
       alert(`Mission salvata con successo! Copertura ${selectedLang}: ${stats.percent}%`);
@@ -2035,6 +2185,7 @@ export const TranslationsPage: React.FC = () => {
     currentSorted = scriptsSorted;
     currentDetails = scriptDetails;
     currentSaveFunction = saveTranslations;
+    console.log('[SAVE BUTTON DEBUG] scriptDetails:', !!scriptDetails, 'saving:', saving);
   } else if (selectedTab === 'missions') {
     currentSorted = missionsSorted;
     currentDetails = missionDetails;
@@ -2390,7 +2541,10 @@ export const TranslationsPage: React.FC = () => {
                         const dynamicStats = calculateDynamicCoverage(itemName, d.percent, d.covered, d.totalFields);
                         return (
                           <>
-                            {dynamicStats.percent}% <span className="text-xs text-gray-500">({dynamicStats.covered}/{dynamicStats.totalFields})</span>
+                            <span style={{backgroundColor: preventReload ? 'red' : 'transparent', color: preventReload ? 'white' : 'inherit'}}>
+                              {dynamicStats.percent}% <span className="text-xs text-gray-500">({dynamicStats.covered}/{dynamicStats.totalFields})</span>
+                              {preventReload && <span className="text-xs text-white ml-2">[LOCKED]</span>}
+                            </span>
                             {/* Copertura IT */}
                             {selectedLang === 'IT' && (
                               <div className="text-xs text-blue-400 mt-1">
@@ -3132,6 +3286,13 @@ export const TranslationsPage: React.FC = () => {
         </table>
       </div>
       
+      {/* Modal per errori di backup */}
+      <BackupErrorModal
+        isOpen={showBackupErrorModal}
+        onClose={() => setShowBackupErrorModal(false)}
+        errorMessage={backupErrorMessage}
+        backupDetails={backupErrorDetails}
+      />
     </div>
   );
 };

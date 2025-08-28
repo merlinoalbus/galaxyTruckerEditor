@@ -9,6 +9,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
 const { initializeLanguage, isLanguageInitialized, getAvailableLanguages } = require('../utils/languageInitializer');
+const { updateScriptInFileMultilingualWithBackup, BackupRestoreError } = require('../utils/backupManager');
 
 const router = express.Router();
 const logger = getLogger();
@@ -2514,8 +2515,12 @@ async function saveScriptMultilingual(scriptName, blocks, languages) {
         const scriptDir = path.dirname(scriptPath);
         await fs.ensureDir(scriptDir);
         
-        // Gestisce aggiornamento file esistente
-        await updateScriptInFileMultilingual(scriptPath, scriptName, fullScriptContent);
+        // Gestisce aggiornamento file esistente con sistema di backup
+        const saveResult = await updateScriptInFileMultilingualWithBackup(scriptPath, scriptName, fullScriptContent);
+        
+        if (!saveResult.success) {
+          throw new Error('Failed to save script file');
+        }
         
         results.languagesProcessed.push(language);
         results.filesGenerated.push(`scripts_${language}.txt`);
@@ -2532,10 +2537,20 @@ async function saveScriptMultilingual(scriptName, blocks, languages) {
         
       } catch (langError) {
         logger.error(`Error saving script ${scriptName} in ${language}: ${langError.message}`);
-        results.validation.languageValidations[language] = {
-          isValid: false,
-          error: langError.message
-        };
+        
+        // Gestione speciale per errori di backup/ripristino
+        if (langError instanceof BackupRestoreError) {
+          results.validation.languageValidations[language] = {
+            isValid: false,
+            error: langError.message,
+            backupDetails: langError.details
+          };
+        } else {
+          results.validation.languageValidations[language] = {
+            isValid: false,
+            error: langError.message
+          };
+        }
         results.validation.isValid = false;
       }
     }
@@ -2560,7 +2575,11 @@ async function saveScriptSingleLanguage(scriptName, blocks, language) {
     const scriptDir = path.dirname(scriptPath);
     await fs.ensureDir(scriptDir);
     
-    await updateScriptInFileMultilingual(scriptPath, scriptName, fullScriptContent);
+    const saveResult = await updateScriptInFileMultilingualWithBackup(scriptPath, scriptName, fullScriptContent);
+    
+    if (!saveResult.success) {
+      throw new Error('Failed to save script file');
+    }
     
     const validation = await validateSavedScript(scriptName, language, blocks);
     
@@ -2581,39 +2600,10 @@ async function saveScriptSingleLanguage(scriptName, blocks, language) {
 }
 
 
+// FUNZIONE AGGIORNATA PER USARE IL BACKUP MANAGER
 async function updateScriptInFileMultilingual(filePath, scriptName, newContent) {
-  let existingContent = '';
-  
-  if (await fs.pathExists(filePath)) {
-    existingContent = await fs.readFile(filePath, 'utf8');
-  }
-  
-  // Rimuovi versione esistente dello script
-  const scriptStartPattern = new RegExp(`SCRIPT\\s+${scriptName}\\s*\\n`, 'i');
-  const scriptEndPattern = /END_OF_SCRIPTS\\s*\\n?/;
-  
-  let updatedContent = existingContent;
-  const startMatch = updatedContent.match(scriptStartPattern);
-  
-  if (startMatch) {
-    const startIndex = startMatch.index;
-    const afterStart = updatedContent.substring(startIndex + startMatch[0].length);
-    const endMatch = afterStart.match(scriptEndPattern);
-    
-    if (endMatch) {
-      const endIndex = startIndex + startMatch[0].length + endMatch.index + endMatch[0].length;
-      updatedContent = updatedContent.substring(0, startIndex) + updatedContent.substring(endIndex);
-    }
-  }
-  
-  // Aggiungi nuovo script
-  if (updatedContent && !updatedContent.endsWith('\n')) {
-    updatedContent += '\n';
-  }
-  updatedContent += newContent;
-  
-  // Salva file aggiornato
-  await fs.writeFile(filePath, updatedContent, 'utf8');
+  // Usa la nuova funzione con sistema di backup
+  return await updateScriptInFileMultilingualWithBackup(filePath, scriptName, newContent);
 }
 
 // Verifica se i blocchi contengono dati multilingua
