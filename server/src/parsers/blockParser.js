@@ -1565,8 +1565,8 @@ function serializeCommand(element, targetLanguage = 'EN') {
           if ((element.type === 'SETDECKPREPARATIONSCRIPT' || element.type === 'SETFLIGHTDECKPREPARATIONSCRIPT') && paramName === 'script') {
             parts.push(`"${paramValue}"`);
           }
-          // Eccezione: ADDINFOWINDOW deve SEMPRE avere virgolette per il parametro 'image'
-          else if (element.type === 'ADDINFOWINDOW' && paramName === 'image') {
+          // Eccezione: ADDINFOWINDOW e SHOWINFOWINDOW devono SEMPRE avere virgolette per il parametro 'image'
+          else if ((element.type === 'ADDINFOWINDOW' || element.type === 'SHOWINFOWINDOW') && paramName === 'image') {
             parts.push(`"${paramValue}"`);
           } else if ((paramType === 'string' && !noQuoteParams.includes(paramName)) || needQuoteParams.includes(paramName)) {
             parts.push(`"${paramValue}"`);
