@@ -1659,43 +1659,103 @@ export const TranslationsPage: React.FC = () => {
 
   // Funzione per calcolare la copertura dinamica considerando gli edits
   const calculateDynamicCoverage = useCallback((itemName: string, basePercent: number, baseCovered: number, baseTotal: number) => {
-    if (selectedTab !== 'scripts' && selectedTab !== 'missions') {
-      return { percent: basePercent, covered: baseCovered, totalFields: baseTotal };
-    }
-
     let dynamicCovered = baseCovered;
-    const relevantDetails = selectedTab === 'scripts' && selectedScript === itemName ? scriptDetails 
-                          : selectedTab === 'missions' && selectedMission === itemName ? missionDetails 
-                          : null;
 
-    if (relevantDetails?.details) {
-      // Per ogni campo nel dettaglio, controlla se c'è un edit
-      relevantDetails.details.forEach((detail: any, idx: number) => {
-        const editKey = `${itemName}|${idx}|${selectedLang}`;
-        const editValue = edits[editKey];
-        const originalValue = detail.values?.[selectedLang] || '';
-        const enValue = detail.en || '';
+    if (selectedTab === 'scripts' || selectedTab === 'missions') {
+      const relevantDetails = selectedTab === 'scripts' && selectedScript === itemName ? scriptDetails 
+                            : selectedTab === 'missions' && selectedMission === itemName ? missionDetails 
+                            : null;
 
-        // Controlla stato originale
-        const wasTranslated = originalValue && originalValue.trim() !== '' && originalValue.trim() !== enValue.trim();
-        
-        // Controlla stato con edit
-        const currentValue = editValue !== undefined ? editValue : originalValue;
-        const isNowTranslated = currentValue && currentValue.trim() !== '' && currentValue.trim() !== enValue.trim();
+      if (relevantDetails?.details) {
+        // Per ogni campo nel dettaglio, controlla se c'è un edit
+        relevantDetails.details.forEach((detail: any, idx: number) => {
+          const editKey = `${itemName}|${idx}|${selectedLang}`;
+          const editValue = edits[editKey];
+          const originalValue = detail.values?.[selectedLang] || '';
+          const enValue = detail.en || '';
 
-        if (wasTranslated !== isNowTranslated) {
-          if (isNowTranslated && !wasTranslated) {
-            dynamicCovered++; // Campo ora tradotto
-          } else if (!isNowTranslated && wasTranslated) {
-            dynamicCovered--; // Campo non più tradotto
+          // Controlla stato originale
+          const wasTranslated = originalValue && originalValue.trim() !== '' && originalValue.trim() !== enValue.trim();
+          
+          // Controlla stato con edit
+          const currentValue = editValue !== undefined ? editValue : originalValue;
+          const isNowTranslated = currentValue && currentValue.trim() !== '' && currentValue.trim() !== enValue.trim();
+
+          if (wasTranslated !== isNowTranslated) {
+            if (isNowTranslated && !wasTranslated) {
+              dynamicCovered++; // Campo ora tradotto
+            } else if (!isNowTranslated && wasTranslated) {
+              dynamicCovered--; // Campo non più tradotto
+            }
+          }
+        });
+      }
+    } else if (selectedTab === 'strings') {
+      // Per strings, il calcolo dinamico viene gestito dal componente interno
+      // poiché usa updateString invece di setEdits direttamente
+      return { percent: basePercent, covered: baseCovered, totalFields: baseTotal };
+    } else if (selectedTab === 'nodes') {
+      // Per nodes, il calcolo dinamico sarà gestito quando avremo accesso ai dati del nodo
+      // Attualmente i nodes usano edits ma necessitiamo dei dati specifici del nodo
+      return { percent: basePercent, covered: baseCovered, totalFields: baseTotal };
+    } else if (selectedTab === 'yaml-missions') {
+      // Per yaml-missions, controlla gli edits nelle missioni
+      if (yamlMissionsData?.items) {
+        const missionData = yamlMissionsData.items.find((item: any) => item.id === itemName);
+        if (missionData) {
+          const fields = ['caption', 'description'];
+          fields.forEach((field) => {
+            const editKey = `yaml-missions|${itemName}|${selectedLang}_${field}`;
+            const editValue = edits[editKey];
+            const originalValue = missionData.translations?.[selectedLang]?.[field] || '';
+            const enValue = missionData.translations?.['EN']?.[field] || '';
+
+            if (enValue) {
+              const wasTranslated = originalValue && originalValue.trim() !== '' && originalValue.trim() !== enValue.trim();
+              const currentValue = editValue !== undefined ? editValue : originalValue;
+              const isNowTranslated = currentValue && currentValue.trim() !== '' && currentValue.trim() !== enValue.trim();
+
+              if (wasTranslated !== isNowTranslated) {
+                if (isNowTranslated && !wasTranslated) {
+                  dynamicCovered++;
+                } else if (!isNowTranslated && wasTranslated) {
+                  dynamicCovered--;
+                }
+              }
+            }
+          });
+
+          // Controlla buttons
+          if (missionData.translations?.['EN']?.buttons && Array.isArray(missionData.translations['EN'].buttons)) {
+            missionData.translations['EN'].buttons.forEach((enButton: any, buttonIndex: number) => {
+              if (enButton.text) {
+                const editKey = `yaml-missions|${itemName}|${selectedLang}_button_${buttonIndex}`;
+                const editValue = edits[editKey];
+                const originalButton = missionData.translations?.[selectedLang]?.buttons?.[buttonIndex];
+                const originalValue = originalButton?.text || '';
+                const enValue = enButton.text;
+
+                const wasTranslated = originalValue && originalValue.trim() !== '' && originalValue.trim() !== enValue.trim();
+                const currentValue = editValue !== undefined ? editValue : originalValue;
+                const isNowTranslated = currentValue && currentValue.trim() !== '' && currentValue.trim() !== enValue.trim();
+
+                if (wasTranslated !== isNowTranslated) {
+                  if (isNowTranslated && !wasTranslated) {
+                    dynamicCovered++;
+                  } else if (!isNowTranslated && wasTranslated) {
+                    dynamicCovered--;
+                  }
+                }
+              }
+            });
           }
         }
-      });
+      }
     }
 
     const dynamicPercent = baseTotal > 0 ? Math.round((dynamicCovered / baseTotal) * 100) : 100;
     return { percent: dynamicPercent, covered: dynamicCovered, totalFields: baseTotal };
-  }, [selectedTab, selectedScript, selectedMission, scriptDetails, missionDetails, edits, selectedLang]);
+  }, [selectedTab, selectedScript, selectedMission, scriptDetails, missionDetails, selectedCategory, yamlMissionsData, edits, selectedLang]);
 
   // Chiudi i dettagli se gli script selezionati non sono più visibili nel filtro
   useEffect(() => {
