@@ -59,6 +59,8 @@ export const TranslationsPage: React.FC = () => {
   const [edits, setEdits] = useState<Record<string, string>>({});
   const [mergedBlocks, setMergedBlocks] = useState<IFlowBlock[] | null>(null);
   const [translationFields, setTranslationFields] = useState<TranslationField[]>([]);
+  const [allTranslationFields, setAllTranslationFields] = useState<TranslationField[]>([]); // Campi completi non filtrati
+  const [allScriptDetails, setAllScriptDetails] = useState<any>(null); // Dettagli script completi non filtrati
   const [saving, setSaving] = useState(false);
   const [scriptContent, setScriptContent] = useState<any>(null);
   
@@ -85,6 +87,7 @@ export const TranslationsPage: React.FC = () => {
   const [filteredRegularMissions, setFilteredRegularMissions] = useState<Set<string>>(new Set());
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [contentSearchActive, setContentSearchActive] = useState<boolean>(false);
+  const [filterEnabled, setFilterEnabled] = useState<boolean>(true);  // Toggle per attivare/disattivare il filtro
 
   // Hook per localization strings
   const {
@@ -862,6 +865,10 @@ export const TranslationsPage: React.FC = () => {
   // Estrai i campi di traduzione dai blocchi filtrati
   const fields = extractTranslationFields(filteredBlocks, availableLanguages);
   setTranslationFields(fields);
+  
+  // Estrai ANCHE i campi da TUTTI i blocchi per il toggle
+  const allFields = extractTranslationFields(blocks, availableLanguages);
+  setAllTranslationFields(allFields);
         
         // Calcola le statistiche per creare scriptDetails compatibile
         const summary: PerLanguage = {};
@@ -877,7 +884,7 @@ export const TranslationsPage: React.FC = () => {
           };
         }
         
-        // Crea dettagli compatibili con l'API esistente
+        // Crea dettagli compatibili con l'API esistente (per blocchi filtrati)
         const details = fields.map(f => ({
           path: f.blockPath,
           field: f.field,
@@ -887,12 +894,32 @@ export const TranslationsPage: React.FC = () => {
           values: f.values
         }));
         
-        setScriptDetails({
+        // Crea dettagli per TUTTI i blocchi (per il toggle)
+        const allDetails = allFields.map(f => ({
+          path: f.blockPath,
+          field: f.field,
+          label: f.nearestLabel,
+          type: f.type,
+          en: f.en,
+          values: f.values
+        }));
+        
+        const scriptDetailsData = {
           script: selectedScript,
           totalFields: fields.length,
           summary,
           details
-        });
+        };
+        
+        const allScriptDetailsData = {
+          script: selectedScript,
+          totalFields: allFields.length,
+          summary,
+          details: allDetails
+        };
+        
+        setScriptDetails(scriptDetailsData);
+        setAllScriptDetails(allScriptDetailsData); // Salva versione completa per toggle
         
         // Precarica i valori attuali negli edits
         const initialEdits: Record<string, string> = {};
@@ -1232,6 +1259,7 @@ export const TranslationsPage: React.FC = () => {
       }
       
       setTranslationFields(fields);
+      setAllTranslationFields(allFields); // Salva copia completa per toggle
       
       // Calcola le statistiche per creare dettagli compatibili
       const summary: PerLanguage = {};
@@ -1393,6 +1421,7 @@ export const TranslationsPage: React.FC = () => {
       // Ricalcola le statistiche
       const updatedFields = extractTranslationFields(updatedAllBlocks, missionContent.availableLanguages || ['EN', 'DE', 'FR', 'ES', 'PL', 'CS', 'RU']);
       setTranslationFields(updatedFields);
+      setAllTranslationFields(updatedFields); // Salva copia completa per toggle
       
       const stats = calculateCoverageStats(updatedFields, selectedLang);
       
@@ -2232,7 +2261,7 @@ export const TranslationsPage: React.FC = () => {
         <table className="w-full text-left text-sm table-fixed">
           <thead className="bg-slate-900 text-gray-300">
             <tr>
-              <th className="px-3 py-2 w-[60%]">
+              <th className="px-3 py-2 w-[45%]">
                 {selectedTab === 'scripts' ? 'Script' : 
                  selectedTab === 'missions' ? 'Mission' : 
                  selectedTab === 'strings' ? 'Category' :
@@ -2240,7 +2269,7 @@ export const TranslationsPage: React.FC = () => {
                  selectedTab === 'yaml-missions' ? 'Mission' : 'Item'}
               </th>
               <th className="px-3 py-2 w-[20%]">% {selectedLang}</th>
-              <th className="px-3 py-2 w-[20%]">Azioni</th>
+              <th className="px-3 py-2 w-[35%]">Azioni</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-700">
@@ -2273,7 +2302,7 @@ export const TranslationsPage: React.FC = () => {
               return (
                 <React.Fragment key={itemName}>
                   <tr className="hover:bg-slate-700/40">
-                    <td className="px-3 py-2 text-gray-200 w-[60%] truncate" title={itemName}>{itemName}</td>
+                    <td className="px-3 py-2 text-gray-200 w-[45%] truncate" title={itemName}>{itemName}</td>
                     <td className="px-3 py-2 text-gray-300 w-[20%]">
                       {(() => {
                         const dynamicStats = calculateDynamicCoverage(itemName, d.percent, d.covered, d.totalFields);
@@ -2290,7 +2319,7 @@ export const TranslationsPage: React.FC = () => {
                         );
                       })()}
                     </td>
-                    <td className="px-3 py-2 text-gray-300 w-[20%]">
+                    <td className="px-3 py-2 text-gray-300 w-[35%]">
                       <div className="flex items-center space-x-2">
                         {/* 1) Mostra Dettagli/Nascondi Dettagli */}
                         <button 
@@ -2567,6 +2596,21 @@ export const TranslationsPage: React.FC = () => {
                             <span>✨</span>
                           </button>
                         )}
+                        {/* 5) Toggle filtro - TEST: attivo sempre quando c'è ricerca */}
+                        {isOpen && globalSearchTerm && (
+                          <button
+                            className={`px-3 py-2 border rounded transition-colors ${
+                              filterEnabled 
+                                ? 'bg-green-600 hover:bg-green-500 border-green-500 text-white' 
+                                : 'bg-slate-700 hover:bg-slate-600 border-slate-600 text-gray-300'
+                            }`}
+                            title={filterEnabled ? 'Filtro attivo - clicca per disattivare' : 'Filtro disattivato - clicca per attivare'}
+                            onClick={() => setFilterEnabled(!filterEnabled)}
+                            style={{ fontSize: '20px', lineHeight: '1', minWidth: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          >
+                            {filterEnabled ? '🔽' : '📋'}
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -2596,8 +2640,8 @@ export const TranslationsPage: React.FC = () => {
                                     <tbody className="divide-y divide-slate-700">
                                   {filteredStrings
                                     .filter((stringItem) => {
-                                      // Se non c'è ricerca globale, mostra tutte le stringhe
-                                      if (!globalSearchTerm.trim()) return true;
+                                      // Se il filtro è disattivato o non c'è ricerca, mostra tutte le stringhe
+                                      if (!filterEnabled || !globalSearchTerm.trim()) return true;
                                       
                                       const searchTermLower = globalSearchTerm.toLowerCase();
                                       
@@ -2669,7 +2713,29 @@ export const TranslationsPage: React.FC = () => {
                                   ) : (
                                     <table className="w-full text-left text-sm">
                                       <tbody className="divide-y divide-slate-700">
-                                        {translationFields.map((field, idx) => {
+                                        {(filterEnabled ? translationFields : allTranslationFields)
+                                        .filter((field) => {
+                                          // Se non c'è ricerca o filtro disattivato, mostra tutti i campi
+                                          if (!globalSearchTerm.trim() || !filterEnabled) return true;
+                                          
+                                          const searchTermLower = globalSearchTerm.toLowerCase();
+                                          
+                                          // Controlla nel testo EN
+                                          if (field.en && field.en.toLowerCase().includes(searchTermLower)) return true;
+                                          
+                                          // Controlla in tutte le lingue disponibili
+                                          if (field.values) {
+                                            for (const lang in field.values) {
+                                              const value = field.values[lang];
+                                              if (value && typeof value === 'string' && value.toLowerCase().includes(searchTermLower)) {
+                                                return true;
+                                              }
+                                            }
+                                          }
+                                          
+                                          return false;
+                                        })
+                                        .map((field, idx) => {
                                         const key = `${itemName}|${idx}|${selectedLang}`;
                                         const enValue = field.en || '';
                                         const fieldValue = field.values && field.values[selectedLang] ? field.values[selectedLang] : '';
@@ -2761,8 +2827,8 @@ export const TranslationsPage: React.FC = () => {
                                         })).filter((button: any) => button.en) : [])
                                     ];
                                   })()?.filter((item: any) => {
-                                    // Se non c'è ricerca globale, mostra tutti i campi
-                                    if (!globalSearchTerm.trim()) return true;
+                                    // Se il filtro è disattivato o non c'è ricerca, mostra tutti i campi
+                                    if (!filterEnabled || !globalSearchTerm.trim()) return true;
                                     
                                     const searchTermLower = globalSearchTerm.toLowerCase();
                                     
@@ -2909,11 +2975,11 @@ export const TranslationsPage: React.FC = () => {
                                 </table>
                                 <div className="max-h-96 overflow-auto">
                                   <table className="w-full text-left text-sm">
-                                    <tbody className="divide-y divide-slate-700">
-                                  {currentDetails.details
+                                    <tbody className="divide-y divide-slate-700" key={`scripts-${filterEnabled}`}>
+                                  {(filterEnabled ? currentDetails.details : (allScriptDetails?.details || currentDetails.details))
                                     .filter((d: any) => {
-                                      // Se non c'è ricerca globale, mostra tutti i blocchi
-                                      if (!globalSearchTerm.trim()) return true;
+                                      // Se non c'è ricerca o filtro disattivato, mostra tutti i blocchi  
+                                      if (!globalSearchTerm.trim() || !filterEnabled) return true;
                                       
                                       // Controlla se il termine di ricerca è presente in qualsiasi lingua del blocco
                                       const searchTermLower = globalSearchTerm.toLowerCase();
