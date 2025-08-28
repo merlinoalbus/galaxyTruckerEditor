@@ -391,12 +391,10 @@ export const TranslationsPage: React.FC = () => {
       // Poi cerca nel contenuto usando batch endpoint (UNA sola chiamata)
       const remainingScripts = scriptNames.filter(name => !matchingScripts.has(name));
       
-      console.log(`Ricerca batch nel contenuto di ${remainingScripts.length} script...`);
       
       if (remainingScripts.length > 0) {
         const contentMatches = await batchSearchInScripts(remainingScripts, globalSearchTerm);
         contentMatches.forEach(scriptName => matchingScripts.add(scriptName));
-        console.log(`Trovati ${contentMatches.length} script con il contenuto cercato`);
       }
       
     } catch (error) {
@@ -649,25 +647,20 @@ export const TranslationsPage: React.FC = () => {
     }
   }, [selectedTab, coverage, nodesData, yamlMissionsData, loadScriptsCoverage, loadNodesData, loadYamlMissionsData]);
 
-  // Funzione per estrarre i campi multilingua dai blocchi
+
+  // Funzione per estrarre i campi multilingua dai blocchi (come prima)
   const extractTranslationFields = useCallback((blocks: IFlowBlock[], languages: string[]): TranslationField[] => {
     const fields: TranslationField[] = [];
     const norm = (s: string | undefined): string => (typeof s === 'string' ? s.trim() : '');
-    
     function visit(list: IFlowBlock[], pathStack: (string | number)[], context?: { lastLabel?: string | null }) {
       if (!Array.isArray(list)) return;
       let lastLabel = context?.lastLabel || null;
-      
       for (let i = 0; i < list.length; i++) {
         const b = list[i] || {};
         const currentPath = [...pathStack, i];
-        
-        // Traccia il label più vicino per navigazione
         if (b.type === 'LABEL' && b.parameters?.name) {
           lastLabel = String(b.parameters.name);
         }
-        
-        // Campo text (usato da OPT)
         if (b.text && typeof b.text === 'object' && !Array.isArray(b.text)) {
           const enVal = norm(b.text.EN || Object.values(b.text)[0] || '');
           if (enVal) {
@@ -681,8 +674,6 @@ export const TranslationsPage: React.FC = () => {
             });
           }
         }
-        
-        // Parametri con oggetti multilingua
         if (b.parameters && typeof b.parameters === 'object') {
           for (const [pName, pVal] of Object.entries(b.parameters)) {
             if (pVal && typeof pVal === 'object' && !Array.isArray(pVal)) {
@@ -700,21 +691,70 @@ export const TranslationsPage: React.FC = () => {
             }
           }
         }
-        
-        // Ricorsione sui contenitori
         if (b.children) visit(b.children, [...currentPath, 'children'], { lastLabel });
         if (b.thenBlocks) visit(b.thenBlocks, [...currentPath, 'thenBlocks'], { lastLabel });
         if (b.elseBlocks) visit(b.elseBlocks, [...currentPath, 'elseBlocks'], { lastLabel });
-        
-        // Ricorsione sui blocchi specifici delle missions
         if (b.blockInit) visit(b.blockInit, [...currentPath, 'blockInit'], { lastLabel });
         if (b.blockStart) visit(b.blockStart, [...currentPath, 'blockStart'], { lastLabel });
         if (b.blockEvaluate) visit(b.blockEvaluate, [...currentPath, 'blockEvaluate'], { lastLabel });
       }
     }
-    
     visit(blocks, [], { lastLabel: null });
     return fields;
+  }, []);
+
+  // Funzione per filtrare i blocchi che matchano la ricerca in almeno una lingua
+  const filterBlocksBySearchTerm = useCallback((blocks: IFlowBlock[], searchTerm: string): IFlowBlock[] => {
+    if (!searchTerm.trim()) return blocks;
+    const normalizedSearch = searchTerm.toLowerCase().trim();
+    // Funzione per capire se un blocco o un suo discendente ha almeno un campo traducibile che matcha
+    const hasTranslatableMatchDeep = (block: IFlowBlock): boolean => {
+      // Match diretto
+      if (block.text && typeof block.text === 'object' && !Array.isArray(block.text)) {
+        for (const val of Object.values(block.text)) {
+          if (typeof val === 'string' && val.toLowerCase().includes(normalizedSearch)) return true;
+        }
+      }
+      if (block.parameters && typeof block.parameters === 'object') {
+        for (const pVal of Object.values(block.parameters)) {
+          if (pVal && typeof pVal === 'object' && !Array.isArray(pVal)) {
+            for (const langVal of Object.values(pVal as any)) {
+              if (typeof langVal === 'string' && langVal.toLowerCase().includes(normalizedSearch)) return true;
+            }
+          }
+        }
+      }
+      // Match nei figli
+      for (const key of ['children', 'thenBlocks', 'elseBlocks', 'blockInit', 'blockStart', 'blockEvaluate'] as const) {
+        if (Array.isArray((block as any)[key])) {
+          if ((block as any)[key].some((child: IFlowBlock) => hasTranslatableMatchDeep(child))) {
+            return true;
+          }
+        }
+      }
+      return false;
+    };
+    // Ricorsivo: mantieni la catena di genitori se almeno un discendente matcha
+    const filterRec = (list: IFlowBlock[]): IFlowBlock[] => {
+      return list
+        .map(block => {
+          if (!hasTranslatableMatchDeep(block)) return null;
+          let newBlock = { ...block };
+          (['children', 'thenBlocks', 'elseBlocks', 'blockInit', 'blockStart', 'blockEvaluate'] as const).forEach(key => {
+            if (Array.isArray((block as any)[key])) {
+              const filtered = filterRec((block as any)[key]);
+              if (filtered.length > 0) {
+                (newBlock as any)[key] = filtered;
+              } else {
+                delete (newBlock as any)[key];
+              }
+            }
+          });
+          return newBlock;
+        })
+        .filter(Boolean) as IFlowBlock[];
+    };
+    return filterRec(blocks);
   }, []);
 
   // Calcolo delle statistiche di copertura
@@ -781,15 +821,18 @@ export const TranslationsPage: React.FC = () => {
           throw new Error('Failed to load script blocks');
         }
         
-        const blocks = json.data.blocks;
+  let blocks = json.data.blocks;
         const availableLanguages = json.data.availableLanguages || ['EN', 'DE', 'FR', 'ES', 'PL', 'CS', 'RU'];
-        
-        setMergedBlocks(blocks);
-        setScriptContent(json.data);
-        
-        // Estrai i campi di traduzione dai blocchi
-        const fields = extractTranslationFields(blocks, availableLanguages);
-        setTranslationFields(fields);
+        // Applica filtro blocchi se ricerca attiva
+        let filteredBlocks = blocks;
+        if (globalSearchTerm && globalSearchTerm.trim()) {
+          filteredBlocks = filterBlocksBySearchTerm(blocks, globalSearchTerm);
+        }
+  setMergedBlocks(filteredBlocks);
+  setScriptContent(json.data);
+  // Estrai i campi di traduzione dai blocchi filtrati
+  const fields = extractTranslationFields(filteredBlocks, availableLanguages);
+  setTranslationFields(fields);
         
         // Calcola le statistiche per creare scriptDetails compatibile
         const summary: PerLanguage = {};
@@ -984,6 +1027,139 @@ export const TranslationsPage: React.FC = () => {
     }
   }, [selectedScript, mergedBlocks, scriptContent, translationFields, edits, selectedLang, applyEditsToBlocks, extractTranslationFields, calculateCoverageStats, scriptDetails]);
 
+  // Funzione per filtrare ricorsivamente i blocchi delle missions
+  const filterBlocksRecursively = useCallback((blocks: IFlowBlock[], searchTerm: string): IFlowBlock[] => {
+    if (!searchTerm.trim()) return blocks;
+    const searchTermLower = searchTerm.toLowerCase();
+    
+    const filterBlock = (block: IFlowBlock): IFlowBlock | null => {
+      // Controlla se il blocco ha testo che matcha
+      let hasMatch = false;
+      
+      // Controlla parameters.text (per SAY, SAYCHAR, etc.)
+      if (block.parameters?.text && typeof block.parameters.text === 'object') {
+        for (const lang in block.parameters.text) {
+          const text = block.parameters.text[lang];
+          if (text && typeof text === 'string' && text.toLowerCase().includes(searchTermLower)) {
+            hasMatch = true;
+            break;
+          }
+        }
+      }
+      
+      // Controlla text diretto (per OPT)
+      if (block.text && typeof block.text === 'object') {
+        for (const lang in block.text) {
+          const text = block.text[lang];
+          if (text && typeof text === 'string' && text.toLowerCase().includes(searchTermLower)) {
+            hasMatch = true;
+            break;
+          }
+        }
+      }
+      
+      // Controlla altri parametri string multilingua
+      if (block.parameters && typeof block.parameters === 'object') {
+        for (const [key, value] of Object.entries(block.parameters)) {
+          if (value && typeof value === 'object' && !Array.isArray(value)) {
+            // Potrebbe essere un oggetto multilingua
+            for (const lang in value as any) {
+              const text = (value as any)[lang];
+              if (text && typeof text === 'string' && text.toLowerCase().includes(searchTermLower)) {
+                hasMatch = true;
+                break;
+              }
+            }
+          }
+        }
+      }
+      
+      // Filtra ricorsivamente i blocchi figli
+      const filteredBlock = { ...block };
+      
+      // Ricorsione per tutti i tipi di contenitori
+      if (block.children) {
+        const filteredChildren = filterBlocksRecursively(block.children, searchTerm);
+        if (filteredChildren.length > 0) {
+          filteredBlock.children = filteredChildren;
+          hasMatch = true;
+        } else {
+          delete filteredBlock.children;
+        }
+      }
+      
+      if (block.thenBlocks) {
+        const filteredThen = filterBlocksRecursively(block.thenBlocks, searchTerm);
+        if (filteredThen.length > 0) {
+          filteredBlock.thenBlocks = filteredThen;
+          hasMatch = true;
+        } else {
+          delete filteredBlock.thenBlocks;
+        }
+      }
+      
+      if (block.elseBlocks) {
+        const filteredElse = filterBlocksRecursively(block.elseBlocks, searchTerm);
+        if (filteredElse.length > 0) {
+          filteredBlock.elseBlocks = filteredElse;
+          hasMatch = true;
+        } else {
+          delete filteredBlock.elseBlocks;
+        }
+      }
+      
+      if (block.blockInit) {
+        const filteredInit = filterBlocksRecursively(block.blockInit, searchTerm);
+        if (filteredInit.length > 0) {
+          filteredBlock.blockInit = filteredInit;
+          hasMatch = true;
+        } else {
+          delete filteredBlock.blockInit;
+        }
+      }
+      
+      if (block.blockStart) {
+        const filteredStart = filterBlocksRecursively(block.blockStart, searchTerm);
+        if (filteredStart.length > 0) {
+          filteredBlock.blockStart = filteredStart;
+          hasMatch = true;
+        } else {
+          delete filteredBlock.blockStart;
+        }
+      }
+      
+      if (block.blockEvaluate) {
+        const filteredEvaluate = filterBlocksRecursively(block.blockEvaluate, searchTerm);
+        if (filteredEvaluate.length > 0) {
+          filteredBlock.blockEvaluate = filteredEvaluate;
+          hasMatch = true;
+        } else {
+          delete filteredBlock.blockEvaluate;
+        }
+      }
+      
+      // IMPORTANTE: Per i blocchi contenitori (BUILD, FLIGHT, IF, etc), 
+      // mantienili se hanno figli con match anche se il blocco stesso non ha testo
+      if (!hasMatch) {
+        // Controlla se è un contenitore con almeno un figlio
+        const hasChildren = (filteredBlock.children?.length || 0) > 0 || 
+                          (filteredBlock.thenBlocks?.length || 0) > 0 || 
+                          (filteredBlock.elseBlocks?.length || 0) > 0 ||
+                          (filteredBlock.blockInit?.length || 0) > 0 ||
+                          (filteredBlock.blockStart?.length || 0) > 0 ||
+                          (filteredBlock.blockEvaluate?.length || 0) > 0;
+        
+        if (hasChildren) {
+          hasMatch = true;
+        }
+      }
+      
+      return hasMatch ? filteredBlock : null;
+    };
+    
+    return blocks.map(filterBlock).filter(b => b !== null) as IFlowBlock[];
+  }, []);
+  
   // Funzione per caricare i dettagli di una mission
   const loadMissionDetails = useCallback(async (missionName: string) => {
     if (!missionName) {
@@ -1000,7 +1176,7 @@ export const TranslationsPage: React.FC = () => {
         throw new Error('Failed to load mission blocks');
       }
       
-      const allBlocks = [
+      let allBlocks = [
         ...(json.data.blocksMission || []),
         ...(json.data.blocksFinish || [])
       ];
@@ -1008,8 +1184,24 @@ export const TranslationsPage: React.FC = () => {
       
       setMissionContent(json.data);
       
-      // Estrai i campi di traduzione
-      const fields = extractTranslationFields(allBlocks, availableLanguages);
+      // Estrai TUTTI i campi di traduzione dai blocchi (NON filtrati)
+      const allFields = extractTranslationFields(allBlocks, availableLanguages);
+      
+      // Applica filtro sui campi estratti se ricerca attiva
+      let fields = allFields;
+      if (globalSearchTerm && globalSearchTerm.trim()) {
+        const searchTermLower = globalSearchTerm.toLowerCase();
+        fields = allFields.filter(field => {
+          // Controlla se il campo contiene il termine cercato in QUALSIASI lingua
+          for (const [lang, value] of Object.entries(field.values)) {
+            if (value && typeof value === 'string' && value.toLowerCase().includes(searchTermLower)) {
+              return true;
+            }
+          }
+          return false;
+        });
+      }
+      
       setTranslationFields(fields);
       
       // Calcola le statistiche per creare dettagli compatibili
@@ -1062,7 +1254,7 @@ export const TranslationsPage: React.FC = () => {
       setMissionDetails(null);
       setMissionContent(null);
     }
-  }, [extractTranslationFields, calculateCoverageStats]);
+  }, [extractTranslationFields, calculateCoverageStats, filterBlocksRecursively, globalSearchTerm]);
 
   // Funzione per aggiungere id ai blocchi se mancanti
   const ensureBlockIds = useCallback((blocks: IFlowBlock[]): IFlowBlock[] => {
@@ -2350,7 +2542,7 @@ export const TranslationsPage: React.FC = () => {
                   </tr>
                   {isOpen && 
                    ((selectedTab === 'scripts' && currentDetails && currentDetails.script === itemName) ||
-                    (selectedTab === 'missions' && selectedMission === itemName && currentDetails && currentDetails.script === itemName) ||
+                    (selectedTab === 'missions' && selectedMission === itemName && currentDetails) ||
                     (selectedTab === 'strings' && currentDetails && currentDetails.nome === itemName) ||
                     (selectedTab === 'nodes' && currentDetails && currentDetails.id === itemName) ||
                     (selectedTab === 'yaml-missions' && selectedYamlMissions.has(itemName))) && (
@@ -2372,7 +2564,22 @@ export const TranslationsPage: React.FC = () => {
                                 <div className="max-h-96 overflow-auto">
                                   <table className="w-full text-left text-sm">
                                     <tbody className="divide-y divide-slate-700">
-                                  {filteredStrings.map((stringItem, idx) => {
+                                  {filteredStrings
+                                    .filter((stringItem) => {
+                                      // Se non c'è ricerca globale, mostra tutte le stringhe
+                                      if (!globalSearchTerm.trim()) return true;
+                                      
+                                      const searchTermLower = globalSearchTerm.toLowerCase();
+                                      
+                                      // Controlla in TUTTE le lingue disponibili
+                                      for (const value of Object.values(stringItem.values)) {
+                                        if (value && typeof value === 'string' && value.toLowerCase().includes(searchTermLower)) {
+                                          return true;
+                                        }
+                                      }
+                                      return false;
+                                    })
+                                    .map((stringItem, idx) => {
                                     const enValue = stringItem.values.EN || '';
                                     const rawValue = stringItem.values[selectedLang] || '';
                                     
@@ -2410,6 +2617,78 @@ export const TranslationsPage: React.FC = () => {
                                   })}
                                     </tbody>
                                   </table>
+                                </div>
+                              </div>
+                            ) : selectedTab === 'missions' ? (
+                              // Rendering per missions regolari
+                              <div className="w-full">
+                                <table className="w-full text-left text-sm">
+                                  <thead className="bg-slate-900 text-gray-300 sticky top-0 z-10">
+                                    <tr>
+                                      <th className="px-3 py-2 w-[15%]">Tipo</th>
+                                      <th className="px-3 py-2 w-[25%]">Posizione</th>
+                                      <th className="px-3 py-2 w-[60%]">Valore</th>
+                                    </tr>
+                                  </thead>
+                                </table>
+                                <div className="max-h-96 overflow-auto">
+                                  {translationFields.length === 0 ? (
+                                    <div className="p-4 text-gray-400 text-center">
+                                      Nessun campo di traduzione trovato per questa mission.
+                                    </div>
+                                  ) : (
+                                    <table className="w-full text-left text-sm">
+                                      <tbody className="divide-y divide-slate-700">
+                                        {translationFields.map((field, idx) => {
+                                        const key = `${itemName}|${idx}|${selectedLang}`;
+                                        const enValue = field.en || '';
+                                        const fieldValue = field.values && field.values[selectedLang] ? field.values[selectedLang] : '';
+                                        const currentValue = edits[key] !== undefined ? edits[key] : fieldValue;
+                                        const isMissing = !currentValue || currentValue.trim() === '' || currentValue.trim() === enValue.trim();
+                                        
+                                        return (
+                                          <tr key={idx} className={`${isMissing ? 'bg-red-900/20' : 'bg-yellow-900/20'}`}>
+                                            <td className="px-3 py-2 text-gray-400 w-[15%] text-xs">
+                                              {field.type}
+                                            </td>
+                                            <td className="px-3 py-2 text-gray-400 w-[25%] text-xs font-mono">
+                                              {field.blockPath}
+                                              {field.nearestLabel && <div className="text-blue-400">📍 {field.nearestLabel}</div>}
+                                            </td>
+                                            <td className="px-3 py-2 text-gray-200 w-[60%]">
+                                              <ScriptMetadataProvider>
+                                                <TranslationEditor
+                                                  value={(() => {
+                                                    const values: Record<string, string> = {};
+                                                    for (const [lang, value] of Object.entries(field.values || {})) {
+                                                      values[lang] = value || '';
+                                                    }
+                                                    
+                                                    // Sovrascrivi con il valore editato per selectedLang se esiste
+                                                    if (edits[key] !== undefined) {
+                                                      values[selectedLang] = edits[key];
+                                                    }
+                                                    
+                                                    return values;
+                                                  })()}
+                                                  onChange={(newValue) => {
+                                                    const updatedValue = newValue[selectedLang] || '';
+                                                    setEdits(prev => ({ ...prev, [key]: updatedValue }));
+                                                  }}
+                                                  className="min-h-16"
+                                                  availableLanguages={['EN', 'IT', 'CS', 'DE', 'ES', 'FR', 'PL', 'RU']}
+                                                  compactMode={true}
+                                                  editableLanguages={[selectedLang]}
+                                                  placeholder={`Traduzione in ${selectedLang}`}
+                                                />
+                                              </ScriptMetadataProvider>
+                                            </td>
+                                          </tr>
+                                        );
+                                        })}
+                                      </tbody>
+                                    </table>
+                                  )}
                                 </div>
                               </div>
                             ) : selectedTab === 'nodes' || selectedTab === 'yaml-missions' ? (
@@ -2451,7 +2730,48 @@ export const TranslationsPage: React.FC = () => {
                                           buttonIndex: buttonIndex
                                         })).filter((button: any) => button.en) : [])
                                     ];
-                                  })()?.map((item: any, idx: number) => {
+                                  })()?.filter((item: any) => {
+                                    // Se non c'è ricerca globale, mostra tutti i campi
+                                    if (!globalSearchTerm.trim()) return true;
+                                    
+                                    const searchTermLower = globalSearchTerm.toLowerCase();
+                                    
+                                    // Controlla nel testo EN
+                                    if (item.en && item.en.toLowerCase().includes(searchTermLower)) return true;
+                                    
+                                    // Controlla nel testo della lingua corrente
+                                    if (item.current && item.current.toLowerCase().includes(searchTermLower)) return true;
+                                    
+                                    // Per NODES e YAML-MISSIONS, controlla solo il campo specifico in tutte le lingue
+                                    if (selectedTab === 'nodes' || selectedTab === 'yaml-missions') {
+                                      const itemData = selectedTab === 'yaml-missions' 
+                                        ? yamlMissionsData?.items?.find((i: any) => i.id === itemName)
+                                        : currentDetails;
+                                      
+                                      if (itemData?.translations) {
+                                        // Controlla solo il campo specifico (item.field) in tutte le lingue
+                                        for (const lang in itemData.translations) {
+                                          const translation = itemData.translations[lang];
+                                          if (translation) {
+                                            if (item.field === 'caption' && translation.caption && translation.caption.toLowerCase().includes(searchTermLower)) {
+                                              return true;
+                                            }
+                                            if (item.field === 'description' && translation.description && translation.description.toLowerCase().includes(searchTermLower)) {
+                                              return true;
+                                            }
+                                            if (item.field.startsWith('button_') && translation.buttons && Array.isArray(translation.buttons)) {
+                                              const button = translation.buttons[item.buttonIndex];
+                                              if (button?.text && button.text.toLowerCase().includes(searchTermLower)) {
+                                                return true;
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                    
+                                    return false;
+                                  })?.map((item: any, idx: number) => {
                                     const itemData = selectedTab === 'yaml-missions' 
                                       ? yamlMissionsData?.items?.find((item: any) => item.id === itemName)
                                       : currentDetails;
@@ -2560,7 +2880,30 @@ export const TranslationsPage: React.FC = () => {
                                 <div className="max-h-96 overflow-auto">
                                   <table className="w-full text-left text-sm">
                                     <tbody className="divide-y divide-slate-700">
-                                  {currentDetails.details.map((d: any, idx: number) => {
+                                  {currentDetails.details
+                                    .filter((d: any) => {
+                                      // Se non c'è ricerca globale, mostra tutti i blocchi
+                                      if (!globalSearchTerm.trim()) return true;
+                                      
+                                      // Controlla se il termine di ricerca è presente in qualsiasi lingua del blocco
+                                      const searchTermLower = globalSearchTerm.toLowerCase();
+                                      
+                                      // Controlla nel testo EN
+                                      if (d.en && d.en.toLowerCase().includes(searchTermLower)) return true;
+                                      
+                                      // Controlla in tutte le lingue disponibili
+                                      if (d.values) {
+                                        for (const lang in d.values) {
+                                          const value = d.values[lang];
+                                          if (value && typeof value === 'string' && value.toLowerCase().includes(searchTermLower)) {
+                                            return true;
+                                          }
+                                        }
+                                      }
+                                      
+                                      return false;
+                                    })
+                                    .map((d: any, idx: number) => {
                                   const key = `${currentDetails.script}|${idx}|${selectedLang}`;
                                   const initial = (d.values[selectedLang] || '');
                                   const targetVal = edits[key] !== undefined ? edits[key] : initial;
