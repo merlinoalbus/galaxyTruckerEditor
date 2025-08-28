@@ -83,7 +83,6 @@ export const TranslationsPage: React.FC = () => {
   const [selectedScript, setSelectedScript] = useState<string | null>(null);
   const [scriptDetails, setScriptDetails] = useState<ScriptDetailsResponse['data'] | null>(null);
   const [edits, setEdits] = useState<Record<string, string>>({});
-  const [mergedBlocks, setMergedBlocks] = useState<IFlowBlock[] | null>(null);
   const [originalBlocks, setOriginalBlocks] = useState<IFlowBlock[] | null>(null); // Blocchi originali completi per il salvataggio
   const [translationFields, setTranslationFields] = useState<TranslationField[]>([]);
   const [allTranslationFields, setAllTranslationFields] = useState<TranslationField[]>([]); // Campi completi non filtrati
@@ -94,7 +93,6 @@ export const TranslationsPage: React.FC = () => {
   // Stati per tutti i tipi di traduzioni
   const [selectedTab, setSelectedTab] = useState<'scripts' | 'missions' | 'strings' | 'nodes' | 'yaml-missions'>('scripts');
   const [missionsCoverage, setMissionsCoverage] = useState<any>(null);
-  const [selectedMissions, setSelectedMissions] = useState<Set<string>>(new Set());
   const [selectedMission, setSelectedMission] = useState<string | null>(null);
   const [missionDetails, setMissionDetails] = useState<any>(null);
   const [missionContent, setMissionContent] = useState<any>(null);
@@ -126,20 +124,9 @@ export const TranslationsPage: React.FC = () => {
     categories,
     selectedCategory,
     isLoading: isLoadingStrings,
-    isLoadingCategory,
-    isSaving: isSavingStrings,
-    isTranslating,
-    error: stringsError,
-    searchTerm: stringsSearchTerm,
-    selectedLanguage: stringsSelectedLanguage,
     filteredStrings,
-    categoryStats,
-    setSearchTerm: setStringsSearchTerm,
-    setSelectedLanguage: setStringsSelectedLanguage,
-    setError: setStringsError,
     loadCategory,
     saveCategory,
-    translateString,
     translateCategory,
     updateString,
     setSelectedCategory,
@@ -884,7 +871,6 @@ export const TranslationsPage: React.FC = () => {
     const loadDetails = async () => {
       if (!selectedScript) {
         setScriptDetails(null);
-        setMergedBlocks(null);
         setOriginalBlocks(null);
         setTranslationFields([]);
         setScriptContent(null);
@@ -908,11 +894,9 @@ export const TranslationsPage: React.FC = () => {
         setOriginalBlocks(blocks);
         
         // Applica filtro blocchi per la visualizzazione se ricerca attiva
-        let filteredBlocks = blocks;
         if (globalSearchTerm && globalSearchTerm.trim()) {
-          filteredBlocks = filterBlocksBySearchTerm(blocks, globalSearchTerm);
+          filterBlocksBySearchTerm(blocks, globalSearchTerm);
         }
-        setMergedBlocks(filteredBlocks);
         setScriptContent(json.data);
         
         // IMPORTANTE: Estrai i campi di traduzione dai blocchi ORIGINALI completi
@@ -995,7 +979,6 @@ export const TranslationsPage: React.FC = () => {
       } catch (e: any) {
         console.error('Error loading script details:', e);
         setScriptDetails(null);
-        setMergedBlocks(null);
         setOriginalBlocks(null);
         setTranslationFields([]);
         setScriptContent(null);
@@ -1103,11 +1086,9 @@ export const TranslationsPage: React.FC = () => {
       setOriginalBlocks(updatedBlocks);
       
       // Aggiorna anche i blocchi filtrati per la visualizzazione
-      let updatedFilteredBlocks = updatedBlocks;
       if (globalSearchTerm && globalSearchTerm.trim()) {
-        updatedFilteredBlocks = filterBlocksBySearchTerm(updatedBlocks, globalSearchTerm);
+        filterBlocksBySearchTerm(updatedBlocks, globalSearchTerm);
       }
-      setMergedBlocks(updatedFilteredBlocks);
       
       // Ricalcola le statistiche con i nuovi valori
       const updatedFields = extractTranslationFields(updatedBlocks, scriptContent.availableLanguages || ['EN', 'DE', 'FR', 'ES', 'PL', 'CS', 'RU']);
@@ -1172,11 +1153,10 @@ export const TranslationsPage: React.FC = () => {
         });
       }
       
-      // Riabilita i ricaricamenti dopo 10 secondi (tempo sufficiente per vedere l'aggiornamento)
+      // Riabilita i ricaricamenti dopo 5 secondi (tempo sufficiente per vedere l'aggiornamento)
       setTimeout(() => {
         setPreventReload(false);
-        console.log('[SAVE DEBUG] preventReload set to false after 10 seconds - reloads enabled');
-      }, 10000);
+      }, 5000);
       
       alert(`Script salvato con successo! Copertura ${selectedLang}: ${stats.percent}%`);
       
@@ -1205,7 +1185,6 @@ export const TranslationsPage: React.FC = () => {
       // In caso di errore, riabilita i ricaricamenti immediatamente
       if (preventReload) {
         setPreventReload(false);
-        console.log('[SAVE DEBUG] preventReload reset to false due to error');
       }
     }
   }, [selectedScript, originalBlocks, scriptContent, translationFields, edits, selectedLang, applyEditsToBlocks, extractTranslationFields, calculateCoverageStats, scriptDetails, globalSearchTerm, filterBlocksBySearchTerm]);
@@ -1243,7 +1222,7 @@ export const TranslationsPage: React.FC = () => {
       
       // Controlla altri parametri string multilingua
       if (block.parameters && typeof block.parameters === 'object') {
-        for (const [key, value] of Object.entries(block.parameters)) {
+        for (const [, value] of Object.entries(block.parameters)) {
           if (value && typeof value === 'object' && !Array.isArray(value)) {
             // Potrebbe essere un oggetto multilingua
             for (const lang in value as any) {
@@ -1376,7 +1355,7 @@ export const TranslationsPage: React.FC = () => {
         const searchTermLower = globalSearchTerm.toLowerCase();
         fields = allFields.filter(field => {
           // Controlla se il campo contiene il termine cercato in QUALSIASI lingua
-          for (const [lang, value] of Object.entries(field.values)) {
+          for (const [, value] of Object.entries(field.values)) {
             if (value && typeof value === 'string' && value.toLowerCase().includes(searchTermLower)) {
               return true;
             }
@@ -1585,9 +1564,6 @@ export const TranslationsPage: React.FC = () => {
           // Salva il valore vecchio PRIMA di modificare
           const oldCovered = missionInCoverage.languages[selectedLang].covered;
           
-          console.log(`[COVERAGE DEBUG] Mission: ${selectedMission}, Lang: ${selectedLang}`);
-          console.log(`[COVERAGE DEBUG] Old covered: ${oldCovered}, New covered: ${stats.covered}`);
-          console.log(`[COVERAGE DEBUG] Current perLanguage[${selectedLang}]:`, updatedMissionsCoverage.perLanguage[selectedLang]);
           
           // Aggiorna i valori per la singola missione
           missionInCoverage.languages[selectedLang] = {
@@ -1600,21 +1576,14 @@ export const TranslationsPage: React.FC = () => {
           // Aggiorna anche i totali per lingua se necessario
           if (updatedMissionsCoverage.perLanguage[selectedLang] && typeof oldCovered === 'number') {
             const coverageDelta = stats.covered - oldCovered;
-            console.log(`[COVERAGE DEBUG] Coverage delta: ${coverageDelta}`);
             
-            const oldPerLanguageCovered = updatedMissionsCoverage.perLanguage[selectedLang].covered;
-            const oldPerLanguageMissing = updatedMissionsCoverage.perLanguage[selectedLang].missing;
             
             updatedMissionsCoverage.perLanguage[selectedLang].covered += coverageDelta;
             updatedMissionsCoverage.perLanguage[selectedLang].missing -= coverageDelta;
             
-            console.log(`[COVERAGE DEBUG] PerLanguage before: covered=${oldPerLanguageCovered}, missing=${oldPerLanguageMissing}`);
-            console.log(`[COVERAGE DEBUG] PerLanguage after: covered=${updatedMissionsCoverage.perLanguage[selectedLang].covered}, missing=${updatedMissionsCoverage.perLanguage[selectedLang].missing}`);
-            
             const totalFields = updatedMissionsCoverage.perLanguage[selectedLang].totalFields;
             if (totalFields > 0) {
               updatedMissionsCoverage.perLanguage[selectedLang].percent = Math.round((updatedMissionsCoverage.perLanguage[selectedLang].covered / totalFields) * 100);
-              console.log(`[COVERAGE DEBUG] PerLanguage new percent: ${updatedMissionsCoverage.perLanguage[selectedLang].percent}%`);
             }
           }
           
@@ -2185,7 +2154,6 @@ export const TranslationsPage: React.FC = () => {
     currentSorted = scriptsSorted;
     currentDetails = scriptDetails;
     currentSaveFunction = saveTranslations;
-    console.log('[SAVE BUTTON DEBUG] scriptDetails:', !!scriptDetails, 'saving:', saving);
   } else if (selectedTab === 'missions') {
     currentSorted = missionsSorted;
     currentDetails = missionDetails;
@@ -2895,7 +2863,6 @@ export const TranslationsPage: React.FC = () => {
                                     const rawValue = stringItem.values[selectedLang] || '';
                                     
                                     // Per la textarea, usa sempre il valore della lingua selezionata (può essere vuoto)
-                                    const textareaValue = rawValue;
                                     
                                     // Non tradotta se: vuota o uguale a EN
                                     const isMissing = !rawValue || rawValue.trim() === '' || rawValue.trim() === enValue.trim();
