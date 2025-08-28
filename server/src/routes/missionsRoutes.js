@@ -2015,6 +2015,45 @@ router.post('/translations/batch-search', async (req, res) => {
   }
 });
 
+// Helper function per verificare se una riga contiene contenuto tradubibile
+function isTranslatableContent(line, searchTerm) {
+  const trimmed = line.trim().toLowerCase();
+  const searchTermLower = searchTerm.toLowerCase();
+  
+  // Lista di comandi con parametri tradubibili (con pattern di match per il testo)
+  const translatableCommands = [
+    // Comandi con testo diretto
+    { pattern: /^say\s+(.+)$/i, textGroup: 1 },
+    { pattern: /^text\s+(.+)$/i, textGroup: 1 },
+    { pattern: /^ask\s+(.+)$/i, textGroup: 1 },
+    { pattern: /^message\s+(.+)$/i, textGroup: 1 },
+    { pattern: /^prompt\s+(.+)$/i, textGroup: 1 },
+    { pattern: /^title\s+(.+)$/i, textGroup: 1 },
+    { pattern: /^description\s+(.+)$/i, textGroup: 1 },
+    { pattern: /^label\s+(.+)$/i, textGroup: 1 },
+    
+    // Comandi con parametri nominati che possono contenere testo
+    { pattern: /^saychar\s+\w+\s+(.+)$/i, textGroup: 1 },
+    { pattern: /^askchar\s+\w+\s+(.+)$/i, textGroup: 1 },
+    
+    // Menu e opzioni (OPT con testo)
+    { pattern: /^opt\s+(.+)$/i, textGroup: 1 }
+  ];
+  
+  // Controlla ogni pattern
+  for (const cmd of translatableCommands) {
+    const match = trimmed.match(cmd.pattern);
+    if (match && match[cmd.textGroup]) {
+      const textContent = match[cmd.textGroup].toLowerCase();
+      if (textContent.includes(searchTermLower)) {
+        return true;
+      }
+    }
+  }
+  
+  return false;
+}
+
 // Helper function per cercare in un file di mission
 async function searchInMissionFile(filePath, missionName, searchTerm) {
   try {
@@ -2044,8 +2083,8 @@ async function searchInMissionFile(filePath, missionName, searchTerm) {
         continue;
       }
       
-      // Se siamo nella mission corretta, cerca il termine
-      if (insideMission && trimmedLine.toLowerCase().includes(searchTerm)) {
+      // Se siamo nella mission corretta, cerca il termine SOLO nei campi tradubibili
+      if (insideMission && isTranslatableContent(trimmedLine, searchTerm)) {
         return true;
       }
     }
