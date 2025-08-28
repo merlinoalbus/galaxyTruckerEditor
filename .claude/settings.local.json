@@ -75,7 +75,11 @@
       "Read(C:\\Program Files (x86)\\Steam\\steamapps\\common\\Galaxy Trucker\\campaign/**)",
       "Read(C:\\Program Files (x86)\\Steam\\steamapps\\common\\Galaxy Trucker\\campaign/**)",
       "Read(C:\\Program Files (x86)\\Steam\\steamapps\\common\\Galaxy Trucker\\campaign/**)",
-      "Read(C:\\Program Files (x86)\\Steam\\steamapps\\common\\Galaxy Trucker\\campaign/**)"
+      "Read(C:\\Program Files (x86)\\Steam\\steamapps\\common\\Galaxy Trucker\\campaign/**)",
+      "Bash(startBE)",
+      "Bash(./scripts/start-be.sh:*)",
+      "Bash(./scripts/start-fe.sh:*)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",
