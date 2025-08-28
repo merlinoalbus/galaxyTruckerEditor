@@ -84,6 +84,7 @@ export const TranslationsPage: React.FC = () => {
   const [filteredMissionsNames, setFilteredMissionsNames] = useState<Set<string>>(new Set());
   const [filteredRegularMissions, setFilteredRegularMissions] = useState<Set<string>>(new Set());
   const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [contentSearchActive, setContentSearchActive] = useState<boolean>(false);
 
   // Hook per localization strings
   const {
@@ -375,6 +376,7 @@ export const TranslationsPage: React.FC = () => {
       return;
     }
     
+    setContentSearchActive(true);
     setIsSearching(true);
     const matchingScripts = new Set<string>();
     
@@ -420,6 +422,7 @@ export const TranslationsPage: React.FC = () => {
       return;
     }
 
+    setContentSearchActive(true);
     setIsSearching(true);
     const matchingCategories = new Set<string>();
 
@@ -464,6 +467,7 @@ export const TranslationsPage: React.FC = () => {
       return;
     }
 
+    setContentSearchActive(true);
     setIsSearching(true);
     const matchingNodes = new Set<string>();
 
@@ -508,6 +512,7 @@ export const TranslationsPage: React.FC = () => {
       return;
     }
 
+    setContentSearchActive(true);
     setIsSearching(true);
     const matchingMissions = new Set<string>();
 
@@ -552,6 +557,7 @@ export const TranslationsPage: React.FC = () => {
       return;
     }
 
+    setContentSearchActive(true);
     setIsSearching(true);
     const matchingMissions = new Set<string>();
 
@@ -800,6 +806,29 @@ export const TranslationsPage: React.FC = () => {
       loadMissionsCoverage();
     }
   }, [selectedTab, missionsCoverage, loadMissionsCoverage]);
+
+  // Attiva automaticamente "Cerca nel contenuto" quando si cambia tab e la ricerca nel contenuto è attiva
+  useEffect(() => {
+    if (!contentSearchActive) return;
+    
+    // Attiva la ricerca automaticamente per il nuovo tab se la ricerca nel contenuto è attiva
+    const timeout = setTimeout(() => {
+      if (selectedTab === 'scripts' && !isSearching) {
+        performScriptContentSearch();
+      } else if (selectedTab === 'strings' && !isSearching) {
+        performStringContentSearch();  
+      } else if (selectedTab === 'nodes' && !isSearching) {
+        performNodeContentSearch();
+      } else if (selectedTab === 'yaml-missions' && !isSearching) {
+        performMissionContentSearch();
+      } else if (selectedTab === 'missions' && !isSearching) {
+        performRegularMissionContentSearch();
+      }
+    }, 300); // Piccolo delay per permettere il caricamento dei dati
+
+    return () => clearTimeout(timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTab, contentSearchActive]); // Solo selectedTab e contentSearchActive come dipendenze
 
   useEffect(() => {
     const loadDetails = async () => {
@@ -2146,6 +2175,7 @@ export const TranslationsPage: React.FC = () => {
               className="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white border border-slate-600 rounded"
               onClick={() => {
                 setGlobalSearchTerm('');
+                setContentSearchActive(false);
                 setFilteredScriptNames(new Set());
                 setFilteredStringCategories(new Set());
                 setFilteredNodesNames(new Set());
