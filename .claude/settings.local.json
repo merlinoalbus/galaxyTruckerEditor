@@ -79,7 +79,8 @@
       "Bash(startBE)",
       "Bash(./scripts/start-be.sh:*)",
       "Bash(./scripts/start-fe.sh:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(./scripts/restart-all.sh:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",
