@@ -81,7 +81,8 @@
       "Bash(./scripts/start-fe.sh:*)",
       "Bash(grep:*)",
       "Bash(./scripts/restart-all.sh:*)",
-      "Bash(./scripts/stop-be2.sh:*)"
+      "Bash(./scripts/stop-be2.sh:*)",
+      "Bash(npm run start2:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",

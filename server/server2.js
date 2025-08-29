@@ -9,7 +9,7 @@ const path = require('path');
 const fs = require('fs');
 
 // Usa configurazione specifica per server2
-const config2 = require('./config-server2');
+const config2 = require('./src/config/config2');
 
 // Import routes
 const apiRoutes = require('./src/routes/apiRoutes');
@@ -21,18 +21,19 @@ const localizationRoutes = require('./src/routes/localizationRoutes');
 const exportRoutes = require('./src/routes/exportRoutes');
 
 const app = express();
-const PORT = config2.PORT;
+const PORT = config2.PORT || 3002;
 const logger = getLogger();
 
 // Override del config per usare i path del secondo server
 const config = require('./src/config/config');
-config.GAME_HOST = config2.GAME_BASE_PATH;
+config.GAME_HOST = config2.GAME_BASE_PATH || 'C:/Program Files (x86)/Steam/steamapps/common/Galaxy Trucker';
 config.SERVER_PORT = config2.PORT;
 
 // Verifica che il path del gioco esista
-if (!fs.existsSync(config2.GAME_BASE_PATH)) {
-  logger.warn(`⚠️ Game path not found: ${config2.GAME_BASE_PATH}`);
-  logger.warn(`Please update GAME_BASE_PATH in server/config-server2.js`);
+const gamePath = config2.GAME_BASE_PATH || './GAMEFOLDER2';
+if (!fs.existsSync(gamePath)) {
+  logger.warn(`⚠️ Game path not found: ${gamePath}`);
+  logger.warn(`Please update GAME_HOST_BE2 in server/.env`);
 }
 
 // Middleware di sicurezza
@@ -50,8 +51,8 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Serve static files from game directory
-if (config2.GAME_BASE_PATH && fs.existsSync(config2.GAME_BASE_PATH)) {
-  app.use('/static', express.static(config2.GAME_BASE_PATH, {
+if (gamePath && fs.existsSync(gamePath)) {
+  app.use('/static', express.static(gamePath, {
     setHeaders: (res, path) => {
       if (path.endsWith('.png') || path.endsWith('.jpg') || path.endsWith('.jpeg')) {
         res.setHeader('Content-Type', 'image/png');
@@ -66,8 +67,8 @@ app.get('/health', (req, res) => {
     status: 'OK', 
     serverName: config2.SERVER_NAME,
     port: config2.PORT,
-    gamePath: config2.GAME_BASE_PATH,
-    gamePathExists: fs.existsSync(config2.GAME_BASE_PATH)
+    gamePath: gamePath,
+    gamePathExists: fs.existsSync(gamePath)
   });
 });
 
@@ -76,7 +77,7 @@ app.get('/api/server-info', (req, res) => {
   res.json({
     name: config2.SERVER_NAME,
     port: config2.PORT,
-    gamePath: config2.GAME_BASE_PATH,
+    gamePath: gamePath,
     mountPoint: config2.API_MOUNT_POINT
   });
 });
@@ -104,9 +105,9 @@ app.use((err, req, res, next) => {
 // File watcher per hot reload (opzionale)
 if (process.env.NODE_ENV !== 'production') {
   const watchPaths = [
-    path.join(config2.GAME_BASE_PATH, 'campaign'),
-    path.join(config2.GAME_BASE_PATH, 'missions'),
-    path.join(config2.GAME_BASE_PATH, 'localization_strings')
+    path.join(gamePath, 'campaign'),
+    path.join(gamePath, 'missions'),
+    path.join(gamePath, 'localization_strings')
   ].filter(p => fs.existsSync(p));
 
   if (watchPaths.length > 0) {
@@ -125,10 +126,10 @@ if (process.env.NODE_ENV !== 'production') {
 // Start server
 app.listen(PORT, '0.0.0.0', () => {
   logger.info(`🚀 ${config2.SERVER_NAME} running on http://localhost:${PORT}`);
-  logger.info(`📁 Game path: ${config2.GAME_BASE_PATH}`);
+  logger.info(`📁 Game path: ${gamePath}`);
   logger.info(`✅ Server ready for connections`);
   
-  if (!fs.existsSync(config2.GAME_BASE_PATH)) {
+  if (!fs.existsSync(gamePath)) {
     logger.warn(`⚠️ Warning: Game path does not exist!`);
   }
 });
