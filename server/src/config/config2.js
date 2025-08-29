@@ -2,11 +2,11 @@
 const path = require('path');
 
 module.exports = {
-  PORT: 3002,
+  PORT: process.env.SERVER_PORT_BE2,
   SERVER_NAME: 'Backend 2',
   
   // Path del gioco diverso - da personalizzare con il tuo path
-  GAME_BASE_PATH: 'C:/Program Files (x86)/Steam/steamapps/common/Galaxy Trucker Extended',
+  GAME_BASE_PATH: process.env.GAME_HOST_BE2,
   
   // Mount point diverso per distinguere i due server
   API_MOUNT_POINT: '/api2',
