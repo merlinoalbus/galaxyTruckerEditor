@@ -1,5 +1,6 @@
 // (rimosso ParsedScript import non utilizzato)
-import { API_CONFIG, API_ENDPOINTS } from '@/config/constants';
+import { API_ENDPOINTS } from '@/config/constants';
+import { getApiUrl } from '@/hooks/useApiUrl';
 import { logger } from '@/utils/logger';
 
 // Cache per evitare richieste duplicate
@@ -7,6 +8,13 @@ const fileCache = new Map<string, string | null>();
 const existsCache = new Map<string, boolean>();
 
 export const scriptLoaderService = {
+  // Pulisce tutte le cache - da chiamare quando si cambia backend
+  clearCache(): void {
+    fileCache.clear();
+    existsCache.clear();
+    logger.info('ScriptLoaderService cache cleared');
+  },
+
   // Metodo principale - usa API /scripts conforme alla documentazione
   async loadParsedScripts(): Promise<any> {
     const cacheKey = 'parsed_scripts';
@@ -18,7 +26,8 @@ export const scriptLoaderService = {
     }
 
     try {
-      const url = `${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS}`;
+      const { API_BASE_URL } = getApiUrl();
+      const url = `${API_BASE_URL}${API_ENDPOINTS.SCRIPTS}`;
       const response = await fetch(url, { 
         method: 'GET',
         headers: { 'Accept': 'application/json' }
@@ -58,7 +67,8 @@ export const scriptLoaderService = {
         `scripts2${lang === 'EN' ? '' : lang}.txt` : 
         `campaign/${fileName}`;
       
-      const url = `${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.FILE_GENERIC(filePath)}`;
+      const { API_BASE_URL } = getApiUrl();
+      const url = `${API_BASE_URL}${API_ENDPOINTS.FILE_GENERIC(filePath)}`;
       const response = await fetch(url, { 
         method: 'GET',
         headers: { 'Accept': 'application/json' }
@@ -93,7 +103,8 @@ export const scriptLoaderService = {
         `scripts2${lang === 'EN' ? '' : lang}.txt` : 
         `campaign/${fileName}`;
       
-      const url = `${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.FILE_GENERIC(filePath)}`;
+      const { API_BASE_URL } = getApiUrl();
+      const url = `${API_BASE_URL}${API_ENDPOINTS.FILE_GENERIC(filePath)}`;
       const response = await fetch(url, { method: 'HEAD' });
       const exists = response.ok;
       
@@ -126,9 +137,4 @@ export const scriptLoaderService = {
     return result;
   },
 
-  // Svuota cache quando necessario
-  clearCache() {
-    fileCache.clear();
-    existsCache.clear();
-  }
 };

@@ -1,9 +1,7 @@
 // Servizio per comunicazione con il backend reale
 import { Mission, DeckScript } from '@/types/GameTypes';
 import { FileParser } from '@/utils/FileParser';
-import { API_CONFIG } from '@/config/constants';
-
-const API_BASE = process.env.REACT_APP_API_URL || API_CONFIG.API_BASE_URL;
+import { getApiUrl } from '@/hooks/useApiUrl';
 
 export interface FileMetadata {
   name: string;
@@ -43,7 +41,8 @@ export interface FileOperationMetadata {
 
 class GameDataService {
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    const url = `${API_BASE}${endpoint}`;
+    const { API_BASE_URL } = getApiUrl();
+    const url = `${API_BASE_URL}${endpoint}`;
     
     const response = await fetch(url, {
       headers: {
@@ -324,7 +323,13 @@ class GameDataService {
     gameRoot: string;
     backupDir: string;
   }> {
-    return this.request('/health');
+    // Health check should use the backend URL directly, not API
+    const { BE_BASE_URL } = getApiUrl();
+    const response = await fetch(`${BE_BASE_URL}/health`);
+    if (!response.ok) {
+      throw new Error(`Health check failed: ${response.statusText}`);
+    }
+    return response.json();
   }
 
   // Campaign

@@ -80,7 +80,8 @@
       "Bash(./scripts/start-be.sh:*)",
       "Bash(./scripts/start-fe.sh:*)",
       "Bash(grep:*)",
-      "Bash(./scripts/restart-all.sh:*)"
+      "Bash(./scripts/restart-all.sh:*)",
+      "Bash(./scripts/stop-be2.sh:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",

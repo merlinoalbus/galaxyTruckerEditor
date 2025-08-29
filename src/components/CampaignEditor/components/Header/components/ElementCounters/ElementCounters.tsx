@@ -1,7 +1,8 @@
 import { logger } from '@/utils/logger';
 import React, { useEffect, useState } from 'react';
 import { Code, Map, Zap, Tag, Users, Database, Image, Trophy } from 'lucide-react';
-import { API_CONFIG, API_ENDPOINTS } from '@/config/constants';
+import { API_ENDPOINTS } from '@/config/constants';
+import { getApiUrl } from '@/hooks/useApiUrl';
 import { useTranslation } from '@/locales';
 
 interface ElementCounts {
@@ -34,13 +35,15 @@ export const ElementCounters: React.FC<ElementCountersProps> = ({ scriptsCount, 
   });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchCounts = async () => {
-      try {
-        setLoading(true);
-        
-        // Fetch all counts in parallel
-        const [
+  const fetchCounts = async () => {
+    try {
+      setLoading(true);
+      
+      // Get dynamic API URL
+      const { API_BASE_URL } = getApiUrl();
+      
+      // Fetch all counts in parallel
+      const [
           scriptsRes,
           missionsRes,
           semaphoresRes,
@@ -50,55 +53,70 @@ export const ElementCounters: React.FC<ElementCountersProps> = ({ scriptsCount, 
           imagesRes,
           achievementsRes
         ] = await Promise.all([
-          fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS}`),
-          fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.MISSIONS}`),
-          fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_SEMAPHORES}`),
-          fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_LABELS}`),
-          fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.GAME_CHARACTERS}`),
-          fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_VARIABLES}`),
-          fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.IMAGES}`),
-          fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.GAME_ACHIEVEMENTS}`)
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.SCRIPTS}`),
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.MISSIONS}`),
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.SCRIPTS_SEMAPHORES}`),
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.SCRIPTS_LABELS}`),
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.GAME_CHARACTERS}`),
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.SCRIPTS_VARIABLES}`),
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.IMAGES}`),
+          fetch(`${API_BASE_URL}${API_ENDPOINTS.GAME_ACHIEVEMENTS}`)
         ]);
 
-        const [
-          scriptsData,
-          missionsData,
-          semaphoresData,
-          labelsData,
-          charactersData,
-          variablesData,
-          imagesData,
-          achievementsData
-        ] = await Promise.all([
-          scriptsRes.json(),
-          missionsRes.json(),
-          semaphoresRes.json(),
-          labelsRes.json(),
-          charactersRes.json(),
-          variablesRes.json(),
-          imagesRes.json(),
-          achievementsRes.json()
-        ]);
+      const [
+        scriptsData,
+        missionsData,
+        semaphoresData,
+        labelsData,
+        charactersData,
+        variablesData,
+        imagesData,
+        achievementsData
+      ] = await Promise.all([
+        scriptsRes.json(),
+        missionsRes.json(),
+        semaphoresRes.json(),
+        labelsRes.json(),
+        charactersRes.json(),
+        variablesRes.json(),
+        imagesRes.json(),
+        achievementsRes.json()
+      ]);
 
-        setCounts({
-          scripts: scriptsCount || scriptsData.count || 0,
-          missions: missionsData.count || 0,
-          semaphores: semaphoresData.count || 0,
-          labels: labelsData.count || 0,
-          characters: charactersData.count || 0,
-          variables: variablesData.count || 0,
-          images: imagesData.count || 0,
-          achievements: achievementsData.count || 0
-        });
-      } catch (error) {
-  logger.error('Error fetching element counts:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      setCounts({
+        scripts: scriptsCount || scriptsData.count || 0,
+        missions: missionsData.count || 0,
+        semaphores: semaphoresData.count || 0,
+        labels: labelsData.count || 0,
+        characters: charactersData.count || 0,
+        variables: variablesData.count || 0,
+        images: imagesData.count || 0,
+        achievements: achievementsData.count || 0
+      });
+    } catch (error) {
+      logger.error('Error fetching element counts:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchCounts();
   }, [scriptsCount]);
+
+  // Listen for backend changes
+  useEffect(() => {
+    const handleBackendChanged = () => {
+      logger.info('ElementCounters: Backend changed, refreshing counts...');
+      fetchCounts();
+    };
+    
+    window.addEventListener('backendChanged', handleBackendChanged);
+    
+    return () => {
+      window.removeEventListener('backendChanged', handleBackendChanged);
+    };
+  }, []);
 
   const counters = [
     { icon: Code, label: t('elements.scripts'), count: counts.scripts, color: 'text-amber-400', bgColor: 'bg-amber-900/20', elementType: null },
