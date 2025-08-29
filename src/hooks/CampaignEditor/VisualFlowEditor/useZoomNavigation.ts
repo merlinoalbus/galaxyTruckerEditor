@@ -48,9 +48,33 @@ export const useZoomNavigation = ({
 
   // Funzione ricorsiva per trovare e aggiornare un blocco nell'albero
   const updateBlockInNavigationTree = useCallback((blocks: any[], blockId: string, newBlock: any): any[] => {
+    // Controlla se è un ID virtuale per contenitore THEN/ELSE
+    const virtualMatch = blockId.match(/^(.+)-(then|else)$/);
+    
     return blocks.map(block => {
       if (block.id === blockId) {
         return newBlock;
+      }
+      
+      // Gestione speciale per blocchi virtuali
+      if (virtualMatch) {
+        const [, parentId, containerType] = virtualMatch;
+        if (block.id === parentId) {
+          // Aggiorna il container appropriato con i children del blocco virtuale
+          if (containerType === 'then') {
+            return {
+              ...block,
+              thenBlocks: newBlock.children || [],
+              numThen: (newBlock.children || []).length
+            };
+          } else if (containerType === 'else') {
+            return {
+              ...block,
+              elseBlocks: newBlock.children || [],
+              numElse: (newBlock.children || []).length
+            };
+          }
+        }
       }
       
       const updatedBlock = { ...block };
@@ -68,10 +92,58 @@ export const useZoomNavigation = ({
   }, []);
 
   // Trova un blocco nell'albero e restituisce il path completo fino ad esso
+  // Supporta blocchi virtuali per contenitori THEN/ELSE con ID formato: blockId-then, blockId-else
   const findBlockInTree = useCallback((blocks: any[], blockId: string, path: any[] = []): { block: any, path: any[] } | null => {
+    // Controlla se è un ID virtuale per contenitore THEN/ELSE
+    const virtualMatch = blockId.match(/^(.+)-(then|else)$/);
+    
     for (const block of blocks) {
       if (block.id === blockId) {
         return { block, path };
+      }
+      
+      // Se cerchiamo un blocco virtuale, controlla se questo è il parent IF
+      if (virtualMatch) {
+        const [, parentId, containerType] = virtualMatch;
+        if (block.id === parentId && (block.thenBlocks || block.elseBlocks)) {
+          // Crea blocco virtuale per il contenitore
+          const containerBlocks = containerType === 'then' ? block.thenBlocks : block.elseBlocks;
+          if (containerBlocks && containerBlocks.length > 0) {
+            const virtualBlock = {
+              id: blockId,
+              type: `${block.type}_${containerType.toUpperCase()}`,
+              parentBlock: block,
+              children: containerBlocks,
+              isVirtualContainer: true,
+              containerType: containerType,
+              // Eredita tutte le proprietà rilevanti dal blocco padre
+              ifType: block.ifType,
+              variabile: block.variabile,
+              valore: block.valore,
+              parameters: block.parameters,
+              scriptName: block.scriptName,
+              // Proprietà di container
+              isContainer: true,
+              // Conteggi specifici per il container
+              numThen: containerType === 'then' ? containerBlocks.length : (block.numThen || (block.thenBlocks?.length || 0)),
+              numElse: containerType === 'else' ? containerBlocks.length : (block.numElse || (block.elseBlocks?.length || 0)),
+              // Informazioni del container virtuale
+              containerName: containerType === 'then' ? 'THEN' : 'ELSE',
+              originalParentId: block.id,
+              // Eredita validazioni dal padre
+              validationType: block.validationType,
+              isInvalid: block.isInvalid,
+              // Metadati per debugging
+              __virtualInfo: {
+                originalType: block.type,
+                containerType: containerType,
+                parentId: block.id,
+                childCount: containerBlocks.length
+              }
+            };
+            return { block: virtualBlock, path: [...path, block] };
+          }
+        }
       }
       
       // Cerca nei children
@@ -408,6 +480,25 @@ export const useZoomNavigation = ({
       newPath = buildZoomPath(result.path, result.block);
     }
     
+    // Per blocchi virtuali, mostra il blocco virtuale come container
+    if (result.block.isVirtualContainer) {
+      // Costruisci il path includendo il blocco virtuale
+      const containerName = result.block.containerType === 'then' ? 'THEN' : 'ELSE';
+      const virtualPath = [...navigationPath, {
+        id: result.block.id,
+        name: `${result.block.parentBlock.type} ${containerName}`,
+        block: result.block
+      }];
+      
+      try { if ((window as any).__VFE_NAV_DEBUG__) { logger.debug('[NAV] -> zoom in virtual', { from: navigationPath, to: virtualPath, blockId }); } } catch {}
+      setNavigationPath(virtualPath);
+      setCurrentFocusedBlock(result.block);
+      
+      // Mostra il blocco virtuale stesso come root, non solo i suoi children
+      setCurrentScriptBlocks([result.block]);
+      return;
+    }
+
   try { if ((window as any).__VFE_NAV_DEBUG__) { logger.debug('[NAV] -> zoom in', { from: navigationPath, to: newPath, blockId }); } } catch {}
   setNavigationPath(newPath);
     setCurrentFocusedBlock(result.block);
@@ -573,6 +664,22 @@ export const useZoomNavigation = ({
       return;
     }
     
+    // Prima di uscire, assicurati che le modifiche dei blocchi virtuali siano sincronizzate
+    if (navigationPath.length > 0 && currentScriptBlocks.length > 0) {
+      const currentBlockId = navigationPath[navigationPath.length - 1].id;
+      // Se è un blocco virtuale, forza la sincronizzazione direttamente
+      const virtualMatch = currentBlockId.match(/^(.+)-(then|else)$/);
+      if (virtualMatch && currentScriptBlocks[0]) {
+        // Sincronizza direttamente senza usare la funzione callback
+        setRootBlocks(prevRoot => {
+          if (!prevRoot || prevRoot.length === 0) {
+            return prevRoot;
+          }
+          return updateBlockInNavigationTree(prevRoot, currentBlockId, currentScriptBlocks[0]);
+        });
+      }
+    }
+    
   // Determina se siamo in un sub-script o in una mission e individua gli indici dei marker
   const markerIndices = getMarkerIndices(navigationPath);
   const isInContext = markerIndices.length > 0;
@@ -590,22 +697,21 @@ export const useZoomNavigation = ({
         const contextName = navigationPath[lastMarkerIndex].name;  // Il nome è già pulito nel path
         const scriptData = openedScripts.get(contextName);
         if (scriptData) {
+          // Se abbiamo rootBlocks con modifiche, usali invece dei blocchi originali
+          const blocksToUse = rootBlocks.length > 0 ? rootBlocks : scriptData.blocks;
           setRootBlocks([]);
-          setCurrentScriptBlocks(scriptData.blocks);
+          setCurrentScriptBlocks(blocksToUse);
         }
       } else {
         // Siamo nello script principale, torna alla vista completa
         setNavigationPath([]);
         setCurrentFocusedBlock(null);
-        setRootBlocks([]);
-        // Carica i blocchi dello script principale
+        // Carica i blocchi dello script principale - usa rootBlocks se disponibili
         const mainScriptName = currentScript?.name || 'main';
         const mainScriptData = openedScripts.get(mainScriptName);
-        if (mainScriptData) {
-          setCurrentScriptBlocks(mainScriptData.blocks);
-        } else if (rootBlocks.length > 0) {
-          setCurrentScriptBlocks(rootBlocks);
-        }
+        const blocksToUse = rootBlocks.length > 0 ? rootBlocks : (mainScriptData ? mainScriptData.blocks : []);
+        setRootBlocks([]);
+        setCurrentScriptBlocks(blocksToUse);
       }
   } else if (isInContext && markerIndices.includes(targetIndex)) {
       // Caso speciale: cliccato esattamente sul marker (sub-script/mission) nel breadcrumb
@@ -769,7 +875,7 @@ export const useZoomNavigation = ({
         }
     }
     }
-  }, [navigationPath, rootBlocks, setCurrentScriptBlocks, findBlockInTree, openedScripts, currentScript, currentScriptContext, setCurrentScriptContext, currentScriptBlocks, scriptNavigationPath, setScriptNavigationPath, getMarkerIndices]);
+  }, [navigationPath, rootBlocks, setCurrentScriptBlocks, findBlockInTree, openedScripts, currentScript, currentScriptContext, setCurrentScriptContext, currentScriptBlocks, scriptNavigationPath, setScriptNavigationPath, getMarkerIndices, setRootBlocks, updateBlockInNavigationTree]);
 
   // Funzione per aggiornare i rootBlocks quando siamo in navigazione
   const updateRootBlocksIfNeeded = useCallback((updatedBlocks: any[]) => {

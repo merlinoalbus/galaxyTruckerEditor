@@ -4,6 +4,7 @@ import { GameDataProvider, useGameData } from '@/contexts/GameDataContext';
 import { LanguageProvider } from '@/contexts/LanguageContext';
 import { FullscreenProvider, useFullscreen } from '@/contexts/FullscreenContext';
 import { SceneProvider } from '@/contexts/SceneContext';
+import { BackendProvider } from '@/contexts/BackendContext';
 import { Header } from '@/components/CampaignEditor/components/Header/Header';
 import { Sidebar } from '@/components/CampaignEditor/components/Sidebar';
 // import { Traduzioni } from '@/components/Editors/Traduzioni';
@@ -119,14 +120,16 @@ function AppContent() {
 
 export function App() {
   return (
-    <LanguageProvider>
-      <GameDataProvider>
-        <FullscreenProvider>
-          <SceneProvider>
-            <AppContent />
-          </SceneProvider>
-        </FullscreenProvider>
-      </GameDataProvider>
-    </LanguageProvider>
+    <BackendProvider>
+      <LanguageProvider>
+        <GameDataProvider>
+          <FullscreenProvider>
+            <SceneProvider>
+              <AppContent />
+            </SceneProvider>
+          </FullscreenProvider>
+        </GameDataProvider>
+      </LanguageProvider>
+    </BackendProvider>
   );
 }

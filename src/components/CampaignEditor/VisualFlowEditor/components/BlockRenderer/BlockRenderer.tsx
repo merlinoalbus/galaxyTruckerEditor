@@ -20,6 +20,8 @@ import { AddPartToShipBlock } from '../blocks/AddPartToShipBlock/AddPartToShipBl
 import { AddPartToAsideSlotBlock } from '../blocks/AddPartToAsideSlotBlock/AddPartToAsideSlotBlock';
 import { AddShipPartsBlock } from '../blocks/AddShipPartsBlock/AddShipPartsBlock';
 import { FinishMissionBlock } from '../blocks/FinishMissionBlock/FinishMissionBlock';
+import { AnchorPoint } from '../AnchorPoint/AnchorPoint';
+import { useTranslation } from '@/locales';
 import type { IFlowBlock, BlockUpdate } from '@/types/CampaignEditor/VisualFlowEditor/blocks.types';
 interface BlockRendererProps {
   block: IFlowBlock;
@@ -72,6 +74,8 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
   isCustom,
   availableLanguages
 }) => {
+  const { t } = useTranslation();
+  
   const updateBlock = useCallback((updates: BlockUpdate) => {
     onUpdateBlock(block.id, updates);
   }, [block.id, onUpdateBlock]);
@@ -118,6 +122,143 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
     ));
   }, [depth, onUpdateBlock, onRemoveBlock, onDragStart, onDragOver, onDrop, onDropAtIndex, isDragActive, onZoomIn, onZoomOut, isZoomed, currentFocusedBlockId, sessionData, createDropValidator, invalidBlocks, blockValidationTypes, allBlocks, collapseAllTrigger, expandAllTrigger, globalCollapseState, isCustom, availableLanguages]);
 
+  // Render virtual container blocks (THEN/ELSE)
+  if ((block as any).isVirtualContainer) {
+    const virtualBlock = block as any;
+    const isThenn = virtualBlock.containerType === 'then';
+    const containerName = isThenn ? 'THEN' : 'ELSE';
+    const containerColor = isThenn ? 'from-emerald-950/90 to-emerald-950/95 border-emerald-700/80' : 'from-slate-800/90 to-slate-800/95 border-slate-600/80';
+    const labelColor = isThenn ? 'text-emerald-400 bg-emerald-900/40' : 'text-slate-400 bg-slate-700/40';
+
+    // Calcola validazioni sui blocchi figli
+    const childrenValidations = virtualBlock.children?.map((child: any) => ({
+      id: child.id,
+      isInvalid: invalidBlocks.includes(child.id),
+      validationType: blockValidationTypes?.get(child.id)
+    })) || [];
+    
+    const hasInvalidChildren = childrenValidations.some((child: any) => child.isInvalid);
+    const hasWarnings = childrenValidations.some((child: any) => child.validationType === 'warning');
+    const hasErrors = childrenValidations.some((child: any) => child.validationType === 'error');
+    
+    // Il container virtuale è invalido se ha figli invalidi
+    const virtualBlockIsInvalid = hasInvalidChildren || hasErrors;
+    const virtualValidationType = hasErrors ? 'error' : (hasWarnings ? 'warning' : undefined);
+    
+    // Classi per validazione del container
+    const validationClasses = virtualBlockIsInvalid 
+      ? (virtualValidationType === 'warning' 
+          ? 'border-orange-500 border-2 shadow-orange-500/50 shadow-lg'
+          : 'border-red-500 border-2 shadow-red-500/50 shadow-lg')
+      : '';
+
+    return (
+      <div data-block-id={block.id}>
+        <div className={`relative bg-gradient-to-b ${containerColor} border rounded-xl p-3 min-h-[100px] shadow-inner ${validationClasses}`}>
+          {/* Zoom-out button per il container virtuale */}
+          {onZoomOut && (
+            <button
+              onClick={onZoomOut}
+              className="absolute top-2 right-2 p-1 bg-slate-600/80 hover:bg-orange-600 border border-slate-500/50 rounded-md z-20 transition-all duration-200 backdrop-blur-sm"
+              title={t('visualFlowEditor.zoom.goBack')}
+            >
+              <svg className="w-3 h-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </button>
+          )}
+          
+          {/* Label del container */}
+          <div className={`absolute top-2 left-3 text-[10px] ${labelColor} font-bold uppercase tracking-wider px-2 py-0.5 rounded-md backdrop-blur-sm`}>
+            {containerName} • {virtualBlock.children?.length || 0}
+            {virtualBlockIsInvalid && (
+              <span className={`ml-1 ${virtualValidationType === 'warning' ? 'text-orange-400' : 'text-red-400'}`}>
+                {virtualValidationType === 'warning' ? '⚠' : '❌'}
+              </span>
+            )}
+          </div>
+          
+          <div className="mt-6 space-y-1">
+            {/* Punto di ancoraggio iniziale */}
+            <AnchorPoint
+              onDragOver={onDragOver}
+              onDrop={(e) => {
+                // Per i blocchi virtuali, usa l'ID del blocco virtuale stesso
+                // Il sistema di drop dovrebbe gestire il mapping al padre reale
+                onDropAtIndex(e, virtualBlock.id, 'children', 0);
+              }}
+              label={isThenn ? t('visualFlowEditor.if.insertInThen') : t('visualFlowEditor.if.insertInElse')}
+            />
+            
+            {/* Render dei blocchi figli con ancoraggi */}
+            {virtualBlock.children && virtualBlock.children.length > 0 ? (
+              virtualBlock.children.map((childBlock: IFlowBlock, index: number) => (
+                <div key={childBlock.id}>
+                  <BlockRenderer
+                    key={childBlock.id}
+                    block={childBlock}
+                    depth={depth + 1}
+                    onUpdateBlock={(blockId, updates) => {
+                      // Per i blocchi figli di container virtuali, propaga al blocco padre reale
+                      onUpdateBlock(blockId, updates);
+                      // Aggiorna anche il conteggio nel container virtuale
+                      if (virtualBlock.containerType === 'then') {
+                        virtualBlock.numThen = virtualBlock.children?.length || 0;
+                      } else {
+                        virtualBlock.numElse = virtualBlock.children?.length || 0;
+                      }
+                    }}
+                    onRemoveBlock={(blockId) => {
+                      // Rimuove il blocco e aggiorna i conteggi
+                      onRemoveBlock(blockId);
+                      // Aggiorna il conteggio nel container virtuale
+                      if (virtualBlock.containerType === 'then') {
+                        virtualBlock.numThen = Math.max(0, (virtualBlock.numThen || 0) - 1);
+                      } else {
+                        virtualBlock.numElse = Math.max(0, (virtualBlock.numElse || 0) - 1);
+                      }
+                    }}
+                    onDragStart={onDragStart}
+                    onDragOver={onDragOver}
+                    onDrop={onDrop}
+                    onDropAtIndex={onDropAtIndex}
+                    isDragActive={isDragActive}
+                    onZoomIn={onZoomIn}
+                    onZoomOut={onZoomOut}
+                    isZoomed={isZoomed}
+                    currentFocusedBlockId={currentFocusedBlockId}
+                    sessionData={sessionData}
+                    createDropValidator={createDropValidator}
+                    invalidBlocks={invalidBlocks}
+                    blockValidationTypes={blockValidationTypes}
+                    allBlocks={allBlocks}
+                    collapseAllTrigger={collapseAllTrigger}
+                    expandAllTrigger={expandAllTrigger}
+                    globalCollapseState={globalCollapseState}
+                    isCustom={isCustom}
+                    availableLanguages={availableLanguages}
+                  />
+                  <AnchorPoint
+                    onDragOver={onDragOver}
+                    onDrop={(e) => {
+                      // Per i blocchi virtuali, usa l'ID del blocco virtuale stesso
+                      onDropAtIndex(e, virtualBlock.id, 'children', index + 1);
+                    }}
+                    label=""
+                  />
+                </div>
+              ))
+            ) : (
+              <div className="text-gray-500 text-sm text-center py-4">
+                Nessun blocco in questo container
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Render SCRIPT block
   if (block.type === 'SCRIPT') {
     return (
@@ -154,7 +295,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({
           onDropElseAtIndex={(e, index) => onDropAtIndex(e, block.id, 'elseBlocks', index)}
           renderChildren={renderChildren}
           isDragActive={isDragActive}
-          onZoomIn={onZoomIn ? (() => onZoomIn(block.id)) : undefined}
+          onZoomIn={onZoomIn}
           onZoomOut={currentFocusedBlockId === block.id ? onZoomOut : undefined}
           isZoomed={isZoomed}
           sessionData={sessionData}

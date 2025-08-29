@@ -1,12 +1,14 @@
 import { logger } from '@/utils/logger';
 import { MapNode, MapConnection, CampaignScript, Mission } from '@/types/CampaignEditor/InteractiveMap/InteractiveMap.types';
 // (rimosso ScriptCommand import non utilizzato)
-import { API_CONFIG, API_ENDPOINTS } from '@/config/constants';
+import { API_ENDPOINTS } from '@/config/constants';
+import { getApiUrl } from '@/hooks/useApiUrl';
 
 class InteractiveMapService {
   async loadNodes(): Promise<MapNode[]> {
     try {
-      const response = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.GAME_NODES}`);
+      const { API_BASE_URL } = getApiUrl();
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.GAME_NODES}`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
@@ -27,7 +29,8 @@ class InteractiveMapService {
 
   async loadMissions(): Promise<Mission[]> {
     try {
-      const response = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.MISSIONS_ROUTES}`);
+      const { API_BASE_URL } = getApiUrl();
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.MISSIONS_ROUTES}`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
@@ -49,7 +52,8 @@ class InteractiveMapService {
   async loadAllScripts(): Promise<CampaignScript[]> {
     try {
       // Usa API /scripts per ottenere lista completa scripts
-      const response = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS}`);
+      const { API_BASE_URL } = getApiUrl();
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.SCRIPTS}`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
@@ -149,7 +153,8 @@ class InteractiveMapService {
   // Nuovi metodi per recuperare altre entità tramite API
   async loadVariables(): Promise<any[]> {
     try {
-      const response = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_VARIABLES}`);
+      const { API_BASE_URL } = getApiUrl();
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.SCRIPTS_VARIABLES}`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
@@ -164,7 +169,8 @@ class InteractiveMapService {
 
   async loadCharacters(): Promise<any[]> {
     try {
-      const response = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.GAME_CHARACTERS}`);
+      const { API_BASE_URL } = getApiUrl();
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.GAME_CHARACTERS}`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
@@ -179,7 +185,8 @@ class InteractiveMapService {
 
   async loadButtons(): Promise<any[]> {
     try {
-      const response = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.GAME_BUTTONS}`);
+      const { API_BASE_URL } = getApiUrl();
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.GAME_BUTTONS}`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
@@ -194,7 +201,8 @@ class InteractiveMapService {
 
   async loadSemaphores(): Promise<any[]> {
     try {
-      const response = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_SEMAPHORES}`);
+      const { API_BASE_URL } = getApiUrl();
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.SCRIPTS_SEMAPHORES}`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
@@ -209,7 +217,8 @@ class InteractiveMapService {
 
   async loadLabels(): Promise<any[]> {
     try {
-      const response = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.SCRIPTS_LABELS}`);
+      const { API_BASE_URL } = getApiUrl();
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.SCRIPTS_LABELS}`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
@@ -227,7 +236,8 @@ class InteractiveMapService {
     if (!imagePaths || imagePaths.length === 0) return [];
     
     try {
-      const response = await fetch(`${API_CONFIG.API_BASE_URL}${API_ENDPOINTS.IMAGES_BINARY}`, {
+      const { API_BASE_URL } = getApiUrl();
+      const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.IMAGES_BINARY}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

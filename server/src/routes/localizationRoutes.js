@@ -42,6 +42,15 @@ router.post('/ai-translate', localizationController.aiTranslateString);
 // POST /api/localization/ai-translate-category - Traduzione AI per intera categoria
 router.post('/ai-translate-category', localizationController.aiTranslateCategory);
 
+// POST /api/localization/strings/batch-search - Cerca un termine nel contenuto delle strings
+router.post('/strings/batch-search', localizationController.batchSearchStrings);
+
+// POST /api/localization/nodes/batch-search - Cerca un termine nel contenuto dei nodes
+router.post('/nodes/batch-search', localizationController.batchSearchNodes);
+
+// POST /api/localization/missions/batch-search - Cerca un termine nel contenuto delle missions YAML
+router.post('/missions/batch-search', localizationController.batchSearchMissions);
+
 // Error handling middleware specifico per localization
 router.use((err, req, res, next) => {
   logger.error(`Localization API Error: ${err.message}`, {

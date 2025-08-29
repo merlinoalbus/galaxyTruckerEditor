@@ -12,6 +12,7 @@ import {
   Target,
   LucideIcon 
 } from 'lucide-react';
+import { useMemo } from 'react';
 import { useTranslation } from '@/locales';
 
 export interface MetacodePatternInfo {
@@ -31,7 +32,7 @@ export interface MetacodePatternInfo {
 export const useMetacodePatterns = (): MetacodePatternInfo[] => {
   const { t } = useTranslation();
 
-  return [
+  return useMemo(() => [
     // Localizzazione (raggruppati)
     {
       id: 'gender',
@@ -109,7 +110,7 @@ export const useMetacodePatterns = (): MetacodePatternInfo[] => {
       generateDefault: () => '[MISSION_RESULT(missionId)]',
       examples: ['[MISSION_RESULT(mission01)]']
     }
-  ];
+  ], [t]);
 };
 
 

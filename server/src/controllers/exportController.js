@@ -75,9 +75,12 @@ async function exportLanguages(req, res) {
       'Content-Disposition': `attachment; filename="${zipName}"`,
     });
 
-    // Crea l'archivio ZIP
+    // Crea l'archivio ZIP con opzioni cross-platform
     const archive = archiver('zip', {
-      zlib: { level: 9 } // Compressione massima
+      zlib: { level: 9 }, // Compressione massima
+      forceLocalTime: true, // Forza timestamp locali per compatibilità
+      forceZip64: false, // Evita ZIP64 a meno che necessario
+      store: false // Usa compressione sempre
     });
 
     archive.on('warning', (err) => {
@@ -97,9 +100,12 @@ async function exportLanguages(req, res) {
     archive.pipe(res);
 
     // Raccogli i file per ogni lingua
-    for (const lang of languages) {
+    const hasEnglish = languages.includes('EN');
+    for (let i = 0; i < languages.length; i++) {
+      const lang = languages[i];
       const targetLang = patchMode ? replacementLanguage : lang;
-      await addLanguageFiles(archive, lang, targetLang);
+      const isFirstLanguage = (i === 0);
+      await addLanguageFiles(archive, lang, targetLang, patchMode, isFirstLanguage, hasEnglish);
     }
 
     // Aggiungi la guida all'installazione
@@ -127,56 +133,140 @@ async function exportLanguages(req, res) {
 /**
  * Aggiunge i file di una lingua specifica all'archivio
  */
-async function addLanguageFiles(archive, sourceLang, targetLang) {
+async function addLanguageFiles(archive, sourceLang, targetLang, patchMode, isFirstLanguage, hasEnglish) {
   const gameFolder = config.GAME_HOST;
   
   if (!gameFolder || !fsSync.existsSync(gameFolder)) {
     throw new Error(`Directory di gioco non trovata: ${gameFolder}`);
   }
 
-  // Lista dei percorsi da includere per ogni lingua
+  // Determina le lingue per i nomi dei percorsi (maiuscole/minuscole)
+  const sourceLangUpper = sourceLang.toUpperCase();
+  const sourceLangLower = sourceLang.toLowerCase();
+  const targetLangUpper = targetLang.toUpperCase();
+  const targetLangLower = targetLang.toLowerCase();
+
+  // Lista delle cartelle da includere per ogni lingua
   const languagePaths = [
-    `advCards/captions_${sourceLang}`,
-    `campaign/campaignScripts${sourceLang}`,
-    `customScripts/${sourceLang}`,
-    `localization_strings/credits/credits_${sourceLang}.yaml`,
-    `Manual/manual_${sourceLang}`,
-    `sd/advCards/captions_${sourceLang}`,
+    {
+      source: path.normalize(`advCards/captions_${sourceLangLower}`),
+      target: `advCards/captions_${targetLangLower}`
+    },
+    {
+      source: path.normalize(`campaign/campaignScripts${sourceLangUpper}`),
+      target: `campaign/campaignScripts${targetLangUpper}`
+    },
+    {
+      source: path.normalize(`customScripts/${sourceLangUpper}`),
+      target: `customScripts/${targetLangUpper}`
+    },
+    {
+      source: path.normalize(`Manual/manual_${sourceLangLower}`),
+      target: `Manual/manual_${targetLangLower}`
+    },
+    {
+      source: path.normalize(`sd/advCards/captions_${sourceLangLower}`),
+      target: `sd/advCards/captions_${targetLangLower}`
+    }
   ];
 
-  // File specifici
-  const specificFiles = [
-    `common/flags/${sourceLang}.png`,
-    `videos/company_logo_${sourceLang}.png`,
-    `videos/intro${sourceLang}.sub`,
-  ];
+  // File specifici da copiare - in modalità NO PATCH i file sd/ esistono già
+  const specificFiles = [];
+  
+  // File sempre presenti
+  specificFiles.push(
+    {
+      source: path.normalize(`common/flags/${sourceLangUpper}.png`),
+      target: `common/flags/${targetLangUpper}.png`
+    },
+    {
+      source: path.normalize(`videos/company_logo_${sourceLangUpper}.png`),
+      target: `videos/company_logo_${targetLangUpper}.png`
+    },
+    {
+      source: path.normalize(`videos/intro${sourceLangUpper}.sub`),
+      target: `videos/intro${targetLangUpper}.sub`
+    }
+  );
+  
+  // File mp3 opzionale
+  const mp3Path = path.normalize(`videos/intro${sourceLangUpper}.mp3`);
+  if (fsSync.existsSync(path.join(gameFolder, mp3Path))) {
+    specificFiles.push({
+      source: mp3Path,
+      target: `videos/intro${targetLangUpper}.mp3`
+    });
+  }
+  
+  // File sd/ - in NO PATCH esistono già, in PATCH vanno creati dai file normali
+  if (patchMode) {
+    // In modalità PATCH, copia dal file normale
+    specificFiles.push(
+      {
+        source: path.normalize(`common/flags/${sourceLangUpper}.png`),
+        target: `sd/common/flags/${targetLangUpper}.png`
+      },
+      {
+        source: path.normalize(`videos/company_logo_${sourceLangUpper}.png`),
+        target: `sd/videos/company_logo_${targetLangUpper}.png`
+      }
+    );
+  } else {
+    // In modalità NO PATCH, prendi i file sd/ esistenti
+    specificFiles.push(
+      {
+        source: path.normalize(`sd/common/flags/${sourceLangUpper}.png`),
+        target: `sd/common/flags/${targetLangUpper}.png`
+      },
+      {
+        source: path.normalize(`sd/videos/company_logo_${sourceLangUpper}.png`),
+        target: `sd/videos/company_logo_${targetLangUpper}.png`
+      }
+    );
+  }
 
   // Aggiungi file di localizzazione
-  const localizationPattern = `*_${sourceLang}.yaml`;
   const localizationDir = path.join(gameFolder, 'localization_strings');
   
   if (fsSync.existsSync(localizationDir)) {
     const localizationFiles = await fs.readdir(localizationDir);
     const matchingFiles = localizationFiles.filter(file => 
-      file.endsWith(`_${sourceLang}.yaml`) && !file.includes('credits_')
+      file.endsWith(`_${sourceLangUpper}.yaml`) && !file.includes('credits_')
     );
     
     for (const file of matchingFiles) {
       const sourcePath = path.join(localizationDir, file);
-      const targetFile = file.replace(`_${sourceLang}.yaml`, `_${targetLang}.yaml`);
+      const targetFile = file.replace(`_${sourceLangUpper}.yaml`, `_${targetLangUpper}.yaml`);
       const targetPath = `localization_strings/${targetFile}`;
       
       if (fsSync.existsSync(sourcePath)) {
-        archive.file(sourcePath, { name: targetPath });
+        archive.file(sourcePath, { 
+          name: targetPath.replace(/\\/g, '/'), 
+          mode: 0o644 
+        });
         logger.debug(`Aggiunto file di localizzazione: ${targetPath}`);
       }
+    }
+    
+    // Aggiungi il file credits specifico
+    const creditsSourcePath = path.join(localizationDir, 'credits', `credits_${sourceLangUpper}.yaml`);
+    const creditsTargetPath = `localization_strings/credits/credits_${targetLangUpper}.yaml`;
+    
+    if (fsSync.existsSync(creditsSourcePath)) {
+      archive.file(creditsSourcePath, { 
+        name: creditsTargetPath.replace(/\\/g, '/'), 
+        mode: 0o644 
+      });
+      logger.debug(`Aggiunto file credits: ${creditsTargetPath}`);
+    } else {
+      logger.warn(`File credits non trovato: ${creditsSourcePath}`);
     }
   }
 
   // Aggiungi cartelle
-  for (const langPath of languagePaths) {
-    const sourcePath = path.join(gameFolder, langPath);
-    const targetPath = langPath.replace(new RegExp(sourceLang, 'g'), targetLang);
+  for (const pathConfig of languagePaths) {
+    const sourcePath = path.join(gameFolder, pathConfig.source);
+    const targetPath = pathConfig.target.replace(/\\/g, '/');
     
     if (fsSync.existsSync(sourcePath)) {
       await addDirectoryToArchive(archive, sourcePath, targetPath);
@@ -187,20 +277,67 @@ async function addLanguageFiles(archive, sourceLang, targetLang) {
   }
 
   // Aggiungi file specifici
-  for (const filePath of specificFiles) {
-    const sourcePath = path.join(gameFolder, filePath);
-    const targetPath = filePath.replace(new RegExp(sourceLang, 'g'), targetLang);
+  for (const fileConfig of specificFiles) {
+    const sourcePath = path.join(gameFolder, fileConfig.source);
+    const targetPath = fileConfig.target.replace(/\\/g, '/');
     
     if (fsSync.existsSync(sourcePath)) {
-      archive.file(sourcePath, { name: targetPath });
+      archive.file(sourcePath, { 
+        name: targetPath, 
+        mode: 0o644 
+      });
       logger.debug(`Aggiunto file specifico: ${targetPath}`);
     } else {
       logger.warn(`File non trovato: ${sourcePath}`);
     }
   }
 
-  // Se la lingua è EN, aggiungi anche i file .txt di customScripts
-  if (sourceLang === 'EN') {
+  // Aggiungi videos/podklady/ENG_kanal.png solo alla prima lingua processata
+  if (isFirstLanguage) {
+    if (patchMode) {
+      // In modalità PATCH, usa il company_logo della lingua sorgente
+      const companyLogoSource = path.join(gameFolder, `videos/company_logo_${sourceLangUpper}.png`);
+      if (fsSync.existsSync(companyLogoSource)) {
+        archive.file(companyLogoSource, { 
+          name: 'videos/podklady/ENG_kanal.png',
+          mode: 0o644 
+        });
+        logger.debug('Aggiunto: videos/podklady/ENG_kanal.png (da company_logo in modalità PATCH)');
+      } else {
+        logger.warn(`Logo aziendale per ENG_kanal non trovato: ${companyLogoSource}`);
+      }
+    } else {
+      // In modalità NO PATCH, controlla se EN è tra le lingue selezionate
+      if (hasEnglish) {
+        // Se EN è tra le lingue, usa company_logo_EN.png
+        const companyLogoEN = path.join(gameFolder, 'videos/company_logo_EN.png');
+        if (fsSync.existsSync(companyLogoEN)) {
+          archive.file(companyLogoEN, { 
+            name: 'videos/podklady/ENG_kanal.png',
+            mode: 0o644 
+          });
+          logger.debug('Aggiunto: videos/podklady/ENG_kanal.png (da company_logo_EN.png)');
+        } else {
+          logger.warn(`company_logo_EN.png non trovato`);
+        }
+      } else {
+        // Se EN NON è tra le lingue, usa il file originale ENG_kanal.png
+        const engKanalSource = path.join(gameFolder, 'videos/podklady/ENG_kanal.png');
+        if (fsSync.existsSync(engKanalSource)) {
+          archive.file(engKanalSource, { 
+            name: 'videos/podklady/ENG_kanal.png',
+            mode: 0o644 
+          });
+          logger.debug('Aggiunto: videos/podklady/ENG_kanal.png (file originale)');
+        } else {
+          logger.warn(`ENG_kanal.png originale non trovato`);
+        }
+      }
+    }
+  }
+
+  // Se la lingua sorgente è EN, aggiungi anche i file .txt di customScripts
+  if (sourceLangUpper === 'EN') {
     const customScriptsDir = path.join(gameFolder, 'customScripts');
     if (fsSync.existsSync(customScriptsDir)) {
       const txtFiles = await fs.readdir(customScriptsDir);
@@ -231,17 +368,27 @@ async function addDirectoryToArchive(archive, sourcePath, targetPath) {
       
       for (const item of items) {
         const itemSourcePath = path.join(sourcePath, item);
-        const itemTargetPath = `${targetPath}/${item}`;
+        // Assicurati che i path nel ZIP usino sempre / anche su Windows
+        const itemTargetPath = `${targetPath}/${item}`.replace(/\\/g, '/');
         
         const itemStats = await fs.stat(itemSourcePath);
         if (itemStats.isDirectory()) {
           await addDirectoryToArchive(archive, itemSourcePath, itemTargetPath);
         } else {
-          archive.file(itemSourcePath, { name: itemTargetPath });
+          // Aggiungi opzioni per preservare formato cross-platform
+          archive.file(itemSourcePath, { 
+            name: itemTargetPath,
+            mode: 0o644 // Permessi standard per i file
+          });
         }
       }
     } else {
-      archive.file(sourcePath, { name: targetPath });
+      // File singolo - normalizza path per ZIP
+      const normalizedTargetPath = targetPath.replace(/\\/g, '/');
+      archive.file(sourcePath, { 
+        name: normalizedTargetPath,
+        mode: 0o644
+      });
     }
   } catch (error) {
     logger.warn(`Errore durante l'aggiunta della directory ${sourcePath}: ${error.message}`);
@@ -284,12 +431,14 @@ IMPORTANT NOTES:
     content += `• PATCH MODE ACTIVE: This installation will replace ${replacementLanguage} language files with ${languages[0]} language content
 • The ${replacementLanguage} language flag will still show in-game, but content will be in ${languages[0]}
 • To access this language, select ${replacementLanguage} in the game's language settings
+• LANGUAGE SELECTION: Once files are replaced, you can select the language from the game menu by relying on the displayed flags, even if the text indicates a different (original pre-patch) language
 
 `;
   } else {
     content += `• LANGUAGE INSTALLATION: This adds/updates ${languages.join(' and ')} language support
 • Even if the game was prepared for Italian (IT), it cannot be enabled as an actual FLAG
 • However, you can replace an existing language with the installed content
+• LANGUAGE SELECTION: Once files are replaced, you can select the language from the game menu by relying on the displayed flags, even if the text indicates a different (original pre-patch) language
 
 `;
   }
@@ -348,12 +497,14 @@ NOTE IMPORTANTI:
     content += `• MODALITÀ PATCH ATTIVA: Questa installazione sostituirà i file della lingua ${replacementLanguage} con il contenuto della lingua ${languages[0]}
 • La bandiera della lingua ${replacementLanguage} apparirà ancora nel gioco, ma il contenuto sarà in ${languages[0]}
 • Per accedere a questa lingua, seleziona ${replacementLanguage} nelle impostazioni lingua del gioco
+• SELEZIONE LINGUA: Una volta sostituiti i file, potrai selezionare la lingua dal menu di gioco facendo affidamento alle bandiere visualizzate, anche se il testo indica una lingua differente (originale pre-patch)
 
 `;
   } else {
     content += `• INSTALLAZIONE LINGUE: Questo aggiunge/aggiorna il supporto per ${languages.join(' e ')}
 • Anche se il gioco era predisposto per l'Italiano (IT), non è possibile abilitarlo come BANDIERA effettiva
 • Tuttavia, puoi sostituire una lingua esistente con il contenuto installato
+• SELEZIONE LINGUA: Una volta sostituiti i file, potrai selezionare la lingua dal menu di gioco facendo affidamento alle bandiere visualizzate, anche se il testo indica una lingua differente (originale pre-patch)
 
 `;
   }

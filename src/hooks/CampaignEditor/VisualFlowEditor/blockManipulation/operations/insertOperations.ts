@@ -44,6 +44,17 @@ export const addBlockAtIndex = (
   }
 
   return blocks.map(block => {
+    // Gestione speciale per blocchi virtuali
+    if (block.id === containerId && (block as any).isVirtualContainer) {
+      // Per i blocchi virtuali, aggiungi sempre ai children indipendentemente dal containerType
+      const newChildren = [...((block as any).children || [])];
+      newChildren.splice(index, 0, newBlock);
+      return {
+        ...block,
+        children: newChildren
+      };
+    }
+    
     if (block.id === containerId) {
       if (containerType === 'thenBlocks') {
         const newBlocks = [...(block.thenBlocks || [])];
@@ -153,6 +164,15 @@ export const addBlockToContainer = (
   }
 
   return blocks.map(block => {
+    // Gestione speciale per blocchi virtuali
+    if (block.id === containerId && (block as any).isVirtualContainer) {
+      // Per i blocchi virtuali, aggiungi sempre ai children
+      return {
+        ...block,
+        children: [...((block as any).children || []), newBlock]
+      };
+    }
+    
     if (block.id === containerId) {
       if (containerType === 'thenBlocks') {
         return {

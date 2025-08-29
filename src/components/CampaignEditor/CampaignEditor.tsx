@@ -29,6 +29,19 @@ export const CampaignEditor: React.FC = () => {
     handleScriptSelect
   } = useCampaignEditor();
 
+  // Ascolta il cambio di backend per ricaricare i dati
+  useEffect(() => {
+    const handleBackendChanged = (event: CustomEvent) => {
+      console.log('🔄 Backend changed detected in CampaignEditor, data will be refreshed by GameDataContext');
+    };
+    
+    window.addEventListener('backendChanged', handleBackendChanged as EventListener);
+    
+    return () => {
+      window.removeEventListener('backendChanged', handleBackendChanged as EventListener);
+    };
+  }, []);
+
   // Exit fullscreen when changing tabs
   useEffect(() => {
     if ((activeTab !== 'map' && isMapFullscreen) || (activeTab !== 'flow' && isFlowFullscreen)) {

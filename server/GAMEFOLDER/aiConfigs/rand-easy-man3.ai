@@ -1,6 +1,0 @@
-idName: "rand-easy-man3"
-avatar: avatars/campaign/common/easy-man3.png
-color: "gbry"
-preferencesSettings: aiConfigs/settingBase.aipref
-speedSettings: aiConfigs/settingBaseEasy.aispeed
-stupidity: 120

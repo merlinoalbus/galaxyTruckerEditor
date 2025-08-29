@@ -1,5 +1,0 @@
-class_name: 'CGEUITextButton'
-name: 'closeButton'
-size: [80, 80]
-position: ['root.w - 150', '50']
-image: 'common/close_frame.png'

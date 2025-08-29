@@ -1,8 +1,0 @@
-class_name: CGEUITextButton
-size: [250, 120]
-text: Ok
-3patch: common/button.png
-font_size: 48
-text_fit: shrink_if_overflow
-padding: [35, 10, 35, 20]
-text_color: 00bedc

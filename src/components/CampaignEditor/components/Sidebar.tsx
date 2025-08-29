@@ -1,15 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   Map, 
   Languages, 
-  Rocket
+  Rocket,
+  Server,
+  CheckCircle,
+  XCircle,
+  RefreshCw
 } from 'lucide-react';
 import { useTranslation } from '@/locales';
+import { useBackend } from '@/contexts/BackendContext';
 
 export function Sidebar() {
   const location = useLocation();
   const { t } = useTranslation();
+  const { backends, activeBackend, setActiveBackend, refreshBackends } = useBackend();
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const menuItems = [
     { path: '/', icon: Map, label: t('sidebar.campaign'), color: 'text-yellow-400' },
@@ -65,6 +72,68 @@ export function Sidebar() {
 
         {/* Azioni Rapide rimosse */}
       </nav>
+
+      {/* Backend Switcher */}
+      <div className="p-4 border-t border-slate-700">
+        <div className="mb-3">
+          <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+            Backend Server
+          </h3>
+          
+          {/* Refresh button */}
+          <button
+            onClick={async () => {
+              setIsRefreshing(true);
+              await refreshBackends();
+              setIsRefreshing(false);
+            }}
+            className="w-full mb-2 px-3 py-1 bg-slate-700 hover:bg-slate-600 text-gray-300 rounded text-xs flex items-center justify-center gap-2 transition-colors"
+          >
+            <RefreshCw className={`w-3 h-3 ${isRefreshing ? 'animate-spin' : ''}`} />
+            Aggiorna stato
+          </button>
+          
+          {/* Backend list */}
+          <div className="space-y-1">
+            {backends.map((backend) => (
+              <button
+                key={backend.url}
+                onClick={() => backend.isAvailable && setActiveBackend(backend)}
+                disabled={!backend.isAvailable}
+                className={`w-full px-3 py-2 rounded text-xs transition-colors flex items-center justify-between ${
+                  activeBackend.url === backend.url
+                    ? 'bg-gt-accent/20 text-gt-accent border border-gt-accent'
+                    : backend.isAvailable
+                    ? 'bg-slate-700 hover:bg-slate-600 text-gray-300'
+                    : 'bg-slate-800 text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Server className="w-3 h-3" />
+                  <div className="text-left">
+                    <div className="font-medium">{backend.name}</div>
+                    <div className="text-[10px] opacity-70">Porta {backend.port}</div>
+                  </div>
+                </div>
+                {backend.isAvailable ? (
+                  <CheckCircle className="w-3 h-3 text-green-400" />
+                ) : (
+                  <XCircle className="w-3 h-3 text-red-400" />
+                )}
+              </button>
+            ))}
+          </div>
+          
+          {/* Active backend info */}
+          {activeBackend.gamePath && (
+            <div className="mt-2 p-2 bg-slate-800 rounded text-[10px] text-gray-400">
+              <div className="truncate" title={activeBackend.gamePath}>
+                📁 {activeBackend.gamePath}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* Footer */}
       <div className="p-4 border-t border-slate-700">

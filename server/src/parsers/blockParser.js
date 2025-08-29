@@ -107,9 +107,9 @@ const COMMAND_CATALOG = {
   
   // PERSONAGGI
   // Reso case-insensitive, esteso a tutte le posizioni note e con immagine opzionale (terzo parametro)
-  'SHOWCHAR': { params: ['character', 'position:enum', 'image'], pattern: /^ShowChar\s+(\w+)\s+(left|center|right|top|bottom|lefttop|leftbottom|righttop|rightbottom)(?:\s+(.+))?$/i },
+  'SHOWCHAR': { params: ['character', 'position:enum', 'image'], pattern: /^ShowChar\s+(\w+)\s+(left|center|right|top|bottom|lefttop|leftbottom|righttop|rightbottom)(?:\s+(?:"(.+)"|(\S+)))?$/i },
   'HIDECHAR': { params: ['character'], pattern: /^HideChar\s+(\w+)$/ },
-  'CHANGECHAR': { params: ['character', 'image'], pattern: /^ChangeChar\s+(\w+)\s+(.+)$/ },
+  'CHANGECHAR': { params: ['character', 'image'], pattern: /^ChangeChar\s+(\w+)\s+(?:"(.+)"|(\S+))$/ },
   'FOCUSCHAR': { params: ['character'], pattern: /^FocusChar\s+(\w+)$/i },
   
   // FINESTRA DIALOGO
@@ -164,8 +164,8 @@ const COMMAND_CATALOG = {
   'RESETFOCUS': { params: ['button'], pattern: /^ResetFocus\s+(\w+)$/i },
   'SETFOCUSIFCREDITS': { params: ['button', 'credits:number'], pattern: /^SETFOCUSIFCREDITS\s+(\w+)\s+(\d+)$/i },
   'SETNODEKNOWN': { params: ['node'], pattern: /^SETNODEKNOWN\s+(\w+)$/i },
-  'ADDINFOWINDOW': { params: ['image'], pattern: /^AddInfoWindow\s+"(.+)"$/i },
-  'SHOWINFOWINDOW': { params: ['image'], pattern: /^SHOWINFOWINDOW\s+(.+)$/i },
+  'ADDINFOWINDOW': { params: ['image'], pattern: /^AddInfoWindow\s+(?:"(.+)"|(\S+))$/i },
+  'SHOWINFOWINDOW': { params: ['image'], pattern: /^SHOWINFOWINDOW\s+(?:"(.+)"|(\S+))$/i },
   
   // ACHIEVEMENTS
   'SETACHIEVEMENTPROGRESS': { params: ['achievement', 'value:number'], pattern: /^SetAchievementProgress\s+([\w_]+)\s+(\d+)$/i },
@@ -721,7 +721,7 @@ function parseNextElement(lines, startIndex, language = 'EN', recursionDepth = 0
   // 2. Controlla se è un COMANDO
   const commandMatch = identifyCommand(line);
   if (commandMatch) {
-    return parseCommand(line, commandMatch, language, startIndex, recursionDepth);
+    return parseCommand(line, commandMatch, language, startIndex);
   }
   
   // 3. Fallback comando generico
@@ -1035,8 +1035,25 @@ function parseCommand(line, commandMatch, language, lineIndex) {
     // Mapping parametri
     if (commandDef.params && match.length > 1) {
       commandDef.params.forEach((paramDef, index) => {
-        const paramValue = match[index + 1];
+        let paramValue = match[index + 1];
         const [paramName, paramType] = paramDef.split(':');
+        
+        // Gestione speciale per comandi che supportano sia con che senza virgolette
+        if ((commandName === 'ADDINFOWINDOW' || commandName === 'SHOWINFOWINDOW') && index === 0) {
+          // Il pattern ha due gruppi: uno per con virgolette, uno per senza
+          // match[1] è per con virgolette, match[2] è per senza
+          paramValue = match[1] || match[2];
+        }
+        // SHOWCHAR ha il parametro image opzionale come terzo parametro con doppio gruppo
+        else if (commandName === 'SHOWCHAR' && index === 2 && paramName === 'image') {
+          // match[3] è per con virgolette, match[4] è per senza
+          paramValue = match[3] || match[4] || undefined;
+        }
+        // CHANGECHAR ha il parametro image come secondo parametro con doppio gruppo
+        else if (commandName === 'CHANGECHAR' && index === 1 && paramName === 'image') {
+          // match[2] è per con virgolette, match[3] è per senza
+          paramValue = match[2] || match[3];
+        }
         
         if (paramType === 'multilingual') {
           commandObject.parameters[paramName] = { [language]: paramValue };
@@ -1545,6 +1562,10 @@ function serializeCommand(element, targetLanguage = 'EN') {
           
           // Eccezione: per SetDeckPreparationScript e SetFlightDeckPreparationScript, il parametro 'script' deve SEMPRE essere tra virgolette
           if ((element.type === 'SETDECKPREPARATIONSCRIPT' || element.type === 'SETFLIGHTDECKPREPARATIONSCRIPT') && paramName === 'script') {
+            parts.push(`"${paramValue}"`);
+          }
+          // Eccezione: ADDINFOWINDOW e SHOWINFOWINDOW devono SEMPRE avere virgolette per il parametro 'image'
+          else if ((element.type === 'ADDINFOWINDOW' || element.type === 'SHOWINFOWINDOW') && paramName === 'image') {
             parts.push(`"${paramValue}"`);
           } else if ((paramType === 'string' && !noQuoteParams.includes(paramName)) || needQuoteParams.includes(paramName)) {
             parts.push(`"${paramValue}"`);

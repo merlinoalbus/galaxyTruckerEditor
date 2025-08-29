@@ -1,8 +1,0 @@
-idName: "prisoner1"
-character: basic
-avatar: avatars/campaign/prisoner1.png
-color: "rygb"
-preferencesSettings: aiConfigs/settingBase.aipref
-speedSettings: aiConfigs/settingBaseMedium.aispeed
-difficulty: normal
-stupidity: 60

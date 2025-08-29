@@ -1,11 +1,13 @@
 {
   "name": "galaxy-trucker-editor-server",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "description": "Backend server for Galaxy Trucker Editor - Real file management",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
+    "start2": "node server2.js",
     "dev": "nodemon server.js",
+    "dev2": "nodemon server2.js",
     "test": "jest"
   },
   "dependencies": {

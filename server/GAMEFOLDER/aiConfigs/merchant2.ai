@@ -1,9 +1,0 @@
-idName: "merchant2"
-shipTypes: ["II-merch"]
-character: rich
-avatar: campaign/merch.png
-color: "rbyg"
-preferencesSettings: aiConfigs/settingMerchant.aipref
-speedSettings: aiConfigs/settingBaseMedium.aispeed
-difficulty: normal
-stupidity: 60

@@ -1,8 +1,0 @@
-idName: "hard_safe"
-character: safe
-avatar: avatars/ai/hard_safe.png
-color: "rygb"
-preferencesSettings: aiConfigs/settingSafe.aipref
-speedSettings: aiConfigs/settingBase.aispeed
-difficulty: hard  #hard, medium, easy
-stupidity: 20
