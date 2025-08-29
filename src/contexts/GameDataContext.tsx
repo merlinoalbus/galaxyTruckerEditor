@@ -92,7 +92,19 @@ export function GameDataProvider({ children }: GameDataProviderProps) {
       initialized.current = true;
       utilityOps.healthCheck();
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    
+    // Ascolta il cambio di backend per ricaricare i dati
+    const handleBackendChanged = (event: CustomEvent) => {
+      console.log('🔄 Backend changed detected in GameDataContext, refreshing data...');
+      utilityOps.refreshAll();
+    };
+    
+    window.addEventListener('backendChanged', handleBackendChanged as EventListener);
+    
+    return () => {
+      window.removeEventListener('backendChanged', handleBackendChanged as EventListener);
+    };
+  }, [utilityOps]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const value: GameDataContextType = {
     // State

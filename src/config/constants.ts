@@ -4,12 +4,35 @@ export const API_CONFIG = {
   FE_HOST: 'http://localhost',
   FE_PORT: 3000,
   get BE_BASE_URL() {
-    return `${this.BE_HOST}:${this.BE_PORT}`;
+    // Usa il backend attivo dal localStorage se disponibile
+    try {
+      const savedBackendConfig = localStorage.getItem('preferredBackendConfig');
+      if (savedBackendConfig) {
+        const config = JSON.parse(savedBackendConfig);
+        return config.url;
+      }
+    } catch (error) {
+      // Fallback
+    }
+    
+    const savedBackend = localStorage.getItem('preferredBackend');
+    return savedBackend || `${this.BE_HOST}:${this.BE_PORT}`;
   },
   get FE_BASE_URL() {
     return `${this.FE_HOST}:${this.FE_PORT}`;
   },
   get API_BASE_URL() {
+    // Usa il mount point corretto dal localStorage se disponibile
+    try {
+      const savedBackendConfig = localStorage.getItem('preferredBackendConfig');
+      if (savedBackendConfig) {
+        const config = JSON.parse(savedBackendConfig);
+        return `${config.url}${config.mountPoint}`;
+      }
+    } catch (error) {
+      // Fallback
+    }
+    
     return `${this.BE_BASE_URL}/api`;
   },
   get ASSETS_BASE_URL() {

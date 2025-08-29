@@ -118,6 +118,12 @@ export const TranslationsPage: React.FC = () => {
   const [showBackupErrorModal, setShowBackupErrorModal] = useState<boolean>(false);
   const [backupErrorMessage, setBackupErrorMessage] = useState<string>('');
   const [backupErrorDetails, setBackupErrorDetails] = useState<any>(null);
+  
+  // Stati per l'ordinamento
+  type SortField = 'name' | 'percent';
+  type SortDirection = 'asc' | 'desc';
+  const [sortField, setSortField] = useState<SortField>('name');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
 
   // Hook per localization strings
   const {
@@ -132,6 +138,9 @@ export const TranslationsPage: React.FC = () => {
     setSelectedCategory,
     SUPPORTED_LANGUAGES
   } = useLocalizationStrings();
+
+  // Ascolta il cambio di backend per ricaricare i dati di traduzione
+  // (spostato dopo la definizione delle funzioni loadScriptsCoverage e loadMissionsCoverage)
   
   // Funzione helper per filtrare gli elementi basata sul termine di ricerca
   const filterItems = useCallback((items: any[], searchTerm: string) => {
@@ -838,6 +847,39 @@ export const TranslationsPage: React.FC = () => {
       loadMissionsCoverage();
     }
   }, [selectedTab, missionsCoverage, loadMissionsCoverage]);
+
+  // Ascolta il cambio di backend per ricaricare i dati di traduzione
+  useEffect(() => {
+    const handleBackendChanged = (event: CustomEvent) => {
+      console.log('🔄 Backend changed detected in TranslationsPage, refreshing translation data...');
+      
+      // Reset degli stati
+      setCoverage(null);
+      setScriptDetails(null);
+      setOriginalBlocks(null);
+      setTranslationFields([]);
+      setAllTranslationFields([]);
+      setAllScriptDetails(null);
+      setSelectedScript(null);
+      setSelectedMission(null);
+      setSelectedNode(null);
+      setMissionDetails(null);
+      setMissionContent(null);
+      setMissionsCoverage(null);
+      setNodesData(null);
+      setYamlMissionsData(null);
+      
+      // Ricarica i dati coverage
+      loadScriptsCoverage();
+      loadMissionsCoverage();
+    };
+    
+    window.addEventListener('backendChanged', handleBackendChanged as EventListener);
+    
+    return () => {
+      window.removeEventListener('backendChanged', handleBackendChanged as EventListener);
+    };
+  }, [loadScriptsCoverage, loadMissionsCoverage]);
 
   // Attiva automaticamente "Cerca nel contenuto" quando si cambia tab e la ricerca nel contenuto è attiva
   useEffect(() => {
@@ -2286,8 +2328,50 @@ export const TranslationsPage: React.FC = () => {
     currentSaveFunction = saveYamlMissionsTranslations;
   }
   
-  // Applica il filtro di ricerca globale
-  const filteredSorted = filterItems(currentSorted, globalSearchTerm);
+  // Funzione per ordinare gli elementi
+  const sortItems = (items: any[]) => {
+    if (!items || items.length === 0) return items;
+    
+    return [...items].sort((a, b) => {
+      let aValue: any;
+      let bValue: any;
+      
+      if (sortField === 'name') {
+        // Ottieni il nome dell'elemento in base al tipo di tab
+        if (selectedTab === 'scripts') {
+          aValue = a.script?.toLowerCase() || '';
+          bValue = b.script?.toLowerCase() || '';
+        } else if (selectedTab === 'missions') {
+          aValue = a.mission?.toLowerCase() || '';
+          bValue = b.mission?.toLowerCase() || '';
+        } else if (selectedTab === 'strings') {
+          aValue = a.category?.toLowerCase() || '';
+          bValue = b.category?.toLowerCase() || '';
+        } else if (selectedTab === 'nodes') {
+          aValue = a.node?.toLowerCase() || '';
+          bValue = b.node?.toLowerCase() || '';
+        } else if (selectedTab === 'yaml-missions') {
+          aValue = a.mission?.toLowerCase() || '';
+          bValue = b.mission?.toLowerCase() || '';
+        }
+      } else if (sortField === 'percent') {
+        // Ottieni la percentuale per la lingua selezionata
+        const langData = a.languages?.[selectedLang] || {};
+        const langDataB = b.languages?.[selectedLang] || {};
+        aValue = langData.percent || 0;
+        bValue = langDataB.percent || 0;
+      }
+      
+      // Confronta i valori
+      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+  };
+  
+  // Applica ordinamento e poi filtro di ricerca globale
+  const sortedItems = sortItems(currentSorted);
+  const filteredSorted = filterItems(sortedItems, globalSearchTerm);
 
   return (
     <div className="space-y-6">
@@ -2295,31 +2379,51 @@ export const TranslationsPage: React.FC = () => {
       <div className="flex items-center gap-4 bg-slate-800 border border-slate-700 rounded-lg p-4">
         <button
           className={`px-4 py-2 rounded ${selectedTab === 'scripts' ? 'bg-slate-800 text-white border-2 border-slate-400' : 'bg-slate-700 text-gray-300 hover:bg-slate-600'}`}
-          onClick={() => setSelectedTab('scripts')}
+          onClick={() => {
+            setSelectedTab('scripts');
+            setSortField('name');
+            setSortDirection('asc');
+          }}
         >
           📜 Scripts
         </button>
         <button
           className={`px-4 py-2 rounded ${selectedTab === 'missions' ? 'bg-slate-800 text-white border-2 border-slate-400' : 'bg-slate-700 text-gray-300 hover:bg-slate-600'}`}
-          onClick={() => setSelectedTab('missions')}
+          onClick={() => {
+            setSelectedTab('missions');
+            setSortField('name');
+            setSortDirection('asc');
+          }}
         >
           🚀 Missions
         </button>
         <button
           className={`px-4 py-2 rounded ${selectedTab === 'strings' ? 'bg-slate-800 text-white border-2 border-slate-400' : 'bg-slate-700 text-gray-300 hover:bg-slate-600'}`}
-          onClick={() => setSelectedTab('strings')}
+          onClick={() => {
+            setSelectedTab('strings');
+            setSortField('name');
+            setSortDirection('asc');
+          }}
         >
           🌐 Strings
         </button>
         <button
           className={`px-4 py-2 rounded ${selectedTab === 'nodes' ? 'bg-slate-800 text-white border-2 border-slate-400' : 'bg-slate-700 text-gray-300 hover:bg-slate-600'}`}
-          onClick={() => setSelectedTab('nodes')}
+          onClick={() => {
+            setSelectedTab('nodes');
+            setSortField('name');
+            setSortDirection('asc');
+          }}
         >
           🏠 Nodes
         </button>
         <button
           className={`px-4 py-2 rounded ${selectedTab === 'yaml-missions' ? 'bg-slate-800 text-white border-2 border-slate-400' : 'bg-slate-700 text-gray-300 hover:bg-slate-600'}`}
-          onClick={() => setSelectedTab('yaml-missions')}
+          onClick={() => {
+            setSelectedTab('yaml-missions');
+            setSortField('name');
+            setSortDirection('asc');
+          }}
         >
           📍 Missions YAML
         </button>
@@ -2446,15 +2550,32 @@ export const TranslationsPage: React.FC = () => {
       </div>
 
       {/* Controls */}
-      <div className="flex items-center gap-4">
-        <label className="text-gray-300 text-sm">Lingua</label>
-        <select value={selectedLang} onChange={(e) => setSelectedLang(e.target.value)} className="bg-slate-800 text-gray-200 border border-slate-700 rounded px-2 py-1">
-          {langs.map(l => <option key={l} value={l}>{l}</option>)}
-        </select>
-        <label className="flex items-center gap-2 text-gray-300 text-sm">
-          <input type="checkbox" checked={onlyMissing} onChange={(e) => setOnlyMissing(e.target.checked)} />
-          Solo mancanti
-        </label>
+      <div className="flex items-center justify-between bg-slate-800 border border-slate-700 rounded-lg p-3">
+        <div className="flex items-center gap-4">
+          <label className="text-gray-300 text-sm">Lingua</label>
+          <select value={selectedLang} onChange={(e) => setSelectedLang(e.target.value)} className="bg-slate-700 text-gray-200 border border-slate-600 rounded px-2 py-1">
+            {langs.map(l => <option key={l} value={l}>{l}</option>)}
+          </select>
+          <label className="flex items-center gap-2 text-gray-300 text-sm">
+            <input type="checkbox" checked={onlyMissing} onChange={(e) => setOnlyMissing(e.target.checked)} />
+            Solo mancanti
+          </label>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-gray-400">
+          <span>Ordinamento:</span>
+          <span className="text-blue-400 font-medium">
+            {sortField === 'name' ? 
+              (selectedTab === 'scripts' ? 'Script' : 
+               selectedTab === 'missions' ? 'Mission' : 
+               selectedTab === 'strings' ? 'Category' :
+               selectedTab === 'nodes' ? 'Node' :
+               selectedTab === 'yaml-missions' ? 'Mission' : 'Nome') 
+              : 'Percentuale'}
+          </span>
+          <span className="text-blue-400 font-bold">
+            {sortDirection === 'asc' ? '↑' : '↓'}
+          </span>
+        </div>
       </div>
 
       {/* Content table */}
@@ -2462,14 +2583,50 @@ export const TranslationsPage: React.FC = () => {
         <table className="w-full text-left text-sm table-fixed">
           <thead className="bg-slate-900 text-gray-300">
             <tr>
-              <th className="px-3 py-2 w-[45%]">
-                {selectedTab === 'scripts' ? 'Script' : 
-                 selectedTab === 'missions' ? 'Mission' : 
-                 selectedTab === 'strings' ? 'Category' :
-                 selectedTab === 'nodes' ? 'Node' :
-                 selectedTab === 'yaml-missions' ? 'Mission' : 'Item'}
+              <th 
+                className="px-3 py-2 w-[45%] cursor-pointer hover:bg-slate-800 transition-colors"
+                onClick={() => {
+                  if (sortField === 'name') {
+                    setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+                  } else {
+                    setSortField('name');
+                    setSortDirection('asc');
+                  }
+                }}
+              >
+                <div className="flex items-center gap-2">
+                  <span>
+                    {selectedTab === 'scripts' ? 'Script' : 
+                     selectedTab === 'missions' ? 'Mission' : 
+                     selectedTab === 'strings' ? 'Category' :
+                     selectedTab === 'nodes' ? 'Node' :
+                     selectedTab === 'yaml-missions' ? 'Mission' : 'Item'}
+                  </span>
+                  <div className="flex flex-col">
+                    <span className={`text-xs ${sortField === 'name' && sortDirection === 'asc' ? 'text-blue-400' : 'text-gray-500'}`}>▲</span>
+                    <span className={`text-xs ${sortField === 'name' && sortDirection === 'desc' ? 'text-blue-400' : 'text-gray-500'}`}>▼</span>
+                  </div>
+                </div>
               </th>
-              <th className="px-3 py-2 w-[20%]">% {selectedLang}</th>
+              <th 
+                className="px-3 py-2 w-[20%] cursor-pointer hover:bg-slate-800 transition-colors"
+                onClick={() => {
+                  if (sortField === 'percent') {
+                    setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+                  } else {
+                    setSortField('percent');
+                    setSortDirection('desc'); // Default decrescente per percentuali
+                  }
+                }}
+              >
+                <div className="flex items-center gap-2">
+                  <span>% {selectedLang}</span>
+                  <div className="flex flex-col">
+                    <span className={`text-xs ${sortField === 'percent' && sortDirection === 'asc' ? 'text-blue-400' : 'text-gray-500'}`}>▲</span>
+                    <span className={`text-xs ${sortField === 'percent' && sortDirection === 'desc' ? 'text-blue-400' : 'text-gray-500'}`}>▼</span>
+                  </div>
+                </div>
+              </th>
               <th className="px-3 py-2 w-[35%]">Azioni</th>
             </tr>
           </thead>
