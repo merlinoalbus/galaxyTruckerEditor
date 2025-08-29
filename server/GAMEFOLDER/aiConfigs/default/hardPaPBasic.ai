@@ -1,9 +1,0 @@
-idName: "hard_basic_pap"
-type: turn
-character: basic
-avatar: avatars/ai/hard_basic.png
-color: "rygb"
-preferencesSettings: aiConfigs/settingBase.aipref
-qualitySettings: aiConfigs/settingPaPBase.aiqual
-difficulty: hard  # 1- hard, 3 - normal, 6 - easy
-stupidity: 20

@@ -1,9 +1,0 @@
-idName: "easy_basic_pap"
-type: turn
-character: basic
-avatar: avatars/ai/easy_basic.png
-color: "gbyr"
-preferencesSettings: aiConfigs/settingBase.aipref
-qualitySettings: aiConfigs/settingPaPBase.aiqual
-difficulty: easy  # 1- hard, 3 - normal, 6 - easy
-stupidity: 120

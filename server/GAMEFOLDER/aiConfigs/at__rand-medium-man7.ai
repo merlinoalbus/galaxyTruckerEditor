@@ -1,7 +1,0 @@
-idName: "at__rand-medium-man7"
-avatar: avatars/campaign/common/medium-man7.png
-color: "byrg"
-preferencesSettings: aiConfigs/settingRich.aipref
-speedSettings: aiConfigs/settingBaseMedium.aispeed
-difficulty: medium  #hard, medium, easy
-stupidity: 60
