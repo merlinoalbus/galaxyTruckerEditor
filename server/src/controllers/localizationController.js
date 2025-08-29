@@ -7,6 +7,49 @@ const config = require('../config/config');
 
 const logger = getLogger();
 
+// ----------------------------------------------
+// AI Response Cleaning Utility
+// ----------------------------------------------
+
+/**
+ * Cleans AI response by removing unwanted formatting, numbering, and invalid characters
+ */
+function cleanAIResponse(response) {
+  if (!response || typeof response !== 'string') return '';
+  
+  let cleaned = response.trim();
+  
+  // Remove numbered lists at the beginning (1. 2. 3. etc.)
+  cleaned = cleaned.replace(/^\d+\.\s*/gm, '');
+  
+  // Remove bullet points at the beginning (- * + etc.)
+  cleaned = cleaned.replace(/^[-*+]\s*/gm, '');
+  
+  // Remove leading/trailing quotes that might be added by AI
+  cleaned = cleaned.replace(/^["'`]|["'`]$/g, '');
+  
+  // Clean up newlines and carriage returns (normalize to single spaces)
+  cleaned = cleaned.replace(/[\r\n]+/g, ' ');
+  
+  // Remove multiple spaces
+  cleaned = cleaned.replace(/\s+/g, ' ');
+  
+  // Remove common AI prefixes/suffixes
+  const prefixes = [
+    /^(Translation|Translated|Result|Output):\s*/i,
+    /^(Here is the|Here's the|The)\s+translation:\s*/i,
+    /^\s*-\s*/,
+    /^\s*>\s*/
+  ];
+  
+  for (const prefix of prefixes) {
+    cleaned = cleaned.replace(prefix, '');
+  }
+  
+  // Final trim
+  return cleaned.trim();
+}
+
 // Lingue supportate standard
 const SUPPORTED_LANGUAGES = ['EN', 'DE', 'FR', 'ES', 'PL', 'CS', 'RU'];
 
@@ -825,11 +868,16 @@ class LocalizationController {
       const codesList = metacodes.length ? `Metacodes: ${metacodes.join(' ')}` : 'Metacodes: none';
       
       const systemPrompt = [
-        'You are a professional game localizer. Translate from English to the target language preserving placeholders and metacodes.',
-        'Rules:',
-        '- Keep every metacode exactly as is, do not translate or remove them (e.g., [NAME], [IMG:something], [NUM], [GENDER:...]).',
-        '- Return only the translated string, no quotes, no commentary.',
-        '- Prefer idiomatic, natural phrasing for the target language.',
+        'You are a professional game localizer for "Galaxy Trucker", an ironic and humorous space trading game.',
+        'Context: This is a comedic game with witty dialogues, space trading adventures, and quirky characters.',
+        'Translation Rules:',
+        '- Keep every metacode exactly as is, do not translate or remove them. Metacodes are identified by [] brackets.',
+        '- Common metacodes: [g(maschile|femminile|neutro)] for gender, [n(1:singolare|2:plurale)] or [n(1:un gatto|2:due gatti|3:una colonia)] for numbers, [v(Tap|Click)] for device format, [NAME] for player name.',
+        '- When translating, consider how these metacodes will be used in the target language context.',
+        '- Return ONLY the translated string, no quotes, no commentary, no numbering, no prefixes.',
+        '- Maintain the ironic and humorous tone of the original game.',
+        '- Use idiomatic expressions and colloquialisms appropriate for the target language.',
+        '- Preserve the comedic spirit and witty style of Galaxy Trucker.',
         '- If the English text is already language-agnostic (e.g., only metacodes), still return a target-language appropriate phrasing around the codes when appropriate.',
         '',
         codesList,
@@ -877,7 +925,7 @@ class LocalizationController {
             throw new Error('No translation received from Gemini');
           }
           
-          return content.trim();
+          return cleanAIResponse(content);
           
         } catch (error) {
           clearTimeout(timeout);
@@ -970,20 +1018,31 @@ class LocalizationController {
       }
       
       const systemPrompt = [
-        'You are a professional game localizer. Translate from English to the target language preserving placeholders and metacodes.',
-        '- Keep every metacode exactly as is, do not translate or remove them (e.g., [NAME], [IMG:something], [NUM], [GENDER:...]).',
-        '- Return only the translated string for each item, in order, nothing else.',
-        '- Prefer idiomatic, natural phrasing for the target language.',
-        `- Context: These are localization strings for the game "${category}".`
+        'You are a professional game localizer for "Galaxy Trucker", an ironic and humorous space trading game.',
+        'Context: This is a comedic game with witty dialogues, space trading adventures, and quirky characters.',
+        `Translating category: "${category}"`,
+        'Translation Rules:',
+        '- Keep every metacode exactly as is, do not translate or remove them. Metacodes are identified by [] brackets.',
+        '- Common metacodes: [g(maschile|femminile|neutro)] for gender, [n(1:singolare|2:plurale)] or [n(1:un gatto|2:due gatti|3:una colonia)] for numbers, [v(Tap|Click)] for device format, [NAME] for player name.',
+        '- When translating, consider how these metacodes will be used in the target language context.',
+        '- Maintain the ironic and humorous tone of the original game.',
+        '- Use idiomatic expressions and colloquialisms appropriate for the target language.',
+        '- Preserve the comedic spirit and witty style of Galaxy Trucker.',
+        '- IMPORTANT: Return ONLY a valid JSON array, no other text before or after.'
       ].join('\n');
       
-      // Compose a single request with numbered items to keep order stable
-      const numbered = items.map((it, i) => {
-        const codes = Array.isArray(it.metacodesDetected) && it.metacodesDetected.length 
-          ? ` Metacodes: ${it.metacodesDetected.join(' ')}` 
-          : '';
-        return `${i + 1}. ${it.textEN}${codes ? `\n${codes}` : ''}`;
-      }).join('\n\n');
+      // Create structured JSON request with IDs for reliable association
+      const structuredItems = items.map((it, i) => ({
+        id: it.id,
+        text: it.textEN,
+        metacodes: Array.isArray(it.metacodesDetected) ? it.metacodesDetected : []
+      }));
+
+      const jsonRequest = {
+        target: toLanguage,
+        category: category,
+        items: structuredItems
+      };
       
       const body = {
         contents: [
@@ -991,8 +1050,11 @@ class LocalizationController {
             parts: [
               { text: systemPrompt },
               { text: `Target language: ${toLanguage}` },
-              { text: 'Translate the following entries preserving all metacodes. Reply with one line per entry in the same order, without numbers:' },
-              { text: numbered }
+              { text: 'You will receive a JSON object with texts to translate. Return a JSON array with translations.' },
+              { text: 'Each item in your response must have: {"id": "same_id_from_input", "original": "original_text", "translated": "your_translation"}' },
+              { text: 'Example: [{"id":"key1","original":"Hello","translated":"Ciao"},{"id":"key2","original":"Goodbye","translated":"Arrivederci"}]' },
+              { text: 'Input JSON:' },
+              { text: JSON.stringify(jsonRequest) }
             ]
           }
         ]
@@ -1026,21 +1088,121 @@ class LocalizationController {
           throw new Error('No translation received from Gemini');
         }
         
-        // Parse the response to extract individual translations
-        const translatedLines = content.trim().split('\n').map(line => line.trim()).filter(line => line);
-        const translations = [];
-        
-        for (let i = 0; i < items.length; i++) {
-          const originalItem = items[i];
-          let translatedText = translatedLines[i] || originalItem.textEN; // Fallback to original
-          
-          // Clean up any potential numbering that might have been returned
-          translatedText = translatedText.replace(/^\d+\.\s*/, '').trim();
-          
-          translations.push({
+        // Parse JSON response
+        let translatedItems = [];
+        try {
+          // Clean response to extract JSON (remove any text before/after)
+          const jsonMatch = content.match(/\[[\s\S]*\]/);
+          if (!jsonMatch) {
+            throw new Error('No JSON array found in response');
+          }
+          translatedItems = JSON.parse(jsonMatch[0]);
+        } catch (parseError) {
+          logger.error(`Failed to parse AI JSON response: ${parseError.message}`);
+          // Fallback to line-based parsing
+          const lines = content.split(/\r?\n/).filter((l) => l.trim().length > 0);
+          translatedItems = items.map((it, i) => ({
+            id: it.id,
+            original: it.textEN,
+            translated: cleanAIResponse(lines[i] || it.textEN)
+          }));
+        }
+
+        // Create ID map for quick lookup
+        const translationMap = new Map();
+        translatedItems.forEach(item => {
+          if (item && item.id) {
+            translationMap.set(item.id, cleanAIResponse(item.translated || ''));
+          }
+        });
+
+        // Map translations preserving original order
+        const translations = items.map(originalItem => {
+          const translatedText = translationMap.get(originalItem.id) || originalItem.textEN;
+          return {
             key: originalItem.id,
             originalText: originalItem.textEN,
             translatedText
+          };
+        });
+
+        // Calculate missing translations
+        const missingCount = translations.filter(t => !t.translatedText || t.translatedText === t.originalText).length;
+        const missingPercentage = (missingCount / items.length) * 100;
+
+        // Retry logic for missing translations (if between 30% and 80%)
+        if (missingPercentage > 30 && missingPercentage < 80) {
+          logger.info(`Retrying ${missingCount} missing translations for category ${category} (${missingPercentage.toFixed(1)}%)`);
+          
+          // Prepare items for retry
+          const retryItems = [];
+          items.forEach((it, i) => {
+            const trans = translations[i];
+            if (!trans.translatedText || trans.translatedText === trans.originalText) {
+              retryItems.push(it);
+            }
+          });
+
+          // Make retry request
+          try {
+            const retryBody = {
+              contents: [{
+                parts: [
+                  { text: systemPrompt },
+                  { text: `Target language: ${toLanguage}` },
+                  { text: 'Translate these specific items that were missing. Return JSON array:' },
+                  { text: JSON.stringify({
+                    target: toLanguage,
+                    category: category,
+                    items: retryItems.map(it => ({
+                      id: it.id,
+                      text: it.textEN,
+                      metacodes: it.metacodesDetected || []
+                    }))
+                  })}
+                ]
+              }]
+            };
+
+            const retryResp = await fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'X-goog-api-key': apiKey },
+              body: JSON.stringify(retryBody)
+            });
+
+            if (retryResp.ok) {
+              const retryJson = await retryResp.json();
+              const retryContent = retryJson?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+              
+              try {
+                const retryMatch = retryContent.match(/\[[\s\S]*\]/);
+                if (retryMatch) {
+                  const retryTranslations = JSON.parse(retryMatch[0]);
+                  
+                  // Update translations with retry results
+                  retryTranslations.forEach(item => {
+                    if (item && item.id) {
+                      const index = translations.findIndex(t => t.key === item.id);
+                      if (index !== -1) {
+                        translations[index].translatedText = cleanAIResponse(item.translated || translations[index].originalText);
+                      }
+                    }
+                  });
+                }
+              } catch (retryParseError) {
+                logger.warn(`Retry parse failed for category ${category}: ${retryParseError.message}`);
+              }
+            }
+          } catch (retryError) {
+            logger.warn(`Retry request failed for category ${category}: ${retryError.message}`);
+          }
+        } else if (missingPercentage >= 80) {
+          logger.error(`Too many missing translations for category ${category}: ${missingPercentage.toFixed(1)}%`);
+          return res.status(500).json({ 
+            success: false, 
+            error: 'Translation failed - too many missing items',
+            category,
+            missingPercentage: missingPercentage.toFixed(1)
           });
         }
         
@@ -1064,6 +1226,381 @@ class LocalizationController {
       res.status(500).json({
         success: false,
         error: 'Failed to translate category',
+        message: error.message
+      });
+    }
+  }
+
+  // ----------------------------------------------
+  // BATCH SEARCH METHODS
+  // ----------------------------------------------
+
+  /**
+   * Batch search in localization strings content
+   */
+  batchSearchStrings = async (req, res) => {
+    try {
+      const { categoryNames, searchTerm } = req.body;
+      
+      if (!Array.isArray(categoryNames) || !searchTerm || typeof searchTerm !== 'string') {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid request. Expected { categoryNames: string[], searchTerm: string }'
+        });
+      }
+      
+      logger.info(`Batch search for "${searchTerm}" in ${categoryNames.length} string categories`);
+      
+      const normalizedSearchTerm = searchTerm.toLowerCase().trim();
+      const matchingCategories = [];
+      
+      // Processa le categorie in parallelo per performance
+      const searchPromises = categoryNames.map(async (categoryName) => {
+        try {
+          const localizationPath = path.join(config.GAME_ROOT, 'localization_strings');
+          
+          // Scansiona i file per quella categoria in tutte le lingue
+          const files = await fs.readdir(localizationPath);
+          const categoryFiles = files.filter(file => {
+            const match = file.match(/^(.+)_([A-Z]{2})\.yaml$/);
+            return match && match[1] === categoryName;
+          });
+          
+          if (categoryFiles.length === 0) {
+            // Prova anche nelle sottocartelle (come credits)
+            try {
+              const subDirs = files.filter(async (item) => {
+                const fullPath = path.join(localizationPath, item);
+                const stat = await fs.stat(fullPath);
+                return stat.isDirectory();
+              });
+              
+              for (const subDir of subDirs) {
+                const subDirPath = path.join(localizationPath, subDir);
+                try {
+                  const subFiles = await fs.readdir(subDirPath);
+                  const subCategoryFiles = subFiles.filter(file => {
+                    const match = file.match(/^(.+)_([A-Z]{2})\.yaml$/);
+                    return match && `${subDir}/${match[1]}` === categoryName;
+                  });
+                  if (subCategoryFiles.length > 0) {
+                    // Cerca nei file della sottocartella
+                    for (const file of subCategoryFiles) {
+                      const filePath = path.join(subDirPath, file);
+                      if (await this.searchInYamlFile(filePath, normalizedSearchTerm)) {
+                        return categoryName;
+                      }
+                    }
+                  }
+                } catch (subError) {
+                  // Continua con le altre sottocartelle
+                }
+              }
+            } catch (dirError) {
+              // Se fallisce la scansione delle sottocartelle, continua
+            }
+            return null;
+          }
+          
+          // Cerca il termine in tutti i file linguistici di questa categoria
+          for (const file of categoryFiles) {
+            const filePath = path.join(localizationPath, file);
+            if (await this.searchInYamlFile(filePath, normalizedSearchTerm)) {
+              return categoryName;
+            }
+          }
+          
+        } catch (error) {
+          logger.warn(`Error searching strings category ${categoryName}: ${error.message}`);
+        }
+        return null;
+      });
+      
+      const results = await Promise.all(searchPromises);
+      const matchingCategoryNames = results.filter(name => name !== null);
+      
+      logger.info(`Found ${matchingCategoryNames.length} string categories matching "${searchTerm}"`);
+      
+      res.json({
+        success: true,
+        data: {
+          searchTerm,
+          totalSearched: categoryNames.length,
+          matchingCategories: matchingCategoryNames,
+          matchCount: matchingCategoryNames.length
+        }
+      });
+      
+    } catch (error) {
+      logger.error('Error in batch search strings:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to search strings',
+        message: error.message
+      });
+    }
+  }
+
+  /**
+   * Helper method per cercare un termine in un file YAML
+   */
+  async searchInYamlFile(filePath, normalizedSearchTerm) {
+    try {
+      const content = await fs.readFile(filePath, 'utf8');
+      const data = yaml.load(content);
+      
+      if (!data || typeof data !== 'object') {
+        return false;
+      }
+      
+      // Cerca il termine nelle strings del file
+      for (const [stringKey, value] of Object.entries(data)) {
+        // Cerca nella chiave stessa
+        if (stringKey.toLowerCase().includes(normalizedSearchTerm)) {
+          return true;
+        }
+        
+        // Se il valore è una stringa
+        if (typeof value === 'string') {
+          if (value.toLowerCase().includes(normalizedSearchTerm)) {
+            return true;
+          }
+        }
+        // Se il valore è un oggetto con traduzioni multiple
+        else if (value && typeof value === 'object') {
+          for (const text of Object.values(value)) {
+            if (typeof text === 'string' && text.toLowerCase().includes(normalizedSearchTerm)) {
+              return true;
+            }
+          }
+        }
+      }
+      
+      return false;
+    } catch (error) {
+      logger.warn(`Error searching in YAML file ${filePath}: ${error.message}`);
+      return false;
+    }
+  }
+
+  /**
+   * Batch search in nodes content
+   */
+  batchSearchNodes = async (req, res) => {
+    try {
+      const { nodeNames, searchTerm } = req.body;
+      
+      if (!Array.isArray(nodeNames) || !searchTerm || typeof searchTerm !== 'string') {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid request. Expected { nodeNames: string[], searchTerm: string }'
+        });
+      }
+      
+      logger.info(`Batch search for "${searchTerm}" in ${nodeNames.length} nodes`);
+      
+      const normalizedSearchTerm = searchTerm.toLowerCase().trim();
+      const matchingNodes = [];
+      
+      // Lingue supportate per nodes
+      const languages = ['EN', 'DE', 'FR', 'ES', 'PL', 'CS', 'RU', 'IT'];
+      
+      // Carica e combina tutti i files nodes.yaml da tutte le lingue
+      const allNodesData = [];
+      for (const lang of languages) {
+        try {
+          const filePath = path.join(__dirname, '../../GAMEFOLDER/campaign/campaignScripts' + lang + '/nodes.yaml');
+          const fileContent = await fs.readFile(filePath, 'utf8');
+          const yamlData = yaml.load(fileContent);
+          
+          if (Array.isArray(yamlData)) {
+            allNodesData.push(...yamlData.map(node => ({ ...node, language: lang })));
+          }
+        } catch (error) {
+          logger.warn(`Could not load nodes for language ${lang}: ${error.message}`);
+        }
+      }
+      
+      // Processa i nodes in parallelo per performance
+      const searchPromises = nodeNames.map(async (nodeName) => {
+        try {
+          // Cerca il node in tutti i dati caricati
+          const nodeItems = allNodesData.filter(node => node.name === nodeName);
+          if (nodeItems.length === 0) {
+            return null;
+          }
+          
+          // Cerca nel nome del node
+          if (nodeName.toLowerCase().includes(normalizedSearchTerm)) {
+            return nodeName;
+          }
+          
+          // Cerca in tutti i nodi di tutte le lingue
+          for (const nodeItem of nodeItems) {
+            // Cerca in caption
+            if (nodeItem.caption && nodeItem.caption.toLowerCase().includes(normalizedSearchTerm)) {
+              return nodeName;
+            }
+            
+            // Cerca in description
+            if (nodeItem.description && nodeItem.description.toLowerCase().includes(normalizedSearchTerm)) {
+              return nodeName;
+            }
+            
+            // Cerca nei buttons
+            if (nodeItem.buttons && Array.isArray(nodeItem.buttons)) {
+              for (const button of nodeItem.buttons) {
+                if (Array.isArray(button) && button.length >= 3 && button[2]) {
+                  const buttonText = button[2].toString();
+                  if (buttonText.toLowerCase().includes(normalizedSearchTerm)) {
+                    return nodeName;
+                  }
+                }
+              }
+            }
+          }
+          
+        } catch (error) {
+          logger.warn(`Error searching node ${nodeName}: ${error.message}`);
+        }
+        return null;
+      });
+      
+      const results = await Promise.all(searchPromises);
+      const matchingNodeNames = results.filter(name => name !== null);
+      
+      logger.info(`Found ${matchingNodeNames.length} nodes matching "${searchTerm}"`);
+      
+      res.json({
+        success: true,
+        data: {
+          searchTerm,
+          totalSearched: nodeNames.length,
+          matchingNodes: matchingNodeNames,
+          matchCount: matchingNodeNames.length
+        }
+      });
+      
+    } catch (error) {
+      logger.error('Error in batch search nodes:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to search nodes',
+        message: error.message
+      });
+    }
+  }
+
+  /**
+   * Batch search in missions YAML content
+   */
+  batchSearchMissions = async (req, res) => {
+    try {
+      const { missionNames, searchTerm } = req.body;
+      
+      if (!Array.isArray(missionNames) || !searchTerm || typeof searchTerm !== 'string') {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid request. Expected { missionNames: string[], searchTerm: string }'
+        });
+      }
+      
+      logger.info(`Batch search for "${searchTerm}" in ${missionNames.length} missions`);
+      
+      const normalizedSearchTerm = searchTerm.toLowerCase().trim();
+      const matchingMissions = [];
+      
+      // Lingue supportate per missions
+      const languages = ['EN', 'DE', 'FR', 'ES', 'PL', 'CS', 'RU', 'IT'];
+      
+      // Carica e combina tutti i files missions.yaml da tutte le lingue
+      const allMissionsData = [];
+      for (const lang of languages) {
+        try {
+          const filePath = path.join(__dirname, '../../GAMEFOLDER/campaign/campaignScripts' + lang + '/missions.yaml');
+          const fileContent = await fs.readFile(filePath, 'utf8');
+          const yamlData = yaml.load(fileContent);
+          
+          if (Array.isArray(yamlData)) {
+            allMissionsData.push(...yamlData.map(mission => ({ ...mission, language: lang })));
+          }
+        } catch (error) {
+          logger.warn(`Could not load missions for language ${lang}: ${error.message}`);
+        }
+      }
+      
+      // Processa le missions in parallelo per performance
+      const searchPromises = missionNames.map(async (missionName) => {
+        try {
+          // Cerca la mission in tutti i dati caricati
+          const missionItems = allMissionsData.filter(mission => mission.name === missionName);
+          if (missionItems.length === 0) {
+            return null;
+          }
+          
+          // Cerca nel nome della mission
+          if (missionName.toLowerCase().includes(normalizedSearchTerm)) {
+            return missionName;
+          }
+          
+          // Cerca in tutte le missions di tutte le lingue
+          for (const missionItem of missionItems) {
+            // Cerca in caption
+            if (missionItem.caption && missionItem.caption.toLowerCase().includes(normalizedSearchTerm)) {
+              return missionName;
+            }
+            
+            // Cerca in description
+            if (missionItem.description && missionItem.description.toLowerCase().includes(normalizedSearchTerm)) {
+              return missionName;
+            }
+            
+            // Cerca in source
+            if (missionItem.source && missionItem.source.toLowerCase().includes(normalizedSearchTerm)) {
+              return missionName;
+            }
+            
+            // Cerca in destination
+            if (missionItem.destination && missionItem.destination.toLowerCase().includes(normalizedSearchTerm)) {
+              return missionName;
+            }
+            
+            // Cerca nel button (array format)
+            if (missionItem.button && Array.isArray(missionItem.button)) {
+              for (const buttonPart of missionItem.button) {
+                if (buttonPart && buttonPart.toString().toLowerCase().includes(normalizedSearchTerm)) {
+                  return missionName;
+                }
+              }
+            }
+          }
+          
+        } catch (error) {
+          logger.warn(`Error searching mission ${missionName}: ${error.message}`);
+        }
+        return null;
+      });
+      
+      const results = await Promise.all(searchPromises);
+      const matchingMissionNames = results.filter(name => name !== null);
+      
+      logger.info(`Found ${matchingMissionNames.length} missions matching "${searchTerm}"`);
+      
+      res.json({
+        success: true,
+        data: {
+          searchTerm,
+          totalSearched: missionNames.length,
+          matchingMissions: matchingMissionNames,
+          matchCount: matchingMissionNames.length
+        }
+      });
+      
+    } catch (error) {
+      logger.error('Error in batch search missions:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to search missions',
         message: error.message
       });
     }

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Type, Hash, Image, User, ChevronDown } from 'lucide-react';
+import { Type, Hash, Image, User, ChevronDown, RefreshCw } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/locales';
 import { API_CONFIG } from '@/config/constants';
@@ -43,9 +43,10 @@ const useTop5Metacodes = (language?: string, scriptId?: string) => {
       return;
     }
 
-    // Se già in caricamento per questa lingua, attendi
+    // Se già in caricamento per questa lingua, non bloccare (permetti a tutti di inizializzarsi)
     if (loadingLanguages.has(activeLang)) {
-      setLoading(true);
+      setLoading(false); // Non bloccare, sarà aggiornato quando il primo finisce
+      setTopMetacodes(metacodesCache[cacheKey] || { gender: [], number: [], image: [], name: [] });
       return;
     }
 
@@ -150,6 +151,15 @@ export const MetacodeInsertButtons: React.FC<MetacodeInsertButtonsProps> = ({
           break;
       }
       onInsert(customCode);
+    }
+  };
+
+  const handleRefreshCache = async () => {
+    try {
+      // Fa effettivamente la chiamata API per aggiornare la cache
+      await refreshMetacodesCache(currentLang || 'IT', scriptId);
+    } catch (error) {
+      // Silent error handling
     }
   };
 
@@ -364,6 +374,52 @@ export const MetacodeInsertButtons: React.FC<MetacodeInsertButtonsProps> = ({
         <User className="w-3 h-3" />
         <span className="text-[10px]">NAME</span>
       </button>
+      
+      {/* Pulsante Refresh Cache */}
+      <button
+        type="button"
+        onClick={handleRefreshCache}
+        disabled={isDisabled}
+        className={`flex items-center gap-0.5 px-1.5 py-0.5 text-xs rounded transition-colors ${
+          isDisabled 
+            ? 'bg-slate-700/50 text-gray-500 cursor-not-allowed' 
+            : 'bg-slate-700 text-gray-300 hover:bg-blue-500 hover:text-white'
+        }`}
+        title={isDisabled ? t('visualFlowEditor.metacode.selectTextField') : 'Aggiorna cache metacode'}
+      >
+        <RefreshCw className="w-3 h-3" />
+      </button>
     </div>
   );
+};
+
+/**
+ * Funzione per forzare il refresh della cache dei metacodes top5
+ * Fa una nuova chiamata API e aggiorna la cache con i dati freschi
+ */
+export const refreshMetacodesCache = async (language: string = 'IT', scriptId?: string) => {
+  const cacheKey = `${language}_${scriptId || 'no-script'}`;
+  
+  try {
+    // Rimuove dalla cache l'entry specifica
+    delete metacodesCache[cacheKey];
+    
+    // Fa la chiamata API per ottenere dati freschi
+    const response = await fetch(`${API_CONFIG.API_BASE_URL}/metacodes/top5/${language}`);
+    
+    if (response.ok) {
+      const result = await response.json();
+      // Aggiorna la cache con i nuovi dati
+      metacodesCache[cacheKey] = result.data;
+      return result.data;
+    } else {
+      const emptyData = { gender: [], number: [], image: [], name: [] };
+      metacodesCache[cacheKey] = emptyData;
+      return emptyData;
+    }
+  } catch (error) {
+    const emptyData = { gender: [], number: [], image: [], name: [] };
+    metacodesCache[cacheKey] = emptyData;
+    return emptyData;
+  }
 };

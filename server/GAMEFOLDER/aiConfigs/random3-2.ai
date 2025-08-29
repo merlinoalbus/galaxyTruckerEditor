@@ -1,8 +1,0 @@
-idName: "random3-2"
-name: "John"
-character: basic
-avatar: avatars/common/05.png
-color: "ygbr"
-preferencesSettings: aiConfigs/settingBase.aipref
-difficulty: hard  # 1- hard, 3 - normal, 6 - easy
-

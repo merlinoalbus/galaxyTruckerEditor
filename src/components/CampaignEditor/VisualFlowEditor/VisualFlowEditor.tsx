@@ -545,7 +545,15 @@ const VisualFlowEditorInternal: React.FC<VisualFlowEditorProps> = ({
       
   // Non azzerare il breadcrumb: preserva l'attuale path (solo elementi con nome)
   const preservedPath = navigationPath.filter(i => i.name);
-  setRootBlocks([]);
+  
+  // Se siamo in navigazione zoom, ripristina rootBlocks con i dati appena salvati
+  // altrimenti azzera per tornare alla modalità normale
+  if (isZoomed && rootBlocks.length > 0) {
+    // Mantieni i rootBlocks aggiornati per continuare la navigazione
+    // (i rootBlocks contengono già le modifiche salvate)
+  } else {
+    setRootBlocks([]);
+  }
       
       // Imposta il nuovo contesto della missione
       setCurrentScriptContext({

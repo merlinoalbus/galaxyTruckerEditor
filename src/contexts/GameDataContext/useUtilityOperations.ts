@@ -1,4 +1,5 @@
 import { gameDataService } from '@/services/CampaignEditor/GameDataService';
+import { getApiUrl } from '@/hooks/useApiUrl';
 
 export const useUtilityOperations = (
   setLoading: (loading: boolean) => void,
@@ -10,9 +11,40 @@ export const useUtilityOperations = (
     try {
       setLoading(true);
       setError(null);
-      const status = await gameDataService.healthCheck();
-      setConnected(status.status === 'ok');
-      setGameRoot(status.gameRoot || '');
+      
+      // Prova prima con il backend attivo, poi fallback sui backend di default
+      let backends = [];
+      try {
+        const { BE_BASE_URL } = getApiUrl();
+        backends = [BE_BASE_URL];
+      } catch {
+        // Fallback se BackendContext non è ancora inizializzato
+        backends = ['http://localhost:3001', 'http://localhost:3002'];
+      }
+      
+      let connected = false;
+      for (const backendUrl of backends) {
+        try {
+          const response = await fetch(`${backendUrl}/health`);
+          
+          if (response.ok) {
+            const status = await response.json();
+            if (status.status === 'OK') {
+              setConnected(true);
+              setGameRoot(status.gameRoot || backendUrl);
+              connected = true;
+              break;
+            }
+          }
+        } catch (error) {
+          // Continua con il prossimo backend
+          continue;
+        }
+      }
+      
+      if (!connected) {
+        throw new Error('Nessun backend disponibile');
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to refresh');
       setConnected(false);
@@ -33,10 +65,37 @@ export const useUtilityOperations = (
 
   const healthCheck = async (): Promise<boolean> => {
     try {
-      const status = await gameDataService.healthCheck();
-      const connected = status.status === 'ok';
-      setConnected(connected);
-      return connected;
+      // Prova prima con il backend attivo, poi fallback sui backend di default
+      let backends = [];
+      try {
+        const { BE_BASE_URL } = getApiUrl();
+        backends = [BE_BASE_URL];
+      } catch {
+        // Fallback se BackendContext non è ancora inizializzato
+        backends = ['http://localhost:3001', 'http://localhost:3002'];
+      }
+      
+      for (const backendUrl of backends) {
+        try {
+          const response = await fetch(`${backendUrl}/health`);
+          
+          if (response.ok) {
+            const status = await response.json();
+            if (status.status === 'OK') {
+              setConnected(true);
+              setGameRoot(status.gameRoot || backendUrl);
+              return true;
+            }
+          }
+        } catch (error) {
+          // Continua con il prossimo backend
+          continue;
+        }
+      }
+      
+      // Nessun backend disponibile
+      setConnected(false);
+      return false;
     } catch (err) {
       setConnected(false);
       return false;

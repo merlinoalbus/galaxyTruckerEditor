@@ -9,6 +9,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
 const { initializeLanguage, isLanguageInitialized, getAvailableLanguages } = require('../utils/languageInitializer');
+const { updateScriptInFileMultilingualWithBackup, BackupRestoreError } = require('../utils/backupManager');
 
 const router = express.Router();
 const logger = getLogger();
@@ -717,6 +718,49 @@ router.get('/translations/:scriptName', async (req, res) => {
 });
 
 // ----------------------------------------------
+// AI Response Cleaning Utility
+// ----------------------------------------------
+
+/**
+ * Cleans AI response by removing unwanted formatting, numbering, and invalid characters
+ */
+function cleanAIResponse(response) {
+  if (!response || typeof response !== 'string') return '';
+  
+  let cleaned = response.trim();
+  
+  // Remove numbered lists at the beginning (1. 2. 3. etc.)
+  cleaned = cleaned.replace(/^\d+\.\s*/gm, '');
+  
+  // Remove bullet points at the beginning (- * + etc.)
+  cleaned = cleaned.replace(/^[-*+]\s*/gm, '');
+  
+  // Remove leading/trailing quotes that might be added by AI
+  cleaned = cleaned.replace(/^["'`]|["'`]$/g, '');
+  
+  // Clean up newlines and carriage returns (normalize to single spaces)
+  cleaned = cleaned.replace(/[\r\n]+/g, ' ');
+  
+  // Remove multiple spaces
+  cleaned = cleaned.replace(/\s+/g, ' ');
+  
+  // Remove common AI prefixes/suffixes
+  const prefixes = [
+    /^(Translation|Translated|Result|Output):\s*/i,
+    /^(Here is the|Here's the|The)\s+translation:\s*/i,
+    /^\s*-\s*/,
+    /^\s*>\s*/
+  ];
+  
+  for (const prefix of prefixes) {
+    cleaned = cleaned.replace(prefix, '');
+  }
+  
+  // Final trim
+  return cleaned.trim();
+}
+
+// ----------------------------------------------
 // NEW: AI translate suggestion (Gemini API)
 // POST /api/scripts/ai-translate
 // body: { textEN, langTarget, metacodesDetected?: string[] }
@@ -736,11 +780,16 @@ router.post('/ai-translate', async (req, res) => {
     const metacodes = Array.isArray(metacodesDetected) ? metacodesDetected.filter(Boolean) : [];
     const codesList = metacodes.length ? `Metacodes: ${metacodes.join(' ')}` : 'Metacodes: none';
     const systemPrompt = [
-      'You are a professional game localizer. Translate from English to the target language preserving placeholders and metacodes.',
-      'Rules:',
-      '- Keep every metacode exactly as is, do not translate or remove them (e.g., [NAME], [IMG:something], [NUM], [GENDER:...]).',
-      '- Return only the translated string, no quotes, no commentary.',
-      '- Prefer idiomatic, natural phrasing for the target language.',
+      'You are a professional game localizer for "Galaxy Trucker", an ironic and humorous space trading game.',
+      'Context: This is a comedic game with witty dialogues, space trading adventures, and quirky characters.',
+      'Translation Rules:',
+      '- Keep every metacode exactly as is, do not translate or remove them. Metacodes are identified by [] brackets.',
+      '- Common metacodes: [g(maschile|femminile|neutro)] for gender, [n(1:singolare|2:plurale)] or [n(1:un gatto|2:due gatti|3:una colonia)] for numbers, [v(Tap|Click)] for device format, [NAME] for player name.',
+      '- When translating, consider how these metacodes will be used in the target language context.',
+      '- Return ONLY the translated string, no quotes, no commentary, no numbering, no prefixes.',
+      '- Maintain the ironic and humorous tone of the original game.',
+      '- Use idiomatic expressions and colloquialisms appropriate for the target language.',
+      '- Preserve the comedic spirit and witty style of Galaxy Trucker.',
       '- If the English text is already language-agnostic (e.g., only metacodes), still return a target-language appropriate phrasing around the codes when appropriate.',
       '',
       codesList
@@ -797,6 +846,9 @@ router.post('/ai-translate', async (req, res) => {
       }
     }
 
+    // Clean up the suggestion (remove numbering, invalid characters, etc.)
+    suggestion = cleanAIResponse(suggestion);
+
     // Validate metacodes preservation (presence check)
     let preservedMetacodesOK = true;
     for (const code of metacodes) {
@@ -829,17 +881,29 @@ router.post('/ai-translate-batch', async (req, res) => {
     }
 
     const systemPrompt = [
-      'You are a professional game localizer. Translate from English to the target language preserving placeholders and metacodes.',
-      '- Keep every metacode exactly as is, do not translate or remove them (e.g., [NAME], [IMG:something], [NUM], [GENDER:...]).',
-      '- Return only the translated string for each item, in order, nothing else.',
-      '- Prefer idiomatic, natural phrasing for the target language.'
+      'You are a professional game localizer for "Galaxy Trucker", an ironic and humorous space trading game.',
+      'Context: This is a comedic game with witty dialogues, space trading adventures, and quirky characters.',
+      'Translation Rules:',
+      '- Keep every metacode exactly as is, do not translate or remove them. Metacodes are identified by [] brackets.',
+      '- Common metacodes: [g(maschile|femminile|neutro)] for gender, [n(1:singolare|2:plurale)] or [n(1:un gatto|2:due gatti|3:una colonia)] for numbers, [v(Tap|Click)] for device format, [NAME] for player name.',
+      '- When translating, consider how these metacodes will be used in the target language context.',
+      '- Maintain the ironic and humorous tone of the original game.',
+      '- Use idiomatic expressions and colloquialisms appropriate for the target language.',
+      '- Preserve the comedic spirit and witty style of Galaxy Trucker.',
+      '- IMPORTANT: Return ONLY a valid JSON array, no other text before or after.'
     ].join('\n');
 
-    // Compose a single request with numbered items to keep order stable
-    const numbered = items.map((it, i) => {
-      const codes = Array.isArray(it.metacodesDetected) && it.metacodesDetected.length ? ` Metacodes: ${it.metacodesDetected.join(' ')}` : '';
-      return `${i + 1}. ${it.textEN}${codes ? `\n${codes}` : ''}`;
-    }).join('\n\n');
+    // Create structured JSON request with IDs for reliable association
+    const structuredItems = items.map((it, i) => ({
+      id: String(i).padStart(3, '0'),
+      text: it.textEN,
+      metacodes: Array.isArray(it.metacodesDetected) ? it.metacodesDetected : []
+    }));
+
+    const jsonRequest = {
+      target: langTarget,
+      items: structuredItems
+    };
 
     const body = {
       contents: [
@@ -847,8 +911,11 @@ router.post('/ai-translate-batch', async (req, res) => {
           parts: [
             { text: systemPrompt },
             { text: `Target language: ${langTarget}` },
-            { text: 'Translate the following entries preserving all metacodes. Reply with one line per entry in the same order, without numbers:' },
-            { text: numbered }
+            { text: 'You will receive a JSON object with texts to translate. Return a JSON array with translations.' },
+            { text: 'Each item in your response must have: {"id": "same_id_from_input", "original": "original_text", "translated": "your_translation"}' },
+            { text: 'Example response: [{"id":"001","original":"Hello","translated":"Ciao"},{"id":"002","original":"Goodbye","translated":"Arrivederci"}]' },
+            { text: 'Input JSON:' },
+            { text: JSON.stringify(jsonRequest) }
           ]
         }
       ]
@@ -871,11 +938,118 @@ router.post('/ai-translate-batch', async (req, res) => {
     const json = await resp.json();
     const fullText = json?.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
-    // Split lines mapping back to items; keep same length (pad if needed)
-    const lines = fullText.split(/\r?\n/).filter((l) => l.trim().length > 0);
-    const suggestions = items.map((_, i) => lines[i] || '');
+    // Parse JSON response
+    let translatedItems = [];
+    try {
+      // Clean response to extract JSON (remove any text before/after)
+      const jsonMatch = fullText.match(/\[[\s\S]*\]/);
+      if (!jsonMatch) {
+        throw new Error('No JSON array found in response');
+      }
+      translatedItems = JSON.parse(jsonMatch[0]);
+    } catch (parseError) {
+      logger.error(`Failed to parse AI JSON response: ${parseError.message}`);
+      // Fallback to line-based parsing
+      const lines = fullText.split(/\r?\n/).filter((l) => l.trim().length > 0);
+      translatedItems = items.map((it, i) => ({
+        id: String(i).padStart(3, '0'),
+        original: it.textEN,
+        translated: cleanAIResponse(lines[i] || it.textEN)
+      }));
+    }
 
-    // Basic metacode preservation validation per item
+    // Create ID map for quick lookup
+    const translationMap = new Map();
+    translatedItems.forEach(item => {
+      if (item && item.id) {
+        translationMap.set(item.id, cleanAIResponse(item.translated || ''));
+      }
+    });
+
+    // Map back to original order using IDs
+    const suggestions = items.map((it, i) => {
+      const id = String(i).padStart(3, '0');
+      return translationMap.get(id) || it.textEN; // Fallback to original
+    });
+
+    // Calculate missing translations
+    const missingCount = suggestions.filter((s, i) => !s || s === items[i].textEN).length;
+    const missingPercentage = (missingCount / items.length) * 100;
+
+    // Retry logic for missing translations
+    if (missingPercentage > 30 && missingPercentage < 80) {
+      logger.info(`Retrying ${missingCount} missing translations (${missingPercentage.toFixed(1)}%)`);
+      
+      // Prepare items for retry
+      const retryItems = [];
+      const retryIndices = [];
+      items.forEach((it, i) => {
+        if (!suggestions[i] || suggestions[i] === it.textEN) {
+          retryItems.push(it);
+          retryIndices.push(i);
+        }
+      });
+
+      // Make retry request (simplified, single attempt)
+      try {
+        const retryBody = {
+          contents: [{
+            parts: [
+              { text: systemPrompt },
+              { text: `Target language: ${langTarget}` },
+              { text: 'Translate these specific items that were missing. Return JSON array:' },
+              { text: JSON.stringify({
+                target: langTarget,
+                items: retryItems.map((it, idx) => ({
+                  id: String(retryIndices[idx]).padStart(3, '0'),
+                  text: it.textEN,
+                  metacodes: it.metacodesDetected || []
+                }))
+              })}
+            ]
+          }]
+        };
+
+        const retryResp = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-goog-api-key': apiKey },
+          body: JSON.stringify(retryBody)
+        });
+
+        if (retryResp.ok) {
+          const retryJson = await retryResp.json();
+          const retryText = retryJson?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          
+          try {
+            const retryMatch = retryText.match(/\[[\s\S]*\]/);
+            if (retryMatch) {
+              const retryTranslations = JSON.parse(retryMatch[0]);
+              retryTranslations.forEach(item => {
+                if (item && item.id) {
+                  const index = parseInt(item.id);
+                  if (!isNaN(index) && index < suggestions.length) {
+                    suggestions[index] = cleanAIResponse(item.translated || items[index].textEN);
+                  }
+                }
+              });
+            }
+          } catch (retryParseError) {
+            logger.warn(`Retry parse failed: ${retryParseError.message}`);
+          }
+        }
+      } catch (retryError) {
+        logger.warn(`Retry request failed: ${retryError.message}`);
+      }
+    } else if (missingPercentage >= 80) {
+      logger.error(`Too many missing translations: ${missingPercentage.toFixed(1)}%`);
+      return res.status(500).json({ 
+        success: false, 
+        error: 'Translation failed - too many missing items',
+        missingPercentage: missingPercentage.toFixed(1)
+      });
+    }
+
+    // Validate metacode preservation
     const preserved = items.map((it, i) => {
       const out = suggestions[i] || '';
       const codes = Array.isArray(it.metacodesDetected) ? it.metacodesDetected : [];
@@ -1408,15 +1582,10 @@ async function parseScriptMultilingual(scriptName, format) {
     
     // 2. Merge multilingua se formato blocchi
     if (format === 'blocks') {
-      try {
-        const mergedResult = mergeMultilingualBlocks(parsedScripts, referenceScript);
-        return mergedResult;
-      } catch (mergeError) {
-        logger.error(`Error merging multilingual script ${scriptName}: ${mergeError.message}`);
-        // Fallback: restituisci solo inglese con errore
-        referenceScript.error = `ML - ${mergeError.message}`;
-        return referenceScript;
-      }
+      // La funzione mergeMultilingualBlocks ora gestisce internamente i fallback
+      // e non lancia più errori, quindi non serve try-catch
+      const mergedResult = mergeMultilingualBlocks(parsedScripts, referenceScript);
+      return mergedResult;
     } else {
       // Formato raw: aggiungi solo info multilingua
       referenceScript.availableLanguages = Object.keys(parsedScripts);
@@ -1433,9 +1602,12 @@ async function parseScriptMultilingual(scriptName, format) {
 // Merge blocchi multilingua
 function mergeMultilingualBlocks(parsedScripts, referenceScript) {
   const languages = Object.keys(parsedScripts);
-  const result = { ...referenceScript };
+  // CORREZIONE: Fai sempre una copia profonda per preservare l'originale
+  const result = JSON.parse(JSON.stringify(referenceScript));
   
-  // Controlla struttura consistente
+  // Controlla struttura consistente e filtra solo le lingue compatibili
+  const compatibleLanguages = ['EN']; // EN è sempre compatibile con se stesso
+  
   for (const lang of languages) {
     if (lang === 'EN') continue;
     
@@ -1443,14 +1615,30 @@ function mergeMultilingualBlocks(parsedScripts, referenceScript) {
     const structureMatch = compareBlockStructures(referenceScript.blocks, otherScript.blocks);
     
     if (!structureMatch.isMatch) {
-      throw new Error(`Structure mismatch between EN and ${lang} at ${structureMatch.mismatchLocation}`);
+      logger.warn(`Structure mismatch between EN and ${lang} at ${structureMatch.mismatchLocation} - skipping ${lang} from merge`);
+      // NON lanciare errore, continua con le altre lingue
+      continue;
     }
+    
+    // Se la struttura è compatibile, includi questa lingua
+    compatibleLanguages.push(lang);
   }
   
-  // Merge testi multilingua
-  result.blocks = mergeBlocksTextContent(result.blocks, parsedScripts, []);
-  result.availableLanguages = languages;
+  // Crea un oggetto parsedScripts solo con le lingue compatibili
+  const compatibleParsedScripts = {};
+  for (const lang of compatibleLanguages) {
+    compatibleParsedScripts[lang] = parsedScripts[lang];
+  }
+  
+  // Merge testi multilingua solo con lingue compatibili
+  result.blocks = mergeBlocksTextContent(result.blocks, compatibleParsedScripts, []);
+  result.availableLanguages = compatibleLanguages; // Solo lingue effettivamente processate
   result.multilingualMerged = true;
+  result.skippedLanguages = languages.filter(lang => !compatibleLanguages.includes(lang));
+  
+  if (result.skippedLanguages.length > 0) {
+    logger.info(`Merged script with ${compatibleLanguages.length}/${languages.length} languages. Skipped: ${result.skippedLanguages.join(', ')}`);
+  }
   
   return result;
 }
@@ -1964,14 +2152,41 @@ router.post('/saveScript', async (req, res) => {
             // Modalità multilingua - genera un file per ogni lingua
             const languages = SUPPORTED_LANGUAGES;
             
+            // PROTEZIONE: Se viene da traduzioni, NON modificare mai i file EN
+            const isFromTranslations = body.fromTranslations || fileScripts[0]?.fromTranslations;
+            
             for (const lang of languages) {
+              // Salta EN se la richiesta viene dalla pagina traduzioni
+              if (isFromTranslations && lang === 'EN') {
+                logger.info(`Skipping EN file modification - request from translations page`);
+                results.push({
+                  scriptName: fileScripts[0].name,
+                  language: lang,
+                  status: 'skipped',
+                  reason: 'EN files are protected from translations page modifications'
+                });
+                continue;
+              }
+              
               const filePath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`, fileName);
               await processFileForLanguage(filePath, fileScripts, lang, results);
             }
           } else {
             // Modalità singola lingua (default EN)
-            const filePath = path.join(GAME_ROOT, 'campaign', 'campaignScriptsEN', fileName);
-            await processFileForLanguage(filePath, fileScripts, 'EN', results);
+            const isFromTranslations = body.fromTranslations || fileScripts[0]?.fromTranslations;
+            
+            if (isFromTranslations) {
+              logger.warn(`Blocked EN file modification - request from translations page in single-language mode`);
+              results.push({
+                scriptName: fileScripts[0].name,
+                language: 'EN',
+                status: 'blocked',
+                reason: 'EN files are protected from translations page modifications'
+              });
+            } else {
+              const filePath = path.join(GAME_ROOT, 'campaign', 'campaignScriptsEN', fileName);
+              await processFileForLanguage(filePath, fileScripts, 'EN', results);
+            }
           }
         }
       }
@@ -2341,8 +2556,12 @@ async function saveScriptMultilingual(scriptName, blocks, languages) {
         const scriptDir = path.dirname(scriptPath);
         await fs.ensureDir(scriptDir);
         
-        // Gestisce aggiornamento file esistente
-        await updateScriptInFileMultilingual(scriptPath, scriptName, fullScriptContent);
+        // Gestisce aggiornamento file esistente con sistema di backup
+        const saveResult = await updateScriptInFileMultilingualWithBackup(scriptPath, scriptName, fullScriptContent);
+        
+        if (!saveResult.success) {
+          throw new Error('Failed to save script file');
+        }
         
         results.languagesProcessed.push(language);
         results.filesGenerated.push(`scripts_${language}.txt`);
@@ -2359,10 +2578,20 @@ async function saveScriptMultilingual(scriptName, blocks, languages) {
         
       } catch (langError) {
         logger.error(`Error saving script ${scriptName} in ${language}: ${langError.message}`);
-        results.validation.languageValidations[language] = {
-          isValid: false,
-          error: langError.message
-        };
+        
+        // Gestione speciale per errori di backup/ripristino
+        if (langError instanceof BackupRestoreError) {
+          results.validation.languageValidations[language] = {
+            isValid: false,
+            error: langError.message,
+            backupDetails: langError.details
+          };
+        } else {
+          results.validation.languageValidations[language] = {
+            isValid: false,
+            error: langError.message
+          };
+        }
         results.validation.isValid = false;
       }
     }
@@ -2387,7 +2616,11 @@ async function saveScriptSingleLanguage(scriptName, blocks, language) {
     const scriptDir = path.dirname(scriptPath);
     await fs.ensureDir(scriptDir);
     
-    await updateScriptInFileMultilingual(scriptPath, scriptName, fullScriptContent);
+    const saveResult = await updateScriptInFileMultilingualWithBackup(scriptPath, scriptName, fullScriptContent);
+    
+    if (!saveResult.success) {
+      throw new Error('Failed to save script file');
+    }
     
     const validation = await validateSavedScript(scriptName, language, blocks);
     
@@ -2408,39 +2641,10 @@ async function saveScriptSingleLanguage(scriptName, blocks, language) {
 }
 
 
+// FUNZIONE AGGIORNATA PER USARE IL BACKUP MANAGER
 async function updateScriptInFileMultilingual(filePath, scriptName, newContent) {
-  let existingContent = '';
-  
-  if (await fs.pathExists(filePath)) {
-    existingContent = await fs.readFile(filePath, 'utf8');
-  }
-  
-  // Rimuovi versione esistente dello script
-  const scriptStartPattern = new RegExp(`SCRIPT\\s+${scriptName}\\s*\\n`, 'i');
-  const scriptEndPattern = /END_OF_SCRIPTS\\s*\\n?/;
-  
-  let updatedContent = existingContent;
-  const startMatch = updatedContent.match(scriptStartPattern);
-  
-  if (startMatch) {
-    const startIndex = startMatch.index;
-    const afterStart = updatedContent.substring(startIndex + startMatch[0].length);
-    const endMatch = afterStart.match(scriptEndPattern);
-    
-    if (endMatch) {
-      const endIndex = startIndex + startMatch[0].length + endMatch.index + endMatch[0].length;
-      updatedContent = updatedContent.substring(0, startIndex) + updatedContent.substring(endIndex);
-    }
-  }
-  
-  // Aggiungi nuovo script
-  if (updatedContent && !updatedContent.endsWith('\n')) {
-    updatedContent += '\n';
-  }
-  updatedContent += newContent;
-  
-  // Salva file aggiornato
-  await fs.writeFile(filePath, updatedContent, 'utf8');
+  // Usa la nuova funzione con sistema di backup
+  return await updateScriptInFileMultilingualWithBackup(filePath, scriptName, newContent);
 }
 
 // Verifica se i blocchi contengono dati multilingua

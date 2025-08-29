@@ -33,6 +33,7 @@ app.use(cors({
   origin: [
     'http://localhost:3000',
     'http://localhost:3002',
+    'http://localhost:3001',
     'http://localhost',
     'https://galaxytruckereditor.nasmerlinoalbus.cloud'
   ],
@@ -73,6 +74,16 @@ app.get('/health', (req, res) => {
     status: 'OK', 
     timestamp: new Date().toISOString(),
     version: '2.0.0-modular'
+  });
+});
+
+// Server info endpoint
+app.get('/api/server-info', (req, res) => {
+  res.json({
+    name: 'Backend Principale',
+    port: config.SERVER_PORT,
+    gamePath: config.GAME_HOST,
+    mountPoint: '/api'
   });
 });
 
