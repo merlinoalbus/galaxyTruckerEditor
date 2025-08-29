@@ -61,6 +61,8 @@ services:
     stdin_open: False
     tty: False
     user: '0:0'
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
 
 volumes:
   GalaxyApp:
@@ -96,4 +98,4 @@ x-notes: >+
 x-portals: 
   - name: Galaxy Trucker Editor
     protocol: http
-    port: 4000
+    port: 4001

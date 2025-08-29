@@ -82,7 +82,8 @@
       "Bash(grep:*)",
       "Bash(./scripts/restart-all.sh:*)",
       "Bash(docker exec:*)",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(docker-compose:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits",

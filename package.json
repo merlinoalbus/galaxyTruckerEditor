@@ -1,6 +1,6 @@
 {
   "name": "galaxy-trucker-editor",
-  "version": "3.3.0",
+  "version": "4.0.0",
   "description": "Visual editor for Galaxy Trucker missions and configurations",
   "private": true,
   "dependencies": {
