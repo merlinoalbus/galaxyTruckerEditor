@@ -1,8 +1,8 @@
 export const API_CONFIG = {
   BE_HOST: 'http://localhost',
-  BE_PORT: 3001,
+  BE_PORT: 4001,
   FE_HOST: 'http://localhost',
-  FE_PORT: 3000,
+  FE_PORT: 4000,
   get BE_BASE_URL() {
     return `${this.BE_HOST}:${this.BE_PORT}`;
   },
