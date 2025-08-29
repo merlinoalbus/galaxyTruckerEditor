@@ -1,0 +1,11 @@
+idName: "richGirl"
+gender: female
+shipTypes: ["I-sport", "II-sport"]
+character: safe
+avatar: campaign/rich.png
+color: "yrgb"
+preferencesSettings: aiConfigs/settingRichGirl.aipref
+speedSettings: aiConfigs/settingBaseMedium.aispeed
+difficulty: normal
+stupidity: 20
+

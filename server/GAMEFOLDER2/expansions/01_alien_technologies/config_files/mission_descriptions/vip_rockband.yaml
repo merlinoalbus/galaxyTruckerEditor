@@ -1,0 +1,18 @@
+                                                  # expansion adventure config
+name:         vip_rockband_title
+
+planetImg:    spacebar.png
+
+avatarImg:    campaign/bartender.png
+avatarColor:  avatarBgColor
+
+
+missions:
+- vip_rockband1.yaml                                  # 1 star mission
+- vip_rockband2.yaml                                  # 2 star mission
+- vip_rockband3.yaml                                  # 3 star mission
+
+
+dialogScript:   vip_rockband_Dlg
+endDialogsWin: [vip_rockband1_Success, vip_rockband2_Success, vip_rockband3_Success]
+endDialogLoose: vip_rockband_Failure

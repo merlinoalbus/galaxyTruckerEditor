@@ -1,0 +1,15 @@
+hitsImportance: [[0.2, 0.4, 0.2, 0.2], [0.2, 0.4, 0.2, 0.2], [0.2, 0.4, 0.2, 0.2], [0.2, 0.4, 0.2, 0.2]] # small meteor, big meteor, small fire, big fire;  up, down, left, right
+daysLostImportance: 0.3
+crewLostImportance: 2.3
+goodsLostImportance: 0.33
+goodsGainImportance: 0.3
+sabotageImportance: 0.3
+    
+strengthValueConst: 120
+bigMeteorProtectConstant: 70
+speedConstant: 75
+crewLostConstant: 100
+crewConstant: 40
+cargoConstant: 45
+shieldConstant: 60
+batteryConstant: 70

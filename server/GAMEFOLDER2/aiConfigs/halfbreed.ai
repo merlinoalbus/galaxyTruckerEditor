@@ -1,0 +1,9 @@
+idName: "halfbreed"
+shipTypes: ["I", "II", "III-amoeba"]
+character: basic
+avatar: avatars/campaign/mixed-avatar.png
+color: "rgby"
+preferencesSettings: aiConfigs/settingRacer.aipref
+speedSettings: aiConfigs/settingBaseHard.aispeed
+difficulty: normal
+stupidity: 30

@@ -1,0 +1,38 @@
+name:         three_little_aliens_title                      # id of mission name string - localized 
+
+
+# txt + img
+new:          three_little_aliens_new
+rules:        three_little_aliens3_rules
+objectives:   three_little_aliens3_objectives
+images:       [[parts/alienSpec.png, 256, 256, ["CyanAliens", "CyanAlienType1", "CyanAlienType2", "CyanAlienType3", "CombinedLifeSupport"]]]
+
+
+gameType:     realtime                            # values: realtime/turnbased; If mentioned this value can not be changed in GUI setting (lobby) by player.
+
+
+rounds:
+- roundType:  STI
+  pileConfig: at__three_little_aliens.yaml
+
+
+shipPlans:    [I-random_smaller]                         # names of all available ship plans. If not mentioned default plans will be used. Should by only one ship plan for one flight.
+
+
+opponents:
+- at__rand-medium-woman5
+- at__rand-medium-man4
+- at__rand-hard-woman1
+#- "medium_basic"
+#- "medium_basic"
+#- "hard_basic"
+
+
+deckScript:   at__Three_Little_Aliens_hard          # adventure cards deck building script
+
+
+winCondition:                                     # values: scoreWinner / didntGiveUp; used in expansion, to find ouf when is mission completed succefully
+              didntGiveUp: true
+              escortBrownAlien: true
+              escortPurpleAlien: true
+              escortCyanAlien: true

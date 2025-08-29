@@ -1,0 +1,8 @@
+idName: "cyan2"
+avatar: avatars/campaign/cyan.png
+color: "ybrg"
+preferencesSettings: aiConfigs/settingRich.aipref
+speedSettings: aiConfigs/settingBaseMedium.aispeed
+difficulty: normal
+stupidity: 20
+

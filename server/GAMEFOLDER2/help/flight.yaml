@@ -1,0 +1,69 @@
+- type: img
+  src: help/white_arrow.png
+  id: arrow_info
+  bounds: [442, 78, 49, 57]
+  
+- type: img
+  src: help/yellow_arrow_top_left.png
+  id: arrow_cards
+  bounds: [155, 343, 67, 78]
+  
+- type: img
+  src: help/white_arrow.png
+  id: arrow_card
+  bounds: [480, 220, 49, 57]
+  
+- type: txt
+  id: f_what_is_happening
+  bounds: [360, 134, 694, 94]
+  vAlign: top
+  hAlign: left
+  
+- type: txt
+  id: f_avatars
+  bounds: [1070, 178, 444, 77]
+  vAlign: top
+  hAlign: right
+  
+- type: txt
+  id: f_adventure_deck
+  bounds: [111, 417, 975, 77]
+  vAlign: top
+  hAlign: left
+  color: yellow
+  
+- type: txt
+  id: fd_adventure_deck
+  bounds: [525, 250, 576, 70]
+  vAlign: top
+  hAlign: left
+
+- type: txt
+  id: fd_adventure_deck_more_info
+  bounds: [525, 310, 800, 70]
+  vAlign: top
+  hAlign: left
+  color: yellow
+  
+- type: txt
+  id: f_flight_track
+  bounds: [0, 802, 1536, 85]
+  vAlign: top
+  hAlign: center
+  style: heading
+  autoScaleY: true
+  
+- type: txt
+  id: f_positions_of_ships
+  bounds: [8, 893, 1536, 63]
+  vAlign: top
+  hAlign: center
+  autoScaleY: true
+  
+- type: txt
+  id: f_tap_ship_or_avatar
+  bounds: [0, 959, 1536, 142]
+  vAlign: top
+  hAlign: center
+  color: yellow
+  autoScaleY: true

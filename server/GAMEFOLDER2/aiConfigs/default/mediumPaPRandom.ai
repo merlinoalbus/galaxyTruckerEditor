@@ -1,0 +1,6 @@
+idName: "medium_random_pap"
+type: turn
+character: random
+avatar: avatars/ai/medium_random.png
+color: "ygbr"
+difficulty: medium

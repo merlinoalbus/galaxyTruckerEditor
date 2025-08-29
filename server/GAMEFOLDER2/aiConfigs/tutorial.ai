@@ -1,0 +1,10 @@
+idName: "tutAI"
+character: basic
+avatar: campaign/tutor.png
+color: "ygbr"
+preferencesSettings: aiConfigs/settingTut.aipref
+qualitySettings: aiConfigs/settingTut.aiqual
+speedSettings: aiConfigs/settingBase.aispeed
+speed: 1
+difficulty: easy
+stupidity: 100

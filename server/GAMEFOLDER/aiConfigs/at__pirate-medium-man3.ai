@@ -1,0 +1,7 @@
+idName: "at__pirate-medium-man3"
+avatar: avatars/alien_technologies/pirate-man3.png
+color: "gybr"
+preferencesSettings: aiConfigs/settingBase.aipref
+speedSettings: aiConfigs/settingBaseMedium.aispeed
+difficulty: medium  #hard, medium, easy
+stupidity: 60

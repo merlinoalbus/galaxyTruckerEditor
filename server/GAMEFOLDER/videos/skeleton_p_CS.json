@@ -1,0 +1,995 @@
+{
+"skeleton": {
+	"hash": "NrQVroaC3wT+4i1ikI8Sw5dknBo",
+	"spine": "3.8.93",
+	"x": -2539.4,
+	"y": -2102.28,
+	"width": 4947.62,
+	"height": 4252.23,
+	"images": "./podklady/",
+	"audio": ""
+},
+"bones": [
+	{ "name": "Background", "transform": "onlyTranslation" },
+	{ "name": "CITY", "parent": "Background", "x": 142, "y": -423.73 },
+	{ "name": "KANAL", "parent": "Background", "x": 0.54, "y": 19.13, "transform": "onlyTranslation" },
+	{ "name": "LESK_LOGO", "parent": "Background", "x": -722.6, "y": -211.19 },
+	{ "name": "LESK_LOGO2", "parent": "Background", "x": -724.84, "y": -60.5 },
+	{ "name": "LODE_CITYBAAAAACK 2", "parent": "Background", "x": -1057.14, "y": -854.52 },
+	{ "name": "LODE_CITY_BACK", "parent": "Background", "x": -1130.1, "y": -278.98 },
+	{ "name": "MAIN_building", "parent": "Background", "x": 22.43, "y": 51.96 },
+	{ "name": "MESTO prulet 1", "parent": "Background", "x": -970.77, "y": 318.53 },
+	{ "name": "MESTO prulet 2", "parent": "Background", "x": -970.77, "y": -164.42 },
+	{ "name": "MONEY", "parent": "Background", "x": 60.41, "y": 1456.63 },
+	{ "name": "MOVINGSPACE", "parent": "Background", "x": 17.74, "y": 52.72 },
+	{ "name": "PIPEEEEE_BASIC SHIP", "parent": "Background", "x": -36.18, "y": -19.5 },
+	{ "name": "PLANETY", "parent": "Background", "x": -3.32, "y": -48.75 },
+	{ "name": "PRAVNIK", "parent": "Background", "x": 55.08, "y": 1543.66 },
+	{ "name": "SHIIIIIP", "parent": "Background", "x": 8.16, "y": -12.74 },
+	{ "name": "SHIP_FLY", "parent": "Background", "x": -32.1, "y": -39.74 },
+	{ "name": "SPACE_OBJECTS", "parent": "Background", "x": 8.04, "y": -59.27, "color": "6b9b00ff" },
+	{ "name": "Space", "parent": "Background", "x": 26.07, "y": -4.58 },
+	{ "name": "Space_stars", "parent": "Background", "x": 2.36, "y": 2.71 },
+	{ "name": "TOILET SCENE", "parent": "Background", "x": 22.85, "y": 1335.61 },
+	{ "name": "ZARE", "parent": "Background", "x": -870.45, "y": -580.21 },
+	{ "name": "1", "parent": "SHIIIIIP", "x": -93.75, "y": -108.75 },
+	{ "name": "2", "parent": "SHIIIIIP", "x": 106.58, "y": 41.69 },
+	{ "name": "3", "parent": "SHIIIIIP", "x": 186.45, "y": -91.82 },
+	{ "name": "4", "parent": "SHIIIIIP", "x": -55.36, "y": 158.88 },
+	{ "name": "BLASTERS", "parent": "SPACE_OBJECTS", "x": 940.4, "y": -33.93 },
+	{ "name": "ENGINE", "parent": "SHIP_FLY", "x": 105.02, "y": 229.45 },
+	{ "name": "ENGINE_1", "parent": "SHIP_FLY", "x": 233.46, "y": 128.14 },
+	{ "name": "Forge", "parent": "PLANETY", "x": -280.42, "y": -234.27 },
+	{ "name": "Meteor", "parent": "SPACE_OBJECTS", "x": 949.9, "y": -303.97 },
+	{ "name": "NEWBIE", "parent": "PLANETY", "x": 347.67, "y": 233.03 },
+	{ "name": "Outpost", "parent": "PLANETY", "x": -266.14, "y": 447.13 },
+	{ "name": "PIEPS_2", "parent": "PIPEEEEE_BASIC SHIP", "x": 24.63, "y": 36.94 },
+	{ "name": "PIPES_1", "parent": "PIPEEEEE_BASIC SHIP", "x": -14.07, "y": -40.46 },
+	{ "name": "REGULA", "parent": "PLANETY", "x": 175.46, "y": 641.14 },
+	{ "name": "ROJ meteor", "parent": "SPACE_OBJECTS", "x": 1275.17, "y": 53.58 },
+	{ "name": "STARS_1", "parent": "MOVINGSPACE", "x": 423.78, "y": -78.06 },
+	{ "name": "Space_time_lab", "parent": "PLANETY", "x": 141.81, "y": -374.48 },
+	{ "name": "Splachovadlo", "parent": "TOILET SCENE", "x": 499.75, "y": 28.2 },
+	{ "name": "Stars_2", "parent": "MOVINGSPACE", "x": 34.04, "y": -110.65 },
+	{ "name": "TOILTET", "parent": "TOILET SCENE", "x": 11.24, "y": 36.31 },
+	{ "name": "UFO", "parent": "TOILET SCENE", "x": 424.06, "y": 19.81, "scaleX": 1.4729, "scaleY": 1.4729 },
+	{ "name": "UFO_HAPPY", "parent": "TOILET SCENE", "x": 152.03, "y": -187.34, "scaleX": 0.4757, "scaleY": 0.4757 },
+	{ "name": "bone2", "parent": "SPACE_OBJECTS", "x": -395.92, "y": -1195.78, "color": "6b9b00ff" },
+	{ "name": "bone3", "parent": "LODE_CITYBAAAAACK 2", "x": -49.62, "y": 10.63 },
+	{ "name": "bone4", "parent": "LODE_CITY_BACK", "x": 968.79, "y": 25.82 },
+	{ "name": "bone5", "parent": "LODE_CITYBAAAAACK 2", "x": 1662.25, "y": 8.44 },
+	{ "name": "lode city", "parent": "LODE_CITY_BACK", "x": 53.16, "y": 3.54 },
+	{ "name": "pIRATES", "parent": "SPACE_OBJECTS", "x": 915.97, "y": 359.6 },
+	{ "name": "bone", "parent": "ROJ meteor", "x": -785.65, "y": -1062.18 },
+	{ "name": "bone6", "parent": "bone5", "x": 61.36, "y": 5.58 }
+],
+"slots": [
+	{ "name": "space", "bone": "Space", "attachment": "Moving_space" },
+	{ "name": "Space_stars", "bone": "Space_stars", "attachment": "Space_stars" },
+	{ "name": "Move_stars", "bone": "STARS_1", "attachment": "Move_stars" },
+	{ "name": "Move_stars2", "bone": "Stars_2", "attachment": "Move_stars" },
+	{ "name": "Roj MEteor", "bone": "ROJ meteor", "attachment": "Roj MEteor" },
+	{ "name": "meteor_large", "bone": "Meteor", "attachment": "meteor_large" },
+	{ "name": "enemy_bolt_big", "bone": "BLASTERS", "attachment": "enemy_bolt_big" },
+	{ "name": "pirates2", "bone": "pIRATES" },
+	{ "name": "zare", "bone": "ZARE", "attachment": "zare" },
+	{ "name": "City", "bone": "CITY", "attachment": "City" },
+	{ "name": "Lode_city3", "bone": "LODE_CITY_BACK", "attachment": "Lode_city" },
+	{ "name": "Lode_city2", "bone": "lode city", "attachment": "Lode_city" },
+	{ "name": "Lode_city", "bone": "LODE_CITY_BACK", "attachment": "Lode_city" },
+	{ "name": "lode city", "bone": "lode city" },
+	{ "name": "Lode_city4", "bone": "bone3", "attachment": "Lode_city" },
+	{ "name": "Lode_city5", "bone": "bone5", "attachment": "Lode_city" },
+	{ "name": "Lode_city6", "bone": "bone6", "attachment": "Lode_city" },
+	{ "name": "smugglers1", "bone": "MESTO prulet 1", "attachment": "smugglers1" },
+	{ "name": "abandonedshipOn", "bone": "MESTO prulet 2", "attachment": "abandonedshipOn" },
+	{ "name": "Budova", "bone": "MAIN_building", "attachment": "Budova" },
+	{ "name": "G_kanal", "bone": "KANAL", "attachment": "G_kanal" },
+	{ "name": "regula", "bone": "REGULA", "attachment": "regula" },
+	{ "name": "newbieport", "bone": "NEWBIE", "attachment": "newbieport" },
+	{ "name": "forge", "bone": "Forge", "attachment": "forge" },
+	{ "name": "outpost", "bone": "Outpost", "attachment": "outpost" },
+	{ "name": "Space Time Lab", "bone": "Space_time_lab", "attachment": "Space Time Lab" },
+	{ "name": "SHP_2", "bone": "2", "attachment": "SHP_2" },
+	{ "name": "SHP_3", "bone": "3", "attachment": "SHP_3" },
+	{ "name": "SHP_4", "bone": "4", "attachment": "SHP_4" },
+	{ "name": "Pipe_1", "bone": "PIPES_1", "attachment": "Pipe_1" },
+	{ "name": "Pipe_2", "bone": "PIEPS_2", "attachment": "Pipe_2" },
+	{ "name": "SHP_1", "bone": "1", "attachment": "SHP_1" },
+	{ "name": "ENGINE", "bone": "ENGINE", "attachment": "ENGINE" },
+	{ "name": "ENGINE2", "bone": "ENGINE_1", "attachment": "ENGINE" },
+	{ "name": "Active_ship", "bone": "SHIP_FLY", "attachment": "Active_ship" },
+	{ "name": "blasters", "bone": "bone2", "attachment": "blasters" },
+	{ "name": "Toilet", "bone": "TOILTET", "attachment": "Toilet" },
+	{ "name": "splachovadlo", "bone": "Splachovadlo", "attachment": "splachovadlo" },
+	{ "name": "Blue-managerHAPPY", "bone": "UFO", "attachment": "Blue-manager" },
+	{ "name": "Blue-managerHAPPY2", "bone": "UFO_HAPPY" },
+	{ "name": "A-icon_15", "bone": "MONEY" },
+	{ "name": "pravnik", "bone": "PRAVNIK", "attachment": "pravnik" },
+	{ "name": "Lesk", "bone": "LESK_LOGO", "attachment": "Lesk" },
+	{ "name": "Lesk2", "bone": "LESK_LOGO2", "attachment": "Lesk" }
+],
+"skins": [
+	{
+		"name": "default",
+		"attachments": {
+			"A-icon_15": {
+				"A-icon_15": { "scaleX": 1.337, "scaleY": 1.337, "width": 512, "height": 512 }
+			},
+			"Active_ship": {
+				"Active_ship": { "x": 73.67, "y": 18.65, "scaleX": 0.7058, "scaleY": 0.7058, "width": 932, "height": 892 }
+			},
+			"Blue-managerHAPPY": {
+				"Blue-manager": {
+					"type": "mesh",
+					"uvs": [ 1, 1, 0, 1, 0, 0.66704, 0, 0.46597, 0, 0, 1, 0, 0.14619, 0.51351, 0.33507, 0.41545, 0.38324, 0.49568, 0.24507, 0.67496, 0.04985, 0.59077, 0.10689, 0.65713 ],
+					"triangles": [ 7, 4, 5, 3, 4, 7, 8, 7, 5, 6, 3, 7, 10, 3, 6, 11, 10, 6, 2, 3, 10, 2, 10, 11, 8, 9, 6, 8, 6, 7, 11, 6, 9, 1, 2, 11, 1, 11, 9, 8, 5, 0, 9, 8, 0, 1, 9, 0 ],
+					"vertices": [ -38.12, -329.69, -331.53, -329.69, -331.53, -204.66, -331.53, -129.15, -331.53, 45.82, -38.12, 45.82, -288.64, -139.57, -233.22, -110.18, -219.08, -140.31, -259.62, -206.89, -313.19, -188.29, -303.14, -209.49 ],
+					"hull": 6,
+					"edges": [ 0, 2, 8, 10, 0, 10, 6, 8, 2, 4, 4, 6 ],
+					"width": 822,
+					"height": 1052
+				},
+				"Blue-managerHAPPY": { "x": -144.97, "y": -7.07, "scaleX": 0.6789, "scaleY": 0.6789, "width": 822, "height": 1052 }
+			},
+			"Blue-managerHAPPY2": {
+				"Blue-managerHAPPY": { "scaleX": 1.112, "scaleY": 1.112, "width": 822, "height": 1052 }
+			},
+			"Budova": {
+				"Budova": { "x": -32.83, "y": -60.19, "width": 1000, "height": 1333 }
+			},
+			"City": {
+				"City": { "x": -144.31, "y": 317.89, "width": 1000, "height": 1333 }
+			},
+			"ENGINE": {
+				"ENGINE": { "y": -1.81, "scaleX": 1.3636, "scaleY": 1.3636, "rotation": 39.75, "width": 200, "height": 180 }
+			},
+			"ENGINE2": {
+				"ENGINE": {
+					"x": -3.62,
+					"y": 7.24,
+					"scaleX": 1.29,
+					"scaleY": 1.29,
+					"rotation": 49.64,
+					"width": 200,
+					"height": 180
+				}
+			},
+			"G_kanal": {
+				"G_kanal": { "x": 4.35, "y": 17.74, "width": 676, "height": 692 }
+			},
+			"Lesk": {
+				"Lesk": { "width": 100, "height": 100 }
+			},
+			"Lesk2": {
+				"Lesk": { "width": 100, "height": 100 }
+			},
+			"Lode_city": {
+				"Lode_city": { "x": 5.32, "y": 1.77, "scaleX": 1.589, "scaleY": 1.589, "width": 797, "height": 100 }
+			},
+			"Lode_city2": {
+				"Lode_city": { "x": -1063.96, "width": 797, "height": 100 }
+			},
+			"Lode_city3": {
+				"Lode_city": { "x": 1001.42, "y": 3.54, "width": 797, "height": 100 }
+			},
+			"Lode_city4": {
+				"Lode_city": { "x": 933.72, "y": -5.02, "scaleX": -1, "width": 797, "height": 100 }
+			},
+			"Lode_city5": {
+				"Lode_city": { "scaleX": -1, "width": 797, "height": 100 }
+			},
+			"Lode_city6": {
+				"Lode_city": { "x": 730.41, "scaleX": -1, "width": 797, "height": 100 }
+			},
+			"Move_stars": {
+				"Move_stars": { "x": -401.47, "y": -44.61, "scaleX": 0.8215, "scaleY": 0.8215, "width": 2250, "height": 3000 }
+			},
+			"Move_stars2": {
+				"Move_stars": { "width": 2250, "height": 3000 }
+			},
+			"Pipe_1": {
+				"Pipe_1": { "width": 400, "height": 390 }
+			},
+			"Pipe_2": {
+				"Pipe_2": { "x": -42.22, "y": -79.15, "width": 400, "height": 390 }
+			},
+			"Roj MEteor": {
+				"Roj MEteor": { "width": 2250, "height": 3000 }
+			},
+			"SHP_1": {
+				"SHP_1": { "width": 400, "height": 412 }
+			},
+			"SHP_2": {
+				"SHP_2": { "x": 11.1, "y": -25.56, "width": 400, "height": 412 }
+			},
+			"SHP_3": {
+				"SHP_3": { "x": 32.89, "y": 2.67, "width": 400, "height": 412 }
+			},
+			"SHP_4": {
+				"SHP_4": { "x": -16.89, "y": -10.67, "width": 400, "height": 412 }
+			},
+			"Space Time Lab": {
+				"Space Time Lab": { "x": -5.17, "y": 5.28, "scaleX": 0.7639, "scaleY": 0.7639, "width": 400, "height": 400 }
+			},
+			"Space_stars": {
+				"Space_stars": { "x": -39.61, "y": -119.04, "scaleX": 1.2803, "scaleY": 1.4159, "width": 1000, "height": 1333 }
+			},
+			"Toilet": {
+				"Toilet": {
+					"type": "mesh",
+					"uvs": [ 1, 1, 0, 1, 0, 0.69364, 0, 0.52526, 0, 0.34726, 0, 0.14641, 0, 0, 0.44383, 0, 1, 0, 0.43929, 0.69364, 0.36818, 0.48197, 0.3939, 0.28713, 0.42114, 0.13559 ],
+					"triangles": [ 12, 6, 7, 5, 6, 12, 11, 5, 12, 4, 5, 11, 10, 4, 11, 3, 4, 10, 2, 3, 10, 12, 8, 11, 9, 11, 8, 10, 11, 9, 2, 10, 9, 1, 2, 9, 8, 12, 7, 0, 9, 8, 1, 9, 0 ],
+					"vertices": [ 500, -629, -500, -629, -500, -243.6, -500, -31.78, -500, 192.14, -500, 444.81, -500, 629, -56.17, 629, 500, 629, -60.71, -243.6, -131.82, 22.69, -106.1, 267.79, -78.86, 458.43 ],
+					"hull": 9,
+					"edges": [ 0, 2, 0, 16, 2, 4, 12, 14, 14, 16, 10, 12, 8, 10, 4, 6, 6, 8 ],
+					"width": 1000,
+					"height": 1258
+				}
+			},
+			"abandonedshipOn": {
+				"abandonedshipOn": { "x": -3.72, "y": -3.72, "width": 256, "height": 256 }
+			},
+			"blasters": {
+				"blasters": {
+					"x": -674.8,
+					"y": -148.54,
+					"scaleX": 0.4285,
+					"scaleY": 0.4285,
+					"rotation": 7.29,
+					"width": 2250,
+					"height": 3000
+				}
+			},
+			"enemy_bolt_big": {
+				"enemy_bolt_big": { "width": 256, "height": 256 }
+			},
+			"forge": {
+				"forge": { "x": -2.35, "y": -0.23, "scaleX": 0.5419, "scaleY": 0.5419, "width": 400, "height": 400 }
+			},
+			"meteor_large": {
+				"meteor_large": { "width": 256, "height": 256 }
+			},
+			"newbieport": {
+				"newbieport": { "x": 2.39, "y": -5.85, "scaleX": 0.5781, "scaleY": 0.5781, "width": 400, "height": 400 }
+			},
+			"outpost": {
+				"outpost": { "x": 0.16, "y": -2.42, "scaleX": 0.661, "scaleY": 0.661, "width": 400, "height": 400 }
+			},
+			"pirates2": {
+				"pirates2": { "x": -14.93, "y": -2.71, "width": 512, "height": 512 }
+			},
+			"pravnik": {
+				"pravnik": { "x": -9.21, "y": -2611.04, "scaleX": 0.4851, "scaleY": 0.4851, "width": 2149, "height": 1223 }
+			},
+			"regula": {
+				"regula": { "x": 7.38, "y": -15.18, "width": 400, "height": 400 }
+			},
+			"smugglers1": {
+				"smugglers1": { "x": -7.43, "y": -3.72, "width": 512, "height": 512 }
+			},
+			"space": {
+				"Moving_space": { "y": 2.65, "scaleX": 0.4952, "scaleY": 0.4952, "width": 2250, "height": 3000 },
+				"space": { "x": -30.06, "y": -4.73, "width": 1000, "height": 1333 }
+			},
+			"splachovadlo": {
+				"splachovadlo": { "x": -503.77, "y": 259.71, "scaleX": 1.0529, "scaleY": 1.0529, "width": 125, "height": 1000 }
+			},
+			"zare": {
+				"zare": { "x": -2.84, "y": -5.68, "width": 400, "height": 400 }
+			}
+		}
+	}
+],
+"animations": {
+	"animation": {
+		"slots": {
+			"A-icon_15": {
+				"attachment": [
+					{ "time": 30.0667, "name": "A-icon_15" }
+				]
+			},
+			"Active_ship": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 20.0667, "name": "Active_ship" },
+					{ "time": 25.5, "name": null }
+				]
+			},
+			"Blue-managerHAPPY2": {
+				"attachment": [
+					{ "time": 27.6333, "name": "Blue-managerHAPPY" }
+				]
+			},
+			"Budova": {
+				"attachment": [
+					{ "time": 10.3333, "name": null }
+				]
+			},
+			"ENGINE": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 20, "name": "ENGINE" }
+				]
+			},
+			"ENGINE2": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 20, "name": "ENGINE" }
+				]
+			},
+			"G_kanal": {
+				"attachment": [
+					{ "time": 10.3333, "name": null },
+					{ "time": 35.0333, "name": "G_kanal" }
+				]
+			},
+			"Lesk": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 0.9333, "name": "Lesk" }
+				]
+			},
+			"Move_stars": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 20.1333, "name": "Move_stars" },
+					{ "time": 20.8, "name": null },
+					{ "time": 21.6, "name": "Move_stars" },
+					{ "time": 22.4, "name": null },
+					{ "time": 23.2, "name": "Move_stars" },
+					{ "time": 24, "name": null }
+				]
+			},
+			"Move_stars2": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 20.9333, "name": "Move_stars" },
+					{ "time": 21.9, "name": null },
+					{ "time": 22.6667, "name": "Move_stars" },
+					{ "time": 23.6333, "name": null },
+					{ "time": 24.4, "name": "Move_stars" }
+				]
+			},
+			"Pipe_1": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 16.4, "name": "Pipe_1" },
+					{ "time": 19.8667, "name": null }
+				]
+			},
+			"Pipe_2": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 17, "name": "Pipe_2" },
+					{ "time": 19.5333, "name": null }
+				]
+			},
+			"Roj MEteor": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 20.2667, "name": "Roj MEteor" },
+					{ "time": 21.1, "name": null },
+					{ "time": 21.3, "name": "Roj MEteor" }
+				]
+			},
+			"SHP_1": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 19.2, "name": "SHP_1" },
+					{ "time": 20.0667, "name": null }
+				]
+			},
+			"SHP_2": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 17.4333, "name": "SHP_2" },
+					{ "time": 20.1, "name": null }
+				]
+			},
+			"SHP_3": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 17.7, "name": "SHP_3" },
+					{ "time": 20.0667, "name": null }
+				]
+			},
+			"SHP_4": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 18.5333, "name": "SHP_4" },
+					{ "time": 20.0333, "name": null }
+				]
+			},
+			"Space Time Lab": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 12.2333, "name": "Space Time Lab" }
+				]
+			},
+			"Space_stars": {
+				"attachment": [
+					{ "time": 10.6667, "name": null }
+				]
+			},
+			"blasters": {
+				"attachment": [
+					{ "time": 21.1667, "name": null },
+					{ "time": 23.7667, "name": "blasters" }
+				]
+			},
+			"enemy_bolt_big": {
+				"attachment": [
+					{ "time": 22, "name": null },
+					{ "time": 24.3, "name": "enemy_bolt_big" },
+					{ "time": 24.7667, "name": null },
+					{ "time": 26.0333, "name": "enemy_bolt_big" }
+				]
+			},
+			"forge": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 13.0333, "name": "forge" }
+				]
+			},
+			"newbieport": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 13.9667, "name": "newbieport" }
+				]
+			},
+			"outpost": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 11.5333, "name": "outpost" }
+				]
+			},
+			"regula": {
+				"attachment": [
+					{ "name": null },
+					{ "time": 9, "name": "regula" }
+				]
+			},
+			"space": {
+				"attachment": [
+					{ "name": "space" }
+				]
+			}
+		},
+		"bones": {
+			"KANAL": {
+				"rotate": [
+					{},
+					{ "time": 0.2333, "angle": -180 },
+					{ "time": 0.4667, "angle": 0.89 },
+					{ "time": 1.6667, "curve": "stepped" },
+					{ "time": 35.0333 },
+					{ "time": 35.2667, "angle": -180 },
+					{ "time": 35.5, "angle": 0.89 },
+					{ "time": 38.6333 },
+					{ "time": 38.8667, "angle": 180 }
+				],
+				"translate": [
+					{ "time": 5.5667, "x": -11.24, "curve": "stepped" },
+					{ "time": 9.5, "x": -11.24 },
+					{ "time": 10.3333, "x": 15.68, "y": 63.05 }
+				],
+				"scale": [
+					{ "x": 0, "y": 0 },
+					{ "time": 0.4667, "x": 1.1, "y": 1.1 },
+					{ "time": 0.6, "curve": "stepped" },
+					{ "time": 5.3333 },
+					{ "time": 5.5667, "x": 0.464, "y": 0.464, "curve": "stepped" },
+					{ "time": 9.5, "x": 0.464, "y": 0.464 },
+					{ "time": 10.3333, "x": 0, "y": 0, "curve": "stepped" },
+					{ "time": 35.0333, "x": 0, "y": 0 },
+					{ "time": 35.5, "x": 1.1, "y": 1.1 },
+					{ "time": 35.6333, "curve": "stepped" },
+					{ "time": 38.6333 },
+					{ "time": 38.8667, "x": 0, "y": 0 }
+				]
+			},
+			"MAIN_building": {
+				"translate": [
+					{ "y": -1280.9 },
+					{ "time": 5.0333, "x": 2.57, "y": -1275.92 },
+					{ "time": 5.3, "x": 2.57, "y": -98.25 },
+					{ "time": 5.5333, "x": 2.57, "y": -201.71, "curve": "stepped" },
+					{ "time": 9.5, "x": 2.57, "y": -201.71 },
+					{ "time": 10.3333, "x": -6.01, "y": 30.09 }
+				],
+				"scale": [
+					{ "time": 9.5 },
+					{ "time": 10.3333, "x": 0, "y": 0 }
+				]
+			},
+			"CITY": {
+				"translate": [
+					{ "y": -435.9, "curve": "stepped" },
+					{ "time": 5, "y": -435.9 },
+					{ "time": 5.3333, "y": 91.08 },
+					{ "time": 5.5, "y": 22.77, "curve": "stepped" },
+					{ "time": 9.5, "y": 22.77 },
+					{ "time": 10.2667, "x": -3.63, "y": -262.54 },
+					{ "time": 10.3, "x": -74.89, "y": -272.73 }
+				],
+				"scale": [
+					{ "time": 10.3, "x": 0.1, "y": 0.1 }
+				]
+			},
+			"Space_stars": {
+				"translate": [
+					{ "y": 5.71 },
+					{ "time": 10.6667, "y": 78.07 }
+				],
+				"scale": [
+					{ "time": 10 },
+					{ "time": 10.3333, "x": 0, "y": 0 }
+				]
+			},
+			"REGULA": {
+				"translate": [
+					{ "time": 9, "x": -164.79, "y": -2200.24 },
+					{ "time": 10.3333, "x": -156.05, "y": -592.45 }
+				],
+				"scale": [
+					{ "time": 9, "x": 6.302, "y": 6.302 },
+					{ "time": 10.3333, "x": 0.589, "y": 0.589 }
+				]
+			},
+			"Space": {
+				"translate": [
+					{ "time": 39.2333 }
+				]
+			},
+			"Forge": {
+				"scale": [
+					{ "time": 13.0333, "x": 0, "y": 0 },
+					{ "time": 13.2667, "x": 1.4, "y": 1.4 },
+					{ "time": 13.3667 }
+				]
+			},
+			"NEWBIE": {
+				"scale": [
+					{ "time": 13.9667, "x": 0, "y": 0 },
+					{ "time": 14.1333, "x": 1.2, "y": 1.2 },
+					{ "time": 14.2333 }
+				]
+			},
+			"Space_time_lab": {
+				"scale": [
+					{ "time": 12.2333, "x": 0, "y": 0 },
+					{ "time": 12.5, "x": 1.4, "y": 1.4 },
+					{ "time": 12.6333 }
+				]
+			},
+			"Outpost": {
+				"scale": [
+					{ "time": 11.5333, "x": 0, "y": 0 },
+					{ "time": 11.8, "x": 1.4, "y": 1.4 },
+					{ "time": 11.9333 }
+				]
+			},
+			"1": {
+				"rotate": [
+					{ "time": 19.2, "angle": 120 },
+					{ "time": 19.5333 }
+				],
+				"translate": [
+					{ "time": 19.2, "x": -650.06, "y": -384.81 },
+					{ "time": 19.5333 }
+				],
+				"scale": [
+					{ "time": 19.2, "x": 0.3, "y": 0.3 },
+					{ "time": 19.5333 }
+				]
+			},
+			"2": {
+				"rotate": [
+					{ "time": 17.4333, "angle": -97.05 },
+					{ "time": 17.8 }
+				],
+				"translate": [
+					{ "time": 17.4333, "x": 745.33, "y": 134.5 },
+					{ "time": 17.8 }
+				],
+				"scale": [
+					{ "time": 17.4333, "x": 2, "y": 2 },
+					{ "time": 17.8 }
+				]
+			},
+			"3": {
+				"rotate": [
+					{ "time": 17.7, "angle": -69.4 },
+					{ "time": 18.0333 }
+				],
+				"translate": [
+					{ "time": 17.7, "x": 242.49, "y": -730.47 },
+					{ "time": 18.0333 }
+				],
+				"scale": [
+					{ "time": 17.7, "x": 1.881, "y": 1.881 },
+					{ "time": 18.0333 }
+				]
+			},
+			"4": {
+				"rotate": [
+					{ "time": 18.5333, "angle": 95.83 },
+					{ "time": 18.9333 }
+				],
+				"translate": [
+					{ "time": 18.5333, "x": -724.07, "y": 391.71 },
+					{ "time": 18.9333 }
+				],
+				"scale": [
+					{ "time": 18.5333, "x": 2, "y": 2 },
+					{ "time": 18.9333 }
+				]
+			},
+			"PLANETY": {
+				"scale": [
+					{ "time": 16.1333 },
+					{ "time": 16.4667, "x": 0, "y": 0 }
+				]
+			},
+			"SHIP_FLY": {
+				"rotate": [
+					{ "time": 20.0667 },
+					{ "time": 20.3333, "angle": 1.77 },
+					{ "time": 20.6, "angle": 12.28 },
+					{ "time": 20.8667, "angle": -1.8 },
+					{ "time": 21.1333 },
+					{ "time": 21.7667, "angle": 6.35 },
+					{ "time": 22.1, "angle": 28.6 },
+					{ "time": 22.6667, "angle": -11.72 },
+					{ "time": 23.3333, "angle": 7.62 },
+					{ "time": 24.4333, "angle": 1.77 },
+					{ "time": 24.7, "angle": 169.43 },
+					{ "time": 24.8333, "angle": -99.9 },
+					{ "time": 24.9, "angle": -1.8 },
+					{ "time": 25.1 }
+				],
+				"translate": [
+					{ "time": 20.0667 },
+					{ "time": 20.3333, "x": -17.6, "y": -20.8 },
+					{ "time": 20.6, "x": -66.71, "y": 33.35 },
+					{ "time": 20.7667, "x": 6.72, "y": 5.76 },
+					{ "time": 20.8667, "x": 11.2, "y": 9.6 },
+					{ "time": 21.1333 },
+					{ "time": 21.7667, "x": 49.1, "y": -42.97 },
+					{ "time": 22.1, "x": -28.64, "y": 49.1 },
+					{ "time": 22.6667, "x": 151.16, "y": -11.07 },
+					{ "time": 23.3333 },
+					{ "time": 24, "x": 129.25, "y": 190.11 },
+					{ "time": 24.4333, "x": -17.6, "y": -20.8 },
+					{ "time": 24.7, "x": 88.94, "y": -66.71 },
+					{ "time": 24.8333, "x": 6.72, "y": 5.76 },
+					{ "time": 24.9, "x": 11.2, "y": 9.6 },
+					{ "time": 25.1 },
+					{ "time": 25.5, "x": -1030.24, "y": -1267.76 }
+				],
+				"scale": [
+					{ "time": 25.1 },
+					{ "time": 25.5, "x": 2.5, "y": 2.5 }
+				]
+			},
+			"STARS_1": {
+				"translate": [
+					{ "time": 20, "x": -1028.3, "y": -1172.2 },
+					{ "time": 20.8, "x": 951.02, "y": 1014.04 },
+					{ "time": 21.6, "x": -1028.3, "y": -1172.2 },
+					{ "time": 22.4, "x": 951.02, "y": 1014.04 },
+					{ "time": 23.2, "x": -1028.3, "y": -1172.2 },
+					{ "time": 24, "x": 951.02, "y": 1014.04 }
+				]
+			},
+			"Stars_2": {
+				"translate": [
+					{ "time": 19.2333, "x": -1179.01, "y": -1268.8 },
+					{ "time": 20.1, "x": 1085.31, "y": 1124.35 },
+					{ "time": 20.9333, "x": -1179.01, "y": -1268.8 },
+					{ "time": 21.8, "x": 1085.31, "y": 1124.35 },
+					{ "time": 22.6667, "x": -1179.01, "y": -1268.8 },
+					{ "time": 23.5333, "x": 1085.31, "y": 1124.35 },
+					{ "time": 24.4, "x": -1179.01, "y": -1268.8 },
+					{ "time": 25.2667, "x": 1085.31, "y": 1124.35 }
+				]
+			},
+			"Meteor": {
+				"rotate": [
+					{ "time": 20.2 },
+					{ "time": 20.5667, "angle": 147.79 },
+					{ "time": 21, "angle": -86.22 }
+				],
+				"translate": [
+					{ "time": 18.7, "x": -1298.59, "y": -523.84, "curve": "stepped" },
+					{ "time": 20.2, "x": -1298.59, "y": -523.84 },
+					{ "time": 21, "x": -114.55, "y": 471.64 }
+				]
+			},
+			"BLASTERS": {
+				"rotate": [
+					{ "time": 21.5333, "angle": -36.8 }
+				],
+				"translate": [
+					{ "time": 21.5333, "x": -1715.15, "y": -462.4 },
+					{ "time": 21.9333, "x": -631.62, "y": 987.09 },
+					{ "time": 24.3667, "x": -1839.42, "y": -369.51 },
+					{ "time": 24.7667, "x": -815.59, "y": 1124.61 },
+					{ "time": 26.0333, "x": -944.6, "y": -925.43 },
+					{ "time": 26.1, "x": -975.95, "y": -1014.97 },
+					{ "time": 26.5, "x": 157.62, "y": 397.12 }
+				],
+				"scale": [
+					{ "time": 21.5333, "x": 0.5, "y": 0.8 }
+				]
+			},
+			"pIRATES": {
+				"rotate": [
+					{ "time": 20.5333, "angle": 40.18 },
+					{ "time": 21.9667, "angle": -6.85 }
+				],
+				"translate": [
+					{ "time": 20.5333, "x": -1875.78, "y": -1048.79 },
+					{ "time": 21.3667, "x": -1234.14, "y": 30.95 },
+					{ "time": 21.9667, "x": -853.44, "y": 717.75 }
+				],
+				"scale": [
+					{ "time": 20.5333 },
+					{ "time": 21.3667, "x": 0.569, "y": 0.569 }
+				]
+			},
+			"ROJ meteor": {
+				"translate": [
+					{ "time": 20.2667, "x": -2178.43, "y": -899.38 },
+					{ "time": 21.1, "x": -383.21, "y": 777 },
+					{ "time": 21.3, "x": -2178.43, "y": -899.38 },
+					{ "time": 21.7667, "x": -383.21, "y": 777 }
+				],
+				"scale": [
+					{ "time": 20.2667, "x": 0.432, "y": 0.432 }
+				]
+			},
+			"bone2": {
+				"translate": [
+					{ "time": 20.5 },
+					{ "time": 21.1667, "x": 1905.56, "y": 2355.42 },
+					{ "time": 23.7667 },
+					{ "time": 24.4333, "x": 1905.56, "y": 2355.42 }
+				]
+			},
+			"TOILET SCENE": {
+				"translate": [
+					{ "time": 26.0667 },
+					{ "time": 26.5667, "x": 11.37, "y": -1373.14 },
+					{ "time": 27.0667, "x": 11.38, "y": -1323.08, "curve": "stepped" },
+					{ "time": 30, "x": 11.38, "y": -1323.08 },
+					{ "time": 30.0667, "x": 11.38, "y": -7.81 }
+				],
+				"scale": [
+					{ "time": 26.0667, "x": 1.1, "y": 1.1, "curve": "stepped" },
+					{ "time": 26.5667, "x": 1.1, "y": 1.1 },
+					{ "time": 26.8333, "x": 1.4, "y": 1.1 },
+					{ "time": 27.0667, "x": 1.1, "y": 1.1 }
+				]
+			},
+			"Splachovadlo": {
+				"translate": [
+					{ "time": 27.2 },
+					{ "time": 27.3667, "y": -65.88 },
+					{ "time": 27.5333 }
+				]
+			},
+			"MONEY": {
+				"translate": [
+					{ "time": 30.0667 },
+					{ "time": 30.2333, "x": -48.98, "y": -1394.16, "curve": "stepped" },
+					{ "time": 32.3, "x": -48.98, "y": -1394.16 },
+					{ "time": 32.6667, "x": -48.98, "y": -403.18 }
+				],
+				"scale": [
+					{ "time": 30.2333 },
+					{ "time": 30.5667, "x": 1.4 },
+					{ "time": 30.9 }
+				]
+			},
+			"PRAVNIK": {
+				"translate": [
+					{ "time": 32.7333 },
+					{ "time": 33, "x": -41.44, "y": 1056.34, "curve": "stepped" },
+					{ "time": 34.9667, "x": -41.44, "y": 1056.34 },
+					{ "time": 35.0333, "x": -36.84, "y": 41.45 }
+				]
+			},
+			"ENGINE": {
+				"scale": [
+					{ "time": 20, "x": 0, "y": 0 },
+					{ "time": 20.2667, "x": 1.7, "y": 1.7 },
+					{ "time": 20.5 },
+					{ "time": 21, "x": 1.3, "y": 1.3 },
+					{ "time": 21.4667, "x": 0.7, "y": 0.7 },
+					{ "time": 21.7333, "x": 1.5, "y": 1.5 },
+					{ "time": 22.3333, "x": 0.7, "y": 0.7 },
+					{ "time": 22.7667, "x": 1.2, "y": 1.2 },
+					{ "time": 23.1667 },
+					{ "time": 23.8667, "x": 0.7, "y": 0.7 },
+					{ "time": 24.1333, "x": 1.7, "y": 1.7 },
+					{ "time": 24.7667, "x": 1.2, "y": 1.2 },
+					{ "time": 25.1, "x": 1.6, "y": 1.6 },
+					{ "time": 25.3333 }
+				]
+			},
+			"ENGINE_1": {
+				"scale": [
+					{ "time": 20, "x": 0, "y": 0 },
+					{ "time": 20.2667, "x": 1.7, "y": 1.7 },
+					{ "time": 20.5 },
+					{ "time": 21.0333, "x": 1.3, "y": 1.3 },
+					{ "time": 21.5, "x": 0.7, "y": 0.7 },
+					{ "time": 21.7667, "x": 1.5, "y": 1.5 },
+					{ "time": 22.3667, "x": 0.7, "y": 0.7 },
+					{ "time": 22.8, "x": 1.2, "y": 1.2 },
+					{ "time": 23.2333 },
+					{ "time": 23.9333, "x": 0.7, "y": 0.7 },
+					{ "time": 24.1667, "x": 1.7, "y": 1.7 },
+					{ "time": 24.8333, "x": 1.2, "y": 1.2 },
+					{ "time": 25.1667, "x": 1.6, "y": 1.6 },
+					{ "time": 25.4 }
+				]
+			},
+			"LESK_LOGO": {
+				"translate": [
+					{ "time": 0.9333, "x": 510.07, "y": 237.24 },
+					{ "time": 1.6333, "x": 510.6, "y": 237.19 },
+					{ "time": 2.8, "x": 922.6, "y": 411.19, "curve": "stepped" },
+					{ "time": 3.5, "x": 922.6, "y": 411.19 },
+					{ "time": 3.8333, "x": 672.6, "y": 511.19 }
+				],
+				"scale": [
+					{ "time": 0.9333, "x": 0, "y": 0 },
+					{ "time": 1.2667, "x": 2, "y": 2 },
+					{ "time": 1.6333, "x": 0, "y": 0, "curve": "stepped" },
+					{ "time": 2.8, "x": 0, "y": 0 },
+					{ "time": 3.1333, "x": 2, "y": 2 },
+					{ "time": 3.5, "x": 0, "y": 0, "curve": "stepped" },
+					{ "time": 3.8333, "x": 0, "y": 0 },
+					{ "time": 4.1667, "x": 2, "y": 2 },
+					{ "time": 4.5333, "x": 0, "y": 0 }
+				]
+			},
+			"LESK_LOGO2": {
+				"translate": [
+					{ "time": 1.3333, "x": 798.71, "y": 35.59 },
+					{ "time": 2.0667, "x": 797.84, "y": 35.5 },
+					{ "time": 3.3667, "x": 644.84, "y": 0.5, "curve": "stepped" },
+					{ "time": 4.1, "x": 644.84, "y": 0.5 },
+					{ "time": 4.4667, "x": 974.84, "y": 60.5 }
+				],
+				"scale": [
+					{ "time": 1.3333, "x": 0, "y": 0 },
+					{ "time": 1.7333, "x": 2, "y": 2 },
+					{ "time": 2.0667, "x": 0, "y": 0, "curve": "stepped" },
+					{ "time": 3.3667, "x": 0, "y": 0 },
+					{ "time": 3.7667, "x": 2, "y": 2 },
+					{ "time": 4.1, "x": 0, "y": 0, "curve": "stepped" },
+					{ "time": 4.4667, "x": 0, "y": 0 },
+					{ "time": 4.8, "x": 2, "y": 2 },
+					{ "time": 5.1, "x": 0, "y": 0 }
+				]
+			},
+			"MESTO prulet 2": {
+				"translate": [
+					{ "time": 5.9667, "x": 256.33 },
+					{ "time": 7.5333, "x": 1634.6 }
+				]
+			},
+			"MESTO prulet 1": {
+				"translate": [
+					{ "time": 7.6333, "x": 1746.05, "y": -26 },
+					{ "time": 10.0667, "x": 196.89, "y": -33.43 }
+				],
+				"scale": [
+					{ "time": 7.6333, "x": -1 }
+				]
+			},
+			"LODE_CITY_BACK": {
+				"translate": [
+					{ "y": -563.38 },
+					{ "time": 5.1, "x": 290.06, "y": -493.65 },
+					{ "time": 5.4, "x": 312.37 },
+					{ "time": 9.4333, "x": 1855.45 },
+					{ "time": 9.9667, "x": 2276.59, "y": -744.66 }
+				]
+			},
+			"LODE_CITYBAAAAACK 2": {
+				"translate": [
+					{ "time": 4.6333 },
+					{ "time": 5.2667, "y": 454.31 },
+					{ "time": 9.3447, "x": -816.67, "y": 454.31 },
+					{ "time": 10.0667, "x": -1245.08, "y": 89.49 }
+				]
+			},
+			"ZARE": {
+				"rotate": [
+					{ "time": 35.8 },
+					{ "time": 37.7333, "angle": 2000 }
+				],
+				"translate": [
+					{ "time": 35.5667, "x": 888.61, "y": 664.33 }
+				],
+				"scale": [
+					{ "time": 35.5667, "x": 0, "y": 0 },
+					{ "time": 35.8, "x": 2, "y": 2 },
+					{ "time": 36.8333, "x": 3, "y": 3 },
+					{ "time": 38.2667, "x": 0, "y": 0 }
+				]
+			},
+			"PIEPS_2": {
+				"rotate": [
+					{ "time": 17, "angle": -153.59 },
+					{ "time": 17.3333 }
+				],
+				"translate": [
+					{ "time": 17, "x": 664.9, "y": 265.61 },
+					{ "time": 17.3333 }
+				]
+			},
+			"PIPES_1": {
+				"rotate": [
+					{ "time": 16.4, "angle": -600 },
+					{ "time": 16.7333 }
+				],
+				"translate": [
+					{ "time": 16.4, "x": -621.98, "y": -415.06 },
+					{ "time": 16.7333 }
+				]
+			}
+		},
+		"deform": {
+			"default": {
+				"Blue-managerHAPPY": {
+					"Blue-manager": [
+						{ "time": 27.2 },
+						{
+							"time": 27.3667,
+							"offset": 6,
+							"vertices": [ -13.30704, -31.27171, 0, 0, 0, 0, 0.66534, -26.61423, 0, 0, 0, 0, 0, 0, -7.319, -14.63782 ]
+						},
+						{ "time": 27.5333 }
+					]
+				},
+				"Toilet": {
+					"Toilet": [
+						{ "time": 27.2333 },
+						{
+							"time": 27.3667,
+							"offset": 8,
+							"vertices": [ -1.27454, -1.27456, -71.37453, 1.27448, -137.65076, -1.2746, 29.31451, -2.54907, 0, 0, 0, 0, 0, 0, 0, 0, 76.47273, -2.54913 ]
+						},
+						{
+							"time": 27.4333,
+							"offset": 6,
+							"vertices": [ -95.59077, 0, -108.3364, 3.8236, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43.84541, 1.25273, 100.68906, -5.0982 ]
+						},
+						{
+							"time": 27.5,
+							"offset": 4,
+							"vertices": [ -59.13083, -2.57086, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 47.56181, 1.28543 ]
+						},
+						{ "time": 27.5667 }
+					]
+				}
+			}
+		},
+		"drawOrder": [
+			{
+				"time": 13.8333,
+				"offsets": [
+					{ "slot": "regula", "offset": -2 }
+				]
+			},
+			{ "time": 35.6 }
+		]
+	}
+}
+}

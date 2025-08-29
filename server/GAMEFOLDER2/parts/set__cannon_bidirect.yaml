@@ -1,0 +1,20 @@
+- type: gunBidirect
+  connectors: [1, 0, 0, 2]
+- type: gunBidirect
+  connectors: [1, 0, 0, 2]
+- type: gunBidirect
+  connectors: [2, 0, 0, 1]
+- type: gunBidirect
+  connectors: [2, 0, 0, 1]
+- type: gunBidirect
+  connectors: [1, 0, 0, 3]
+- type: gunBidirect
+  connectors: [3, 0, 0, 1]
+- type: gunBidirect
+  connectors: [2, 0, 0, 3]
+- type: gunBidirect
+  connectors: [3, 0, 0, 2]
+- type: gunBidirect
+  connectors: [3, 0, 0, 0]
+- type: gunBidirect
+  connectors: [0, 0, 0, 3]

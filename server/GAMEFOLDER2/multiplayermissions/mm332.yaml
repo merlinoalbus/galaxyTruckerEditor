@@ -1,0 +1,57 @@
+name: "multiplayer_mission332"                    # id of mission name string - localized 
+missionID: 332                                    # serial number of the mission
+
+alienTechnology: true
+
+
+
+# Dusty Connectors
+
+# ships: 
+# rules: Lots of components with 3 or 4 connectors.
+# rewards: Reward for final order is doubled.
+# cards: Stardust is more frequent. Meteors are a bit more frequent. 
+
+
+
+
+    #gameType:                                  # Values: realtime/turnbased; If mentioned this value can not be changed in a lobby by player.
+
+fligthsAvailabelToChange: [STI, STII, STIII]    # Which flights can be turned on/off in a lobby by player. Other flights are locked.
+flightsPicked: [STI]
+
+playersCount: [2, 4]                            # [min, max]. Default is [2, 4]. Min can not be less then 2.
+
+# ==== SHIPS ====                               # Names of all available ship plans. If not mentioned default plans will be used. Should by only one ship plan for one flight.
+#shipPlans: [I-random, II-random, III-random]
+
+
+# ==== TILES ===                                # Config file with list of all parts. Use 'pileConfig' or 'pileListConfig'.
+pileConfigSTI:   at__mm_lots_of_3_and_4_connectors.yaml
+pileConfigSTII:  at__mm_lots_of_3_and_4_connectors.yaml
+pileConfigSTIII: at__mm_lots_of_3_and_4_connectors.yaml
+
+
+# ==== CARDS ===
+atDeckScript:       at__mm_More_Stardust_Deck
+atRoughDeckScript:  at__mm_More_Stardust_Deck    # Used as digital and rough. (user can choose from 2 decks by default: digital and rough)
+    #customDeckScript:                           # Special custom deck, that doesn't fit to any deck category. If custom, digital and rough are set, user can choose from 3 decks.
+
+
+
+
+# ==== RULES ====                                # You can mention only those values you want edit. But you have to repeat (copy&paste) the rules for each flight.
+evaluation:                     
+  STI:
+    finalPositionReward: [8, 6, 4, 2]            # [first, second, third, fourth]
+  STII:
+    finalPositionReward: [16, 12, 8, 4]          # [first, second, third, fourth]
+  STIII:
+    finalPositionReward: [24, 16, 12, 6]         # [first, second, third, fourth]
+
+
+
+# ==== Infoboards ====
+InfoBoards:
+  - default: [true]
+

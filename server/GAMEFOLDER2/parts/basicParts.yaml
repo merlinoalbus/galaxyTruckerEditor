@@ -1,0 +1,8 @@
+- type: basic1
+  connectors: [3, 3, 3, 3]
+- type: basic2
+  connectors: [3, 3, 3, 3]
+- type: basic3
+  connectors: [3, 3, 3, 3]
+- type: basic4
+  connectors: [3, 3, 3, 3]

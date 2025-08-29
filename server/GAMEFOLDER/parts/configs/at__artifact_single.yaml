@@ -1,0 +1,28 @@
+- set_alien_brown.yaml: 3
+- set_alien_purple.yaml: 3
+- set__alien_cyan.yaml: 3
+- set__alien_combined_cyan_brown.yaml: 1
+- set__alien_combined_cyan_purple.yaml: 1
+- set_cabin.yaml: 16       #15
+#
+#- set__cabinVIP.yaml: 3
+#
+- set_cannons.yaml: 17     #22, 26, 25
+- set__cannon_bidirect.yaml: 3
+- set_engines.yaml: 17     #18
+#
+- set__cannon_engine.yaml: 3
+- set__catapult.yaml: 5
+#
+- set_shield.yaml: 5
+- set_structural.yaml: 4
+#
+- set_battery2.yaml: 6  #5
+- set_battery3.yaml: 3
+- set_cargo.yaml: 5     #6
+- set__combined_cargo2_with_cargoSpec1.yaml: 2
+- set__combined_cargo2_with_battery2.yaml: 2
+- set__combined_cargoSpec1_with_battery2.yaml: 2
+- set__plating.yaml: 4
+#
+- set__artifact_single.yaml: 8

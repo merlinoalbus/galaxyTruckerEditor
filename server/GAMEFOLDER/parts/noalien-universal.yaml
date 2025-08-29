@@ -1,0 +1,268 @@
+- type: basic1
+  connectors: [3, 3, 3, 3]
+- type: basic2
+  connectors: [3, 3, 3, 3]
+- type: basic3
+  connectors: [3, 3, 3, 3]
+- type: basic4
+  connectors: [3, 3, 3, 3]
+- type: cabin
+  connectors: [3, 3, 0, 0]
+- type: cabin
+  connectors: [3, 0, 0, 3]
+- type: cabin
+  connectors: [3, 0, 3, 0]
+- type: cabin
+  connectors: [3, 0, 3, 0]
+- type: cabin
+  connectors: [3, 0, 3, 3]
+- type: cabin
+  connectors: [3, 3, 0, 3]
+- type: cabin
+  connectors: [3, 3, 3, 0]
+- type: cabin
+  connectors: [3, 3, 0, 3]
+- type: cabin
+  connectors: [3, 0, 3, 3]
+- type: cabin
+  connectors: [3, 3, 0, 3]
+- type: cabin
+  connectors: [3, 3, 3, 0]
+- type: cabin
+  connectors: [3, 3, 3, 0]
+- type: cabin
+  connectors: [3, 3, 3, 3]
+- type: cabin
+  connectors: [3, 3, 3, 3]
+- type: cabin
+  connectors: [3, 3, 3, 3]
+- type: cabin
+  connectors: [3, 3, 3, 3]
+- type: engine
+  connectors: [3, 3, 3, 0]
+- type: engine
+  connectors: [3, 3, 3, 0]
+- type: engine
+  connectors: [0, 3, 3, 0]
+- type: engine
+  connectors: [3, 3, 0, 0]
+- type: engine
+  connectors: [0, 3, 0, 0]
+- type: engine
+  connectors: [0, 3, 0, 0]
+- type: engine
+  connectors: [3, 0, 0, 0]
+- type: engine
+  connectors: [3, 0, 0, 0]
+- type: engine
+  connectors: [0, 0, 3, 0]
+- type: engine
+  connectors: [0, 0, 3, 0]
+- type: engine
+  connectors: [0, 3, 0, 0]
+- type: engine
+  connectors: [0, 3, 0, 0]
+- type: engine
+  connectors: [3, 3, 0, 0]
+- type: engine
+  connectors: [0, 3, 3, 0]
+- type: engine
+  connectors: [3, 0, 3, 0]
+- type: engine
+  connectors: [3, 0, 3, 0]
+- type: engine
+  connectors: [3, 0, 3, 0]
+- type: engine
+  connectors: [3, 3, 0, 0]
+- type: engine
+  connectors: [0, 3, 3, 0]
+- type: gun
+  connectors: [3, 0, 3, 3]
+- type: gun
+  connectors: [3, 0, 3, 3]
+- type: gun
+  connectors: [0, 0, 0, 3]
+- type: gun
+  connectors: [0, 0, 0, 3]
+- type: gun
+  connectors: [0, 0, 0, 3]
+- type: gun
+  connectors: [0, 0, 0, 3]
+- type: gun
+  connectors: [0, 0, 3, 3]
+- type: gun
+  connectors: [0, 0, 3, 3]
+- type: gun
+  connectors: [0, 0, 3, 3]
+- type: gun
+  connectors: [0, 0, 3, 3]
+- type: gun
+  connectors: [3, 0, 0, 3]
+- type: gun
+  connectors: [3, 0, 0, 3]
+- type: gun
+  connectors: [3, 0, 0, 3]
+- type: gun
+  connectors: [3, 0, 0, 0]
+- type: gun
+  connectors: [0, 0, 3, 0]
+- type: gun
+  connectors: [3, 0, 3, 3]
+- type: gun
+  connectors: [3, 0, 3, 0]
+- type: gun
+  connectors: [3, 0, 3, 0]
+- type: gun
+  connectors: [3, 0, 3, 0]
+- type: gun
+  connectors: [3, 0, 3, 0]
+- type: engineDouble
+  connectors: [3, 3, 3, 0]
+- type: engineDouble
+  connectors: [3, 3, 3, 0]
+- type: engineDouble
+  connectors: [3, 0, 3, 0]
+- type: engineDouble
+  connectors: [0, 3, 3, 0]
+- type: engineDouble
+  connectors: [3, 3, 0, 0]
+- type: engineDouble
+  connectors: [0, 3, 0, 0]
+- type: engineDouble
+  connectors: [0, 3, 0, 0]
+- type: gunDouble
+  connectors: [3, 0, 3, 3]
+- type: gunDouble
+  connectors: [3, 0, 3, 3]
+- type: gunDouble
+  connectors: [0, 0, 0, 3]
+- type: gunDouble
+  connectors: [0, 0, 3, 3]
+- type: gunDouble
+  connectors: [3, 0, 0, 3]
+- type: gunDouble
+  connectors: [0, 0, 3, 3]
+- type: gunDouble
+  connectors: [3, 0, 3, 0]
+- type: shield
+  connectors: [3, 3, 3, 3]
+- type: shield
+  connectors: [3, 3, 3, 3]
+- type: shield
+  connectors: [3, 0, 0, 3]
+- type: shield
+  connectors: [3, 0, 0, 3]
+- type: shield
+  connectors: [3, 3, 0, 3]
+- type: shield
+  connectors: [3, 0, 3, 3]
+- type: shield
+  connectors: [3, 0, 3, 3]
+- type: shield
+  connectors: [3, 0, 3, 3]
+- type: shield
+  connectors: [3, 0, 0, 3]
+- type: shield
+  connectors: [3, 0, 0, 3]
+- type: battery2
+  connectors: [3, 3, 3, 0]
+- type: battery2
+  connectors: [3, 3, 3, 0]
+- type: battery2
+  connectors: [3, 0, 3, 0]
+- type: battery2
+  connectors: [3, 3, 0, 0]
+- type: battery2
+  connectors: [3, 0, 0, 3]
+- type: battery2
+  connectors: [3, 0, 0, 0]
+- type: battery2
+  connectors: [3, 0, 0, 0]
+- type: battery2
+  connectors: [3, 3, 3, 3]
+- type: battery2
+  connectors: [3, 3, 3, 3]
+- type: battery3
+  connectors: [3, 3, 0, 0]
+- type: battery3
+  connectors: [3, 3, 3, 0]
+- type: battery3
+  connectors: [3, 0, 0, 0]
+- type: battery3
+  connectors: [3, 0, 3, 0]
+- type: battery3
+  connectors: [3, 3, 0, 0]
+- type: battery3
+  connectors: [3, 3, 0, 0]
+- type: cargo2
+  connectors: [3, 0, 3, 3]
+- type: cargo2
+  connectors: [3, 0, 3, 3]
+- type: cargo2
+  connectors: [3, 3, 0, 0]
+- type: cargo2
+  connectors: [3, 0, 3, 0]
+- type: cargo2
+  connectors: [3, 0, 3, 0]
+- type: cargo2
+  connectors: [3, 3, 3, 3]
+- type: cargo2
+  connectors: [3, 3, 3, 3]
+- type: cargo2
+  connectors: [3, 0, 0, 0]
+- type: cargo2
+  connectors: [3, 0, 0, 0]
+- type: cargo3
+  connectors: [3, 0, 0, 0]
+- type: cargo3
+  connectors: [3, 0, 0, 0]
+- type: cargo3
+  connectors: [3, 0, 3, 0]
+- type: cargo3
+  connectors: [3, 0, 3, 0]
+- type: cargo3
+  connectors: [3, 0, 3, 0]
+- type: cargo3
+  connectors: [3, 0, 3, 0]
+- type: cargoSpec1
+  connectors: [3, 3, 3, 3]
+- type: cargoSpec1
+  connectors: [3, 3, 3, 3]
+- type: cargoSpec1
+  connectors: [3, 3, 0, 0]
+- type: cargoSpec1
+  connectors: [3, 0, 3, 0]
+- type: cargoSpec1
+  connectors: [3, 0, 3, 3]
+- type: cargoSpec1
+  connectors: [3, 3, 3, 0]
+- type: cargoSpec2
+  connectors: [3, 0, 3, 0]
+- type: cargoSpec2
+  connectors: [3, 0, 0, 0]
+- type: cargoSpec2
+  connectors: [3, 0, 0, 0]
+- type: nothing
+  connectors: [3, 3, 3, 0]
+- type: nothing
+  connectors: [3, 3, 3, 0]
+- type: nothing
+  connectors: [3, 3, 3, 0]
+- type: nothing
+  connectors: [3, 3, 3, 3]
+- type: nothing
+  connectors: [3, 3, 3, 3]
+- type: nothing
+  connectors: [3, 3, 3, 3]
+- type: nothing
+  connectors: [3, 3, 3, 3]
+- type: nothing
+  connectors: [3, 3, 3, 0]
+- type: nothing
+  connectors: [3, 3, 3, 0]
+- type: nothing
+  connectors: [3, 3, 3, 0]
+- type: battery2
+  connectors: [3, 3, 0, 0]
+- type: battery2
+  connectors: [3, 0, 0, 3]

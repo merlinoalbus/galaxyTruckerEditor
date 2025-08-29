@@ -1,0 +1,359 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Manuel de Galaxy Trucker</title>
+<!--<link href='http://fonts.googleapis.com/css?family=Roboto:400,700,700italic' rel='stylesheet' type='text/css'>-->
+<meta content='width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;' name='viewport' />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<link href="general.css" rel="stylesheet" type="text/css" media="screen">
+<link href="../desktop.css" rel="stylesheet" type="text/css" media="screen">
+</head>
+
+<body>
+
+<div class="main_background">
+</div>
+
+<div class="main_container_table">
+<div class="main_container_row">
+
+<div class="menu">
+	<div><a href="index.html"><img class="menu_button" src="img/menu_button01.png"></a></div>
+    <div><a href="building_the_ship.html"><img class="menu_button" src="img/menu_button02.png"></a></div>
+    <div><a href="flight.html"><img class="menu_button" src="img/menu_button03_hl.png"></a></div>
+    <div><a href="adventure_cards.html"><img class="menu_button" src="img/menu_button04.png"></a></div>
+    <div><a href="journeys_end.html"><img class="menu_button" src="img/menu_button05.png"></a></div>
+    <div><a href="campaign.html"><img class="menu_button" src="img/menu_button06.png"></a></div>
+    <div><a href="turn-based_game.html"><img class="menu_button" src="img/menu_button07.png"></a></div>
+    <div><a href="online_game.html"><img class="menu_button" src="img/menu_button08.png"></a></div>
+    <div><a href="at.html"><img class="menu_button" src="../manual_en/img/menu_button09.png"></a></div>
+</div>
+
+<div class="content">
+
+
+
+<div class="block">
+    <h1>Le Vol</h1>
+    
+    <div class="block"> 
+        <img class="screenshot_with_border" src="../img/flight.jpg" style="width:100%; max-width:1200px;" />
+    </div>
+    <br />
+	
+	<!-- To be adjusted in the image for translation -->
+    <!--
+	<div style="border: solid 1px darkorange; background-color: #222; width:500px; margin: auto; margin-bottom: 20px; ">
+		<h1>Labels to modify :</h1>
+		<ul>
+			<li>Ce qu'il se passe</li>
+			<li>Avatars des joueurs</li>
+			<li><span style="color: yellow;">Cliquez ici pour révéler la prochaine carte Aventure</span></li>
+			<li>PLAN DE VOL<br/>Vous pouvez voir les positions relatives de tous les vaisseaux</li>
+			<li><span style="color: yellow;">Cliquez sur le vaisseau d'un joueur ou sur son avatar pour zoomer sur son vaisseau</span></li>
+		</ul>
+	</div>
+    -->
+	<!-- End of translation -->
+    
+    <p><img class="component_left" src="../../tutorial/infoFlightImg1.png" />Le vol se compose d’un certain nombre de <a href="adventure_cards.html">cartes Aventure</a> (8 dans ce cas).</p>
+    <br />
+    
+    <p><!--<img class="component_left" src="img/flight01.jpg" />--><img class="component_left" style="width:160px;" src="../../tutorial/infoFlightImg2.png" />Le plan de vol indique les positions <b>relatives</b> des vaisseaux pendant le vol. Les vaisseaux se dirigent continuellement dans la même direction, à la même vitesse. Au cours du voyage, certaines aventures peuvent changer leurs positions relatives.</p>
+    
+    <p>Le vol se termine lorsque toutes les <a href="adventure_cards.html">cartes Aventure</a> ont été révélées. </p>
+</div>
+
+
+
+<div class="block">
+    <h2>Vues</h2>
+    
+    <div class="block">
+    	<p><img class="left" src="../img/flight_views_avatar.png" /><span class="tap">Cliquez sur l’avatar d’un joueur pour voir son vaisseau.</span></p>
+    </div>
+    <br />
+    <div class="block">
+    	<p><img class="left" src="../img/flight_views_tap_ship.png" /><span class="tap">Ou cliquez directement sur son vaisseau.</span></p>
+    </div>
+    <br />
+    <div class="block">
+    	<p><img class="left" src="../img/flight_views_zoom_out.png" />Dans la vue du vaisseau, vous pouvez <span class="tap">appuyer sur l’icône loupe pour retourner sur le plan de vol.</span></p>
+    </div>
+</div>
+
+
+
+<div class="block">
+    <a name="info_panel"></a>
+    <h3>Panneau d’information</h3>
+    
+    <p>Le panneau d’information est accessible lorsque vous avez zoomé sur le vaisseau d’un joueur. <span class="tap">Cliquez au bas de l’écran pour l’afficher.</span></p>
+        
+    <div class="block"> 
+        <img class="screenshot_with_border" src="../img/flight_infopanel_button.jpg" style="width:47%; max-width:800px;" />
+        &nbsp;
+        <img class="screenshot_with_border" src="img/flight_infopanel.jpg" style="width:47%; max-width:800px;" />
+    </div>
+    <br />
+    
+    <p>Le panneau d’information vous donne des informations très utiles :</p>
+    
+    <ul>
+    <li>Le nom du pilote.</li>
+    <li>La <a href="building_the_ship.html#ship_class">classe</a> du vaisseau. (Les vaisseaux de classe II et III sont plus grands.)</li>
+	<li>Le nombre de Crédits gagnés pendant ce vol au fil des aventures rencontrées.</li>
+	<li>L'<b>assurance</b> &ndash; la somme maximale que le joueur devra <a href="journeys_end.html#penalties">payer</a> en cas de perte de composants.</li>
+    <li>Le nombre de composants perdus en route.</li>
+    <li>La somme que le joueur devra <a href="journeys_end.html#penalties">payer</a> pour ces composants perdus.</li>
+    <li>Le <a href="journeys_end.html#finishing_bonus">bonus d’arrivée</a> à la fin du vol. (Les joueurs qui terminent premiers reçoivent une récompense supérieure.)</li>
+    <li>Le <a href="journeys_end.html#best_looking_ship_bonus">bonus</a> pour avoir le moins <a href="building_the_ship.html#exposed_connectors">de connecteurs exposés</a>.</li>
+    <li>La valeur des marchandises chargées sur le vaisseau.</li>
+    <li>Le nombre de membres d’équipage.</li>
+    <li>Le nombre de <a href="building_the_ship__batteries.html"> cellules d'énergie <img src="../img/battery.png" width="7" /></a>.</li>
+    <li>La <a href="building_the_ship__engines.html#engine_strength">puissance des moteurs</a>.</li>
+    <li>La <a href="building_the_ship__cannons.html#cannon_strength">puissance des canons</a>.</li>
+    <li>Le nombre de <a href="building_the_ship.html#exposed_connectors">connecteurs exposés</a>.</li>
+    <li>Et le bouton <a href="#giving_up">"Abandonner le vol"</a>.</li>
+    </ul>
+    
+    <p><span class="tap">Cliquez sur le panneau d’information pour le réduire à nouveau au bas de l’écran.</span></p>
+</div>
+
+
+
+<div class="block">
+    <h2>Cartes Aventure</h2>
+    
+    <p><img class="component_left" src="../../tutorial/infoFlightImg1.png" />Les évènements du vol sont déterminés par les <a href="adventure_cards.html">cartes Aventure</a>, empilées dans le coin supérieur gauche de l’écran. Les cartes indiquées ici sont de niveau I. Les cartes Aventure de niveaux II et III sont plus dangereuses et offrent de plus grandes récompenses. Sur les vols de niveaux élevés, vous disposerez également d’un <a href="building_the_ship.html#ship_class">vaisseau plus grand</a>.</p>
+    
+    <div class="small_window">
+      <p>Sur le paquet de cartes, vous pouvez voir le niveau de la prochaine carte Aventure. Dans un vol de niveau I, toutes les cartes seront de niveau I, mais dans un vol de niveau supérieur, les cartes Aventure seront un mélange de cartes de différents niveaux. Si vous voyez que le niveau de la prochaine carte Aventure est III, vous pouvez vous préparer à une grande récompense, à un grand problème, voire même aux deux.</p>	
+    </div>
+    
+    <p><span class="tap">Cliquez sur le paquet pour découvrir la prochaine aventure !</span></p>
+</div>
+
+
+
+<div class="block">
+    <a name="what_can_happen_to_you"></a>
+    <h2>Que peut-il se passer pendant votre Vol ?</h2>
+ 
+    <p>Les <a href="adventure_cards.html">cartes Aventures</a> fournissent de nombreux défis et opportunités.</p>
+</div>
+
+
+
+<div class="block">
+    <a name="gaining_and_losing_flight_days"></a>
+    <a name="flight_days"></a>
+    <h3>Gagner ou perdre des jours de vol</h3>
+    
+    <p>Certaines <a href="adventure_cards.html">cartes Aventure</a> peuvent vous faire perdre des jours de vol. Les cartes qui offrent des récompenses ont un numéro inscrit en bas à droite. Ce numéro correspond au nombre de jours de vol que vous perdrez si vous acceptez la récompense. Vous pouvez aussi perdre des jours de vol en traversant une <a href="adventure_cards.html#combat_zone">Zone de Combat</a>.</p>
+    
+    <p>Lorsque vous perdez des jours de vol, votre vaisseau recule sur le plan de vol. Deux vaisseaux ne peuvent pas occuper la même case. Un vaisseau qui recule saute par-dessus le vaisseau derrière lui :</p>
+    
+    <!--<p class="image_caption">If Blue loses 3 flight days, he will end up in the space just in front of Red.</p>-->
+    
+    
+    <div class="small_window">
+        <div class="table_cell_width33percent_center">
+            <p class="image_caption">Si le leader <br />perd 2 jours<br /><br /></p>
+            <img src="../../tutorial/infoFlightTrackImg1.png" height="220pt" />    </div>
+        <div class="table_cell_width33percent_center">
+            <p class="image_caption">Si le second <br />perd<br /> 2 jours</p>
+            <img src="../../tutorial/infoFlightTrackImg2.png" height="220pt" />    </div>
+        <div class="table_cell_width33percent_center_last">
+            <p class="image_caption">Si les deux joueurs<br /> perdent 2 jours<br /><br /></p>
+            <img src="../../tutorial/infoFlightTrackImg3.png" height="220pt" />    </div>
+    </div>
+    
+    <!--
+    <div class="small_window">
+        <div class="table_cell_width33percent_center">
+            <p class="image_caption">If the leader<br /> loses 2 days<br /><br /></p>
+            <img src="../../tutorial/infoFlightTrackImg1.png" height="320" />    </div>
+        <div class="table_cell_width33percent_center">
+            <p class="image_caption">If the second<br /> player loses<br /> 2 days</p>
+            <img src="../../tutorial/infoFlightTrackImg2.png" height="320" />    </div>
+        <div class="table_cell_width33percent_center_last">
+            <p class="image_caption">If both players<br /> lose 2 days<br /><br /></p>
+            <img src="../../tutorial/infoFlightTrackImg3.png" height="320" />    </div>
+    </div>
+    -->
+    <!--<img src="../tutorial/infoFlightTrack.jpg" width="100%" /><br />
+    <br />-->
+    
+    <p>De la même façon, lorsqu’un vaisseau <b>gagne</b> des jours de vol, , il se déplace vers l’avant, sautant par-dessus les autres vaisseaux. Vous pouvez gagner des jours de vol dans <a href="adventure_cards.html#open_space">l’Espace Intersidéral</a>.</p>
+    
+    <div class="small_window">
+    <p>Parfois vous souhaiterez être devant, à d'autres moment, vous serez plus en sécurité à l'arrière.</p>
+    
+    <p>Le leader est le premier à choisir une récompense. Mais recevoir une récompense vous fait perdre des jours de vol, c’est pourquoi vous préférerez parfois refuser une récompense pour pouvoir rester en tête.</p>
+    
+    <p>Le leader affronte les <a href="adventure_cards.html#enemies">ennemis</a> en premier. C’est une bonne chose si vous êtes suffisamment armé, mais cela peut s'avérer très mauvais s’ils sont plus forts que vous. En cas d’égalité dans une <a href="adventure_cards.html#combat_zone">Zone de Combat</a>, le joueur qui est devant un autre joueur perd cette égalité. C’est donc parfois un désavantage de devancer les autres joueurs.</p>
+    
+    <p>Si vous survivez jusqu’à la fin du vol, votre <a href="journeys_end.html#finishing_bonus">bonus d’arrivée</a> sera plus important si vous terminez devant vos adversaires. Il est toujours intéressant d’être en tête à l’issue de la dernière carte Aventure.</p>
+    </div>
+</div>
+
+
+
+<div class="block">
+    <a name="getting_goods"></a>
+    <a name="gaining_goods"></a>
+    <!-- Anchor twice, just in case-->
+    <h3>Gagner des marchandises</h3>
+    
+    <img class="component_left" src="../../tutorial/infoCargoImg.png" />
+    <p>Lorsqu’une carte Aventure vous permet de charger des marchandises sur votre vaisseau, vous pouvez <span class="drag_and_drop">les faire glisser depuis la boîte de dialogue jusqu’à vos <a href="building_the_ship__cargo_holds.html">cargos-containers</a></span>. Vous pouvez aussi <span class="tap">appuyer sur les marchandises</span> pour qu’elles soient placées automatiquement dans votre vaisseau.</p>
+    
+    <div class="small_window">
+      <p>Essayez de placer les marchandises de valeur dans les containers les moins exposés : ce serait dommage que le composant soit détruit pendant le vol !</p>
+    </div>
+    
+    <p>Chaque fois que vous avez l’opportunité de charger des marchandises, vous pouvez en profiter pour réorganiser vos marchandises, en <span class="drag_and_drop">les faisant simplement glisser vers un nouveau container</span>.</p>
+    
+    <p>Les marchandises non stockées peuvent être rejetées dans l’espace.  <span class="drag_and_drop">Vous pouvez faire glisser des marchandises sur la boîte de dialogue</span> <span class="tap">ou simplement appuyer dessus pour qu’elles se déplacent automatiquement.</p>
+    
+    <div class="small_window">
+        <p>La liste des prix des marchandises vous aidera à décider de ce que vous voulez abandonner :</p>
+    
+        <img src="../img/cargo_prices.png" width="75pt" /><br />
+        <br />
+    </div>
+    
+    <img class="component_left" src="../../tutorial/infoCargo2Img.png" />
+    <p>Les marchandises rouges sont de plus grande valeur, mais doivent être stockées dans des <a href="building_the_ship__cargo_holds.html#red_containers">cargo-containers rouges</a>, pas les blancs. Les containers rouges peuvent en revanche aussi contenir des marchandises jaunes, vertes ou bleues.</p>
+</div>
+
+
+
+<div class="block">
+    <div class="small_window">
+        <p>Tant que vous ne manquez pas de place, n’hésitez pas à remplir vos cargo-containers, même en mettant des marchandises de faible valeur dans des containers rouges. Lorsque vous chargerez de nouvelles marchandises, il sera toujours temps de réorganiser toute votre cargaison et  d'abandonner éventuellement n’importe quel nombre de marchandises.</p>
+    </div>
+    
+    <p>Lorsque vous êtes satisfait de l’organisation de votre cargaison, <span class="tap">cliquez sur l'icône <img src="../img/dialog_ok_cropped.png" alt="green check mark" height="16" /> pour valider et poursuivre le vol..</span></p>
+</div>
+
+
+
+<div class="block">
+    <a name="losing_goods"></a>
+    <h3>Perdre des marchandises</h3>
+    <p>Lorsqu’une carte vous fait perdre des marchandises, les marchandises de plus grande valeur sont perdues en premier. Les ennemis ne vous laissent pas le choix, et s’emparent automatiquement des marchandises les plus intéressantes. Si vous n’avez pas suffisamment de marchandises en stock, les ennemis prendront des <a href="building_the_ship__batteries.html">cellules d'énergie <img src="../img/battery.png" width="7" /></a> en compensation. Si vous n’avez plus de marchandises ni de <a href="building_the_ship__batteries.html"> cellules d'énergie <img src="../img/battery.png" width="7" /></a>, ils ne vous prennent plus rien.</p>
+</div> 
+ 
+<div class="block"> 
+    <a name="losing_crew"></a>
+    <h3>Perdre de l’équipage</h3>
+    
+    <p>Certaines aventures vous permettent de remporter des récompenses uniquement si vous acceptez d’abandonner un certain nombre de membres d’équipage. D'autres aventures vous font perdre une partie de votre équipage. Dans ces deux cas, l’application zoomera sur votre vaisseau, vous indiquant les cabines d’équipage et attendant que vous sélectionniez les membres d’équipage que vous décidez de perdre. <span class="tap">Cliquez sur une cabine pour voir les possibilités qui s’offrent à vous. </span>Les <a href="building_the_ship__cabins.html#choosing_crew">extraterrestres</a> peuvent être eux aussi abandonnés, si vous le souhaitez. Lorsque vous êtes satisfait de votre choix, <span class="tap">cliquez sur l’icône <img src="../img/dialog_ok_cropped.png" alt="green check mark" height="16" /> pour valider la perte de vos membres d’équipage et reprendre le vol.</span></p>
+    
+    <p>Si vous n’avez plus d’équipage humain à bord du vaisseau, vous devrez <a href="#giving_up">abandonner le vol</a> une fois la carte Aventure résolue.</p>
+</div>
+
+
+
+<div class="block">
+    <a name="hits_to_your_ship"></a>
+    <h3>Impacts sur votre vaisseau</h3>
+    
+    <p>Votre vaisseau va affronter de nombreux dangers, certains pouvant détruire des composants de votre vaisseau ! Voici la liste des impacts qui peuvent endommager votre vaisseau (et comment s’en protéger) :</p>
+    
+    <ul>
+    <li>Une <a href="adventure_cards.html#small_meteor">petite météorite </a> rebondira sur votre vaisseau à moins que le point d’impact ne soit un <a href="building_the_ship.html#exposed_connectors">connecteur exposé</a>. Si c’est le cas, vous devez dépenser 1 <a href="building_the_ship__batteries.html"> cellule d'énergie&nbsp;<img src="../img/battery.png" width="7" /></a> pour activer un <a href="building_the_ship__shield_generators.html">bouclier</a> correctement orienté. Sinon le composant sera détruit.</li>
+    
+    <li>Une <a href="adventure_cards.html#large_meteor">large météorite </a> détruit le composant qu’elle touche, à moins qu’elle ne soit détruite par un <a href="building_the_ship__cannons.html">tir de canon</a>.</li>
+    
+    <li>Un <a href="adventure_cards.html#light_cannon_fire">tir de canon léger </a> peut être absorbé par un <a href="building_the_ship__shield_generators.html">bouclier</a>. Cela vous coûte 1 <a href="building_the_ship__batteries.html"> cellule d'énergie <img src="../img/battery.png" width="7" /></a>. Sinon le composant sera détruit.</li>
+    
+    <li>Un <a href="adventure_cards.html#heavy_cannon_fire">tir de canon lourd </a> détruit le composant qu’il touche. Vous ne pouvez pas y échapper.</li>
+    </ul>
+    
+    <p>Si votre vaisseau est touché (parce que vous ne pouvez pas, ou ne voulez pas, l’empêcher) le composant correspondant est <b>détruit</b>. Cela peut entraîner la perte d’autres composants connectés... qui se retrouvent à la dérive dans l'espace.</p>
+    
+    <p>Si votre vaisseau se retrouve divisé en deux morceaux, choisissez la partie que vous souhaitez conserver <span class="tap">en appuyant dessus</span>. Le reste du vaisseau est perdu. Tous les composants non connectés à votre vaisseau à la fin du vol comptent comme <a href="journeys_end.html#lost_components">des composants perdus</a>.</p>
+</div>
+
+
+
+<!-- obrazok ako astronaut leti vo volnom vesmire len s volantom v rukach -->
+<div class="block">
+	<center>
+		<img src="../img/illustration_wreck.png" width="25%" />
+	</center>     
+</div>
+
+
+
+<div class="block">
+    <a name="giving_up"></a>
+    <h2>Abandonner</h2>
+    
+    <p>Vous devrez parfois abandonner avant la fin du vol. Vous choisirez même parfois de le faire volontairement. Ce sont des choses qui arrivent… Corp. Inc. vous ramènera dans l’un de ses hangars pour vous permettre de recommencer.</p>
+    
+    <p>Si vous abandonnez :</p>
+    
+    <ul>
+        <li>Vous devenez spectateur du vol, aucune des aventures restantes ne vous affecte.</li>
+        
+        <li>A la <a href="journeys_end.html">fin du vol</a>, vous ne recevez aucun bonus.</li>
+        
+        <li>Vous vendez vos marchandises à la moitié de leur prix.</li>
+        
+        <li>Vous devez rembourser les composants perdus pendant le vol.</li>
+    </ul>
+    
+    <p>Si vous vous retrouvez seul et que tous vos adversaires ont abandonné, vous pouvez continuer le vol et affronter seul les dernières aventures. Les cartes comme <a href="adventure_cards.html#combat_zone">Zone de Combat</a> ou <a href="adventure_cards.html#sabotage">Sabotage</a>, qui pénalisent le plus mauvais vaisseau, seront ignorées. (Vous n’êtes pas le plus mauvais pilote… vous êtes le meilleur !)</p>
+</div>    
+    
+    
+    
+<div class="block">    
+    <a name="losing_all_humans"></a>
+    <h3>Perdre son équipage humain</h3>
+    
+    <p>Vous devez abandonner le vol si une carte Aventure vous laisse sans équipage humain à bord de votre vaisseau. (Les <a href="building_the_ship__alien_life_support.html">extraterrestres </a> ne peuvent pas piloter le vaisseau eux-mêmes.) Cela peut être dû à la destruction de votre dernière <a href="building_the_ship__cabins.html">cabine</a> occupée, à la perte de membres d’équipage dans une <a href="adventure_cards.html#combat_zone">Zone de Combat</a> ou à cause des <a href="adventure_cards.html#enemies">Esclavagistes</a>. Vous pouvez aussi le faire volontairement en abandonnant des membres d’équipage dans un <a href="adventure_cards.html#abandoned_ship">Vaisseau Abandonné</a>. Si vous perdez votre dernier humain dans une <a href="adventure_cards.html#battle_zone">Zone de Combat</a>, votre vaisseau reste concerné par la carte Aventure jusqu’à ce qu’elle soit pleinement résolue.</p>
+</div>
+    
+    
+    
+<div class="block">    
+    <a name="open_space_without_engines"></a>
+    <h3>Espace Intersidéral sans moteur</h3>
+    
+    <p>Grâce à la magie de l’inertie, votre vaisseau peut atteindre la fin du vol même sans moteur… à moins de se retrouver dans une zone d'<a href="adventure_cards.html#open_space">Espace Intersidéral</a>. Vous devez abandonner le vol si votre <a href="building_the_ship__engines.html#engine_strength">puissance de moteurs</a> est de zéro dans l’Espace Intersidéral.</p>
+</div>
+
+
+
+<div class="block">
+    <a name="choosing_to_give_up"></a>
+    <h3>Choisir d’abandonner</h3>
+    
+    <!--<img class="component_left screenshot_with_border" src="img/giveup_screenshot.png" />--><p>Il est parfois judicieux d’abandonner pour limiter vos pertes. Vous pouvez choisir d’abandonner en <span class="tap">appuyant sur votre avatar</span> pour zoomer sur votre vaisseau. <span class="tap">Faites apparaître le <a href="#info_panel">panneau d’informations</a> en appuyant au bas de l’écran</span>    
+    , puis <span class="tap">cliquez sur le bouton « Abandonner le vol »</span>.</p>
+</div>
+
+
+
+<div class="block">
+    <h2>Fin du vol</h2>
+    
+    <p>Une fois que la dernière <a href="adventure_cards.html">carte Aventure</a> a été résolue, le vol est terminé. Il est temps de recevoir les <a href="journeys_end.html">bonus</a> de fin de vol ! (Et aussi de payer pour les composants que vous avez perdus…)</p>
+</div>
+
+
+
+</div>
+</div>
+</div>
+
+</body>
+</html>

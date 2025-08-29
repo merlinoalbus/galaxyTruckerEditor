@@ -1,0 +1,16 @@
+- type: alienSpecGun
+  connectors: [0, 1, 0, 2]
+- type: alienSpecGun
+  connectors: [0, 2, 0, 1]
+- type: alienSpecGun
+  connectors: [0, 1, 2, 0]
+- type: alienSpecGun
+  connectors: [0, 2, 1, 0]
+- type: alienSpecEngine
+  connectors: [0, 1, 0, 2]
+- type: alienSpecEngine
+  connectors: [0, 2, 0, 1]
+- type: alienSpecEngine
+  connectors: [0, 1, 2, 0]
+- type: alienSpecEngine
+  connectors: [0, 2, 1, 0]

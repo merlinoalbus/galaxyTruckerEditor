@@ -1,0 +1,7 @@
+idName: "at__rand-medium-man1"
+avatar: avatars/campaign/common/medium-man1.png
+color: "gybr"
+preferencesSettings: aiConfigs/settingBase.aipref
+speedSettings: aiConfigs/settingBaseMedium.aispeed
+difficulty: medium  #hard, medium, easy
+stupidity: 60

@@ -1,0 +1,18 @@
+                                                  # expansion adventure config
+name:         artifact_title
+
+planetImg:    artifact_planet.png
+
+avatarImg:    expansions/01_alien_technologies/images/archeologist.png
+avatarColor:  avatarBgColor
+
+
+missions:
+- artifact1.yaml                                  # 1 star mission
+- artifact2.yaml                                  # 2 star mission
+- artifact3.yaml                                  # 3 star mission
+
+
+dialogScript:   artifact_Dlg
+endDialogsWin:  [artifact1_Success, artifact2_Success, artifact3_Success]
+endDialogLoose: [artifact1_Failure, artifact2_Failure, artifact3_Failure]

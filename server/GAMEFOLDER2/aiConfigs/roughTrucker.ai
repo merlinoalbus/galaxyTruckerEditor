@@ -1,0 +1,8 @@
+idName: "roughTrucker"
+character: safe
+avatar: campaign/roughtrucker.png
+color: "bgyr"
+preferencesSettings: aiConfigs/settingRough.aipref
+speedSettings: aiConfigs/settingBaseEasy.aispeed
+difficulty: easy
+stupidity: 40

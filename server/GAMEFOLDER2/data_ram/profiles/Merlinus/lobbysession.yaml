@@ -1,0 +1,25 @@
+---
+AlienTechnologies: n
+required_players: 2
+pileConfigSTIII: default.yaml
+is_quick_match: n
+pileConfigSTII: default.yaml
+flight_option: noGivingUp
+pileConfigSTI: default.yaml
+is_realtime: y
+flight_III: y
+maxPlayers: 4
+flight_II: y
+shipPlans:
+- I
+- II
+- III
+flight_I: y
+is_live: y
+user_1: required
+user_2: reserved
+user_3: optional
+user_4: optional
+speed: 3
+deck: digitalDeck
+...

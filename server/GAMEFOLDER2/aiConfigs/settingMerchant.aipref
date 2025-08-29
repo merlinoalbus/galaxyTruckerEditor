@@ -1,0 +1,15 @@
+hitsImportance: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]] # small meteor, big meteor, small fire, big fire;  up, down, left, right
+daysLostImportance: 0
+crewLostImportance: 0
+goodsLostImportance: 0
+goodsGainImportance: 2.5
+sabotageImportance: 1
+    
+strengthValueConst: 0
+bigMeteorProtectConstant: 0
+speedConstant: 100
+crewLostConstant: 100
+crewConstant: 40
+cargoConstant: 90
+shieldConstant: 30
+batteryConstant: 40

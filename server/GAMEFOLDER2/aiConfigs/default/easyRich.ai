@@ -1,0 +1,9 @@
+idName: "easy_rich"
+character: rich
+avatar: avatars/ai/easy_rich.png
+color: "gbyr"
+preferencesSettings: aiConfigs/settingRich.aipref
+speedSettings: aiConfigs/settingBaseEasy.aispeed
+difficulty: easy  #hard, medium, easy
+stupidity: 120
+

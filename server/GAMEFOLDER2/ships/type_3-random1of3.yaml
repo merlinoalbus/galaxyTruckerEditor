@@ -1,0 +1,22 @@
+- name: III-random1of3
+  type: STIII
+  random: true
+  variantsCount: 3
+  slotsCount: 36
+  background: none
+  buildboardoffset: [3.4, 0]
+  buildboardoffsetlandscape: [1.5, 1.5]
+  boardoffset: [5, 5]
+  aside_slots:
+    2:
+      - background: doubleaside.png
+        position: [-1.2, -0.3]
+        positionOtherSide: [-1.0, -0.6] # x-coord works in diferent way for randomly generated ship - it define wide of space between ship and aside slot group
+        size: [1.5, 1.5]
+        slots:
+          - [0.51, 0]
+          - [0, 0.51]    # stredy se nesmi prekryvat (navrat na drag start position dilku)
+  config: "levels/tiles.yaml"
+  avatarPosition: [-0.6, -0.35]  # x-coord works in diferent way for randomly generated ship - it define wide of space between ship and avatar
+  avatarPositionOtherSide: [-0.35, -0.35]
+  avatarSize: [1.2, 1.2]

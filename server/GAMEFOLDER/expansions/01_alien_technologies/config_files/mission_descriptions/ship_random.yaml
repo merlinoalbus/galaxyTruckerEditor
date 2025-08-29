@@ -1,0 +1,18 @@
+                                                  # expansion adventure config
+name:         ship_random_title
+
+planetImg:    newbieport.png
+
+avatarImg:    campaign/tutor.png
+avatarColor:  avatarBgColor
+
+
+missions:
+- ship_random1.yaml                                  # 1 star mission
+- ship_random2.yaml                                  # 2 star mission
+- ship_random3.yaml                                  # 3 star mission
+
+
+dialogScript:   ship_random_Dlg
+endDialogsWin: [ship_random1_Success, ship_random2_Success, ship_random3_Success]
+endDialogLoose: ship_random_Failure

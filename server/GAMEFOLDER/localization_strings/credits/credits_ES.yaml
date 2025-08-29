@@ -1,0 +1,92 @@
+﻿
+- name: Programación
+  persons:
+    - ["Musil", "Daniel", "campaign/guru.png"]
+    - ["Doucek", "Jakub", "achievements/images/cut_the_rope.jpg"]
+    - ["Kotry", "Matúš", "P"]
+    - ["Vytrhlík", "Martin", "campaign/pirate-hands-closed.png"]
+    - ["Coural", "Radek", "P"]
+    - ["Richter", "Jiří", "P"]
+- name: "Diseño del juego"
+  persons:
+    - ["Chvátil", "Vlaada", "campaign/designer-hi.png"]
+    - ["Jablonovský", "Dávid", "expansions/01_alien_technologies/images/catapult-fanatic-happy-moving.png"]
+    - ["Holt", "Jason", "expansions/01_alien_technologies/images/avatar_male07_with_blue_bg_for_credits_jason.png"]
+- name: Gráficos
+  persons:
+    - ["Politzer", "Jakub", "M"]
+    - ["Kučerovský", "Tomáš", "M"]
+    - ["Pech", "Radim", "M"]
+    - ["Kilianová", "Jana Yuffie", "expansions/01_alien_technologies/images/avatar_yuffie.png"]
+- name: "Sonido"
+  persons:
+    - ["Matějka", "Ondřej", "M"]
+    - ["Horváth", "Marek", "M"]
+- name: Producción
+  persons:
+    - ["Murmak", "Petr", "campaign/merch.png"]
+    - ["Holubová", "Lenka", "campaign/mech-thumbup.png"]
+    - ["Zemánková", "Jana", "avatars/common/female/41.png"]
+    - ["Krajča", "Pavel Sauli", "avatars/common/male/36.png"]
+    - ["Dvořák", "Tomáš", "expansions/01_alien_technologies/images/archeologist.png"]
+    - ["Chvátilová", "Marcela", "F"]
+- name: Traducción
+  persons:
+    - ["Lazárková", "Dita", "F"]
+    - ["Maite", "Madinabeitia", "F"]
+    - ["Skoupý", "Ondřej", "M"]
+- name: "Probadores"
+  persons:
+    - ["Miko", "Miloš", "achievements/images/at__3_normal.jpg"]
+    - ["Vodička", "Vít", "M"]
+    - ["Seberová", "Anežka 'Angie'", "avatars/common/female/33.png"]
+    - ["Holešová", "Zuzana 'Bett'", "F"]
+    - ["Čepan", "Zdeno 'Krio'", "M"]
+    - ["Vágo", "Stanislav", "M"]
+    - ["Cenek", "Štěpán 'Kat'", "M"]
+    - ["Filip", "", ""]
+    - ["Miloš", "", ""]
+    - ["Vodka", "", ""]
+    - ["Roneth", "", ""]
+    - ["Tuko", "", ""]
+    - ["Yim", "", ""]
+    - ["Elwen", "", ""]
+    - ["Faya", "", ""]
+    - ["Patrik", "", ""]
+    - ["ESE", "", ""]
+    - ["Yuyka", "", ""]
+    - ["Mín", "", ""]
+    - ["Fanda", "", ""]
+    - ["Pogo", "", ""]
+    - ["Markéta", "", ""]
+    - ["Orbit", "", ""]
+    - ["Lenka", "", ""]
+    - ["Marcela", "", ""]
+    - ["Hanička", "", ""]
+    - ["Alenka", "", ""]
+    - ["Pavlík", "", ""]
+    - ["Kačka", "", ""]
+    - ["Pája", "", ""]
+    - ["Míša", "", ""]
+    - ["Jakub", "", ""]
+    - ["Olaf", "", ""]
+    - ["Fux", "", ""]
+    - ["Thaddeus", "", ""]
+    - ["Janča", "", ""]
+    - ["Paul", "", ""]
+    - ["Pegas", "", ""]
+    - ["PitrPicko", "", ""]
+    - ["Lopura", "", ""]
+- name: "Muchas gracias a:"
+  persons:
+    - ["Luke", "", ""]
+    - ["Radovan", "", ""]
+    - ["George", "", ""]
+    - ["Telchy", "", ""]
+    - ["Krysař", "", ""]
+    - ["Gekon", "", ""]
+    - ["Jerry", "", ""]
+    - ["Štambi", "", ""]
+
+
+

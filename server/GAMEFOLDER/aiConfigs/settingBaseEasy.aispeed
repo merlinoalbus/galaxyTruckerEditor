@@ -1,0 +1,20 @@
+##   Delays (ms)
+
+occupiedCardsDelay: 400 # ai wants look at pile but some else is holding it
+cardsLookingDelay: 5000 #koukani na karty
+startDelay: 800 # jak rychle zasne hrat po odstartovani
+checkingAdvCardsDelay: 400 # kontroluje karty (jestli se chce podivat)
+testedPartFitAfterExpectationDropDelay: 1500 # umisti dilek po te co ho uz zkousel ale ted az ted mu kleslo ocekavani na tolik aby ho postavil
+foundRevealedPartDelay: 1500 #otocil dilek a hned se mu hodi
+    
+revealedDoNotFullfilDelay: 350 #Very important for building speed - speed of AI part finding on heap
+revealedDoNotFitDelay: 350 #Very important for building speed - speed of AI part finding on heap
+    
+pickPartDelay: 150
+revealPartDelay: 500
+placingRevealedPartDelay: 9000 # We revealed part and it fulfills our expectations
+refuseRevealedPartDelay: 6000 # nechce nove otoceny dilek
+placePartDelay: 4500 # umisteni dilku na lod
+turnClockDelay: 6000 # po dostaveni lodi otoceni hodin
+
+dropedPartProtectedTime: 6000 

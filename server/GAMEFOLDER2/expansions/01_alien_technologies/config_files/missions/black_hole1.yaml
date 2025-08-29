@@ -1,0 +1,44 @@
+name:         black_hole_title                      # id of mission name string - localized 
+
+
+# txt + img
+new:          black_hole_new
+rules:        black_hole1_rules
+objectives:   black_hole1_objectives
+images:       [[parts/radioactive.png, 256, 256, ["tutorial/infoRadioactiveCargo.png"]]]
+
+
+gameType:     realtime                            # values: realtime/turnbased; If mentioned this value can not be changed in GUI setting (lobby) by player.
+
+
+rounds:
+- roundType:  STII
+  pileConfig: at__black_hole__easy.yaml
+
+
+shipPlans:    [II]                         # names of all available ship plans. If not mentioned default plans will be used. Should by only one ship plan for one flight.
+
+
+opponents:
+  - at__rand-medium-woman5
+  - at__pirate-medium-man1
+#- "easy_basic"
+#- "medium_basic"
+
+
+deckScript:   at__Black_Hole_Deck          # adventure cards deck building script
+
+
+winCondition:
+                                                  # values: scoreWinner / didntGiveUp; used in expansion, to find ouf when is mission completed succefully
+              didntGiveUp: true
+              dropRadioactiveTilesIntoBlackHole: 1
+
+
+evaluation:                                       # You can mention only those values you want edit. But you have to repeat (copy&paste) the rules for each flight.  
+  STI:
+    radioactiveBlackholeDrop: 10
+  STII:
+    radioactiveBlackholeDrop: 10
+  STIII:
+    radioactiveBlackholeDrop: 10

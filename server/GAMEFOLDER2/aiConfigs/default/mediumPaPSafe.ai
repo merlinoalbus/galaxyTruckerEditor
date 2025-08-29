@@ -1,0 +1,9 @@
+idName: "medium_safe_pap"
+type: turn
+character: safe
+avatar: avatars/ai/medium_safe.png
+color: "ygbr"
+preferencesSettings: aiConfigs/settingSafe.aipref
+qualitySettings: aiConfigs/settingPaPBase.aiqual
+difficulty: medium
+stupidity: 80

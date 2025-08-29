@@ -1,0 +1,91 @@
+- type: bg
+  src: help/bgShipBuilding.png
+
+- type: txt
+  id: b_remaining_time
+  bounds: [40, 14, 1200, 72]
+  vAlign: top
+  hAlign: left
+
+- type: txt
+  id: b_drag_order_number
+  bounds: [55, 277, 930, 400]
+  vAlign: top
+  hAlign: left
+  color: green
+
+- type: txt
+  id: b_look_at_cards
+  bounds: [44, 163, 871, 67]
+  vAlign: top
+  hAlign: center
+  color: yellow
+
+- type: txt
+  id: b_opponent_ships
+  bounds: [989, 106, 410, 80]
+  vAlign: top
+  hAlign: center
+
+- type: txt
+  id: b_tap_to_see
+  bounds: [989, 186, 610, 80]
+  vAlign: top
+  hAlign: center
+  color: yellow
+
+- type: txt
+  id: b_components_offer
+  bounds: [0, 627, 1536, 85]
+  vAlign: top
+  hAlign: center
+  style: heading
+  autoScaleY: true
+
+- type: txt
+  id: b_drag_component
+  bounds: [799, 920, 736, 180]
+  vAlign: top
+  hAlign: center
+  color: green
+  autoScaleY: true
+
+- type: txt
+  id: b_your_ship
+  bounds: [0, 1133, 1536, 85]
+  vAlign: top
+  hAlign: center
+  style: heading
+  autoScaleY: true
+  
+- type: txt
+  id: b_store_two_components
+  bounds: [69, 1221, 470, 400]
+  vAlign: top
+  hAlign: left
+  color: green
+  autoScaleY: true
+
+- type: txt
+  id: b_release_component
+  bounds: [0, 1642, 1536, 70]
+  vAlign: top
+  hAlign: center
+  color: green
+  autoScaleY: true
+
+- type: txt
+  id: b_tap_component
+  bounds: [0, 1719, 1536, 70]
+  vAlign: top
+  hAlign: center
+  color: yellow
+  autoScaleY: true
+
+- type: txt
+  id: b_return_component
+  bounds: [0, 1805, 1536, 70]
+  vAlign: top
+  hAlign: center
+  color: green
+  autoScaleY: true

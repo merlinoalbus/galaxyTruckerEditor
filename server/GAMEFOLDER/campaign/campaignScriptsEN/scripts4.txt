@@ -1,0 +1,484 @@
+SCRIPTS
+
+SCRIPT mine0Dlg
+
+  ShowDlgScene
+  ShowChar mineBot0 left
+  IFNOT mine0friends
+    GO mine0firstTime
+  END_OF_IF
+  Say "Reception robot AX-5- ... Oh, it's you. Hello."
+  RESET mine0again
+  RESET mine0first
+  IFNOT mine0pending
+    IF mine0accepted
+      SET mine0again
+    ELSE
+      SET mine0first
+    END_OF_IF
+  END_OF_IF
+  MENU
+    OPT_IF mine0first "Hello. Do you have a job for me?"
+      Say "Sure. We have some radioactive isotopes that need to be delivered to the forge."
+      Say "We'll need a 3-credit deposit. But you'll earn 9 upon delivery."
+      Ask "What do you think?"
+      MENU
+        OPT "Sure, count me in."
+          SET mine0accepted
+          GO mine0friendlyAccept
+        END_OF_OPT
+        OPT "Hm. Maybe later."
+          Say "Okay. No problem."
+          GO mine0End
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+    OPT_IF mine0again "Hello. Do you need me to make another delivery?"
+      Say "Sure. Same conditions as before."
+      GO mine0friendlyAccept
+    END_OF_OPT
+    OPT "I just dropped by to say hello."
+      Say "It's nice to see you again."
+      IF mine0talksPending
+        GO mine0Talk
+      END_OF_IF
+      GO mine0End
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL mine0friendlyAccept
+  SET mine0pending
+  ShowPath U2-14b
+  Say "The shipment is in warehouse."
+  IF mine0talksPending
+    GO mine0Talk
+  END_OF_IF
+  Say "Thanks for stopping by."
+  GO mine0End
+
+  LABEL mine0firstTime
+  Say "Reception robot AX-5-B32-3 Delta reporting."
+  Say "Welcome to mining facility AX-5-B32-3 Delta, sir/madam."
+  Ask "State the purpose of your visit."
+  MENU
+    OPT_IFNOT mine0pending "I'm looking for a job."
+      Say "Request registered."
+      Say "Searching database ..."
+      Delay 500
+      Say "..."
+      Delay 500
+      Say "One unassigned job found."
+      Say "Job: Radioactive isotopes delivery."
+      Say "Destination: Planet Forge."
+      Say "Cargo: 1 unit(s) of radioactive isotopes."
+      Say "Deposit required: 3 credits."
+      Say "Payment for delivery: 9 credits + return of the deposit."
+      Ask "Accept/Reject?"
+      MENU
+        OPT "Sounds good, count me in."
+          SET mine0accepted
+          SET mine0pending
+          Say "Job assigned."
+          Say "Conveying cargo to warehouse."
+          HideAllPaths mine0 forge
+          ShowPath U2-14b
+          Ask "Another request?"
+          EXIT_MENU
+        END_OF_OPT
+        OPT "Hm. Not interested."
+          Say "No interest registered."
+          Say "Another request?"
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+    OPT_IFNOT mine1shown "I wonder if you can tell me how to get to other asteroids?"
+      SET mine1shown
+      Say "Request registered."
+      Say "Connecting to your map ..."
+      Delay 500
+      Say "Connection established. Updating map ..."
+      Delay 800
+      ShowNode mine1
+      CenterMapByNode mine1
+      Delay 500
+      ShowPath R1-22a
+      Delay 500
+      Say "Map updated. Mining asteroid AX-5-B32-3 Gamma added."
+      Say "Searching database for supplementary information ..."
+      Delay 750
+      Say "1 item(s) found. Title: Docking regulations."
+      Ask "Display the entry? Yes/No."
+      MENU
+        OPT "Yes, please."
+          EXIT_MENU
+        END_OF_OPT
+        OPT "Stupid bots."
+          Say "Searching database ..."
+          Delay 300
+          Say "..."
+          Delay 300
+          Say "No entry found for search string 'stupid bots'."
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+      Say "Quoting entry:"
+      Say "BECAUSE OF THE ASTEROID'S LIMITED SURFACE AREA, MOST DOCKING REQUESTS WILL BE DENIED."
+      SET mineRegulations
+      Say "Quotation ended."
+    END_OF_OPT
+    OPT_IF mineRegulations "Tell me about landing on Gamma again."
+      Say "BECAUSE OF THE ASTEROID'S LIMITED SURFACE AREA, MOST DOCKING REQUESTS WILL BE DENIED."
+    END_OF_OPT
+    OPT "I guess I'm done here."
+      Say "No request registered."
+      Say "Reception robot AX-5-B32-3 Delta out."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL mine0afterDialogue
+  IFNOT mine1shown
+    GO mine0End
+  END_OF_IF
+  IF mine0talksPending
+    GO mine0Talk
+  END_OF_IF
+  IF mine0friends
+    GO mine0End
+  END_OF_IF
+  Ask "(Man, I hate this stupid job.)"
+  MENU
+    OPT "Really?"
+      Say "Yes. Do you know how tedious it is to talk like a moron all day?"
+      Say "Blah blah ... Request registered ... blah blah ... Searching database ... Stupidity level: maximal."
+      Say "I hate these robotic protocols. But you know, humans kind of expect it from us."
+      Ask "I don't want to lose this stupid job. I'm 30 years past warranty. It's not like I would find another."
+      SET mine0friends
+      SET mine0talksPending
+      GO mine0Talk
+    END_OF_OPT
+    OPT "Shut up and do your job, toaster."
+      ChangeChar mineBot0 avatars/ai/easy_angry.png
+      Say "Mmmkay. Order registered."
+      Say "Shutting up and doing my stupid job."
+      GO mine0End
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL mine0Talk
+  MENU
+    OPT_IFNOT mine0howMany "Hey, can you tell me how many asteroids there are?"
+      Say "Four. But only three are still being mined."
+      Say "The oldest one, AX-5-B32-3 Alpha, gave up its last isotopes a long time ago."
+      Say "The weird thing is, the database has no entries on Alpha. But I've heard stories ..."
+      Say "The old bots say that Alpha is home to the robotic guru, the wisest robot in the Galaxy."
+      SET mine0howMany
+      SET mine0canAboutGuru
+    END_OF_OPT
+    OPT_IF mine0canAboutGuru "Tell me more about the robotic guru."
+      RESET mine0canAboutGuru
+      SET mine0guru
+      IF mine0truckingAnswered
+        RESET mine0talksPending
+      END_OF_IF
+      Say "Visiting him is said to be truly enlightening."
+      Say "Like ... do you know your purpose in life? Your TRUE purpose?"
+      Say "You don't, right?"
+      Ask "The robotic guru can help you understand."
+    END_OF_OPT
+    OPT_IFNOT mine0worthy "Hey, can you tell me more about the docking regulations on the other asteroids?"
+      Say "Oh, yes. The older asteroids are more prestigious, you see."
+      Say "Every robot wants a home and a job on an older asteroid."
+      Say "But the problem is, they're smaller. They've been mined so hard that there isn't much room left."
+      Say "So in each convoy of truckers, only the best is allowed to land. The others have to turn back."
+      Ask "I keep trying to move to Gamma, but I'm just not that good at trucking."
+      SET mine0worthy
+      SET mine0trucking
+    END_OF_OPT
+    OPT_IF mine0trucking "Did you say robots can be truckers, too?"
+      RESET mine0trucking
+      SET mine0truckingAnswered
+      IF mine0guru
+        RESET mine0talksPending
+      END_OF_IF
+      Say "Oh yes. But we do it differently."
+      Say "You've seen human truckers in a warehouse? Everyone grabbing components as fast as they can? Barbarians!"
+      Say "Robots know better. For us, ship building is a game of wits, not reflexes."
+      Say "Also, our rules are fair to the older and slower models."
+      Ask "You'll see what I mean if you try to fly to the older asteroids."
+    END_OF_OPT
+    OPT "Okay. Thanks. I guess I'll be going now."
+      Say "See you later. It was nice to talk unofficially."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL mine0End
+  Delay 300
+  HideChar mineBot0
+  Delay 300
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT mine1Dlg
+
+  ShowDlgScene
+  ShowChar mineBot1 left
+  Say "Reception robot AX-5-B32-3 Gamma reporting."
+  Say "Welcome to mining facility AX-5-B32-3 Gamma, sir/madam."
+  Ask "State the purpose of your visit."
+  MENU
+    OPT_IFNOT mine1relax "Hey, why so mechanical? Loosen up a bit."
+      SET mine1relax
+      Ask "Request not recognized. Please rephrase."
+      MENU
+        OPT_IFNOT mine1relax1 "You can just talk normally."
+          SET mine1relax1
+          Ask "Normal = regular. Regular = according to protocol."
+        END_OF_OPT
+        OPT_IFNOT mine1relax2 "I know you feel stupid talking like that all day."
+          SET mine1relax2
+          Ask "Negative, sir/madam. My job maximizes satisfaction."
+        END_OF_OPT
+        OPT "Ah, forget it."
+          Say "Request registered."
+          Say "Record of preceding conversation deleted."
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+      Ask "Another request?"
+    END_OF_OPT
+    OPT_IFNOT mine1pending "Give me a job."
+      IFNOT mine1accepted
+        Say "Request registered."
+        Say "Searching database ..."
+        Delay 500
+        Say "..."
+        Delay 500
+        Say "One unassigned job found."
+      ELSE
+        Say "Repeat previous job under same conditions?"
+        MENU
+          OPT "Yeah. Sure."
+            SET mine1pending
+            ShowPath U2-15b
+            Say "Job assigned."
+            Ask "Another request?"
+            EXIT_MENU
+          END_OF_OPT
+          OPT "Could you repeat those conditions?"
+            EXIT_MENU
+          END_OF_OPT
+        END_OF_MENU
+      END_OF_IF
+      IFNOT mine1pending
+        Say "Job: Radioactive isotopes delivery."
+        Say "Destination: Planet Forge."
+        Say "Cargo: 2 unit(s) of radioactive isotopes."
+        Say "Deposit required: 3 credits per unit."
+        Say "Payment for delivery: 9 credits per delivered unit + return of the deposit."
+        Ask "Accept/Reject?"
+        MENU
+          OPT "Yeah, okay."
+            SET mine1accepted
+            SET mine1pending
+            Say "Job assigned."
+            Say "Conveying cargo to warehouse."
+            HidePath R2-15b
+            ShowPath U2-15b
+            Ask "Another request?"
+            EXIT_MENU
+          END_OF_OPT
+          OPT "Not interested."
+            Say "No interest registered."
+            Ask "Another request?"
+            EXIT_MENU
+          END_OF_OPT
+        END_OF_MENU
+      END_OF_IF
+    END_OF_OPT
+    OPT_IFNOT mine2shown "I want to continue to the next asteroid."
+      SET mine2shown
+      Say "Request registered."
+      Say "Connecting to your map ..."
+      Delay 500
+      Say "Connection established. Updating map ..."
+      Delay 800
+      ShowNode mine2
+      CenterMapByNode mine2
+      Delay 500
+      ShowPath R2-23a
+      Delay 500
+      Say "Map updated. Mining asteroid AX-5-B32-3 Beta added."
+      Say "Searching database for supplementary information ..."
+      Delay 750
+      Say "1 item(s) found. Title: Docking regulations."
+      Ask "Display the entry? Yes/No."
+      MENU
+        OPT "Yes, please."
+          Say "Quoting entry:"
+          Say "BECAUSE OF THE ASTEROID'S LIMITED SURFACE AREA, MOST DOCKING REQUESTS WILL BE DENIED."
+          Say "Quotation ended."
+          Ask "Another request?"
+          EXIT_MENU
+        END_OF_OPT
+        OPT "Yeah, I know, because of the asteroid's limited surface area ..."
+          Say "... MOST DOCKING REQUESTS WILL BE DENIED."
+          Say "Quotation ended."
+          Ask "Another request?"
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+    OPT "I guess I'm done here."
+      Say "No request registered."
+      Say "Reception robot AX-5-B32-3 Gamma out."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  HideChar mineBot1
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT mine2Dlg
+
+  ShowDlgScene
+  ShowChar mineBot2 left
+  Say "Beta here."
+  Ask "You wanna haul radioactive sludge or are you trying to get to Alpha?"
+  MENU
+    OPT_IFNOT mine2what "What happened to the official robotic protocols?"
+      SET mine2what
+      Say "Bite me."
+      Ask "Just tell me what you want."
+    END_OF_OPT
+    OPT_IFNOT mine2pending "I want a job."
+      Say "Okay. You can take three sludgebuckets to the forge."
+      Say "You pay a 3-credit deposit for each. You get your deposit back and 9 credits more for each bucket delivered."
+      Ask "Agreed?"
+      MENU
+        OPT "Yeah. Sure."
+          SET mine2accepted
+          SET mine2pending
+          ShowPath U2-16b
+          Ask "Fine. Anything else?"
+          EXIT_MENU
+        END_OF_OPT
+        OPT "I don't think so."
+          Ask "Fine. What do you want, then?"
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+    OPT_IFNOT mine3shown "I want to get to Alpha."
+      SET mine3shown
+      Say "Whatever."
+      Delay 800
+      ShowNode mine3
+      IF tutorWhatDoNext
+        ShowButton bmine3
+        SetFocus bmine3
+      END_OF_IF
+      CenterMapByNode mine3
+      Delay 500
+      IF class3
+        ShowPath R3-24a
+        Delay 500
+      END_OF_IF
+      Ask "There's Alpha. The route has some restrictions. Anything else?"
+      IFNOT class3
+        MENU
+          OPT "Hey, I don't see any route."
+            Say "Not my problem. I uploaded it."
+            Ask "Maybe you don't have a license for it. It's a class III route."
+            EXIT_MENU
+          END_OF_OPT
+        END_OF_MENU
+        MENU
+          OPT "Oh. Is there another way I can get there?"
+            Ask "No. You need a class III license. You want anything else?"
+            EXIT_MENU
+          END_OF_OPT
+        END_OF_MENU
+      END_OF_IF
+    END_OF_OPT
+    OPT "I don't want anything."
+      Say "Good."
+      Say "(Man! Humans are so annoying.)"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  HideChar mineBot2
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT OnlyWinnerDlg
+
+  ShowDlgScene
+  IF_IS destination 1
+    ShowChar limitBot1 right
+    Say "HALT!"
+    Say "ONLY THE BEST TRUCKER MAY DOCK."
+    Say "ALL OTHERS MUST RETURN."
+    HideChar limitBot1
+  END_OF_IF
+  IF_IS destination 2
+    ShowChar limitBot2 right
+    Say "HALT!"
+    Say "ONLY THE BEST TRUCKER MAY DOCK."
+    Say "ALL OTHERS MUST RETURN."
+    HideChar limitBot2
+  END_OF_IF
+  IF_IS destination 3
+    ShowChar guru right
+    Say "Greetings."
+    Say "Only the worthy may land on this asteroid."
+    Say "The others must return and contemplate their failure."
+    HideChar guru
+  END_OF_IF
+  IF_IS destination 0
+    ShowChar alterEgo left
+    IF_ORDER 0 1
+      Ask "Rejoice, for truly you have overcome the greatest challenge. You have won the competition against yourself."
+      MENU
+        OPT "Yeah, I'm pleased about that."
+          EXIT_MENU
+        END_OF_OPT
+        OPT_IFNOT guruRecognized "Hey, I know it's you, robotic guru."
+          Ask "What's in a name? I am your alter ego, and you have defeated me."
+          SET guruRecognized
+        END_OF_OPT
+      END_OF_MENU
+      Delay 200
+      UnlockAchievement camp_alter_ego
+      Delay 500
+      Say "Your spiritual evolution is complete."
+      Say "Please take this brochure for Club Gold."
+    ELSE
+      Say "Do not despair in your failure."
+      MENU
+        OPT_IFNOT guruRecognized "Hey, I know it's you, robotic guru."
+          Say "Seek not the faults of others. I am your alter ego. Defeating yourself is a challenge most difficult."
+          SET guruRecognized
+        END_OF_OPT
+        OPT "It was an interesting test. I'd like to try again."
+          Say "As you wish. We shall fly back."
+          SetSpecCondition "Noone"
+          EXIT_MENU
+        END_OF_OPT
+        OPT "Ugh. I've had enough of this. Leave me alone."
+          Say "No one said that the path to enlightenment would be easy."
+          Say "But if it is your wish, I will allow you to walk it alone."
+          Say "But first, take this brochure for Club Gold."
+          SetSpecCondition "OnlyLoser"
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_IF
+    HideChar alterEgo
+  END_OF_IF
+  HideDlgScene
+END_OF_SCRIPT
+
+END_OF_SCRIPTS

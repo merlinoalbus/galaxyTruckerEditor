@@ -1,0 +1,22 @@
+SCRIPTS
+
+MISSION Tutorial
+  AddOpponent tutAI
+  SetFlightDeckPreparationScript "tutorialDeck"
+  SetTutorial
+  DoNotShuffleAdvCards
+  INIT_BUILD
+  AddShipParts "parts/tutorial.yaml"
+  SetSecretAdvPile 1 0
+  SetAdvPile 1 0
+  SetShipType STI
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  END_FLIGHT
+  EVALUATE_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+END_OF_SCRIPTS

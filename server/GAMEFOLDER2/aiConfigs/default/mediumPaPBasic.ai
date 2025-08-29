@@ -1,0 +1,9 @@
+idName: "medium_basic_pap"
+type: turn
+character: basic
+avatar: avatars/ai/medium_basic.png
+color: "ygbr"
+preferencesSettings: aiConfigs/settingBase.aipref
+qualitySettings: aiConfigs/settingPaPBase.aiqual
+difficulty: medium
+stupidity: 80

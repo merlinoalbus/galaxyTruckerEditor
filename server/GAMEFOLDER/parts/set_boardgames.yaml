@@ -1,0 +1,56 @@
+- type: boardgame
+  connectors: [2, 0, 1, 0]
+  image: boardgame01.png
+  special: true
+- type: boardgame
+  connectors: [2, 0, 2, 1]
+  image: boardgame01.png
+  special: true
+- type: boardgame
+  connectors: [1, 2, 1, 2]
+  image: boardgame02.png
+  special: true
+- type: boardgame
+  connectors: [0, 0, 2, 3]
+  image: boardgame02.png
+  special: true
+- type: boardgame
+  connectors: [2, 3, 2, 2]
+  image: boardgame03.png
+  special: true
+- type: boardgame
+  connectors: [0, 0, 3, 1]
+  image: boardgame03.png
+  special: true
+- type: boardgame
+  connectors: [1, 3, 1, 1]
+  image: boardgame04.png
+  special: true
+- type: boardgame
+  connectors: [0, 0, 0, 3]
+  image: boardgame04.png
+  special: true
+- type: boardgame
+  connectors: [3, 0, 1, 2]
+  image: boardgame05.png
+  special: true
+- type: boardgame
+  connectors: [3, 0, 1, 0]
+  image: boardgame05.png
+  special: true
+- type: boardgame
+  connectors: [2, 0, 3, 1]
+  image: boardgame06.png
+  special: true
+- type: boardgame
+  connectors: [0, 0, 0, 3]
+  image: boardgame06.png
+  special: true
+- type: boardgame
+  connectors: [1, 0, 1, 2]
+  image: boardgame07.png
+  special: true
+- type: boardgame
+  connectors: [2, 0, 3, 0]
+  image: boardgame07.png
+  special: true

@@ -1,0 +1,5 @@
+idName: "easy_random"
+character: random
+avatar: avatars/ai/easy_random.png
+color: "gbyr"
+difficulty: easy  # 1- hard, 3 - normal, 6 - easy

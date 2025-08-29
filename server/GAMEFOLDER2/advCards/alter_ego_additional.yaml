@@ -1,0 +1,14 @@
+- type: openspace
+  round: 3
+- type: openspace
+  round: 3
+- type: stardust
+  round: 2
+- type: planets
+  round: 1
+  planets:
+    - cargo: r1
+    - cargo: y1
+    - cargo: g1
+    - cargo: b1
+  days: -1

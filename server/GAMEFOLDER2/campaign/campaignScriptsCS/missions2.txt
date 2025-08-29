@@ -1,0 +1,1049 @@
+SCRIPTS
+
+MISSION universalConnectors
+  SUB_SCRIPT add2RandomOpponentsMedium
+  SetDeckPreparationScript "digitalDeck"
+  INIT_BUILD
+  SetShipType STII
+  SUB_SCRIPT universalParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+MISSION noEnemies2
+  SUB_SCRIPT addRandomOpponentsMedium
+  SetDeckPreparationScript "nonCombatDeck"
+  INIT_BUILD
+  SetShipType STII
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+MISSION pirateAmbush
+  SUB_SCRIPT add2RandomOpponentsMedium
+  SetDeckPreparationScript "pirateAmbush1"
+  SetFlightDeckPreparationScript "pirateAmbush2"
+  INIT_BUILD
+  SetSecretAdvPile 1 0
+  SetSecretAdvPile 2 0
+  SetShipType STII
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+SCRIPT pirateEscape
+
+  IF pirateEscaped
+    RETURN
+  END_OF_IF
+  SET pirateEscapedAtLeastOnce
+  SET pirateEscaped
+  ShowDlgScene
+  Announce "Než budete pokračovat, zkontrolovali jste pirátovu celu... Je prázdná!"
+  IfMissionResultIs 1
+    Announce "Asi se mu podařilo vyklouznout z lodi, zatímco jste nakládali zboží."
+  END_OF_IF
+  IfMissionResultIs 2
+    Announce "Asi se mu podařilo vmísit se mezi posádku, co opouštěla tvou loď."
+  END_OF_IF
+  IfMissionResultIs 3
+    Announce "Asi se mu podařilo vmísit se mezi posádku, co šla vyrabovat opuštěnou stanici – a nevrátil se zpět."
+  END_OF_IF
+  IfMissionResultIs 4
+    Announce "Asi se mu podařilo nějak vyklouznout, když jste brali pašerákům zboží."
+  END_OF_IF
+  IfMissionResultIs 5
+    Announce "Asi se mu podařilo nějak se vmísit mezi členy posádky, co nepřátelé unesli."
+  END_OF_IF
+  IfMissionResultIs 6
+    Announce "Asi se schoval do jedné z beden, které nepřátelé odnesli."
+  END_OF_IF
+  IfMissionResultIs 8
+    Announce "Asi se nějak schoval mezi baterie, které nepřátelé odnesli."
+  END_OF_IF
+  IfMissionResultIs 7
+    Announce "Asi se vmísil mezi posádku, co čistila špinavé konektory... A pak... Jak se mu sakra podařilo utéct?"
+    Announce "(Příště by to chtělo nemít žádné otevřené přípojky.)"
+  END_OF_IF
+  HidePath U2-17x
+  IFNOT ropeCut
+    HideButton bpirate3
+  END_OF_IF
+  ShowButton bpirate2
+  SetFocus bpirate2
+  MENU
+    OPT "Sakryš, vrátíme se do pirátské skrýše."
+      GiveUpFlight
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Kašlem na to, pokračujeme bez něj..."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  HideDlgScene
+END_OF_SCRIPT
+
+MISSION pirateEscort
+  IFNOT pirateEscortTried
+    AddOpponent prisoner1
+    AddOpponent prisoner2
+    SET pirateEscortTried
+  ELSE
+    SUB_SCRIPT add2RandomOpponentsMedium
+  END_OF_IF
+  SetDeckPreparationScript "digitalDeck"
+  SetSpecCondition "pirateEscort"
+  INIT_BUILD
+  SetShipType STII
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  IF_MISSION_WON
+    ShowDlgScene
+    ShowChar policeBot left
+    Say "Zde robot mezigalaktického úřadu pro vyšetřování."
+    Ask "Máme tu hlášení o převozu nebezpečného zločince."
+    IF pirateEscaped
+      MENU
+        OPT "To bude nějaký omyl, o ničem nevíme."
+          Say "Omyl není přípustný. Lež není přípustná."
+          Say "Mezigalaktický úřad pro vyšetřování si účtuje poplatek 5 kreditů za znevážení instituce."
+          Say "Nemusíte se obtěžovat převodem, máme přístup k vašemu účtu."
+          AddMissionCredits -5
+          Announce "5 kreditů strženo z tvého účtu."
+          EXIT_MENU
+        END_OF_OPT
+        OPT "Jo, převáželi jsme ho... Ale nakonec převezl on nás. Omlouváme se."
+          Say "Rozumím."
+          Say "Záznam o události vyhotoven."
+          Say "Odměna nevyplacena."
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+      Delay 500
+      HideChar policeBot
+      HideDlgScene
+    ELSE
+      MENU
+        OPT "Jasně, tady ho máte. Ale dobře ho hlídejte, pořád zkouší utéct."
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+      Say "Útěk není přípustný."
+      ShowChar pirate right
+      SayChar pirate "To se ještě uvidí... Zastavíte na planetě a ..."
+      SayChar policeBot "Mlčet. Nebo bude autorizováno použití donucovacích prostředků."
+      SayChar pirate "Uhm... Zatraceně..."
+      Delay 300
+      HideChar pirate
+      Delay 300
+      SayChar policeBot "Vězeň přijat."
+      Ask "Odměna 30 kreditů připsána na váš účet."
+      MENU
+        OPT "Ach, děkuji."
+          EXIT_MENU
+        END_OF_OPT
+        OPT "Ehm, neřekl[g(|a)] jsem vám ještě číslo účtu."
+          Say "Ha. Ha. Ha. Mluvíte s mezigalaktickým úřadem pro vyšetřování."
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+      AddMissionCredits 30
+      Announce "30 kreditů připsáno na tvůj účet."
+      HidePath U2-17x
+      SET pirateEscorted
+      Delay 300
+      HideChar policeBot
+      Delay 300
+      HideDlgScene
+      UnlockAchievement camp_pirate
+    END_OF_IF
+  END_OF_IF
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+SCRIPT explosivesIntro
+
+  ShowDlgScene
+  ShowChar foreman left
+  IF explosivesFailed
+    Say "Aha, nedoletěl[g(|a)] jsi, co?"
+    Say "Dám ti další šanci. Stejně nemám pro tu práci dost lidí."
+    RESET explosivesFailed
+  ELSE
+    Delay 500
+    ChangeChar foreman campaign/foreman-hello.png
+    Say "Tak, tady to je. Prvotřídní výbušniny pro důlní práce."
+    ChangeChar foreman campaign/foreman-smile.png
+    IF_MIN explosives 3
+      Say "Musel jsem nějaké namontovat přímo na loď. Doufám, že je to takhle v pořádku."
+    END_OF_IF
+    HideDlgScene
+    AddInfoWindow "tutorial/infoExplosiveCargo.png"
+    ShowInfoWindow "tutorial/infoExplosiveCargo.png"
+    ShowDlgScene
+    ShowChar foreman left
+    Say "Roboti na asteroidech ti za ně dobře zaplatí!"
+    Say "Tak se drž, ať to není výbuch. Ha ha!"
+  END_OF_IF
+  HideChar foreman
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT ms_no_explosives0
+
+  SET_TO explosives 0
+  SET_TO destination 0
+  ACT_MISSION explosivesDelivery
+END_OF_SCRIPT
+
+SCRIPT ms_no_explosives1
+
+  SET_TO explosives 0
+  SET_TO destination 1
+  ACT_MISSION explosivesDelivery
+END_OF_SCRIPT
+
+SCRIPT ms_no_explosives2
+
+  SET_TO explosives 0
+  SET_TO destination 2
+  ACT_MISSION explosivesDelivery
+END_OF_SCRIPT
+
+SCRIPT ms_explosives0
+
+  SET_TO explosives 2
+  SET_TO destination 0
+  ACT_MISSION explosivesDelivery
+END_OF_SCRIPT
+
+SCRIPT ms_explosives1
+
+  SET_TO explosives 4
+  SET_TO destination 1
+  ACT_MISSION explosivesDelivery
+END_OF_SCRIPT
+
+SCRIPT ms_explosives2
+
+  SET_TO explosives 6
+  SET_TO destination 2
+  ACT_MISSION explosivesDelivery
+END_OF_SCRIPT
+
+MISSION explosivesDelivery
+  SUB_SCRIPT add3RandomOpponentsMedium
+  SetDeckPreparationScript "explosiveDeck"
+  INIT_BUILD
+  SetSpecCondition "explosives"
+  IF_MIN explosives 2
+    BuildingHelpScript 1000 explosivesIntro
+  END_OF_IF
+  SetShipType STII
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  IF_IS explosives 2
+    AddPartToAsideSlot explosive 1 0 1 0
+    AddPartToAsideSlot explosive 2 0 2 0
+    AddPartToShip 1 17 explosive 2121 0
+    AddPartToShip 2 23 explosive 2222 0
+    AddPartToShip 3 25 explosive 1111 0
+  END_OF_IF
+  IF_IS explosives 4
+    AddPartToAsideSlot explosive 2 3 2 0
+    AddPartToAsideSlot explosive 1 3 1 0
+    AddPartToShip 0 23 explosive 1212 0
+    AddPartToShip 0 25 explosive 2121 0
+    AddPartToShip 1 17 explosive 2323 0
+    AddPartToShip 1 23 explosive 3131 0
+    AddPartToShip 2 17 explosive 1313 0
+    AddPartToShip 2 25 explosive 2323 0
+    AddPartToShip 3 23 explosive 1323 0
+    AddPartToShip 3 25 explosive 2313 0
+  END_OF_IF
+  IF_IS explosives 6
+    AddPartToAsideSlot explosive 1 2 3 0
+    AddPartToAsideSlot explosive 3 1 2 0
+    AddPartToShip 0 23 explosive 1011 0
+    AddPartToShip 0 25 explosive 2220 0
+    AddPartToShip 0 30 explosive 1101 0
+    AddPartToShip 0 18 explosive 0222 0
+    AddPartToShip 1 17 explosive 2222 0
+    AddPartToShip 1 23 explosive 1111 0
+    AddPartToShip 1 16 explosive 3333 0
+    AddPartToShip 2 17 explosive 1111 0
+    AddPartToShip 2 25 explosive 2222 0
+    AddPartToShip 2 18 explosive 3333 0
+    AddPartToShip 3 17 explosive 3333 0
+    AddPartToShip 3 23 explosive 2222 0
+    AddPartToShip 3 25 explosive 1111 0
+  END_OF_IF
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  IF_MISSION_WON
+    ShowDlgScene
+    IF_IS destination 0
+      ShowChar tradeBot0 left
+      Say "Zasobovací důlní robot AX delta se hlásí."
+    END_OF_IF
+    IF_IS destination 1
+      ShowChar tradeBot1 left
+      Say "Zasobovací důlní robot AX gama se hlásí."
+    END_OF_IF
+    IF_IS destination 2
+      ShowChar tradeBot2 left
+      Say "Zasobovací důlní robot AX beta se hlásí."
+    END_OF_IF
+    Say "Skenování příchozí lodi zahájeno."
+    IfMissionResultMin 1
+      IfMissionResultIs 1
+        Say "Potvrzeno doručení jednoho balíku výbušnin."
+        Say "Převedena částka 4 kredity."
+        AddMissionCredits 4
+      END_OF_IF
+      IfMissionResultIs 2
+        Say "Potvrzeno doručení dvou balíků výbušnin."
+        Say "Převedena částka 8 kreditů."
+        AddMissionCredits 8
+        IF_IS explosives 2
+          SET achExplosives2
+          SUB_SCRIPT explosivesAchievementCheck
+        END_OF_IF
+      END_OF_IF
+      IfMissionResultIs 3
+        Say "Potvrzeno doručení tří balíků výbušnin."
+        Say "Převedena částka 12 kreditů."
+        AddMissionCredits 12
+      END_OF_IF
+      IfMissionResultIs 4
+        Say "Potvrzeno doručení čtyř balíků výbušnin."
+        Say "Převedena částka 16 kreditů."
+        AddMissionCredits 16
+        IF_IS explosives 4
+          SET achExplosives4
+          SUB_SCRIPT explosivesAchievementCheck
+        END_OF_IF
+      END_OF_IF
+      IfMissionResultIs 5
+        Say "Potvrzeno doručení pěti balíků výbušnin."
+        Say "Převedena částka 20 kreditů."
+        AddMissionCredits 20
+      END_OF_IF
+      IfMissionResultIs 6
+        Say "Potvrzeno doručení šesti balíků výbušnin."
+        Say "Převedena částka 24 kreditů."
+        AddMissionCredits 24
+        IF_IS explosives 6
+          SET achExplosives6
+          SUB_SCRIPT explosivesAchievementCheck
+        END_OF_IF
+      END_OF_IF
+      RESET explosivesPending
+      IF_IS destination 0
+        HidePath U2-14a
+      END_OF_IF
+      IF_IS destination 1
+        HidePath U2-15a
+      END_OF_IF
+      IF_IS destination 2
+        HidePath U2-16a
+      END_OF_IF
+      Delay 500
+      Say "Transakce provedena."
+    ELSE
+      IF_MIN explosives 1
+        SET explosivesFailed
+      END_OF_IF
+      Say "Nebyla detekován žádný užitečný náklad."
+      Say "Přistaní zamítnuto."
+      SetMissionAsFailed
+    END_OF_IF
+    IF_IS destination 0
+      Say "Zasobovací důlní robot AX delta končí."
+      HideChar tradeBot0
+    END_OF_IF
+    IF_IS destination 1
+      Say "Zasobovací důlní robot AX gama končí."
+      HideChar tradeBot1
+    END_OF_IF
+    IF_IS destination 2
+      Say "Zasobovací důlní robot AX beta končí."
+      HideChar tradeBot2
+    END_OF_IF
+    HideDlgScene
+  ELSE
+    SET explosivesFailed
+  END_OF_IF
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+SCRIPT explosivesAchievementCheck
+
+  SET_TO achExplTotal 0
+  IF achExplosives2
+    ADD achExplTotal 1
+  END_OF_IF
+  IF achExplosives4
+    ADD achExplTotal 1
+  END_OF_IF
+  IF achExplosives6
+    ADD achExplTotal 1
+  END_OF_IF
+  IF_IS achExplTotal 1
+    SetAchievementProgress camp_explosives 1
+  END_OF_IF
+  IF_IS achExplTotal 2
+    SetAchievementProgress camp_explosives 2
+  END_OF_IF
+  IF_IS achExplTotal 3
+    SetAchievementProgress camp_explosives 3
+  END_OF_IF
+END_OF_SCRIPT
+
+SCRIPT radioactiveAchievementCheck
+
+  SET_TO achRadioTotal 0
+  IF achRadioactive1
+    ADD achRadioTotal 1
+  END_OF_IF
+  IF achRadioactive2
+    ADD achRadioTotal 1
+  END_OF_IF
+  IF achRadioactive3
+    ADD achRadioTotal 1
+  END_OF_IF
+  IF_IS achRadioTotal 1
+    SetAchievementProgress camp_radioactive 1
+  END_OF_IF
+  IF_IS achRadioTotal 2
+    SetAchievementProgress camp_radioactive 2
+  END_OF_IF
+  IF_IS achRadioTotal 3
+    SetAchievementProgress camp_radioactive 3
+  END_OF_IF
+END_OF_SCRIPT
+
+SCRIPT radioactiveTutorial
+
+  AddInfoWindow "tutorial/infoRadioactiveCargo.png"
+  ShowInfoWindow "tutorial/infoRadioactiveCargo.png"
+END_OF_SCRIPT
+
+SCRIPT radioactivePayment
+
+  ShowDlgScene
+  IF_IS radioactive 1
+    ShowChar tradeBot0 left
+    Say "Připraveno 1 beden radioaktivních izotopů."
+    Say "Požadována záloha 3 kreditů."
+    IF_HAS_CREDITS 3
+      AddCredits -3
+      Announce "Zaplatil[g(|a)] jsi 3 kredity."
+      SET paid
+    ELSE
+      GO radioactiveNoCredits
+    END_OF_IF
+    Delay 300
+    HideChar tradeBot0
+  END_OF_IF
+  IF_IS radioactive 2
+    ShowChar tradeBot1 left
+    Say "Připraveno 2 beden radioaktivních izotopů."
+    Say "Požadována záloha 6 kreditů."
+    IF_HAS_CREDITS 6
+      AddCredits -6
+      Announce "Zaplatil[g(|a)] jsi 6 kreditů."
+      SET paid
+    ELSE
+      GO radioactiveNoCredits
+    END_OF_IF
+    Delay 300
+    HideChar tradeBot1
+  END_OF_IF
+  IF_IS radioactive 3
+    ShowChar tradeBot2 left
+    Say "Připraveno 3 beden radioaktivních izotopů."
+    Say "1 beden instalováno přímo na loď."
+    Say "Požadována záloha 9 kreditů."
+    IF_HAS_CREDITS 9
+      AddCredits -9
+      Announce "Zaplatil[g(|a)] jsi 9 kreditů."
+      SET paid
+    ELSE
+      GO radioactiveNoCredits
+    END_OF_IF
+    Delay 300
+    HideChar tradeBot2
+  END_OF_IF
+  HideDlgScene
+  RETURN
+
+  LABEL radioactiveNoCredits
+  Delay 1200
+  Say "Převod kreditů neúspěšný."
+  Say "Nedostatečný zůstatek."
+  Say "Zakázka zrušena."
+  IF_IS radioactive 1
+    RESET mine0pending
+    HidePath U2-14b
+    ShowPath R2-14b
+    HideChar tradeBot0
+  END_OF_IF
+  IF_IS radioactive 2
+    RESET mine1pending
+    HidePath U2-15b
+    ShowPath R2-15b
+    HideChar tradeBot1
+  END_OF_IF
+  IF_IS radioactive 3
+    RESET mine2pending
+    HidePath U2-16b
+    ShowPath R2-16b
+    HideChar tradeBot2
+  END_OF_IF
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT ms_no_radioactive
+
+  SET_TO radioactive 0
+  ACT_MISSION radioactiveDelivery
+END_OF_SCRIPT
+
+SCRIPT ms_radioactive1
+
+  SET_TO radioactive 1
+  RESET paid
+  SUB_SCRIPT radioactivePayment
+  IF paid
+    ACT_MISSION radioactiveDelivery
+  END_OF_IF
+END_OF_SCRIPT
+
+SCRIPT ms_radioactive2
+
+  SET_TO radioactive 2
+  RESET paid
+  SUB_SCRIPT radioactivePayment
+  IF paid
+    ACT_MISSION radioactiveDelivery
+  END_OF_IF
+END_OF_SCRIPT
+
+SCRIPT ms_radioactive3
+
+  SET_TO radioactive 3
+  RESET paid
+  SUB_SCRIPT radioactivePayment
+  IF paid
+    ACT_MISSION radioactiveDelivery
+  END_OF_IF
+END_OF_SCRIPT
+
+MISSION radioactiveDelivery
+  SUB_SCRIPT add2RandomOpponentsMedium
+  SetDeckPreparationScript "radioactiveDeck"
+  INIT_BUILD
+  SetSpecCondition "radioactive"
+  IF_MIN radioactive 1
+    BuildingHelpScript 1000 radioactiveTutorial
+  END_OF_IF
+  SetShipType STII
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  IF_IS radioactive 1
+    AddPartToAsideSlot radioactive 1 2 1 2
+    RESET mine0pending
+    HidePath U2-14b
+    ShowPath R2-14b
+  END_OF_IF
+  IF_IS radioactive 2
+    AddPartToAsideSlot radioactive 2 2 2 2
+    AddPartToAsideSlot radioactive 1 1 1 1
+    RESET mine1pending
+    HidePath U2-15b
+    ShowPath R2-15b
+  END_OF_IF
+  IF_IS radioactive 3
+    AddPartToAsideSlot radioactive 2 2 2 2
+    AddPartToAsideSlot radioactive 1 1 1 1
+    AddPartToShip 0 17 radioactive 3031 0
+    RESET mine2pending
+    HidePath U2-16b
+    ShowPath R2-16b
+  END_OF_IF
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  IF_MISSION_WON
+    ShowDlgScene
+    ShowChar foreman left
+    Say "No páni, to je [g(můj trucker|moje truckerka)]. Copak nám vezeš?"
+    IfMissionResultIs 0
+      Say "Nic? No, co nadělám. Tak příště, jo?"
+    END_OF_IF
+    IfMissionResultIs 1
+      Say "Ha, vidím, bednu radioaktivního izotopu. Pěkně horkej náklad, co?"
+      Delay 300
+      ChangeChar foreman campaign/foreman-list.png
+      Delay 500
+      Say "Platil[g(|a)] jsi zálohu? Tady ji máš zpět. A 9 kreditů navrch, za dovoz."
+      AddMissionCredits 12
+      Announce "Dostal[g(|a)] jsi 12 kreditů."
+      IF_IS radioactive 1
+        SET achRadioactive1
+        SUB_SCRIPT radioactiveAchievementCheck
+      END_OF_IF
+    END_OF_IF
+    IfMissionResultIs 2
+      Say "Vidím, támhle máš dvě bedny radioaktivního izotopu. Tomu říkám truckeřina!"
+      Delay 300
+      ChangeChar foreman campaign/foreman-list.png
+      Delay 500
+      Say "Vrátím ti za ně zálohu... a tady máš 18 kreditů navrch."
+      AddMissionCredits 24
+      Announce "Dostal[g(|a)] jsi 24 kreditů."
+      IF_IS radioactive 2
+        SET achRadioactive2
+        SUB_SCRIPT radioactiveAchievementCheck
+      END_OF_IF
+    END_OF_IF
+    IfMissionResultIs 3
+      Say "Ha, vidím, kompletní nepoškozená zásilka, tři dávky radioaktivního izotopu. Tak to jsi fakt dobr[g(ej|á)]!"
+      Delay 300
+      ChangeChar foreman campaign/foreman-list.png
+      Delay 500
+      Say "9 kreditů záloha, 27 za doručení... Víš co, zaokrouhleme to na 40, za dobré služby."
+      AddMissionCredits 40
+      Announce "Dostal[g(|a)] jsi 40 kreditů."
+      IF_IS radioactive 3
+        SET achRadioactive3
+        SUB_SCRIPT radioactiveAchievementCheck
+      END_OF_IF
+    END_OF_IF
+    HideChar foreman
+    HideDlgScene
+  END_OF_IF
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+SCRIPT experimentTutorial
+
+  IF labHasIngots
+    AddInfoWindow "tutorial/infoHeavyCargo.png"
+  END_OF_IF
+  IF labHasExpl
+    AddInfoWindow "tutorial/infoExplosiveCargo.png"
+  END_OF_IF
+  IF labHasRadio
+    AddInfoWindow "tutorial/infoRadioactiveCargo.png"
+  END_OF_IF
+  IF labHasBooze
+    AddInfoWindow "tutorial/infoFragileCargo.png"
+  END_OF_IF
+  IF labHasIngots
+    ShowInfoWindow "tutorial/infoHeavyCargo.png"
+    RETURN
+  END_OF_IF
+  IF labHasExpl
+    ShowInfoWindow "tutorial/infoExplosiveCargo.png"
+    RETURN
+  END_OF_IF
+  IF labHasRadio
+    ShowInfoWindow "tutorial/infoRadioactiveCargo.png"
+    RETURN
+  END_OF_IF
+  IF labHasBooze
+    ShowInfoWindow "tutorial/infoFragileCargo.png"
+    RETURN
+  END_OF_IF
+END_OF_SCRIPT
+
+MISSION experiment
+  SUB_SCRIPT addRandomOpponentsMedium
+  SetDeckPreparationScript "digitalDeck"
+  INIT_BUILD
+  SetSpecCondition "specTiles"
+  BuildingHelpScript 1000 experimentTutorial
+  SetAdvPile 1 1
+  SetAdvPile 2 1
+  SetAdvPile 3 3
+  SetSecretAdvPile 1 1
+  SetSecretAdvPile 2 1
+  SetSecretAdvPile 3 3
+  SetShipType STIII
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  RESET labHasRadio
+  RESET labHasExpl
+  RESET labHasIngots
+  RESET labHasBooze
+  RESET labBoozeAccepted
+  IF labRadio3
+    AddPartToAsideSlot radioactive 1 2 3 2
+    AddPartToAsideSlot radioactive 2 1 0 0
+    AddPartToShip 0 22 radioactive 1233 0
+    RESET labRadio3
+    SET labHasRadio
+  END_OF_IF
+  IF labExpl6
+    AddPartToAsideSlot explosive 1 3 0 0
+    AddPartToAsideSlot explosive 2 0 3 0
+    AddPartToShip 0 30 explosive 0131 0
+    AddPartToShip 0 32 explosive 3232 0
+    AddPartToShip 0 23 explosive 3132 0
+    AddPartToShip 0 39 explosive 3131 0
+    RESET labExpl6
+    SET labHasExpl
+  END_OF_IF
+  IF labIngots2_4
+    AddPartToAsideSlot ingot4 1 0 0 0
+    AddPartToAsideSlot ingot4 2 1 2 0
+    RESET labIngots2_4
+    SET labHasIngots
+  END_OF_IF
+  IF labRadio2Ingots3_2
+    AddPartToAsideSlot ingot2 1 0 2 0
+    AddPartToAsideSlot radioactive 2 2 2 0
+    AddPartToShip 0 32 radioactive 3111 0
+    AddPartToShip 0 30 ingot2 0131 0
+    AddPartToShip 0 40 ingot2 3330 0
+    RESET labRadio2Ingots3_2
+    SET labHasRadio
+    SET labHasIngots
+  END_OF_IF
+  IF labExpl4Ingots2_3
+    AddPartToAsideSlot ingot3 1 2 0 0
+    AddPartToAsideSlot explosive 1 1 1 1
+    AddPartToShip 0 30 explosive 0130 0
+    AddPartToShip 0 32 ingot3 3121 0
+    AddPartToShip 0 41 explosive 2103 0
+    AddPartToShip 0 23 explosive 2131 0
+    RESET labExpl4Ingots2_3
+    SET labHasIngots
+    SET labHasExpl
+  END_OF_IF
+  IF labExpl4Radio2
+    AddPartToAsideSlot radioactive 2 2 2 2
+    AddPartToAsideSlot explosive 3 0 3 0
+    AddPartToShip 0 22 explosive 1333 0
+    AddPartToShip 0 23 radioactive 3131 0
+    AddPartToShip 0 40 explosive 3320 0
+    AddPartToShip 0 39 explosive 2333 0
+    RESET labExpl4Radio2
+    SET labHasRadio
+    SET labHasExpl
+  END_OF_IF
+  IF labExpl3Radio2Ingots1_5
+    AddPartToAsideSlot radioactive 2 2 2 0
+    AddPartToAsideSlot ingot5 1 3 2 0
+    AddPartToShip 0 22 radioactive 2123 0
+    AddPartToShip 0 21 explosive 0123 0
+    AddPartToShip 0 23 explosive 2031 0
+    AddPartToShip 0 40 explosive 1230 0
+    RESET labExpl3Radio2Ingots1_5
+    SET labHasRadio
+    SET labHasExpl
+    SET labHasIngots
+  END_OF_IF
+  IF labExpl3Radio2Ingots1_5booze2
+    AddPartToAsideSlot radioactive 1 1 1 0
+    AddPartToAsideSlot booze 2 3 2 0
+    AddPartToShip 0 30 radioactive 0131 0
+    AddPartToShip 0 21 explosive 2321 0
+    AddPartToShip 0 22 explosive 2123 0
+    AddPartToShip 0 39 explosive 3121 0
+    AddPartToShip 0 32 ingot5 3323 0
+    AddPartToShip 0 33 booze 2320 0
+    RESET labExpl3Radio2Ingots1_5booze2
+    SET labHasRadio
+    SET labHasExpl
+    SET labHasIngots
+    SET labHasBooze
+    SET labBoozeAccepted
+  END_OF_IF
+  ShowPath R3-26a
+  IF_IS labQuestLevel 1
+    SET lab1Failed
+  END_OF_IF
+  IF_IS labQuestLevel 2
+    SET lab2Failed
+  END_OF_IF
+  IF_IS labQuestLevel 3
+    SET lab3Failed
+  END_OF_IF
+  IFNOT recommendationDesigner
+    SetFocus blab
+  END_OF_IF
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  IF_MISSION_WON
+    ShowDlgScene
+    ShowChar mech left
+    IFNOT labDeliveredOnce
+      Say "Ahoj. To je milé překvapení."
+      Say "Slyšela jsem, že mi kvůli experimentu posílají zásilku, ale netušila jsem, že ji přivezeš ty."
+      SET labDeliveredOnce
+    ELSE
+      Say "Ahoj, ráda tě vidím. Prý mi posílají další zásilku kvůli tomu experimentu."
+    END_OF_IF
+    RESET allOk
+    IF_IS labTotal 2
+      IfMissionResultMin 2
+        SET allOk
+      END_OF_IF
+    END_OF_IF
+    IF_IS labTotal 3
+      IfMissionResultMin 3
+        SET allOk
+      END_OF_IF
+    END_OF_IF
+    IF_IS labTotal 5
+      IfMissionResultMin 5
+        SET allOk
+      END_OF_IF
+    END_OF_IF
+    IF_IS labTotal 6
+      IfMissionResultIs 6
+        SET allOk
+      END_OF_IF
+      IfMissionResultIs 16
+        SET allOk
+      END_OF_IF
+      IfMissionResultIs 26
+        SET allOk
+      END_OF_IF
+    END_OF_IF
+    RESET labBooze0
+    RESET labBooze1
+    RESET labBooze2
+    IfMissionResultMin 20
+      SET labBooze2
+    ELSE
+      IfMissionResultMin 10
+        SET labBooze1
+      ELSE
+        SET labBooze0
+      END_OF_IF
+    END_OF_IF
+    Delay 1000
+    IFNOT allOk
+      ChangeChar mech campaign/mech-f.png
+      Delay 300
+      IfMissionResultIs 0
+        Say "Ale koukám, že ji nevezeš... Asi problémy cestou, co?"
+        Say "No nic, třeba příště."
+      ELSE
+        Say "Ale koukám, že ta zásilka není kompletní."
+        Say "Hm, to je škoda. Podle smlouvy s laboratoří ti nemůžu zaplatit."
+        Delay 300
+        Delay 200
+        Say "Hele, já vím, že je to blbý... Ráda bych ti zaplatila aspoň něco, ale neproplatili by mi to."
+        ChangeChar mech campaign/mech.png
+        IF labBoozeAccepted
+          MENU
+            OPT_IF labBooze2 "Rozumím. Ale aspoň jsem v pořádku dovezl[g(|a)] ty dvě bedýnky s pitím, co ti z laboratoře poslali."
+              ChangeChar mech campaign/mech-thumbup.png
+              Say "Díky. Vyřiď jim prosím, že je to od nich milé."
+              EXIT_MENU
+            END_OF_OPT
+            OPT_IF labBooze1 "Rozumím. Navíc jsem cestou přiš[g(el|la)] o jednu z těch bedýnek s pitím, co ti z laboratoře poslali."
+              ChangeChar mech campaign/mech-explaining.png
+              Say "To nevadí, jedna úplně stačí. Vyřiď jim prosím, že děkuju."
+              EXIT_MENU
+            END_OF_OPT
+            OPT_IF labBooze0 "Rozumím. Navíc jsem cestou rozflákal[g(|a)] ty bedýnky s pitím, co ti z laboratoře poslali."
+              ChangeChar mech campaign/mech-explaining.png
+              Say "To se nedá nic dělat. Stejně jim prosím vyřiď, že to od nich bylo milé."
+              EXIT_MENU
+            END_OF_OPT
+          END_OF_MENU
+        END_OF_IF
+        IF_IS labQuestLevel 1
+          RESET lab1Failed
+          SET lab1Success
+          SET lab1Done
+          SetFocus bworkshop
+        END_OF_IF
+        IF_IS labQuestLevel 2
+          RESET lab2Failed
+          SET lab2Success
+          SET lab2Done
+        END_OF_IF
+        IF_IS labQuestLevel 3
+          RESET lab3Failed
+          SET lab3Success
+          SET lab3Done
+        END_OF_IF
+      END_OF_IF
+    ELSE
+      Delay 300
+      Say "A koukám, že je zcela v pořádku."
+      Delay 200
+      ChangeChar mech campaign/mech-thumbup.png
+      Delay 500
+      ChangeChar mech campaign/mech.png
+      Delay 300
+      Say "Dobrá práce! Tady máš odměnu."
+      Delay 300
+      AddMissionCredits 25
+      Announce "Dostal[g(|a)] jsi odměnu 25 kreditů."
+      Delay 300
+      IF labBoozeAccepted
+        MENU
+          OPT_IF labBooze2 "Díky. Jo, a abych nezapomněl[g(|a)], tady ti z laboratoře posílají dvě bedýnky s pitím."
+            Say "Ach, to je od nich milé. A od tebe taky, žes to všechno dokázal[g(|a)] dovézt."
+            ChangeChar mech campaign/mech-thumbup.png
+            Delay 300
+            UnlockAchievement camp_four_cargo
+            SET labAchievement
+            Delay 600
+            ChangeChar mech campaign/mech.png
+            Delay 300
+            Say "Díky moc!"
+            EXIT_MENU
+          END_OF_OPT
+          OPT_IF labBooze1 "Díky. Jo, a abych nezapomněl[g(|a)], z laboratoře poslali dvě bedýnky s pitím, ale o jednu jsem cestou přiš[g(el|la)]."
+            ChangeChar mech campaign/mech-explaining.png
+            Say "To nevadí, i tak se divím, žes to vůbec všechno dokázal doručit. Vyřiď jim prosím, že děkuju."
+            EXIT_MENU
+          END_OF_OPT
+          OPT_IF labBooze0 "Díky. Bohužel jsem cestou rozflákal[g(|a)] nějaké bedýnky s pitím, co ti z laboratoře poslali."
+            ChangeChar mech campaign/mech-explaining.png
+            Say "To se nedá nic dělat. Stejně jim prosím vyřiď, že to od nich bylo milé."
+            ChangeChar mech campaign/mech-explaining.png
+            Say "A od tebe taky, že ses pokusil[g(|a)] to dovézt."
+            EXIT_MENU
+          END_OF_OPT
+        END_OF_MENU
+      END_OF_IF
+      IF_IS labQuestLevel 1
+        RESET lab1Failed
+        SET lab1FullSuccess
+        SET lab1Done
+        SetFocus bworkshop
+      END_OF_IF
+      IF_IS labQuestLevel 2
+        RESET lab2Failed
+        SET lab2FullSuccess
+        SET lab2Done
+      END_OF_IF
+      IF_IS labQuestLevel 3
+        RESET lab3Failed
+        SET lab3FullSuccess
+        SET lab3Done
+      END_OF_IF
+    END_OF_IF
+    HideChar mech
+    HideDlgScene
+  END_OF_IF
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+MISSION finalRoute
+  AddOpponent tutorRace
+  AddOpponent richGirlRace
+  AddOpponent halfbreed
+  RESET frRound
+  SetDeckPreparationScript "digitalDeck"
+  SetSpecCondition "FinalRace"
+  INIT_BUILD
+  RESET flightDebug
+  IF flightDebug
+    SetAdvPile 1 0
+    SetSecretAdvPile 1 2
+  END_OF_IF
+  IF_IS loadInstances 0
+    ModifyOpponentsBuildSpeed 95
+  END_OF_IF
+  IF_IS loadInstances 1
+    ModifyOpponentsBuildSpeed 90
+  END_OF_IF
+  IF_IS loadInstances 2
+    ModifyOpponentsBuildSpeed 85
+  END_OF_IF
+  IF_IS loadInstances 3
+    ModifyOpponentsBuildSpeed 80
+  END_OF_IF
+  IF_MIN loadInstances 4
+    ModifyOpponentsBuildSpeed 75
+  END_OF_IF
+  IF_MIN loadInstances 5
+    ModifyOpponentsBuildSpeed 70
+  END_OF_IF
+  IF_MIN loadInstances 6
+    ModifyOpponentsBuildSpeed 65
+  END_OF_IF
+  SetShipType STI
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  END_FLIGHT
+  INIT_BUILD
+  IF flightDebug
+    SetAdvPile 1 0
+    SetAdvPile 2 0
+    SetSecretAdvPile 1 2
+    SetSecretAdvPile 2 0
+  END_OF_IF
+  SetShipType STII
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  END_FLIGHT
+  INIT_BUILD
+  IF flightDebug
+    SetAdvPile 1 0
+    SetAdvPile 2 0
+    SetAdvPile 3 0
+    SetSecretAdvPile 1 2
+    SetSecretAdvPile 2 0
+    SetSecretAdvPile 3 0
+  END_OF_IF
+  SetShipType STIII
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  END_FLIGHT
+  SetMissionAsCompleted
+  FINISH_MISSION
+END_OF_MISSION
+
+END_OF_SCRIPTS

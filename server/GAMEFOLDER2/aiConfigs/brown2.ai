@@ -1,0 +1,9 @@
+idName: "brown2"
+character: safe
+avatar: avatars/campaign/brown.png
+color: "rgyb"
+preferencesSettings: aiConfigs/settingSafe.aipref
+speedSettings: aiConfigs/settingBaseMedium.aispeed
+difficulty: normal
+stupidity: 60
+

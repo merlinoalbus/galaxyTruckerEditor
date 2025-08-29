@@ -1,0 +1,37 @@
+- type: planets
+  round: 1
+  planets:
+    - cargo: r1y1
+    - cargo: y1g1
+    - cargo: g1b2
+  days: -2
+- type: abandonedstation
+  round: 1
+  condition: 4
+  cargo: g2
+  days: -2
+- type: meteoric
+  round: 1
+  meteors: UrlU
+- type: abandonedship
+  round: 1
+  crew: -2
+  credits: 3
+  days: -1
+- type: stardust
+  round: 1
+- type: pirates
+  round: 1
+  condition: 5
+  fire: uU
+  credits: 4
+  days: -1
+- type: planets
+  round: 1
+  planets:
+    - cargo: r2
+    - cargo: y1g1b1
+    - cargo: g1b2
+  days: -3
+- type: openspace
+  round: 1

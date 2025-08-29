@@ -1,0 +1,824 @@
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: stardust
+  round: 1
+- type: stardust
+  round: 1
+- type: stardust
+  round: 1
+- type: stardust
+  round: 1
+- type: stardust
+  round: 1
+- type: stardust
+  round: 1
+- type: epidemic
+  round: 1
+- type: epidemic
+  round: 1
+- type: epidemic
+  round: 1
+- type: epidemic
+  round: 1
+- type: epidemic
+  round: 1
+- type: epidemic
+  round: 1
+- type: sabotage
+  round: 1
+- type: sabotage
+  round: 1
+- type: sabotage
+  round: 1
+- type: sabotage
+  round: 1
+- type: abandonedstation
+  round: 1
+  condition: 4
+  cargo: r1
+  days: -1
+- type: abandonedstation
+  round: 1
+  condition: 6
+  cargo: r2
+  days: -1
+- type: abandonedstation
+  round: 1
+  condition: 6
+  cargo: r2
+  days: -1
+- type: abandonedship
+  round: 1
+  crew: -2
+  credits: 3
+  days: -1
+- type: abandonedship
+  round: 1
+  crew: -2
+  credits: 3
+  days: -1
+- type: abandonedship
+  round: 1
+  crew: -2
+  credits: 3
+  days: -1
+- type: abandonedship
+  round: 1
+  crew: -2
+  credits: 3
+  days: -1
+- type: abandonedship
+  round: 1
+  crew: -3
+  credits: 4
+  days: -1
+- type: abandonedship
+  round: 1
+  crew: -3
+  credits: 4
+  days: -1
+- type: abandonedship
+  round: 1
+  crew: -3
+  credits: 4
+  days: -1
+- type: abandonedship
+  round: 1
+  crew: -3
+  credits: 4
+  days: -1
+- type: abandonedship
+  round: 1
+  crew: -3
+  credits: 4
+  days: -1
+- type: abandonedship
+  round: 1
+  crew: -3
+  credits: 4
+  days: -1
+- type: abandonedship
+  round: 1
+  crew: -4
+  credits: 5
+  days: -1
+- type: abandonedship
+  round: 1
+  crew: -4
+  credits: 5
+  days: -1
+- type: abandonedship
+  round: 1
+  crew: -4
+  credits: 5
+  days: -1
+- type: abandonedship
+  round: 1
+  crew: -4
+  credits: 5
+  days: -1
+- type: abandonedship
+  round: 1
+  crew: -5
+  credits: 6
+  days: -1
+- type: abandonedship
+  round: 1
+  crew: -5
+  credits: 6
+  days: -1
+- type: planets
+  round: 1
+  planets:
+    - cargo: r2
+    - cargo: r1
+    - cargo: r1
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: r2
+    - cargo: r1
+    - cargo: r1
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: r2
+    - cargo: r1
+    - cargo: r1
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: r3
+    - cargo: r2
+    - cargo: r1
+    - cargo: r1
+  days: -5
+- type: planets
+  round: 1
+  planets:
+    - cargo: r3
+    - cargo: r2
+    - cargo: r1
+    - cargo: r1
+  days: -5
+- type: planets
+  round: 1
+  planets:
+    - cargo: r3
+    - cargo: r2
+    - cargo: r1
+    - cargo: r1
+  days: -5
+- type: planets
+  round: 1
+  planets:
+    - cargo: r1y1
+    - cargo: r1g1
+    - cargo: r1b1
+    - cargo: r1
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: r2
+    - cargo: r2
+    - cargo: r1
+  days: -3
+- type: planets
+  round: 1
+  planets:
+    - cargo: r2
+    - cargo: r1
+  days: -2
+- type: meteoric
+  round: 1
+  meteors: lllrrr
+- type: meteoric
+  round: 1
+  meteors: uuuDdd
+- type: meteoric
+  round: 1
+  meteors: ulDDd
+- type: meteoric
+  round: 1
+  meteors: rlDrl
+- type: meteoric
+  round: 1
+  meteors: llDud
+- type: meteoric
+  round: 1
+  meteors: rrudD
+- type: meteoric
+  round: 1
+  meteors: Uurld
+- type: meteoric
+  round: 1
+  meteors: UuuuU
+- type: meteoric
+  round: 1
+  meteors: uUuUu
+- type: meteoric
+  round: 1
+  meteors: UUU
+- type: meteoric
+  round: 1
+  meteors: lUUr
+- type: meteoric
+  round: 1
+  meteors: UddD
+- type: meteoric
+  round: 1
+  meteors: UdD
+- type: meteoric
+  round: 1
+  meteors: rUrUr
+- type: meteoric
+  round: 1
+  meteors: llrrU
+- type: meteoric
+  round: 1
+  meteors: Duudd
+- type: meteoric
+  round: 1
+  meteors: UldlU
+- type: meteoric
+  round: 1
+  meteors: UrdrU
+- type: meteoric
+  round: 1
+  meteors: lLll
+- type: meteoric
+  round: 1
+  meteors: rRrr
+- type: meteoric
+  round: 1
+  meteors: DdRr
+- type: meteoric
+  round: 1
+  meteors: DdLl
+- type: meteoric
+  round: 1
+  meteors: RRd
+- type: meteoric
+  round: 1
+  meteors: LLd
+- type: combatzone
+  round: 1
+  competitions:
+    - crew:
+        days: -4
+    - engines:
+        cargo: -2
+    - cannons:
+        fire: ldD
+- type: combatzone
+  round: 1
+  competitions:
+    - crew:
+        days: -3
+    - engines:
+        cargo: -3
+    - cannons:
+        fire: rdD
+- type: combatzone
+  round: 1
+  competitions:
+    - crew:
+        cargo: -2
+    - engines:
+        cargo: -3
+    - cannons:
+        fire: dD
+- type: combatzone
+  round: 1
+  competitions:
+    - cannons:
+        cargo: -2
+    - engines:
+        cargo: -3
+    - crew:
+        fire: DD
+- type: combatzone
+  round: 1
+  competitions:
+    - crew:
+        cargo: -2
+    - cannons:
+        cargo: -3
+    - engines:
+        fire: ddD
+- type: combatzone
+  round: 1
+  competitions:
+    - crew:
+        cargo: -3
+    - cannons:
+        crew: -2
+    - engines:
+        cargo: -4
+- type: combatzone
+  round: 1
+  competitions:
+    - engines:
+        days: -4
+    - crew:
+        cargo: -3
+    - cannons:
+        cargo: -2
+- type: combatzone
+  round: 1
+  competitions:
+    - engines:
+        days: -4
+    - cannons:
+        cargo: -2
+    - crew:
+        fire: lrdd
+- type: openspace
+  round: 2
+- type: openspace
+  round: 2
+- type: openspace
+  round: 2
+- type: openspace
+  round: 2
+- type: openspace
+  round: 2
+- type: openspace
+  round: 2
+- type: openspace
+  round: 2
+- type: openspace
+  round: 2
+- type: openspace
+  round: 2
+- type: openspace
+  round: 2
+- type: openspace
+  round: 2
+- type: openspace
+  round: 2
+- type: stardust
+  round: 2
+- type: stardust
+  round: 2
+- type: epidemic
+  round: 2
+- type: epidemic
+  round: 2
+- type: epidemic
+  round: 2
+- type: epidemic
+  round: 2
+- type: sabotage
+  round: 2
+- type: sabotage
+  round: 2
+- type: abandonedstation
+  round: 2
+  condition: 8
+  cargo: r3
+  days: -2
+- type: abandonedstation
+  round: 2
+  condition: 9
+  cargo: r3
+  days: -2
+- type: abandonedship
+  round: 2
+  crew: -3
+  credits: 5
+  days: -1
+- type: abandonedship
+  round: 2
+  crew: -4
+  credits: 7
+  days: -2
+- type: abandonedship
+  round: 2
+  crew: -4
+  credits: 6
+  days: -1
+- type: abandonedship
+  round: 2
+  crew: -5
+  credits: 7
+  days: -1
+- type: abandonedship
+  round: 2
+  crew: -5
+  credits: 8
+  days: -2
+- type: abandonedship
+  round: 2
+  crew: -5
+  credits: 7
+  days: -1
+- type: abandonedship
+  round: 2
+  crew: -6
+  credits: 9
+  days: -2
+- type: abandonedship
+  round: 2
+  crew: -7
+  credits: 10
+  days: -2
+- type: planets
+  round: 2
+  planets:
+    - cargo: r2
+    - cargo: r2
+    - cargo: r1
+  days: -3
+- type: planets
+  round: 2
+  planets:
+    - cargo: r2
+    - cargo: r2
+    - cargo: r1
+  days: -3
+- type: planets
+  round: 2
+  planets:
+    - cargo: r2
+    - cargo: r2
+  days: -3
+- type: planets
+  round: 2
+  planets:
+    - cargo: r2
+    - cargo: r1
+    - cargo: r1
+  days: -3
+- type: planets
+  round: 2
+  planets:
+    - cargo: r3
+    - cargo: r2
+  days: -4
+- type: planets
+  round: 2
+  planets:
+    - cargo: r3
+    - cargo: r2
+    - cargo: r2
+    - cargo: r1
+  days: -4
+- type: planets
+  round: 2
+  planets:
+    - cargo: r4
+    - cargo: r3
+    - cargo: r2
+  days: -5
+- type: planets
+  round: 2
+  planets:
+    - cargo: r4
+    - cargo: r3
+    - cargo: r2
+    - cargo: r1
+  days: -5
+- type: meteoric
+  round: 2
+  meteors: DdLlL
+- type: meteoric
+  round: 2
+  meteors: DdRrR
+- type: meteoric
+  round: 2
+  meteors: uudDllrr
+- type: meteoric
+  round: 2
+  meteors: llddddrr
+- type: meteoric
+  round: 2
+  meteors: LllllD
+- type: meteoric
+  round: 2
+  meteors: RrrrrD
+- type: meteoric
+  round: 2
+  meteors: UURR
+- type: meteoric
+  round: 2
+  meteors: UULL
+- type: meteoric
+  round: 2
+  meteors: rrrLL
+- type: meteoric
+  round: 2
+  meteors: lllRR
+- type: meteoric
+  round: 2
+  meteors: LDR
+- type: meteoric
+  round: 2
+  meteors: UllDrr
+- type: combatzone
+  round: 2
+  competitions:
+    - cannons:
+        days: -5
+    - engines:
+        cargo: -4
+    - crew:
+        fire: rludD
+- type: combatzone
+  round: 2
+  competitions:
+    - engines:
+        days: -4
+    - crew:
+        cargo: -2
+    - cannons:
+        cargo: -5
+- type: combatzone
+  round: 2
+  competitions:
+    - crew:
+        cargo: -5
+    - cannons:
+        cargo: -4
+    - engines:
+        fire: ddDD
+- type: combatzone
+  round: 2
+  competitions:
+    - crew:
+        days: -5
+    - engines:
+        cargo: -4
+    - cannons:
+        fire: udddD
+- type: openspace
+  round: 3
+- type: openspace
+  round: 3
+- type: openspace
+  round: 3
+- type: openspace
+  round: 3
+- type: openspace
+  round: 3
+- type: openspace
+  round: 3
+- type: openspace
+  round: 3
+- type: openspace
+  round: 3
+- type: openspace
+  round: 3
+- type: openspace
+  round: 3
+- type: openspace
+  round: 3
+- type: openspace
+  round: 3
+- type: stardust
+  round: 3
+- type: epidemic
+  round: 3
+- type: epidemic
+  round: 3
+- type: sabotage
+  round: 3
+- type: sabotage
+  round: 3
+- type: sabotage
+  round: 3
+- type: sabotage
+  round: 3
+- type: sabotage
+  round: 3
+- type: abandonedstation
+  round: 3
+  condition: 9
+  cargo: r3
+  days: -2
+- type: abandonedstation
+  round: 3
+  condition: 10
+  cargo: r3
+  days: -2
+- type: abandonedship
+  round: 3
+  crew: -5
+  credits: 9
+  days: -2
+- type: abandonedship
+  round: 3
+  crew: -6
+  credits: 10
+  days: -2
+- type: abandonedship
+  round: 3
+  crew: -6
+  credits: 10
+  days: -2
+- type: abandonedship
+  round: 3
+  crew: -6
+  credits: 10
+  days: -2
+- type: abandonedship
+  round: 3
+  crew: -7
+  credits: 11
+  days: -2
+- type: abandonedship
+  round: 3
+  crew: -7
+  credits: 11
+  days: -2
+- type: abandonedship
+  round: 3
+  crew: -7
+  credits: 11
+  days: -2
+- type: abandonedship
+  round: 3
+  crew: -8
+  credits: 12
+  days: -2
+- type: planets
+  round: 3
+  planets:
+    - cargo: r3
+    - cargo: r2
+    - cargo: r1
+    - cargo: r1
+  days: -3
+- type: planets
+  round: 3
+  planets:
+    - cargo: r3
+    - cargo: r2
+    - cargo: r1
+    - cargo: r1
+  days: -3
+- type: planets
+  round: 3
+  planets:
+    - cargo: r4
+    - cargo: r3
+    - cargo: r2
+    - cargo: r1
+  days: -5
+- type: planets
+  round: 3
+  planets:
+    - cargo: r4
+    - cargo: r3
+    - cargo: r2
+    - cargo: r1
+  days: -5
+- type: planets
+  round: 3
+  planets:
+    - cargo: r3
+    - cargo: r2
+  days: -3
+- type: planets
+  round: 3
+  planets:
+    - cargo: r3
+    - cargo: r2
+    - cargo: r1
+  days: -3
+- type: planets
+  round: 3
+  planets:
+    - cargo: r3
+    - cargo: r3
+    - cargo: r2
+    - cargo: r2
+  days: -4
+- type: meteoric
+  round: 3
+  meteors: DDDllrr
+- type: meteoric
+  round: 3
+  meteors: UllDrrU
+- type: meteoric
+  round: 3
+  meteors: LuuuuuR
+- type: meteoric
+  round: 3
+  meteors: uullrrDD
+- type: meteoric
+  round: 3
+  meteors: DDDD
+- type: meteoric
+  round: 3
+  meteors: LlLuuD
+- type: meteoric
+  round: 3
+  meteors: RrRuuD
+- type: meteoric
+  round: 3
+  meteors: LLLL
+- type: meteoric
+  round: 3
+  meteors: RRRR
+- type: meteoric
+  round: 3
+  meteors: uurrDR
+- type: meteoric
+  round: 3
+  meteors: uullDL
+- type: meteoric
+  round: 3
+  meteors: dRRRrr
+- type: meteoric
+  round: 3
+  meteors: dLLLll
+- type: meteoric
+  round: 3
+  meteors: LRUD
+- type: combatzone
+  round: 3
+  competitions:
+    - crew:
+        cargo: -4
+    - cannons:
+        cargo: -4
+    - engines:
+        fire: UUDD
+- type: combatzone
+  round: 3
+  competitions:
+    - cannons:
+        cargo: -4
+    - crew:
+        cargo: -2
+    - engines:
+        fire: dDDDD
+- type: combatzone
+  round: 3
+  competitions:
+    - cannons:
+        days: -6
+    - engines:
+        cargo: -5
+    - crew:
+        cargo: -6
+- type: combatzone
+  round: 3
+  competitions:
+    - crew:
+        days: -6
+    - engines:
+        cargo: -5
+    - cannons:
+        fire: uLRDD

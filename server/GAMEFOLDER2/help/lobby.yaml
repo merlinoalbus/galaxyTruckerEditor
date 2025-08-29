@@ -1,0 +1,95 @@
+- type: txt
+  id: lobby_games_in_progress
+  bounds: [0, 200, 1536, 85]
+  vAlign: top
+  hAlign: center
+  style: heading
+  autoScaleY: true
+
+- type: txt
+  id: lobby_mission_details
+  bounds: [32, 822, 1008, 85]
+  vAlign: top
+  hAlign: center
+  style: heading
+  autoScaleY: true
+
+- type: txt
+  id: lobby_game_details
+  bounds: [32, 822, 1008, 85]
+  vAlign: top
+  hAlign: center
+  style: heading
+  autoScaleY: true
+
+- type: txt
+  id: lobby_chat
+  bounds: [32, 1240, 1008, 85]
+  vAlign: top
+  hAlign: center
+  style: heading
+  autoScaleY: true
+
+- type: img
+  src: help/yellow_arrow_right.png
+  id: arrow_new_game
+  bounds: [1036, 427, 88, 55]
+
+- type: txt
+  id: lobby_tap_to_create_new_game
+  bounds: [234, 471, 794, 170]
+  vAlign: top
+  hAlign: right
+  color: yellow
+  autoScaleY: true
+
+- type: txt
+  id: lobby_new_games
+  bounds: [800, 1024, 676, 85]
+  vAlign: top
+  hAlign: right
+  style: heading
+  autoScaleY: true    
+
+- type: txt
+  id: lobby_tap_to_see_details
+  bounds: [704, 1096, 780, 110]
+  vAlign: top
+  hAlign: right
+  color: yellow
+  autoScaleY: true
+
+- type: txt
+  id: lobby_create_session
+  bounds: [380, 822, 800, 95]
+  vAlign: top
+  hAlign: center
+  style: heading
+  autoScaleY: true
+
+- type: img
+  src: help/yellow_arrow_right.png
+  id: arrow_change_mission
+  bounds: [956, 407, 88, 55]
+
+- type: txt
+  id: lobby_tap_to_choose_different_mission
+  bounds: [154, 451, 794, 170]
+  vAlign: top
+  hAlign: right
+  color: yellow
+  autoScaleY: true
+
+- type: img
+  src: help/yellow_arrow_right.png
+  id: arrow_mission_rules
+  bounds: [1166, 457, 88, 55]
+
+- type: txt
+  id: lobby_tap_to_see_mission_rules
+  bounds: [1100, 501, 300, 170]
+  vAlign: top
+  hAlign: left
+  color: yellow
+  autoScaleY: true
+

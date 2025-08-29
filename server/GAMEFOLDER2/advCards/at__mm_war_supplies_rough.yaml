@@ -1,0 +1,90 @@
+- type: combatzone
+  round: 3
+  super: true
+  competitions:
+    - cannons:
+        cargo: -3
+    - crew:
+        crew: -6
+    - engines:
+        fire: ddDDD
+- type: combatzone
+  round: 3
+  super: true
+  competitions:
+    - crew:
+        fire: uuU
+    - engines:
+        cargo: -3
+    - cannons:
+        fire: UulRD
+- type: combatzone
+  round: 3
+  super: true
+  competitions:
+    - crew:
+        fire: ddd
+    - cannons:
+        crew: -7
+    - engines:
+        fire: rlUUD
+- type: combatzone
+  round: 3
+  super: true
+  competitions:
+    - cannons:
+        cargo: -5
+    - crew:
+        crew: -8
+    - engines:
+        fire: ddDDDD
+- type: combatzone
+  round: 3
+  super: true
+  competitions:
+    - crew:
+        fire: DD
+    - engines:
+        cargo: -5
+    - cannons:
+        fire: lrLRLR
+- type: combatzone
+  round: 3
+  super: true
+  competitions:
+    - crew:
+        cargo: -3
+    - cannons:
+        crew: -9
+    - engines:
+        fire: rLUUDD
+- type: combatzone
+  round: 3
+  super: true
+  competitions:
+    - cannons:
+        cargo: -7
+    - crew:
+        crew: -10
+    - engines:
+        fire: DDDDDD
+- type: combatzone
+  round: 3
+  super: true
+  competitions:
+    - crew:
+        fire: UUU
+    - engines:
+        cargo: -7
+    - cannons:
+        fire: LLLRRR
+- type: combatzone
+  round: 3
+  super: true
+  competitions:
+    - crew:
+        cargo: -6
+    - cannons:
+        fire: DDD
+    - engines:
+        fire: UUUDDD

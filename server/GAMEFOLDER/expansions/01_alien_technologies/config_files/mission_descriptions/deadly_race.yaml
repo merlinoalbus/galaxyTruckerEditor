@@ -1,0 +1,18 @@
+                                                  # expansion adventure config
+name:         deadly_race_title
+
+planetImg:    club.png
+
+avatarImg:    campaign/chair.png
+avatarColor:  avatarBgColor
+
+
+missions:
+- deadly_race1.yaml                                  # 1 star mission
+- deadly_race2.yaml                                  # 2 star mission
+- deadly_race3.yaml                                  # 3 star mission
+
+
+dialogScript:    deadly_race_Dlg
+endDialogsWin: [deadly_race1_Success, deadly_race2_Success, deadly_race3_Success]
+endDialogLoose: [deadly_race_Failure, deadly_race_Failure, deadly_race3_Failure]

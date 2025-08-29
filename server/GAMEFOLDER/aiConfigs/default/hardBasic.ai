@@ -1,0 +1,8 @@
+idName: "hard_basic"
+character: basic
+avatar: avatars/ai/hard_basic.png
+color: "rygb"
+preferencesSettings: aiConfigs/settingBase.aipref
+speedSettings: aiConfigs/settingBase.aispeed
+difficulty: hard  #hard, medium, easy
+stupidity: 20

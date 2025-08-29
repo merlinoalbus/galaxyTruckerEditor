@@ -1,0 +1,841 @@
+SCRIPTS
+
+SCRIPT newbieDlg
+
+  IF class3
+    SUB_SCRIPT tutorClass3Dlg
+    RETURN
+  END_OF_IF
+  IF tutor_moremissions
+    Delay 200
+    ShowDlgScene
+    ChangeChar tutor campaign/tutor-hidden.png
+    ShowChar tutor left
+    Delay 1500
+    ChangeChar tutor campaign/tutor-pizza.png
+    Delay 500
+    SayChar tutor "¿No ves que estoy ocupado? ¡Fuera de aquí!"
+    Delay 500
+    ChangeChar tutor campaign/tutor-hidden.png
+    Delay 500
+    HideChar tutor
+    Delay 500
+    HideDlgScene
+    RETURN
+  END_OF_IF
+  Delay 200
+  ShowDlgScene
+  ShowChar tutor left
+  Delay 200
+  IF tutor_somemissions
+    Say "Hola, ¿cómo va todo? Espero que estés content[g(o|a)] con tu ruta habitual."
+    MENU
+      OPT "Sí, solo venía a saludar."
+        HideDlgScene
+        RETURN
+      END_OF_OPT
+      OPT "¿Podrías recomendarme otra ruta?"
+        GO more_missions
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  IF tutorialRefused
+    IF playerIsCocky
+      Ask "Vaya, vaya, si es [g(Don|Doña)] Sabelotodo. ¿Has cambiado de opinión?"
+    ELSE
+      Ask "Vaya, vaya, si es [g(Don|Doña)] No Me Gustan Los Tutoriales. ¿Has cambiado de opinión?"
+    END_OF_IF
+    MENU
+      OPT "Nah. Solo quiero salir de aquí."
+        Say "De acuerdo. Puedes seguir la ruta habitual que lleva a la Taberna Espacial."
+        Delay 500
+        ShowNode "bar"
+        CenterMapByNode bar
+        Delay 750
+        ShowPath "R1-1a"
+        ShowPath "R1-1b"
+        Delay 500
+        CenterMapByPath R1-1a
+        Delay 1000
+        SET tutor_somemissions
+        Ask "Es un trayecto seguro y aburriiiido. Podrías pasar el resto de tu miserable existencia recorriéndolo de un lado a otro."
+        MENU
+          OPT "Me gusta la idea."
+            GO basic_route_agreed
+          END_OF_OPT
+          OPT "¡Yo quiero una misión de verdad!"
+            GO more_missions
+          END_OF_OPT
+        END_OF_MENU
+      END_OF_OPT
+    END_OF_MENU
+  ELSE
+    Ask "¡Ja! ¡Pero si es [g(el novato|la novata)]. Tu entrenamiento ha terminado. ¿Puedo ayudarte en algo más?"
+    MENU
+      OPT "No me has dicho lo que tengo que hacer ahora."
+        Say "¡Es verdad! Te recomiendo seguir la ruta habitual que lleva a la Taberna Espacial."
+        Delay 250
+        ShowNode "bar"
+        CenterMapByNode bar
+        Delay 750
+        ShowPath "R1-1a"
+        ShowPath "R1-1b"
+        Delay 500
+        CenterMapByPath R1-1a
+        Delay 1000
+        SET tutor_somemissions
+        Ask "Es un trayecto seguro y aburriiiido. Podrías pasar el resto de tu miserable existencia recorriéndolo de un lado a otro."
+        MENU
+          OPT "Me gusta la idea. Gracias."
+            Say "Me alegro. Pulsa sobre el cohete espacial y podrás partir."
+            GO basic_route_agreed
+          END_OF_OPT
+          OPT "¿No hay nada mejor?"
+            GO more_missions
+          END_OF_OPT
+        END_OF_MENU
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+
+  LABEL basic_route_agreed
+  HideDlgScene
+  RETURN
+
+  LABEL more_missions
+  Ask "Creo que por ahora tienes suficiente con eso."
+  MENU
+    OPT "Puede que tengas razón. Seguiré la ruta habitual."
+      GO newbie_end
+    END_OF_OPT
+    OPT "Ni hablar, con esa ruta no tengo ni para empezar."
+      Say "De acuerdo, valiente, tú lo has querido."
+      Say "Hay otra ruta. Lleva hasta un remoto rincón de la galaxia."
+      Delay 1000
+      ChangeChar tutor campaign/tutor-scary.png
+      Delay 500
+      AskChar tutor "Llena de peligros y amenazas estar."
+      MENU
+        OPT "Háblame de esos peligros."
+          Say "Cosas temibles e indescriptibles ser."
+          Say "No más preguntas responder ahora, joven pádawan."
+          Ask "Decir demasiado he."
+          MENU
+            OPT "¡Eh, venga ya!"
+              Delay 250
+              ChangeChar tutor campaign/tutor.png
+              Delay 250
+              Say "Vale, sí, hay unos cuantos meteoritos. ¿Content[g(o|a)]?"
+              Say "Ahora, largo de aquí. Están a punto de traerme una pizza."
+              GO more_missions1
+            END_OF_OPT
+          END_OF_MENU
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL more_missions1
+  HideChar tutor
+  ResetFocus btutor
+  Delay 250
+  ShowNode outpost
+  CenterMapByNode outpost
+  Delay 500
+  ShowPath "R1-2a"
+  ShowPath "R1-2b"
+  CenterMapByPath "R1-2a"
+  Delay 500
+  SET tutor_moremissions
+
+  LABEL newbie_end
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT embassyDlg
+
+  ShowDlgScene
+  IF purpleEscortFinished
+    ShowChar ambassador left
+    Delay 250
+    ChangeChar ambassador campaign/ambassador-happy.png
+    Delay 100
+    Say "Muchas gracias por sus servicios. Nos han resultado de gran ayuda."
+    Say "Aquí tiene 10 créditos por los inconvenientes. Provienen del fondo para Pagos Inesperados Emitidos a Completos Desconocidos."
+    AddCredits 10
+    Announce "Recibes 10 créditos."
+    Delay 250
+    HideButton bambassador
+    HideChar ambasador
+    HideDlgScene
+    RETURN
+  END_OF_IF
+  IF purpleAccepted
+    ShowChar ambassador left
+    Delay 250
+    Say "Por favor, debe darse prisa."
+    Say "No podemos permitir que surja un conflicto con los alienígenas de Th'kzw-r. Son todos grandes guerreros."
+    Delay 250
+    HideChar ambassador
+    HideDlgScene
+    RETURN
+  END_OF_IF
+  IFNOT wasAtEmbassy
+    SET wasAtEmbassy
+    ChangeChar ambassador campaign/ambassador-peek.png
+    ShowChar ambassador right
+    Delay 250
+    Ask "¡Pssst! ¿Le importaría seguirme por este oscuro pasadizo?"
+    MENU
+      OPT "Claro. ¿Por qué no?"
+        GO corridor
+      END_OF_OPT
+      OPT "Mi madre no me deja seguir a extraños por oscuros pasadizos."
+        Ask "Por favor, se trata de una cuestión muy delicada. No puedo hablar de ella en público."
+        MENU
+          OPT "Vale, te seguiré."
+            GO corridor
+          END_OF_OPT
+          OPT "¡No, no y no!"
+            SET corridorRefused
+            GO refused
+          END_OF_OPT
+        END_OF_MENU
+      END_OF_OPT
+    END_OF_MENU
+  ELSE
+    IF purpleOfferMade
+      ChangeChar ambassador campaign/ambassador.png
+      ShowChar ambassador left
+      Delay 250
+      Ask "¿Sí?"
+      MENU
+        OPT "¿Aún necesitas a alguien para escoltar a ya-sabes-quién hasta ya-sabes-dónde?"
+          Ask "Sí… ¿Eso es una oferta?"
+          MENU
+            OPT "Sí, me apunto."
+              GO acceptPurple
+            END_OF_OPT
+            OPT "No, simple curiosidad."
+              GO refused
+            END_OF_OPT
+          END_OF_MENU
+        END_OF_OPT
+      END_OF_MENU
+    ELSE
+      ChangeChar ambassador campaign/ambassador-peek.png
+      ShowChar ambassador  right
+      Delay 250
+      Say "¿Sí?"
+      MENU
+        OPT "He cambiado de opinión. Vamos a pasear por ese oscuro pasadizo."
+          GO corridor
+        END_OF_OPT
+        OPT "Solo estoy echando un vistazo."
+          GO refused
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_IF
+  END_OF_IF
+
+  LABEL corridor
+  Say "Gracias por acompañarme."
+  Delay 250
+  HideChar ambassador
+  Delay 1500
+  ChangeChar ambassador campaign/ambassador.png
+  ShowChar ambassador left
+  Delay 250
+  Say "Verá… estamos en una situación un tanto delicada. Hace poco tuvimos con nosotros a una delegación del planeta Th'kzw-r. Cuando partieron, se dejaron a uno de sus oficiales en tierra."
+  Ask "¿Sería tan amable de escoltar al señor K'wwfrg hasta su planeta?"
+  SET purpleOfferMade
+  MENU
+    OPT "Claro, llevaré al señor K'wwfrg hasta Th'kzw-r. No hay problema."
+      GO acceptPurple
+    END_OF_OPT
+    OPT "¿Por qué no buscas una nave diplomática que lo lleve? Son más elegantes."
+      Ask "Lo que ha sucedido es un tanto embarazoso para nuestro invitado. Preferiríamos tratar este asunto con discreción."
+      MENU
+        OPT "Claro, cuenta conmigo."
+          GO acceptPurple
+        END_OF_OPT
+        OPT "Será mejor que te busques a otr[g(o|a)]."
+          GO refused
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL acceptPurple
+  Say "¡Cuánto me alegro de oírlo! Muchas gracias."
+  Delay 250
+  ChangeChar ambassador campaign/ambassador-happy.png
+  Delay 250
+  Say "¿Señor K'wwfrg?"
+  Delay 1000
+  ShowChar purpleDipl right
+  Delay 250
+  SayChar ambassador "[g(Este caballero|Esta dama)] lo acompañará a su destino."
+  Delay 250
+  AskChar purpleDipl "¡Wzrr kh'gwh qt Th'kzw-r!"
+  MENU
+    OPT "De nada."
+      Delay 250
+      HideChar purpleDipl
+      Delay 500
+      ChangeChar ambassador campaign/ambassador.png
+      Delay 250
+      SayChar ambassador "Se lo agradecemos profundamente. Recibirá su recompensa en cuanto regrese de la misión."
+      SET purpleAccepted
+      ShowNode "purpleHome"
+      ShowPath "U1-5purple"
+      SET purpleAccepted
+      ResetFocus bambassador
+      IF VIPTried
+        HideButton bvip
+        ShowButton bvip2
+      END_OF_IF
+      HideChar ambassador
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL refused
+  Say "Hm, entiendo... Que tenga un buen día."
+
+  LABEL sceneEnd
+  Delay 1000
+  HideChar ambassador
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT barDlg
+
+  ShowDlgScene
+  ShowChar bartender left
+  Ask "Hola. ¿Puedo hacer algo por ti?"
+  IF boozeQuestHeard
+    MENU
+      OPT_IF mechDebtPending "Me envía una mecánica."
+        GO bar_debt
+      END_OF_OPT
+      OPT_IF boozeQuestTried "¿Necesitas que entregue algo más?"
+        GO booze_quest
+      END_OF_OPT
+      OPT_IF boozeQuestRefused "¿Aún necesitas a alguien para esa entrega?"
+        GO booze_quest
+      END_OF_OPT
+      OPT "Quiero gastar unos cuantos créditos en este bar. ¡Saca la mejor botella que tengas!"
+        GO drinking
+      END_OF_OPT
+      OPT "Huy, perdona. He entrado sin querer."
+        Say "Un error lo tiene cualquiera. Que pases un buen día."
+        GO leaving_bar
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  MENU
+    OPT_IF mechDebtPending "Me envía una mecánica."
+      GO bar_debt
+    END_OF_OPT
+    OPT "¡Prepárame tu mejor cóctel!"
+      Ask "Marchando. Será un crédito, por favor."
+      IF_HAS_CREDITS 1
+        MENU
+          OPT "Me lo puedo permitir. He conseguido algo de dinero durante el vuelo. Aquí lo tienes."
+            Say "Gracias."
+            AddCredits -1
+            Announce "Entregas 1 crédito al camarero."
+            GO anything_else
+          END_OF_OPT
+          OPT "Es demasiado caro. Me marcho de aquí."
+            Say "Como quieras. Que pases un buen día."
+            GO leaving_bar
+          END_OF_OPT
+        END_OF_MENU
+      ELSE
+        MENU
+          OPT "Oye, mejor olvídalo. Ahora mismo no voy bien de dinero."
+            Say "Como quieras. Que pases un buen día."
+            GO leaving_bar
+          END_OF_OPT
+        END_OF_MENU
+      END_OF_IF
+    END_OF_OPT
+    OPT "Solo estoy echando un vistazo. Tienes un bar muy bonito."
+      GO nice_bar
+    END_OF_OPT
+    OPT "Este local apesta. Yo me marcho."
+      Say "Como quieras. Que pases un buen día."
+      GO leaving_bar
+    END_OF_OPT
+  END_OF_MENU
+  HideChar programmer
+  HideDlgScene
+
+  LABEL anything_else
+  Say "¿Algo más?"
+  MENU
+    OPT "Eso mismo me pregunto yo. ¿No tienes algo más? ¿Una misión, por ejemplo?"
+      Say "¿Perdón?"
+      MENU
+        OPT "Esto es un juego y he pagado por una bebida virtual que nunca voy a probar. ¡Tiene que llevarme a una misión!"
+          Delay 200
+          ChangeChar bartender campaign/bartender-close.png
+          Delay 200
+          Say "¡Ah, ya entiendo qué ha pasado! Has pulsado en la opción de diálogo equivocada."
+          Say "Para acceder a la misión tenías que echar un vistazo al bar. Era gratis."
+          Delay 200
+          ChangeChar bartender campaign/bartender.png
+          Delay 200
+          Say "¿Algo más?"
+          MENU
+            OPT_IFNOT bar_quest_insist "Dame una misión."
+              SET bar_quest_insist
+              Ask "Lo siento, aquí solo damos bebidas. ¿Se te ofrece algo más?"
+            END_OF_OPT
+            OPT "¡Otra copa, por favor!"
+              GO drinking
+            END_OF_OPT
+            OPT "No, gracias. Solo estoy echando un vistazo. Tienes un bar muy bonito."
+              GO nice_bar
+            END_OF_OPT
+          END_OF_MENU
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL drinking
+  IF_HAS_CREDITS 1
+    Say "Marchando. Será un crédito, por favor."
+    AddCredits -1
+    Announce "Entregas 1 crédito al camarero."
+    MENU
+      OPT "*Glup*"
+        Ask "¿Algo más?"
+        MENU
+          OPT "Sí, ponme otra copa."
+            GO drinking
+          END_OF_OPT
+          OPT "Hm, creo que llevo una copa de más. Debería irme ya."
+            Say "Gracias, que pases un buen día."
+            GO leaving_bar_in_shame
+          END_OF_OPT
+        END_OF_MENU
+      END_OF_OPT
+    END_OF_MENU
+  ELSE
+    Say "Será un crédito, por favor... Oh, veo que te has quedado a cero."
+    Say "Toma, un caramelo de regalo. Ahora, por favor, abandona el local por la puerta de atrás."
+    GO leaving_bar_in_shame
+  END_OF_IF
+
+  LABEL nice_bar
+  Say "Gracias. Una vez fue un gran bar."
+  MENU
+    OPT "¿Una vez?"
+      Say "El negocio ya no marcha tan bien como antes. De hecho, estamos a punto de cerrar."
+      Say "Tengo el almacén lleno de botellas de primera calidad, pero hoy en día los camioneros buscan cosas más baratas."
+      Ask "Habría sido mejor abrir el bar en Régula. Esa gente sabe apreciar la calidad."
+      MENU
+        OPT "¿Por qué no les vendes los excedentes?"
+          SET boozeQuestHeard
+          Say "Decirlo es fácil, pero la ruta que lleva hasta Régula es demasiado peligrosa para transportar mercancía frágil."
+          Ask "Dudo que pueda encontrar a alguien lo bastante loco como para comprometerse a entregarlo."
+          MENU
+            OPT "¡Lo tienes delante!"
+              GO booze_quest
+            END_OF_OPT
+            OPT "Yo también lo dudo. Buena suerte, tengo que irme."
+              SET boozeQuestRefused
+              Say "Gracias, que pases un buen día."
+              GO leaving_bar
+            END_OF_OPT
+          END_OF_MENU
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL leaving_bar_in_shame
+  Delay 200
+  ChangeChar bartender campaign/bartender-close.png
+  Delay 200
+  Say "Ah... Si no te importa, ¿serías tan amable de salir por la puerta de atrás?"
+
+  LABEL leaving_bar
+  Delay 300
+  HideChar bartender
+  HideDlgScene
+  RETURN
+
+  LABEL booze_quest
+  Delay 200
+  ChangeChar bartender campaign/bartender-close.png
+  Delay 200
+  Say "¿De verdad serías tan amable?"
+  Ask "¿Cuántas cajas de botellas quieres llevar?"
+  MENU
+    OPT "Dame dos cajas. No habrá ningún problema."
+      HidePath "R1-3a"
+      ShowPath "R1-3a2"
+      Say "¡Qué generoso por tu parte!"
+      Say "Las dejaré preparadas en el almacén."
+      GO quest_agreed
+    END_OF_OPT
+    OPT "Verás, mi nave no es muy grande que digamos. Con una caja será suficiente."
+      HidePath "R1-3a"
+      ShowPath "R1-3a1"
+      Say "Es un detalle por tu parte."
+      Say "La dejaré preparada en el almacén."
+      GO quest_agreed
+    END_OF_OPT
+    OPT "¿Sabes qué? Olvídalo. El viaje es demasiado peligroso para cosas tan frágiles."
+      SET boozeQuestRefused
+      RESET boozeQuestTried
+      Say "Supongo que tienes razón… Que pases un buen día."
+      GO leaving_bar
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL quest_agreed
+  ResetFocus bbartender
+  SET boozeQuestAccepted
+  RESET boozeQuestRefused
+  Delay 300
+  ChangeChar bartender campaign/bartender.png
+  Say "Muchas gracias y que pases un buen día."
+  GO leaving_bar
+
+  LABEL bar_debt
+  IF debtRefused
+    ChangeChar bartender campaign/bartender-close.png
+    Ask "¿Has venido a saldar esa deuda?"
+  ELSE
+    Say "Creo que sé a quién te refieres. Esa señorita tenía un nombre inolvidable."
+    Say "Tan inolvidable como la fiesta que montó en este bar."
+    Say "Por desgracia, también recuerdo la fortuna que se gastó con sus amigos."
+    ChangeChar bartender campaign/bartender-close.png
+    Ask "¿Por algún casual te ha enviado a saldar la deuda?"
+  END_OF_IF
+  MENU
+    OPT "Sí, a eso he venido."
+      IF_HAS_CREDITS 21
+        SET hasEnoughForDebt
+      END_OF_IF
+      Ask "¡Qué gran noticia! Serán 21 créditos."
+      MENU
+        OPT_IFNOT hasEnoughForDebt "Huy, creo que me he dejado la cartera en la nave."
+          GO bar_debt_refused
+        END_OF_OPT
+        OPT_IF hasEnoughForDebt "Claro, aquí los tienes."
+          RESET mechDebtPending
+          Delay 300
+          AddCredits -21
+          Announce "Entregas 21 créditos al camarero."
+          ChangeChar bartender campaign/bartender.png
+          ResetFocus bbartender
+          Ask "Muchas gracias. Espero que pases un día encantador."
+          MENU
+            OPT "Hasta pronto."
+              UnlockAchievement camp_honesty
+              GO leaving_bar
+            END_OF_OPT
+            OPT "Espera. ¿Ya está? ¿Me das las gracias y punto?"
+              EXIT_MENU
+            END_OF_OPT
+          END_OF_MENU
+          Ask "Has saldado la deuda de la señorita y todo vuelve a estar en orden. ¿Qué más quieres?"
+          MENU
+            OPT "No lo sé. Algún tipo de recompensa... ¡Por ejemplo, una misión!"
+              Say "Lo siento, no me quedan misiones en la barra."
+              Say "¿Qué tal un logro?"
+              UnlockAchievement camp_honesty
+              Delay 1500
+              Say "Ya está. Espero que te hayas quedado a gusto."
+              Say "Que pases un buen día."
+              GO leaving_bar
+            END_OF_OPT
+          END_OF_MENU
+        END_OF_OPT
+        OPT_IFNOT debtConfusion "Hm. Ella me había dicho que eran 20 créditos."
+          SET debtConfusion
+          ChangeChar bartender campaign/bartender.png
+          Ask "¿Cómo? Estoy seguro de que eran 21, aquí tengo la cuenta."
+        END_OF_OPT
+        OPT "¿Sabes? No creo que hablemos de la misma persona. Mejor me llevo mi dinero."
+          GO bar_debt_refused
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+    OPT "¿Sabes? No creo que hablemos de la misma persona. Mejor me llevo mi dinero."
+      GO bar_debt_refused
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL bar_debt_refused
+  SET debtRefused
+  Delay 500
+  Say "Ya veo."
+  ChangeChar bartender campaign/bartender.png
+  Say "Que pases un buen día."
+  GO leaving_bar
+END_OF_SCRIPT
+
+SCRIPT regulaDlg
+
+  ShowDlgScene
+  ShowChar clerk left
+  Delay 1200
+  ChangeChar clerk campaign/clerk-frown.png
+  Delay 500
+  IF class3
+    Ask "¿Usted de nuevo? ¿Qué quiere ahora?"
+    MENU
+      OPT "En realidad, nada."
+        GO leaveClerk
+      END_OF_OPT
+      OPT "¿Qué tal una licencia para naves de Clase IV?"
+        ChangeChar clerk campaign/clerk.png
+        Ask "No hay naves de Clase IV. ¿De dónde ha sacado esa tontería?"
+        MENU
+          OPT_IFNOT gtabe "Hm... De las expansiones del juego de mesa, creo."
+            SET gtabe
+            Ask "Sigo sin saber a qué se refiere. Ya tiene edad para saber que las naves de Clase IV no existen."
+          END_OF_OPT
+          OPT "¿Qué puedo hacer ahora?"
+            Say "Eso es asunto suyo. Por si no lo había notado, yo no soy su niñera."
+            Delay 300
+            ChangeChar clerk campaign/clerk-frown.png
+            Say "Visite a su instructor de vuelo si no es capaz de pensar solit[g(o|a)]."
+            GO leaveClerk
+          END_OF_OPT
+        END_OF_MENU
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  IF class3Asked
+    Say "¿Usted de nuevo? Ya se lo he dicho. Las naves de Clase III están fuera de su alcance."
+    ChangeChar clerk campaign/clerk.png
+    Ask "O es que... ¿Tiene 450 créditos y dos permisos de vuelo emitidos por especies alienígenas?"
+    RESET oneApproval
+    RESET noApproval
+    IF brownLicenseApproval
+      IF purpleLicenseApproval
+        SET twoApprovals
+      ELSE
+        SET oneApproval
+      END_OF_IF
+    ELSE
+      IF purpleLicenseApproval
+        SET oneApproval
+      ELSE
+        SET noApproval
+      END_OF_IF
+    END_OF_IF
+    IF_HAS_CREDITS 450
+      MENU
+        OPT_IF twoApprovals "Claro que sí. ¿Por quién me tomas?"
+          ChangeChar clerk campaign/clerk.png
+          Delay 200
+          Say "¿Lo dice en serio? Déjeme ver..."
+          Delay 500
+          ChangeChar clerk campaign/clerk-frown.png
+          Delay 1500
+          ChangeChar clerk campaign/clerk.png
+          Delay 300
+          Say "Hm... Parece que los papeles están en regla y hay fondos en la cuenta bancaria."
+          Delay 300
+          Say "Oh."
+          Delay 300
+          Say "De acuerdo. Permita que le felicite por su recién obtenida licencia para naves de Clase III."
+          AddCredits -450
+          Announce "Entregas 450 créditos. ¡Has desbloqueado las naves de Clase III!"
+          UnlockAchievement camp_class3
+          Delay 500
+          SUB_SCRIPT class3_inits
+          ResetFocus bclerk
+          GO afterUnlock
+        END_OF_OPT
+        OPT_IF oneApproval "El dinero no será un problema. Además, tengo uno de los permisos."
+          Say "No le servirá de nada hasta que consiga el otro."
+          Say "Ahora, si me disculpa, tengo trabajo que hacer."
+          GO leaveClerk
+        END_OF_OPT
+        OPT_IF noApproval "Bueno... Tengo el dinero."
+          Say "Me alegro por usted, que lo disfrute. Aquí no le servirá de nada hasta que consiga los permisos."
+          Say "Ahora, si me disculpa, tengo trabajo que hacer."
+          GO leaveClerk
+        END_OF_OPT
+      END_OF_MENU
+    ELSE
+      MENU
+        OPT_IF twoApprovals "Well ... I have the documents you asked for ..."
+          Say "The documents are useless if you cannot pay the processing fee."
+          Say "No le servirán de nada hasta que pueda pagar las tasas de emisión."
+          GO leaveClerk
+        END_OF_OPT
+        OPT_IF oneApproval "Tengo un permiso."
+          Say "¿Un permiso? ¿Me molesta para decirme que tiene un permiso? ¡Lo que hay que aguantar!"
+          GO leaveClerk
+        END_OF_OPT
+        OPT_IF noApproval "Aún no, pero estoy trabajando en ello."
+          Say "No, [g(señor mío|señora mía)]. Usted no está trabajando en ello. ¡Usted me está haciendo perder el tiempo!"
+          GO leaveClerk
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_IF
+  END_OF_IF
+  IF class2
+    Ask "Vaya, usted por aquí… Ya tiene una licencia de Clase II. ¿Qué quiere ahora?"
+    MENU
+      OPT "Hm, nada en especial."
+        GO leaveClerk
+      END_OF_OPT
+      OPT "¿Una licencia de Clase III?"
+        Say "¿Una licencia de Clase III? No creo que sea buena idea."
+        ChangeChar clerk campaign/clerk.png
+        Say "Los requisitos son muy estrictos."
+        Say "Necesita 450 créditos para costear las tasas de emisión y permisos firmados por dos especies alienígenas."
+        Say "Con todo el respeto, [g(señor|señorita)], creo que carece de la habilidad diplomática necesaria para que los alienígenas validen su propuesta."
+        SET class3Asked
+        ResetFocus bclerk
+        IF purpleUnlocked
+          SetFocus bpurple
+        END_OF_IF
+        IF brownUnlocked
+          ShowButton bmerch2
+          SetFocus bmerch2
+        END_OF_IF
+        Say "Ahora, si me disculpa, tengo trabajo que hacer."
+        GO leaveClerk
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  Ask "¿Qué quiere?"
+  MENU
+    OPT "Nada en especial."
+      GO leaveClerk
+    END_OF_OPT
+    OPT "Me gustaría obtener una licencia para naves de Clase II."
+      ResetFocus bclerk
+      SetFocusIfCredits bclerk 100
+      Ask "¡Cuesta 100 créditos!"
+      RESET tooMuchFor2
+      RESET whereToGetSoMuch
+      RESET hasFor2
+      RESET hasFewer
+      IF_HAS_CREDITS 100
+        SET hasFor2
+      ELSE
+        SET tooMuchFor2
+      END_OF_IF
+      IF_HAS_CREDITS 50
+        SET hasFewer
+        IF clerkBribe
+          IF clerkDiscount
+            RESET hasFewer
+          END_OF_IF
+        END_OF_IF
+      END_OF_IF
+      MENU
+        OPT_IF hasFor2 "De acuerdo. Toma el dinero y dame mi licencia."
+          Delay 100
+          ChangeChar clerk campaign/clerk.png
+          Delay 300
+          Say "¿En serio? ¿Tiene el dinero?"
+          Say "En ese caso, aquí tiene su licencia, [g(señor|señorita)]."
+          Delay 300
+          AddCredits -100
+          Announce "Entregas 100 créditos al burócrata. ¡Has desbloqueado las naves de Clase II!"
+          UnlockAchievement camp_class2
+          Delay 500
+          SUB_SCRIPT class2_inits
+          HideButton bclerk
+          GO afterUnlock
+        END_OF_OPT
+        OPT_IF tooMuchFor2 "¡Eso es mucho dinero!"
+          RESET tooMuchFor2
+          SET whereToGetSoMuch
+          Delay 300
+          ChangeChar clerk campaign/clerk.png
+          Say "Le aseguro que la licencia cuesta exactamente lo que debería costar."
+          Delay 500
+          ChangeChar clerk campaign/clerk-frown.png
+          Ask "No podemos dejar que la chusma pilote naves de élite."
+        END_OF_OPT
+        OPT_IF whereToGetSoMuch "¿Cómo se supone que voy a conseguir esa fortuna?"
+          RESET whereToGetSoMuch
+          Say "Trabajando. Igual que yo lo hago para cobrar mi sueldo."
+          Say "Aquí sentado, 4 horas al día, 3 días a la semana, con apenas una hora para comer."
+          Say "Por lo que he oído, los camioneros como usted solo tiene que volar de un lado a otro mientras recogen dinero allá por donde pasan."
+          Ask "Luego vienen y se lo gastan aquí, a cambio de que les firme un impreso."
+        END_OF_OPT
+        OPT_IF hasFewer "¿Qué tal si te doy 50 créditos y lo dejamos estar?"
+          Delay 900
+          Ask "¿Está intentando sobornarme?"
+          MENU
+            OPT_IFNOT clerkDiscount "No, estoy intentando conseguir un descuento."
+              Delay 300
+              ChangeChar clerk campaign/clerk.png
+              Say "[g(Señor|Señorita)], está usted en Régula."
+              Say "No tenemos constancia de un solo descuento en los últimos 200 años."
+              Delay 200
+              ChangeChar clerk campaign/clerk-frown.png
+              Delay 300
+              Say "De hecho, si consulto la normativa, probablemente encuentre unos cuantos recargos aplicables a su caso."
+              Ask "O puede pagar los 100 créditos y aquí no ha pasado nada."
+              SET clerkDiscount
+              EXIT_MENU
+            END_OF_OPT
+            OPT_IFNOT clerkBribe "¿Y si así fuera?"
+              Delay 300
+              ChangeChar clerk campaign/clerk.png
+              Say "Tendría que cumplimentar el impreso B-29 para Sobornos y Otras Remuneraciones No Establecidas."
+              Say "Algo que, a juzgar por su nivel intelectual, dudo que pueda conseguir."
+              Say "Las regulaciones que gobiernan los intentos de soborno son bastante complejas."
+              Say "Le sugiero que descarte la idea. El arte de la corrupción se perfeccionó en este lugar hace ya siglos."
+              Delay 200
+              ChangeChar clerk campaign/clerk-frown.png
+              Delay 300
+              Ask "Para [g(un aficionado|una aficionada)] como usted, resulta mucho más práctico pagar los 100 créditos."
+              SET clerkBribe
+              EXIT_MENU
+            END_OF_OPT
+            OPT "Hm... Olvida lo que he dicho, ¿vale?"
+              Ask "Por supuesto. ¿Está list[g(o|a)] para pagar los 100 créditos?"
+              EXIT_MENU
+            END_OF_OPT
+          END_OF_MENU
+        END_OF_OPT
+        OPT "Te prometo que me lo pensaré. Adiós."
+          GO leaveClerk
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL afterUnlock
+  MENU
+    OPT "Adiós, ¡me largo de aquí!"
+      GO leaveClerk
+    END_OF_OPT
+    OPT "Muchas gracias por todo."
+      GO leaveClerk
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL leaveClerk
+  Delay 500
+  ChangeChar clerk campaign/clerk-frown.png
+  Delay 500
+  HideChar clerk
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+END_OF_SCRIPTS

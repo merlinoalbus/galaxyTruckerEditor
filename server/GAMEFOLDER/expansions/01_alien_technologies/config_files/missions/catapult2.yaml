@@ -1,0 +1,39 @@
+name:         catapult_title                      # id of mission name string - localized 
+
+
+# txt + img
+new:          catapult_new
+rules:        catapult_rules
+objectives:   catapult2_objectives
+images:       [[parts/catapult.png, 256, 256, ["Catapult", "CatapultMeteors", "CatapultEnemies"]]]
+
+
+gameType:     realtime                            # values: realtime/turnbased; If mentioned this value can not be changed in GUI setting (lobby) by player.
+
+
+rounds:
+- roundType:  STIII
+  pileConfig: at__catapult.yaml
+
+
+shipPlans:    [III-random]                         # names of all available ship plans. If not mentioned default plans will be used. Should by only one ship plan for one flight.
+
+
+opponents:
+  - at__pirate-medium-man1
+  - at__pirate-medium-man2
+#- "medium_basic"
+#- "medium_basic"
+
+
+deckScript:   at__Catapult_Deck_medium          # adventure cards deck building script
+
+
+winCondition:
+              scoreWinner: true                   # values: scoreWinner / didntGiveUp; used in expansion, to find ouf when is mission completed succefully
+              didntGiveUp: true
+              allEnemiesAreDefeated: true
+
+
+evaluation:                                       # You can mention only those values you want edit. But you have to repeat (copy&paste) the rules for each flight.  
+  STI:

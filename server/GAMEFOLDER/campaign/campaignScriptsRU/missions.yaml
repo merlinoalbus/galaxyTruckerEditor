@@ -1,0 +1,632 @@
+- name: R1-1a
+  source: newbie
+  destination: bar
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_first_mission"]
+  caption: "Rotta Standard per Bar Spaziale"
+  description: "Una buona missione per iniziare, per un camionista alle prime armi."
+- name: R1-1b
+  source: bar
+  destination: newbie
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "basic1easy3p"]
+  caption: "Rotta Standard per l'Astroporto dei Novizi"
+  description: "Una rotta standard. Niente di speciale."
+- name: R1-2a
+  source: newbie
+  destination: outpost
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_rough_mission"]
+  caption: "Rotta Estesa per l'Ambasciata"
+  description: "È stata segnalata un'alta densità di meteoriti su questa rotta!"
+- name: R1-2b
+  source: outpost
+  destination: newbie
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_rough_mission"]
+  caption: "Rotta Estesa per l'Astroporto dei Novizi"
+  description: "È stata segnalata un'alta densità di meteoriti su questa rotta!"
+- name: R1-3a
+  source: bar
+  destination: regula
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "nobooze"]
+  caption: "Rotta Standard per Regulas"
+  description: "Aspettati sabotaggi lungo il percorso."
+- name: R1-3a1
+  source: bar
+  destination: regula
+  missiontype: UNIQUE
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_booze_1"]
+  caption: "Consegna di bevande"
+  description: "Hai promesso di consegnare una cassa di merci fragili a Regulas. Aspettati sabotaggi lungo il percorso."
+- name: R1-3a2
+  source: bar
+  destination: regula
+  missiontype: UNIQUE
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_booze_2"]
+  caption: "Consegna di bevande"
+  description: "Hai promesso di consegnare due casse di merci fragili a Regulas. Aspettati sabotaggi lungo il percorso."
+- name: R1-3b
+  source: regula
+  destination: bar
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "nobooze"]
+  caption: "Rotta Standard per il Bar Spaziale"
+  description: "Aspettati sabotaggi lungo il percorso."
+- name: R1-4a
+  source: outpost
+  destination: regula
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_road_closed"]
+  caption: "Rotta Chiusa"
+  description: "Questa rotta è chiusa a causa di intense tempeste di meteoriti e pericolosi venti cosmici trasversali."
+- name: R1-4a1
+  source: outpost
+  destination: regula
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_rich_girl"]
+  caption: "Rotta per Regulas"
+  description: "Questa rotta è chiusa a causa di tempeste di meteoriti... ma chi se ne importa?!"
+- name: U1-4a
+  source: outpost
+  destination: regula
+  missiontype: UNIQUE
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_rich_girl"]
+  caption: "Venti Cosmici Trasversali Pericolosi"
+  description: "Questa rotta è chiusa a causa di tempeste di meteoriti... ma hai detto a una collega camionista che l'avresti comunque percorsa."
+- name: R1-4b
+  source: regula
+  destination: outpost
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "basic1medium3p"]
+  caption: "Rotta Standard per l'Ambasciata"
+  description: "Si dice che all'Ambasciata stia succedendo qualcosa..."
+- name: R1-4b1
+  source: regula
+  destination: outpost
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_road_closed"]
+  caption: "Rotta Chiusa per l'Ambasciata"
+  description: "Questa rotta è stata chiusa a causa di tempeste di meteoriti con pericolosi venti cosmici trasversali."
+- name: R1-4b2
+  source: regula
+  destination: outpost
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_meteors_side"]
+  caption: "Rotta per l'Ambasciata"
+  description: "Questa rotta è chiusa a causa di tempeste di meteoriti... ma chi se ne importa?!"
+- name: U1-5purple
+  source: outpost
+  destination: purpleHome
+  missiontype: UNIQUE
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_purpleAlien"]
+  caption: "Lasciato solo e abbandonato."
+  description: "Hai promesso di scortare un Alieno Viola verso il suo pianeta natale Th'kzaw-r."
+- name: R1-5a
+  source: outpost
+  destination: purpleHome
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "adv1mediumRand"]
+  caption: "Rotta Regolare per Th'kzaw-r"
+  description: "Rotta diplomatica trafficata. Cerca di imparare le basi della loro lingua durante il viaggio."
+- name: R1-5b
+  source: purpleHome
+  destination: outpost
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_leavingPurple"]
+  caption: "Rotta Regolare per l'Ambasciata"
+  description: "Questa rotta ti porta fuori dal territorio alieno."
+- name: R1-6a
+  source: outpost
+  destination: brownHome
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "adv1mediumRand"]
+  caption: "Rotta per il Silentio"
+  description: "Non c'è molto traffico diplomatico su questa rotta. Come dicono i locali: '...'"
+- name: R1-6b
+  source: brownHome
+  destination: outpost
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "adv1mediumRand"]
+  caption: "Rotta per l'Ambasciata"
+  description: "Questa rotta ti porta fuori dal territorio alieno."
+- name: U1-7a
+  source: regula
+  destination: workshop
+  missiontype: UNIQUE
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_people_delivery"]
+  caption: "Piazzamento Lavoratori"
+  description: "Hai promesso ad una meccanica che avresti portato alcuni lavoratori alla fabbrica spaziale per lei."
+- name: R1-7a
+  source: regula
+  destination: workshop
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "peopleDelivery"]
+  caption: "Rotta Regolare per Fabbrica Spaziale"
+  description: "Hai promesso ad una meccanica che avresti portato alcuni lavoratori alla fabbrica spaziale per lei. Attenzione alle Epidemie."
+- name: R1-7b
+  source: workshop
+  destination: regula
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "universalEpidemic"]
+  caption: "Rotta Sperimentale per Regulas"
+  description: "EssePiA S.p.A. sta testando nuovi componenti tecnologici su questa rotta. Ma fai attenzione alle Epidemie."
+- name: R1-8a
+  source: bar
+  destination: workshop
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "adv1mediumRand"]
+  caption: "Rotta Regolare per la Fabbrica Spaziale"
+  description: "Solo una rotta regolare."
+- name: R1-8b
+  source: workshop
+  destination: bar
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "universalSabotages"]
+  caption: "Rotta Sperimentale per il Bar Spaziale"
+  description: "EssePiA S.p.A. sta testando nuovi componenti tecnologici su questa rotta. Ma fai attenzione ai Sabotaggi."
+- name: U1-9a
+  source: purpleHome
+  destination: brownHome
+  missiontype: UNIQUE
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_merchant"]
+  caption: "Missione di Scorta"
+  description: "Hai promesso di proteggere un uomo d'affari durante il suo viaggio verso il pianeta natale degli Alieni Marroni."
+- name: R1-9a
+  source: purpleHome
+  destination: brownHome
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "alienPlanets"]
+  caption: "Rotta per il Silentio"
+  description: "Una rotta tra due Pianeti Alieni. Tratta relativamente ostile."
+- name: R1-9b
+  source: brownHome
+  destination: purpleHome
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "alienPlanets"]
+  caption: "Rotta per Th'kzaw-r"
+  description: "Una rotta tra due Pianeti Alieni. Tratta relativamente ostile."
+- name: R3-10a
+  source: regula
+  destination: brownHome
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRand"]
+  caption: "Rotta Diretta per il Silentio"
+  description: "Luogo di vacanza popolare. Nessuna barriera linguistica. Il frasario turistico ha solo una pagina. Ed è vuota."
+- name: R3-10b
+  source: brownHome
+  destination: regula
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRand"]
+  caption: "Rotta per Regulas"
+  description: "Viaggia dal luogo più tranquillo e rilassato della Galassia al più teso."
+- name: R3-11a
+  source: regula
+  destination: newbie
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRand"]
+  caption: "Rotta Diretta per l'Astroporto dei Novizi"
+  description: "Ritorna a dove tutto è iniziato."
+- name: R3-11b
+  source: newbie
+  destination: regula
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRand"]
+  caption: "Nuova Rotta per Regulas"
+  description: "Anche l'Astroporto dei Novizi ora ha una rotta diretta verso Regulas."
+- name: R2-12a
+  source: regula
+  destination: forge
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "adv2mediumRand"]
+  caption: "Rotta per la Fucina Planetaria"
+  description: "Si tratta di una rotta più lunga. Una licenza per astronavi di classe II sarebbe utile qui."
+- name: R2-12b
+  source: forge
+  destination: regula
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "adv2mediumRand"]
+  caption: "Rotta di Ritorno a Regulas"
+  description: "Andiamo a goderci un po' di sana e vecchia burocrazia."
+- name: R2-13a
+  source: forge
+  destination: workshop
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "adv2mediumRand"]
+  caption: "Rotta per la Fabbrica Spaziale"
+  description: "Attualmente, non hai nessun lavoro su questa rotta."
+- name: U2-13a1
+  source: forge
+  destination: workshop
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ingotDelivery"]
+  caption: "Sollevamento Pesi"
+  description: "Hai promesso di consegnare un lingotto alla fabbrica spaziale."
+- name: U2-13a2
+  source: forge
+  destination: workshop
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ingotDelivery"]
+  caption: "Sollevamento Pesi"
+  description: "Hai promesso di consegnare due lingotti alla fabbrica spaziale."
+- name: U2-13a3
+  source: forge
+  destination: workshop
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ingotDelivery"]
+  caption: "Sollevamento Pesi"
+  description: "Hai promesso di consegnare tre lingotti alla fabbrica spaziale."
+- name: R2-13b
+  source: workshop
+  destination: forge
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "universalConnectors"]
+  caption: "Rotta Sperimentale per la Fucina Planetaria"
+  description: "Puoi provare i componenti universali su questa rotta."
+- name: R2-14a
+  source: forge
+  destination: mine0
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_no_explosives0"]
+  caption: "Rotta per gli Asteroidi Minerari"
+  description: "Non hai accettato di trasportare nulla; hai solo chiesto indicazioni. Questo potrebbe avere delle conseguenze."
+- name: U2-14a
+  source: forge
+  destination: mine0
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_explosives0"]
+  caption: "Consegna Esplosiva"
+  description: "Hai promesso di consegnare due casse di esplosivi all'asteroide minerario AX-5-B32-3 Delta."
+- name: R2-14b
+  source: mine0
+  destination: forge
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_no_radioactive"]
+  caption: "Rotta per la Fucina Planetaria"
+  description: "Attualmente, non hai nessun lavoro su questa rotta."
+- name: U2-14b
+  source: mine0
+  destination: forge
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_radioactive1"]
+  caption: "Rotta per Fucina Planetaria"
+  description: "Hai promesso di consegnare un carico di isotopi radioattivi. Attenzione ai Sabotaggi!"
+- name: R2-15a
+  source: forge
+  destination: mine1
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_no_explosives1"]
+  caption: "Rotta per Miniera AX-5-B32-3 Gamma - NON UTILIZZATA ALLA FINE"
+  description: "Attualmente, non hai nessun lavoro su questa rotta."
+- name: U2-15a
+  source: forge
+  destination: mine1
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_explosives1"]
+  caption: "Esplosivi per Gamma"
+  description: "Hai promesso di consegnare quattro casse di esplosivi all'asteroide minerario AX-5-B32-3 Gamma."
+- name: R2-15b
+  source: mine1
+  destination: forge
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_no_radioactive"]
+  caption: "Rotta per la Fucina Planetaria"
+  description: "Attualmente, non hai nessun lavoro su questa rotta."
+- name: U2-15b
+  source: mine1
+  destination: forge
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_radioactive2"]
+  caption: "Rotta per la Fucina Planetaria"
+  description: "Hai promesso di consegnare due carichi di isotopi radioattivi. Attenzione ai Sabotaggi!"
+- name: R2-16a
+  source: forge
+  destination: mine2
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_no_explosives2"]
+  caption: "Rotta per Miniera AX-5-B32-3 Beta - NON UTILIZZATA ALLA FINE"
+  description: "Attualmente, non hai nessun lavoro su questa rotta."
+- name: U2-16a
+  source: forge
+  destination: mine2
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_explosives2"]
+  caption: "Esplosivi per Beta"
+  description: "Hai promesso di consegnare sei casse di esplosivi all'asteroide minerario AX-5-B32-3 Beta"
+- name: R2-16b
+  source: mine2
+  destination: forge
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_no_radioactive"]
+  caption: "Rotta per la Fucina Planetaria"
+  description: "Attualmente, non hai nessun lavoro su questa rotta."
+- name: U2-16b
+  source: mine2
+  destination: forge
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_radioactive3"]
+  caption: "Carico Radioattivo"
+  description: "Hai promesso di consegnare tre carichi di isotopi radioattivi. Attenzione ai Sabotaggi!"
+- name: U2-17a
+  source: bar
+  destination: pirateTrap
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "pirateAmbush"]
+  caption: "Possibilità di Arricchirsi"
+  description: "Un tipo squallido al bar ti ha detto che questa rotta è così sicura che non hai bisogno di armi."
+- name: R2-17a
+  source: pirateHaven
+  destination: bar
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "noEnemies2"]
+  caption: "Rotta per Bar Spaziale"
+  description: "Questa rotta è tornata sicura dopo che hai fatto fuori tutti i pirati."
+- name: R2-17b
+  source: bar
+  destination: pirateHaven
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "noEnemies2"]
+  caption: "Rotta per il Covo dei Pirati"
+  description: "Questa rotta è tornata sicura dopo che hai fatto fuori tutti i pirati."
+- name: U2-17x
+  source: pirateHaven
+  destination: regula
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_pirateEscort"]
+  caption: "La mano della Giustizia"
+  description: "Scorta il Baro ladro e rapinatore che hai catturato dritto dritto a Regulas."
+- name: U2-19a
+  source: brownHome
+  destination: cyanHome
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_merchant2"]
+  caption: "Missione di Scorta 2: il Sequel"
+  description: "Hai promesso di scortare in sicurezza l'uomo d'affari in un altro viaggio d'affari."
+- name: R2-19a
+  source: brownHome
+  destination: cyanHome
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "alienPlanets2brown"]
+  caption: "Rotta per Elitia"
+  description: "Una rotta tra due pianeti alieni. Ormai ci stai iniziando a fare l'abitudine."
+- name: R2-19b
+  source: cyanHome
+  destination: brownHome
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "alienPlanets2brown"]
+  caption: "Rotta per il Silentio"
+  description: "Un'altra rotta tra due pianeti alieni."
+- name: U2-20a
+  source: purpleHome
+  destination: cyanHome
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "warriorTest"]
+  caption: "Duello di Dio"
+  description: "I polpi Viola hanno detto che chi sopravvive, sarà il vincitore. Vediamo cosa intendevano."
+- name: R2-20a
+  source: purpleHome
+  destination: cyanHome
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "alienPlanets2purple"]
+  caption: "Rotta per Elitia"
+  description: "Un'altra rotta tra due pianeti alieni."
+- name: R2-20b
+  source: cyanHome
+  destination: purpleHome
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "alienPlanets2purple"]
+  caption: "Rotta per Th'kzaw-r"
+  description: "Un'altra rotta tra due pianeti alieni."
+- name: U2-21a
+  source: outpost
+  destination: bar
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_rich_girl2"]
+  caption: "Rotta Non Tracciata"
+  description: "Questa rotta è così pericolosa che non è segnata su nessuna mappa. Ma hai detto a una collega camionista che l'avresti percorsa con lei."
+- name: U2-21b
+  source: bar
+  destination: outpost
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "no_script"]
+  caption: "Rotta Non Tracciata"
+  description: "Questa rotta è così pericolosa che non è segnata su nessuna mappa. Ma hai detto a una collega camionista che l'avresti percorsa con lei."
+- name: R1-22a
+  source: mine0
+  destination: mine1
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "turnBased1"]
+  caption: "Rotta Robotica per Miniera AX-5-B32-3 Gamma"
+  description: "Questa rotta utilizza il metodo di costruzione a turni. Solo il Camionista Migliore in classifica può attraccare."
+- name: R1-22b
+  source: mine1
+  destination: mine0
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "turnBased1random"]
+  caption: "Rotta Robotica per Miniera AX-5-B32-3 Delta"
+  description: "Questa rotta utilizza il metodo di costruzione a turni. Chiunque può attraccare."
+- name: R2-23a
+  source: mine1
+  destination: mine2
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "turnBased2"]
+  caption: "Rotta Robotica per Miniera AX-5-B32-3 Beta"
+  description: "Questa rotta utilizza il metodo di costruzione a turni. Solo il Camionista Migliore in classifica può attraccare."
+- name: R2-23b
+  source: mine2
+  destination: mine1
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "turnBased2random"]
+  caption: "Rotta Robotica per Miniera AX-5-B32-3 Gamma"
+  description: "Questa rotta utilizza il metodo di costruzione a turni. Chiunque può attraccare."
+- name: R3-24a
+  source: mine2
+  destination: mine3
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "turnBased3"]
+  caption: "Rotta Robotica per Miniera AX-5-B32-3 Alpha"
+  description: "Questa rotta utilizza il metodo di costruzione a turni. Solo il Camionista Migliore in classifica può attraccare."
+- name: R3-24b
+  source: mine3
+  destination: mine2
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "turnBased3random"]
+  caption: "Rotta Robotica per Miniera AX-5-B32-3 Beta"
+  description: "Questa rotta utilizza il metodo di costruzione a turni. Chiunque può attraccare."
+- name: U3-25a
+  source: mine3
+  destination: club
+  missiontype: UNIQUE
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "turnBasedSolo"]
+  caption: "La domanda del Guru"
+  description: "Riesci a volare meglio di te stesso?"
+- name: U3-26a
+  source: lab
+  destination: workshop
+  missiontype: UNIQUE
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "experiment"]
+  caption: "Lavorare in Laboratorio"
+  description: "Per aiutare con un esperimento, hai accettato di consegnare della roba alla fabbrica spaziale."
+- name: U3-26b
+  source: workshop
+  destination: lab
+  missiontype: UNIQUE
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "ms_experiment"]
+  caption: "Lavorare in Laboratorio"
+  description: "Per aiutare con un esperimento, hai accettato di consegnare della roba al laboratorio di EssePiA S.p.A."
+- name: R3-26a
+  source: lab
+  destination: workshop
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRandLong"]
+  caption: "Rotta Regolare per Fabbrica Spaziale"
+  description: "Rotta Lunga per astronavi di Classe III."
+- name: R3-26b
+  source: workshop
+  destination: lab
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "universal3long"]
+  caption: "Rotta Regolare per Laboratorio EssePiA S.p.A."
+  description: "Rotta Lunga per astronavi di Classe III. Puoi utilizzare i componenti universali su questa rotta."
+- name: R3-27a
+  source: lab
+  destination: club
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRandShort"]
+  caption: "Rotta per il Club Dorato"
+  description: "Rotta Veloce per astronavi di Classe III."
+- name: R3-27b
+  source: club
+  destination: lab
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRandShort"]
+  caption: "Rotta Regolare per Laboratorio EssePiA S.p.A"
+  description: "Rotta Veloce per astronavi di Classe III."
+- name: R3-28a
+  source: forge
+  destination: lab
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRand"]
+  caption: "Rotta Regolare per Laboratorio EssePiA S.p.A"
+  description: "Rotta ordinaria per astronavi di Classe III."
+- name: R3-28b
+  source: lab
+  destination: forge
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRand"]
+  caption: "Rotta Regolare per la Fucina Planetaria"
+  description: "Rotta ordinaria per astronavi di Classe III."
+- name: U3-29a
+  source: cyanHome
+  destination: lab
+  missiontype: UNIQUE
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "ms_merchant3"]
+  caption: "La Grande Fuga"
+  description: "L'uomo d'affari deve fuggire dal territorio alieno."
+- name: U123
+  source: newbie
+  destination: club
+  missiontype: UNIQUE
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "ms_finalRoute"]
+  caption: "La Trasvolata Intergalattica"
+  description: "La competizione più prestigiosa tra i camionisti: una gara di tre voli attraverso la Galassia."

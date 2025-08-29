@@ -1,0 +1,632 @@
+- name: R1-1a
+  source: newbie
+  destination: bar
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_first_mission"]
+  caption: "Reguläre Route zur Weltraumbar"
+  description: "Für einen Anfänger-Trucker gut geeignete Mission."
+- name: R1-1b
+  source: bar
+  destination: newbie
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "basic1easy3p"]
+  caption: "Reguläre Route nach Neulingshafen"
+  description: "Eine übliche Flugstrecke. Nichts Außergewöhnliches hier."
+- name: R1-2a
+  source: newbie
+  destination: outpost
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_rough_mission"]
+  caption: "Lange Route zur Botschafts-Station"
+  description: "Hohe Wahrscheinlichkeit von Meteoriten auf dieser Route!"
+- name: R1-2b
+  source: outpost
+  destination: newbie
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_rough_mission"]
+  caption: "Lange Route nach Neulingshafen"
+  description: "Hohe Wahrscheinlichkeit von Meteoriten auf dieser Route!"
+- name: R1-3a
+  source: bar
+  destination: regula
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "nobooze"]
+  caption: "Reguläre Route nach Regula"
+  description: "Man muss auf dieser Strecke mit Sabotage rechnen."
+- name: R1-3a1
+  source: bar
+  destination: regula
+  missiontype: UNIQUE
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_booze_1"]
+  caption: "Getränkeflug"
+  description: "Du hast zugestimmt, eine Kiste zerbrechlicher Güter nach Regula zu bringen. Man muss auf dieser Strecke mit Sabotage rechnen."
+- name: R1-3a2
+  source: bar
+  destination: regula
+  missiontype: UNIQUE
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_booze_2"]
+  caption: "Getränkeflug"
+  description: "Du hast zugestimmt, zwei Kisten mit zerbrechlichen Gütern nach Regula zu bringen. Man muss auf dieser Strecke mit Sabotage rechnen."
+- name: R1-3b
+  source: regula
+  destination: bar
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "nobooze"]
+  caption: "Reguläre Route zur Weltraumbar"
+  description: "Man muss auf dieser Strecke mit Sabotage rechnen."
+- name: R1-4a
+  source: outpost
+  destination: regula
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_road_closed"]
+  caption: "Route gesperrt"
+  description: "Diese Route ist wegen Meteorstürmen mit gebietsweisen Sturmböen geschlossen."
+- name: R1-4a1
+  source: outpost
+  destination: regula
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_rich_girl"]
+  caption: "Route nach Regula"
+  description: "Diese Route ist wegen Meteorstürmen gesperrt … aber das kümmert dich nicht."
+- name: U1-4a
+  source: outpost
+  destination: regula
+  missiontype: UNIQUE
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_rich_girl"]
+  caption: "Gebietsweise Sturmböen"
+  description: "Diese Route ist wegen Meteorstürmen gesperrt … aber du hast einem anderen Trucker erzählt, dass du sie trotzdem fliegen wirst."
+- name: R1-4b
+  source: regula
+  destination: outpost
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "basic1medium3p"]
+  caption: "Reguläre Route zur Botschafts-Station"
+  description: "Gerüchte besagen, dass es einen … Vorfall in der Botschaft geben soll."
+- name: R1-4b1
+  source: regula
+  destination: outpost
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_road_closed"]
+  caption: "Route zur Botschafts-Station gesperrt"
+  description: "Diese Route ist wegen Meteorstürmen mit gebietsweisen Sturmböen geschlossen."
+- name: R1-4b2
+  source: regula
+  destination: outpost
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_meteors_side"]
+  caption: "Route zur Botschafts-Station"
+  description: "Diese Route ist wegen Meteorstürmen gesperrt … aber das kümmert dich nicht."
+- name: U1-5purple
+  source: outpost
+  destination: purpleHome
+  missiontype: UNIQUE
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_purpleAlien"]
+  caption: "Im Klo vergessen"
+  description: "Du hast zugesagt, ein lila Alien zu seiner Heimatwelt Th'kzw-r zu bringen."
+- name: R1-5a
+  source: outpost
+  destination: purpleHome
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "adv1mediumRand"]
+  caption: "Reguläre Route nach Th'kzw-r"
+  description: "Vielbeflogene Diplomatenstrecke. Versuche, die Grundlagen ihrer Sprache auf dem Trip zu lernen."
+- name: R1-5b
+  source: purpleHome
+  destination: outpost
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_leavingPurple"]
+  caption: "Reguläre Route zur Botschafts-Station"
+  description: "Diese Strecke bringt dich aus dem Aliengebiet heraus."
+- name: R1-6a
+  source: outpost
+  destination: brownHome
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "adv1mediumRand"]
+  caption: "Route nach Silenzium"
+  description: "Nicht allzuviele Diplomaten auf dieser Strecke. Denn, um es mit den Einheimischen zu sagen: …"
+- name: R1-6b
+  source: brownHome
+  destination: outpost
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "adv1mediumRand"]
+  caption: "Route zur Botschafts-Station"
+  description: "Diese Strecke bringt dich aus dem Aliengebiet heraus."
+- name: U1-7a
+  source: regula
+  destination: workshop
+  missiontype: UNIQUE
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_people_delivery"]
+  caption: "Arbeiter-Einsetz-Flug"
+  description: "Du hast einer Mechanikerin zugesagt, für sie einige Arbeiter zur Weltraumfabrik zu bringen."
+- name: R1-7a
+  source: regula
+  destination: workshop
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "peopleDelivery"]
+  caption: "Reguläre Route zur Weltraumfabrik"
+  description: "Du hast einer Mechanikerin gesagt, dass du Arbeiter zur Weltraumfabrik bringst. Hüte dich vor Epidemien."
+- name: R1-7b
+  source: workshop
+  destination: regula
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "universalEpidemic"]
+  caption: "Experimentelle Route nach Regula"
+  description: "Die Corporation mbH testet ziemlich coole Technologien auf dieser Strecke. Hüte dich jedoch vor Epidemien."
+- name: R1-8a
+  source: bar
+  destination: workshop
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "adv1mediumRand"]
+  caption: "Reguläre Route zur Weltraumfabrik"
+  description: "Bloß eine normale Strecke."
+- name: R1-8b
+  source: workshop
+  destination: bar
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "universalSabotages"]
+  caption: "Experimentelle Route zur Weltraumbar"
+  description: "Die Corporation mbH testet ziemlich coole Technologien auf dieser Strecke. Rechne jedoch mit Sabotage."
+- name: U1-9a
+  source: purpleHome
+  destination: brownHome
+  missiontype: UNIQUE
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_merchant"]
+  caption: "Begleitmission"
+  description: "Du hast zugesagt, einen Geschäftsmann auf seinem Flug zu den braunen Aliens zu eskortieren."
+- name: R1-9a
+  source: purpleHome
+  destination: brownHome
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "alienPlanets"]
+  caption: "Route nach Silenzium"
+  description: "Eine Strecke zwischen zwei Alien-Planeten. Ziemlich feindlich."
+- name: R1-9b
+  source: brownHome
+  destination: purpleHome
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "alienPlanets"]
+  caption: "Route nach Th'kzw-r"
+  description: "Eine Strecke zwischen zwei Alien-Planeten. Ziemlich feindlich."
+- name: R3-10a
+  source: regula
+  destination: brownHome
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRand"]
+  caption: "Direkte Route nach Silenzium"
+  description: "Ein beliebtes Urlaubsziel. Keinerlei Sprachbarrieren. Das Wörterbuch für Touristen hat nur eine Seite. Und die ist leer."
+- name: R3-10b
+  source: brownHome
+  destination: regula
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRand"]
+  caption: "Route nach Regula"
+  description: "Vom ruhigsten, entspanntesten Ort der Galaxis zum verklemmtesten."
+- name: R3-11a
+  source: regula
+  destination: newbie
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRand"]
+  caption: "Direkte Route nach Neulingshafen"
+  description: "Zurück dorthin, wo alles begann."
+- name: R3-11b
+  source: newbie
+  destination: regula
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRand"]
+  caption: "Neue Route nach Regula"
+  description: "Jetzt hat bietet der Neulingshafen eine direkte Strecke nach Regula."
+- name: R2-12a
+  source: regula
+  destination: forge
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "adv2mediumRand"]
+  caption: "Route zur planetaren Gießerei"
+  description: "Eine längere Strecke. Hier wäre eine Klasse-II-Lizenz günstig."
+- name: R2-12b
+  source: forge
+  destination: regula
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "adv2mediumRand"]
+  caption: "Rückkehrroute nach Regula"
+  description: "Spaß mit Bürokratie (wenn man sowas mag)."
+- name: R2-13a
+  source: forge
+  destination: workshop
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "adv2mediumRand"]
+  caption: "Route zur Weltraumfabrik"
+  description: "Derzeit hast du keinen Job für diese Route."
+- name: U2-13a1
+  source: forge
+  destination: workshop
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ingotDelivery"]
+  caption: "Schwerlasttransport"
+  description: "Du hast zugesagt, einen Barren zur Weltraumfabrik zu bringen."
+- name: U2-13a2
+  source: forge
+  destination: workshop
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ingotDelivery"]
+  caption: "Schwerlasttransport"
+  description: "Du hast zugesagt, zwei Barren zur Weltraumfabrik zu bringen."
+- name: U2-13a3
+  source: forge
+  destination: workshop
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ingotDelivery"]
+  caption: "Schwerlasttransport"
+  description: "Du hast zugesagt, drei Barren zur Weltraumfabrik zu bringen."
+- name: R2-13b
+  source: workshop
+  destination: forge
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "universalConnectors"]
+  caption: "Experimentelle Route zur planetaren Gießerei"
+  description: "Du kannst die universellen Anschlussteile auf dieser Strecke testen."
+- name: R2-14a
+  source: forge
+  destination: mine0
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_no_explosives0"]
+  caption: "Route zu den Bergbau-Asteroiden"
+  description: "Du hast nicht zugesagt, irgendetwas zu transportieren; du hast bloß nach dem Weg gefragt. Das könnte Folgen haben."
+- name: U2-14a
+  source: forge
+  destination: mine0
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_explosives0"]
+  caption: "Explosive Fracht"
+  description: "Du hast zugesagt, zwei Einheiten Sprengstoff zum Bergbau-Asteroid AX-5-B32-3 Delta zu bringen."
+- name: R2-14b
+  source: mine0
+  destination: forge
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_no_radioactive"]
+  caption: "Route zur planetaren Gießerei"
+  description: "Derzeit hast du keinen Job für diese Route."
+- name: U2-14b
+  source: mine0
+  destination: forge
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_radioactive1"]
+  caption: "Route zur planetaren Gießerei"
+  description: "Du hast zugesagt, ein Paket radioaktiver Isotope auszuliefern. Hüte dich vor Sabotage!"
+- name: R2-15a
+  source: forge
+  destination: mine1
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_no_explosives1"]
+  caption: "Route to Mine AX-5-B32-3 Gamma - NOT USED IN THE END"
+  description: "Currently, you have no job on this route."
+- name: U2-15a
+  source: forge
+  destination: mine1
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_explosives1"]
+  caption: "Sprengstoff für Gamma"
+  description: "Du hast zugesagt, vier Einheiten Sprengstoff zum Bergbau-Asteroid AX-5-B32-3 Gamma zu bringen."
+- name: R2-15b
+  source: mine1
+  destination: forge
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_no_radioactive"]
+  caption: "Route zur planetaren Gießerei"
+  description: "Derzeit hast du keinen Job für diese Route."
+- name: U2-15b
+  source: mine1
+  destination: forge
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_radioactive2"]
+  caption: "Route zur planetaren Gießerei"
+  description: "Du hast zugesagt, zwei Pakete radioaktiver Isotope auszuliefern. Hüte dich vor Sabotage!"
+- name: R2-16a
+  source: forge
+  destination: mine2
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_no_explosives2"]
+  caption: "Route to Mine AX-5-B32-3 Beta - NOT USED IN THE END"
+  description: "Currently, you have no job on this route."
+- name: U2-16a
+  source: forge
+  destination: mine2
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_explosives2"]
+  caption: "Sprengstoff für Beta"
+  description: "Du hast zugesagt, sechs Pakete Sprengstoff zum Bergbau-Asteroid AX-5-B32-3 Beta zu bringen."
+- name: R2-16b
+  source: mine2
+  destination: forge
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_no_radioactive"]
+  caption: "Route zur planetaren Gießerei"
+  description: "Derzeit hast du keinen Job für diese Route."
+- name: U2-16b
+  source: mine2
+  destination: forge
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_radioactive3"]
+  caption: "Radioaktive Fracht"
+  description: "Du hast zugesagt, drei Pakete radioaktiver Isotope auszuliefern. Hüte dich vor Sabotage!"
+- name: U2-17a
+  source: bar
+  destination: pirateTrap
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "pirateAmbush"]
+  caption: "Willst du reich werden?"
+  description: "In der Bar hat dir schmieriger Typ erzählt, dass du auf dieser Strecke keine Waffen brauchst."
+- name: R2-17a
+  source: pirateHaven
+  destination: bar
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "noEnemies2"]
+  caption: "Route zur Weltraumbar"
+  description: "Diese Route ist jetzt sicherer, nachdem du die Piraten beseitigt hast."
+- name: R2-17b
+  source: bar
+  destination: pirateHaven
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "noEnemies2"]
+  caption: "Route zur Piraten-Zuflucht"
+  description: "Diese Route ist jetzt sicherer, nachdem du die Piraten beseitigt hast."
+- name: U2-17x
+  source: pirateHaven
+  destination: regula
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_pirateEscort"]
+  caption: "Arm des Gesetzes"
+  description: "Eskortiere den gefangenen Piratenkäptn direkt nach Regula."
+- name: U2-19a
+  source: brownHome
+  destination: cyanHome
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_merchant2"]
+  caption: "Begleitmission 2: Die Fortsetzung"
+  description: "Du hast zugesagt, den Geschäftsmann auf einer neuen Geschäftsreise zu beschützen."
+- name: R2-19a
+  source: brownHome
+  destination: cyanHome
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "alienPlanets2brown"]
+  caption: "Route nach Elita"
+  description: "Eine Strecke zwischen zwei Alien-Planeten. Allmählich gewöhnst du dich dran."
+- name: R2-19b
+  source: cyanHome
+  destination: brownHome
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "alienPlanets2brown"]
+  caption: "Route nach Silenzium"
+  description: "Eine andere Strecke zwischen zwei Alien-Planeten."
+- name: U2-20a
+  source: purpleHome
+  destination: cyanHome
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "warriorTest"]
+  caption: "Entscheidung durch Kampf"
+  description: "Die lila Jungs sagen, wer überlebt, gewinnt. Mal sehen, was sie damit meinen."
+- name: R2-20a
+  source: purpleHome
+  destination: cyanHome
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "alienPlanets2purple"]
+  caption: "Route nach Elita"
+  description: "Eine andere Strecke zwischen zwei Alien-Planeten."
+- name: R2-20b
+  source: cyanHome
+  destination: purpleHome
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "alienPlanets2purple"]
+  caption: "Route nach Th'kzw-r"
+  description: "Eine andere Strecke zwischen zwei Alien-Planeten."
+- name: U2-21a
+  source: outpost
+  destination: bar
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_rich_girl2"]
+  caption: "Nicht erfasste Route"
+  description: "Diese Strecke ist derart gefährlich, dass sie auf keinerlei Karten verzeichnet ist. Du hast einer befreundeten Truckerin jedoch zugesagt, sie mit ihr zu fliegen."
+- name: U2-21b
+  source: bar
+  destination: outpost
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "no_script"]
+  caption: "Nicht erfasste Route"
+  description: "Diese Strecke ist derart gefährlich, dass sie auf keinerlei Karten verzeichnet ist. Du hast einer befreundeten Truckerin jedoch zugesagt, sie mit ihr zu fliegen."
+- name: R1-22a
+  source: mine0
+  destination: mine1
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "turnBased1"]
+  caption: "Roboter-Route zur Mine AX-5-B32-3 Gamma"
+  description: "Für diese Strecke gilt die zugbasierte Baumethode. Nur der beste Trucker darf andocken."
+- name: R1-22b
+  source: mine1
+  destination: mine0
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "turnBased1random"]
+  caption: "Roboter-Route zur Mine AX-5-B32-3 Delta"
+  description: "Für diese Strecke gilt die zugbasierte Baumethode. Jeder darf andocken."
+- name: R2-23a
+  source: mine1
+  destination: mine2
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "turnBased2"]
+  caption: "Roboter-Route zur Mine AX-5-B32-3 Beta"
+  description: "Für diese Strecke gilt die zugbasierte Baumethode. Nur der beste Trucker darf andocken."
+- name: R2-23b
+  source: mine2
+  destination: mine1
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "turnBased2random"]
+  caption: "Roboter-Route zur Mine AX-5-B32-3 Gamma"
+  description: "Für diese Strecke gilt die zugbasierte Baumethode. Jeder darf andocken."
+- name: R3-24a
+  source: mine2
+  destination: mine3
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "turnBased3"]
+  caption: "Roboter-Route zur Mine AX-5-B32-3 Alpha"
+  description: "Für diese Strecke gilt die zugbasierte Baumethode. Nur der beste Trucker darf andocken."
+- name: R3-24b
+  source: mine3
+  destination: mine2
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "turnBased3random"]
+  caption: "Roboter-Route zur Mine AX-5-B32-3 Beta"
+  description: "Für diese Strecke gilt die zugbasierte Baumethode. Jeder darf andocken."
+- name: U3-25a
+  source: mine3
+  destination: club
+  missiontype: UNIQUE
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "turnBasedSolo"]
+  caption: "Die Frage des Gurus"
+  description: "Fliegst du besser als du selbst?"
+- name: U3-26a
+  source: lab
+  destination: workshop
+  missiontype: UNIQUE
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "experiment"]
+  caption: "Laborarbeit"
+  description: "Um bei einem Experiment zu helfen, hast du zugesagt, etwas Kram in der Weltraumfabrik abzuliefern."
+- name: U3-26b
+  source: workshop
+  destination: lab
+  missiontype: UNIQUE
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "ms_experiment"]
+  caption: "Laborarbeit"
+  description: "Um bei einem Experiment zu helfen, hast du zugesagt, etwas Kram bei der Corporation mbH abzuliefern."
+- name: R3-26a
+  source: lab
+  destination: workshop
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRandLong"]
+  caption: "Reguläre Route zur Weltraumfabrik"
+  description: "Lange Klasse-III-Route"
+- name: R3-26b
+  source: workshop
+  destination: lab
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "universal3long"]
+  caption: "Reguläre Route zur Corporation mbH"
+  description: "Lange Klasse-III-Route Du wirst auf dieser Route die universellen Anschlussteile benutzen können."
+- name: R3-27a
+  source: lab
+  destination: club
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRandShort"]
+  caption: "Route zum Goldclub"
+  description: "Kürzere Klasse-III-Route"
+- name: R3-27b
+  source: club
+  destination: lab
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRandShort"]
+  caption: "Reguläre Route zur Corporation mbH"
+  description: "Kürzere Klasse-III-Route"
+- name: R3-28a
+  source: forge
+  destination: lab
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRand"]
+  caption: "Reguläre Route zur Corporation mbH"
+  description: "Eine reguläre Klasse-III-Route"
+- name: R3-28b
+  source: lab
+  destination: forge
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRand"]
+  caption: "Reguläre Route zur planetaren Gießerei"
+  description: "Eine reguläre Klasse-III-Route"
+- name: U3-29a
+  source: cyanHome
+  destination: lab
+  missiontype: UNIQUE
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "ms_merchant3"]
+  caption: "Die große Flucht"
+  description: "Der Geschäftsmann muss aus dem Aliengebiet entkommen."
+- name: U123
+  source: newbie
+  destination: club
+  missiontype: UNIQUE
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "ms_finalRoute"]
+  caption: "Das transgalaktische Truckerrennen"
+  description: "Der angesehenste Trucker-Wettbewerb: ein Rennen in drei Flügen quer durch die Galaxis."

@@ -1,0 +1,632 @@
+- name: R1-1a
+  source: newbie
+  destination: bar
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_first_mission"]
+  caption: "Обычный маршрут до Космобара"
+  description: "Подходящий маршрут для начинающего дальнобойщика."
+- name: R1-1b
+  source: bar
+  destination: newbie
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "basic1easy3p"]
+  caption: "Обычный маршрут до Нубо-порта"
+  description: "Обычный маршрут, ничего особенного."
+- name: R1-2a
+  source: newbie
+  destination: outpost
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_rough_mission"]
+  caption: "Длинный маршрут до посольского аванпоста"
+  description: "Высокая вероятность встречи с метеоритами!"
+- name: R1-2b
+  source: outpost
+  destination: newbie
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_rough_mission"]
+  caption: "Длинный маршрут до Нубо-порта"
+  description: "Высокая вероятность встречи с метеоритами!"
+- name: R1-3a
+  source: bar
+  destination: regula
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "nobooze"]
+  caption: "Обычный маршрут до Регулы"
+  description: "Зарегистрированы случая саботажа."
+- name: R1-3a1
+  source: bar
+  destination: regula
+  missiontype: UNIQUE
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_booze_1"]
+  caption: "Доставка алкоголя"
+  description: "Доставка одного контейнера с хрупким товаром на Регулу. На маршруте зарегистрированы случаи саботажа."
+- name: R1-3a2
+  source: bar
+  destination: regula
+  missiontype: UNIQUE
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_booze_2"]
+  caption: "Доставка алкоголя"
+  description: "Доставка двух контейнеров с хрупким товаром на Регулу. На маршруте зарегистрированы случаи саботажа."
+- name: R1-3b
+  source: regula
+  destination: bar
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "nobooze"]
+  caption: "Обычный маршрут до Космобара"
+  description: "Зарегистрированы случая саботажа."
+- name: R1-4a
+  source: outpost
+  destination: regula
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_road_closed"]
+  caption: "Маршрут закрыт"
+  description: "Этот маршрут закрыт из-за метеоритных штормов и опасного бокового ветра."
+- name: R1-4a1
+  source: outpost
+  destination: regula
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_rich_girl"]
+  caption: "Маршрут до Регулы"
+  description: "Этот маршрут закрыт из-за метеоритных штормов... но кого это волнует."
+- name: U1-4a
+  source: outpost
+  destination: regula
+  missiontype: UNIQUE
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_rich_girl"]
+  caption: "Опасный боковой ветер"
+  description: "Этот маршрут закрыт из-за метеоритных штормов... Но ты заявил[g(|a)], что полетишь в любом случае."
+- name: R1-4b
+  source: regula
+  destination: outpost
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "basic1medium3p"]
+  caption: "Обычный маршрут до посольского аванпоста"
+  description: "Ходят слухи, что в посольстве что-то случилось."
+- name: R1-4b1
+  source: regula
+  destination: outpost
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_road_closed"]
+  caption: "Маршрут до посольского аванпоста закрыт"
+  description: "Этот маршрут закрыт из-за метеоритных штормов и опасного бокового ветра."
+- name: R1-4b2
+  source: regula
+  destination: outpost
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_meteors_side"]
+  caption: "Маршрут до посольского аванпоста"
+  description: "Этот маршрут закрыт из-за метеоритных штормов... но кого это волнует."
+- name: U1-5purple
+  source: outpost
+  destination: purpleHome
+  missiontype: UNIQUE
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_purpleAlien"]
+  caption: "Затерянный в туалете"
+  description: "Ты обещал[g(|a)] сопроводить фиолетового инопланетянина до его родной планеты Тх'кзв-р."
+- name: R1-5a
+  source: outpost
+  destination: purpleHome
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "adv1mediumRand"]
+  caption: "Обычный маршрут до Тх'кзв-р"
+  description: "Оживленный дипломатический маршрут. Во время поездки можно попробовать изучить основы их языка."
+- name: R1-5b
+  source: purpleHome
+  destination: outpost
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_leavingPurple"]
+  caption: "Обычный маршрут до посольского аванпоста"
+  description: "Этот маршрут выведет тебя с территории инопланетян."
+- name: R1-6a
+  source: outpost
+  destination: brownHome
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "adv1mediumRand"]
+  caption: "Маршрут к Безмолвию"
+  description: "Не очень оживленный дипломатический маршрут. Ведь, как говорят местные жители,                              ..."
+- name: R1-6b
+  source: brownHome
+  destination: outpost
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "adv1mediumRand"]
+  caption: "Маршрут до посольского аванпоста"
+  description: "Этот маршрут выведет тебя с территории инопланетян."
+- name: U1-7a
+  source: regula
+  destination: workshop
+  missiontype: UNIQUE
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_people_delivery"]
+  caption: "Перевозка рабочих"
+  description: "Ты сказал[g(|a)] механику, что привезешь на завод рабочих."
+- name: R1-7a
+  source: regula
+  destination: workshop
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "peopleDelivery"]
+  caption: "Обычный маршрут до Космического завода"
+  description: "Ты сказал[g(|a)] механику, что привезешь рабочих на Космический завод. Опасайся эпидемий."
+- name: R1-7b
+  source: workshop
+  destination: regula
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "universalEpidemic"]
+  caption: "Экспериментальный маршрут до Регулы"
+  description: "Корпорация испытывает здесь какую-то крутую новую технологию. Опасайся эпидемий."
+- name: R1-8a
+  source: bar
+  destination: workshop
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "adv1mediumRand"]
+  caption: "Обычный маршрут до Космического завода"
+  description: "Просто обычный маршрут."
+- name: R1-8b
+  source: workshop
+  destination: bar
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "universalSabotages"]
+  caption: "Экспериментальный маршрут до Космобара"
+  description: "Корпорация испытывает здесь какую-то крутую новую технологию. Опасайся саботажа."
+- name: U1-9a
+  source: purpleHome
+  destination: brownHome
+  missiontype: UNIQUE
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "ms_merchant"]
+  caption: "Телохранитель"
+  description: "Ты обещал[g(|a)] защищать коммерсанта во время его поездки на родную планету коричневых инопланетян."
+- name: R1-9a
+  source: purpleHome
+  destination: brownHome
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "alienPlanets"]
+  caption: "Маршрут к Безмолвию"
+  description: "Маршрут между двумя планетами инопланетян. Довольно неблагоприятный."
+- name: R1-9b
+  source: brownHome
+  destination: purpleHome
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "alienPlanets"]
+  caption: "Маршрут на Тх'кзв-р"
+  description: "Маршрут между двумя планетами инопланетян. Довольно неблагоприятный.."
+- name: R3-10a
+  source: regula
+  destination: brownHome
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRand"]
+  caption: "Прямой маршрут к Безмолвию"
+  description: "Популярное место отдыха. Никаких языковых барьеров. В туристическом разговорнике всего одна страница. Пустая."
+- name: R3-10b
+  source: brownHome
+  destination: regula
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRand"]
+  caption: "Маршрут до Регулы"
+  description: "Из спокойного и тихого местечка прямо в бурлящий центр событий."
+- name: R3-11a
+  source: regula
+  destination: newbie
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRand"]
+  caption: "Прямой маршрут до Нубо-порта"
+  description: "Туда, где все началось."
+- name: R3-11b
+  source: newbie
+  destination: regula
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRand"]
+  caption: "Новый маршрут до Регулы"
+  description: "Теперь и от Нубо-порта есть прямой маршрут до Регулы."
+- name: R2-12a
+  source: regula
+  destination: forge
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "adv2mediumRand"]
+  caption: "Маршрут до Планеты-кузницы"
+  description: "Длинный маршрут. Хорошо, что у тебя есть лицензия на корабли класса II."
+- name: R2-12b
+  source: forge
+  destination: regula
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "adv2mediumRand"]
+  caption: "Маршрут обратно до Регулы"
+  description: "Давайте еще немного насладимся бюрократией."
+- name: R2-13a
+  source: forge
+  destination: workshop
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "adv2mediumRand"]
+  caption: "Маршрут до Космического завода"
+  description: "Сейчас у тебя нет работы на этом маршруте."
+- name: U2-13a1
+  source: forge
+  destination: workshop
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ingotDelivery"]
+  caption: "Тяжел мой груз"
+  description: "Ты обещал[g(|а)] доставить слиток на Космический завод."
+- name: U2-13a2
+  source: forge
+  destination: workshop
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ingotDelivery"]
+  caption: "Тяжел мой груз"
+  description: "Ты обещал[g(|а)] доставить два слитка на Космический завод."
+- name: U2-13a3
+  source: forge
+  destination: workshop
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ingotDelivery"]
+  caption: "Тяжел мой груз"
+  description: "Ты обещал[g(|а)] доставить три слитка на Космический завод."
+- name: R2-13b
+  source: workshop
+  destination: forge
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "universalConnectors"]
+  caption: "Экспериментальный маршрут до Планеты-кузницы"
+  description: "На этом маршруте можно насладиться универсальными компонентами."
+- name: R2-14a
+  source: forge
+  destination: mine0
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_no_explosives0"]
+  caption: "Маршрут на шахту-астероид"
+  description: "Тебе не нужно что-то везти, ты просто спросил[g(|a)] дорогу. Как бы чего не вышло."
+- name: U2-14a
+  source: forge
+  destination: mine0
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_explosives0"]
+  caption: "Взрывчатка для Дельты"
+  description: "Ты обещал[g(|а)] доставить два контейнера со взрывчаткой на шахту-астероид AX-5-B32-3 Дельта."
+- name: R2-14b
+  source: mine0
+  destination: forge
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_no_radioactive"]
+  caption: "Маршрут до Планеты-кузницы"
+  description: "Сейчас у тебя нет работы на этом маршруте."
+- name: U2-14b
+  source: mine0
+  destination: forge
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_radioactive1"]
+  caption: "Маршрут до Планеты-кузницы"
+  description: "Ты обещал[g(|а)] доставить контейнер с радиоактивными изотопами. Опасайся саботажа!"
+- name: R2-15a
+  source: forge
+  destination: mine1
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_no_explosives1"]
+  caption: "Маршрут до шахты AX-5-B32-3 Гамма – НЕ ИСПОЛЬЗОВАТЬ В КОНЦЕ"
+  description: "Сейчас у тебя нет работы на этом маршруте."
+- name: U2-15a
+  source: forge
+  destination: mine1
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_explosives1"]
+  caption: "Взрывчатка для Гаммы"
+  description: "Ты обещал[g(|а)] доставить четыре контейнера со взрывчаткой на шахту-астероид AX-5-B32-3 Гамма."
+- name: R2-15b
+  source: mine1
+  destination: forge
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_no_radioactive"]
+  caption: "Маршрут до Планеты-кузницы"
+  description: "Сейчас у тебя нет работы на этом маршруте."
+- name: U2-15b
+  source: mine1
+  destination: forge
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_radioactive2"]
+  caption: "Маршрут до Планеты-кузницы"
+  description: "Ты обещал[g(|а)] доставить два контейнера с радиоактивными изотопами. Опасайся саботажа!"
+- name: R2-16a
+  source: forge
+  destination: mine2
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_no_explosives2"]
+  caption: "Маршрут до шахты AX-5-B32-3 Бета – НЕ ИСПОЛЬЗОВАТЬ В КОНЦЕ"
+  description: "Сейчас у тебя нет работы на этом маршруте."
+- name: U2-16a
+  source: forge
+  destination: mine2
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_explosives2"]
+  caption: "Взрывчатка для Беты"
+  description: "Ты обещал[g(|а)] доставить шесть контейнеров со взрывчаткой на шахту-астероид AX-5-B32-3 Бета"
+- name: R2-16b
+  source: mine2
+  destination: forge
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_no_radioactive"]
+  caption: "Маршрут до Планеты-кузницы"
+  description: "Сейчас у тебя нет работы на этом маршруте."
+- name: U2-16b
+  source: mine2
+  destination: forge
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_radioactive3"]
+  caption: "Радиоактивный груз"
+  description: "Ты обещал[g(|а)] доставить три контейнера с радиоактивными изотопами. Опасайся саботажа!"
+- name: U2-17a
+  source: bar
+  destination: pirateTrap
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "pirateAmbush"]
+  caption: "Шанс разбогатеть"
+  description: "Странный парень из бара сказал, что на этом маршруте оружие не понадобится."
+- name: R2-17a
+  source: pirateHaven
+  destination: bar
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "noEnemies2"]
+  caption: "Маршрут до Космобара"
+  description: "Теперь, когда ты [g(избавился|избавилась)] от пиратов, маршрут стал  безопаснее."
+- name: R2-17b
+  source: bar
+  destination: pirateHaven
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "noEnemies2"]
+  caption: "Маршрут до пиратской базы"
+  description: "Теперь, когда ты [g(избавился|избавилась)] от пиратов, маршрут стал безопаснее."
+- name: U2-17x
+  source: pirateHaven
+  destination: regula
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_pirateEscort"]
+  caption: "Рука правосудия"
+  description: "Доставить главаря пиратов прямо на Регулу."
+- name: U2-19a
+  source: brownHome
+  destination: cyanHome
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_merchant2"]
+  caption: "Телохранитель 2. Воскрешение"
+  description: "Ты обещал[g(|a)] защищать коммерсанта во время еще одной его поездки."
+- name: R2-19a
+  source: brownHome
+  destination: cyanHome
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "alienPlanets2brown"]
+  caption: "Маршрут до Элиты"
+  description: "Маршрут между двумя планетами инопланетян. Уже довольно привычный."
+- name: R2-19b
+  source: cyanHome
+  destination: brownHome
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "alienPlanets2brown"]
+  caption: "Маршрут к Безмолвию"
+  description: "Еще один маршрут между двумя планетами инопланетян."
+- name: U2-20a
+  source: purpleHome
+  destination: cyanHome
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "warriorTest"]
+  caption: "Боевое крещение"
+  description: "Фиолетовые парни сказали, что победит тот, кто выживет. Давай посмотрим, что они имели в виду."
+- name: R2-20a
+  source: purpleHome
+  destination: cyanHome
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "alienPlanets2purple"]
+  caption: "Маршрут до Элиты"
+  description: "Еще один маршрут между двумя планетами инопланетян."
+- name: R2-20b
+  source: cyanHome
+  destination: purpleHome
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "alienPlanets2purple"]
+  caption: "Маршрут до Тх'кзв-р"
+  description: "Еще один маршрут между двумя планетами инопланетян."
+- name: U2-21a
+  source: outpost
+  destination: bar
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "ms_rich_girl2"]
+  caption: "Неотмеченный маршрут"
+  description: "Этот маршрут настолько опасен, что даже не нанесен на карту. Но ты заявил[g(|а)], что попытаешь счастья."
+- name: U2-21b
+  source: bar
+  destination: outpost
+  missiontype: UNIQUE
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "no_script"]
+  caption: "Неотмеченный маршрут"
+  description: "Этот маршрут настолько опасен, что даже не нанесен на карту. Но ты заявил[g(|а)], что попытаешь счастья."
+- name: R1-22a
+  source: mine0
+  destination: mine1
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "turnBased1"]
+  caption: "Робомаршрут до шахты AX-5-B32-3 Гамма"
+  description: "Строительство проходит в пошаговом режиме. К посадке допускается только лучший по итогам полета."
+- name: R1-22b
+  source: mine1
+  destination: mine0
+  missiontype: NORMAL
+  license: STI
+  button: ["blaunch", "camp_takeRoute", "turnBased1random"]
+  caption: "Робомаршрут до шахты AX-5-B32-3 Дельта"
+  description: "Строительство проходит в пошаговом режиме. Посадка разрешена для всех."
+- name: R2-23a
+  source: mine1
+  destination: mine2
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "turnBased2"]
+  caption: "Робомаршрут до шахты AX-5-B32-3 Бета"
+  description: "Строительство проходит в пошаговом режиме. К посадке допускается только лучший по итогам полета."
+- name: R2-23b
+  source: mine2
+  destination: mine1
+  missiontype: NORMAL
+  license: STII
+  button: ["blaunch", "camp_takeRoute", "turnBased2random"]
+  caption: "Робомаршрут до шахты AX-5-B32-3 Гамма"
+  description: "Строительство проходит в пошаговом режиме. Посадка разрешена для всех."
+- name: R3-24a
+  source: mine2
+  destination: mine3
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "turnBased3"]
+  caption: "Робомаршрут до шахты AX-5-B32-3 Альфа"
+  description: "Строительство проходит в пошаговом режиме. К посадке допускается только лучший по итогам полета."
+- name: R3-24b
+  source: mine3
+  destination: mine2
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "turnBased3random"]
+  caption: "Робомаршрут до шахты AX-5-B32-3 Бета"
+  description: "Строительство проходит в пошаговом режиме. Посадка разрешена для всех."
+- name: U3-25a
+  source: mine3
+  destination: club
+  missiontype: UNIQUE
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "turnBasedSolo"]
+  caption: "Последнее испытание"
+  description: "Сможешь ли ты победить [g(самого|саму)] себя?"
+- name: U3-26a
+  source: lab
+  destination: workshop
+  missiontype: UNIQUE
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "experiment"]
+  caption: "Эксперимент"
+  description: "Чтобы помочь исследованию, ты [g(согласился|согласилась)] доставить кое-что на Космический завод."
+- name: U3-26b
+  source: workshop
+  destination: lab
+  missiontype: UNIQUE
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "ms_experiment"]
+  caption: "Эксперимент"
+  description: "Чтобы помочь исследованию, ты [g(согласился|согласилась)] доставить кое-что в Бюро Корпорации."
+- name: R3-26a
+  source: lab
+  destination: workshop
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRandLong"]
+  caption: "Обычный маршрут до Космического завода"
+  description: "Длинный маршрут для кораблей класса III."
+- name: R3-26b
+  source: workshop
+  destination: lab
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "universal3long"]
+  caption: "Обычный маршрут до Бюро Корпорации"
+  description: "Длинный маршрут для кораблей класса III. На этом маршруте можно насладиться универсальными компонентами."
+- name: R3-27a
+  source: lab
+  destination: club
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRandShort"]
+  caption: "Маршрут до Золотого клуба"
+  description: "Короткий маршрут для кораблей класса III."
+- name: R3-27b
+  source: club
+  destination: lab
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRandShort"]
+  caption: "Обычный маршрут до Бюро Корпорации"
+  description: "Короткий маршрут для кораблей класса III."
+- name: R3-28a
+  source: forge
+  destination: lab
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRand"]
+  caption: "Обычный маршрут до Бюро Корпорации"
+  description: "Обычный маршрут для кораблей класса III."
+- name: R3-28b
+  source: lab
+  destination: forge
+  missiontype: NORMAL
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "adv3mediumRand"]
+  caption: "Обычный маршрут до Планеты-кузницы"
+  description: "Обычный маршрут для кораблей класса III."
+- name: U3-29a
+  source: cyanHome
+  destination: lab
+  missiontype: UNIQUE
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "ms_merchant3"]
+  caption: "Великий побег"
+  description: "Коммерсант вынужден бежать с территории инопланетян. Поможешь ему?"
+- name: U123
+  source: newbie
+  destination: club
+  missiontype: UNIQUE
+  license: STIII
+  button: ["blaunch", "camp_takeRoute", "ms_finalRoute"]
+  caption: "Межгалактическая гонка"
+  description: "Самое престижное соревнование среди дальнобойщиков: «трехполетный» заезд по Галактике."

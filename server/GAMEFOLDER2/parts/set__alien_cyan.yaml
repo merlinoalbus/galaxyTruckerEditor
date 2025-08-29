@@ -1,0 +1,10 @@
+- type: alienSpec
+  connectors: [3, 0, 0, 1]
+- type: alienSpec
+  connectors: [3, 0, 0, 2]
+- type: alienSpec
+  connectors: [3, 0, 0, 0]
+- type: alienSpec
+  connectors: [1, 2, 1, 2]
+- type: alienSpec
+  connectors: [1, 2, 1, 0]

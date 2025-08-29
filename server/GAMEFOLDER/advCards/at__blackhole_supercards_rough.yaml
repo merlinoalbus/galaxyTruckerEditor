@@ -1,0 +1,16 @@
+- type: blackhole
+  round: 1
+  super: true
+  condition: 5
+- type: blackhole
+  round: 2
+  super: true
+  condition: 6
+- type: blackhole
+  round: 3
+  super: true
+  condition: 7
+- type: blackhole
+  round: 3
+  super: true
+  condition: 8

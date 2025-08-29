@@ -1,0 +1,9 @@
+idName: "hard_safe_pap"
+type: turn
+character: safe
+avatar: avatars/ai/hard_safe.png
+color: "rygb"
+preferencesSettings: aiConfigs/settingSafe.aipref
+qualitySettings: aiConfigs/settingPaPBase.aiqual
+difficulty: hard # 1- hard, 3 - normal, 6 - easy
+stupidity: 20

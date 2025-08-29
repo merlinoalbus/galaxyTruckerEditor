@@ -1,0 +1,3 @@
+- set_radioactive.yaml: 20 # config on /data/parts/ path
+- allParts-update8.yaml: 90
+- set_cannons.yaml: 15
