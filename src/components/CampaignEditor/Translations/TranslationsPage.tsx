@@ -932,13 +932,8 @@ export const TranslationsPage: React.FC = () => {
   let blocks = json.data.blocks;
         const availableLanguages = json.data.availableLanguages || ['EN', 'DE', 'FR', 'ES', 'PL', 'CS', 'RU'];
         
-        // Salva sempre i blocchi originali completi
+        // Salva sempre i blocchi originali completi - NON filtrati
         setOriginalBlocks(blocks);
-        
-        // Applica filtro blocchi per la visualizzazione se ricerca attiva
-        if (globalSearchTerm && globalSearchTerm.trim()) {
-          filterBlocksBySearchTerm(blocks, globalSearchTerm);
-        }
         setScriptContent(json.data);
         
         // IMPORTANTE: Estrai i campi di traduzione dai blocchi ORIGINALI completi
@@ -1009,7 +1004,9 @@ export const TranslationsPage: React.FC = () => {
         fields.forEach((field, idx) => {
           for (const lang of availableLanguages) {
             if (lang === 'EN') continue;
-            const key = `${selectedScript}|${idx}|${lang}`;
+            // CORREZIONE BUG: Usa chiave stabile basata su blockPath e field
+            const stableKey = `${selectedScript}|${JSON.stringify(field.blockPath)}|${field.field}|${lang}`;
+            const key = stableKey;
             const currentValue = (typeof field.values[lang] === 'string' ? field.values[lang]!.trim() : '') || '';
             if (currentValue) {
               initialEdits[key] = currentValue;
@@ -1038,7 +1035,9 @@ export const TranslationsPage: React.FC = () => {
     const currentName = selectedTab === 'scripts' ? selectedScript : selectedMission;
     
     fields.forEach((field, idx) => {
-      const key = `${currentName}|${idx}|${targetLang}`;
+      // CORREZIONE BUG: Usa la stessa chiave stabile utilizzata nella visualizzazione
+      const stableKey = `${currentName}|${JSON.stringify(field.blockPath)}|${field.field}|${targetLang}`;
+      const key = stableKey;
       const newValue = edits[key];
       
       if (newValue !== undefined) {
@@ -1104,7 +1103,8 @@ export const TranslationsPage: React.FC = () => {
         isCustom: scriptContent.isCustom || false,
         customPath: scriptContent.customPath || null,
         isMultilingual: true,
-        availableLanguages: scriptContent.availableLanguages || ['EN', 'DE', 'FR', 'ES', 'PL', 'CS', 'RU']
+        availableLanguages: scriptContent.availableLanguages || ['EN', 'DE', 'FR', 'ES', 'PL', 'CS', 'RU'],
+        fromTranslations: true  // PROTEZIONE: Indica che viene dalla pagina traduzioni
       };
       
       const response = await fetch(`${API_CONFIG.API_BASE_URL}/scripts/saveScript`, {
@@ -1124,13 +1124,8 @@ export const TranslationsPage: React.FC = () => {
         throw new Error(result.message || 'Save failed');
       }
       
-      // Aggiorna i dati locali: sia blocchi originali che filtrati
+      // Aggiorna i dati locali con i blocchi completi (non filtrati)
       setOriginalBlocks(updatedBlocks);
-      
-      // Aggiorna anche i blocchi filtrati per la visualizzazione
-      if (globalSearchTerm && globalSearchTerm.trim()) {
-        filterBlocksBySearchTerm(updatedBlocks, globalSearchTerm);
-      }
       
       // Ricalcola le statistiche con i nuovi valori
       const updatedFields = extractTranslationFields(updatedBlocks, scriptContent.availableLanguages || ['EN', 'DE', 'FR', 'ES', 'PL', 'CS', 'RU']);
@@ -1445,7 +1440,9 @@ export const TranslationsPage: React.FC = () => {
       fields.forEach((field, idx) => {
         for (const lang of availableLanguages) {
           if (lang === 'EN') continue;
-          const key = `${missionName}|${idx}|${lang}`;
+          // CORREZIONE BUG: Usa chiave stabile basata su blockPath e field
+          const stableKey = `${missionName}|${JSON.stringify(field.blockPath)}|${field.field}|${lang}`;
+          const key = stableKey;
           const currentValue = (typeof field.values[lang] === 'string' ? field.values[lang]!.trim() : '') || '';
           if (currentValue) {
             initialEdits[key] = currentValue;
@@ -1850,7 +1847,9 @@ export const TranslationsPage: React.FC = () => {
       if (relevantDetails?.details) {
         // Per ogni campo nel dettaglio, controlla se c'è un edit
         relevantDetails.details.forEach((detail: any, idx: number) => {
-          const editKey = `${itemName}|${idx}|${selectedLang}`;
+          // CORREZIONE BUG: Usa la stessa chiave stabile
+          const stableKey = `${itemName}|${JSON.stringify(detail.path)}|${detail.field}|${selectedLang}`;
+          const editKey = stableKey;
           const editValue = edits[editKey];
           const originalValue = detail.values?.[selectedLang] || '';
           const enValue = detail.en || '';
@@ -2939,8 +2938,10 @@ export const TranslationsPage: React.FC = () => {
                                   const suggestions: string[] = j.data?.suggestions || [];
                                   // Popola tutte le inputbox
                                   const newEdits: Record<string, string> = { ...edits };
-                                  detailsToUse.forEach((_: any, idx: number) => {
-                                    const key = `${currentDetails.script}|${idx}|${selectedLang}`;
+                                  detailsToUse.forEach((detail: any, idx: number) => {
+                                    // CORREZIONE BUG: Usa chiave stabile basata su path e field
+                                    const stableKey = `${currentDetails.script}|${JSON.stringify(detail.path)}|${detail.field}|${selectedLang}`;
+                                    const key = stableKey;
                                     const sug = suggestions[idx];
                                     if (typeof sug === 'string' && sug.length > 0) newEdits[key] = sug;
                                   });
@@ -3097,7 +3098,10 @@ export const TranslationsPage: React.FC = () => {
                                           return false;
                                         })
                                         .map((field, idx) => {
-                                        const key = `${itemName}|${idx}|${selectedLang}`;
+                                        // CORREZIONE BUG: Usa una chiave stabile basata su blockPath e field invece dell'indice
+                                        // L'indice idx cambia quando il filtro è attivo, causando mismatch con gli edits
+                                        const stableKey = `${itemName}|${JSON.stringify(field.blockPath)}|${field.field}|${selectedLang}`;
+                                        const key = stableKey;
                                         const enValue = field.en || '';
                                         const fieldValue = field.values && field.values[selectedLang] ? field.values[selectedLang] : '';
                                         const currentValue = edits[key] !== undefined ? edits[key] : fieldValue;
@@ -3361,7 +3365,9 @@ export const TranslationsPage: React.FC = () => {
                                       return false;
                                     })
                                     .map((d: any, idx: number) => {
-                                  const key = `${currentDetails.script}|${idx}|${selectedLang}`;
+                                  // CORREZIONE BUG: Usa chiave stabile basata su path e field
+                                  const stableKey = `${currentDetails.script}|${JSON.stringify(d.path)}|${d.field}|${selectedLang}`;
+                                  const key = stableKey;
                                   const initial = (d.values[selectedLang] || '');
                                   const targetVal = edits[key] !== undefined ? edits[key] : initial;
                                   const isMissing = !targetVal || targetVal === d.en;

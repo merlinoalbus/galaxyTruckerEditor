@@ -1582,15 +1582,10 @@ async function parseScriptMultilingual(scriptName, format) {
     
     // 2. Merge multilingua se formato blocchi
     if (format === 'blocks') {
-      try {
-        const mergedResult = mergeMultilingualBlocks(parsedScripts, referenceScript);
-        return mergedResult;
-      } catch (mergeError) {
-        logger.error(`Error merging multilingual script ${scriptName}: ${mergeError.message}`);
-        // Fallback: restituisci solo inglese con errore
-        referenceScript.error = `ML - ${mergeError.message}`;
-        return referenceScript;
-      }
+      // La funzione mergeMultilingualBlocks ora gestisce internamente i fallback
+      // e non lancia più errori, quindi non serve try-catch
+      const mergedResult = mergeMultilingualBlocks(parsedScripts, referenceScript);
+      return mergedResult;
     } else {
       // Formato raw: aggiungi solo info multilingua
       referenceScript.availableLanguages = Object.keys(parsedScripts);
@@ -1607,9 +1602,12 @@ async function parseScriptMultilingual(scriptName, format) {
 // Merge blocchi multilingua
 function mergeMultilingualBlocks(parsedScripts, referenceScript) {
   const languages = Object.keys(parsedScripts);
-  const result = { ...referenceScript };
+  // CORREZIONE: Fai sempre una copia profonda per preservare l'originale
+  const result = JSON.parse(JSON.stringify(referenceScript));
   
-  // Controlla struttura consistente
+  // Controlla struttura consistente e filtra solo le lingue compatibili
+  const compatibleLanguages = ['EN']; // EN è sempre compatibile con se stesso
+  
   for (const lang of languages) {
     if (lang === 'EN') continue;
     
@@ -1617,14 +1615,30 @@ function mergeMultilingualBlocks(parsedScripts, referenceScript) {
     const structureMatch = compareBlockStructures(referenceScript.blocks, otherScript.blocks);
     
     if (!structureMatch.isMatch) {
-      throw new Error(`Structure mismatch between EN and ${lang} at ${structureMatch.mismatchLocation}`);
+      logger.warn(`Structure mismatch between EN and ${lang} at ${structureMatch.mismatchLocation} - skipping ${lang} from merge`);
+      // NON lanciare errore, continua con le altre lingue
+      continue;
     }
+    
+    // Se la struttura è compatibile, includi questa lingua
+    compatibleLanguages.push(lang);
   }
   
-  // Merge testi multilingua
-  result.blocks = mergeBlocksTextContent(result.blocks, parsedScripts, []);
-  result.availableLanguages = languages;
+  // Crea un oggetto parsedScripts solo con le lingue compatibili
+  const compatibleParsedScripts = {};
+  for (const lang of compatibleLanguages) {
+    compatibleParsedScripts[lang] = parsedScripts[lang];
+  }
+  
+  // Merge testi multilingua solo con lingue compatibili
+  result.blocks = mergeBlocksTextContent(result.blocks, compatibleParsedScripts, []);
+  result.availableLanguages = compatibleLanguages; // Solo lingue effettivamente processate
   result.multilingualMerged = true;
+  result.skippedLanguages = languages.filter(lang => !compatibleLanguages.includes(lang));
+  
+  if (result.skippedLanguages.length > 0) {
+    logger.info(`Merged script with ${compatibleLanguages.length}/${languages.length} languages. Skipped: ${result.skippedLanguages.join(', ')}`);
+  }
   
   return result;
 }
@@ -2138,14 +2152,41 @@ router.post('/saveScript', async (req, res) => {
             // Modalità multilingua - genera un file per ogni lingua
             const languages = SUPPORTED_LANGUAGES;
             
+            // PROTEZIONE: Se viene da traduzioni, NON modificare mai i file EN
+            const isFromTranslations = body.fromTranslations || fileScripts[0]?.fromTranslations;
+            
             for (const lang of languages) {
+              // Salta EN se la richiesta viene dalla pagina traduzioni
+              if (isFromTranslations && lang === 'EN') {
+                logger.info(`Skipping EN file modification - request from translations page`);
+                results.push({
+                  scriptName: fileScripts[0].name,
+                  language: lang,
+                  status: 'skipped',
+                  reason: 'EN files are protected from translations page modifications'
+                });
+                continue;
+              }
+              
               const filePath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`, fileName);
               await processFileForLanguage(filePath, fileScripts, lang, results);
             }
           } else {
             // Modalità singola lingua (default EN)
-            const filePath = path.join(GAME_ROOT, 'campaign', 'campaignScriptsEN', fileName);
-            await processFileForLanguage(filePath, fileScripts, 'EN', results);
+            const isFromTranslations = body.fromTranslations || fileScripts[0]?.fromTranslations;
+            
+            if (isFromTranslations) {
+              logger.warn(`Blocked EN file modification - request from translations page in single-language mode`);
+              results.push({
+                scriptName: fileScripts[0].name,
+                language: 'EN',
+                status: 'blocked',
+                reason: 'EN files are protected from translations page modifications'
+              });
+            } else {
+              const filePath = path.join(GAME_ROOT, 'campaign', 'campaignScriptsEN', fileName);
+              await processFileForLanguage(filePath, fileScripts, 'EN', results);
+            }
           }
         }
       }

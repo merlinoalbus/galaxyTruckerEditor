@@ -1,0 +1,7 @@
+SCRIPT testShow
+
+  ShowChar tutor right
+  ChangeChar tutor campaign/test.png
+  Say "Test"
+  
+END_OF_SCRIPT
