@@ -1,6 +1,0 @@
-idName: "hard_random"
-character: random
-avatar: avatars/ai/hard_random.png
-color: "rygb"
-difficulty: hard  # 1- hard, 3 - normal, 6 - easy
-

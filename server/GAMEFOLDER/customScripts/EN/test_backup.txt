@@ -1,7 +1,0 @@
-SCRIPTS
-
-  SCRIPT test_backup_system
-    Say "DEBUG TEST: Backup manager debug active!"
-  END_OF_SCRIPT
-
-END_OF_SCRIPTS

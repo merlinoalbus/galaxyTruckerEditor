@@ -1,9 +1,0 @@
-idName: "medium_angry_pap"
-type: turn
-character: angry
-avatar: avatars/ai/medium_angry.png
-color: "ygbr"
-preferencesSettings: aiConfigs/settingAngry.aipref
-qualitySettings: aiConfigs/settingPaPAngry.aiqual
-difficulty: medium  
-stupidity: 80

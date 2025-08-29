@@ -1,9 +1,0 @@
-idName: "richGirlRace"
-shipTypes: ["I-sport", "II-sport", "III"]
-gender: female
-avatar: campaign/rich.png
-color: "yrgb"
-preferencesSettings: aiConfigs/settingBase.aipref
-speedSettings: aiConfigs/settingBaseHard.aispeed
-difficulty: normal
-stupidity: 20

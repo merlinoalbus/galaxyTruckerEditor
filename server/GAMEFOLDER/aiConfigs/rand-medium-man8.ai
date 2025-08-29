@@ -1,6 +1,0 @@
-idName: "rand-medium-man8"
-avatar: avatars/campaign/common/medium-man8.png
-color: "byrg"
-preferencesSettings: aiConfigs/settingAngry.aipref
-speedSettings: aiConfigs/settingBaseMedium.aispeed
-stupidity: 60

@@ -1,9 +1,0 @@
-idName: "easy_angry_pap"
-type: turn
-character: angry
-avatar: avatars/ai/easy_angry.png
-color: "gbyr"
-preferencesSettings: aiConfigs/settingAngry.aipref
-qualitySettings: aiConfigs/settingPaPAngry.aiqual
-difficulty: easy  
-stupidity: 120

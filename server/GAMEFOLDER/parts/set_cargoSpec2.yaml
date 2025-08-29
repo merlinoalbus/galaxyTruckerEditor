@@ -1,6 +1,0 @@
-- type: cargoSpec2
-  connectors: [1, 0, 2, 0]
-- type: cargoSpec2
-  connectors: [2, 0, 0, 0]
-- type: cargoSpec2
-  connectors: [1, 0, 0, 0]

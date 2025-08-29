@@ -1,8 +1,0 @@
-idName: "easy_basic"
-character: basic
-avatar: avatars/ai/easy_basic.png
-color: "gbyr"
-preferencesSettings: aiConfigs/settingBase.aipref
-speedSettings: aiConfigs/settingBaseEasy.aispeed
-difficulty: easy  #hard, medium, easy
-stupidity: 120

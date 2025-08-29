@@ -1,8 +1,0 @@
-idName: "easy_safe"
-character: safe
-avatar: avatars/ai/easy_safe.png
-color: "gbyr"
-preferencesSettings: aiConfigs/settingSafe.aipref
-speedSettings: aiConfigs/settingBaseEasy.aispeed
-difficulty: easy  #hard, medium, easy
-stupidity: 120
