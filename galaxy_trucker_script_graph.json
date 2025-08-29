@@ -1,0 +1,2375 @@
+{
+  "nodes": [
+    {
+      "id": "newbie_init",
+      "label": "newbie_init",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "outpost_init",
+      "label": "outpost_init",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "bar_init",
+      "label": "bar_init",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "regula_init",
+      "label": "regula_init",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "workshop_init",
+      "label": "workshop_init",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "purpleHome_init",
+      "label": "purpleHome_init",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "brownHome_init",
+      "label": "brownHome_init",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "cyanHome_init",
+      "label": "cyanHome_init",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "class2_inits",
+      "label": "class2_inits",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "class3_inits",
+      "label": "class3_inits",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "forge_init",
+      "label": "forge_init",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "pirateTrap_init",
+      "label": "pirateTrap_init",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "pirateHaven_init",
+      "label": "pirateHaven_init",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "showDebugButtons",
+      "label": "showDebugButtons",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "registerVisited",
+      "label": "registerVisited",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "mine0_init",
+      "label": "mine0_init",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "mine1_init",
+      "label": "mine1_init",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "mine2_init",
+      "label": "mine2_init",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "mine3_init",
+      "label": "mine3_init",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "licenseApprovalCheck",
+      "label": "licenseApprovalCheck",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "recommendationCheck",
+      "label": "recommendationCheck",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "club_init",
+      "label": "club_init",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "lab_init",
+      "label": "lab_init",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\base_inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "initcampaign",
+      "label": "initcampaign",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "debugCredits",
+      "label": "debugCredits",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "debugStart",
+      "label": "debugStart",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "showAllBases1",
+      "label": "showAllBases1",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "showAllBases2",
+      "label": "showAllBases2",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "showAllBases3",
+      "label": "showAllBases3",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\inits.txt",
+      "group": "script"
+    },
+    {
+      "id": "purpleSupportInfo",
+      "label": "purpleSupportInfo",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions.txt",
+      "group": "script"
+    },
+    {
+      "id": "purpleAlienInfo",
+      "label": "purpleAlienInfo",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions.txt",
+      "group": "script"
+    },
+    {
+      "id": "brownInfo",
+      "label": "brownInfo",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialSideMeteors",
+      "label": "tutorialSideMeteors",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialBooze",
+      "label": "tutorialBooze",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions.txt",
+      "group": "script"
+    },
+    {
+      "id": "bartenderOverIntercom",
+      "label": "bartenderOverIntercom",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialAdditionalFlightConcepts",
+      "label": "tutorialAdditionalFlightConcepts",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialAdditionalConcepts",
+      "label": "tutorialAdditionalConcepts",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions.txt",
+      "group": "script"
+    },
+    {
+      "id": "merchantGivesUp",
+      "label": "merchantGivesUp",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialEpidemy",
+      "label": "tutorialEpidemy",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions.txt",
+      "group": "script"
+    },
+    {
+      "id": "ingotsIntro",
+      "label": "ingotsIntro",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions.txt",
+      "group": "script"
+    },
+    {
+      "id": "pirateEscape",
+      "label": "pirateEscape",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions2.txt",
+      "group": "script"
+    },
+    {
+      "id": "explosivesIntro",
+      "label": "explosivesIntro",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions2.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_no_explosives0",
+      "label": "ms_no_explosives0",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions2.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_no_explosives1",
+      "label": "ms_no_explosives1",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions2.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_no_explosives2",
+      "label": "ms_no_explosives2",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions2.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_explosives0",
+      "label": "ms_explosives0",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions2.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_explosives1",
+      "label": "ms_explosives1",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions2.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_explosives2",
+      "label": "ms_explosives2",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions2.txt",
+      "group": "script"
+    },
+    {
+      "id": "explosivesAchievementCheck",
+      "label": "explosivesAchievementCheck",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions2.txt",
+      "group": "script"
+    },
+    {
+      "id": "radioactiveAchievementCheck",
+      "label": "radioactiveAchievementCheck",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions2.txt",
+      "group": "script"
+    },
+    {
+      "id": "radioactiveTutorial",
+      "label": "radioactiveTutorial",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions2.txt",
+      "group": "script"
+    },
+    {
+      "id": "radioactivePayment",
+      "label": "radioactivePayment",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions2.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_no_radioactive",
+      "label": "ms_no_radioactive",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions2.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_radioactive1",
+      "label": "ms_radioactive1",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions2.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_radioactive2",
+      "label": "ms_radioactive2",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions2.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_radioactive3",
+      "label": "ms_radioactive3",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions2.txt",
+      "group": "script"
+    },
+    {
+      "id": "experimentTutorial",
+      "label": "experimentTutorial",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\missions2.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialPurple",
+      "label": "tutorialPurple",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\ms_scripts.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_purpleAlien",
+      "label": "ms_purpleAlien",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\ms_scripts.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_first_mission",
+      "label": "ms_first_mission",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\ms_scripts.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_rough_mission",
+      "label": "ms_rough_mission",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\ms_scripts.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_booze_1",
+      "label": "ms_booze_1",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\ms_scripts.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_booze_2",
+      "label": "ms_booze_2",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\ms_scripts.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_road_closed",
+      "label": "ms_road_closed",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\ms_scripts.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_meteors_side",
+      "label": "ms_meteors_side",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\ms_scripts.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_rich_girl",
+      "label": "ms_rich_girl",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\ms_scripts.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_rich_girl2",
+      "label": "ms_rich_girl2",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\ms_scripts.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_leavingPurple",
+      "label": "ms_leavingPurple",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\ms_scripts.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_merchant",
+      "label": "ms_merchant",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\ms_scripts.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_merchant2",
+      "label": "ms_merchant2",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\ms_scripts.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_merchant3",
+      "label": "ms_merchant3",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\ms_scripts.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_people_delivery",
+      "label": "ms_people_delivery",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\ms_scripts.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_pirateEscort",
+      "label": "ms_pirateEscort",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\ms_scripts.txt",
+      "group": "script"
+    },
+    {
+      "id": "ms_finalRoute",
+      "label": "ms_finalRoute",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\ms_scripts.txt",
+      "group": "script"
+    },
+    {
+      "id": "newbieDlg",
+      "label": "newbieDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts1.txt",
+      "group": "script"
+    },
+    {
+      "id": "embassyDlg",
+      "label": "embassyDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts1.txt",
+      "group": "script"
+    },
+    {
+      "id": "barDlg",
+      "label": "barDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts1.txt",
+      "group": "script"
+    },
+    {
+      "id": "regulaDlg",
+      "label": "regulaDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts1.txt",
+      "group": "script"
+    },
+    {
+      "id": "vipCheck",
+      "label": "vipCheck",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts2.txt",
+      "group": "script"
+    },
+    {
+      "id": "richGirlDlg",
+      "label": "richGirlDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts2.txt",
+      "group": "script"
+    },
+    {
+      "id": "richGirlDlg2",
+      "label": "richGirlDlg2",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts2.txt",
+      "group": "script"
+    },
+    {
+      "id": "merchantLaughA",
+      "label": "merchantLaughA",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts2.txt",
+      "group": "script"
+    },
+    {
+      "id": "merchantLaughB",
+      "label": "merchantLaughB",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts2.txt",
+      "group": "script"
+    },
+    {
+      "id": "merchantLaughX",
+      "label": "merchantLaughX",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts2.txt",
+      "group": "script"
+    },
+    {
+      "id": "purpleHomeDlg",
+      "label": "purpleHomeDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts2.txt",
+      "group": "script"
+    },
+    {
+      "id": "merchantDlg",
+      "label": "merchantDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts2.txt",
+      "group": "script"
+    },
+    {
+      "id": "mechDlg",
+      "label": "mechDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts2.txt",
+      "group": "script"
+    },
+    {
+      "id": "brownDlg",
+      "label": "brownDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts2.txt",
+      "group": "script"
+    },
+    {
+      "id": "merchHelpDlg",
+      "label": "merchHelpDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts2.txt",
+      "group": "script"
+    },
+    {
+      "id": "merchDlg2",
+      "label": "merchDlg2",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts2.txt",
+      "group": "script"
+    },
+    {
+      "id": "cyanDlg",
+      "label": "cyanDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts2.txt",
+      "group": "script"
+    },
+    {
+      "id": "workDlg",
+      "label": "workDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts2.txt",
+      "group": "script"
+    },
+    {
+      "id": "shortcutDlg",
+      "label": "shortcutDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts2.txt",
+      "group": "script"
+    },
+    {
+      "id": "forgeDlg",
+      "label": "forgeDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts3.txt",
+      "group": "script"
+    },
+    {
+      "id": "sailorZoomOut",
+      "label": "sailorZoomOut",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts3.txt",
+      "group": "script"
+    },
+    {
+      "id": "sailorAnim",
+      "label": "sailorAnim",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts3.txt",
+      "group": "script"
+    },
+    {
+      "id": "treasureFound",
+      "label": "treasureFound",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts3.txt",
+      "group": "script"
+    },
+    {
+      "id": "barGuestsDlg",
+      "label": "barGuestsDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts3.txt",
+      "group": "script"
+    },
+    {
+      "id": "pirateDlg1",
+      "label": "pirateDlg1",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts3.txt",
+      "group": "script"
+    },
+    {
+      "id": "pirateDlg2",
+      "label": "pirateDlg2",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts3.txt",
+      "group": "script"
+    },
+    {
+      "id": "pirateDlg3",
+      "label": "pirateDlg3",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts3.txt",
+      "group": "script"
+    },
+    {
+      "id": "mine0Dlg",
+      "label": "mine0Dlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts4.txt",
+      "group": "script"
+    },
+    {
+      "id": "mine1Dlg",
+      "label": "mine1Dlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts4.txt",
+      "group": "script"
+    },
+    {
+      "id": "mine2Dlg",
+      "label": "mine2Dlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts4.txt",
+      "group": "script"
+    },
+    {
+      "id": "OnlyWinnerDlg",
+      "label": "OnlyWinnerDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts4.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorClass3Dlg",
+      "label": "tutorClass3Dlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts5.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorShuttleSubdlg",
+      "label": "tutorShuttleSubdlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts5.txt",
+      "group": "script"
+    },
+    {
+      "id": "guruDlg",
+      "label": "guruDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts5.txt",
+      "group": "script"
+    },
+    {
+      "id": "clubDlg",
+      "label": "clubDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts5.txt",
+      "group": "script"
+    },
+    {
+      "id": "merchCyanDlg",
+      "label": "merchCyanDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts5.txt",
+      "group": "script"
+    },
+    {
+      "id": "labDlg",
+      "label": "labDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts5.txt",
+      "group": "script"
+    },
+    {
+      "id": "raceDlg",
+      "label": "raceDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts5.txt",
+      "group": "script"
+    },
+    {
+      "id": "FinalRaceDlg",
+      "label": "FinalRaceDlg",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\scripts5.txt",
+      "group": "script"
+    },
+    {
+      "id": "addMediumGroup1",
+      "label": "addMediumGroup1",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\stdMissions.txt",
+      "group": "script"
+    },
+    {
+      "id": "addMediumGroup2",
+      "label": "addMediumGroup2",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\stdMissions.txt",
+      "group": "script"
+    },
+    {
+      "id": "addMediumGroup3",
+      "label": "addMediumGroup3",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\stdMissions.txt",
+      "group": "script"
+    },
+    {
+      "id": "add1RandomOpponentsEasy",
+      "label": "add1RandomOpponentsEasy",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\stdMissions.txt",
+      "group": "script"
+    },
+    {
+      "id": "add2RandomOpponentsEasy",
+      "label": "add2RandomOpponentsEasy",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\stdMissions.txt",
+      "group": "script"
+    },
+    {
+      "id": "add3RandomOpponentsEasy",
+      "label": "add3RandomOpponentsEasy",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\stdMissions.txt",
+      "group": "script"
+    },
+    {
+      "id": "addRandomOpponentsEasy",
+      "label": "addRandomOpponentsEasy",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\stdMissions.txt",
+      "group": "script"
+    },
+    {
+      "id": "add1RandomOpponentsMedium",
+      "label": "add1RandomOpponentsMedium",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\stdMissions.txt",
+      "group": "script"
+    },
+    {
+      "id": "add2RandomOpponentsMedium",
+      "label": "add2RandomOpponentsMedium",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\stdMissions.txt",
+      "group": "script"
+    },
+    {
+      "id": "add3RandomOpponentsMedium",
+      "label": "add3RandomOpponentsMedium",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\stdMissions.txt",
+      "group": "script"
+    },
+    {
+      "id": "addRandomOpponentsMedium",
+      "label": "addRandomOpponentsMedium",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\stdMissions.txt",
+      "group": "script"
+    },
+    {
+      "id": "add1RandomOpponentsHard",
+      "label": "add1RandomOpponentsHard",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\stdMissions.txt",
+      "group": "script"
+    },
+    {
+      "id": "add2RandomOpponentsHard",
+      "label": "add2RandomOpponentsHard",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\stdMissions.txt",
+      "group": "script"
+    },
+    {
+      "id": "add3RandomOpponentsHard",
+      "label": "add3RandomOpponentsHard",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\stdMissions.txt",
+      "group": "script"
+    },
+    {
+      "id": "addRandomOpponentsHard",
+      "label": "addRandomOpponentsHard",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\stdMissions.txt",
+      "group": "script"
+    },
+    {
+      "id": "stdParts",
+      "label": "stdParts",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\stdMissions.txt",
+      "group": "script"
+    },
+    {
+      "id": "universalParts",
+      "label": "universalParts",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\stdMissions.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialIntro",
+      "label": "tutorialIntro",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialEngineWrong",
+      "label": "tutorialEngineWrong",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialEngineClever",
+      "label": "tutorialEngineClever",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialAIBuilding",
+      "label": "tutorialAIBuilding",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialFlightIntro",
+      "label": "tutorialFlightIntro",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialFlightViews",
+      "label": "tutorialFlightViews",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialFlightAdvCards",
+      "label": "tutorialFlightAdvCards",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialPlanetsHasRed",
+      "label": "tutorialPlanetsHasRed",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialPlanetsHasNoRed",
+      "label": "tutorialPlanetsHasNoRed",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialPlanetLanding",
+      "label": "tutorialPlanetLanding",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialCardInfo",
+      "label": "tutorialCardInfo",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialAbandonedStation",
+      "label": "tutorialAbandonedStation",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialMeteoricInfo",
+      "label": "tutorialMeteoricInfo",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialMeteor1",
+      "label": "tutorialMeteor1",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialMeteor2",
+      "label": "tutorialMeteor2",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialMeteor3",
+      "label": "tutorialMeteor3",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialShieldsInfo",
+      "label": "tutorialShieldsInfo",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialMeteor4",
+      "label": "tutorialMeteor4",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialMeteorFinal",
+      "label": "tutorialMeteorFinal",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialResults",
+      "label": "tutorialResults",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialFinishZero",
+      "label": "tutorialFinishZero",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialFinishPlayerWon",
+      "label": "tutorialFinishPlayerWon",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialFinishPlayerLost",
+      "label": "tutorialFinishPlayerLost",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    },
+    {
+      "id": "tutorialFinal",
+      "label": "tutorialFinal",
+      "type": "script",
+      "file": "C:\\Users\\rober\\OneDrive\\Documenti\\Repository\\supportappgtedit\\server\\GAMEFOLDER\\campaign\\campaignScriptsEN\\tutorials.txt",
+      "group": "script"
+    }
+  ],
+  "edges": [
+    {
+      "from": "newbie_init",
+      "to": "registerVisited",
+      "arrows": "to"
+    },
+    {
+      "from": "outpost_init",
+      "to": "registerVisited",
+      "arrows": "to"
+    },
+    {
+      "from": "bar_init",
+      "to": "registerVisited",
+      "arrows": "to"
+    },
+    {
+      "from": "regula_init",
+      "to": "registerVisited",
+      "arrows": "to"
+    },
+    {
+      "from": "workshop_init",
+      "to": "registerVisited",
+      "arrows": "to"
+    },
+    {
+      "from": "purpleHome_init",
+      "to": "registerVisited",
+      "arrows": "to"
+    },
+    {
+      "from": "brownHome_init",
+      "to": "registerVisited",
+      "arrows": "to"
+    },
+    {
+      "from": "cyanHome_init",
+      "to": "registerVisited",
+      "arrows": "to"
+    },
+    {
+      "from": "forge_init",
+      "to": "registerVisited",
+      "arrows": "to"
+    },
+    {
+      "from": "pirateTrap_init",
+      "to": "pirateHaven_init",
+      "arrows": "to"
+    },
+    {
+      "from": "pirateHaven_init",
+      "to": "registerVisited",
+      "arrows": "to"
+    },
+    {
+      "from": "mine0_init",
+      "to": "registerVisited",
+      "arrows": "to"
+    },
+    {
+      "from": "mine1_init",
+      "to": "registerVisited",
+      "arrows": "to"
+    },
+    {
+      "from": "mine2_init",
+      "to": "registerVisited",
+      "arrows": "to"
+    },
+    {
+      "from": "mine3_init",
+      "to": "registerVisited",
+      "arrows": "to"
+    },
+    {
+      "from": "club_init",
+      "to": "registerVisited",
+      "arrows": "to"
+    },
+    {
+      "from": "lab_init",
+      "to": "registerVisited",
+      "arrows": "to"
+    },
+    {
+      "from": "initcampaign",
+      "to": "campaignIntro",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "forge_init",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "purpleHome_init",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "startO",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "startB",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "startH",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "showAllBases3",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "startA",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "startR",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "regula_init",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "bar_init",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "workshop_init",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "showAllBases2",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "newbie_init",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "startP",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "mine0_init",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "class2_inits",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "startRace",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "pirateTrap_init",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "showAllBases1",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "showDebugButtons",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "startLab",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "outpost_init",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "startSilence",
+      "arrows": "to"
+    },
+    {
+      "from": "debugStart",
+      "to": "startElite",
+      "arrows": "to"
+    },
+    {
+      "from": "showAllBases1",
+      "to": "class2_inits",
+      "arrows": "to"
+    },
+    {
+      "from": "showAllBases1",
+      "to": "brownHome_init",
+      "arrows": "to"
+    },
+    {
+      "from": "showAllBases1",
+      "to": "regula_init",
+      "arrows": "to"
+    },
+    {
+      "from": "showAllBases1",
+      "to": "workshop_init",
+      "arrows": "to"
+    },
+    {
+      "from": "showAllBases1",
+      "to": "bar_init",
+      "arrows": "to"
+    },
+    {
+      "from": "showAllBases1",
+      "to": "newbie_init",
+      "arrows": "to"
+    },
+    {
+      "from": "showAllBases1",
+      "to": "purpleHome_init",
+      "arrows": "to"
+    },
+    {
+      "from": "showAllBases1",
+      "to": "outpost_init",
+      "arrows": "to"
+    },
+    {
+      "from": "showAllBases2",
+      "to": "pirateHaven_init",
+      "arrows": "to"
+    },
+    {
+      "from": "showAllBases2",
+      "to": "cyanHome_init",
+      "arrows": "to"
+    },
+    {
+      "from": "showAllBases2",
+      "to": "class3_inits",
+      "arrows": "to"
+    },
+    {
+      "from": "showAllBases2",
+      "to": "forge_init",
+      "arrows": "to"
+    },
+    {
+      "from": "showAllBases2",
+      "to": "mine1_init",
+      "arrows": "to"
+    },
+    {
+      "from": "showAllBases2",
+      "to": "mine0_init",
+      "arrows": "to"
+    },
+    {
+      "from": "showAllBases2",
+      "to": "mine2_init",
+      "arrows": "to"
+    },
+    {
+      "from": "showAllBases3",
+      "to": "mine3_init",
+      "arrows": "to"
+    },
+    {
+      "from": "showAllBases3",
+      "to": "lab_init",
+      "arrows": "to"
+    },
+    {
+      "from": "showAllBases3",
+      "to": "club_init",
+      "arrows": "to"
+    },
+    {
+      "from": "brownInfo",
+      "to": "add2RandomOpponentsMedium",
+      "arrows": "to"
+    },
+    {
+      "from": "brownInfo",
+      "to": "stdParts",
+      "arrows": "to"
+    },
+    {
+      "from": "tutorialSideMeteors",
+      "to": "stdParts",
+      "arrows": "to"
+    },
+    {
+      "from": "bartenderOverIntercom",
+      "to": "add3RandomOpponentsEasy",
+      "arrows": "to"
+    },
+    {
+      "from": "bartenderOverIntercom",
+      "to": "stdParts",
+      "arrows": "to"
+    },
+    {
+      "from": "bartenderOverIntercom",
+      "to": "bartenderOverIntercom",
+      "arrows": "to"
+    },
+    {
+      "from": "tutorialAdditionalConcepts",
+      "to": "stdParts",
+      "arrows": "to"
+    },
+    {
+      "from": "tutorialAdditionalConcepts",
+      "to": "add2RandomOpponentsEasy",
+      "arrows": "to"
+    },
+    {
+      "from": "merchantGivesUp",
+      "to": "recommendationCheck",
+      "arrows": "to"
+    },
+    {
+      "from": "merchantGivesUp",
+      "to": "stdParts",
+      "arrows": "to"
+    },
+    {
+      "from": "merchantGivesUp",
+      "to": "merchantLaughB",
+      "arrows": "to"
+    },
+    {
+      "from": "merchantGivesUp",
+      "to": "merchantLaughA",
+      "arrows": "to"
+    },
+    {
+      "from": "merchantGivesUp",
+      "to": "licenseApprovalCheck",
+      "arrows": "to"
+    },
+    {
+      "from": "merchantGivesUp",
+      "to": "add2RandomOpponentsMedium",
+      "arrows": "to"
+    },
+    {
+      "from": "tutorialEpidemy",
+      "to": "add2RandomOpponentsMedium",
+      "arrows": "to"
+    },
+    {
+      "from": "tutorialEpidemy",
+      "to": "addRandomOpponentsMedium",
+      "arrows": "to"
+    },
+    {
+      "from": "tutorialEpidemy",
+      "to": "universalParts",
+      "arrows": "to"
+    },
+    {
+      "from": "tutorialEpidemy",
+      "to": "stdParts",
+      "arrows": "to"
+    },
+    {
+      "from": "ingotsIntro",
+      "to": "add2RandomOpponentsMedium",
+      "arrows": "to"
+    },
+    {
+      "from": "ingotsIntro",
+      "to": "stdParts",
+      "arrows": "to"
+    },
+    {
+      "from": "pirateEscape",
+      "to": "add2RandomOpponentsMedium",
+      "arrows": "to"
+    },
+    {
+      "from": "pirateEscape",
+      "to": "stdParts",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_explosives2",
+      "to": "add3RandomOpponentsMedium",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_explosives2",
+      "to": "stdParts",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_explosives2",
+      "to": "explosivesAchievementCheck",
+      "arrows": "to"
+    },
+    {
+      "from": "radioactivePayment",
+      "to": "radioactiveNoCredits",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_radioactive1",
+      "to": "radioactivePayment",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_radioactive2",
+      "to": "radioactivePayment",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_radioactive3",
+      "to": "radioactivePayment",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_radioactive3",
+      "to": "radioactiveAchievementCheck",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_radioactive3",
+      "to": "add2RandomOpponentsMedium",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_radioactive3",
+      "to": "stdParts",
+      "arrows": "to"
+    },
+    {
+      "from": "experimentTutorial",
+      "to": "addRandomOpponentsMedium",
+      "arrows": "to"
+    },
+    {
+      "from": "experimentTutorial",
+      "to": "stdParts",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_purpleAlien",
+      "to": "whatever",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_rough_mission",
+      "to": "r2a_mission",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_rough_mission",
+      "to": "bet_question",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_rough_mission",
+      "to": "after_bet",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_road_closed",
+      "to": "AWAY",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_meteors_side",
+      "to": "ALONE",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_merchant",
+      "to": "merchantLaughB",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_merchant",
+      "to": "merchantLaughA",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_merchant3",
+      "to": "merchantLaughX",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_people_delivery",
+      "to": "peopleDeliveryCont",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_finalRoute",
+      "to": "campVictory",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_finalRoute",
+      "to": "timeLoop",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_finalRoute",
+      "to": "loadTime",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_finalRoute",
+      "to": "merchantLaughA",
+      "arrows": "to"
+    },
+    {
+      "from": "ms_finalRoute",
+      "to": "raceStart",
+      "arrows": "to"
+    },
+    {
+      "from": "newbieDlg",
+      "to": "newbie_end",
+      "arrows": "to"
+    },
+    {
+      "from": "newbieDlg",
+      "to": "basic_route_agreed",
+      "arrows": "to"
+    },
+    {
+      "from": "newbieDlg",
+      "to": "tutorClass3Dlg",
+      "arrows": "to"
+    },
+    {
+      "from": "newbieDlg",
+      "to": "more_missions1",
+      "arrows": "to"
+    },
+    {
+      "from": "newbieDlg",
+      "to": "more_missions",
+      "arrows": "to"
+    },
+    {
+      "from": "embassyDlg",
+      "to": "acceptPurple",
+      "arrows": "to"
+    },
+    {
+      "from": "embassyDlg",
+      "to": "refused",
+      "arrows": "to"
+    },
+    {
+      "from": "embassyDlg",
+      "to": "corridor",
+      "arrows": "to"
+    },
+    {
+      "from": "barDlg",
+      "to": "bar_debt_refused",
+      "arrows": "to"
+    },
+    {
+      "from": "barDlg",
+      "to": "nice_bar",
+      "arrows": "to"
+    },
+    {
+      "from": "barDlg",
+      "to": "booze_quest",
+      "arrows": "to"
+    },
+    {
+      "from": "barDlg",
+      "to": "bar_debt",
+      "arrows": "to"
+    },
+    {
+      "from": "barDlg",
+      "to": "leaving_bar_in_shame",
+      "arrows": "to"
+    },
+    {
+      "from": "barDlg",
+      "to": "quest_agreed",
+      "arrows": "to"
+    },
+    {
+      "from": "barDlg",
+      "to": "leaving_bar",
+      "arrows": "to"
+    },
+    {
+      "from": "barDlg",
+      "to": "anything_else",
+      "arrows": "to"
+    },
+    {
+      "from": "barDlg",
+      "to": "drinking",
+      "arrows": "to"
+    },
+    {
+      "from": "regulaDlg",
+      "to": "class2_inits",
+      "arrows": "to"
+    },
+    {
+      "from": "regulaDlg",
+      "to": "class3_inits",
+      "arrows": "to"
+    },
+    {
+      "from": "regulaDlg",
+      "to": "leaveClerk",
+      "arrows": "to"
+    },
+    {
+      "from": "regulaDlg",
+      "to": "afterUnlock",
+      "arrows": "to"
+    },
+    {
+      "from": "vipCheck",
+      "to": "richGirlDlg",
+      "arrows": "to"
+    },
+    {
+      "from": "richGirlDlg",
+      "to": "richCont",
+      "arrows": "to"
+    },
+    {
+      "from": "richGirlDlg",
+      "to": "richQuery",
+      "arrows": "to"
+    },
+    {
+      "from": "richGirlDlg",
+      "to": "richCont3",
+      "arrows": "to"
+    },
+    {
+      "from": "richGirlDlg",
+      "to": "richCont2",
+      "arrows": "to"
+    },
+    {
+      "from": "richGirlDlg",
+      "to": "richRefused",
+      "arrows": "to"
+    },
+    {
+      "from": "richGirlDlg",
+      "to": "richEnd",
+      "arrows": "to"
+    },
+    {
+      "from": "richGirlDlg2",
+      "to": "richGirl2Querry",
+      "arrows": "to"
+    },
+    {
+      "from": "richGirlDlg2",
+      "to": "richGirl2End",
+      "arrows": "to"
+    },
+    {
+      "from": "purpleHomeDlg",
+      "to": "purpleHomeEnd",
+      "arrows": "to"
+    },
+    {
+      "from": "purpleHomeDlg",
+      "to": "purpleHomeAnswer",
+      "arrows": "to"
+    },
+    {
+      "from": "merchantDlg",
+      "to": "merchantLaughB",
+      "arrows": "to"
+    },
+    {
+      "from": "merchantDlg",
+      "to": "merchCont",
+      "arrows": "to"
+    },
+    {
+      "from": "merchantDlg",
+      "to": "merchSecondQuery",
+      "arrows": "to"
+    },
+    {
+      "from": "merchantDlg",
+      "to": "merchantLaughA",
+      "arrows": "to"
+    },
+    {
+      "from": "merchantDlg",
+      "to": "merchAccept",
+      "arrows": "to"
+    },
+    {
+      "from": "merchantDlg",
+      "to": "merchFirstQuery",
+      "arrows": "to"
+    },
+    {
+      "from": "merchantDlg",
+      "to": "merchEnd",
+      "arrows": "to"
+    },
+    {
+      "from": "mechDlg",
+      "to": "mechEnd",
+      "arrows": "to"
+    },
+    {
+      "from": "mechDlg",
+      "to": "mechAccept",
+      "arrows": "to"
+    },
+    {
+      "from": "mechDlg",
+      "to": "mechCont",
+      "arrows": "to"
+    },
+    {
+      "from": "brownDlg",
+      "to": "brownEnd",
+      "arrows": "to"
+    },
+    {
+      "from": "brownDlg",
+      "to": "brownFail",
+      "arrows": "to"
+    },
+    {
+      "from": "brownDlg",
+      "to": "brownSuccess",
+      "arrows": "to"
+    },
+    {
+      "from": "merchHelpDlg",
+      "to": "merchHelpEnd",
+      "arrows": "to"
+    },
+    {
+      "from": "merchDlg2",
+      "to": "merchDlg2cont",
+      "arrows": "to"
+    },
+    {
+      "from": "merchDlg2",
+      "to": "merchDlg2Querry",
+      "arrows": "to"
+    },
+    {
+      "from": "merchDlg2",
+      "to": "merchDlg2End",
+      "arrows": "to"
+    },
+    {
+      "from": "merchDlg2",
+      "to": "merchantLaughB",
+      "arrows": "to"
+    },
+    {
+      "from": "merchDlg2",
+      "to": "merchantLaughA",
+      "arrows": "to"
+    },
+    {
+      "from": "cyanDlg",
+      "to": "cyanEnd",
+      "arrows": "to"
+    },
+    {
+      "from": "cyanDlg",
+      "to": "cyanLangMore1",
+      "arrows": "to"
+    },
+    {
+      "from": "cyanDlg",
+      "to": "cyanCont",
+      "arrows": "to"
+    },
+    {
+      "from": "cyanDlg",
+      "to": "cyanLangMore2",
+      "arrows": "to"
+    },
+    {
+      "from": "cyanDlg",
+      "to": "cyanLangEnd",
+      "arrows": "to"
+    },
+    {
+      "from": "cyanDlg",
+      "to": "cyanDesignUnlock",
+      "arrows": "to"
+    },
+    {
+      "from": "workDlg",
+      "to": "workSecondDesignQuest",
+      "arrows": "to"
+    },
+    {
+      "from": "workDlg",
+      "to": "doubleDesignOffer",
+      "arrows": "to"
+    },
+    {
+      "from": "workDlg",
+      "to": "workSecondDesign",
+      "arrows": "to"
+    },
+    {
+      "from": "workDlg",
+      "to": "workThirdDesign",
+      "arrows": "to"
+    },
+    {
+      "from": "workDlg",
+      "to": "workSecondDesignQuerry",
+      "arrows": "to"
+    },
+    {
+      "from": "workDlg",
+      "to": "workEnd",
+      "arrows": "to"
+    },
+    {
+      "from": "shortcutDlg",
+      "to": "shortcutEnd",
+      "arrows": "to"
+    },
+    {
+      "from": "shortcutDlg",
+      "to": "shortcutAccepted",
+      "arrows": "to"
+    },
+    {
+      "from": "forgeDlg",
+      "to": "forgeExpl",
+      "arrows": "to"
+    },
+    {
+      "from": "forgeDlg",
+      "to": "forgeExplosives",
+      "arrows": "to"
+    },
+    {
+      "from": "forgeDlg",
+      "to": "forgeExplosivesCont",
+      "arrows": "to"
+    },
+    {
+      "from": "forgeDlg",
+      "to": "forgeIngots",
+      "arrows": "to"
+    },
+    {
+      "from": "forgeDlg",
+      "to": "forgeAcceptEnd",
+      "arrows": "to"
+    },
+    {
+      "from": "forgeDlg",
+      "to": "forgeIngotsCont",
+      "arrows": "to"
+    },
+    {
+      "from": "forgeDlg",
+      "to": "forgeEnd",
+      "arrows": "to"
+    },
+    {
+      "from": "barGuestsDlg",
+      "to": "ratLeaving",
+      "arrows": "to"
+    },
+    {
+      "from": "barGuestsDlg",
+      "to": "ratWaiting",
+      "arrows": "to"
+    },
+    {
+      "from": "barGuestsDlg",
+      "to": "ratOrder",
+      "arrows": "to"
+    },
+    {
+      "from": "barGuestsDlg",
+      "to": "sailorDlg",
+      "arrows": "to"
+    },
+    {
+      "from": "barGuestsDlg",
+      "to": "sailorCont",
+      "arrows": "to"
+    },
+    {
+      "from": "barGuestsDlg",
+      "to": "sailorSecret",
+      "arrows": "to"
+    },
+    {
+      "from": "barGuestsDlg",
+      "to": "sailorZoomOut",
+      "arrows": "to"
+    },
+    {
+      "from": "barGuestsDlg",
+      "to": "ratDlg",
+      "arrows": "to"
+    },
+    {
+      "from": "barGuestsDlg",
+      "to": "sailorEnd",
+      "arrows": "to"
+    },
+    {
+      "from": "barGuestsDlg",
+      "to": "ratBegging",
+      "arrows": "to"
+    },
+    {
+      "from": "barGuestsDlg",
+      "to": "sailorAnim",
+      "arrows": "to"
+    },
+    {
+      "from": "barGuestsDlg",
+      "to": "ratSaying",
+      "arrows": "to"
+    },
+    {
+      "from": "barGuestsDlg",
+      "to": "BARRR",
+      "arrows": "to"
+    },
+    {
+      "from": "pirateDlg1",
+      "to": "pirateEnd",
+      "arrows": "to"
+    },
+    {
+      "from": "pirateDlg1",
+      "to": "pirateArrestAttempt",
+      "arrows": "to"
+    },
+    {
+      "from": "pirateDlg1",
+      "to": "pirateInterventionAccepted",
+      "arrows": "to"
+    },
+    {
+      "from": "pirateDlg1",
+      "to": "pirateChoice",
+      "arrows": "to"
+    },
+    {
+      "from": "pirateDlg2",
+      "to": "pirateArrested",
+      "arrows": "to"
+    },
+    {
+      "from": "pirateDlg3",
+      "to": "pirateEnd3",
+      "arrows": "to"
+    },
+    {
+      "from": "mine0Dlg",
+      "to": "mine0firstTime",
+      "arrows": "to"
+    },
+    {
+      "from": "mine0Dlg",
+      "to": "mine0friendlyAccept",
+      "arrows": "to"
+    },
+    {
+      "from": "mine0Dlg",
+      "to": "mine0Talk",
+      "arrows": "to"
+    },
+    {
+      "from": "mine0Dlg",
+      "to": "mine0End",
+      "arrows": "to"
+    },
+    {
+      "from": "tutorClass3Dlg",
+      "to": "tutorClass3End",
+      "arrows": "to"
+    },
+    {
+      "from": "tutorClass3Dlg",
+      "to": "tutorClass3MainQuerry",
+      "arrows": "to"
+    },
+    {
+      "from": "tutorClass3Dlg",
+      "to": "tutorShuttleSubdlg",
+      "arrows": "to"
+    },
+    {
+      "from": "tutorClass3Dlg",
+      "to": "recommendationCheck",
+      "arrows": "to"
+    },
+    {
+      "from": "clubDlg",
+      "to": "clubEnd",
+      "arrows": "to"
+    },
+    {
+      "from": "merchCyanDlg",
+      "to": "merchCyanEnd",
+      "arrows": "to"
+    },
+    {
+      "from": "merchCyanDlg",
+      "to": "merchCyanAccepted",
+      "arrows": "to"
+    },
+    {
+      "from": "merchCyanDlg",
+      "to": "merchantLaughA",
+      "arrows": "to"
+    },
+    {
+      "from": "merchCyanDlg",
+      "to": "merchantLaughB",
+      "arrows": "to"
+    },
+    {
+      "from": "labDlg",
+      "to": "labQuest3",
+      "arrows": "to"
+    },
+    {
+      "from": "labDlg",
+      "to": "labQuerry3boozeIntro",
+      "arrows": "to"
+    },
+    {
+      "from": "labDlg",
+      "to": "labFinal",
+      "arrows": "to"
+    },
+    {
+      "from": "labDlg",
+      "to": "recommendationCheck",
+      "arrows": "to"
+    },
+    {
+      "from": "labDlg",
+      "to": "labRace",
+      "arrows": "to"
+    },
+    {
+      "from": "labDlg",
+      "to": "labQuerry1",
+      "arrows": "to"
+    },
+    {
+      "from": "labDlg",
+      "to": "labEnd",
+      "arrows": "to"
+    },
+    {
+      "from": "labDlg",
+      "to": "labQuest2",
+      "arrows": "to"
+    },
+    {
+      "from": "labDlg",
+      "to": "labQuerry3",
+      "arrows": "to"
+    },
+    {
+      "from": "labDlg",
+      "to": "labQuerry2",
+      "arrows": "to"
+    },
+    {
+      "from": "labDlg",
+      "to": "lab3ExperimentExplained",
+      "arrows": "to"
+    },
+    {
+      "from": "labDlg",
+      "to": "labQuest1",
+      "arrows": "to"
+    },
+    {
+      "from": "labDlg",
+      "to": "labQuest3Accepted",
+      "arrows": "to"
+    },
+    {
+      "from": "labDlg",
+      "to": "labQuest3Refused",
+      "arrows": "to"
+    },
+    {
+      "from": "FinalRaceDlg",
+      "to": "frRound3",
+      "arrows": "to"
+    },
+    {
+      "from": "FinalRaceDlg",
+      "to": "frRound2",
+      "arrows": "to"
+    },
+    {
+      "from": "addRandomOpponentsEasy",
+      "to": "add3RandomOpponentsEasy",
+      "arrows": "to"
+    },
+    {
+      "from": "addRandomOpponentsEasy",
+      "to": "add2RandomOpponentsEasy",
+      "arrows": "to"
+    },
+    {
+      "from": "addRandomOpponentsEasy",
+      "to": "add1RandomOpponentsEasy",
+      "arrows": "to"
+    },
+    {
+      "from": "add1RandomOpponentsMedium",
+      "to": "addMediumGroup1",
+      "arrows": "to"
+    },
+    {
+      "from": "add1RandomOpponentsMedium",
+      "to": "addMediumGroup3",
+      "arrows": "to"
+    },
+    {
+      "from": "add1RandomOpponentsMedium",
+      "to": "addMediumGroup2",
+      "arrows": "to"
+    },
+    {
+      "from": "add2RandomOpponentsMedium",
+      "to": "addMediumGroup1",
+      "arrows": "to"
+    },
+    {
+      "from": "add2RandomOpponentsMedium",
+      "to": "addMediumGroup3",
+      "arrows": "to"
+    },
+    {
+      "from": "add2RandomOpponentsMedium",
+      "to": "addMediumGroup2",
+      "arrows": "to"
+    },
+    {
+      "from": "add3RandomOpponentsMedium",
+      "to": "addMediumGroup1",
+      "arrows": "to"
+    },
+    {
+      "from": "add3RandomOpponentsMedium",
+      "to": "addMediumGroup3",
+      "arrows": "to"
+    },
+    {
+      "from": "add3RandomOpponentsMedium",
+      "to": "addMediumGroup2",
+      "arrows": "to"
+    },
+    {
+      "from": "addRandomOpponentsMedium",
+      "to": "add2RandomOpponentsMedium",
+      "arrows": "to"
+    },
+    {
+      "from": "addRandomOpponentsMedium",
+      "to": "add3RandomOpponentsMedium",
+      "arrows": "to"
+    },
+    {
+      "from": "addRandomOpponentsMedium",
+      "to": "add1RandomOpponentsMedium",
+      "arrows": "to"
+    },
+    {
+      "from": "addRandomOpponentsHard",
+      "to": "add2RandomOpponentsHard",
+      "arrows": "to"
+    },
+    {
+      "from": "addRandomOpponentsHard",
+      "to": "add3RandomOpponentsHard",
+      "arrows": "to"
+    },
+    {
+      "from": "addRandomOpponentsHard",
+      "to": "add1RandomOpponentsHard",
+      "arrows": "to"
+    },
+    {
+      "from": "universalParts",
+      "to": "add3RandomOpponentsEasy",
+      "arrows": "to"
+    },
+    {
+      "from": "universalParts",
+      "to": "add1RandomOpponentsMedium",
+      "arrows": "to"
+    },
+    {
+      "from": "universalParts",
+      "to": "stdParts",
+      "arrows": "to"
+    },
+    {
+      "from": "universalParts",
+      "to": "add1RandomOpponentsEasy",
+      "arrows": "to"
+    },
+    {
+      "from": "universalParts",
+      "to": "addRandomOpponentsMedium",
+      "arrows": "to"
+    },
+    {
+      "from": "universalParts",
+      "to": "add2RandomOpponentsEasy",
+      "arrows": "to"
+    },
+    {
+      "from": "universalParts",
+      "to": "add2RandomOpponentsMedium",
+      "arrows": "to"
+    },
+    {
+      "from": "universalParts",
+      "to": "add3RandomOpponentsMedium",
+      "arrows": "to"
+    },
+    {
+      "from": "campaignIntro",
+      "to": "campaignIntroEnd",
+      "arrows": "to"
+    },
+    {
+      "from": "campaignIntro",
+      "to": "newbie_init",
+      "arrows": "to"
+    }
+  ],
+  "metadata": {
+    "total_scripts": 154,
+    "total_missions": 0,
+    "total_dependencies": 257,
+    "generated_by": "Galaxy Trucker Script Graph Analyzer"
+  }
+}
