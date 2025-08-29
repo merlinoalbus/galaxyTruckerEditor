@@ -1,0 +1,85 @@
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: openspace
+  round: 1
+- type: stardust
+  round: 1
+- type: abandonedstation
+  round: 1
+  condition: 5
+  cargo: y1g1
+  days: -1
+- type: abandonedstation
+  round: 1
+  condition: 6
+  cargo: r2
+  days: -1
+- type: abandonedship
+  round: 1
+  crew: -2
+  credits: 3
+  days: -1
+- type: abandonedship
+  round: 1
+  crew: -3
+  credits: 4
+  days: -1
+- type: planets
+  round: 1
+  planets:
+    - cargo: r2
+    - cargo: r1b2
+    - cargo: y1
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: g2
+    - cargo: y1
+    - cargo: b3
+  days: -2
+- type: planets
+  round: 1
+  planets:
+    - cargo: r1g1b3
+    - cargo: r1y1b1
+    - cargo: r1b3
+    - cargo: r1g1
+  days: -3
+- type: planets
+  round: 1
+  planets:
+    - cargo: y1g1b2
+    - cargo: y2
+  days: -3
+- type: smugglers
+  round: 1
+  condition: 4
+  payout: -2
+  cargo: y1g1b1
+  days: -1
+- type: pirates
+  round: 1
+  condition: 5
+  fire: uUu
+  credits: 4
+  days: -1
+- type: slavers
+  round: 1
+  condition: 3
+  payout: -3
+  credits: 3
+  days: -1
+- type: meteoric
+  round: 1
+  meteors: Ulr
+- type: meteoric
+  round: 1
+  meteors: udlr
+- type: meteoric
+  round: 1
+  meteors: UuU

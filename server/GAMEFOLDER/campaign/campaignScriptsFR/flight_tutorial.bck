@@ -1,0 +1,118 @@
+SCRIPTS
+
+SCRIPT tutorialFlightIntro
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "So, whe have build our ships. Now, lets race to Port Newbie station."
+  Say "We will get some reward for delivering our pipes there, but that's not main source of trucker income."
+  Say "Truckers hope to make good money on the way."
+  HideChar tutor
+  HideDlgScene
+  AddInfoWindow "tutorial/infoFlight.png"
+  ShowInfoWindow "tutorial/infoFlight.png"
+  ShowDlgScene
+  ShowChar tutor left
+  SetFlightStatusBar "Listen carefully to your instructor."
+  Delay 200
+  Say "This is important - during the flight, check the top line on the screen."
+  Say "It will always tell you what is expected from you (not just in this tutorial, also later during the game)."
+  SetFlightStatusBar "Tap the answer button."
+  MENU
+    OPT "Okay, lets try it."
+	  EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialFlightViews
+  AddInfoWindow "tutorial/infoFlightViews.png"
+  ShowInfoWindow "tutorial/infoFlightViews.png"
+END_OF_SCRIPT
+
+SCRIPT tutorialFlightAdvCards
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "Adventures we encounter are of various types. Some are good, some are nasty."
+  Say "And some may be good or nasty, according how well you have built your ship."
+  Say "This one is good - we can load some valuable goods on these planets."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialPlanetsHasRed
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "Look, there is list of values of goods above my head."
+  Say "As you can see, the most valuable goods is one the first planet."
+  Say "Luckily, you mounted some special (red) cargo holds on your ship, otherwise you would be unable to load red goods."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialPlanetsHasNoRed
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "Look, there is list of values of goods above my head."
+  Say "As you can see, the most valuable goods is one the first planet."
+  Say "Unfortunatelly, you have no special (red) cargo holds, so you would be able to load only the yellow crate there. For you, the best planet is the second one."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialPlanetLanding
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "The number in lower right corner of an Adventure card says, how many flight days you lose if you use the opportunity."
+  Say "I have not landed, so you moved behind me on the flight track. But you have valuable goods now."
+  Say "Players that are ahead on the flight track have first chance for opportunities, but they also face enemies first."
+  Say "Now let's place that cargo into your ship!"
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialCardInfo
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "At any time, you can see detailed info about a card just by tapping on it."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialAbandonedStation
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "See? Some cards offers opportunity for one player only. I was in front, so I had looted the abandoned station before you had the chance."
+  Say "But I lost one flight day when doing so, so you are first again."
+  Say "Do you know how exactly Abandoned station adventure works?"
+  MENU
+    OPT "Yes, I do"
+	  Say "Great. And even if not, you can tap look at the card info by tapping it."
+	  EXIT_MENU
+    END_OF_OPT
+	OPT "No, but I can check the card info"
+	  Say "Great. I am glad you are listening to what I say."
+	  EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+END_OF_SCRIPTS
+

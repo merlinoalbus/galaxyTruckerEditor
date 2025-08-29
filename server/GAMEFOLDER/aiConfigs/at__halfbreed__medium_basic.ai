@@ -1,0 +1,8 @@
+idName: "at__halfbreed__medium_basic"
+character: basic
+avatar: avatars/alien_technologies/halfbreed.png
+color: "rgby"
+preferencesSettings: aiConfigs/settingBase.aipref
+speedSettings: aiConfigs/settingBaseMedium.aispeed
+difficulty: medium  #hard, medium, easy
+stupidity: 80

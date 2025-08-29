@@ -1,0 +1,349 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Galaxy Trucker Rulebook</title>
+<!--<link href='http://fonts.googleapis.com/css?family=Roboto:400,700,700italic' rel='stylesheet' type='text/css'>-->
+<meta content='width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;' name='viewport' />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<link href="general.css" rel="stylesheet" type="text/css" media="screen">
+<link href="../desktop.css" rel="stylesheet" type="text/css" media="screen">
+</head>
+
+<body>
+
+<div class="main_background">
+</div>
+
+<div class="main_container_table">
+<div class="main_container_row">
+
+<div class="menu">
+	<div><a href="index.html"><img class="menu_button" src="img/menu_button01.png"></a></div>
+    <div><a href="building_the_ship.html"><img class="menu_button" src="img/menu_button02_hl.png"></a></div>
+    	<div><a href="building_the_ship__cabins.html"><img class="menu_sub_button" src="img/menu_sub_button01.png"></a></div>
+        <div><a href="building_the_ship__engines.html"><img class="menu_sub_button" src="img/menu_sub_button02.png"></a></div>
+        <div><a href="building_the_ship__cannons.html"><img class="menu_sub_button" src="img/menu_sub_button03.png"></a></div>
+        <div><a href="building_the_ship__batteries.html"><img class="menu_sub_button" src="img/menu_sub_button04.png"></a></div>
+        <div><a href="building_the_ship__shield_generators.html"><img class="menu_sub_button" src="img/menu_sub_button05.png"></a></div>
+        <div><a href="building_the_ship__cargo_holds.html"><img class="menu_sub_button" src="img/menu_sub_button06.png"></a></div>
+        <div><a href="building_the_ship__structural_modules.html"><img class="menu_sub_button" src="img/menu_sub_button07.png"></a></div>
+        <div><a href="building_the_ship__alien_life_support.html"><img class="menu_sub_button" src="img/menu_sub_button08.png"></a></div>
+        <div><a href="building_the_ship__special_campaign_parts.html"><img class="menu_sub_button" src="img/menu_sub_button09.png"></a></div>
+    <div><a href="flight.html"><img class="menu_button" src="img/menu_button03.png"></a></div>
+    <div><a href="adventure_cards.html"><img class="menu_button" src="img/menu_button04.png"></a></div>
+    <div><a href="journeys_end.html"><img class="menu_button" src="img/menu_button05.png"></a></div>
+    <div><a href="campaign.html"><img class="menu_button" src="img/menu_button06.png"></a></div>
+    <div><a href="turn-based_game.html"><img class="menu_button" src="img/menu_button07.png"></a></div>
+    <div><a href="online_game.html"><img class="menu_button" src="img/menu_button08.png"></a></div>
+    <div><a href="at.html"><img class="menu_button" src="img/menu_button09.png"></a></div>
+</div>
+
+
+<div class="content">
+
+
+<div class="block"> 
+    <h1>Building the Ship</h1>
+    
+    <img class="component_left" style="width:63px;" src="../img/realtime.png" />
+    <p>Before you can fly across the Galaxy, you need to build your ship. You begin with one starting component and add new components as you go. Each must join with the components already in place. Your opponents are also building at the same time.</p>
+    
+    <div class="small_window">
+      <p>This page describes real-time building. Turn-based building is similar. The differences are described on a <a href="turn-based_game.html">different page</a>.</p>
+    </div>
+
+    <div class="block"> 
+        <img class="screenshot_with_border" src="../img/building_the_ship.jpg" style="width:100%; max-width:1200px;" />
+    </div>
+</div>
+
+
+
+<div class="block"> 
+    <a name="ship_class"></a>
+    <h2>Ship Class</h2>
+    <p>Some ships are bigger than others. The ship in the illustration above is a Class I ship, but you could also fly Class II or Class III ships, which are bigger. It all depends on the level of the flight. Higher level flights let you use bigger ships, but they have tougher <a href="adventure_cards.html">adventure cards</a> and more of them.</p>
+    
+    <p>The squares show you the size and shape of a ship with the maximum possible number of components for this flight. Try to build a ship that fills most of these squares.</p>
+    
+    <h2>Revealing Components</h2>
+    <p><span class="drag_and_drop">Reveal a component by dragging it to your ship.</span> You can attach it to your ship, return it to the heap, or save it for later.</p>
+    
+    <p>Components you reveal will also be revealed to your opponents, and components they return to the heap will be revealed to you. Over time, more and more components in the heap will be face-up.</p>
+</div>
+
+
+<!-- obrazok ako sa dvaja hraci natahuju o trubku -->
+<!--
+<div class="block">
+	<center>
+		<img src="../../tutorial/infoPlaySimutaneouslyImg.png" width="50%" />
+	</center>     
+</div>
+-->
+
+
+
+<div class="block"> 
+    <a name="attaching_components"></a>
+    <h2>Attaching Components</h2>
+    <p><span class="drag_and_drop">Drag a component to your ship to see where it can go.</span> All legal squares will be highlighted. When you <span class="drag_and_drop">drop the component on a legal square,</span> it will rotate automatically to align its <a href="#connectors">connectors</a> with those already in place.</p>
+    
+    <p><span class="tap">Click the newly placed component to rotate it.</span> It will rotate only into legal orientations.</p>
+    
+    <p><span class="drag_and_drop">You can drag a newly placed component to a different legal square, or you can drag it back to the heap.</span> If you release a component over an illegal square, it will return to where it was when you picked it up.</p>
+</div>
+
+
+
+<div class="block"> 
+    <a name="welding"></a>
+    <h2>Welding</h2>
+    
+    <p>As soon as you drag a new component to your ship, the previous one gets welded in place. <span class="note_red">You cannot move it later.</span></p>
+</div>
+
+
+
+<div class="block"> 
+    <a name="connectors"></a>
+    <h2>Connectors</h2>
+    
+    <p>The game allows you to place new components only in certain positions and orientations. To understand these limitations, you need to understand connectors.</p>
+    
+    <p>Each component has a functional part and 1 to 4 connectors. Connectors can be simple, double, or universal.</p>
+        
+    <div class="block">
+    	<center>
+    		 <img src="img/infoConectorsImg_with_labels.png" width="30%" />
+		</center>
+    </div>
+    <br />
+    
+    <p>Any connector can join with another of the same type, and a universal connector can join with any type. <span class="note_red">A simple connector cannot join with a double connector.</span></p>
+    
+    <p>Sides with no connectors are called smooth sides. <span class="note_red">Smooth sides cannot join with any connectors.</span></p>
+    
+    <br />
+    
+    <div class="block">
+	<center>
+        <img src="../../tutorial/infoConectors2Img.png" width="16%" />
+        <img src="../../tutorial/infoConectors3Img.png" width="16%" align="" style="padding-right:3%" />
+	</center>
+    </div>
+    <br />
+    
+    <p>Each component you place must join with the rest of your space ship. If it touches the ship on multiple sides, all connectors must legally join. Two smooth sides may sit next to each other as long as the piece being added makes a legal connection on another side. Your ship must hold together at all times.</p>
+    
+    <div class="small_window">
+        <p>Don't worry. The game will not let you make an invalid connection.</p>
+    </div>
+</div>
+
+
+
+<div class="block"> 
+    <a name="ship_components"></a>
+    <h2>Ship Components</h2>
+    
+    <p>The starting component represents your pilot <a href="building_the_ship__cabins.html">cabin</a>. It has 4 universal connectors, making it easy to build on to. The warehouse is full of other components you will want on your space ship:</p>
+    
+    <a class="component_list_item_link" href="building_the_ship__cabins.html">
+        <div class="component_list_item_bg">
+            <span class="component_list_item_img_bg"><img src="../img/parts/cabin.png" height="60" /></span>
+            <span class="component_list_item_text_bg">Cabins</span>	</div>
+    </a>
+    <a class="component_list_item_link" href="building_the_ship__engines.html">
+        <div class="component_list_item_bg">
+            <span class="component_list_item_img_bg"><img src="../img/parts/engineDouble.png" height="60" /></span>
+            <span class="component_list_item_text_bg">Engines</span>	</div>
+    </a>
+    <a class="component_list_item_link" href="building_the_ship__cannons.html">
+        <div class="component_list_item_bg">
+            <span class="component_list_item_img_bg"><img src="../img/parts/gunDouble.png" height="60" /></span>
+            <span class="component_list_item_text_bg">Cannons</span>	</div>
+    </a>
+    <a class="component_list_item_link" href="building_the_ship__batteries.html">
+        <div class="component_list_item_bg">
+            <span class="component_list_item_img_bg"><img src="../img/parts/battery3.png" height="60" /></span>
+            <span class="component_list_item_text_bg">Batteries</span>	</div>
+    </a>
+    <a class="component_list_item_link" href="building_the_ship__shield_generators.html">
+        <div class="component_list_item_bg">
+            <span class="component_list_item_img_bg"><img src="../img/parts/shield.png" height="60" /></span>
+            <span class="component_list_item_text_bg">Shield Generators</span>	</div>
+    </a>
+    <a class="component_list_item_link" href="building_the_ship__cargo_holds.html">
+        <div class="component_list_item_bg">
+            <span class="component_list_item_img_bg"><img src="../img/parts/cargoSpec1+cargo2.png" height="60" /></span>
+            <span class="component_list_item_text_bg">Cargo Holds</span>	</div>
+    </a>
+    <a class="component_list_item_link" href="building_the_ship__structural_modules.html">
+        <div class="component_list_item_bg">
+            <span class="component_list_item_img_bg"><img src="../img/parts/structural.png" height="50" style="padding:5px;" /></span>
+            <span class="component_list_item_text_bg">Structural Modules</span>	</div>
+    </a>
+    <a class="component_list_item_link" href="building_the_ship__alien_life_support.html">
+        <div class="component_list_item_bg">
+            <span class="component_list_item_img_bg"><img src="../img/parts/alienGun.png" height="60" /></span>
+            <span class="component_list_item_text_bg">Life Support Components</span>	</div>
+    </a>
+    <a class="component_list_item_link" href="building_the_ship__special_campaign_parts.html">
+        <div class="component_list_item_bg">
+            <span class="component_list_item_img_bg"><img src="../img/parts/explosive.png" height="60" /></span>
+            <span class="component_list_item_text_bg">Campaign Components</span>	</div>
+    </a>
+</div>
+
+
+
+<div class="block"> 
+    <a name="the_well-built_ship"></a>
+    <h2>The Well-Built Ship</h2>
+    
+    <p>Your ship should be solid, bristling with <a href="building_the_ship__cannons.html">cannons</a> and <a href="building_the_ship__engines.html">engines</a>, full of <a href="building_the_ship__cabins.html">cabins</a>, <a href="building_the_ship__batteries.html">batteries</a>, and <a href="building_the_ship__cargo_holds.html">cargo holds</a>, and completely protected by <a href="building_the_ship__shield_generators.html">shields</a>.</p>
+</div>    
+
+
+
+<div class="block"> 
+    <a name="exposed_connectors"></a>
+    <h3>Exposed Connectors</h3>
+    <p>Connectors that are not connected (i.e., those not adjacent to another component), are considered to be <i><b>exposed</b></i>.</p>
+    
+    <p>Exposed connectors are allowed, but they increase the risk of damage to your ship by <a href="adventure_cards.html#small_meteor">small meteors</a>.</p> 
+    
+    <div class="block">
+    	<center>
+    		<img src="../../tutorial/infoOpenConectors2Img.png" width="30%" />
+        </center>
+    </div>
+       
+    <br />
+    <br />
+
+    <p>Exposed connectors can also slow your ship down due to <a href="adventure_cards.html#star_dust">Stardust</a>.</p>
+   
+    
+    <div class="block">
+    	<center>
+    		 <img src="../../tutorial/infoOpenConectorsImg.png" width="30%" />
+        </center>
+    </div>
+    
+    <br />
+    <br />
+    
+    <p>The ends of exposed pipes get warped in transit, so Corporation Incorporated pays a <a href="journeys_end.html#best_looking_ship_bonus">bonus</a> for the ship that arrives with the fewest exposed connectors. If you have a lot of exposed connectors, someone else will probably win this bonus.</p>       
+    
+    <div class="block">
+    	<center>
+    		<img src="../../tutorial/infoOpenConectors3Img.png" width="30%" />
+        </center>
+    </div>
+</div>
+    
+
+
+<div class="block"> 
+    <a name="setting_components_aside"></a>
+    <a name="storage"></a>
+    <h2>Setting Components Aside</h2>
+    
+    <p>While building, you can have up to two components set aside. <span class="drag_and_drop">To set a component aside, drag it to one of the two squares on the left side of your ship.</span> <span class="note_red">Once set aside, the component cannot be returned to the heap.</span> <span class="drag_and_drop">You can add it to your ship at any time by dragging it to a legal square.</span> </p>
+    
+    <div class="block">
+    	<center>
+	    <img src="../img/infoAsideSlotsImg.png" width="40%" />
+        </center>
+    </div>
+    
+    <p>You want to attach set-aside components before time runs out. Any components that are still set aside at the end of building will count against you at the end of your flight. (They count as components <a href="journeys_end.html#lost_components">lost during flight</a>.)</p>
+</div>
+
+    
+    
+<div class="block"> 
+    <a name="looking_at_cards"></a>
+    <a name="adventure_forecast"></a>
+    <h2>Looking at Cards</h2>
+    
+    <p>During building, you may look at the adventure forecast. Looking at the cards can tell you how to build your ship for the given flight.</p>
+    
+    <p>To look at cards, you must have added at least one component to your ship. <span class="tap">Click a stack to look at its cards.</span></p>
+    
+
+    <div class="block">
+    	<center>
+	    <img class="screenshot_with_border" src="../../tutorial/infoLookingAtCardsImg.png" width="40%" />
+        </center>
+    </div>
+    
+    <p><span class="tap">Click again to resume building.</span> You may look at each stack as often as you like. However, you can't look at a stack that another player is currently viewing.</p>
+        
+    
+    <div class="small_window">
+        <p>Of course, looking at the cards takes up time that could be spent grabbing components, but the information can be very helpful. For example, if you see a lot of <a href="adventure_cards.html#planets">planets</a>, you might want more <a href="building_the_ship__cargo_holds.html">cargo holds</a>.</p>     
+    </div>
+    
+    <!-- obrazok s teleskopom -->
+    <div class="block">
+        <center>
+            <img src="../img/illustration_meteoric_inversion.png" width="22%" />
+        </center>     
+	</div>
+    <br />
+    
+    <div class="small_window">
+    <p>Only 75% of the cards are available for preview. The rest will remain secret until the flight. Surprise!</p>
+    </div>
+</div>
+
+
+
+<div class="block"> 
+    <a name="finishing_your_ship"></a>
+    <h2>Finishing Your Ship</h2>
+    
+    <img class="component_left" width="90" src="../../tutorial/infoEndingBuildingImg2.png" />
+    <p>Once you are happy with your ship (or once you run out of good places to add more components) you can finish building. You do not have to place a component on every square.</p>
+    
+    <p>To finish building, simply <span class="drag_and_drop">drag a number tile from the top of the screen and drop it on your ship</span>. The number tiles determine the order in which the space ships will launch. It is not enough to build a perfect space ship with lots of everything and no <a href="building_the_ship.html#exposed_connectors">exposed connectors</a>. You want to be the first! Usually.</p>
+    
+    <p>In some cases, you might think it's better to be behind a few other ships (especially when your cannons are weak and theirs are strong). To take a tile other than the lowest-numbered one, <span class="tap">click the stack of number tiles and all remaining numbers will be displayed.</span> You can then <span class="drag_and_drop">take the number you want by dragging it to your ship.</span></p>
+</div>
+
+
+
+<div class="block"> 
+    <a name="the_timer"></a>
+    <a name="timer"></a>
+    <h2>The Timer</h2>
+    
+    <img class="component_left" width="90" src="../../tutorial/infoEndingBuildingImg1.png" />
+    <p>The timer measures how much time is left for building ships.</p>
+    
+    <p>If no one takes a number tile before time runs out, the game will allow everyone to build for as long as they want. Once one player takes a number tile, the timer will flip over to give everyone else some final building time.</p>
+     
+     <p>If someone has already taken a number tile, then the timer will flip over as soon as it runs out.</p>
+     
+     <p>Once the timer has run out of time twice, building is done. No one is allowed to add any more components. Players who have not already done so must take numbers.</p>
+     
+     <h2>Preparing for Launch</h2>
+     <p>If any players can take <a href="building_the_ship__cabins.html#placing_the_crew">aliens</a> aboard, the game will give them a chance to do so. If no one can take aliens, this step is skipped.</p>
+     
+     <p>Building is done. Now it's time for the <a href="flight.html">flight</a>.</p>
+</div>
+
+
+     
+</div>
+</div>
+</div>
+
+</body>
+</html>

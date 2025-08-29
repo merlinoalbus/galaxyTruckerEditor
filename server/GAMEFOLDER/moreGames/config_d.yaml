@@ -1,0 +1,106 @@
+---
+sections:
+- section_id: 0
+  games:
+  - custom: true
+    name: AT
+    url: http://czechgames.com/en/through-the-ages/
+    height: 200
+    width: 1250
+    titleHeight: 0
+- section_id: 1
+  games:
+  - height: 256
+    image: moreGames/images/tta.png
+    title: Through the Ages
+    width: 256
+    url: "http://cge.as/ttad&x"
+    titleHeight: 40
+  - height: 278
+    image: moreGames/images/gtrr.png
+    title: "Book: Galaxy Trucker Rocky Road"
+    width: 180
+    url: "http://cge.as/gtrre&a"
+    titleHeight: 40
+- section_id: 2
+  games:
+  - height: 262
+    image: moreGames/images/gt.png
+    title: "Galaxy Trucker"
+    width: 195
+    url: "https://czechgames.com/en/galaxy-trucker?utm_source=app&utm_medium=galaxy_trucker&utm_campaign=moregames&utm_content=galaxy_trucker"
+    titleHeight: 40
+  - height: 243
+    image: moreGames/images/33.png
+    title: Through the Ages
+    width: 352
+    url: "https://czechgames.com/en/through-the-ages?utm_source=app&utm_medium=galaxy_trucker&utm_campaign=moregames&utm_content=through_the_ages"
+    titleHeight: 40
+  - height: 216
+    image: moreGames/images/6.png
+    title: "Codenames"
+    width: 164
+    url: "https://codenamesgame.com?utm_source=app&utm_medium=galaxy_trucker&utm_campaign=moregames&utm_content=codenames"
+    titleHeight: 40
+
+  
+  - height: 262
+    image: moreGames/images/tk.png
+    title: "Tash-Kalar"
+    width: 195
+    url: "https://www.czechgames.com/en/tash-kalar?utm_source=app&utm_medium=galaxy_trucker&utm_campaign=moregames&utm_content=tash_kalar"
+    titleHeight: 40
+  - height: 244
+    image: moreGames/images/ar.png
+    title: Arnak
+    width: 354
+    url: "https://czechgames.com/en/lost-ruins-of-arnak?utm_source=app&utm_medium=galaxy_trucker&utm_campaign=moregames&utm_content=arnak"
+    titleHeight: 40
+  - height: 218
+    image: moreGames/images/pm.png
+    title: "Pictomania"
+    width: 164
+    url: "https://czechgames.com/en/pictomania?utm_source=app&utm_medium=galaxy_trucker&utm_campaign=moregames&utm_content=pictomania"
+    titleHeight: 40
+
+
+  - height: 218
+    image: moreGames/images/lj.png
+    title: "Letter Jam"
+    width: 164
+    url: "https://czechgames.com/en/letter-jam?utm_source=app&utm_medium=galaxy_trucker&utm_campaign=moregames&utm_content=letter_jam"
+    titleHeight: 40
+  - height: 244
+    image: moreGames/images/st.png
+    title: Sanctum
+    width: 354
+    url: "https://czechgames.com/en/sanctum?utm_source=app&utm_medium=galaxy_trucker&utm_campaign=moregames&utm_content=sanctum"
+    titleHeight: 40
+  - height: 218
+    image: moreGames/images/uf.png
+    title: "Under Falling Skies"
+    width: 171
+    url: "https://czechgames.com/en/under-falling-skies?utm_source=app&utm_medium=galaxy_trucker&utm_campaign=moregames&utm_content=under_falling_skies"
+    titleHeight: 40
+  
+
+  - height: 216
+    image: moreGames/images/37.png
+    title: "Codenames: Duet"
+    width: 164
+    url: "https://czechgames.com/en/codenames-duet?utm_source=app&utm_medium=galaxy_trucker&utm_campaign=moregames&utm_content=codenames_duet"
+    titleHeight: 40
+  - height: 254
+    image: moreGames/images/pu.png
+    title: "Pulsar 2849"
+    width: 244
+    url: "https://czechgames.com/en/pulsar-2849?utm_source=app&utm_medium=galaxy_trucker&utm_campaign=moregames&utm_content=pulsar"
+    titleHeight: 40
+  - height: 216
+    image: moreGames/images/7.png
+    title: "Codenames: Pictures"
+    width: 164
+    url: "https://czechgames.com/en/codenames-pictures?utm_source=app&utm_medium=galaxy_trucker&utm_campaign=moregames&utm_content=codenames_pictures"
+    titleHeight: 40
+ts: 0
+...

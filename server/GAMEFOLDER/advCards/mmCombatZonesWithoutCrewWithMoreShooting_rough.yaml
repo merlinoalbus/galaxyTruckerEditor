@@ -1,0 +1,144 @@
+- type: combatzone
+  round: 1
+  competitions:
+    - crew:
+        days: -4
+    - engines:
+        fire: D
+    - cannons:
+        fire: ldD
+- type: combatzone
+  round: 1
+  competitions:
+    - crew:
+        days: -3
+    - engines:
+        fire: D
+    - cannons:
+        fire: rdD
+- type: combatzone
+  round: 1
+  competitions:
+    - crew:
+        days: -4
+    - engines:
+        fire: rl
+    - cannons:
+        fire: dD
+- type: combatzone
+  round: 1
+  competitions:
+    - cannons:
+        days: -3
+    - engines:
+        cargo: -3
+    - crew:
+        fire: DD
+- type: combatzone
+  round: 1
+  competitions:
+    - crew:
+        cargo: -2
+    - cannons:
+        fire: dd
+    - engines:
+        fire: ddD
+- type: combatzone
+  round: 1
+  competitions:
+    - crew:
+        cargo: -3
+    - cannons:
+        fire: lr
+    - engines:
+        fire: lrD
+- type: combatzone
+  round: 1
+  competitions:
+    - engines:
+        days: -4
+    - crew:
+        cargo: -3
+    - cannons:
+        fire: lr
+- type: combatzone
+  round: 1
+  competitions:
+    - engines:
+        days: -4
+    - cannons:
+        cargo: -2
+    - crew:
+        fire: lrdd
+- type: combatzone
+  round: 2
+  competitions:
+    - cannons:
+        days: -5
+    - engines:
+        cargo: -4
+    - crew:
+        fire: rluD
+- type: combatzone
+  round: 2
+  competitions:
+    - engines:
+        days: -4
+    - crew:
+        fire: dD
+    - cannons:
+        fire: DDD
+- type: combatzone
+  round: 2
+  competitions:
+    - crew:
+        cargo: -5
+    - cannons:
+        fire: dD
+    - engines:
+        fire: dDD
+- type: combatzone
+  round: 2
+  competitions:
+    - crew:
+        days: -5
+    - engines:
+        fire: Ud
+    - cannons:
+        fire: UdD
+- type: combatzone
+  round: 3
+  competitions:
+    - crew:
+        cargo: -5
+    - cannons:
+        fire: UD
+    - engines:
+        fire: UUDD
+- type: combatzone
+  round: 3
+  competitions:
+    - cannons:
+        cargo: -5
+    - crew:
+        fire: D
+    - engines:
+        fire: DDDD
+- type: combatzone
+  round: 3
+  competitions:
+    - cannons:
+        days: -6
+    - engines:
+        cargo: -5
+    - crew:
+        fire: RLDD
+- type: combatzone
+  round: 3
+  competitions:
+    - crew:
+        days: -6
+    - engines:
+        fire: LR
+    - cannons:
+        fire: LRDD

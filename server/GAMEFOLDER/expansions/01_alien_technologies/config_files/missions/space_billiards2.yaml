@@ -1,0 +1,38 @@
+name:         space_billiards_title                      # id of mission name string - localized 
+
+
+# txt + img
+new:          space_billiards_new
+rules:        space_billiards2_rules
+objectives:   space_billiards2_objectives
+images:       [[advCards/space_billiards_preview.png, 182, 280, ["Spacebilliard"]]]
+
+
+gameType:     turnbased                            # values: realtime/turnbased; If mentioned this value can not be changed in GUI setting (lobby) by player.
+
+
+rounds:
+- roundType:  STII
+  pileConfig: at__space_billiards__hard.yaml       #at__space_billiards.yaml
+
+
+shipPlans:    [II-growing]                         # names of all available ship plans. If not mentioned default plans will be used. Should by only one ship plan for one flight.
+
+
+opponents:
+  - at__richGirl__medium_basic
+  - "easy_basic"
+#  - at__rand-easy-man3
+#- "medium_basic"
+
+
+deckScript:   at__Space_Billiards_Deck         # adventure cards deck building script
+
+
+winCondition:
+              scoreWinner: true                   # values: scoreWinner / didntGiveUp; used in expansion, to find ouf when is mission completed succefully
+              didntGiveUp: true
+
+
+evaluation:                                       # You can mention only those values you want edit. But you have to repeat (copy&paste) the rules for each flight.  
+  STI:

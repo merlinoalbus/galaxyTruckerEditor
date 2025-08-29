@@ -1,0 +1,7 @@
+SCRIPTS
+
+  SCRIPT test_backup_system
+    Say "TEST DEBUG: Debug backup manager attivo!"
+  END_OF_SCRIPT
+
+END_OF_SCRIPTS

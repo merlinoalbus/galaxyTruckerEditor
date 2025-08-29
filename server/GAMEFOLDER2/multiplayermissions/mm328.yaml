@@ -1,0 +1,55 @@
+name: "multiplayer_mission328"                    # id of mission name string - localized 
+missionID: 328                                    # serial number of the mission
+
+alienTechnology: true
+
+
+
+# No Universals
+
+# ships: 
+# rules: There are no universal connectors on components, except on structural components.
+# rewards: 
+# cards: 
+
+
+
+
+    #gameType:                                  # Values: realtime/turnbased; If mentioned this value can not be changed in a lobby by player.
+
+fligthsAvailabelToChange: [STI, STII, STIII]    # Which flights can be turned on/off in a lobby by player. Other flights are locked.
+flightsPicked: [STI]
+
+playersCount: [2, 4]                            # [min, max]. Default is [2, 4]. Min can not be less then 2.
+
+# ==== SHIPS ====                               # Names of all available ship plans. If not mentioned default plans will be used. Should by only one ship plan for one flight.
+#shipPlans: [I-growing, II-growing, III-growing]
+
+
+# ==== TILES ===                                # Config file with list of all parts. Use 'pileConfig' or 'pileListConfig'.
+pileConfigSTI:   at__mm_no_universal_connectors.yaml
+pileConfigSTII:  at__mm_no_universal_connectors.yaml
+pileConfigSTIII: at__mm_no_universal_connectors.yaml
+
+
+# ==== CARDS ===
+atDeckScript:      atDeck
+atRoughDeckScript: atRoughDeck                     # Used as digital and rough. (user can choose from 2 decks by default: digital and rough)
+
+    #customDeckScript: at__mm_Billiard_Race_Deck                         # Special custom deck, that doesn't fit to any deck category. If custom, digital and rough are set, user can choose from 3 decks.
+
+
+
+
+# ==== RULES ====                                # You can mention only those values you want edit. But you have to repeat (copy&paste) the rules for each flight.
+evaluation:                     
+  STI:
+  STII:
+  STIII:
+
+
+
+# ==== Infoboards ====
+InfoBoards:
+  - default: [true]
+

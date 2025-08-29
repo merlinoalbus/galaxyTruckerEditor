@@ -1,0 +1,37 @@
+name:         ship_random_title                      # id of mission name string - localized 
+
+
+# txt + img
+new:          ship_random_new
+rules:        ship_random3_rules
+objectives:   ship_random3_objectives
+images:       [[ships/mission_preview_random_ship.png, 256, 256, ["RandomShipDesign"]], [parts/cargoSpec1+battery2.png, 256, 256, ["CombinedTiles"]]]
+
+
+gameType:     realtime                            # values: realtime/turnbased; If mentioned this value can not be changed in GUI setting (lobby) by player.
+
+
+rounds:
+- roundType:  STI
+  pileConfig: at__combined_cargo.yaml
+
+
+shipPlans:    [I-random]                         # names of all available ship plans. If not mentioned default plans will be used. Should by only one ship plan for one flight.
+
+
+opponents:
+- "at__rand-easy-woman1"
+- "at__rand-easy-man1"
+- "at__rand-easy-woman2"
+
+
+deckScript:   sm_Default_Deck                     # adventure cards deck building script
+
+
+winCondition:
+              scoreWinner: true
+              #scoreWinnerByXCredits: 5                   # values: scoreWinner / didntGiveUp; used in expansion, to find ouf when is mission completed succefully
+              didntGiveUp: true
+
+evaluation:                                       # You can mention only those values you want edit. But you have to repeat (copy&paste) the rules for each flight.  
+  STI:

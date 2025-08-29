@@ -1,0 +1,40 @@
+name:         ship_growing_title                      # id of mission name string - localized 
+
+
+# txt + img
+new:          ship_growing_new
+rules:        ship_growing2_rules
+objectives:   ship_growing2_objectives
+images:       [[ships/mission_preview_growing_ship.png, 256, 256, ["Growing"]]]
+
+
+gameType:     realtime                            # values: realtime/turnbased; If mentioned this value can not be changed in GUI setting (lobby) by player.
+
+
+rounds:
+- roundType:  STII
+  pileConfig: at__growing_ship.yaml
+
+
+shipPlans:    [II-growing]                         # names of all available ship plans. If not mentioned default plans will be used. Should by only one ship plan for one flight.
+
+
+opponents:
+  - at__cyan-medium
+  - at__cyan-medium
+#- at__rand-medium-man2
+#- at__rand-medium-woman2
+#- "medium_basic"
+#- "medium_basic"
+
+
+deckScript:   at__Default_with_Junk_Deck          # adventure cards deck building script
+
+
+winCondition:
+              scoreWinner: true                   # values: scoreWinner / didntGiveUp; used in expansion, to find ouf when is mission completed succefully
+              didntGiveUp: true
+
+
+evaluation:                                       # You can mention only those values you want edit. But you have to repeat (copy&paste) the rules for each flight.  
+  STI:

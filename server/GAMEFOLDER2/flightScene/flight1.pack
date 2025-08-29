@@ -1,0 +1,74 @@
+flightScene/alienOrange.png 1 1540 256 256 
+flightScene/alienPurple.png 260 1540 256 256 
+flightScene/axisHighlight.png 679 1288 50 450 
+flightScene/battery.png 1885 261 130 44  rot
+flightScene/cargoBlue.png 1387 1675 112 112 
+flightScene/cargoGreen.png 1475 1550 112 112 
+flightScene/cargoLostBlue.png 1590 1550 112 112 
+flightScene/cargoLostGreen.png 1382 337 112 112 
+flightScene/cargoLostRed.png 1382 452 112 112 
+flightScene/cargoLostYellow.png 1120 599 112 112 
+flightScene/cargoRed.png 1120 714 112 112 
+flightScene/cargoYellow.png 1251 468 112 112 
+flightScene/cargo_prices.png 1502 337 369 240  rot
+flightScene/dialogWindow.png 215 1 640 1024  rot
+flightScene/dialog_alienorange.png 1125 1675 128 112  rot
+flightScene/dialog_alienpurple.png 1256 1675 128 112  rot
+flightScene/dialog_battery.png 732 1691 128 96  rot
+flightScene/dialog_batteryLost.png 863 1691 128 96  rot
+flightScene/dialog_blast_meteor.png 679 1028 256 256 
+flightScene/dialog_blast_meteor_double.png 938 1024 256 256 
+flightScene/dialog_bounce.png 1197 1024 256 256 
+flightScene/dialog_cancel.png 1475 1288 128 128 
+flightScene/dialog_crew.png 1874 439 128 192  rot
+flightScene/dialog_deflect.png 1475 1419 128 128 
+flightScene/dialog_engine.png 994 1691 128 96  rot
+flightScene/dialog_fight_loss.png 1502 1665 128 128 
+flightScene/dialog_fight_tie.png 1633 1665 128 128 
+flightScene/dialog_fight_win.png 1764 1270 128 128 
+flightScene/dialog_gun.png 1805 580 64 128 
+flightScene/dialog_hit_part.png 1895 1288 128 128 
+flightScene/dialog_hit_part_shot.png 1764 1401 128 128 
+flightScene/dialog_human.png 1885 1 144 128 
+flightScene/dialog_lost_part.png 1705 1532 128 128 
+flightScene/dialog_nowaiting.png 1764 1663 128 128 
+flightScene/dialog_ok.png 1836 1532 128 128 
+flightScene/dialog_ok_disabled.png 1895 1663 128 128 
+flightScene/dialog_question.png 1606 1270 128 128 
+flightScene/dialog_shot.png 1606 1401 128 128 
+flightScene/dialog_stardust.png 858 337 128 128 
+flightScene/dialog_waiting.png 989 337 128 128 
+flightScene/dice1.png 1120 337 128 128 
+flightScene/dice2.png 1251 337 128 128 
+flightScene/dice3.png 858 567 128 128 
+flightScene/dice4.png 858 698 128 128 
+flightScene/dice5.png 989 567 128 128 
+flightScene/dice6.png 989 698 128 128 
+flightScene/endFlightBtn.png 215 1028 330 509 
+flightScene/energy.png 1120 468 128 128 
+flightScene/fastForward.png 1251 752 256 256 
+flightScene/fastForward_pressed.png 1456 1011 256 256 
+flightScene/flightDayLog.png 679 1741 30 32  rot
+flightScene/give_up.png 548 1028 128 768  rot
+flightScene/human.png 1885 132 134 126  rot
+flightScene/infopanelCenter-blue.png 2022 132 1 1024  rot
+flightScene/infopanelCenter-green.png 2026 132 1 1024  rot
+flightScene/infopanelCenter-red.png 2018 261 1 1024  rot
+flightScene/infopanelCenter-yellow.png 858 333 1024 1 
+flightScene/infopanelTop-blue.png 858 1 1024 80 
+flightScene/infopanelTop-green.png 858 84 1024 80 
+flightScene/infopanelTop-red.png 858 167 1024 80 
+flightScene/infopanelTop-yellow.png 858 250 1024 80 
+flightScene/cardHelp/large_meteor_front.png 1502 580 300 169 
+flightScene/cardHelp/large_meteor_side.png 915 1288 170 400  rot
+flightScene/meteorHitLarge.png 1872 634 128 192  rot
+flightScene/meteorHitSmall.png 858 829 128 192  rot
+flightScene/miss_meteor.png 1510 752 256 256 
+flightScene/miss_shot.png 1715 1011 256 256 
+flightScene/msgWindowBottom.png 1 1 109 1536  rot
+flightScene/msgWindowTop.png 113 1 99 1536  rot
+flightScene/shotHitLarge.png 989 829 128 192  rot
+flightScene/shotHitSmall.png 1120 829 128 192  rot
+flightScene/cardHelp/small_meteor.png 732 1288 180 400  rot
+flightScene/cardHelp/spec_slot.png 1885 308 129 128  rot
+flightScene/zoomOut.png 1769 829 162 162 

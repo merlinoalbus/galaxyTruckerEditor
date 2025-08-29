@@ -1,0 +1,8 @@
+idName: "at__roughTrucker__medium_safe"
+character: safe
+avatar: avatars/alien_technologies/roughtrucker.png
+color: "bgyr"
+preferencesSettings: aiConfigs/settingSafe.aipref
+speedSettings: aiConfigs/settingBaseMedium.aispeed
+difficulty: medium  #hard, medium, easy
+stupidity: 80

@@ -1,0 +1,10 @@
+idName: "purple2"
+gender: neutral
+character: angry
+avatar: avatars/campaign/purple.png
+color: "ybrg"
+preferencesSettings: aiConfigs/settingAngry.aipref
+speedSettings: aiConfigs/settingBaseMedium.aispeed
+difficulty: normal
+stupidity: 60
+

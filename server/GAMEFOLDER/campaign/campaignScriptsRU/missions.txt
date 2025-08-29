@@ -1,0 +1,1375 @@
+SCRIPTS
+
+SCRIPT purpleSupportInfo
+
+  ShowDlgScene
+  ChangeChar ambassador campaign/ambassador-peek.png
+  ShowChar ambassador right
+  Delay 300
+  Say "Please choose a good cabin for Mister K'wwfrg. And don't forget to attach his life support module to his cabin!"
+  HideDlgScene
+  AddInfoWindow "tutorial/infoPurpleLifeSupport.png"
+  ShowInfoWindow "tutorial/infoPurpleLifeSupport.png"
+  ShowDlgScene
+  ChangeChar ambassador campaign/ambassador-peek.png
+  ShowChar ambassador right
+  Say "Thank you again. I do hope you arrive safely."
+  Delay 300
+  HideChar ambassador
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT purpleAlienInfo
+
+  AddInfoWindow "tutorial/infoPurpleAliens.png"
+  ShowInfoWindow "tutorial/infoPurpleAliens.png"
+END_OF_SCRIPT
+
+SCRIPT brownInfo
+
+  AddInfoWindow "tutorial/infoBrownLifeSupport.png"
+  AddInfoWindow "tutorial/infoBrownAliens.png"
+  ShowInfoWindow "tutorial/infoBrownLifeSupport.png"
+  SET brownTutorial
+END_OF_SCRIPT
+
+MISSION purpleAlienEscort
+  SUB_SCRIPT add2RandomOpponentsMedium
+  SetDeckPreparationScript "originalDeck"
+  SetSpecCondition "purplealien"
+  INIT_BUILD
+  BuildingHelpScript 1000 "purpleSupportInfo"
+  SetAdvPile 1 3
+  SetSecretAdvPile 1 3
+  SetShipType STI
+  SUB_SCRIPT stdParts
+  AddPartToAsideSlot alienGun 2 1 2 0
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  AlienHelpScript "purpleAlienInfo"
+  EVALUATE_FLIGHT
+  IF_MISSION_WON
+    ShowDlgScene
+    ShowChar purpleGuard left
+    Ask "Kzwrrr' kh! Hr ghz trrzk! TRRZK!"
+    IfMissionResultMin 1
+      MENU
+        OPT "Relax, I'm bringing you this purple guy."
+          Delay 300
+          Say "Kzwrrr' kh! Hr ghz trrzk! TRRZK!"
+          Delay 1000
+          ShowChar purpleDipl right
+          Delay 500
+          Say "Zrrg. H-hrng khzz q Th'kzw-r ..."
+          Delay 300
+          SayChar purpleGuard "Kh gz kwrr-g. Zhg."
+          Delay 500
+          HideChar purpleGuard
+          Delay 300
+          AskChar purpleDipl "Wrwg'gg kwrr-g. W'wg zhg-k."
+          MENU
+            OPT "So ... we're free to land, right?"
+              EXIT_MENU
+            END_OF_OPT
+          END_OF_MENU
+          SayChar purpleDipl "Kzzh."
+          Delay 300
+          HideChar purpleDipl
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+    ELSE
+      MENU
+        OPT "Hey, I had a rough trip. Aren't you even gonna let me land?"
+          Say "KHHH'WZ GHZ TRRZK!"
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+      MENU
+        OPT "I guess you're mad 'cause I'm not carrying that purple guy, huh?"
+          Say "TRRZK!"
+          Delay 1000
+          HideChar purpleGuard
+          SetMissionAsFailed
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_IF
+    HideDlgScene
+  END_OF_IF
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+SCRIPT tutorialSideMeteors
+
+  AddInfoWindow "tutorial/infoBigSideMeteor.png"
+  ShowInfoWindow "tutorial/infoBigSideMeteor.png"
+  SET wasTutorialSideMeteors
+END_OF_SCRIPT
+
+MISSION meteorsSide
+  AddOpponent richGirl
+  IF_PROB 50
+    SetDeckPreparationScript "meteor1LeftDeck"
+  ELSE
+    SetDeckPreparationScript "meteor1RightDeck"
+  END_OF_IF
+  SetSpecCondition "tilesBet"
+  INIT_BUILD
+  BuildingHelpScript 500 "tutorialSideMeteors"
+  SetShipType STI
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  IF_MISSION_WON
+    ShowDlgScene
+    ShowChar richgirl left
+    IfMissionResultMin 0
+      Delay 300
+      IfMissionResultMin 1
+        Say "Well, I guess you had better luck than I did this time."
+      ELSE
+        Say "Hm. We tied."
+      END_OF_IF
+      Say "I'm impressed. You're almost as good as I am."
+      IFNOT designSport1Unlocked
+        Say "Here. You can use my ship design. You've earned it."
+        Delay 300
+        HideChar richgirl
+        Delay 200
+        UnlockShipPlan "I-sport"
+        SET designSport1Unlocked
+        Announce "New class I ship design unlocked."
+        Delay 500
+        SetAchievementProgress camp_design_sporty 1
+        Delay 500
+        HidePath "U1-4a"
+        ShowPath "R1-4a1"
+        IF class2
+          HideButton bvip
+          HideButton bvip2
+          ShowButton brichgirl2
+        END_OF_IF
+      END_OF_IF
+    ELSE
+      Delay 300
+      Say "Looks like I won."
+      Say "No surprise, really, but I hope you picked up a few pointers."
+      Delay 500
+      HideChar richgirl
+    END_OF_IF
+    HideDlgScene
+  END_OF_IF
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+MISSION meteorsSide2
+  AddOpponent richGirl
+  SetDeckPreparationScript "meteor2SidesDeck"
+  SetSpecCondition "tilesBet"
+  INIT_BUILD
+  SetShipType STII
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  IF_MISSION_WON
+    ShowDlgScene
+    ShowChar richgirl left
+    IfMissionResultMin 0
+      Delay 300
+      IfMissionResultMin 1
+        Say "Unbelievable. How could anyone be so lucky?"
+      ELSE
+        Say "Did we really tie?"
+      END_OF_IF
+      Say "You're pretty good, for an ordinary trucker."
+      IFNOT designSport2Unlocked
+        Say "Here. Take this design, too. I know it will be in good hands."
+        Delay 300
+        HideChar richgirl
+        Delay 200
+        UnlockShipPlan "II-sport"
+        SET designSport2Unlocked
+        Announce "New class II ship design unlocked."
+        Delay 500
+        SetAchievementProgress camp_design_sporty 2
+        Delay 500
+      END_OF_IF
+    ELSE
+      Delay 300
+      Say "Looks like I won."
+      Say "Of course, you can't expect to get lucky every time. But at least you tried."
+      Delay 500
+    END_OF_IF
+    HideChar richgirl
+    HideDlgScene
+  END_OF_IF
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+MISSION meteorsSideWithBot
+  AddOpponent medium_safe
+  IF_PROB 50
+    SetDeckPreparationScript "meteor1LeftDeck"
+  ELSE
+    SetDeckPreparationScript "meteor1RightDeck"
+  END_OF_IF
+  INIT_BUILD
+  SetShipType STI
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  ShowDlgScene
+  ShowChar securitybot2 left
+  Delay 300
+  IF_MISSION_WON
+    Say "WELL, YOU MADE IT. LUCKY FOR ME."
+  ELSE
+    Say "I TOLD YOU SO."
+  END_OF_IF
+  Delay 300
+  HideChar securitybot2
+  Delay 300
+  HideDlgScene
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+SCRIPT tutorialBooze
+
+  ShowDlgScene
+  ShowChar bartender left
+  Say "I have the shipment ready."
+  Say "Of course, I will pay you well if you deliver it intact. But if anything breaks, I expect you to reimburse me."
+  Delay 100
+  HideDlgScene
+  AddInfoWindow "tutorial/infoFragileCargo.png"
+  ShowInfoWindow "tutorial/infoFragileCargo.png"
+  ShowDlgScene
+  ChangeChar bartender campaign/bartender-warehouse.png
+  ShowChar bartender left
+  Delay 200
+  Say "Travel safely. Oh, and take enough crew!"
+  Say "Some of my customers have had unfortunate accidents when taking small crews on this route."
+  HideChar bartender
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT bartenderOverIntercom
+
+  ChangeChar bartender campaign/bartender-overIntercom.png
+  ShowChar bartender left
+  Delay 100
+  ChangeChar bartender campaign/bartender-overIntercom1.png
+  Delay 100
+  ChangeChar bartender campaign/bartender-overIntercom.png
+  Delay 100
+  ChangeChar bartender campaign/bartender-overIntercom1.png
+  Delay 100
+  ChangeChar bartender campaign/bartender-overIntercom.png
+  Delay 100
+  ChangeChar bartender campaign/bartender-overIntercom1.png
+  Delay 200
+  ChangeChar bartender campaign/bartender-overIntercom.png
+  Delay 300
+  ChangeChar bartender campaign/bartender-overIntercom1.png
+  Delay 300
+  ChangeChar bartender campaign/bartender-overIntercom.png
+  Delay 300
+END_OF_SCRIPT
+
+MISSION booze2
+  SUB_SCRIPT add3RandomOpponentsEasy
+  SetDeckPreparationScript "boozeDeck"
+  SetSpecCondition "booze"
+  INIT_BUILD
+  ModifyOpponentsBuildSpeed 75
+  SetShipType STI
+  SUB_SCRIPT stdParts
+  AddPartToAsideSlot booze 2 1 2 0
+  AddPartToAsideSlot booze 1 2 1 0
+  BuildingHelpScript 500 "tutorialBooze"
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  ShowDlgScene
+  IF_MISSION_WON
+    SUB_SCRIPT bartenderOverIntercom
+    IfMissionResultMin 2
+      ADD totalBooze 2
+      Say "Both crates? Wonderful! Here are 5 credits for each."
+      AddMissionCredits 10
+      Delay 500
+      UnlockAchievement camp_booze
+      Delay 500
+    ELSE
+      IfMissionResultMin 1
+        ADD totalBooze 1
+        Say "You broke my beverage? Well, I guess you delivered the other crate. Let's call it even."
+      ELSE
+        Say "You broke my beverage? Well, you agreed to cover my losses. That will be 5 credits per crate."
+        AddMissionCredits -10
+      END_OF_IF
+    END_OF_IF
+  ELSE
+    ChangeChar bartender campaign/bartender-warehouse.png
+    ShowChar bartender left
+    Delay 300
+    IfMissionResultMin 2
+      Say "You turned back? Well, at least you didn't break my crates."
+    ELSE
+      IfMissionResultMin 1
+        Say "What? You turned back? And you broke one of my crates? I'm sorry, but you will have to pay me 5 credits."
+        AddMissionCredits -5
+      ELSE
+        Say "What happened to my beverage? I will need 10 credits to cover my losses."
+        AddMissionCredits -10
+      END_OF_IF
+    END_OF_IF
+  END_OF_IF
+  HideChar bartender
+  HideDlgScene
+  SET boozeQuestTried
+  HidePath R1-3a2
+  ShowPath R1-3a
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+MISSION booze1
+  SUB_SCRIPT add3RandomOpponentsEasy
+  SetDeckPreparationScript "boozeDeck"
+  SetSpecCondition "booze"
+  INIT_BUILD
+  ModifyOpponentsBuildSpeed 75
+  SetShipType STI
+  SUB_SCRIPT stdParts
+  AddPartToAsideSlot booze 2 1 2 0
+  BuildingHelpScript 500 "tutorialBooze"
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  ShowDlgScene
+  IF_MISSION_WON
+    SUB_SCRIPT bartenderOverIntercom
+    IfMissionResultMin 1
+      ADD totalBooze 1
+      Say "You delivered the crate? Wonderful. Transferring 5 credits now."
+      AddMissionCredits 5
+    ELSE
+      Say "You broke my crate? Well, that means you have to pay me 5 credits."
+      AddMissionCredits -5
+    END_OF_IF
+  ELSE
+    ChangeChar bartender campaign/bartender-warehouse.png
+    ShowChar bartender left
+    Delay 300
+    IfMissionResultMin 1
+      Say "You turned back? Well, at least you didn't break my crate."
+    ELSE
+      Say "What happened to my beverage? You owe me 5 credits."
+      AddMissionCredits -5
+    END_OF_IF
+  END_OF_IF
+  HideChar bartender
+  HideDlgScene
+  SET boozeQuestTried
+  HidePath R1-3a1
+  ShowPath R1-3a
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+MISSION nobooze
+  SUB_SCRIPT add3RandomOpponentsEasy
+  SetDeckPreparationScript "boozeDeck"
+  INIT_BUILD
+  SetShipType STI
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+SCRIPT tutorialAdditionalFlightConcepts
+
+  IFNOT shouldShowFlightTutorial
+    RETURN
+  END_OF_IF
+  AddInfoWindow "tutorial/infoShipInfo.png"
+  AddInfoWindow "tutorial/infoGivingUpFlight.png"
+  AddInfoWindow "tutorial/infoGivingUpFlight2.png"
+  ShowInfoWindow "tutorial/infoShipInfo.png"
+END_OF_SCRIPT
+
+SCRIPT tutorialAdditionalConcepts
+
+  IF tutorialAdditional
+    RETURN
+  END_OF_IF
+  IF_TUTORIAL_SEEN
+    SET showAdditional
+  ELSE
+    IF tutorialRefused
+      RESET showAdditional
+    ELSE
+      SET showAdditional
+    END_OF_IF
+  END_OF_IF
+  IFNOT showAdditional
+    RETURN
+  END_OF_IF
+  SET tutorialAdditional
+  SET shouldShowFlightTutorial
+  ShowDlgScene
+  ShowChar tutor right
+  Delay 300
+  Say "Hi, newbie. Here's a few more things you need to know about building."
+  Say "Hey, old man. Where are the pictures?"
+  HideChar tutor
+  HideDlgScene
+  AddInfoWindow "tutorial/infoAsideSlots.png"
+  AddInfoWindow "tutorial/infoLookingAtCards.png"
+  ShowInfoWindow "tutorial/infoAsideSlots.png"
+  ShowDlgScene
+  ShowChar tutor right
+  Delay 300
+  Say "Hm. You're wondering where to find these decks of cards you're supposed to be able to look at."
+  Say "They show up at the top of the screen after you have welded your first component."
+  Say "Well, go it. Good luck."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+MISSION firstMission
+  SUB_SCRIPT add2RandomOpponentsEasy
+  SetDeckPreparationScript "firstMissionDeck"
+  INIT_BUILD
+  BuildingHelpScript 500 "tutorialAdditionalConcepts"
+  RESET shouldShowFlightTutorial
+  ModifyOpponentsBuildSpeed 75
+  SetShipType STI
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  FlightHelpScript "tutorialAdditionalFlightConcepts"
+  EVALUATE_FLIGHT
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+SCRIPT merchantGivesUp
+
+  IF merchForcedFail
+    RETURN
+  END_OF_IF
+  ShowDlgScene
+  ChangeChar merchant campaign/merch-disappointed.png
+  ShowChar merchant left
+  Say "That did not go as well as I had hoped."
+  Say "Oh well. Let's go back. We'll try it again some other time."
+  SetMissionAsFailed
+  SET merchForcedFail
+  HideChar merchant
+  HideDlgScene
+END_OF_SCRIPT
+
+MISSION merchantProtection
+  AddOpponent merchant
+  SetDeckPreparationScript "merchantDeck"
+  RESET merchForcedFail
+  INIT_BUILD
+  SetAdvPile 1 3
+  SetSecretAdvPile 1 3
+  SetShipType STI
+  SUB_SCRIPT stdParts
+  SetSpecCondition "merchantProtect"
+  START_BUILDING
+  AddPartToShip 1 7 alienEngine 3333 0
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  IF_MISSION_WON
+    IfMissionResultMin 3
+      ShowDlgScene
+      ShowChar merchant left
+      Say "Yesss! We made it. And with lots of goods."
+      Say "It has been a pleasure doing business with you."
+      Say "Here is your share: [missionResult] credits."
+      AddMissionCreditsByResult
+      SubOpponentCreditsByResult
+      HideButton bmerchant
+      Delay 500
+      SetAchievementProgress camp_merchant 1
+      Delay 300
+      HidePath U1-9a
+      ShowPath R1-9a
+      ShowPath R1-9b
+    ELSE
+      ShowDlgScene
+      ShowChar merchant left
+      Say "Well, we made it. But we don't have many goods."
+      Say "No point in landing, really. We don't even have enough to cover the port tariff."
+      Say "Let's go back and try this route again later."
+      AllShipsGiveUp
+      SET merchantFailed
+      HidePath U1-9a
+      SetFocus bmerchant
+    END_OF_IF
+    HideChar merchant
+    HideDlgScene
+  ELSE
+    SET merchantFailed
+    HidePath U1-9a
+    SetFocus bmerchant
+    IFNOT merchForcedFail
+      ShowDlgScene
+      ChangeChar merchant campaign/merch-disappointed.png
+      ShowChar merchant left
+      Say "You're leaving me? I don't want to risk flying the rest of this route alone."
+      Say "I'll go back with you. Maybe we can do better next time."
+      AllShipsGiveUp
+      HideChar merchant
+      HideDlgScene
+    END_OF_IF
+  END_OF_IF
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+MISSION merchantProtection2
+  AddOpponent merchant
+  SetDeckPreparationScript "merchantDeck2"
+  RESET merchForcedFail
+  INIT_BUILD
+  SetAdvPile 1 1
+  SetAdvPile 2 3
+  SetSecretAdvPile 1 1
+  SetSecretAdvPile 2 3
+  SetShipType STII
+  SUB_SCRIPT stdParts
+  SetSpecCondition "merchantProtect"
+  IF brownUnlocked
+    IFNOT brownTutorial
+      BuildingHelpScript 500 brownInfo
+    END_OF_IF
+  END_OF_IF
+  START_BUILDING
+  AddPartToShip 1 17 alienEngine 3333 0
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  IF_MISSION_WON
+    IfMissionResultMin 5
+      ShowDlgScene
+      ShowChar merchant left
+      Say "Yesss! We made it. And with lots of goods."
+      Say "It has once again been a pleasure doing business with you."
+      Say "Here is your share: [missionResult] credits."
+      AddMissionCreditsByResult
+      SubOpponentCreditsByResult
+      Delay 500
+      SetAchievementProgress camp_merchant 2
+      Delay 300
+      HidePath U2-19a
+      ShowPath R2-19a
+      ShowPath R2-19b
+      Say "Oh ... and here's your voucher from the brown guys."
+      Say "I had it in my pocket the whole time."
+      SUB_SCRIPT merchantLaughA
+      Announce "Brown aliens' class III license voucher obtained."
+      SET brownLicenseApproval
+      SUB_SCRIPT licenseApprovalCheck
+      ShowButton bcyanmerch
+    ELSE
+      ShowDlgScene
+      ShowChar merchant left
+      Say "Well, we made it. But we don't have enough goods."
+      Say "No point in landing, really. We don't even have enough to cover the port tariff."
+      Say "Let's go back and try this route again later."
+      AllShipsGiveUp
+      SET merchantFailed
+    END_OF_IF
+    HideChar merchant
+    HideDlgScene
+  ELSE
+    SET merchantFailed
+    IFNOT merchForcedFail
+      ShowDlgScene
+      ChangeChar merchant campaign/merch-disappointed.png
+      ShowChar merchant left
+      Say "You're leaving me? I don't want to risk flying the rest of this route alone."
+      Say "I'll go back with you. Maybe we can do better next time."
+      AllShipsGiveUp
+      HideChar merchant
+      HideDlgScene
+    END_OF_IF
+  END_OF_IF
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+MISSION merchantProtection3
+  AddOpponent merchant
+  SetDeckPreparationScript "merchantDeck3"
+  RESET merchForcedFail
+  INIT_BUILD
+  SetAdvPile 1 1
+  SetAdvPile 2 1
+  SetAdvPile 3 3
+  SetSecretAdvPile 1 1
+  SetSecretAdvPile 2 1
+  SetSecretAdvPile 3 3
+  SetShipType STIII
+  SUB_SCRIPT stdParts
+  SetSpecCondition "merchantProtect"
+  START_BUILDING
+  AddPartToShip 1 22 alienEngine 3333 0
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  IF_MISSION_WON
+    ShowDlgScene
+    ShowChar merchant left
+    Say "Yesss! We are out of alien territory!"
+    IfMissionResultIs 0
+      Say "I don't have any goods, but who cares? At least we made it alive."
+    ELSE
+      IfMissionResultMin 8
+        Say "And what's even better, I have tons of goods to sell!"
+      ELSE
+        IfMissionResultMin 4
+          Say "And I even picked up plenty of goods along the way!"
+        ELSE
+          Say "And I even picked up a few goods along the way."
+        END_OF_IF
+      END_OF_IF
+      Say "Here is your share: [missionResult] credits."
+      AddMissionCreditsByResult
+      SubOpponentCreditsByResult
+    END_OF_IF
+    Delay 500
+    SetAchievementProgress camp_merchant 3
+    Delay 300
+    HidePath U3-29a
+    ChangeChar merchant campaign/merch-inviting.png
+    Say "You can have my recommendation. No one deserves it more than you do."
+    SET recommendationMerchant
+    SET recommendationMerchantUntold
+    Announce "Businessman's recommendation obtained."
+    SUB_SCRIPT recommendationCheck
+    Say "Thanks for everything. That was a real adventure!"
+    SUB_SCRIPT merchantLaughB
+    Say "Take care."
+    HideChar merchant
+    HideDlgScene
+  ELSE
+    SET merchant3Failed
+    IFNOT merchForcedFail
+      ShowDlgScene
+      ChangeChar merchant campaign/merch-disappointed.png
+      ShowChar merchant left
+      Say "You're leaving me? I don't want to risk flying the rest of this route alone."
+      Say "I'll go back with you. Maybe we can escape later."
+      AllShipsGiveUp
+      HideChar merchant
+      HideDlgScene
+    END_OF_IF
+  END_OF_IF
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+MISSION alienPlanets
+  IF_PROB 50
+    AddOpponent purple2
+  ELSE
+    AddOpponent brown2
+  END_OF_IF
+  IF_PROB 75
+    IF_PROB 50
+      AddOpponent purple2
+    ELSE
+      AddOpponent brown2
+    END_OF_IF
+    IF_PROB 50
+      IF_PROB 50
+        AddOpponent purple2
+      ELSE
+        AddOpponent brown2
+      END_OF_IF
+    END_OF_IF
+  END_OF_IF
+  SetDeckPreparationScript "digitalDeck"
+  INIT_BUILD
+  SetShipType STI
+  SUB_SCRIPT stdParts
+  IF brownUnlocked
+    IFNOT brownTutorial
+      BuildingHelpScript 500 brownInfo
+    END_OF_IF
+  END_OF_IF
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+MISSION alienPlanets2brown
+  IF_PROB 50
+    AddOpponent cyan2
+  ELSE
+    AddOpponent brown2
+  END_OF_IF
+  IF_PROB 75
+    IF_PROB 50
+      AddOpponent cyan2
+    ELSE
+      AddOpponent brown2
+    END_OF_IF
+    IF_PROB 50
+      IF_PROB 50
+        AddOpponent cyan2
+      ELSE
+        AddOpponent brown2
+      END_OF_IF
+    END_OF_IF
+  END_OF_IF
+  SetDeckPreparationScript "digitalDeck"
+  INIT_BUILD
+  SetShipType STII
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+MISSION alienPlanets2purple
+  IF_PROB 50
+    AddOpponent cyan2
+  ELSE
+    AddOpponent purple2
+  END_OF_IF
+  IF_PROB 75
+    IF_PROB 50
+      AddOpponent cyan2
+    ELSE
+      AddOpponent purple2
+    END_OF_IF
+    IF_PROB 50
+      IF_PROB 50
+        AddOpponent cyan2
+      ELSE
+        AddOpponent purple2
+      END_OF_IF
+    END_OF_IF
+  END_OF_IF
+  SetDeckPreparationScript "digitalDeck"
+  INIT_BUILD
+  SetShipType STII
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+MISSION warriorTest
+  AddOpponent purple2
+  AddOpponent purple2
+  AddOpponent purple2
+  SetDeckPreparationScript "battleZones"
+  INIT_BUILD
+  SetShipType STII
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  IF_MISSION_WON
+    ShowDlgScene
+    ShowChar purple left
+    Delay 300
+    Say "Zh wrrzk-hrrg krz'h!"
+    Delay 300
+    ShowChar purple2 right
+    Delay 300
+    Say "Ghrrk-zhr ww'gh wrrzk-hrrg krz'h!"
+    Delay 300
+    Announce "The purple aliens give you a voucher for a class III license."
+    SET purpleLicenseApproval
+    SUB_SCRIPT licenseApprovalCheck
+    HideChar purple2
+    Delay 300
+    HideChar purple
+    HideDlgScene
+    HidePath U2-20a
+    ShowPath R2-20a
+  END_OF_IF
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+MISSION noMerchant
+  SUB_SCRIPT add2RandomOpponentsMedium
+  SetDeckPreparationScript "merchantDeck"
+  INIT_BUILD
+  SetShipType STI
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+SCRIPT tutorialEpidemy
+
+  ShowDlgScene
+  ShowChar mech right
+  Delay 200
+  Say "Hi. It's me again."
+  ChangeChar mech campaign/mech-explaining.png
+  Say "I just heard there's some sort of bug going around."
+  Ask "Just to be safe, don't put two cabins next to each other, okay? Otherwise, people might get sick."
+  MENU
+    OPT "Understood. Don't worry. I'll be careful."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Delay 300
+  ChangeChar mech campaign/mech-thumbup.png
+  Delay 300
+  Say "Okay, thanks again. And good luck!"
+  HideChar mech
+  HideDlgScene
+END_OF_SCRIPT
+
+MISSION peopleDelivery
+  SUB_SCRIPT add2RandomOpponentsMedium
+  SetDeckPreparationScript "epidemyDeck"
+  INIT_BUILD
+  IFNOT wasTutorialEpidemy
+    SET wasTutorialEpidemy
+    BuildingHelpScript 1000 tutorialEpidemy
+  END_OF_IF
+  SetShipType STI
+  SUB_SCRIPT stdParts
+  SetSpecCondition "peopleDelivery"
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  IF_MISSION_WON
+    ShowDlgScene
+    ShowChar mech right
+    IFNOT nextPeopleDelivery
+      Say "Welcome to our factory. Did you bring me anybody?"
+    ELSE
+      Say "Glad to see you! Are you bringing me more people?"
+    END_OF_IF
+    IfMissionResultMin 0
+      ChangeChar mech campaign/mech-explaining.png
+      IfMissionResultMin 10
+        Say "So many people? And all of them are okay?! You're the best!!!"
+        Delay 300
+        ChangeChar mech campaign/mech-kiss.png
+        Delay 300
+        Say "*kiss!*"
+        Delay 300
+        ChangeChar mech campaign/mech.png
+        Delay 600
+        ChangeChar mech campaign/mech-blush.png
+        Delay 300
+        Say "Sorry. I guess I got a little carried away."
+        UnlockAchievement camp_kiss
+        Delay 300
+        ChangeChar mech campaign/mech.png
+        SET wasKiss
+      ELSE
+        IfMissionResultMin 8
+          Say "That's a lot of people. And everyone is okay? You're the best!"
+          Delay 200
+          ChangeChar mech campaign/mech-blush.png
+          Delay 200
+          IFNOT wasKiss
+            Say "Sorry. I got so excited I almost kissed you."
+          ELSE
+            Say "Sorry. I almost got carried away again."
+          END_OF_IF
+          Delay 300
+          ChangeChar mech campaign/mech.png
+        ELSE
+          IfMissionResultMin 6
+            Say "Good work. I'm glad everyone is okay."
+          ELSE
+            Say "Is that everyone? Oh well, at least no one got hurt. Nice work."
+          END_OF_IF
+        END_OF_IF
+      END_OF_IF
+      IFNOT nextPeopleDelivery
+        Say "Here are [missionResult] credits. Thank you very much."
+        AddMissionCreditsByResult
+        Say "Next time you come this way, stop by the Regula docks and see if any of our people need a ride."
+        Say "I might not be able to pay you, but I'm sure they can work for their passage."
+        SET nextPeopleDelivery
+        HidePath "U1-7a"
+        ShowPath "R1-7a"
+        ShowPath "R1-7b"
+      ELSE
+        Say "Thanks a lot. I wasn't sure I could pay you for this trip ..."
+        IfMissionResultMin 8
+          Say "But I think I can spare 3 credits. You deserve it."
+          AddMissionCredits 3
+        ELSE
+          IfMissionResultMin 5
+            Say "But here's 2 credits for your trouble."
+            AddMissionCredits 2
+          ELSE
+            Say "But here's a credit for trying."
+            AddMissionCredits 1
+          END_OF_IF
+        END_OF_IF
+        Say "And bring us more the next time you're heading this way, okay?"
+      END_OF_IF
+    ELSE
+      SET peopleDeliveryFailed
+      IfMissionResultMin -2
+        Say "That's ... not everyone."
+      ELSE
+        IfMissionResultMin -4
+          Say "Oh no. What happened to the others?"
+        ELSE
+          Say "Oh no! What a massacre!"
+        END_OF_IF
+      END_OF_IF
+      IFNOT nextPeopleDelivery
+        Say "How sad!"
+        MENU
+          OPT "I'm so sorry!"
+            EXIT_MENU
+          END_OF_OPT
+        END_OF_MENU
+        ChangeChar mech campaign/mech.png
+        Say "I know you are. I know you tried."
+        ChangeChar mech campaign/mech-f.png
+        Say "Well, what can I do? Back to Regula to find more people."
+        ChangeChar mech campaign/mech.png
+        Ask "Can I catch a ride with you?"
+        MENU
+          OPT "Sure. If it will help."
+            Say "Thanks."
+            SetMissionAsFailed
+            EXIT_MENU
+          END_OF_OPT
+        END_OF_MENU
+      ELSE
+        Say "I'm sure you were trying to keep them safe."
+        Say "But next time, be more careful!"
+      END_OF_IF
+    END_OF_IF
+    HideChar mech
+    HideDlgScene
+  ELSE
+    IFNOT nextPeopleDelivery
+      ShowDlgScene
+      ChangeChar mech campaign/mech-intercom.png
+      ShowChar mech right
+      Ask "What's up?"
+      IfMissionResultMin 0
+        MENU
+          OPT "We're turning back. But don't worry. Everyone is okay."
+            EXIT_MENU
+          END_OF_OPT
+        END_OF_MENU
+      ELSE
+        MENU
+          OPT "You don't want to know."
+            EXIT_MENU
+          END_OF_OPT
+        END_OF_MENU
+      END_OF_IF
+      Say "Okay. I guess these things happen. I'm going back to Regula as well."
+      SET peopleDeliveryFailed
+      HideChar mech
+      HideDlgScene
+    END_OF_IF
+  END_OF_IF
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+MISSION universalEpidemic
+  SUB_SCRIPT addRandomOpponentsMedium
+  SetDeckPreparationScript "epidemyDeck"
+  INIT_BUILD
+  SetShipType STI
+  SUB_SCRIPT universalParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+MISSION universalSabotages
+  SUB_SCRIPT addRandomOpponentsMedium
+  SetDeckPreparationScript "boozeDeck"
+  INIT_BUILD
+  SetShipType STI
+  SUB_SCRIPT universalParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+MISSION universal3long
+  SUB_SCRIPT addRandomOpponentsMedium
+  SetDeckPreparationScript "digitalDeck"
+  INIT_BUILD
+  SetAdvPile 1 1
+  SetAdvPile 2 1
+  SetAdvPile 3 3
+  SetSecretAdvPile 1 1
+  SetSecretAdvPile 2 1
+  SetSecretAdvPile 3 3
+  SetShipType STIII
+  SUB_SCRIPT universalParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+SCRIPT ingotsIntro
+
+  ShowDlgScene
+  ShowChar foreman left
+  Delay 750
+  IF ingotsFailedDelivery
+    ChangeChar foreman campaign/foreman-no.png
+    Say "Hey, I hear you didn't make it last time."
+    ChangeChar foreman campaign/foreman.png
+    Say "Don't worry. I'll give you another chance. I'm a nice guy."
+    Say "(Besides, no one else will take the job.)"
+    RESET ingotsFailedDelivery
+  ELSE
+    ChangeChar foreman campaign/foreman-whatsup.png
+    IF oneingot
+      IF ing3
+        Say "Okeydokey, here you go. One megamassive ingot of pure cosmic steel."
+        ChangeChar foreman campaign/foreman-smile.png
+        Say "Don't forget to attach it to your ship, okay?"
+      ELSE
+        Say "Okeydokey, here's another ingot. She's a beauty."
+      END_OF_IF
+    END_OF_IF
+    IF twoingots
+      Say "Okay, here you go. Two shiny ingots. Take care, now."
+    END_OF_IF
+    IF threeingots
+      Say "Ho boy! Three ingots. What beauties these are!"
+      ChangeChar foreman campaign/foreman-smile.png
+      Say "I had to weld one to your ship. I hope that's okay."
+    END_OF_IF
+  END_OF_IF
+  HideDlgScene
+  AddInfoWindow "tutorial/infoHeavyCargo.png"
+  ShowInfoWindow "tutorial/infoHeavyCargo.png"
+  ShowDlgScene
+  ShowChar foreman left
+  Delay 500
+  ChangeChar foreman campaign/foreman-hello.png
+  Say "Take care, now."
+  HideChar foreman
+  HideDlgScene
+END_OF_SCRIPT
+
+MISSION ingotDelivery
+  SUB_SCRIPT add2RandomOpponentsMedium
+  SetDeckPreparationScript "ingotDeck"
+  INIT_BUILD
+  SetSpecCondition "ingots"
+  BuildingHelpScript 1000 ingotsIntro
+  SetShipType STII
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  IF ing2
+    AddPartToAsideSlot ingot2 2 1 0 0
+  END_OF_IF
+  IF ing3
+    AddPartToAsideSlot ingot3 3 2 0 0
+  END_OF_IF
+  IF ing4
+    AddPartToAsideSlot ingot4 2 3 2 0
+  END_OF_IF
+  IF ing5
+    AddPartToAsideSlot ingot5 1 3 1 0
+  END_OF_IF
+  IF ing6
+    AddPartToAsideSlot ingot4 1 3 2 3
+  END_OF_IF
+  IF ing8
+    AddPartToAsideSlot ingot4 2 1 2 0
+  END_OF_IF
+  IF twoingots
+    IF ing2
+      AddPartToAsideSlot ingot2 3 0 3 0
+    END_OF_IF
+    IF ing3
+      AddPartToAsideSlot ingot3 1 2 1 0
+    END_OF_IF
+    IF ing4
+      AddPartToAsideSlot ingot4 3 0 3 0
+    END_OF_IF
+  END_OF_IF
+  IF threeingots
+    IF ing2
+      AddPartToAsideSlot ingot2 1 3 2 0
+      AddPartToShip 0 17 ingot2 2323 0
+    END_OF_IF
+    IF ing3
+      AddPartToAsideSlot ingot3 3 2 3 0
+      AddPartToShip 0 17 ingot3 1212 0
+    END_OF_IF
+  END_OF_IF
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  EVALUATE_FLIGHT
+  RESET allok
+  RESET somemissing
+  RESET allmissing
+  IF_MISSION_WON
+    IfMissionResultMin 1
+      IfMissionResultMin 2
+        IfMissionResultMin 3
+          SET allok
+        ELSE
+          IF threeingots
+            SET somemissing
+          ELSE
+            SET allok
+          END_OF_IF
+        END_OF_IF
+      ELSE
+        IF oneingot
+          SET allok
+        ELSE
+          SET allmissing
+        END_OF_IF
+      END_OF_IF
+    END_OF_IF
+    ShowDlgScene
+    ShowChar mech right
+    Delay 500
+    IFNOT ingotDeliveryAttempt
+      Say "You must be the trucker. My name is ... Oh! It's you!"
+      ChangeChar mech campaign/mech-explaining.png
+      Say "Good to see you again. I'm in charge of inspecting deliveries here."
+      SET ingotDeliveryAttempt
+    ELSE
+      ChangeChar mech campaign/mech-explaining.png
+      Say "Hi! Good to see you again."
+    END_OF_IF
+    IF allok
+      ChangeChar mech campaign/mech-thumbup.png
+      Say "Yep. This shipment looks good."
+      Say "Here you go:"
+      HideAllPaths forge workshop
+      ShowPath R2-13a
+      RESET ingotsPending
+      SET ingotsFulfilledOnce
+      IF oneingot
+        IF ing3
+          AddMissionCredits 9
+          Announce "You received 9 credits."
+          SetAchievementAttempt camp_ingots 9
+        END_OF_IF
+        IF ing5
+          AddMissionCredits 12
+          Announce "You received 12 credits."
+          SetAchievementAttempt camp_ingots 12
+        END_OF_IF
+        IF ing6
+          AddMissionCredits 15
+          Announce "You received 15 credits."
+          SetAchievementAttempt camp_ingots 15
+        END_OF_IF
+        IF ing8
+          AddMissionCredits 18
+          Announce "You received 18 credits."
+          SetAchievementAttempt camp_ingots 18
+        END_OF_IF
+      END_OF_IF
+      IF twoingots
+        IF ing2
+          AddMissionCredits 12
+          Announce "You received 12 credits."
+          SetAchievementAttempt camp_ingots 12
+        END_OF_IF
+        IF ing3
+          AddMissionCredits 18
+          Announce "You received 18 credits."
+          SetAchievementAttempt camp_ingots 18
+        END_OF_IF
+        IF ing4
+          AddMissionCredits 22
+          Announce "You received 22 credits."
+          SetAchievementAttempt camp_ingots 22
+        END_OF_IF
+      END_OF_IF
+      IF threeingots
+        IF ing2
+          AddMissionCredits 21
+          Announce "You received 21 credits."
+          SetAchievementAttempt camp_ingots 21
+        END_OF_IF
+        IF ing3
+          AddMissionCredits 30
+          Announce "You received 30 credits."
+          SetAchievementProgress camp_ingots 30
+        END_OF_IF
+      END_OF_IF
+    ELSE
+      IF somemissing
+        ChangeChar mech campaign/mech-f.png
+        Say "Hm. This isn't the entire shipment."
+        Say "Sorry, but I can't sign for an incomplete delivery."
+        ChangeChar mech campaign/mech-explaining-f.png
+        Ask "Those are the rules. Straight from Regula."
+      ELSE
+        ChangeChar mech campaign/mech-f.png
+        Say "Wait ... where's the delivery?"
+        ChangeChar mech campaign/mech-explaining-f.png
+        Ask "Look: we need ingots. We can't just shut down production."
+      END_OF_IF
+      MENU
+        SET ingotsFailedDelivery
+        OPT "I know. I'll go back and try again."
+          SetMissionAsFailed
+          ChangeChar mech campaign/mech-thumbup.png
+          Say "Thanks. I appreciate it. I know that hauling ingots isn't an easy job."
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_IF
+    Delay 300
+    HideChar mech
+    HideDlgScene
+  ELSE
+    SET ingotsFailed
+  END_OF_IF
+  END_FLIGHT
+  FINISH_MISSION
+END_OF_MISSION
+
+MISSION roughMission
+  AddOpponent "roughTrucker"
+  SetDeckPreparationScript "meteor1Deck"
+  SetSpecCondition "bet"
+  INIT_BUILD
+  BuildingHelpScript 500 tutorialAdditionalConcepts
+  RESET shouldShowFlightTutorial
+  ModifyOpponentsBuildSpeed 75
+  SetShipType STI
+  SUB_SCRIPT stdParts
+  START_BUILDING
+  END_BUILDING
+  INIT_FLIGHT
+  START_FLIGHT
+  FlightHelpScript tutorialAdditionalFlightConcepts
+  EVALUATE_FLIGHT
+  ShowDlgScene
+  ShowChar roughtrucker left
+  Delay 500
+  IF wasBet
+    IfMissionResultIs 1
+      Say "*Sigh*"
+      Say "Gambling's gonna ruin me."
+      AddMissionCredits 3
+      AddOpponentsCredits 1 -3
+      Announce "You received 3 credits from your fellow trucker."
+      UnlockAchievement camp_bet
+    ELSE
+      IfMissionResultIs 0
+        Say "I won. Time to pay up[g(, pal|, sister)]."
+        AddMissionCredits -3
+        AddOpponentsCredits 1 3
+        Announce "You must pay 3 credits to your fellow trucker."
+      ELSE
+        Say "Huh. So much for our race. We both got crushed."
+        Say "I guess that means no one won."
+        Say "Maybe next time."
+      END_OF_IF
+    END_OF_IF
+  ELSE
+    IfMissionResultIs 1
+      Say "Huh. I'm glad you decided not to wager on it."
+    ELSE
+      IfMissionResultIs 0
+        Say "Ha, I won! Too bad we didn't bet on it."
+      ELSE
+        Say "Huh. So much for our race. We both got crushed."
+      END_OF_IF
+    END_OF_IF
+  END_OF_IF
+  Delay 300
+  HideChar roughtrucker
+  Delay 200
+  HideDlgScene
+  END_FLIGHT
+FINISH_MISSION
+END_OF_MISSION
+
+END_OF_SCRIPTS

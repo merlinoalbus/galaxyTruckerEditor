@@ -1,0 +1,18 @@
+                                                  # expansion adventure config
+name:         bidir_cannons_title
+
+planetImg:    workshop.png
+
+avatarImg:    campaign/mech.png
+avatarColor:  avatarBgColor
+
+
+missions:
+- bidir_cannons1.yaml                                  # 1 star mission
+- bidir_cannons2.yaml                                  # 2 star mission
+- bidir_cannons3.yaml                                  # 3 star mission
+
+
+dialogScript:   bidir_cannons_Dlg
+endDialogsWin: [bidir_cannons1_Success, bidir_cannons2_Success, bidir_cannons3_Success]
+endDialogLoose: bidir_cannons_Failure

@@ -1,0 +1,8 @@
+idName: "medium_basic"
+character: basic
+avatar: avatars/ai/medium_basic.png
+color: "ygbr"
+preferencesSettings: aiConfigs/settingBase.aipref
+speedSettings: aiConfigs/settingBaseMedium.aispeed
+difficulty: medium  #hard, medium, easy
+stupidity: 80

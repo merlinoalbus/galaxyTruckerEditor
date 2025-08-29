@@ -1,0 +1,1337 @@
+SCRIPTS
+
+SCRIPT forgeDlg
+
+  ShowDlgScene
+  ShowChar foreman left
+  Delay 750
+  IF ingotsPending
+    Say "О, привет. Ты еще здесь?"
+    ChangeChar foreman campaign/foreman-no.png
+    Say "Ты же в курсе, что на заводе ждут слитки, верно?"
+    GO forgeEnd
+  END_OF_IF
+  IF explosivesPending
+    Say "О, привет. Ты еще здесь?"
+    ChangeChar foreman campaign/foreman-no.png
+    Say "Ты же в курсе, что на астероидах все еще ждут взрывчатку, верно?"
+    IFNOT explosivesFailed
+      GO forgeEnd
+    END_OF_IF
+    IF toMine0
+      GO forgeEnd
+    END_OF_IF
+    MENU
+      OPT "Да. С этим возникли некоторые проблемы, но я собираюсь попробовать еще раз."
+        ChangeChar foreman campaign/foreman.png
+        Say "Хорошо."
+        GO forgeEnd
+      END_OF_OPT
+      OPT "Как-то уж больно много взрывчатки. Есть что-нибудь попроще?"
+        ChangeChar foreman campaign/foreman.png
+        RESET explosivesFailed
+        IF toMine2
+          RESET toMine2
+          HidePath U2-16a
+          Ask "О. Конечно. Можешь доставить четыре контейнера взрывчатки до Гаммы."
+          MENU
+            OPT "Хорошо."
+              SET toMine1
+              ShowPath U2-15a
+              EXIT_MENU
+            END_OF_OPT
+            OPT "Ну... все равно как-то много."
+              SET toMine0
+              ShowPath U2-14a
+              Say "Ну, можешь отвезти два контейнера до Дельты. Более простой работы у меня нет."
+              EXIT_MENU
+            END_OF_OPT
+          END_OF_MENU
+          EXIT_MENU
+        ELSE
+          RESET toMine1
+          HidePath U2-15a
+          SET toMine0
+          ShowPath U2-14a
+          Say "Хм. Ну, могу предложить два контейнера до Дельты. Более простой работы у меня нет."
+          EXIT_MENU
+        END_OF_IF
+      END_OF_OPT
+    END_OF_MENU
+    GO forgeEnd
+  END_OF_IF
+  IF forgeAccepted
+    ChangeChar foreman campaign/foreman-hello.png
+    Say "А вот и наш[g(|а)] [g(дальнобойщик|дальнобойщица)]!"
+    ChangeChar foreman campaign/foreman-smile.png
+    Ask "Готов[g(|а)] к следующему заданию?"
+    MENU
+      OPT_IFNOT ingotsAccepted "Да, пора лететь на Космический завод."
+        GO forgeIngots
+      END_OF_OPT
+      OPT_IF ingotsAccepted "Да, пора доставить на Космический завод очередные слитки."
+        GO forgeIngotsCont
+      END_OF_OPT
+      OPT_IFNOT explosivesAccepted "Да, пора лететь на шахты-астероиды."
+        GO forgeExplosives
+      END_OF_OPT
+      OPT_IF explosivesAccepted "Да, пора доставить взрывчатку на шахты-астероиды."
+        GO forgeExplosivesCont
+      END_OF_OPT
+      OPT "Ну, не прямо сейчас. Может, позже."
+        ChangeChar foreman campaign/foreman-whatsup.png
+        Say "О, ладно. Конечно. Может, позже."
+        GO forgeEnd
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  IF forgeOffered
+    Ask "О, опять ты! Что, передумал[g(|а)]?"
+    MENU
+      OPT "Да. Я готов[g(|а)] лететь на Космический завод."
+        Say "Отлично."
+        GO forgeIngots
+      END_OF_OPT
+      OPT "Да. Я готов[g(|а)] лететь на шахты-астероиды."
+        Say "Отлично."
+        GO forgeExplosives
+      END_OF_OPT
+      OPT_IFNOT mineUnlocked "Не совсем. Но я хотел[g(|а)] бы узнать, где расположены эти шахты-астероиды."
+        SET mineUnlocked
+        Say "А, понятно."
+        Say "Помогать ты не хочешь."
+        Say "Но просить помощи не стесняешься."
+        Say "Что ж, твое дело. Астероиды расположены тут..."
+        Delay 500
+        ShowNode mine0
+        Delay 500
+        ShowPath R2-14a
+        Delay 500
+        Say "Но ты удивишься... Впрочем, не важно."
+        Say "А теперь убирайся."
+        GO forgeEnd
+      END_OF_OPT
+      OPT "Нет. Я просто [g(проходил|проходила)] мимо."
+        ChangeChar foreman campaign/foreman-no.png
+        Say "Вот и проходи!"
+        Say "Не мешай работать."
+        GO forgeEnd
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  Ask "Е-мое! Ты как раз вовремя."
+  MENU
+    OPT "Это вы мне?"
+      Say "Тебе, кому ж еще."
+      Say "Ты же дальнобойщик, так?"
+      GO forgeExpl
+    END_OF_OPT
+    OPT "Вы меня ждали?"
+      Say "Еще бы!"
+      GO forgeExpl
+    END_OF_OPT
+    OPT "А то! Я всегда вовремя."
+      Ask "Ну и отлично. За работу."
+      MENU
+        OPT "Э-э-э, работу?"
+          Say "Да, конечно. За работу."
+          GO forgeExpl
+        END_OF_OPT
+        OPT "Э-э-э... конечно. Полный вперед!.."
+          ChangeChar foreman campaign/foreman-smile.png
+          Say "Именно! Вот что в тебе нравится, так это настрой."
+          GO forgeExpl
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL forgeExpl
+  SET forgeOffered
+  Say "Я просил Регулу выделить мне дальнобойщика еще две недели назад. Е-мое, ты же не думаешь, что производство все это время простаивало?"
+  Say "Разумеется, у нас скопилась куча всего и для завода, и для шахт-астероидов."
+  ChangeChar foreman campaign/foreman-smile.png
+  Ask "С чего думаешь начать?"
+  MENU
+    OPT "С завода."
+      Say "Хорошо."
+      GO forgeIngots
+    END_OF_OPT
+    OPT "С астероидов."
+      Say "Хорошо."
+      GO forgeExplosives
+    END_OF_OPT
+    OPT "Не хотелось бы вас разочаровывать, но вы приняли меня за кого-то другого."
+      Ask "Ты не мой дальнобойщик? А кто же?"
+      MENU
+        OPT "Я просто дальнобойщик, который случайно проходил мимо."
+          ChangeChar foreman campaign/foreman-whatsup.png
+          Ask "Хм... ладно. А ты не хочешь стать моим дальнобойщиком?"
+          MENU
+            OPT "Ни капельки."
+              ChangeChar foreman campaign/foreman.png
+              Say "Хм... ну... ладно. Если будешь на Регуле, передай им, что я все еще жду дальнобойщика."
+              Say "Такого, который не боится работать."
+              GO forgeEnd
+            END_OF_OPT
+            OPT "Ну, может быть я смогу закинуть пару ящиков на Космический завод."
+              ChangeChar foreman campaign/foreman-smile.png
+              Say "Е-мое! Спасибо, выручил[g(|а)]!"
+              GO forgeIngots
+            END_OF_OPT
+            OPT "Ну, может быть я смогу закинуть пару ящиков на шахты-астероиды."
+              ChangeChar foreman campaign/foreman-smile.png
+              Say "Е-мое! Спасибо, выручил[g(|а)]!"
+              GO forgeExplosives
+            END_OF_OPT
+          END_OF_MENU
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL forgeIngots
+  IFNOT workshopInitialized
+    Say "Мы производим мегамассивные слитки для завода и... погоди-ка минуту..."
+    ChangeChar foreman campaign/foreman-list.png
+    Say "А, не важно."
+    Say "Тут сказано, что завод еще не работает. Не хватает рабочих."
+    Say "Похоже, придется отправить тебя на Регулу, чтобы ты забрал[g(|а)] оттуда бригаду рабочих."
+    ChangeChar foreman campaign/foreman.png
+    Ask "Е-мое! Просить на Регуле дальнобойщика только для того, чтобы отправить его обратно на Регулу! Бред, конечно, но что поделать."
+    MENU
+      OPT "Не вопрос. Я полечу на Регулу."
+        GO forgeEnd
+      END_OF_OPT
+      OPT "Хм, а что насчет шахт-астероидов?"
+        GO forgeExplosives
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  Say "Мы производим мегамассивные слитки."
+  Say "Потом цепляем их к какому-нибудь кораблю, а он доставляет их на завод."
+  ChangeChar foreman campaign/foreman-whatsup.png
+  Ask "Но это должен быть корабль с хорошей тягой, ясно? С большой мощностью движков."
+  MENU
+    OPT "Не вопрос. Сделаю."
+      ChangeChar foreman campaign/foreman-smile.png
+      Say "Заметано!"
+      SET ingotsAccepted
+      SET ingotsPending
+      SET oneingot
+      SET ing3
+      HideAllPaths forge workshop
+      ShowPath U2-13a1
+      GO forgeAcceptEnd
+    END_OF_OPT
+    OPT "Эмм... Не, это не ко мне."
+      ChangeChar foreman campaign/foreman-smile.png
+      Say "О... ну... ладно."
+      Delay 300
+      ChangeChar foreman campaign/foreman.png
+      Delay 300
+      Say "(Да уж, не тот нынче дальнобойщик пошел, не тот!)"
+      GO forgeEnd
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL forgeIngotsCont
+  IF threeingots
+    IF ing2
+      RESET ingots3small
+      SET ingots3medium
+    END_OF_IF
+  ELSE
+    IF twoingots
+      IF ing2
+        RESET ingots2small
+        SET ingots2medium
+        SET ingots3small
+      END_OF_IF
+      IF ing3
+        RESET ingots2medium
+        SET ingots2big
+      END_OF_IF
+    ELSE
+      IF ing3
+        SET ingots2small
+        SET ingot1big
+      END_OF_IF
+      IF ing5
+        RESET ingot1big
+        SET ingot1bigger
+      END_OF_IF
+      IF ing6
+        RESET ingot1bigger
+        SET ingot1biggest
+      END_OF_IF
+    END_OF_IF
+  END_OF_IF
+  RESET ing2
+  RESET ing3
+  RESET ing4
+  RESET ing5
+  RESET ing6
+  RESET ing7
+  RESET ing8
+  RESET oneingot
+  RESET twoingots
+  RESET threeingots
+  ChangeChar foreman campaign/foreman-list.png
+  Ask "Итак. Вот список того, что нужно доставить. Сколько слитков ты готов[g(|а)] взять?"
+  MENU
+    OPT_IF ingots2small "Возьму 2 маленьких слитка."
+      SET twoingots
+      SET ing2
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF ingots2medium "Возьму 2 средних слитка"
+      SET twoingots
+      SET ing3
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF ingots2big "Давай 2 больших."
+      SET twoingots
+      SET ing4
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF ingots3small "Возьму 3 маленьких слитка."
+      SET threeingots
+      SET ing2
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF ingots3medium "Возьму 3 средних слитка."
+      SET threeingots
+      SET ing3
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF ingot1big "Возьму 1 большой слиток."
+      SET oneingot
+      SET ing5
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF ingot1bigger "Давай слиток побольше."
+      SET oneingot
+      SET ing6
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF ingot1biggest "Давай самый большой, какой есть."
+      SET oneingot
+      SET ing8
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Эм... не сегодня. Может, потом."
+      GO forgeEnd
+    END_OF_OPT
+  END_OF_MENU
+  ChangeChar foreman campaign/foreman-smile.png
+  Say "По рукам. Я доставлю это к месту строительства корабля. Удачи!"
+  HideAllPaths forge workshop
+  IF oneingot
+    ShowPath U2-13a1
+  END_OF_IF
+  IF twoingots
+    ShowPath U2-13a2
+  END_OF_IF
+  IF threeingots
+    ShowPath U2-13a3
+  END_OF_IF
+  SET ingotsPending
+  GO forgeAcceptEnd
+
+  LABEL forgeExplosives
+  ChangeChar foreman campaign/foreman-smile.png
+  Delay 300
+  Say "Ты, наверное, знаешь, что добыча руды на астероидах полностью автоматизирована."
+  Say "Кроме роботов там никого нет."
+  Delay 300
+  ChangeChar foreman campaign/foreman-list.png
+  Delay 700
+  Ask "Ну так вот, эти роботы прислали заявку на два ящика взрывчатки."
+  MENU
+    OPT "Я готов[g(|а)]."
+      IF mineUnlocked
+        HideAllPaths forge mine0
+        ShowPath U2-14a
+        CenterMapByPath U2-14a
+        Say "Хорошо. Ты знаешь, что делать."
+      ELSE
+        Say "Хорошо. Давай покажу, где это."
+        Delay 500
+        ShowNode mine0
+        Delay 500
+        ShowPath U2-14a
+        CenterMapByPath U2-14a
+      END_OF_IF
+      Delay 500
+      Say "Взрывчатка будет ждать тебя на складе."
+      SET explosivesAccepted
+      SET explosivesPending
+      SET toMine0
+      GO forgeAcceptEnd
+    END_OF_OPT
+    OPT_IFNOT forgeExcuseExpl "Честно говоря, я немного побаиваюсь взрывчатки."
+      Say "Ничего страшного. Ее всегда можно разместить подальше от кают, верно?"
+      SET forgeExcuseExpl
+      IF forgeExcuseBots
+        SET forgeBothExcuses
+      END_OF_IF
+    END_OF_OPT
+    OPT_IFNOT forgeExcuseBots "Честно говоря, я немного побаиваюсь роботов."
+      Say "Ничего страшного. Ты же слышал[g(|а)] о двадцати семи законах робототехники?"
+      Say "Да, когда-то давно их вроде бы было всего три..."
+      Say "Но потом появились роботы-адвокаты, защитники прав ботов, вот это все. В общем, сейчас бояться нечего."
+      SET forgeExcuseBots
+      IF forgeExcuseExpl
+        SET forgeBothExcuses
+      END_OF_IF
+    END_OF_OPT
+    OPT_IF forgeBothExcuses "Похоже, у меня закончились отговорки... Но я все равно не хочу везти взрывчатку для роботов."
+      Say "А, ясно. [g(Очередной бездельник|Очередная бездельница)]."
+      Say "Убирайся!"
+      RESET forgeBothExcuses
+      GO forgeEnd
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL forgeExplosivesCont
+  Ask "Вот спасибо. На какой астероид отправишься?"
+
+  LABEL forgeQuerry
+  RESET canAsk3
+  IF mine3Initialized
+    IFNOT smallestAsked
+      SET canAsk3
+    END_OF_IF
+  END_OF_IF
+  RESET toMine0
+  RESET toMine1
+  RESET toMine2
+  MENU
+    OPT_IFNOT mine1Initialized "Эм... Я знаю только один."
+      Delay 300
+      Say "Точно. Дельта. Погоди-ка..."
+      Delay 300
+      ChangeChar foreman campaign/foreman-list.png
+      Delay 500
+      Say "Та-а-ак. Туда нужно доставить 2 ящика взрывчатки."
+      SET toMine0
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF mine1Initialized "На большой."
+      Say "Точно. Дельта. Погоди-ка..."
+      Delay 300
+      ChangeChar foreman campaign/foreman-list.png
+      Delay 500
+      Say "Та-а-ак. Туда нужно доставить 2 ящика взрывчатки."
+      SET toMine0
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF mine1Initialized "На маленький."
+      Say "На Гамму? Сейчас посмотрим..."
+      Delay 300
+      ChangeChar foreman campaign/foreman-list.png
+      Delay 500
+      Say "Им нужно 4 ящика взрывчатки."
+      SET toMine1
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF mine2Initialized "На самый маленький."
+      Say "А, понял. На Бету. Неплохая шахта. Давай-ка глянем..."
+      Delay 300
+      ChangeChar foreman campaign/foreman-list.png
+      Delay 500
+      Say "Им нужно 6 ящиков взрывчатки."
+      SET toMine2
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF canAsk3 "На самый-самый маленький."
+      Say "Альфа? Так все, там уже ничего не добывают."
+      Ask "Выбери что-то другое."
+      SET smallestAsked
+      RESET canAsk3
+    END_OF_OPT
+    OPT_IFNOT canAsk3 "Знаешь, давай пока отложим астероиды."
+      GO forgeEnd
+    END_OF_OPT
+  END_OF_MENU
+  MENU
+    OPT "Хорошо."
+      Say "Отлично! Удачи!"
+      SET explosivesPending
+      IF toMine0
+        ShowPath U2-14a
+      END_OF_IF
+      IF toMine1
+        ShowPath U2-15a
+      END_OF_IF
+      IF toMine2
+        ShowPath U2-16a
+      END_OF_IF
+      GO forgeAcceptEnd
+    END_OF_OPT
+    OPT_IFNOT minesWithoutDelivery "Интересно, а можно слетать на астероид просто так, не по работе?"
+      SET minesWithoutDelivery
+      Say "Нет. Эти роботы не выносят вмешательства в их частную жизнь."
+      Say "Поэтому их можно беспокоить только по рабочим вопросам."
+    END_OF_OPT
+    OPT "Хм... звучит довольно рискованно."
+      GO forgeEnd
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL forgeAcceptEnd
+  IFNOT class3
+    IFNOT forgeAccepted
+      SET forgeAccepted
+    ELSE
+      IFNOT class3Recommended
+        SET class3Recommended
+        Say "Вот бы мне побольше таких [g(дальнобойщиков|дальнобойщиц)], как ты. Шустрых, толковых, не чурающихся работы."
+        Ask "Кстати, а ты уже подал[g(|а)] заявку на получение лицензии на корабли класса III?"
+        MENU
+          OPT_IFNOT class3Asked "Еще нет. А что для этого надо?"
+            Say "Для этого надо зайти в Департамент звездного транспорта на Регуле. Там тебе все объяснят."
+            Say "Когда будешь там в следующий раз, обязательно это сделай. А прямо сейчас тебя ждет работа, верно?"
+            SetFocus bclerk
+            EXIT_MENU
+          END_OF_OPT
+          OPT_IF class3Asked "Ну, я работаю над этим. Это не так-то просто."
+            Say "Уверен, что для тебя нет ничего невозможного. Так что ты ее получишь, рано или поздно."
+            Say "А прямо сейчас тебя ждет работа, верно?"
+            EXIT_MENU
+          END_OF_OPT
+        END_OF_MENU
+      ELSE
+        IFNOT class3Asked
+          Say "Да, и не забудь: когда в следующий раз будешь на Регуле, зайди в офис и спроси насчет лицензии на корабли III класса. Ты ее заслуживаешь. По-любому."
+        END_OF_IF
+      END_OF_IF
+    END_OF_IF
+  ELSE
+    SET forgeAccepted
+  END_OF_IF
+
+  LABEL forgeEnd
+  HideChar foreman
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT sailorZoomOut
+
+  Delay 200
+  ChangeChar sailor campaign/sailor.png
+  SET_TO sailor 4
+END_OF_SCRIPT
+
+SCRIPT sailorAnim
+
+  Delay 200
+  IF_IS sailor 4
+    SET_TO sailor 0
+  ELSE
+    IF_MIN sailor 2
+      IF_IS sailor 3
+        IF_PROB 33
+          SET_TO sailor 2
+        ELSE
+          IF_PROB 50
+            SET_TO sailor 1
+          ELSE
+            SET_TO sailor 0
+          END_OF_IF
+        END_OF_IF
+      ELSE
+        IF_PROB 33
+          SET_TO sailor 3
+        ELSE
+          IF_PROB 50
+            SET_TO sailor 1
+          ELSE
+            SET_TO sailor 0
+          END_OF_IF
+        END_OF_IF
+      END_OF_IF
+    ELSE
+      IF_IS sailor 1
+        IF_PROB 33
+          SET_TO sailor 3
+        ELSE
+          IF_PROB 50
+            SET_TO sailor 2
+          ELSE
+            SET_TO sailor 0
+          END_OF_IF
+        END_OF_IF
+      ELSE
+        IF_PROB 33
+          SET_TO sailor 3
+        ELSE
+          IF_PROB 50
+            SET_TO sailor 2
+          ELSE
+            SET_TO sailor 1
+          END_OF_IF
+        END_OF_IF
+      END_OF_IF
+    END_OF_IF
+  END_OF_IF
+  IF_IS sailor 0
+    ChangeChar sailor campaign/sailor0.png
+  END_OF_IF
+  IF_IS sailor 1
+    ChangeChar sailor campaign/sailor1.png
+  END_OF_IF
+  IF_IS sailor 2
+    ChangeChar sailor campaign/sailor2.png
+  END_OF_IF
+  IF_IS sailor 3
+    ChangeChar sailor campaign/sailor3.png
+  END_OF_IF
+  Delay 200
+END_OF_SCRIPT
+
+SCRIPT treasureFound
+
+  ShowDlgScene
+  Announce "Похоже, ты [g(нашел|нашла)] планету, отмеченную крррасным кррррестом."
+  Delay 500
+  Announce "После недолгих поисков ты выкопал[g(|а)] большой черррный сундук."
+  Delay 1000
+  Announce "Открыв крышку,.."
+  Delay 1000
+  Announce "...ты увидел[g(|а)] 20 кредитов!"
+  MENU
+    OPT "Что ж, это не несметные богатства, но лучше, чем ничего."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  AddMissionCredits 20
+  Delay 500
+  UnlockAchievement camp_treasure
+  Delay 500
+  RESET treasurePlanet
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT barGuestsDlg
+
+  ShowDlgScene
+  Delay 300
+  IF sailorAvailable
+    IF ratAvailable
+      ShowChar sailor left
+      Delay 300
+      ShowChar rat right
+      Delay 500
+      MENU
+        OPT "Подсесть к старому моряку слева."
+          Delay 500
+          HideChar rat
+          Delay 300
+          GO sailorDlg
+        END_OF_OPT
+        OPT "Подсесть к какому-то подозрительному типу справа."
+          Delay 500
+          HideChar sailor
+          Delay 300
+          GO ratDlg
+        END_OF_OPT
+        OPT "Просто уйти – похоже, тут не протолкнуться."
+          HideChar sailor
+          Delay 100
+          HideChar rat
+          HideDlgScene
+          RETURN
+        END_OF_OPT
+      END_OF_MENU
+    ELSE
+      ShowChar sailor left
+      Delay 300
+      GO sailorDlg
+    END_OF_IF
+  ELSE
+    IF ratAvailable
+      ShowChar rat right
+      Delay 300
+      GO ratDlg
+    ELSE
+      Announce "В баре никого нет."
+      IF ratFinished
+        IF sailorFinished
+          HideButton bguests
+        END_OF_IF
+      END_OF_IF
+      HideDlgScene
+      RETURN
+    END_OF_IF
+  END_OF_IF
+
+  LABEL sailorDlg
+  SUB_SCRIPT sailorZoomOut
+  FocusChar sailor
+  Delay 1000
+  IF sailorVisited
+    SUB_SCRIPT sailorAnim
+    Say "Тысяча черрртей! Это же наш юнга!"
+    IF sailorFulfilled
+      SUB_SCRIPT sailorAnim
+      Ask "Ну как, уже сыскал[g(|а)] клад-то?"
+      IF treasurePlanet
+        MENU
+          OPT "Не! Пока ищу."
+            GO sailorEnd
+          END_OF_OPT
+        END_OF_MENU
+      ELSE
+        MENU
+          OPT "Ага, спасибо. Давай возьму тебе выпить."
+            SUB_SCRIPT sailorAnim
+            Say "Не-а, все норррмально."
+            SUB_SCRIPT sailorZoomOut
+            Say "Ррррраз клад найден, я могу покоиться с мирррром."
+            Delay 1500
+            ChangeChar sailor campaign/sailor-dying.png
+            Delay 800
+            ChangeChar sailor campaign/sailor-dead.png
+            Delay 2000
+            HideChar sailor
+            HideDlgScene
+            RESET sailorAvailable
+            SET sailorFinished
+            RETURN
+          END_OF_OPT
+          OPT "Э... нет. Я его еще не сыскал[g(|а)]."
+            SUB_SCRIPT sailorAnim
+            Say "Аррр. Жаль, прррравда, жаль."
+            GO sailorEnd
+          END_OF_OPT
+          OPT_IFNOT sailorRude "Не твое дело."
+            SUB_SCRIPT sailorAnim
+            SUB_SCRIPT sailorAnim
+            SUB_SCRIPT sailorAnim
+            Say "Дык... но капитан, который его потеррррял, очень хотел бы, чтобы оно нашлось."
+            SET sailorRude
+          END_OF_OPT
+        END_OF_MENU
+      END_OF_IF
+    END_OF_IF
+    SUB_SCRIPT sailorAnim
+    Ask "А вот скажи, [g(парренек|милочка)], ты на 7 станциях-то уже побывал[g(|a)]?"
+    IF_MIN visited 7
+      RESET almostEnoughSeen
+      IF_MIN visited 9
+        SET moreSeen
+      ELSE
+        SET enoughSeen
+      END_OF_IF
+    ELSE
+      IF_MIN visited 5
+        SET almostEnoughSeen
+      END_OF_IF
+    END_OF_IF
+    MENU
+      OPT_IF moreSeen "Больше, чем на семи, старый звездный волк."
+        GO sailorSecret
+      END_OF_OPT
+      OPT_IF enoughSeen "Да, побывал[g(|a)], старый звездный волк."
+        GO sailorSecret
+      END_OF_OPT
+      OPT_IF almostEnoughSeen "Ну, почти."
+        SUB_SCRIPT sailorAnim
+        Say "Так какого черррта ты тут барррагозишь?"
+        GO sailorEnd
+      END_OF_OPT
+      OPT "Я просто хотел[g(|a)] передать привет вашему попугаю."
+        SUB_SCRIPT sailorAnim
+        Say "Попугаю? А, ты про мой трррансляторрр?"
+        SUB_SCRIPT sailorAnim
+        Say "Хоррошо. Тогда перредавай от меня прррривет своей... микррроволновке."
+        GO sailorEnd
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  SUB_SCRIPT sailorAnim
+  Ask "Тысяча черрртей! Это что еще за юнга шваррртуется в нашем баррре?"
+  MENU
+    OPT_IFNOT sailorAnswer "Привет. Я тут [g(новенький|новенькая)]."
+      SUB_SCRIPT sailorAnim
+      Ask "Аррр! Это и так видно, [g(парренек|милочка)], уж больно новый на тебе скафандррр!"
+      SET sailorAnswer
+    END_OF_OPT
+    OPT_IFNOT sailorAnswer "Не юнга, а суровый, видавший виды дальнобойщик, рому мне в ухо и сарынь на кичку!"
+      SUB_SCRIPT sailorAnim
+      Ask "Арр, не пытайся провести старого звездного волка, [g(парренек|милочка)]. Твой скафандрррр все еще как новый!"
+      SET sailorAnswer
+    END_OF_OPT
+    OPT "Это, конечно, здорово, что твой попугай умеет говорить, но выражения он подбирает так себе. Последил бы за ним."
+      SUB_SCRIPT sailorAnim
+      Say "Попугай? Где попугай?"
+      Delay 1000
+      SUB_SCRIPT sailorAnim
+      Say "А, это! Это не попугай, [g(парренек|милочка)]. Это мой телепатический тррррансляторрр!"
+      SUB_SCRIPT sailorAnim
+      Say "Я доррого заплатил за все эти сыррые, холодные ночи, что прровел на мостике своей посудины."
+      SUB_SCRIPT sailorAnim
+      Ask "Во врррремя одной стрррррашной солнечной бурррри на пути к Альдебаррррану у меня пррррропал голос."
+      MENU
+        OPT "О. Это так печально."
+          SUB_SCRIPT sailorAnim
+          Say "А, ерррунда. Благодаррря своему трррранслятору, я могу говорррить часами, не напрягая глотку."
+          GO sailorCont
+        END_OF_OPT
+        OPT "Так вам и надо."
+          SUB_SCRIPT sailorAnim
+          Say "Гррррубишь?! Аррр. А ты мне нррравишься."
+          GO sailorCont
+        END_OF_OPT
+        OPT "Но разве солнечная буря может..."
+          SUB_SCRIPT sailorAnim
+          Delay 200
+          SUB_SCRIPT sailorAnim
+          Delay 200
+          SUB_SCRIPT sailorAnim
+          Ask "..?"
+          MENU
+            OPT "...а, не важно."
+              GO sailorCont
+            END_OF_OPT
+          END_OF_MENU
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL sailorCont
+  SET sailorVisited
+  SUB_SCRIPT sailorZoomOut
+  Ask "Так каким ветрррром тебя занесло за стол к старррому звездному волку?"
+  MENU
+    OPT_IFNOT sailorButton "Не знаю. Видимо, просто от скуки."
+      SUB_SCRIPT sailorAnim
+      Say "Юнга! Ты ничего не знаешь о тайнах космоса!"
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Я хочу послушать о тайнах космоса."
+      SUB_SCRIPT sailorAnim
+      Say "Черрртовски веррные слова! Ты [g(прришел|прришла)] по адррресу."
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IFNOT sailorButton "Я просто куда-то нажал[g(|а)] и вот я тут."
+      SUB_SCRIPT sailorAnim
+      Say "Салага! Знаешь, в мое врремя нельзя было что-то нажать, чтобы попасть в баррр."
+      SUB_SCRIPT sailorAnim
+      Ask "Если ты хотел зайти в баррр, то тебе прриходилось набирррать по буквам «ЗАЙТИ В БАР»."
+      SET sailorButton
+    END_OF_OPT
+  END_OF_MENU
+  SUB_SCRIPT sailorAnim
+  Say "Космос полон тайн."
+  SUB_SCRIPT sailorAnim
+  Say "И одной из них я бы хотел поделиться."
+  SUB_SCRIPT sailorAnim
+  Say "Но не с юнгой вроде тебя! Ведь ты ж еще молодой, ты еще стрррадаешь еррррундой... Кхе-кхм. О чем это я? А!"
+  SUB_SCRIPT sailorAnim
+  Ask "Вот что я тебе скажу, [g(парренек|милочка)]: побывай-ка ты на семи рразных станциях-планетах, и я, так и быть, откррою тебе свою тайну."
+  IF_MIN visited 7
+    MENU
+      OPT "Ты недооцениваешь меня, старый звездный волк. Я уже побывал[g(|а)] на семи станциях."
+        SUB_SCRIPT sailorAnim
+        Say "Вот так-так, якоррь мне дюзы! Удивил[g(|а)] ты меня, [g(парренек|милочка)], удивил[g(|а)]."
+        GO sailorSecret
+      END_OF_OPT
+    END_OF_MENU
+  ELSE
+    MENU
+      OPT "Ясно. Сейчас мне придется выслушать несколько советов, столь же очевидных, сколь и бесполезных."
+        SUB_SCRIPT sailorAnim
+        Say "Вот [g(дурррайлей|дурреха)]! Моя тайна – о старром космическом сокррровище!"
+        EXIT_MENU
+      END_OF_OPT
+      OPT "Правда? А про секрет какого рода идет речь?"
+        SUB_SCRIPT sailorAnim
+        Say "Я бы испорртил интрригу, если бы сказал, что рречь идет о старром космическом сокррровище."
+        SUB_SCRIPT sailorAnim
+        Say "Поэтому пусть это пока останется тайной."
+        EXIT_MENU
+      END_OF_OPT
+      OPT "Отлично. Обожаю тайны."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    SUB_SCRIPT sailorAnim
+    Say "Теперь ступай, дай мне пррредаться воспоминаниям..."
+    SUB_SCRIPT sailorAnim
+    Say "Помню, ухаживал я как-то за одной девой. Напрропалую пррям ухаживал. А в ту порру все девы созвездия Дева были от меня без ума..."
+    GO sailorEnd
+  END_OF_IF
+
+  LABEL sailorSecret
+  ResetFocus bguests
+  SET sailorFulfilled
+  SUB_SCRIPT sailorAnim
+  Say "Хорррошо. Тогда слушай..."
+  SUB_SCRIPT sailorAnim
+  Say "Жил однажды капитан, храбрый, дерзкий хулиган. И по женской части был интриган."
+  SUB_SCRIPT sailorAnim
+  Say "Только он пиратом был, много душ он погубил. А под старость вдруг чего-то приуныл."
+  SUB_SCRIPT sailorAnim
+  Say "В основном он тужил, что сокровище так тщательно зарыл."
+  SUB_SCRIPT sailorAnim
+  Say "Клад зарыт на далекой планете, его с картой бы нашел и слепой."
+  SUB_SCRIPT sailorAnim
+  Say "Только карту пират спрятал в сейфе и закрыл сейф на пароль голосовой."
+  SUB_SCRIPT sailorAnim
+  Say "Пусть прошло немало лет, и голоса в помине нет, я запомнил той планеты секрет."
+  SUB_SCRIPT sailorAnim
+  Ask "Там и карта не нужна – точно помню, что она красным крестиком помечена была."
+  MENU
+    OPT "Ух. Впечатляет... Один вопрос – а если я найду эту планету, рассказать вам... в смысле, тому капитану, где она находится?"
+      SUB_SCRIPT sailorAnim
+      Say "Нет стоит, [g(парренек|милочка)]. Он был не особо богат, и клад получился не очень большим."
+      SUB_SCRIPT sailorAnim
+      Say "Думаю, ему прросто хочется, чтобы то, что он скопил за всю жизнь, пррринесло пользу хоть кому-то..."
+      SUB_SCRIPT sailorAnim
+      Ask "В общем, если найдешь этот клад – он твой!"
+      MENU
+        OPT "Хорошо. Планета, отмеченная красным крестом. Я буду иметь в виду."
+          SUB_SCRIPT sailorAnim
+          SET treasurePlanet
+          Say "Попутного солнечного ветра, [g(парренек|милочка)]!"
+          GO sailorEnd
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL sailorEnd
+  SUB_SCRIPT sailorAnim
+  Delay 300
+  SUB_SCRIPT sailorAnim
+  Delay 300
+  SUB_SCRIPT sailorZoomOut
+  Delay 750
+  HideChar sailor
+  HideDlgScene
+  RETURN
+
+  LABEL ratDlg
+  IFNOT ratVisited
+    SET ratVisited
+    Delay 500
+    Say "Эй, [g(приятель|дамочка)]."
+    Delay 250
+    ChangeChar rat campaign/rat-turn.png
+    Delay 600
+    ChangeChar rat campaign/rat.png
+    Delay 400
+    ChangeChar rat campaign/rat-smile.png
+    Delay 1500
+    ChangeChar rat campaign/rat.png
+    Delay 150
+    Ask "Да, ты. Подь сюды. Шепнуть тебе кое-чо надо. Один секретик."
+    MENU
+      OPT "Правда? Обожаю секретики."
+        Say "Тем более. А эт ваще самый секретный секретик."
+        ChangeChar rat campaign/rat-finger-smile.png
+        Say "Я могу подкинуть мазу, как срубить деньжат по-быстрому."
+        GO ratWaiting
+      END_OF_OPT
+      OPT "Слышь, кореш. А может ну его, а?"
+        ChangeChar rat campaign/rat-finger-smile.png
+        Say "Не «ну», не «ну»! Я могу подкинуть мазу, как срубить деньжат по-быстрому."
+        GO ratWaiting
+      END_OF_OPT
+      OPT "Не имею привычки разговаривать с незнакомцами. Тем более с такими... жуликоватыми."
+        ChangeChar rat campaign/rat-frown.png
+        Say "Чё?! Слышь, ты... [g(фраер|метелка)]. Вот теперь я тебе точно ничего не скажу, понял[g(|а)]?"
+        Delay 1500
+        ChangeChar rat campaign/rat.png
+        Delay 500
+        Say "Хотя эт... Фиг с тобой, короч. Так и быть, скажу – я могу подкинуть мазу, как срубить деньжат по-быстрому."
+        GO ratWaiting
+      END_OF_OPT
+    END_OF_MENU
+  ELSE
+    Delay 300
+    ChangeChar rat campaign/rat-smile.png
+    Delay 300
+    Say "О, это ж ты!"
+    ChangeChar rat campaign/rat-finger-smile.png
+    Ask "Чо, захотелось таки узнать секретик и ты типа решил[g(|а)] купить мне стаканчик-другой, а?"
+    MENU
+      OPT "Нет."
+        Delay 300
+        ChangeChar rat campaign/rat-frown.png
+        GO ratBegging
+      END_OF_OPT
+      OPT "Ну... ладно."
+        GO ratOrder
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+
+  LABEL ratWaiting
+  ChangeChar rat campaign/rat.png
+  Delay 1000
+  ChangeChar rat campaign/rat-turn.png
+  Delay 500
+  ChangeChar rat campaign/rat.png
+  Delay 1500
+  ChangeChar rat campaign/rat-turn.png
+  Delay 800
+  ChangeChar rat campaign/rat.png
+  Delay 600
+  MENU
+    OPT "Ну и чего мы ждем?"
+      Say "Мы ждем, что ты купишь мне выпить. Так это и работает – я говорю, что знаю секретик..."
+      Ask "А ты говоришь... что?"
+      MENU
+        OPT "Не интересует."
+          GO ratBegging
+        END_OF_OPT
+        OPT "(*Вздох*) Ладно, ладно. Хочешь, я куплю тебе выпить?"
+          GO ratOrder
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL ratBegging
+  Ask "Да лан, не жмись. Одна маленькая рюмка в обмен на секрет, как по-быстрому срубить деньжат. Сделка века, отвечаю!"
+  MENU
+    OPT "Нет."
+      Delay 300
+      ChangeChar rat campaign/rat-frown.png
+      Say "Ну и отвали тогда, чего пристал[g(|а)]?"
+      Delay 1500
+      Ask "...Хотя нет, стой. Давай, так скажу. Сложно сдержаться, когда в горле сушняк."
+      MENU
+        OPT "Ну хорошо. Выкладывай."
+          GO ratSaying
+        END_OF_OPT
+        OPT "Я сказал[g(|а)], нет. Мне не интересно."
+          GO ratLeaving
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+    OPT "Уф. Ладно. Одну рюмку."
+      GO ratOrder
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL ratOrder
+  ChangeChar rat campaign/rat-finger-smile.png
+  Say "Во, ништяк! Эй, бармен!"
+  Delay 500
+  ShowChar bartender left
+  Delay 500
+  SayChar rat "[g(Мой приятель|Эта дамочка)] хочет купить мне пару стаканчиков... чего тут у вас... и похавать. Да, похавать... И еще снять для меня номер. С душем, а не как в прошлый раз."
+  ChangeChar rat campaign/rat-smile.png
+  AskChar bartender "[g(Сэр|Мадам)], это правда? Это будет стоить 3 кредита."
+  RESET hasEnough
+  IF_HAS_CREDITS 3
+    SET hasEnough
+  END_OF_IF
+  MENU
+    OPT_IF hasEnough "Ну, что ж. Хорошо."
+      Delay 300
+      SayChar bartender "Как вам будет угодно."
+      AddCredits -3
+      Announce "Ты платишь 3 кредита."
+      SET paidForRat
+      Delay 300
+      HideChar bartender
+      GO ratSaying
+    END_OF_OPT
+    OPT_IFNOT hasEnough "Эм. Простите. У меня сейчас нет таких денег. Может, в следующий раз."
+      Delay 300
+      HideChar bartender
+      GO ratLeaving
+    END_OF_OPT
+    OPT "Забудьте весь этот бред. Я ухожу."
+      Delay 300
+      HideChar bartender
+      GO ratLeaving
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL ratLeaving
+  ChangeChar rat campaign/rat-frown.png
+  Delay 500
+  HideChar rat
+  Delay 250
+  HideDlgScene
+  RETURN
+
+  LABEL ratSaying
+  ChangeChar rat campaign/rat.png
+  SayChar rat "Ну так вот, про секрет. Я знаю, где находится один очень богатый сектор. В одном тайном месте, так сходу и не найдешь. И никто не найдет. Кроме меня."
+  ChangeChar rat campaign/rat-finger-smile.png
+  Say "Причем маршрут – конфетка, ребенок справится. Никакой опасности, все чики-пики. Одни только планеты с кучами товаров, и все. Давай карту, покажу."
+  Delay 250
+  Delay 250
+  ShowNode pirateTrap
+  CenterMapByNode pirateTrap
+  Delay 500
+  ShowPath U2-17a
+  Delay 300
+  ChangeChar rat campaign/rat.png
+  Say "Дело – верняк. Нужны только трюмы и прочие ценные компоненты."
+  Say "Пушки – нафиг. Накой они тебе? Я ж говорю – конфетка, ноль опасности, сечешь?"
+  IF paidForRat
+    Say "Ништяк, да? Такой смачный секрет – и всего за пару монет. Оно того стоило, скажи?"
+    ChangeChar rat campaign/rat-smile.png
+    Say "А теперь эт, слышь... мне щаз хавку принесут, так что давай, покедова!"
+  ELSE
+    ChangeChar rat campaign/rat-frown.png
+    Say "А теперь эт, слышь... мне еще надо какого-нить фраерка на выпивон развести, так что давай, покедова!"
+  END_OF_IF
+  HideChar rat
+  Delay 1300
+  ChangeChar rat campaign/rat-peek.png
+  ShowChar rat right
+  Delay 700
+  Say "И эт, слышь. Никаких пушек. Они только мешать будут. Отвечаю. Ну все, давай, покедова! (Хе-хе.)"
+  Delay 200
+  HideChar rat
+  SET ratFinished
+  RESET ratAvailable
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT pirateDlg1
+
+  ShowDlgScene
+  ShowChar pirate left
+  Say "Ахой, парни! Что за добычу притащили сегодня наши сети?.."
+  Say "...Разрази меня астероид! Это не мои парни!"
+  Ask "Где они? И кто ты, черт побери, [g(такой|такая)]?"
+  MENU
+    OPT "Твоих людей больше нет. А ты пойдешь со мной!"
+      GO pirateArrestAttempt
+    END_OF_OPT
+    OPT "Я – твоя новая банда. Старая оказалась совершенно некомпетентной в своей области."
+      Say "Гм! Это довольно неожиданно... но, допустим. Давай, я объясню тебе принцип нашей работы."
+      Say "Мои агенты заманивают доверчивых дальнобойщиков в нашу ловушку. Твоей задачей будет их атаковать (не агентов, разумеется, а дальнобойщиков)."
+      Ask "Я получаю 90 процентов прибыли, а ты – возможность использовать мой логотип."
+      MENU
+        OPT_IFNOT pirateLogo "Э-э-э... логотип?"
+          Ask "Ну да, логотип! Ты что, не видел[g(|а)] череп с костями? Это – мой зарегистрированный товарный знак."
+          SET pirateLogo
+        END_OF_OPT
+        OPT "Звучит как отличная концовка для кампании. Решено – я становлюсь пиратом!"
+          GO pirateChoice
+        END_OF_OPT
+        OPT "Звучит как-то не очень."
+          Say "Если хочешь, можно обсудить детали."
+          Say "Например, ты можешь отдавать мне 95 процентов и использовать зарегистрированные слоганы:"
+          Say "«Кредиты или жизнь!» и «15 астронавтов на сундук батарей»."
+          Ask "Что скажешь?"
+          MENU
+            OPT "Скажу, что тебе лучше пройти со мной. Нам нужно кое-куда заехать."
+              GO pirateArrestAttempt
+            END_OF_OPT
+            OPT "Хм, а ведь и вправду неплохие слоганы! Договорились, 95 процентов – твои."
+              GO pirateChoice
+            END_OF_OPT
+            OPT "Давай остановимся на 90 процентах. А слоганы я себе сам[g(|а)] придумаю."
+              GO pirateChoice
+            END_OF_OPT
+          END_OF_MENU
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+    OPT_IFNOT pirateMeta "Эм... погоди-ка немного. Это все похоже на некую ключевую точку для всей кампании."
+      SET pirateMeta
+      Say "Без проблем, [g(приятель|подруга)]. Не торопись."
+      ChangeChar pirate campaign/pirate-hands-closed.png
+      Delay 3500
+      ChangeChar pirate campaign/pirate.png
+      Ask "Но все же скажи, где мой корабль и где моя команда?"
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL pirateChoice
+  Say "Отлично! Значит, договорились."
+  Delay 300
+  ChangeChar pirate campaign/pirate-freeze.png
+  Delay 600
+  ShowChar programmer right
+  Delay 600
+  Say "Привет. Это разработчик. Я просто хочу убедиться, что ты правильно понимаешь, что к чему."
+  Ask "Если ты решишь стать пиратом, то кампания закончится здесь и сейчас. Ты правда этого хочешь?"
+  MENU
+    OPT "Ага. А что, прикольно."
+      Say "Правда? Блин."
+      Say "Просто я убедил программистов, что никто не выберет эту ветку диалога, поэтому мы даже не стали ее прорабатывать – дальше нет ни миссий, ни диалогов, ничего такого."
+      Say "Выходит, я ошибся. И теперь мне придется покупать пиццу для всего офиса. Спасибо тебе, блин, большое."
+      Ask "А теперь, пожалуйста, вернись и выбери правильную ветку диалога, хорошо?"
+      MENU
+        OPT "Ну, если это единственный вариант, то я, пожалуй, попробую арестовать того парня."
+          Say "Спасибо. Я надеялся, что ты прислушаться к голосу разума."
+          GO pirateInterventionAccepted
+        END_OF_OPT
+        OPT_IFNOT pirateLimits "Если арест плохого парня – единственный вариант, то почему у меня до сих пор есть возможность отказаться?"
+          Ask "Хороший вопрос. Погоди, сейчас исправим."
+          SET pirateLimits
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+    OPT "Пожалуй, нет. По зрелом размышлении я все же попробую захватить того парня и получить хорошее вознаграждение."
+      Say "Спасибо."
+      GO pirateInterventionAccepted
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL pirateInterventionAccepted
+  Delay 300
+  HideChar programmer
+  Delay 500
+  ChangeChar pirate campaign/pirate.png
+  Delay 500
+
+  LABEL pirateArrestAttempt
+  SayChar pirate "Ого! Похоже, ты слышал[g(|а)], что на Регуле за меня обещана награда."
+  Say "Блеск. Давай, арестуй меня, если осмелишься."
+  Ask "Но предупреждаю, еще никто и никогда не победил меня в драке один на один."
+  MENU
+    OPT "Хм. Похоже, это будет сложнее, чем я думал[g(|а)]."
+      Say "Вне всякого сомнения, [g(приятель|подруга)], вне всякого сомнения."
+      GO pirateEnd
+    END_OF_OPT
+    OPT "Насколько мне известно, в игре нет режима драки один на один."
+      Say "Но если бы был, никто не смог бы победить меня, уверяю."
+      GO pirateEnd
+    END_OF_OPT
+    OPT_IFNOT pirateBragging "Ты же в курсе, что я победил[g(|а)] три корабля плохих парней?"
+      Ask "Но это не значит, что ты сможешь победить меня в драке один на один."
+      SET pirateBragging
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL pirateEnd
+  Say "И, поскольку ты не можешь меня победить – давай, до свиданья. Мне еще нужно поговорить с одним идиотом, который не в состоянии нормально выполнить свою работу."
+  Delay 400
+  HideChar pirate
+  Delay 300
+  HideDlgScene
+  HideButton bpirate1
+  ShowButton bpirate2
+  SetFocus bpirate2
+END_OF_SCRIPT
+
+SCRIPT pirateDlg2
+
+  ShowDlgScene
+  ShowChar pirate left
+  IFNOT ropeCut
+    ChangeChar rat campaign/rat-tied.png
+    ShowChar rat right
+  END_OF_IF
+  IF pirateEscaped
+    RESET pirateEscaped
+    AskChar pirate "Это снова ты со своей бандой?"
+    MENU
+      OPT "Да, и тебе снова придется пройти со мной."
+        SayChar pirate "Блеск. Значит, придется снова сбежать."
+        Say "Как только ты сядешь на какую-нибудь планету... или остановишься забрать добычу с поверженного врага..."
+        Say "Или, улучив момент, просто решишь почистить торчащие разъемы от звездной пыли..."
+        Say "Стоит тебе только отвернуться... и меня уже нет!"
+        GO pirateArrested
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  SayChar pirate "Итак, дружок, скажи, что именно в моих словах показалось тебе непонятным?"
+  SayChar rat "Мм. Мммымм. Мммымым. Мымыым."
+  SayChar pirate "Я просил тебя найти парочку простаков, так? А вместо этого ты присылаешь сюда этого [g(ковбоя|терминатора в юбке)]?"
+  SayChar rat "Мммымм мымы."
+  SayChar pirate "А еще мы говорили, что [g(он не должен быть вооружен|она не должна быть вооружена)]. Без оружия. Нет стволов. Ноу ганс. Нихт каноне. Никаких пушек. Ты говорил [g(ему|ей)] «никаких пушек»?"
+  AskChar rat "Мыы."
+  MENU
+    OPT "Неудобно прерывать ваш милый диалог, но [g(ковбой|терминатор в юбке)] вернулся. Причем не один, а с экипажем."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  SayChar pirate "О боги, опять ты? Я же уже сказал, что меня нельзя победить в в драке один на один."
+  SayChar rat "Ммы, мымым!"
+  AskChar pirate "Ах, да, действительно. Поправочка – теперь я один против целого экипажа. Тут я уже не так в себе уверен."
+  MENU
+    OPT "Верно. Поэтому ты пойдешь со мной."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  SayChar pirate "Блеск. Признаю, сейчас у тебя тактическое преимущество. На только сейчас."
+  AskChar pirate "Не думаю, что оно сохранится на протяжении всего пути до Регулы. Я сбегу при первой же возможности, уверяю."
+  MENU
+    OPT_IFNOT pirateExplains "Что? Сбежишь? Куда, в открытый космос?"
+      SET pirateExplains
+      SayChar pirate "Не стоит меня недооценивать, [g(приятель|подруга)]. Допустим, ты приземлишься на какую-нибудь планету..."
+      Say "...или встретишь странный корабль... или просто остановишься, чтобы почистить от звездной пыли торчащие разъемы ..."
+      Ask "Стоит тебе только отвернуться... и меня уже нет!"
+    END_OF_OPT
+    OPT "Посмотрим. Давай, двигай."
+      Say "Блеск."
+      GO pirateArrested
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL pirateArrested
+  Delay 300
+  HideChar pirate
+  HideButton bpirate2
+  IFNOT ropeCut
+    ShowButton bpirate3
+    Delay 700
+    SayChar rat "Ммым, ммыммы?.. Ммы?.. ММММММММЫЫ!"
+    Delay 500
+    HideChar rat
+  END_OF_IF
+  Delay 300
+  ShowPath U2-17x
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT pirateDlg3
+
+  ShowDlgScene
+  ChangeChar rat campaign/rat-tied.png
+  ShowChar rat right
+  Ask "Ммы... Ммы ммммммы?"
+  MENU
+    OPT "Полагаю, ты хочешь, чтобы я помог[g(|ла)] тебе, да, паренек?"
+      Say "Ммы."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  MENU
+    OPT "Ну, хотя ты этого ни капли не заслуживаешь... фиг с тобой. Живи."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "А зря. Меня и так все устраивает."
+      GO pirateEnd3
+    END_OF_OPT
+  END_OF_MENU
+  Delay 500
+  ChangeChar rat campaign/rat-tied-down.png
+  Delay 800
+  UnlockAchievement camp_cut_the_rope
+  SET ropeCut
+  Say "Ммы ммммммы."
+  MENU
+    OPT "Не благодари."
+    END_OF_OPT
+    EXIT_MENU
+  END_OF_MENU
+  HideButton bpirate3
+
+  LABEL pirateEnd3
+  Delay 300
+  HideChar rat
+  Delay 300
+  HideDlgScene
+END_OF_SCRIPT
+
+END_OF_SCRIPTS

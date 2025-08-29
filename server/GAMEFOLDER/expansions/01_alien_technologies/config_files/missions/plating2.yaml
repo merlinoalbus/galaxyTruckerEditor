@@ -1,0 +1,43 @@
+name:         plating_title                      # id of mission name string - localized 
+
+
+# txt + img
+new:          plating_new
+rules:        plating2_rules
+objectives:   plating2_objectives
+images:       [[advCards/black_hole_preview.png, 182, 280, ["Blackhole1", "Blackhole2"]], [parts/plating-L.png, 256, 256, ["Plating"]], [parts/explosive.png, 256, 256, ["tutorial/infoExplosiveCargo.png"]]]
+
+
+gameType:     realtime                            # values: realtime/turnbased; If mentioned this value can not be changed in GUI setting (lobby) by player.
+
+
+rounds:
+- roundType:  STII
+  pileConfig: at__plating.yaml
+
+
+shipPlans:    [II-growing]                         # names of all available ship plans. If not mentioned default plans will be used. Should by only one ship plan for one flight.
+
+
+opponents:
+- "medium_basic"
+- "medium_safe"
+
+
+deckScript:   at__Plating_Deck         # adventure cards deck building script
+
+
+winCondition:
+              deliverExplosiveTiles: 3                   # values: scoreWinner / didntGiveUp; used in expansion, to find ouf when is mission completed succefully
+              didntGiveUp: true
+
+
+evaluation:                                       # You can mention only those values you want edit. But you have to repeat (copy&paste) the rules for each flight.  
+  STI:
+    explosiveCargoValues:   [[0,0], [1,5], [2,10], [3,15], [4,20], [5,25], [6,30], [7,35], [8,40], [9,45], [10,50], [11,55], [12,60], [13,65], [14,70], [15,75], [16,80], [17,85], [18,90], [19,95], [20,100]]
+
+  STII:
+    explosiveCargoValues:   [[0,0], [1,5], [2,10], [3,15], [4,20], [5,25], [6,30], [7,35], [8,40], [9,45], [10,50], [11,55], [12,60], [13,65], [14,70], [15,75], [16,80], [17,85], [18,90], [19,95], [20,100]]
+
+  STIII:
+    explosiveCargoValues:   [[0,0], [1,5], [2,10], [3,15], [4,20], [5,25], [6,30], [7,35], [8,40], [9,45], [10,50], [11,55], [12,60], [13,65], [14,70], [15,75], [16,80], [17,85], [18,90], [19,95], [20,100]]

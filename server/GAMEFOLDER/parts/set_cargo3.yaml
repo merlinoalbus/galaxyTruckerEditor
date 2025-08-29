@@ -1,0 +1,12 @@
+- type: cargo3
+  connectors: [2, 0, 0, 0]
+- type: cargo3
+  connectors: [1, 0, 0, 0]
+- type: cargo3
+  connectors: [1, 0, 1, 0]
+- type: cargo3
+  connectors: [2, 0, 2, 0]
+- type: cargo3
+  connectors: [2, 0, 1, 0]
+- type: cargo3
+  connectors: [2, 0, 1, 0]

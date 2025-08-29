@@ -1,0 +1,1337 @@
+SCRIPTS
+
+SCRIPT forgeDlg
+
+  ShowDlgScene
+  ShowChar foreman left
+  Delay 750
+  IF ingotsPending
+    Say "¡Hola! ¿Sigues ahí?"
+    ChangeChar foreman campaign/foreman-no.png
+    Say "Aún necesitan esos lingotes en la fábrica espacial."
+    GO forgeEnd
+  END_OF_IF
+  IF explosivesPending
+    Say "¡Hola! ¿Sigues ahí?"
+    ChangeChar foreman campaign/foreman-no.png
+    Say "Aún necesitan esos explosivos en el asteroide."
+    IFNOT explosivesFailed
+      GO forgeEnd
+    END_OF_IF
+    IF toMine0
+      GO forgeEnd
+    END_OF_IF
+    MENU
+      OPT "La entrega no ha ido del todo bien. Me gustaría volver a intentarlo."
+        ChangeChar foreman campaign/foreman.png
+        Say "De acuerdo."
+        GO forgeEnd
+      END_OF_OPT
+      OPT "Eran muchos explosivos para un solo viaje. ¿Tienes algún encargo más fácil?"
+        ChangeChar foreman campaign/foreman.png
+        RESET explosivesFailed
+        IF toMine2
+          RESET toMine2
+          HidePath U2-16a
+          Ask "Claro, puedes llevar cuatro cargamentos hasta Gamma."
+          MENU
+            OPT "De acuerdo."
+              SET toMine1
+              ShowPath U2-15a
+              EXIT_MENU
+            END_OF_OPT
+            OPT "¿Cuatro? Siguen siendo muchos explosivos."
+              SET toMine0
+              ShowPath U2-14a
+              Say "De acuerdo, dos cargamentos para Delta. Y no quiero más excusas."
+              EXIT_MENU
+            END_OF_OPT
+          END_OF_MENU
+          EXIT_MENU
+        ELSE
+          RESET toMine1
+          HidePath U2-15a
+          SET toMine0
+          ShowPath U2-14a
+          Say "Puedes llevar dos cargamentos de explosivos hasta Delta. No encontrarás nada más fácil por aquí."
+          EXIT_MENU
+        END_OF_IF
+      END_OF_OPT
+    END_OF_MENU
+    GO forgeEnd
+  END_OF_IF
+  IF forgeAccepted
+    ChangeChar foreman campaign/foreman-hello.png
+    Say "¡Mira quién está aquí! ¡Si es mi camioner[g(o|a)] favorit[g(o|a)]!"
+    ChangeChar foreman campaign/foreman-smile.png
+    Ask "¿List[g(o|a)] para otra misión?"
+    MENU
+      OPT_IFNOT ingotsAccepted "Sí, estoy list[g(o|a)] para ir a la fábrica espacial."
+        GO forgeIngots
+      END_OF_OPT
+      OPT_IF ingotsAccepted "Sí, puedo llevar más lingotes a la fábrica espacial."
+        GO forgeIngotsCont
+      END_OF_OPT
+      OPT_IFNOT explosivesAccepted "Sí, estoy list[g(o|a)] para visitar los asteroides mineros."
+        GO forgeExplosives
+      END_OF_OPT
+      OPT_IF explosivesAccepted "Sí, puedo llevar más explosivos a los asteroides mineros."
+        GO forgeExplosivesCont
+      END_OF_OPT
+      OPT "Me temo que no. Quizás más tarde."
+        ChangeChar foreman campaign/foreman-whatsup.png
+        Say "Como tú digas. Quizás más tarde."
+        GO forgeEnd
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  IF forgeOffered
+    Ask "¡Hola de nuevo! ¿Has reconsiderado mi oferta?"
+    MENU
+      OPT "Sí, estoy list[g(o|a)] para visitar la fábrica espacial."
+        Say "Genial."
+        GO forgeIngots
+      END_OF_OPT
+      OPT "Sí, estoy list[g(o|a)] para volar hasta los asteroides mineros."
+        Say "Genial."
+        GO forgeExplosives
+      END_OF_OPT
+      OPT_IFNOT mineUnlocked "En realidad no, pero me gustaría ir a los asteroides mineros."
+        SET mineUnlocked
+        Say "Oh, ya veo."
+        Say "No me quieres ayudar."
+        Say "Sin embargo, yo sí tengo que ayudarte a ti."
+        Say "¿Qué se le va a hacer? Deja que añada los asteroides a tu mapa."
+        Delay 500
+        ShowNode mine0
+        Delay 500
+        ShowPath R2-14a
+        Delay 500
+        Say "¡Te advierto que te espera una buena sorpresa! (Je, je.)"
+        Say "Ahora, largo de mi vista."
+        GO forgeEnd
+      END_OF_OPT
+      OPT "No, solo estoy de paseo."
+        ChangeChar foreman campaign/foreman-no.png
+        Say "¡Largo de mi vista!"
+        Say "Tengo trabajo que hacer."
+        GO forgeEnd
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  Ask "¡Mira quién está aquí! Ya era hora de que llegaras."
+  MENU
+    OPT "¿Hablas conmigo?"
+      Say "Sí, hablo contigo."
+      Say "Eres [g(el camionero|la camionera)], ¿no?"
+      GO forgeExpl
+    END_OF_OPT
+    OPT "¿Me estabas esperando?"
+      Say "¡Por supuesto!"
+      GO forgeExpl
+    END_OF_OPT
+    OPT "Eso mismo estaba pensando."
+      Ask "Perfecto, a trabajar."
+      MENU
+        OPT "¿Eh? ¿Trabajar?"
+          Say "Sí, manos a la obra."
+          GO forgeExpl
+        END_OF_OPT
+        OPT "¿Eh...? Claro, por supuesto. ¿Por dónde empiezo?"
+          ChangeChar foreman campaign/foreman-smile.png
+          Say "¡Así me gusta! Creo que nos entenderemos."
+          GO forgeExpl
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL forgeExpl
+  SET forgeOffered
+  Say "¿Sabes? Pedí que te enviaran hace un par de semanas. Imagínate cómo se ha acumulado el trabajo desde entonces."
+  Say "Tengo a la fábrica espacial y a los asteroides mineros llamando sin parar. ¡Esto es un desastre!"
+  ChangeChar foreman campaign/foreman-smile.png
+  Ask "¿Adónde quieres ir primero?"
+  MENU
+    OPT "¿Qué tal si empiezo por la fábrica espacial?"
+      Say "Perfecto."
+      GO forgeIngots
+    END_OF_OPT
+    OPT "¿Qué tal si empiezo por los asteroides mineros?"
+      Say "Perfecto."
+      GO forgeExplosives
+    END_OF_OPT
+    OPT "Siento decepcionarte, pero no soy la persona que estabas esperando."
+      Ask "¿No eres mi camioner[g(o|a)]? ¿Entonces quién eres?"
+      MENU
+        OPT "Otr[g(o|a)] camioner[g(o|a)] que pasaba por aquí."
+          ChangeChar foreman campaign/foreman-whatsup.png
+          Ask "Vaya... ¿Te gustaría trabajar para mí igualmente?"
+          MENU
+            OPT "Ni hablar."
+              ChangeChar foreman campaign/foreman.png
+              Say "Oh... Claro... Lo entiendo. Cuando vuelvas a Régula, diles que aún estoy esperando un transportista."
+              Say "Uno al que no le importe trabajar, ¿vale?"
+              GO forgeEnd
+            END_OF_OPT
+            OPT "Bueno, supongo que podría llevar algo hasta la fábrica espacial."
+              ChangeChar foreman campaign/foreman-smile.png
+              Say "¿¡En serio!? ¡Muchas gracias!"
+              GO forgeIngots
+            END_OF_OPT
+            OPT "Bueno, supongo que podría llevar algo hasta los asteroides mineros."
+              ChangeChar foreman campaign/foreman-smile.png
+              Say "Ho boy! Thanks a lot!"
+              GO forgeExplosives
+            END_OF_OPT
+          END_OF_MENU
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL forgeIngots
+  IFNOT workshopInitialized
+    Say "Hemos forjado varios lingotes megamasivos para la fábrica y... hm... Deja que vea."
+    ChangeChar foreman campaign/foreman-list.png
+    Say "Oh, no he dicho nada."
+    Say "Aquí pone que la fábrica aún no está abierta. Necesitan trabajadores."
+    Say "Supongo que primero debería enviarte a Régula para que te encargues de la mano de obra."
+    ChangeChar foreman campaign/foreman.png
+    Ask "¡Lo que faltaba! Pido a Régula que envíen un camionero y, cuando por fin llega, tiene que dar media vuelta. Esto es una locura."
+    MENU
+      OPT "No hay problema. Puedo ir a Régula."
+        GO forgeEnd
+      END_OF_OPT
+      OPT "¿Qué hay de los asteroides mineros?"
+        GO forgeExplosives
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  Say "Hemos forjado algunos lingotes megamasivos por encargo."
+  Say "Ahora solo tenemos que subirlos a una nave capaz de transportarlos."
+  ChangeChar foreman campaign/foreman-whatsup.png
+  Ask "Vas a necesitar bastante potencia si quieres cargar con ellos. Asegúrate de llevar motores de sobra."
+  MENU
+    OPT "No será un problema. ¡Al trabajo!"
+      ChangeChar foreman campaign/foreman-smile.png
+      Say "Así me gusta."
+      SET ingotsAccepted
+      SET ingotsPending
+      SET oneingot
+      SET ing3
+      HideAllPaths forge workshop
+      ShowPath U2-13a1
+      GO forgeAcceptEnd
+    END_OF_OPT
+    OPT "Hm... No creo que sea buena idea."
+      ChangeChar foreman campaign/foreman-smile.png
+      Say "¿No? De acuerdo... Tú mandas."
+      Delay 300
+      ChangeChar foreman campaign/foreman.png
+      Delay 300
+      Say "(Ya no hay camioneros como los de antes. Son todos unos vagos.)"
+      GO forgeEnd
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL forgeIngotsCont
+  IF threeingots
+    IF ing2
+      RESET ingots3small
+      SET ingots3medium
+    END_OF_IF
+  ELSE
+    IF twoingots
+      IF ing2
+        RESET ingots2small
+        SET ingots2medium
+        SET ingots3small
+      END_OF_IF
+      IF ing3
+        RESET ingots2medium
+        SET ingots2big
+      END_OF_IF
+    ELSE
+      IF ing3
+        SET ingots2small
+        SET ingot1big
+      END_OF_IF
+      IF ing5
+        RESET ingot1big
+        SET ingot1bigger
+      END_OF_IF
+      IF ing6
+        RESET ingot1bigger
+        SET ingot1biggest
+      END_OF_IF
+    END_OF_IF
+  END_OF_IF
+  RESET ing2
+  RESET ing3
+  RESET ing4
+  RESET ing5
+  RESET ing6
+  RESET ing7
+  RESET ing8
+  RESET oneingot
+  RESET twoingots
+  RESET threeingots
+  ChangeChar foreman campaign/foreman-list.png
+  Ask "Vale, necesitamos transportar todo esto. ¿Cuánto crees que puedes llevar en un solo viaje?"
+  MENU
+    OPT_IF ingots2small "Me llevaré 2 lingotes pequeños."
+      SET twoingots
+      SET ing2
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF ingots2medium "Me llevaré 2 lingotes medianos."
+      SET twoingots
+      SET ing3
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF ingots2big "Me llevaré 2 lingotes grandes."
+      SET twoingots
+      SET ing4
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF ingots3small "Me llevaré 3 lingotes pequeños."
+      SET threeingots
+      SET ing2
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF ingots3medium "Me llevaré 3 lingotes medianos."
+      SET threeingots
+      SET ing3
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF ingot1big "Me llevaré 1 lingote grande."
+      SET oneingot
+      SET ing5
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF ingot1bigger "Me llevaré 1 lingote más grande."
+      SET oneingot
+      SET ing6
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF ingot1biggest "Me llevaré el lingote más grande que tengas."
+      SET oneingot
+      SET ing8
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Hm... Mejor lo dejamos para otro día."
+      GO forgeEnd
+    END_OF_OPT
+  END_OF_MENU
+  ChangeChar foreman campaign/foreman-smile.png
+  Say "A la orden. Estará en el almacén cuando empieces a construir tu nave. ¡Buena suerte!"
+  HideAllPaths forge workshop
+  IF oneingot
+    ShowPath U2-13a1
+  END_OF_IF
+  IF twoingots
+    ShowPath U2-13a2
+  END_OF_IF
+  IF threeingots
+    ShowPath U2-13a3
+  END_OF_IF
+  SET ingotsPending
+  GO forgeAcceptEnd
+
+  LABEL forgeExplosives
+  ChangeChar foreman campaign/foreman-smile.png
+  Delay 300
+  Say "¿Sabías que los asteroides mineros están completamente automatizados?"
+  Say "Todos sus trabajadores son robots."
+  Delay 300
+  ChangeChar foreman campaign/foreman-list.png
+  Delay 700
+  Ask "Me han dicho que necesitan 2 cargamentos de explosivos."
+  MENU
+    OPT "Parece un buen trabajo."
+      IF mineUnlocked
+        HideAllPaths forge mine0
+        ShowPath U2-14a
+        CenterMapByPath U2-14a
+        Say "Perfecto, ya sabes el camino."
+      ELSE
+        Say "Perfecto, deja que te diga cómo llegar."
+        Delay 500
+        ShowNode mine0
+        Delay 500
+        ShowPath U2-14a
+        CenterMapByPath U2-14a
+      END_OF_IF
+      Delay 500
+      Say "Los explosivos estarán en el almacén cuando empieces a construir tu nave."
+      SET explosivesAccepted
+      SET explosivesPending
+      SET toMine0
+      GO forgeAcceptEnd
+    END_OF_OPT
+    OPT_IFNOT forgeExcuseExpl "¿Sabes? Resulta que tengo cierta fobia a los explosivos."
+      Say "No hay problema. Puedes guardarlos en el módulo del rincón."
+      SET forgeExcuseExpl
+      IF forgeExcuseBots
+        SET forgeBothExcuses
+      END_OF_IF
+    END_OF_OPT
+    OPT_IFNOT forgeExcuseBots "¿Sabes? Es que los robots me ponen un poco nervios[g(o|a)]."
+      Say "No te preocupes, chic[g(o|a)]. Estás protegid[g(o|a)] por las 27 leyes de la robótica."
+      Say "Antes solo había tres..."
+      Say "Pero desde que inventaron los abogados robóticos... Ya sabes cómo son. La cuestión es que estarás a salvo con ellos."
+      SET forgeExcuseBots
+      IF forgeExcuseExpl
+        SET forgeBothExcuses
+      END_OF_IF
+    END_OF_OPT
+    OPT_IF forgeBothExcuses "Vale, se me han gastado las excusas. No quiero entregar explosivos a una panda de robots."
+      Say "Ya, ya, lo que pasa es que estás [g(hecho un vago|hecha una vaga)]."
+      Say "¡Largo de mi vista!"
+      RESET forgeBothExcuses
+      GO forgeEnd
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL forgeExplosivesCont
+  Ask "Gracias. ¿A qué asteroide quieres ir?"
+
+  LABEL forgeQuerry
+  RESET canAsk3
+  IF mine3Initialized
+    IFNOT smallestAsked
+      SET canAsk3
+    END_OF_IF
+  END_OF_IF
+  RESET toMine0
+  RESET toMine1
+  RESET toMine2
+  MENU
+    OPT_IFNOT mine1Initialized "Verás, solo conozco uno."
+      Delay 300
+      Say "Delta, ¿verdad? Dame un segundo."
+      Delay 300
+      ChangeChar foreman campaign/foreman-list.png
+      Delay 500
+      Say "Veamooos. Aquí dice que necesitan 2 cargamentos de explosivos."
+      SET toMine0
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF mine1Initialized "El más grande."
+      Say "Delta, por supuesto. Dame un segundo."
+      Delay 300
+      ChangeChar foreman campaign/foreman-list.png
+      Delay 500
+      Say "Veamooos. Aquí dice que necesitan 2 cargamentos de explosivos."
+      SET toMine0
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF mine1Initialized "El pequeño."
+      Say "¿Gamma? Deja que vea..."
+      Delay 300
+      ChangeChar foreman campaign/foreman-list.png
+      Delay 500
+      Say "Han pedido 4 cargamentos de explosivos."
+      SET toMine1
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF mine2Initialized "El que es aún más pequeño."
+      Say "Oh, claro. Beta. Una de nuestras mejores minas. Deja que vea..."
+      Delay 300
+      ChangeChar foreman campaign/foreman-list.png
+      Delay 500
+      Say "Han pedido 6 cargamentos de explosivos."
+      SET toMine2
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF canAsk3 "El más chiquitín de todos, por favor."
+      Say "Oh, me temo que las minas de Alfa se han agotado. Ya no hacemos entregas."
+      Ask "Elige otro destino."
+      SET smallestAsked
+      RESET canAsk3
+    END_OF_OPT
+    OPT_IFNOT canAsk3 "Pensándolo mejor, hoy no me apetece visitar asteroides."
+      GO forgeEnd
+    END_OF_OPT
+  END_OF_MENU
+  MENU
+    OPT "Me gusta la idea."
+      Say "¡Me alegro! ¡Buena suerte!"
+      SET explosivesPending
+      IF toMine0
+        ShowPath U2-14a
+      END_OF_IF
+      IF toMine1
+        ShowPath U2-15a
+      END_OF_IF
+      IF toMine2
+        ShowPath U2-16a
+      END_OF_IF
+      GO forgeAcceptEnd
+    END_OF_OPT
+    OPT_IFNOT minesWithoutDelivery "Solo por curiosidad, ¿puedo visitar los asteroides sin necesidad de hacer una entrega?"
+      SET minesWithoutDelivery
+      Say "No te lo recomiendo. Los robots valoran mucho su intimidad."
+      Say "Si no tienes nada que hacer en los asteroides, es mejor dejarlos tranquilos."
+    END_OF_OPT
+    OPT "No sé, todo esto parece un poco arriesgado."
+      GO forgeEnd
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL forgeAcceptEnd
+  IFNOT class3
+    IFNOT forgeAccepted
+      SET forgeAccepted
+    ELSE
+      IFNOT class3Recommended
+        SET class3Recommended
+        Say "¿Sabes? Ojalá tuviera más camioneros como tú. Inteligentes, rápidos y sin remilgos a la hora de trabajar."
+        Ask "¿Ya has solicitado una licencia de Clase III?"
+        MENU
+          OPT_IFNOT class3Asked "No, aún no. ¿Cómo se hace?"
+            Say "Tienes que ir a Régula y hablar con el Departamento de Vehículos Estelares. Ellos te lo explicarán todo."
+            Say "¿Por qué no pasas por ahí la próxima vez que vayas? Ahora tienes trabajo que hacer."
+            SetFocus bclerk
+            EXIT_MENU
+          END_OF_OPT
+          OPT_IF class3Asked "Lo he intentado, pero no es tan fácil como parece."
+            Say "Nada es imposible para mi camioner[g(o|a)] favorit[g(o|a)]. Estoy seguro de que lo conseguirás."
+            Say "Ánimo, ahora tienes trabajo que hacer."
+            EXIT_MENU
+          END_OF_OPT
+        END_OF_MENU
+      ELSE
+        IFNOT class3Asked
+          Say "No lo olvides: Pásate por el Departamento de Vehículos Estelares y pregunta por las licencias de Clase III. Eres lo bastante buen[g(o|a)] para que te la concedan. Estoy seguro."
+        END_OF_IF
+      END_OF_IF
+    END_OF_IF
+  ELSE
+    SET forgeAccepted
+  END_OF_IF
+
+  LABEL forgeEnd
+  HideChar foreman
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT sailorZoomOut
+
+  Delay 200
+  ChangeChar sailor campaign/sailor.png
+  SET_TO sailor 4
+END_OF_SCRIPT
+
+SCRIPT sailorAnim
+
+  Delay 200
+  IF_IS sailor 4
+    SET_TO sailor 0
+  ELSE
+    IF_MIN sailor 2
+      IF_IS sailor 3
+        IF_PROB 33
+          SET_TO sailor 2
+        ELSE
+          IF_PROB 50
+            SET_TO sailor 1
+          ELSE
+            SET_TO sailor 0
+          END_OF_IF
+        END_OF_IF
+      ELSE
+        IF_PROB 33
+          SET_TO sailor 3
+        ELSE
+          IF_PROB 50
+            SET_TO sailor 1
+          ELSE
+            SET_TO sailor 0
+          END_OF_IF
+        END_OF_IF
+      END_OF_IF
+    ELSE
+      IF_IS sailor 1
+        IF_PROB 33
+          SET_TO sailor 3
+        ELSE
+          IF_PROB 50
+            SET_TO sailor 2
+          ELSE
+            SET_TO sailor 0
+          END_OF_IF
+        END_OF_IF
+      ELSE
+        IF_PROB 33
+          SET_TO sailor 3
+        ELSE
+          IF_PROB 50
+            SET_TO sailor 2
+          ELSE
+            SET_TO sailor 1
+          END_OF_IF
+        END_OF_IF
+      END_OF_IF
+    END_OF_IF
+  END_OF_IF
+  IF_IS sailor 0
+    ChangeChar sailor campaign/sailor0.png
+  END_OF_IF
+  IF_IS sailor 1
+    ChangeChar sailor campaign/sailor1.png
+  END_OF_IF
+  IF_IS sailor 2
+    ChangeChar sailor campaign/sailor2.png
+  END_OF_IF
+  IF_IS sailor 3
+    ChangeChar sailor campaign/sailor3.png
+  END_OF_IF
+  Delay 200
+END_OF_SCRIPT
+
+SCRIPT treasureFound
+
+  ShowDlgScene
+  Announce "Parece haber una crrruz rrroja en este planeta."
+  Delay 500
+  Announce "Tras sudar la camiseta, desentierras un cofrrre negrrro."
+  Delay 1000
+  Announce "Abres la tapa..."
+  Delay 1000
+  Announce "… ¡y encuentras 20 créditos!"
+  MENU
+    OPT "No es que sea una fortuna, pero menos da una piedra."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  AddMissionCredits 20
+  Delay 500
+  UnlockAchievement camp_treasure
+  Delay 500
+  RESET treasurePlanet
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT barGuestsDlg
+
+  ShowDlgScene
+  Delay 300
+  IF sailorAvailable
+    IF ratAvailable
+      ShowChar sailor left
+      Delay 300
+      ShowChar rat right
+      Delay 500
+      MENU
+        OPT "Puedo sentarme junto al viejo marinero de la izquierda."
+          Delay 500
+          HideChar rat
+          Delay 300
+          GO sailorDlg
+        END_OF_OPT
+        OPT "Puedo sentarme junto al tipejo de la derecha."
+          Delay 500
+          HideChar sailor
+          Delay 300
+          GO ratDlg
+        END_OF_OPT
+        OPT "O puedo marcharme. Aquí hay mucha gente."
+          HideChar sailor
+          Delay 100
+          HideChar rat
+          HideDlgScene
+          RETURN
+        END_OF_OPT
+      END_OF_MENU
+    ELSE
+      ShowChar sailor left
+      Delay 300
+      GO sailorDlg
+    END_OF_IF
+  ELSE
+    IF ratAvailable
+      ShowChar rat right
+      Delay 300
+      GO ratDlg
+    ELSE
+      Announce "Un pesado silencio envuelve el local."
+      IF ratFinished
+        IF sailorFinished
+          HideButton bguests
+        END_OF_IF
+      END_OF_IF
+      HideDlgScene
+      RETURN
+    END_OF_IF
+  END_OF_IF
+
+  LABEL sailorDlg
+  SUB_SCRIPT sailorZoomOut
+  FocusChar sailor
+  Delay 1000
+  IF sailorVisited
+    SUB_SCRIPT sailorAnim
+    Say "¡Aaar! ¡Es [g(el|la)] mariner[g(o|a)] de agua dulce!"
+    IF sailorFulfilled
+      SUB_SCRIPT sailorAnim
+      Ask "¿Has encontrrrado el tesoro, grrrumete?"
+      IF treasurePlanet
+        MENU
+          OPT "No, aún lo estoy buscando."
+            GO sailorEnd
+          END_OF_OPT
+        END_OF_MENU
+      ELSE
+        MENU
+          OPT "Sí, gracias por las pistas. ¿Puedo invitarte a algo?"
+            SUB_SCRIPT sailorAnim
+            Say "No hace falta."
+            SUB_SCRIPT sailorZoomOut
+            Say "Ahora que alguien lo ha rrrecuperado, porrr fin puedo descansarrr en paz."
+            Delay 1500
+            ChangeChar sailor campaign/sailor-dying.png
+            Delay 800
+            ChangeChar sailor campaign/sailor-dead.png
+            Delay 2000
+            HideChar sailor
+            HideDlgScene
+            RESET sailorAvailable
+            SET sailorFinished
+            RETURN
+          END_OF_OPT
+          OPT "Hm... No. Todavía no."
+            SUB_SCRIPT sailorAnim
+            Say "¡Aaar! Me parrrtes el corazón."
+            GO sailorEnd
+          END_OF_OPT
+          OPT_IFNOT sailorRude "No es asunto tuyo."
+            SUB_SCRIPT sailorAnim
+            SUB_SCRIPT sailorAnim
+            SUB_SCRIPT sailorAnim
+            Say "Aaar... El capitán que lo perrrdió desea ferrrvientemente que alguien lo encuentre."
+            SET sailorRude
+          END_OF_OPT
+        END_OF_MENU
+      END_OF_IF
+    END_OF_IF
+    SUB_SCRIPT sailorAnim
+    Ask "Dime, grrrumete. ¿Has visitado ya 7 estaciones?"
+    IF_MIN visited 7
+      RESET almostEnoughSeen
+      IF_MIN visited 9
+        SET moreSeen
+      ELSE
+        SET enoughSeen
+      END_OF_IF
+    ELSE
+      IF_MIN visited 5
+        SET almostEnoughSeen
+      END_OF_IF
+    END_OF_IF
+    MENU
+      OPT_IF moreSeen "Y otros muchos lugares, viejo lobo."
+        GO sailorSecret
+      END_OF_OPT
+      OPT_IF enoughSeen "Así es, viejo lobo."
+        GO sailorSecret
+      END_OF_OPT
+      OPT_IF almostEnoughSeen "He estado en algunas, pero no en tantas."
+        SUB_SCRIPT sailorAnim
+        Say "¿Entonces porrr qué me molestas?"
+        GO sailorEnd
+      END_OF_OPT
+      OPT "Solo he venido para saludar a tu loro."
+        SUB_SCRIPT sailorAnim
+        Say "¿Qué loro? ¿Te refieres a mi trrraductor porrrtátil?"
+        SUB_SCRIPT sailorAnim
+        Say "De acuerrrdo... Saluda a tu nevera de mi parte."
+        GO sailorEnd
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  SUB_SCRIPT sailorAnim
+  Ask "¡Aaar! ¡[g(Un|Una)] mariner[g(o|a)] de agua dulce ha atrrracado en el barrr!"
+  MENU
+    OPT_IFNOT sailorAnswer "Hola, soy nuev[g(o|a)] en esto de viajar por el espacio."
+      SUB_SCRIPT sailorAnim
+      Ask "¡Arrr! Solo hay que mirarte, grrrumete. Tu trrraje espacial aún está limpio."
+      SET sailorAnswer
+    END_OF_OPT
+    OPT_IFNOT sailorAnswer "Estás hablando con [g(un camionero solitario curtido|una camionera solitaria curtida)] en mil y una batallas."
+      SUB_SCRIPT sailorAnim
+      Ask "Arrr, no le vengas con cuentos a un viejo lobo espacial. Tu trrraje aún está limpio, grrrumete."
+      SET sailorAnswer
+    END_OF_OPT
+    OPT "Tienes un loro muy bonito, pero a veces se pasa de maleducado."
+      SUB_SCRIPT sailorAnim
+      Say "¿Un loro? ¿Qué loro?"
+      Delay 1000
+      SUB_SCRIPT sailorAnim
+      Say "¿Te refieres a esto? No es un loro, ¡es mi trrraductor telepático!"
+      SUB_SCRIPT sailorAnim
+      Say "Todas aquellas noches, frrrías y húmedas, en el puente de mi nave me han pasado factura."
+      SUB_SCRIPT sailorAnim
+      Ask "Perrrdí la laringe atrrravesando una torrrmenta solarrr. ¡Tarrrdé todo un año en salirrr de ella!"
+      MENU
+        OPT "Oh. Lo siento mucho."
+          SUB_SCRIPT sailorAnim
+          Say "No te preocupes. Gracias a este cacharrro, puedo hablarrr durante horas sin forrrzar la garrrganta."
+          GO sailorCont
+        END_OF_OPT
+        OPT "Seguro que lo tenías merecido."
+          SUB_SCRIPT sailorAnim
+          Say "No te andas con remilgos. ¡Aaar! ¡Eso me gusta!"
+          GO sailorCont
+        END_OF_OPT
+        OPT "Una tormenta solar no debería…"
+          SUB_SCRIPT sailorAnim
+          Delay 200
+          SUB_SCRIPT sailorAnim
+          Delay 200
+          SUB_SCRIPT sailorAnim
+          Ask "¿...?"
+          MENU
+            OPT "Olvídalo."
+              GO sailorCont
+            END_OF_OPT
+          END_OF_MENU
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL sailorCont
+  SET sailorVisited
+  SUB_SCRIPT sailorZoomOut
+  Ask "Dime, ¿qué te trrrae a la mesa de este viejo lobo espacial?"
+  MENU
+    OPT_IFNOT sailorButton "No lo sé. Estaba aburrid[g(o|a)]."
+      SUB_SCRIPT sailorAnim
+      Say "¡Marineros de agua dulce! ¡No sabéis nada de los secrrretos del univerrrso!"
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Quiero conocer los secretos del universo."
+      SUB_SCRIPT sailorAnim
+      Say "¡Aaaar! ¡Entonces estás hablando con el hombre adecuado!"
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IFNOT sailorButton "He pulsado en la pantalla y has aparecido."
+      SUB_SCRIPT sailorAnim
+      Say "¡Malditos niñatos! ¡En mis tiempos nadie entrrraba en los sitios pulsando una pantalla!"
+      SUB_SCRIPT sailorAnim
+      Ask "Tenías que escribirrrlo con el sudorrr de tu frente: ENTRRRAR BARRR."
+      SET sailorButton
+    END_OF_OPT
+  END_OF_MENU
+  SUB_SCRIPT sailorAnim
+  Say "Conozco unos cuantos secretos acerca del universo."
+  SUB_SCRIPT sailorAnim
+  Say "Y hay uno en particular que me gustaría compartir."
+  SUB_SCRIPT sailorAnim
+  Say "Pero no con [g(un marinero|una marinera)] de agua dulce como tú."
+  SUB_SCRIPT sailorAnim
+  Ask "Haremos una cosa. Cuando hayas visitado 7 estaciones, te revelaré mi secreto."
+  IF_MIN visited 7
+    MENU
+      OPT "Me subestimas, viejo lobo espacial. Ya he estado en 7 estaciones."
+        SUB_SCRIPT sailorAnim
+        Say "¡Rayos y centellas! Puede que no seas tan novat[g(o|a)] como yo creía."
+        GO sailorSecret
+      END_OF_OPT
+    END_OF_MENU
+  ELSE
+    MENU
+      OPT "Sí, ya. No voy a recorrer toda la galaxia para que me des un par de consejos de principiante que no sirven para nada."
+        SUB_SCRIPT sailorAnim
+        Say "¡Te equivocas, joven [g(truhán|truhana)]! Aunque no lo creas, conozco el paradero de un tesoro escondido."
+        EXIT_MENU
+      END_OF_OPT
+      OPT "¿En serio? ¿Qué tipo de secreto?"
+        SUB_SCRIPT sailorAnim
+        Say "No diré ni una palabra acerca del grrran tesoro que enterré en mi juventud. Si no, ¿para qué ibas a visitar las 7 estaciones?"
+        SUB_SCRIPT sailorAnim
+        Say "Prrrefiero que porrr el momento disfrrrutes de la intriga."
+        EXIT_MENU
+      END_OF_OPT
+      OPT "De acuerdo, me gustan los secretos."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    SUB_SCRIPT sailorAnim
+    Say "Ahora, largo. Déjame con mis recuerdos."
+    SUB_SCRIPT sailorAnim
+    Say "Hubo una vez en la que corrrtejé a toda la constelación de Virrrgo..."
+    GO sailorEnd
+  END_OF_IF
+
+  LABEL sailorSecret
+  ResetFocus bguests
+  SET sailorFulfilled
+  SUB_SCRIPT sailorAnim
+  Say "Muy bien, este es mi secreto."
+  SUB_SCRIPT sailorAnim
+  Say "Hace mucho tiempo había un capitán. Era fuerrrte, brrravo, ¡feroz! Un donjuán de tomo y lomo."
+  SUB_SCRIPT sailorAnim
+  Say "Pero el muy canalla era un pirata. Cuando las primeras hebras de plata poblaron su barba, comenzó a lamentar algunas de sus acciones."
+  SUB_SCRIPT sailorAnim
+  Say "Entre ellas, la que más pesar le causaba era haber enterrrado su tesoro."
+  SUB_SCRIPT sailorAnim
+  Say "Lo escondió en un planeta muy lejano y guardó las coordenadas en una caja fuerte que nadie podría forzar."
+  SUB_SCRIPT sailorAnim
+  Say "La única manera de abrirla era mediante el sonido de su prrropia voz."
+  SUB_SCRIPT sailorAnim
+  Say "Sin embargo, ¡oh, desgracia!, el osado capitán perrrdió la voz y la caja fuerte quedó sellada para siempre."
+  SUB_SCRIPT sailorAnim
+  Ask "Lo único que recuerda es la X rrroja que hay en el planeta donde duerrrme su tesoro."
+  MENU
+    OPT "Si encuentro el planeta, ¿debería decirte...? Perdona, ¿debería decirle al capitán dónde está?"
+      SUB_SCRIPT sailorAnim
+      Say "No hace falta, grrrumete. Ni él era tan rico, ni su tesoro tan grande."
+      SUB_SCRIPT sailorAnim
+      Say "Solo desea que alguien lo encuentrrre antes de que se convierrrta en una reliquia del pasado."
+      SUB_SCRIPT sailorAnim
+      Ask "Si descubres dónde está, es tuyo."
+      MENU
+        OPT "Entendido: un planeta con una X roja. Tendré los ojos bien abiertos."
+          SUB_SCRIPT sailorAnim
+          SET treasurePlanet
+          Say "¡Que los vientos solares te sean propicios!"
+          GO sailorEnd
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL sailorEnd
+  SUB_SCRIPT sailorAnim
+  Delay 300
+  SUB_SCRIPT sailorAnim
+  Delay 300
+  SUB_SCRIPT sailorZoomOut
+  Delay 750
+  HideChar sailor
+  HideDlgScene
+  RETURN
+
+  LABEL ratDlg
+  IFNOT ratVisited
+    SET ratVisited
+    Delay 500
+    Say "¡Pssst! Aquí, colega."
+    Delay 250
+    ChangeChar rat campaign/rat-turn.png
+    Delay 600
+    ChangeChar rat campaign/rat.png
+    Delay 400
+    ChangeChar rat campaign/rat-smile.png
+    Delay 1500
+    ChangeChar rat campaign/rat.png
+    Delay 150
+    Ask "Sí, tú. Siéntate conmigo, quiero contarte un secreto."
+    MENU
+      OPT "¿En serio? Me gustan los secretos."
+        Say "Entonces esto te encantará."
+        ChangeChar rat campaign/rat-finger-smile.png
+        Say "Puedo ayudarte a conseguir dinero fácil."
+        GO ratWaiting
+      END_OF_OPT
+      OPT "Ay, madre. No sé si quiero oírlo."
+        ChangeChar rat campaign/rat-finger-smile.png
+        Say "¡Claro que sí! Puedo ayudarte a conseguir dinero fácil."
+        GO ratWaiting
+      END_OF_OPT
+      OPT "No hablo con desconocidos. Y mucho menos con tipejos como tú."
+        ChangeChar rat campaign/rat-frown.png
+        Say "¿Me has llamado tipejo? ¿Sabes qué? No mereces que te cuente mi secreto."
+        Delay 1500
+        ChangeChar rat campaign/rat.png
+        Delay 500
+        Say "Pero, como eres un [g(buen tío|encanto)], te lo diré igualmente. Puedo ayudarte a conseguir dinero fácil."
+        GO ratWaiting
+      END_OF_OPT
+    END_OF_MENU
+  ELSE
+    Delay 300
+    ChangeChar rat campaign/rat-smile.png
+    Delay 300
+    Say "¡Eh, si eres tú!"
+    ChangeChar rat campaign/rat-finger-smile.png
+    Ask "Has decidido invitarme a un trago para que desembuche, ¿eh?"
+    MENU
+      OPT "No."
+        Delay 300
+        ChangeChar rat campaign/rat-frown.png
+        GO ratBegging
+      END_OF_OPT
+      OPT "Vale... Tú ganas."
+        GO ratOrder
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+
+  LABEL ratWaiting
+  ChangeChar rat campaign/rat.png
+  Delay 1000
+  ChangeChar rat campaign/rat-turn.png
+  Delay 500
+  ChangeChar rat campaign/rat.png
+  Delay 1500
+  ChangeChar rat campaign/rat-turn.png
+  Delay 800
+  ChangeChar rat campaign/rat.png
+  Delay 600
+  MENU
+    OPT "¿A qué estamos esperando?"
+      Say "A que me invites a un trago. Ya sabes cómo funcionan estas cosas. Yo digo que tengo un secreto."
+      Ask "Y tú respondes..."
+      MENU
+        OPT "Déjame en paz."
+          GO ratBegging
+        END_OF_OPT
+        OPT "Vale... “Deja que te invite a un trago.”"
+          GO ratOrder
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL ratBegging
+  Ask "¡Venga, [g(hombre|mujer)]! ¡Solo tienes que invitarme y te diré cómo conseguir el dinero! Es un buen trato, ¿no crees?"
+  MENU
+    OPT "No. Déjalo de una vez."
+      Delay 300
+      ChangeChar rat campaign/rat-frown.png
+      Say "¡Déjame en paz, colega! ¡Me estás haciendo perder el tiempo!"
+      Delay 1500
+      Ask "No, ¡espera! Te lo diré igualmente. Es muy difícil guardar un secreto cuando te mueres de sed."
+      MENU
+        OPT "Vale, dispara."
+          GO ratSaying
+        END_OF_OPT
+        OPT "Te he dicho que lo dejes. No me interesa."
+          GO ratLeaving
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+    OPT "¿Eh? De acuerdo, te invitaré a un trago."
+      GO ratOrder
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL ratOrder
+  ChangeChar rat campaign/rat-finger-smile.png
+  Say "¡Eso es otra cosa! ¡Camarero!"
+  Delay 500
+  ShowChar bartender left
+  Delay 500
+  SayChar rat "Aquí [g(el amigo|la amiga)] me va a invitar a un par de rondas... y a una cena. Con habitación incluida. Y ducha."
+  ChangeChar rat campaign/rat-smile.png
+  AskChar bartender "¿Es eso cierto? Te costará 3 créditos."
+  RESET hasEnough
+  IF_HAS_CREDITS 3
+    SET hasEnough
+  END_OF_IF
+  MENU
+    OPT_IF hasEnough "Sí, es correcto."
+      Delay 300
+      SayChar bartender "Como tú digas."
+      AddCredits -3
+      Announce "Entregas 3 créditos al camarero."
+      SET paidForRat
+      Delay 300
+      HideChar bartender
+      GO ratSaying
+    END_OF_OPT
+    OPT_IFNOT hasEnough "¡Oh, cuánto lo siento! No llevo 3 créditos encima. Tal vez otro día, ¿vale?"
+      Delay 300
+      HideChar bartender
+      GO ratLeaving
+    END_OF_OPT
+    OPT "¿Sabes qué? Vamos a olvidarlo, yo me largo."
+      Delay 300
+      HideChar bartender
+      GO ratLeaving
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL ratLeaving
+  ChangeChar rat campaign/rat-frown.png
+  Delay 500
+  HideChar rat
+  Delay 250
+  HideDlgScene
+  RETURN
+
+  LABEL ratSaying
+  ChangeChar rat campaign/rat.png
+  SayChar rat "Vale, este es mi secreto: conozco un sector de la galaxia con formidables riquezas. Pero, como está muy apartado, nadie sabe de su existencia excepto yo."
+  ChangeChar rat campaign/rat-finger-smile.png
+  Say "Es una ruta completamente segura, llena de planetas. Deja que te lo apunte en el mapa."
+  Delay 250
+  Delay 250
+  ShowNode pirateTrap
+  CenterMapByNode pirateTrap
+  Delay 500
+  ShowPath U2-17a
+  Delay 300
+  ChangeChar rat campaign/rat.png
+  Say "Completamente segura, recuérdalo. Solo necesitas bodegas de carga y algunos componentes que se vendan caros."
+  Say "Nada más. Ni escudos, ni cañones, ni nada. Por cierto, ¿te he dicho ya lo segura que es esta ruta?"
+  IF paidForRat
+    Say "Te ha gustado, ¿eh? Si es por un secreto como este, merece la pena pagar un poco de calderilla."
+    ChangeChar rat campaign/rat-smile.png
+    Say "Ahora, si me disculpas, la cena se está enfriando."
+  ELSE
+    ChangeChar rat campaign/rat-frown.png
+    Say "Ahora, si me disculpas, voy a buscar a alguien que me invite a un trago."
+  END_OF_IF
+  HideChar rat
+  Delay 1300
+  ChangeChar rat campaign/rat-peek.png
+  ShowChar rat right
+  Delay 700
+  Say "Lo digo en serio: no vayas armado. Solo te estorbaría. (Je, je, je.)"
+  Delay 200
+  HideChar rat
+  SET ratFinished
+  RESET ratAvailable
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT pirateDlg1
+
+  ShowDlgScene
+  ShowChar pirate left
+  Say "¿¡Qué tal, chicos!? ¿Las naves iban tan cargadas como la última vez?"
+  Say "¡Por las barbas de mi tío! ¡Vosotros no sois mis hombres!"
+  Ask "¿Qué habéis hecho con ellos? ¿Quiénes sois?"
+  MENU
+    OPT "Soy [g(el capitán|la capitana)] que ha capturado a tus hombres. ¡Y ahora voy a capturarte a ti!"
+      GO pirateArrestAttempt
+    END_OF_OPT
+    OPT "Soy tu nueva banda pirata. La anterior estaba llena de incompetentes."
+      Say "¡Hmpf! Esto no es muy habitual que digamos… pero podría servir. Deja que te explique las condiciones."
+      Say "Mis agentes se encargan de atraer a pilotos ingenuos hasta nuestra trampa. Tu trabajo es atacarlos."
+      Ask "Me llevo el 90 por ciento de los beneficios, a cambio de lo cual puedes usar mi logotipo."
+      MENU
+        OPT_IFNOT pirateLogo "¿Eh? ¿Qué logotipo?"
+          Ask "¿Tú cuál crees? ¿No has visto la calavera y las tibias cruzadas? Es una marca registrada."
+          SET pirateLogo
+        END_OF_OPT
+        OPT "Parece un buen final para esta campaña. Me llamo [NAME] ¡y quiero ser [g(un|una)] pirata!"
+          GO pirateChoice
+        END_OF_OPT
+        OPT "No me convence la idea."
+          Say "No te preocupes, podemos negociar las condiciones."
+          Say "Si me das el 95 por ciento, también te dejaré usar un par de frases registradas."
+          Say "“¡La bolsa y la vida!”… y…  “¡Aaar! ¡Todos por la borda, como si fueran Flemings!”."
+          Ask "¿Qué te parece? ¿Mejor así?"
+          MENU
+            OPT "Será mejor que me acompañes. Te voy a entregar a la policía."
+              GO pirateArrestAttempt
+            END_OF_OPT
+            OPT "Me gustan... Vale, te doy el 95 por ciento."
+              GO pirateChoice
+            END_OF_OPT
+            OPT "Te doy el 90 por ciento. Ya me buscaré mis propias frases."
+              GO pirateChoice
+            END_OF_OPT
+          END_OF_MENU
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+    OPT_IFNOT pirateMeta "Hm... Dame un segundo. Es una importante decisión en mi carrera."
+      SET pirateMeta
+      Say "Por supuesto, [g(caballero|señorita)]. Piénselo con calma."
+      ChangeChar pirate campaign/pirate-hands-closed.png
+      Delay 3500
+      ChangeChar pirate campaign/pirate.png
+      Ask "Mientras, puedes decirme quién eres."
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL pirateChoice
+  Say "¡Excelente! Trato hecho."
+  Delay 300
+  ChangeChar pirate campaign/pirate-freeze.png
+  Delay 600
+  ShowChar programmer right
+  Delay 600
+  Say "Hola, soy el programador. Quería asegurarme de que no hay malentendidos."
+  Ask "Si decides unirte a los piratas, la campaña terminará ahora mismo. ¿Estás segur[g(o|a)] de que quieres hacerlo?"
+  MENU
+    OPT "Sí, parece divertido."
+      Say "¿En serio?"
+      Say "Cuando hablé con los desarrolladores, les dije que nadie iba a unirse a los piratas. Así que… no hemos preparado misiones para la trama."
+      Say "En fin, no siempre se puede tener razón. Ahora tendré que invitar a pizza a toda la oficina."
+      Ask "Venga, vuelve al diálogo y sigue el otro hilo argumental."
+      MENU
+        OPT "Vale. Si es mi única opción, tendré que arrestar al pirata."
+          Say "Gracias, sabía que lo entenderías."
+          GO pirateInterventionAccepted
+        END_OF_OPT
+        OPT_IFNOT pirateLimits "Si arrestar al pirata es mi única opción, ¿por qué sigue estando la otra disponible?"
+          Ask "Oh, muy observado[g(r|ra)]. Ahora mismo lo arreglo."
+          SET pirateLimits
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+    OPT "Pensándolo mejor, intentaré capturar al pirata para recibir una suculenta recompensa."
+      Say "Thank you."
+      GO pirateInterventionAccepted
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL pirateInterventionAccepted
+  Delay 300
+  HideChar programmer
+  Delay 500
+  ChangeChar pirate campaign/pirate.png
+  Delay 500
+
+  LABEL pirateArrestAttempt
+  SayChar pirate "¡Ajá! Así que has oído hablar de la recompensa que ofrecen por mí en Régula."
+  Say "Tú lo has querido. Ven a por mí si tienes agallas."
+  Ask "Te advierto de que nunca me han derrotado en combate singular."
+  MENU
+    OPT "Hm, puede que sea más difícil de lo que pensaba."
+      Say "Por supuesto, [g(caballero|señorita)]. Por supuesto."
+      GO pirateEnd
+    END_OF_OPT
+    OPT "Por lo que he visto de momento, este juego no tiene combates singulares."
+      Say "Pero si los tuviera, nadie podría derrotarme. Te lo garantizo."
+      GO pirateEnd
+    END_OF_OPT
+    OPT_IFNOT pirateBragging "No es por nada, pero he derrotado a tres naves de tu flota."
+      Ask "Eso no significa que puedas derrotarme si nos enfrentamos cara a cara."
+      SET pirateBragging
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL pirateEnd
+  Say "Ahora que has visto que no tienes posibilidades, tendrás que excusarme. Voy a hablar con el chapucero que te ha metido en esto."
+  Delay 400
+  HideChar pirate
+  Delay 300
+  HideDlgScene
+  HideButton bpirate1
+  ShowButton bpirate2
+  SetFocus bpirate2
+END_OF_SCRIPT
+
+SCRIPT pirateDlg2
+
+  ShowDlgScene
+  ShowChar pirate left
+  IFNOT ropeCut
+    ChangeChar rat campaign/rat-tied.png
+    ShowChar rat right
+  END_OF_IF
+  IF pirateEscaped
+    RESET pirateEscaped
+    AskChar pirate "¿Otra vez tú y esos gusanos?"
+    MENU
+      OPT "Así es. Y esta vez volverás a venir conmigo."
+        SayChar pirate "No importa. Volveré a escapar."
+        Say "Tarde o temprano aterrizarás en un planeta o te detendrás para recoger la recompensa por derrotar a una nave enemiga."
+        Say "Incluso puede que sea mientras limpias el polvo estelar de un conector expuesto."
+        Say "Sea como sea, cuando levantes la vista del trabajo, ¡me habré marchado!"
+        GO pirateArrested
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  SayChar pirate "Vamos a ver, chico. ¿Qué parte de las instrucciones no has entendido?"
+  SayChar rat "Mmf. Mmmmf. Mmmmf mmmmf mmf."
+  SayChar pirate "Te dije expresamente que buscaras inocentones. En cambio, me traes [g(al almirante Nelson|a la almiranta Nelson)] del espacio."
+  SayChar rat "Mmmmf mmf."
+  SayChar pirate "Se supone que su nave debía estar desprotegida ¡sin cañones! ¡sin armas! ¿No se lo dejaste claro?"
+  AskChar rat "Mmf."
+  MENU
+    OPT "Siento interrumpir vuestra pequeña charla, ¡pero Nelson ha vuelto con toda su tripulación!"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  SayChar pirate "¡Por todos los demonios! ¿¡Tú otra vez!? Ya te dije que nadie puede conmigo en combate singular."
+  SayChar rat "¡Mmf, mmmmmf!"
+  AskChar pirate "Hm, sí. Gran observación. No sé cómo me las arreglaré contra toda la tripulación."
+  MENU
+    OPT "Muy bien. Ahora, si no te importa, deberías acompañarme."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  SayChar pirate "De acuerdo, reconozco tu ventaja táctica. Por ahora."
+  AskChar pirate "Sin embargo, no cuentes con que siga en tu nave cuando lleguemos a Régula. Escaparé a la menor oportunidad. Te lo garantizo."
+  MENU
+    OPT_IFNOT pirateExplains "Venga ya, ¿cómo ibas a escapar? Estaremos en el espacio."
+      SET pirateExplains
+      SayChar pirate "No subestimes mi astucia de zorro. Tarde o temprano aterrizarás en un planeta."
+      Say "O te encontrarás con una nave desconocida. O tal vez tengas que limpiar el polvo estelar de un conector expuesto."
+      Ask "Sea como sea, cuando levantes la vista del trabajo, ¡me habré marchado!"
+    END_OF_OPT
+    OPT "Eso ya lo veremos. En marcha."
+      Say "Como quieras."
+      GO pirateArrested
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL pirateArrested
+  Delay 300
+  HideChar pirate
+  HideButton bpirate2
+  IFNOT ropeCut
+    ShowButton bpirate3
+    Delay 700
+    SayChar rat "¿Mff, mmmmf? ¿Mmf? ¡MMMMMMFF!"
+    Delay 500
+    HideChar rat
+  END_OF_IF
+  Delay 300
+  ShowPath U2-17x
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT pirateDlg3
+
+  ShowDlgScene
+  ChangeChar rat campaign/rat-tied.png
+  ShowChar rat right
+  Ask "¿Mmf... mmf mmmmmf?"
+  MENU
+    OPT "Quieres que corte la cuerda para que te puedas marchar, ¿eh?"
+      Say "Mmf."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  MENU
+    OPT "Te mereces seguir ahí colgado, pero… no soy tan cruel."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Sigue soñando."
+      GO pirateEnd3
+    END_OF_OPT
+  END_OF_MENU
+  Delay 500
+  ChangeChar rat campaign/rat-tied-down.png
+  Delay 800
+  UnlockAchievement camp_cut_the_rope
+  SET ropeCut
+  Say "Mmf mmmmf."
+  MENU
+    OPT "De nada."
+    END_OF_OPT
+    EXIT_MENU
+  END_OF_MENU
+  HideButton bpirate3
+
+  LABEL pirateEnd3
+  Delay 300
+  HideChar rat
+  Delay 300
+  HideDlgScene
+END_OF_SCRIPT
+
+END_OF_SCRIPTS

@@ -1,0 +1,2808 @@
+SCRIPTS
+
+SCRIPT ship_random_Dlg
+
+  ShowDlgScene
+  ChangeChar tutor campaign/tutor.png
+  ShowChar tutor left
+  Delay 400
+  Say "Sorry, derzeit mache ich keine Tutorials."
+  Delay 500
+  ChangeChar tutor campaign/tutor-pizza.png
+  Delay 500
+  Ask "Ich hab grad Mittagspause."
+  MENU
+    OPT_IF tutor_somemissions "Erkennen Sie mich nicht?"
+      ChangeChar tutor campaign/tutor-smile.png
+      Ask "He! Der kleine Neuling! Was machst du denn hier?"
+      MENU
+        OPT "Ich wollte mir bloß mal diese Erweiterung ansehen."
+          GO show_expansion_stuff
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+    OPT "Ich bin hier für ein Tutorial. Ich möchte das Zeug aus dieser Erweiterung kennen lernen."
+      GO show_expansion_stuff
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL show_expansion_stuff
+  Delay 300
+  ChangeChar tutor campaign/tutor-smile.png
+  Delay 200
+  Say "Oh, das wird dir gefallen."
+  Say "Die Ingenieure der Corp mbH haben ein bahnbrechendes neues Schiffsteil entwickelt."
+  Ask "Und sie möchten, dass du dieses unkonventionelle Schiffsdesign testest."
+
+  LABEL ship_random_ask
+  MENU
+    OPT_IFNOT askedHowUnconventional "Äh... und wie unkonventionell ist dieses Schiffsdesign genau?"
+      ChangeChar tutor campaign/tutor-smile.png
+      ChangeChar tutor campaign/tutor.png
+      Ask "Naja, so unkonventionell, dass du keine Ahnung hast, welche Form es haben wird, bevor du nicht mit dem Bau beginnst."
+      SET askedHowUnconventional
+      SET showOptCommentOnRandomDesign
+      GO ship_random_ask
+    END_OF_OPT
+    OPT_IF showOptCommentOnRandomDesign "Sie wollen damit also sagen, dass dieses Design völlig zufällig ist, ja?"
+      ChangeChar tutor campaign/tutor.png
+      Say "Natürlich nicht!"
+      Say "Es basiert auf einem ungeheuer hochentwickelten revolutionären Algorithmus, der den gravitonischen Druck der nächstgelegenen 18 Pulsare sowie die Quantenfluktuationen des Börsenmarkts berücksichtigt."
+      Ask "Ein paar der schlausten Köpfe aus der Sanitärtechnik haben dran gearbeitet. Hat die ganze Nacht gedauert, bis es funktioniert hat."
+      RESET showOptCommentOnRandomDesign
+      GO ship_random_ask
+    END_OF_OPT
+    OPT_IFNOT askedTellNewComponent "Erzähl mir mehr über dieses \"revolutionäre\" neue Bauteil."
+      ChangeChar tutor campaign/tutor.png
+      Say "Es ist eine Ladefläche, die außerdem Batterien aufnehmen kann."
+      ChangeChar tutor campaign/tutor.png
+      Ask "... vielleicht ist es auch ein Batterieteil, das Waren aufnehmen kann."
+      SET askedTellNewComponent
+      SET showOptCommentOnCargoBattery
+      GO ship_random_ask
+    END_OF_OPT
+    OPT_IF showOptCommentOnCargoBattery "Also ist dieses revolutionäre neue Bauteil bloß eine Ladefläche."
+      ChangeChar tutor campaign/tutor.png
+      Say "Es ist eine Waren- und Batteriefläche. Hast du nicht zugehört?"
+      ChangeChar tutor campaign/tutor.png
+      Ask "Es klingt vielleicht nicht besonders, aber du kannst damit mehr Zeug in dein Schiff stopfen. Und das ist immer gut."
+      RESET showOptCommentOnCargoBattery
+      GO ship_random_ask
+    END_OF_OPT
+    OPT "Hört sich gut an. Also los."
+      ChangeChar tutor campaign/tutor-pizza.png
+      Say "Viel Glück, Neuling."
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+  END_OF_MENU
+  HideDlgScene
+  RETURN
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT ship_random1_Success
+
+  ShowDlgScene
+  ChangeChar tutor campaign/tutor-smile.png
+  ShowChar tutor left
+  Delay 300
+  Say "Ha! Gute Arbeit, Neuling!"
+  Say "Das war natürlich sehr einfach."
+  ChangeChar tutor campaign/tutor.png
+  Say "Du hast gerade eine neue Mission freigeschaltet, falls du eine neue Herausforderung suchst."
+  Say "Oder du kannst diese Mission nochmal versuchen, diesmal auf mittlerer Schwierigkeit. Wie du willst."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT ship_random2_Success
+
+  ShowDlgScene
+  ChangeChar tutor campaign/tutor-smile.png
+  ShowChar tutor left
+  Delay 300
+  Ask "Prima Job, Neuling."
+  MENU
+    OPT "Danke."
+      GO randomShipSuccessBranchingEnd
+    END_OF_OPT
+    OPT "Ähm, offensichtlich haben Sie das nicht mitgekriegt, aber ich bin kein Neuling mehr."
+      IF finalRaceWon
+        Say "Ach was! Auch wenn du das transgalaktische Truckerrennen gewonnen hast, bleibst du doch immer der kleine Neuling für mich."
+        GO randomShipSuccessBranchingEnd
+      END_OF_IF
+      IF Class3
+        Say "Auch wenn du Schiffe der Klasse 3 fliegen darfst, bleibst du doch immer mein kleiner Neuling."
+        GO randomShipSuccessBranchingEnd
+      END_OF_IF
+      IF Class2
+        Say "Naja, du hast bloß eine Lizenz der Klasse 2. Krieg' erst mal eine Lizenz Klasse 3, bevor du große Sprüche mit deinem alten Ausbilder klopfst."
+        GO randomShipSuccessBranchingEnd
+      END_OF_IF
+      IF tutor_somemissions
+        Say "Pah, besonders weit bist du ja nicht gekommen in der Kampagne, also wirkst du auf mich wie ein Neuling."
+        GO randomShipSuccessBranchingEnd
+      ELSE
+        Say "Tja, bevor du die Kampagne ausprobiert hast, siehst du für mich wie ein Neuling aus."
+        GO randomShipSuccessBranchingEnd
+      END_OF_IF
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL randomShipSuccessBranchingEnd
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT ship_random3_Success
+
+  ShowDlgScene
+  ChangeChar tutor campaign/tutor-smile.png
+  ShowChar tutor left
+  Delay 300
+  Say "Gute Arbeit, Neuling. Du bist jetzt bereit für echtes Trucken."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT ship_random_Failure
+
+  IF_PROB 50
+    ShowDlgScene
+    ChangeChar tutor campaign/tutor.png
+    ShowChar tutor left
+    Delay 300
+    Say "Oh weia, ich dachte, das bekommst du hin, Neuling. Na gut. Vielleicht nächstes Mal."
+    HideDlgScene
+    RETURN
+  ELSE
+    ShowDlgScene
+    ChangeChar tutor campaign/tutor.png
+    ShowChar tutor left
+    Delay 300
+    Say "Jepp, das passiert manchmal, sogar den besten Truckern."
+    HideDlgScene
+    RETURN
+  END_OF_IF
+END_OF_SCRIPT
+
+SCRIPT domination_Help
+
+  ShowDlgScene
+  ChangeChar tutor campaign/tutor-smile.png
+  ShowChar tutor left
+  IF currentDominationValue
+    Say "Gute Arbeit, Neuling! Du hast soeben die Dominanz errungen."
+  ELSE
+    Say "He, Neuling! Du hast beinahe Dominanz errungen."
+  END_OF_IF
+  Say "Deine Dominanz-Wertung ist der Abstand zwischen deiner Wertung und der Wertung des besten Gegners."
+  Say "Du erringst nur dann Dominanz, wenn du den Flug gewinnst und alle Aufgaben erfüllst."
+  Say "Du kannst deine beste Dominanz-Wertung jederzeit auf dem Missions-Bildschirm sehen. Viel mehr steckt zwar nicht dahinter, aber es fühlt sich gut an."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT merchantLaughA
+
+  ChangeChar merchant campaign/merch-laughA1.png
+  Delay 150
+  ChangeChar merchant campaign/merch-laughA2.png
+  Delay 200
+  ChangeChar merchant campaign/merch-laughA1.png
+  Delay 250
+  ChangeChar merchant campaign/merch-laughA2.png
+  Delay 300
+  ChangeChar merchant campaign/merch-sitting.png
+END_OF_SCRIPT
+
+SCRIPT junkyard_Dlg
+
+  ShowDlgScene
+  ChangeChar merchant campaign/merch-inviting.png
+  ShowChar merchant left
+  Delay 400
+  Say "Hallo da! Ich nehme an, Sie fragen sich, was ein repektabler Geschäftsmann wie ich in einem Schrottplatzsektor macht?"
+  Say "Nun, die Wahrheit ist, dass manches von diesem ... Müll ... für Sammler von großem Wert sein kann."
+  Ask "Ich hätte gern, dass Sie mir so viel Waren bringen wie Sie können."
+  MENU
+    OPT "Hört sich gut an!"
+      ChangeChar merchant campaign/merch-sitting.png
+      Say "Großartig!"
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Na gut... okay."
+      ChangeChar merchant campaign/merch-sitting.png
+      Say "Das will ich hören!"
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Ich tippe, ich habe eh keine Wahl."
+      ChangeChar merchant campaign/merch-sitting.png
+      Say "Ich wusste doch, dass Sie [g(ein Teamspieler|eine Teamspielerin)] sind!"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Say "Guten Flug dann!"
+  Delay 250
+  HideChar merchant
+  Delay 1000
+  ChangeChar junk_dealer expansions/01_alien_technologies/images/character_junk_dealer.png
+  ShowChar junk_dealer right
+  Delay 250
+  AskChar junk_dealer "Wo willst du hin, [NAME]?"
+  MENU
+    OPT_IFNOT knowJunkDealerAsked "Kenne ich Sie?"
+      SET knowJunkDealerAsked
+      SayChar junk_dealer "Du kennst gar nichts. Ich schon. Ich kenne Schrott. Ich bin Schrotthändler."
+      SayChar junk_dealer "Jetzt sag mal, wo glaubst du, fliegst du hin?"
+    END_OF_OPT
+    OPT "Ich will ein paar Schrottplätze besuchen."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  SayChar junk_dealer "Oh. Jede Menge gutes Zeug auf den Schrottplätzen. Aber du musst dich da auskennen. Du brauchst die richtigen Leute."
+  Ask "Sonst werden die Dinge gefährlich. Du weißt, was ich meine?"
+  MENU
+    OPT "Nein."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Ich kann auf mich selbst aufpassen."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  ChangeChar merchant campaign/merch-inviting.png
+  ShowChar merchant left
+  Delay 250
+  SayChar merchant "Ich bitte um Verzeihung. Kein Grund für Drohungen. Ich bin sicher, [NAME] wird sich freuen, Geschäfte mit Ihnen und Ihren Leuten zu machen."
+  SayChar junk_dealer "Also gut. Sehe dich auf den Schrottplätzen."
+  HideChar junk_dealer
+  Delay 500
+  SayChar merchant "Keine Sorge. Bellende Hunde beißen nicht."
+  ChangeChar merchant campaign/merch-sitting.png
+  SayChar merchant "Genau wie Schrottplatz-Wachhunde!"
+  SUB_SCRIPT merchantLaughA
+  HideChar merchant
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT junkyard1_Success
+
+  ShowDlgScene
+  ChangeChar merchant campaign/merch-sitting.png
+  ShowChar merchant left
+  Delay 300
+  Say "Willkommen daheim! Mal sehen, was Sie retten konnten."
+  Say "Oh ... das sieht wertvoll aus. Und so was nennen die Leute Schrott!"
+  SUB_SCRIPT merchantLaughA
+  Say "Danke für Ihre Hilfe. Als Gegenleistung zeige ich Ihnen, wie Sie auf Ihren Flügen weitere Schrottplätze finden können."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT junkyard2_Success
+
+  ShowDlgScene
+  ChangeChar merchant campaign/merch-sitting.png
+  ShowChar merchant left
+  Delay 300
+  Say "Wow! Ich kenne ein paar Sammler, die das garantiert lieben werden."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT junkyard3_Success
+
+  ShowDlgScene
+  ChangeChar merchant campaign/merch-sitting.png
+  ShowChar merchant left
+  Delay 300
+  Say "Ooh! Ich wusste gar nicht, dass es davon noch welche in der Galaxis gibt. Guter Fund."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT junkyard_Failure
+
+  IF_PROB 50
+    ShowDlgScene
+    ChangeChar merchant campaign/merch-disappointed.png
+    ShowChar merchant left
+    Delay 300
+    Say "Tut mir wirklich leid, aber dieser Müll ist einfach nur ... Schrott."
+    Say "Könnten Sie die Schrottplätze bitte etwas akribischer durchsuchen."
+    HideDlgScene
+    RETURN
+  ELSE
+    ShowDlgScene
+    ChangeChar merchant campaign/merch-inviting.png
+    ShowChar merchant left
+    Delay 300
+    Say "Hm ... Nö. Ich suche das Besondere. Das hier ist es jedenfalls nicht."
+    Say "Mehr Glück beim nächsten Mal."
+    HideDlgScene
+    RETURN
+  END_OF_IF
+END_OF_SCRIPT
+
+SCRIPT bidir_cannons_Dlg
+
+  ShowDlgScene
+  ChangeChar mech campaign/mech.png
+  ShowChar mech left
+  Delay 400
+  IFNOT mechOffered
+    Ask "Sag mal, kennen wir uns von irgendwoher?"
+    MENU
+      OPT "Nein, das glaube ich nicht."
+        Say "Oh, na gut."
+        Say "Egal, ich bin froh dass du hier bist. Lass mich dir etwas zeigen ..."
+        GO biDirCannonsCont
+      END_OF_OPT
+      OPT "Nö, das war ein anderer Trucker mit einem anderen Spielerprofil."
+        Say "Genau."
+        Say "Egal, ich bin froh dass du hier bist. Lass mich dir etwas zeigen ..."
+        GO biDirCannonsCont
+      END_OF_OPT
+    END_OF_MENU
+  ELSE
+    Ask "He! Du bist wieder da! Wie geht's dir so?"
+    MENU
+      OPT "Nicht übel. Und dir?"
+        Say "Viel zu tun. Schau dir das hier doch mal an ..."
+        GO biDirCannonsCont
+      END_OF_OPT
+      OPT "Ach, du weißt ja. So ein Truckerleben ist nie ganz einfach, aber immer aufregend. Erst vor kurzem ist mir ..."
+        Say "Jaja, schon gut. Ich hab jetzt keine Zeit für lange Geschichten."
+        Say "Ich möchte dir was zeigen ..."
+        GO biDirCannonsCont
+      END_OF_OPT
+      OPT "Ich dacht, du magst keinen Smalltalk."
+        ChangeChar mech campaign/mech-blush.png
+        Say "Oh. Du erinnerst dich!"
+        ChangeChar mech campaign/mech.png
+        Say "Jawoll, lass uns das Geplänkel überspringen und direkt zu einem neuen Bauteil übergehe, das ich entworfen habe."
+        GO biDirCannonsCont
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+
+  LABEL biDirCannonsCont
+  ChangeChar mech campaign/mech-explaining.png
+  Say "Wenn du eine Doppelkanone nimmst und einen der Läufe versetzt, hast du eine Zweiwege-Kanone! Mit nur einer Batterie kannst du in zwei Richtungen ballern."
+  Ask "Der Haken an der Sache ist, dass ich keine Ahnung habe, ob das etwas bringt. Würdest du das für mich testen?"
+  MENU
+    OPT "Klar. Hört sich nach Spaß an."
+      ChangeChar mech campaign/mech-thumbup.png
+      Say "Großartig. Ich schicke ein paar zur Lagerhalle."
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+    OPT "Was springt für mich dabei raus?"
+      ChangeChar mech campaign/mech-thumbup.png
+      Say "Naja, du kriegst diese Art Kanonen auch in späteren Missionen. Ich denke schon, dass du die mögen wirst."
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+    OPT "Wieso sollte jemand in zwei Richtungen schießen wollen?"
+      Say "Na, stell dir einfach vor, du wolltest große Meteoriten von der Seite oder von vorne abschießen. Diese Kanone kann beides."
+      ChangeChar mech campaign/mech-thumbup.png
+      Say "Außerdem sieht sie cool aus."
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+  END_OF_MENU
+END_OF_SCRIPT
+
+SCRIPT bidir_cannons1_Success
+
+  ShowDlgScene
+  ChangeChar mech campaign/mech-thumbup.png
+  ShowChar mech left
+  Delay 300
+  Say "Großartig! Bin ich froh, dass diese Kanonen so nützlich sind, wie ich dachte."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT bidir_cannons2_Success
+
+  ShowDlgScene
+  ChangeChar mech campaign/mech-thumbup.png
+  ShowChar mech left
+  Delay 300
+  Say "Ich tippe, ich könnte diese Kanonen Truckern empfehlen, die auf unvorhersehbare Meteoriten stoßen werden. Danke für den Test."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT bidir_cannons3_Success
+
+  ShowDlgScene
+  ChangeChar mech campaign/mech-thumbup.png
+  ShowChar mech left
+  Delay 300
+  Say "Das war fantastisch!"
+  ChangeChar mech campaign/mech.png
+  Say "Du wirst von mir hören, sobald ich etwas Neues entworfen habe."
+  ChangeChar mech campaign/mech-explaining.png
+  Say "Hm ... da kommt mir gerade eine Idee ... Tschuldigung. Muss mal schnell was zeichnen. Tschüss!"
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT bidir_cannons_Failure
+
+  IF_PROB 50
+    ShowDlgScene
+    ChangeChar mech campaign/mech-f.png
+    ShowChar mech left
+    Delay 300
+    Say "Oha. Und ich dachte wirklich, dass diese neuen Kanonen recht nützlich sein könnten. Naja, wenn du sie vielleicht nochmal ausprobieren möchtest, gib Bescheid."
+    HideDlgScene
+    RETURN
+  ELSE
+    ShowDlgScene
+    ChangeChar mech campaign/mech-f.png
+    ShowChar mech left
+    Delay 300
+    Say "Hat nicht geklappt, was? Hast du denn auch genug Batterien mitgenommen? Diese neuen Kanonen fressen die Dinger quasi."
+    HideDlgScene
+    RETURN
+  END_OF_IF
+END_OF_SCRIPT
+
+SCRIPT three_little_aliens_Dlg
+
+  ShowDlgScene
+  ShowChar purpleDipl right
+  Delay 400
+  SayChar purpleDipl "Kzzgh'k wk, t' qw'ffr!"
+  Delay 400
+  ShowChar brown left
+  Delay 1000
+  SayChar brown "..."
+  SayChar purpleDipl "Nzzk k'k! Tgh tgh'th th'k kzzzt!"
+  Delay 2000
+  SayChar brown "..."
+  Delay 250
+  HideChar purpleDipl
+  Delay 500
+  ChangeChar brown campaign/brown-purr.png
+  Delay 1000
+  ChangeChar brown campaign/brown.png
+  Delay 250
+  HideChar brown
+  Delay 1000
+  ChangeChar ambassador campaign/ambassador.png
+  ShowChar ambassador left
+  Delay 400
+  Ask "Gut, ich denke, besser kann man die Lage nicht beschreiben. Sind Sie bereit für den Flug oder brauchen Sie noch weitere Informationen?"
+  MENU
+    OPT "Absolut bereit. Ich habe alles verstanden."
+      ChangeChar ambassador campaign/ambassador-happy.png
+      Say "Ausgezeichnet! Die drei Diplomaten warten schon auf Sie, sobald Ihr Schiff fertig gebaut ist."
+      MENU
+        OPT "Ähm, drei? Ich hab bloß zwei gezählt."
+          ChangeChar ambassador campaign/ambassador.png
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Nur eine Frage: Was haben die da gerade gesagt?"
+      Say "Ah, gut. Nun, lassen Sie mich zusammenfassen:"
+      Say "Wir haben drei Aliens, die auf eine diplomatische Konferenz müssen."
+      Say "Es sind keine anderen Schiffe verfügbar, also benötigen wir Ihre Fähigkeiten als [g(Elite-Trucker|Elite-Truckerin)]."
+      MENU
+        OPT "Oh. Okay. Wer ist das dritte Alien?"
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Ich hab's im Kern verstanden, aber die Details, die sind mir doch entschlüpft."
+      Say "Nun, ich kann Ihnen ALLE Details geben."
+      Say "Es handelt sich um Diplomaten. Das bedeutet, dass sie bei allen Gesprächen Diskretion walten lassen müssen."
+      Say "Wen Sie bloß dafür sorgen, dass alle drei sicher zu ihrer Diplomatenkonferenz gelangen, haben Sie ihre Aufgabe schon erfüllt."
+      MENU
+        OPT "Moment mal: „Alle drei“?"
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  ShowChar cyan right
+  AskChar cyan "Guten Tag, [g(werter Herr|werte Dame)]. Ich bin sehr erfreut, dass Sie sich zu dieser Unternehmung bereiterklärt haben."
+  MENU
+    OPT_IF wasAtCyan "Oh nein! Nicht schon wieder dieser Kerl!"
+      SayChar cyan "Ha ha. Höchst amüsant!"
+      SayChar cyan "Sie geben Ablehnung vor, um Ihre Freude zu verbergen!"
+      SayChar cyan "Das ist eine eindrucksvolle sprachliche Höchstleistung, die über den Entwicklungsstand Ihrer Rasse weit hinausgeht. Als Spezialist in Linguistik beglückwünsche ich Sie."
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF wasAtCyan "Oh, hallo. Ich hatte ja keine Ahnung, dass Sie ein Diplomat sind."
+      SayChar cyan "Das bin ich natürlich auch nicht. Ich habe mich auf Linguistik spezialisiert."
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IFNOT wasAtCyan "Ich glaube, wir kennen uns noch nicht."
+      SayChar cyan "Ah, dann dürfte eine formelle Vorstellung angebracht sein."
+      SayChar cyan "Ich komme von einer überlegenen Spezialisten-Spezies. Ein jedes unserer Kinder wählt frühzeitig eine Spezialisierung."
+      SayChar cyan "Meine Spezialität ist Linguistik."
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IFNOT wasAtCyan "Ha! Sie kenne ich doch aus dem Brettspiel!"
+      SayChar cyan "Das ist nicht vollständig korrekt."
+      SayChar cyan "Vielmehr sind Sie auf einen anderen Spezialisten meiner erleuchteten Spezies getroffen. Allesamt nützliche Individuen."
+      SayChar cyan "Meine Spezialität ist jedoch die Linguistik."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  SayChar ambassador "Entschuldigen Sie. Sagten Sie, Ihre Spezialisierung sei Linguistik? Wir brauchen aber einen Diplomaten für diese Mission."
+  SayChar cyan "Sie irren sich. [g(Unser geschätzter Trucker|Unsere geschätzte Truckerin)] hier kann jeden beliebigen Spezialisten meiner Spezies mitnehmen."
+  SayChar ambassador "Aber bei Verhandlungen derart delikater Natur ..."
+  AskChar cyan "Ich versichere Ihnen, dass wir alle gleichermaßen qualifiziert sind."
+  MENU
+    OPT "Worum geht's bei der Konferenz eigentlich?"
+      SayChar cyan "Sanitär-Inneneinrichtung. Dafür haben wir noch keinen Spezialisten."
+      SayChar cyan "Aber Sie sollten unsere hydroponischen Steingärten mal sehen!"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  HideChar cyan
+  Delay 300
+  HideChar ambassador
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT three_little_aliens1_Success
+
+  ShowDlgScene
+  ChangeChar ambassador campaign/ambassador-happy.png
+  ShowChar ambassador left
+  Delay 300
+  Say "Oh, ich danke Ihnen! Sie haben der Galaxis einen großartigen Dienst erwiesen. Außerdem hörte ich, dass Sie ab jetzt auch türkise Alien-Spezialisten rekrutieren dürfen. Eine große Ehre!"
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT three_little_aliens2_Success
+
+  ShowDlgScene
+  ChangeChar ambassador campaign/ambassador-happy.png
+  ShowChar ambassador left
+  Delay 300
+  Say "Ich bin sehr froh, dass Sie den Aliens bei diesen heiklen Verhandlungen helfen konnten."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT three_little_aliens3_Success
+
+  ShowDlgScene
+  ChangeChar ambassador campaign/ambassador-happy.png
+  ShowChar ambassador left
+  Delay 300
+  Say "Danke für Ihre Hilfe. Wir in der Botschaft wissen, dass wir jederzeit auf Sie zählen können."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT three_little_aliens_Failure
+
+  ShowDlgScene
+  ChangeChar ambassador campaign/ambassador-peek.png
+  ShowChar ambassador left
+  Delay 300
+  IF_PROB 50
+    Say "Ach je. Nun, der Schlüssel zu erfolgreicher Diplomatie ist das Durchhaltevermögen bei solchen Rückschlägen."
+  ELSE
+    Say "Höchst unerfreulich. Sie sollten diese Diplomaten bei der Konferenz abliefern, nicht über das ganze All verteilen."
+  END_OF_IF
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT ship_growing_Dlg
+
+  ShowDlgScene
+  ChangeChar cyan campaign/cyan.png
+  ShowChar cyan left
+  Delay 400
+  Say "Merket auf! Der Trucker naht!"
+  ChangeChar cyan campaign/cyan.png
+  Ask "Seid gegrüßt! Ich bringe Kunde von einem fortgeschrittenen Volke!"
+  MENU
+    OPT "Hi, schön, Sie wiederzusehen."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Ask "Mitnichten! Sagt nicht „wiedersehen“, denn wir treffen uns heute zum ersten Male."
+  MENU
+    OPT "Sind Sie nicht der Linguist? Ich dachte der wäre der einzige, der Deutsch spricht."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Ask "Dies entspricht nicht der Wahrheit. Viele der Unseren müssen Eure Sprache für ihre jeweilige Spezialisierung erlernen."
+  MENU
+    OPT "Oh. Was ist denn Ihre Spezialität?"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Say "Ich bin hoch erfreut, dass Ihr fragt! Mein Spezialgebiet ist..."
+  Delay 1000
+  Say "..."
+  Delay 2000
+  Ask "... DRAMA!"
+  MENU
+    OPT "Hätte ich mir ja denken können."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Say "Ich wurde entsandt, Euch zu begrüßen, weil ich große Fähigkeiten im Überbringen von Geschenken habe."
+  Say "[g(Hochgeschätzter|Hochgeschätzte)][NAME], wir danken Euch für den sicheren Transport unseres Landsmannes in Zeiten höchster Not."
+  Say "Als ein Zeichen unserer Dankbarkeit will mein Volk Euch mit diesem fortgeschrittenen, erleuchteten und ästhetisch höchst gelungenen Schiffsdesign beglücken:"
+  Ask "Dem organischen Schiffe! Seine äußere Form wächst während des Baus heran."
+  MENU
+    OPT "Ein organisches Schiff?"
+      ChangeChar cyan campaign/cyan.png
+      Say "Fürwahr. Eure Baufortschritte haben Einfluss auf die anderen Trucker und deren Entscheidungen beeinflussen gleichermaßen euer Schiff."
+      Say "Es handelt sich um die größte Herausforderung beim Bauwettbewerb, mit unendlich vielen taktischen Möglichkeiten! Dieses Schiff wird bald das absolute Machtinstrument im Universum. Machen wir davon Gebrauch!"
+      Say "... Ähem. Ich bitte um Verzeihung. Da ging es mit mir durch."
+      Say "Aber ein gutes Schiffsdesign ist es wirklich, [NAME]: Ihr müsst den Wettbewerb gewinnen. Erweist Euch als würdig für diese Art Schiff."
+      MENU
+        OPT "Ähm ... ja, schon gut."
+        END_OF_OPT
+        HideDlgScene
+        RETURN
+      END_OF_MENU
+    END_OF_OPT
+    OPT "Das hört sich nach Spaß an. Danke für dieses Design."
+      ChangeChar cyan campaign/cyan.png
+      Say "Oh ja, Euch wurde die große Ehre eines erleuchteten Volkes zuteil."
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+  END_OF_MENU
+END_OF_SCRIPT
+
+SCRIPT ship_growing1_Success
+
+  ShowDlgScene
+  ChangeChar cyan campaign/cyan.png
+  ShowChar cyan left
+  Delay 300
+  Say "Bravo! Bravo! Welch beeindruckende Vorstellung!"
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT ship_growing2_Success
+
+  ShowDlgScene
+  ChangeChar cyan campaign/cyan.png
+  ShowChar cyan left
+  Delay 300
+  Say "Bravo! Bravo! Dem Pegasusse gleich schwebtet Ihr durch die Galaxis!"
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT ship_growing3_Success
+
+  ShowDlgScene
+  ChangeChar cyan campaign/cyan.png
+  ShowChar cyan left
+  Delay 300
+  Say "Bravo! Bravissimo! Mögen Eure Taten im ganzen Universum besungen werden!"
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT ship_growing_Failure
+
+  ShowDlgScene
+  ChangeChar cyan campaign/cyan.png
+  ShowChar cyan left
+  Delay 300
+  IF_PROB 50
+    Say "Oh, [g(der tragische Held|die tragische Heldin)] kehrt heim."
+  ELSE
+    Say "Ach! Versagt habt Ihr! Doch verzaget nicht, bitt ich Euch. Denn dieser beschämende Fehlschlag wird euren späteren Erfolg in noch größerem Lichte erscheinen lassen."
+  END_OF_IF
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT plating_Dlg
+
+  ShowDlgScene
+  ChangeChar foreman campaign/foreman.png
+  ShowChar foreman left
+  Delay 400
+  Say "Herrschaftszeiten! Mein [g&Truckerjunge|Truckermädchen)]!"
+  Say "Jungejunge, bin ich froh, dich zu sehen. Ich hab 'ne große Ladung Explosivstoff und ... mal sehen ..."
+  ChangeChar foreman campaign/foreman-list.png
+  Ask "... da ist es ... du musst den Sprengstoff an einer Menge großer Meteoriten vorbei bringen."
+  MENU
+    OPT "Was soll da schon schiefgehen?"
+      ChangeChar foreman campaign/foreman-hello.png
+      Say "Jo mei, 'ne Menge. Zum Beispiel könnteste explodiern."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Ask "Und außerdem könnte ein schwarzes Loch dich plattmachen."
+  MENU
+    OPT "Oh, mal was Neues."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Was? Ein schwarzes Loch?"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Say "Jaja, schwarze Löcher sind hier in der Gegend eine echte Plage."
+  Say "Man kann sie nicht verstopfen, egal, wie viel Kram man reinwirft."
+  IF ingotsAccepted
+    Say "Besonders mies sind sie, wenn du diese megamassiven Barren transportierst, die wir hier herstellen. Kennste noch?"
+  ELSE
+    Say "Besonders mies sind die, wenn du zusätzliche Masse transportierst. Wir machen hier in meiner Schmiede ja diese megamassiven Barren."
+  END_OF_IF
+  Say "Manche Trucker benutzen sie, um ihre Schiffe vor Meteoriten zu schützen."
+  Say "Aber dann wird der Schutz in die schwarzen Löcher gezogen und sie fliegen völlig nackt mit jeder Menge Sprengstoff durch die Gegend."
+  ChangeChar foreman campaign/foreman-smile.png
+  Ask "Immerhin sind sie die ganz großen Stars. Fürn paar Sekunden jedenfalls."
+  MENU
+    OPT "Das hört sich gefährlich an."
+      ChangeChar foreman campaign/foreman.png
+      Ask "Ach, keine Sorge. Nimm einfach ein bisschen unzerstörbare Platten mit und das wird schon."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Klingt nach Spaß."
+      ChangeChar foreman campaign/foreman.png
+      Ask "Trotzdem empfehle ich, ein bisschen unzerstörbare Platten mitzunehmen."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  MENU
+    OPT "Moment mal, was?"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Say "Hab ich das nicht erzählt? Ich hab da eine Mechanikerin, die unzerstörbare Platten herstellen kann."
+  ChangeChar mech campaign/mech.png
+  ShowChar mech right
+  SayChar mech "Hallo mal wieder."
+  ChangeChar mech campaign/mech-explaining.png
+  SayChar mech "Es stimmt. Diese neuen Bauteile sind genau so unzerstörbar wie megamassive Barren, sind aber nicht megamassiv."
+  ChangeChar mech campaign/mech.png
+  SayChar mech "Also brauchst du dir um nichts Sorgen zu machen."
+  SayChar foreman "Außer um schwarze Löcher. Und Meteoriten. Und Explosionen."
+  Delay 2000
+  ChangeChar mech campaign/mech-thumbup.png
+  Delay 1000
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT plating1_Success
+
+  ShowDlgScene
+  ChangeChar foreman campaign/foreman-hello.png
+  ShowChar foreman left
+  Delay 300
+  Say "Herrschaftszeiten! Gute Arbeit."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT plating2_Success
+
+  ShowDlgScene
+  ChangeChar foreman campaign/foreman-hello.png
+  ShowChar foreman left
+  Delay 300
+  Say "Gut, gut. Bist nicht explodiert."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT plating3_Success
+
+  ShowDlgScene
+  ChangeChar foreman campaign/foreman-hello.png
+  ShowChar foreman left
+  Delay 300
+  Say "Ich dachte wirklich, dass dich dieses schwarze Loch erwischt. Gute Arbeit."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT plating_Failure
+
+  ShowDlgScene
+  IF_PROB 50
+    ChangeChar foreman campaign/foreman-no.png
+    ShowChar foreman left
+    Delay 300
+    Say "Da war die Strecke doch ein bisschen zu krass, was? Beim nächsten Mal klappt's besser."
+  ELSE
+    ChangeChar mech campaign/mech.png
+    ShowChar mech right
+    Delay 300
+    Say "Tut mir leid, dass meine unzerstörbaren Platten dir nicht geholfen haben. Vielleicht hattest du einfach nicht genug davon, was?"
+  END_OF_IF
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT space_billiards_Dlg
+
+  ShowDlgScene
+  ChangeChar richgirl campaign/rich.png
+  ShowChar richgirl left
+  Delay 400
+  ChangeChar richgirl campaign/rich-smile.png
+  Ask "Oh, hi. Ich würde gerne Weltraumbillard spielen. Hast du Lust?"
+  MENU
+    OPT "Klar, lass uns loslegen!"
+      ChangeChar richgirl campaign/rich-smile-cheer.png
+      Say "Na endlich mal ein bisschen Spaß."
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+    OPT "Und was ist das genau? Billard ... im Weltraum?"
+      ChangeChar richgirl campaign/rich-smile.png
+      Say "Exakt."
+      ChangeChar richgirl campaign/rich-bored.png
+      Say "Die Kugeln sind natürlich Meteoriten."
+      ChangeChar richgirl campaign/rich-bored-cheer.png
+      Say "Mit ein bisschen Hilfe der Physik lässt du sie in die Schiffe anderer Spieler knallen."
+      ChangeChar richgirl campaign/rich-smile.png
+      Ask "Klingt dich jetzt schon nach viel Spaß, oder?"
+      MENU
+        OPT "Ganz sicher."
+          ChangeChar richgirl campaign/rich-smile-cheer.png
+          Say "Mach dich bereit, zerquetscht zu werden."
+          HideDlgScene
+          RETURN
+        END_OF_OPT
+        OPT "Vielleicht. Kannst du mir ein paar Tipps geben?"
+          SET VIPTruckerGaveTips
+          Say "Klar. Stört mich nicht, mein Wissen mit Nicht-Elite-Truckern zu teilen."
+          ChangeChar richgirl campaign/rich.png
+          Say "Der Kniff liegt darin, herauszufinden, wer durch welche Meteoriten verwundbar ist. Du darfst nicht ständig den Trucker in Führung im Auge haben."
+          ChangeChar richgirl campaign/rich-smile.png
+          Say "Viel Glück. Und mach dir nichts draus, deklassiert zu werden. Das geht allen in meiner Nähe so."
+          ChangeChar richgirl campaign/rich-smile-cheer.png
+          Delay 1000
+          HideDlgScene
+          RETURN
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+END_OF_SCRIPT
+
+SCRIPT space_billiards1_Success
+
+  ShowDlgScene
+  ChangeChar richgirl campaign/rich-smile.png
+  ShowChar richgirl left
+  Delay 300
+  IF VIPTruckerGaveTips
+    Say "Meine Tipps haben anscheinend geholfen. Gratuliere!"
+  ELSE
+    Say "Das war ein Spaß! Du hast echt Glück gehabt, gratuliere!"
+  END_OF_IF
+  MENU
+    OPT "Danke. Ich glaub, ich bin jetzt für etwas Schwierigeres bereit."
+    END_OF_OPT
+    HideDlgScene
+    RETURN
+  END_OF_MENU
+END_OF_SCRIPT
+
+SCRIPT space_billiards2_Success
+
+  ShowDlgScene
+  ChangeChar richgirl campaign/rich-smile.png
+  ShowChar richgirl left
+  Delay 300
+  Say "He. Nochmal wirst du nicht so viel Glück haben."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT space_billiards3_Success
+
+  ShowDlgScene
+  ChangeChar richgirl campaign/rich-smile.png
+  ShowChar richgirl left
+  Delay 300
+  Say "Das war spannend! Stört mich gar nicht, dass ich nicht gewonnen habe."
+  ChangeChar richgirl campaign/rich-smile-cheer.png
+  Say "Danke für einen großartigen Flug!"
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT space_billiards_Failure
+
+  ShowDlgScene
+  ChangeChar richgirl campaign/rich.png
+  ShowChar richgirl left
+  Delay 300
+  ChangeChar richgirl campaign/rich-smile.png
+  IF_PROB 50
+    Say "Naja, was hast du erwartet?"
+    Say "Egal, mehr Glück fürs nächste Mal."
+    MENU
+      OPT "Hm, danke."
+      END_OF_OPT
+      HideDlgScene
+      RETURN
+    END_OF_MENU
+  ELSE
+    Say "Ha! Matchball. In die Seitentasche."
+  END_OF_IF
+END_OF_SCRIPT
+
+SCRIPT black_hole_Dlg
+
+  ShowDlgScene
+  ChangeChar rat campaign/rat-peek.png
+  ShowChar rat left
+  Delay 400
+  ChangeChar rat campaign/rat-peek.png
+  Say "Pssst! Hey, [g(Kumpel|Lady)]."
+  Delay 250
+  ChangeChar rat campaign/rat-turn.png
+  Delay 600
+  ChangeChar rat campaign/rat.png
+  Delay 400
+  ChangeChar rat campaign/rat-smile.png
+  Delay 1500
+  ChangeChar rat campaign/rat.png
+  Delay 150
+  RESET sawRatTiedUp
+  IF pirateHavenInitialized
+    IFNOT ropeCut
+      SET sawRatTiedUp
+    END_OF_IF
+  END_OF_IF
+  IF ropeCut
+    ChangeChar rat campaign/rat-frown.png
+    Delay 150
+    Ask "Ach, du bist das."
+    MENU
+      OPT "Bist du nicht froh, mich zu sehen? Bin immerhin [g(der Trucker, der|die Truckerin, die)] dich gerettet hat."
+        Say "Jau."
+        Delay 500
+        ChangeChar rat campaign/rat-smile.png
+        Say "Na klar! [g(Alter Kumpel! Alter Freund!|Natürlich bin ich froh, dein wunderschönes Gesicht wiederzusehen!)]"
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+  ELSE
+    IF sawRatTiedUP
+      ChangeChar rat campaign/rat-frown.png
+      Delay 150
+      Ask "Ach. Du mal wieder."
+      MENU
+        OPT "Hä? Ich dachte, du wärst gefesselt?"
+          ChangeChar rat campaign/rat.png
+          Say "Naja, man hat mich losgemacht."
+          Say "Nach einer Weile."
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+    ELSE
+      ChangeChar rat campaign/rat.png
+      Delay 150
+    END_OF_IF
+  END_OF_IF
+  Ask "Hör mal. Ich hab da ein Geschäft für dich."
+  MENU
+    OPT "Oh prima. Ich mag Geschäfte!"
+      ChangeChar rat campaign/rat-smile.png
+      Say "Dann bin ich sicher, dass dir dieses hier gefallen wird. Du musst nur ein bisschen Fracht transportieren ..."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Ach du meine Güte. Ich glaube, ich will das nicht hören."
+      ChangeChar rat campaign/rat-smile.png
+      Say "Keine Sorge. Das ist genau dein Ding. Du musst nur ein bisschen Fracht transportieren ..."
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF ratVisited "Ich gebe dir keinen Drink aus."
+      ChangeChar rat campaign/rat-frown.png
+      Say "Neinnein. Es geht diesmal nicht um Drinks. Ich habe einen Freund, für den musst du ein bisschen Fracht transportieren ..."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  ChangeChar rat campaign/rat-finger-smile.png
+  Ask "... und in ein schwarzes Loch werfen."
+  MENU
+    OPT "Ich vermeide schwarze Löcher grundsätzlich."
+      GO black_hole_option_black_hole
+    END_OF_OPT
+    OPT "Das hört sich nach übler Fracht an."
+      GO black_hole_option_components
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL black_hole_option_black_hole
+  SET blackHoleTrickExplained
+  ChangeChar rat campaign/rat.png
+  Say "Du schaffst das schon, keine Sorge."
+  ChangeChar rat campaign/rat-turn.png
+  Say "So lange du schnell genug bist, wird nicht dein ganzes Schiff kaputtgehen."
+  ChangeChar rat campaign/rat.png
+  Ask "Flieg aber nicht zu schnell, sonst hast du nicht genug Zeit, die Ladung abzutrennen."
+  MENU
+    OPT "Ich sollte das besser ablehnen, aber ..."
+      ChangeChar rat campaign/rat-smile.png
+      Say "Großartig! Du wirst es nicht bereuen!"
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+    OPT_IFNOT blackHoleCargoExplained "Ich denke, ich sollte so ein Zeug besser nicht transportieren."
+      GO black_hole_option_components
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL black_hole_option_components
+  SET blackHoleCargoExplained
+  ChangeChar rat campaign/rat-turn.png
+  Say "Das ist babyleicht!"
+  ChangeChar rat campaign/rat-finger-smile.png
+  Say "Es leuchtet GRÜN! Und jeder weiß doch, dass Grün die Farbe für Sicherheit ist."
+  ChangeChar rat campaign/rat.png
+  Ask "Platziere es nur lieber nicht neben Leuten, Aliens oder Batterien."
+  MENU
+    OPT "Okay. Klingt vernünftig."
+      ChangeChar rat campaign/rat-smile.png
+      Say "Großartig! Danke, [g(Kumpel|Lady)]."
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+    OPT_IFNOT blackHoleTrickExplained "Ich weiß nicht, ob ich bei noch mehr schwarzen Löchern herumfliegen soll."
+      GO black_hole_option_black_hole
+    END_OF_OPT
+  END_OF_MENU
+END_OF_SCRIPT
+
+SCRIPT black_hole1_Success
+
+  ShowDlgScene
+  ChangeChar rat campaign/rat.png
+  ShowChar rat left
+  Delay 300
+  Ask "Ha! Ich wusste doch, dass du [g(der richtige Mann|die richtige Frau)] für diesen Job bist!"
+  MENU
+    OPT "Worauf du dich verlassen kannst."
+      ChangeChar rat campaign/rat-smile.png
+      Say "Übrigens: Mein Boss mag deine Arbeitsweise."
+      ChangeChar rat campaign/rat-finger-smile.png
+      Say "Könnte sein, dass er was Spezielles für dich hat."
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+  END_OF_MENU
+END_OF_SCRIPT
+
+SCRIPT black_hole2_Success
+
+  ShowDlgScene
+  ChangeChar rat campaign/rat-smile.png
+  ShowChar rat left
+  Delay 300
+  Say "Siehst du? Ich sagte doch, dass das ein super Geschäft sein würde."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT black_hole3_Success
+
+  ShowDlgScene
+  ChangeChar rat campaign/rat-smile.png
+  ShowChar rat left
+  Delay 300
+  Say "Siehst du? Was habe ich gesagt?"
+  ChangeChar rat campaign/rat-finger-smile.png
+  Say "Kinderleicht."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT black_hole_Failure
+
+  IF_PROB 50
+    ShowDlgScene
+    ChangeChar rat campaign/rat-frown.png
+    ShowChar rat left
+    Delay 300
+    Say "Was machst du da bloß?"
+    ChangeChar rat campaign/rat-finger-frown.png
+    Ask "Ich bekomme 'ne Menge Ärger, wenn dieses Zeug nicht in einem schwarzen Loch landet!"
+    MENU
+      OPT "Gedulde dich oder mache es selber."
+        ChangeChar rat campaign/rat.png
+        Delay 300
+        HideDlgScene
+        RETURN
+      END_OF_OPT
+    END_OF_MENU
+  ELSE
+    ShowDlgScene
+    ChangeChar rat campaign/rat-frown.png
+    ShowChar rat left
+    Delay 300
+    Say "Der Boss ist gar nicht glücklich."
+    ChangeChar rat campaign/rat-finger-frown.png
+    Say "Und wenn er nicht glücklich ist, bin ich nicht glücklich."
+    HideDlgScene
+    RETURN
+  END_OF_IF
+END_OF_SCRIPT
+
+SCRIPT catapult_Dlg
+
+  ShowDlgScene
+  ChangeChar pirate campaign/pirate.png
+  ShowChar pirate left
+  Delay 400
+  ChangeChar pirate campaign/pirate.png
+  RESET pirateImprisoned
+  RESET pirateMetButNotImprisoned
+  RESET pirateNotMet
+  IF pirateEscorted
+    SET pirateImprisoned
+  ELSE
+    IF pirateHavenInitialized
+      SET pirateMetButNotImprisoned
+    ELSE
+      SET pirateNotMet
+    END_OF_IF
+  END_OF_IF
+  Ask "Heda, [g(mein Guter|meine Gute)]!"
+  MENU
+    OPT_IF pirateImprisoned "Hey! Ich dachte, Sie säßen im Knast?"
+      Say "Ha! Ich bin ausgebrochen!"
+      Say "Also eigentlich ... ich habe mich geändert. Ja! Sehr. Ich bin jetzt ein Anderer."
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF pirateMetButNotImprisoned "Oh nein. Ich hätte Sie ins Gefängnis stecken sollen, als ich die Gelegenheit dazu hatte."
+      Say "Keine Sorge. Ich habe mich geändert, das versichere ich Ihnen."
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF pirateNotMet "Gleichfalls heda. Was sollen Sie denn darstellen? So eine Art Piratencyborg?"
+      Say "Ich ziehe es vor, mich als Räuberbaron zu sehen."
+      Say "Äh, natürlich ... ein VERÄNDERTER Räuberbaron. Wirklich sehr."
+      Say "Habe mich komplett geändert, ich schwöre."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Ask "Also brauchen Sie keine Vorbehalte zu haben, mir zu helfen."
+  MENU
+    OPT "Irgendwie glaube ich nicht, dass Sie sich verändert haben."
+      Say "Ist doch egal, denn diese Mission wird Sie interessieren:"
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Was soll's. Erzählen Sie mir von der Mission."
+      Say "Hervorragend!"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  ChangeChar pirate campaign/pirate-closed.png
+  Ask "Ich möchte, dass Sie alle Piraten, Schmuggler und Sklavenhändler in diesem Sektor beseitigen."
+  MENU
+    OPT "Kein Problem. Haben Sie eine Superwaffe, die ich mir borgen kann?"
+      ChangeChar pirate campaign/pirate.png
+      Say "Die habe ich tatsächlich, [g(guter Herr|liebe Dame)], tatsächlich!"
+      ChangeChar pirate campaign/pirate-closed.png
+      ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic.png
+      ShowChar catapult_fanatic right
+      SayChar catapult_fanatic "Fliege ich jetzt los?"
+      ChangeChar pirate campaign/pirate-hands-threaten.png
+      SayChar pirate "Noch nicht. Du wirst deinen Flug bald antreten. Jetzt verpfeif dich."
+      SayChar catapult_fanatic "Fliegen! Fliegen und zerstören! Ah hahahaha ha!"
+      ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic-happy-moving.png
+      Delay 300
+      ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic.png
+      Delay 300
+      ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic-happy-moving.png
+      Delay 300
+      HideChar catapult_fanatic
+      ChangeChar pirate campaign/pirate-hands-closed.png
+      SayChar pirate "Also, wo war ich? ... Ach ja! Die Superwaffe."
+      Say "Ich bin, wie Sie sicher erraten haben, sehr an historischen Studien interessiert."
+      Say "Insbesondere an den Versuchen der Menschheit, große Probleme in kleinere Probleme aufzuspalten."
+      ChangeChar pirate campaign/pirate.png
+      Say "Mittels Artillerie."
+      ChangeChar pirate campaign/pirate-hands.png
+      Say "Und daher, mit der Besinnung auf Urprinzipien und unter Berücksichtigung des Wissens der Altvorderen, habe ich eine klassische Waffe für die Neuzeit aufbereitet."
+      Ask "Man staune! Das Weltraumkatapult!"
+      GO catapult_ask
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL catapult_ask
+  MENU
+    OPT_IFNOT catapultExplainedPhysics "Das ist doch wohl ein Scherz! Ein Katapult? Im All?"
+      SET catapultExplainedPhysics
+      ChangeChar pirate campaign/pirate-hands-closed.png
+      Say "Ich gebe zu, dass mir das Konzept ein bisschen Kopfzerbrechen bereitet hat."
+      ChangeChar pirate campaign/pirate-hands.png
+      Say "Wie zum Beispiel erreicht man eine ballistische Flugbahn bei fehlender Schwerkraft?"
+      ChangeChar pirate campaign/pirate-hands-threaten.png
+      Say "Doch kann ich versichern, dass diese Superwaffe auch in unserer Ära so viel Zerstörungskraft entwickelt wie einst."
+      GO catapult_ask
+    END_OF_OPT
+    OPT_IFNOT catapultExplainedHowTo "Wie muss ich das bedienen?"
+      SET catapultExplainedHowTo
+      ChangeChar pirate campaign/pirate.png
+      Say "Das ist einfach. Es muss bloß mit Waren geladen werden ... oder einem tapferen Mann ... und dann einfach abfeuern!"
+      ChangeChar pirate campaign/pirate-closed.png
+      Say "Naja, der tapfere Mann wäre gegen Meteoriten nicht besonders effektiv, aber gegen feindliche Schiffe hätten Sie mit ihm keine Probleme, das schwöre ich."
+      ChangeChar pirate campaign/pirate.png
+      Say "Oh, beinahe hätte ich vergessen, den größten Vorteil dieser Waffe im Vergleich zu konventionellen Waffen zu erwähnen: Sie schießt in vier Richtungen."
+      GO catapult_ask
+    END_OF_OPT
+    OPT "Klingt gut. Also los."
+      ChangeChar pirate campaign/pirate.png
+      Say "Hervorragend. Ich schicke ein paar meiner Männer ..."
+      ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic.png
+      ShowChar catapult_fanatic right
+      SayChar catapult_fanatic "Iiiich! Nimm miiiich!"
+      ChangeChar pirate campaign/pirate-hands-threaten.png
+      SayChar pirate "... als Munition mit."
+      SayChar catapult_fanatic "Endlich fliegen! Huuuuiii!"
+      ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic-happy-moving.png
+      Delay 300
+      ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic.png
+      Delay 300
+      ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic-happy-moving.png
+      Delay 300
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+  END_OF_MENU
+END_OF_SCRIPT
+
+SCRIPT catapult1_Success
+
+  ShowDlgScene
+  ChangeChar pirate campaign/pirate-hands.png
+  ShowChar pirate left
+  Delay 300
+  Say "Eine köstliche Vorstellung! Sie haben diesen Kerlen wirklich eine Abreibung verpasst!"
+  ChangeChar pirate campaign/pirate.png
+  Say "Aus Dankbarkeit überlasse ich Ihnen das Katapult. Sie werden es fraglos zu guten Zwecken einsetzen."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT catapult2_Success
+
+  ShowDlgScene
+  ChangeChar pirate campaign/pirate.png
+  ShowChar pirate left
+  Delay 300
+  Say "Ausgezeichnet! Jetzt, da die Konkurrenz ausgeschaltet ist, werde ich die Kontrolle über diesen Sektor übernehmen!"
+  ChangeChar pirate campaign/pirate-closed.png
+  Say "Äh ... das soll natürlich heißen ... „Kontrolle“ im geänderten Sinn des Wortes."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT catapult3_Success
+
+  ShowDlgScene
+  ChangeChar pirate campaign/pirate-hands.png
+  ShowChar pirate left
+  Delay 300
+  Say "Herausragend!"
+  ChangeChar pirate campaign/pirate-hands-closed.png
+  Say "Das, [g(mein guter Herr|meine gute Dame)] war pure artillerieballistische Annihilation, wenn ich so sagen darf!"
+  ChangeChar pirate campaign/pirate.png
+  Say "Aus Ihnen hätte [g(ein Pirat|eine Piratin)] werden sollen."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT catapult_Failure
+
+  ShowDlgScene
+  ChangeChar pirate campaign/pirate-hands.png
+  ShowChar pirate left
+  Delay 300
+  ChangeChar pirate campaign/pirate-hands-threaten.png
+  Ask "Ho! Was soll denn das bedeuten?"
+  MENU
+    OPT "Sorry. Die Gegner in diesem Sektor sind wirklich hart."
+      ChangeChar pirate campaign/pirate-hands.png
+      Say "Ach was! Ohren steif halten, [g(mein Guter|meine Gute)]. Ohren steif halten."
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+    OPT "Ganz ehrlich, ich muss noch lernen, mit diesen Katapulten umzugehen."
+      ChangeChar pirate campaign/pirate-hands.png
+      Say "Laden. Zielen. Feuern. Was gibt es da zu lernen?"
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+  END_OF_MENU
+END_OF_SCRIPT
+
+SCRIPT ship_amoeba_Dlg
+
+  ShowDlgScene
+  ChangeChar cyan campaign/cyan.png
+  ShowChar cyan left
+  Delay 400
+  Say "Sehet! Was erblicke ich da? Mich deucht, es ist [NAME]!"
+  MENU
+    OPT "Hi, Drama-Spezialist."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Say "Ich entbiete meine besten Grüße!"
+  Say "Erlaubt mir, euch im Namen meiner Spezies ein weiteres, erleuchtetes Schiffsdesign zu übereignen."
+  Say "In eurer Sprache würdet ihr es „Amöbe“ heißen. Dies Schiff ist asymmetrisch UND topologisch höchst amüsant."
+  ChangeChar cyan campaign/cyan.png
+  Ask "Oder, wie ihr es ausdrücken würdet, es hat Löcher."
+  MENU
+    OPT "Klingt gut. Mal ausprobieren."
+      ChangeChar cyan campaign/cyan.png
+      Say "Aha! Und wieder ist [g(er|sie)] bereit für die Herausforderung!"
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+    OPT "Und warum hat es diese Löcher?"
+      ChangeChar cyan campaign/cyan.png
+      Say "Was gäbe es besseres als ein Schiff mit Löchern?"
+      GO ship_amoeba_ask
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL ship_amoeba_ask
+  MENU
+    OPT_IFNOT amoebaSuggestNoHoles "Wie wär's mit einem Schiff ohne Löcher?"
+      SET amoebaSuggestNoHoles
+      ChangeChar cyan campaign/cyan.png
+      Say "Oh, wie furchtbar! Das wäre langweilig, nicht effizient und hässlich, all dies auf einmal."
+      GO ship_amoeba_ask
+    END_OF_OPT
+    OPT_IFNOT amoebaSuggestRandomHoles "Wie wär's mit einem Schiff mit zufällig verteilten Löchern?"
+      SET amoebaSuggestRandomHoles
+      ChangeChar cyan campaign/cyan.png
+      Say "Ah, [g(ein Kenner|eine Kennerin)] unserer überlegener Technologie und fortgeschrittener Ästhetik."
+      GO ship_amoeba_ask
+    END_OF_OPT
+    OPT "Schon gut. Lass mich das Ding fliegen."
+      ChangeChar cyan campaign/cyan.png
+      Say "Das „Ding“ ist ein Ausbund an Schönheit. Du wirst es lieben."
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+  END_OF_MENU
+END_OF_SCRIPT
+
+SCRIPT ship_amoeba1_Success
+
+  ShowDlgScene
+  ChangeChar cyan campaign/cyan.png
+  ShowChar cyan left
+  Delay 300
+  Say "Oh, welch makellose Leistung! Hast du es bemerkt? Sobald du ein ästhetisch ansprechendes Schiff fliegst, erzielst du auch ästhetisch ansprechende Leistungen."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT ship_amoeba2_Success
+
+  ShowDlgScene
+  ChangeChar cyan campaign/cyan.png
+  ShowChar cyan left
+  Delay 300
+  Say "Ich bin immer wieder erstaunt darüber, wie auch niedrigere Spezies so viel mehr erreichen können, sobald sie in den Genuss unserer überlegenen Technik kommen. Zugabe! Zugabe!"
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT ship_amoeba3_Success
+
+  ShowDlgScene
+  ChangeChar cyan campaign/cyan.png
+  ShowChar cyan left
+  Delay 300
+  Say "Überragend!"
+  Say "Solch heldenhafte Leistung ist die perfekte Ergänzung eines wundervollen Schiffsdesigns."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT ship_amoeba_Failure
+
+  ShowDlgScene
+  ChangeChar cyan campaign/cyan.png
+  ShowChar cyan left
+  Delay 300
+  IF_PROB 50
+    Say "Oh, welche Tragödie!"
+    Say "Es dauert mich, [g(mein Herr|werte Dame)]. Ich trauere um euch."
+  ELSE
+    Say "Nein, seid nicht niedergeschlagen, sondern frohlocket!"
+    Say "Wie das Küken lernen muss, sich in die Lüfte zu erheben, so werdet auch Ihr, mit eurem Spatzenhirn, erst mit genug Übung zum Meister unserer Hochtechnologie aufsteigen."
+  END_OF_IF
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT rescue_Dlg
+
+  ShowDlgScene
+  ChangeChar prisoner1 campaign/prisoner1-calmer.png
+  ShowChar prisoner1 left
+  Delay 400
+  ChangeChar prisoner1 campaign/prisoner1-worried.png
+  Ask "Schnell! Komm mit! Wir brauchen jeden Trucker!"
+  MENU
+    OPT "Klar. Ich bin bereit."
+      ChangeChar prisoner1 campaign/prisoner1.png
+      Say "Gut. Lass uns diese Trucker von den Sklavenhaltern befreien!"
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+    OPT "Warte mal. Ich glaube, ich muss erst mehr wissen."
+      ChangeChar prisoner1 campaign/prisoner1-calmer.png
+      Say "Die Sklavenhändler sind wild geworden."
+      Say "Mensche, Aliens, sogar Trucker-Veteranen. Sie haben sich geholt was sie kriegen konnten."
+      Say "Die Glücklicheren sind auf den Schrottplätzen als billige Arbeiter gelandet."
+      ChangeChar prisoner1 campaign/prisoner1-worried.png
+      Ask "Alle anderen sind noch in der Hand der Sklavenhändler. Wir müssen sie alle retten."
+      MENU
+        OPT "Ich bin dabei."
+          ChangeChar prisoner1 campaign/prisoner1.png
+          Say "Gut. Dann los."
+          HideDlgScene
+          RETURN
+        END_OF_OPT
+        OPT "Von wie vielen Sklavenhändlern reden wir? Wie viele Trucker wurden gefangen?"
+          ChangeChar prisoner1 campaign/prisoner1-worried.png
+          Say "Viel zu viele. Sie haben sogar meinen Exfreund."
+          ChangeChar prisoner1 campaign/prisoner1-calmer.png
+          Say "Gut, ich glaube, dem würde ein bisschen Strafe ganz gut tun, aber alle anderen sind gute, ehrliche Trucker wie du und ich."
+          ChangeChar prisoner1 campaign/prisoner1-worried.png
+          Say "Wir müssen sie retten!"
+          HideDlgScene
+          RETURN
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+END_OF_SCRIPT
+
+SCRIPT rescue1_Success
+
+  ShowDlgScene
+  ChangeChar prisoner1 campaign/prisoner1.png
+  ShowChar prisoner1 left
+  Delay 300
+  Say "Du hast es geschafft! Du hast alle diese Trucker gerettet!"
+  Delay 500
+  ShowChar prisoner2 right
+  Delay 300
+  SayChar prisoner2 "Schätzchen! Du hast [g(einen Trucker|eine Truckerin)] geschickt, um mich zu retten!"
+  ChangeChar prisoner1 campaign/prisoner1-calmer.png
+  AskChar prisoner1 "Blährg! Den kannst du behalten, [NAME]."
+  MENU
+    OPT "Wieso? Wer ist das?"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  ChangeChar prisoner1 campaign/prisoner1-calmer.png
+  Say "Mein Exfreund."
+  Delay 300
+  HideChar prisoner1
+  Delay 300
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT rescue2_Success
+
+  ShowDlgScene
+  ShowChar prisoner2 right
+  Delay 300
+  SayChar prisoner2 "Wir haben es geschafft! Wir konnten alle diese Trucker retten!"
+  ChangeChar prisoner1 campaign/prisoner1-calmer.png
+  ShowChar prisoner1 left
+  Delay 300
+  SayChar prisoner1 "Du schon wieder! Wieder schmückst du dich mit fremden Federn."
+  ChangeChar prisoner1 campaign/prisoner1.png
+  SayChar prisoner1 "[NAME] hat diese Trucker gerettet."
+  Delay 300
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT rescue3_Success
+
+  ShowDlgScene
+  ChangeChar prisoner1 campaign/prisoner1-calmer.png
+  ShowChar prisoner1 left
+  ShowChar prisoner2 right
+  Delay 300
+  SayChar prisoner2 "[NAME] hat es geschafft! [g(Er|Sie)] hat diese Trucker gerettet!"
+  SayChar prisoner2 "Und es war deine Idee."
+  SayChar prisoner1 "Du verdankst mir deine Freiheit. Ich werde dafür sorgen, dass du das ie vergisst."
+  SayChar prisoner2 "Hast du Bock, am Donnerstag mit mir Weltraumbillard zu spielen?"
+  Delay 3000
+  SayChar prisoner1 "Mal sehen."
+  Delay 300
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT rescue_Failure
+
+  IF_PROB 50
+    ShowDlgScene
+    ChangeChar prisoner1 campaign/prisoner1-worried.png
+    ShowChar prisoner1 left
+    Delay 300
+    Say "Oh, nein."
+    HideDlgScene
+    RETURN
+  ELSE
+    ShowDlgScene
+    ChangeChar prisoner1 campaign/prisoner1-worried.png
+    ShowChar prisoner1 left
+    Delay 300
+    Say "Wir müssen es noch einmal versuchen. Wir können sie nicht ihrem Schicksal überlassen."
+    HideDlgScene
+    RETURN
+  END_OF_IF
+END_OF_SCRIPT
+
+SCRIPT artifact_Dlg
+
+  ShowDlgScene
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head-hand-up.png
+  ShowChar artifact_runner left
+  Delay 400
+  Ask "Hallo. Ich suche nach einem Trucker."
+  MENU
+    OPT "Naja, Sie haben einen gefunden."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
+  Ask "Gut. Ich trucke selber ja nicht so oft, denn ich bin ein Fachmann auf anderem Gebiet."
+  MENU
+    OPT "Lassen Sie mich raten: Sie sind Archäologe, stimmt's?"
+      ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
+      Say "Hm ... das ist eine sehr freundliche Umschreibung. Aber gut. Sagen wir mal, ich wäre Archäologe."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Lassen Sie mich raten: Sie sind Maultiertreiber, stimmt's?"
+      ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
+      Ask "Äh ... nein. Ich bin Archäologe."
+      MENU
+        OPT "Wenn Sie meinen ... Hauptsache, Sie hauen mich nicht mit dieser Peitsche."
+          ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-hands-down.png
+          Delay 500
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Say "Ich war gerade dabei, zu ... äh, forschen, und habe ein Alien-Artefakt entdeckt."
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
+  Ask "Ich möchte, dass Sie es in ein Museum bringen. Aber Vorsicht, nicht stürzen! Wenn Sie verstehen, was ich meine."
+  MENU
+    OPT "Jepp, ich weiß, was Sie meinen."
+      ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-happy.png
+      Say "Prima! Immer gut, mit Profis zu arbeiten."
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+    OPT "Sie meinen, es ist zerbrechlich? Oder gefährlich?"
+      ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
+      Ask "Nicht zerbrechlich. Und nicht gefährlich, wenn man richtig damit umgeht. Halt bloß ein klassisches Alien-Artefakt."
+      MENU
+        OPT "Okay. Hört sich einfach an."
+          ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-happy.png
+          Say "Prima! Immer gut, mit Profis zu arbeiten."
+          HideDlgScene
+          RETURN
+        END_OF_OPT
+        OPT "Könnten Sie etwas genauer sein?"
+          ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-hands-down.png
+          Ask "Die Strahlung dieses Artefakts erzeugt einen Totalausfall. Nichts in der Zone dieses Ausfalls funktioniert noch, außer strukturelle Dinge, wie Anschlüsse."
+          MENU
+            OPT "Klingt tückisch. Aber ich kann's ja mal probieren."
+              ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
+              Say "Danke. Viel Glück."
+              HideDlgScene
+              RETURN
+            END_OF_OPT
+            OPT "Vielleicht sollten Sie einfach mitkommen."
+              ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
+              Say "Sorry, [g(Kumpel|Süße)], antike Zivilisationen buddeln sich nicht von alleine aus. Ich muss zurück zum Fundort."
+              HideDlgScene
+              RETURN
+            END_OF_OPT
+          END_OF_MENU
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_OPT
+  END_OF_MENU
+END_OF_SCRIPT
+
+SCRIPT artifact1_Success
+
+  ShowDlgScene
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-happy.png
+  ShowChar artifact_runner left
+  Delay 300
+  Say "Das wird sich großartig in einem Museum machen. Vielen Dank."
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head-hand-up.png
+  Ask "Ach, übrigens habe ich gerade einen neuen Fund gemacht: ein Doppel-Artefakt."
+  MENU
+    OPT "Ich tippe, ich soll das ebenfalls abliefern, ja?"
+      ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-happy.png
+      Say "Sie lesen meine Gedanken."
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+  END_OF_MENU
+END_OF_SCRIPT
+
+SCRIPT artifact2_Success
+
+  ShowDlgScene
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-happy.png
+  ShowChar artifact_runner left
+  Delay 300
+  Ask "Danke, [g(Kumpel|Schätzchen)]."
+  MENU
+    OPT "Kein Problem."
+      Ask "Alle Welt redet über diese Artefakte. Die Öffentlichkeit will mehr davon. Und wie es der Zufall will, habe ich mehr gefunden."
+      MENU
+        OPT "Nicht zu fassen."
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+      ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head-hand-up.png
+      Say "Ihr abschließender Job wird es sein, zwei Artefakte abzuliefern, ein einzelnes und ein doppeltes. Viel Glück."
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+  END_OF_MENU
+END_OF_SCRIPT
+
+SCRIPT artifact3_Success
+
+  ShowDlgScene
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-happy.png
+  ShowChar artifact_runner left
+  Delay 300
+  Say "Ich wusste, dass ich auf Sie zählen konnte. Sie sind ein echter Profi."
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head-hand-up.png
+  Say "Zu blöd, dass Ihr Name im Museum nicht direkt neben meinem stehen wird."
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
+  Ask "Ich würde Sie ja in meiner Pressekonferenz erwähnen, aber Sie wissen ja, dass man sich kurz fassen soll."
+  MENU
+    OPT "Huuh. Ihre Dankbarkeit kennt wirklich keine Grenzen."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "So bin ich nun mal. Der unbesungene Held des Weltalls."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-happy.png
+  Say "Die Zusammenarbeit hat mich gefreut."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT artifact1_Failure
+
+  ShowDlgScene
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-angry.png
+  ShowChar artifact_runner left
+  Delay 300
+  Ask "Was ist geschehen? Das war ein unbezahlbares Artefakt!"
+  MENU
+    OPT "Ich hatte ein paar Probleme. Kann ich's nochmal probieren?"
+      ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-hands-down.png
+      Say "Ja, sicher."
+      Say "Erzählen Sie aber nirgendwo, dass ich noch ein Artefakt hatte. Ich möchte nicht, dass die Preise der Dinger ins Bodenlose fallen."
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+  END_OF_MENU
+END_OF_SCRIPT
+
+SCRIPT artifact2_Failure
+
+  ShowDlgScene
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-angry.png
+  ShowChar artifact_runner left
+  Delay 300
+  Ask "Doppelter Ärger, was? Ich weiß, dass das hart ist, aber das Museum braucht das Teil wirklich dringend."
+  MENU
+    OPT "Lassen Sie mich's nochmal versuchen?"
+      ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-hands-down.png
+      Say "Oh, sicher. Keine Sorge, das passiert andauernd."
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+  END_OF_MENU
+END_OF_SCRIPT
+
+SCRIPT artifact3_Failure
+
+  ShowDlgScene
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-angry.png
+  ShowChar artifact_runner left
+  Delay 300
+  Ask "Diese Fracht muss unbedingt abgeliefert werden."
+  MENU
+    OPT "Und ich brauche ein Schiff, das funktioniert. Der Flug ist nicht gerade einfach, wenn die Hälfte der Teile nicht funktioniert."
+      ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-hands-down.png
+      Say "Ich weiß, ich weiß. Klappt bestimmt beim nächsten Mal."
+      HideDlgScene
+      RETURN
+    END_OF_OPT
+  END_OF_MENU
+END_OF_SCRIPT
+
+SCRIPT deadly_race_Dlg
+
+  RESET playerHasMetPresident
+  RESET playerIsInClubGold
+  RESET playerWonTransgalacticTrek
+  IF clubTalk
+    SET playerHasMetPresident
+  END_OF_IF
+  IF_MIN recommendationsTold 3
+    SET playerHasMetPresident
+    SET playerIsInClubGold
+  END_OF_IF
+  IF finalRaceWon
+    SET playerWonTransgalacticTrek
+    SET playerIsInClubGold
+    SET playerHasMetPresident
+  END_OF_IF
+  ShowDlgScene
+  ChangeChar chairman campaign/chair.png
+  ShowChar chairman left
+  Delay 400
+  ChangeChar chairman campaign/chair.png
+  IF playerHasMetPresident
+    Say "Willkommen zurück, [NAME]!"
+  ELSE
+    Say "[NAME]! Schön, dich endlich mal zu treffen."
+  END_OF_IF
+  Say "Bist du bereit für ein Rennen? Ein sehr spezielles Rennen?"
+  Say "Du wirst eine Strecke nehmen, die so neu ist, dass noch kein Trucker sie gesehen hat!"
+  Say "Wir wissen bloß, dass sie sehr gefährlich ist, also dürfen nur Experten-Trucker mitfliegen."
+  Ask "Die Siegprämie ist Unsterblichkeit ... in gewisser Weise. Wir werden die Strecke nämlich nach demjenigen benennen, der das Rennen gewinnt."
+  SET raceOptCautious
+  SET raceOptOpponents
+  SET raceOptWhyMe
+  RESET raceOptLetsGo
+
+  LABEL deadly_race_ask
+  MENU
+    OPT_IF raceOptCautious "Wenn die Strecke so gefährlich ist, wies fliegt man sie dann nicht langsam und vorsichtig ab?"
+      SET raceOptLetsGo
+      RESET raceOptCautious
+      GO deadly_race_cautious
+    END_OF_OPT
+    OPT_IF raceOptOpponents "Wenn das nur für Experten-Trucker ist, wer sind meine Gegner?"
+      SET raceOptLetsGo
+      RESET raceOptOpponents
+      GO deadly_race_opponents
+    END_OF_OPT
+    OPT_IF raceOptWhyMe "Wenn das nur für Experten-Trucker ist, wieso dann ich?"
+      SET raceOptLetsGo
+      RESET raceOptWhyMe
+      GO deadly_race_why_me
+    END_OF_OPT
+    OPT_IF raceOptLetsGo "Okay, dann mal los!"
+      GO deadly_race_lets_go
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL deadly_race_cautious
+  ChangeChar chairman campaign/chair.png
+  Ask "Nun, das wäre dann ja kaum ein Rennen, oder?"
+  GO deadly_race_ask
+
+  LABEL deadly_race_opponents
+  ChangeChar chairman campaign/chair.png
+  Say "Deine Gegner sind in der ganzen Galaxis bekannte Trucker. Du hast bestimmt schon von diesem hier gehört:"
+  Delay 300
+  ChangeChar richgirl campaign/rich-smile.png
+  ShowChar richgirl right
+  Delay 300
+  AskChar richgirl "Hallo. Ach, du bist das, ... äh ..."
+  MENU
+    OPT "[NAME]."
+      SayChar richgirl "Es lag mir auf der Zunge."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  ChangeChar richgirl campaign/rich-smile.png
+  SayChar richgirl "Viel Glück beim Rennen. Wirst es brauchen."
+  HideChar richgirl
+  IF playerIsInClubGold
+    SayChar chairman "Und hier kommt ein weiterer Kollege aus dem Goldclub."
+  ELSE
+    SayChar chairman "Und hier noch ein berühmter Trucker, bekannt für seine schnellen Antriebe und akkuraten Geschütze."
+  END_OF_IF
+  ChangeChar halfbreed avatars/campaign/mixed-avatar.png
+  ShowChar halfbreed right
+  SayChar halfbreed "Kh. Kh fwr'z."
+  SayChar chairman "Natürlich kennst du ihn nur unter seinem Spitznamen, nämlich:                                                 ..."
+  HideChar halfbreed
+  Delay 800
+  ChangeChar roughtrucker campaign/roughtrucker.png
+  ShowChar roughtrucker right
+  SayChar chairman "Und hier der dritte Experten-Trucker. Besser gesagt, ein Experte darin, von Meteoriten getroffen zu werden."
+  SayChar roughtrucker "He, unterschätzt mich bloß nicht. Nach all diesen Jahren bin ich hart wie Stein geworden."
+  HideChar roughtrucker
+  AskChar chairman "Wie du siehst, wird dieses Rennen kein Zuckerschlecken."
+  GO deadly_race_ask
+
+  LABEL deadly_race_why_me
+  ChangeChar chairman campaign/chair.png
+  IF playerWonTransgalacticTrek
+    AskChar chairman "Du hast das Transgalaktische Trucker-Rennen gewonnen, [g(mein Lieber|meine Liebe)]."
+  ELSE
+    IF playerIsInClubGold
+      AskChar chairman "Nun, du bist Mitglied im Goldclub, [g(mein Lieber|meine Liebe)]."
+    ELSE
+      AskChar chairman "Dein Ruf ist recht gut und viele Leute haben dich empfohlen, insbesondere nach deinen letzten Erfolgen."
+    END_OF_IF
+  END_OF_IF
+  GO deadly_race_ask
+
+  LABEL deadly_race_lets_go
+  ChangeChar chairman campaign/chair.png
+  Say "Ein gutes Rennen ist immer eine feine Sache."
+  Delay 2000
+  Say "Ladies und Gentlemen, starten Sie Ihren Bau!"
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT deadly_race1_Success
+
+  ShowDlgScene
+  ChangeChar chairman campaign/chair.png
+  ShowChar chairman left
+  Delay 300
+  Say "Und die Rennteilnehmer betreten in diesem Augenblick das Clubhaus."
+  Say "Alle sind hervorragend geflogen, doch kann das Rennen nur einen Gewinner haben."
+  Say "Und der Gewinner ist ..."
+  Say "... [NAME]!"
+  ChangeChar roughtrucker campaign/roughtrucker.png
+  ShowChar roughtrucker right
+  SayChar roughtrucker "Schönes Rennen, [g(Jungchen|Mädel)]. Ich könnte von dir noch was lernen."
+  HideChar roughtrucker
+  ChangeChar halfbreed avatars/campaign/mixed-avatar.png
+  ShowChar halfbreed right
+  SayChar halfbreed "Grtl's'n!"
+  HideChar halfbreed
+  ChangeChar richgirl campaign/rich-smile.png
+  ShowChar richgirl right
+  SayChar richgirl "Ja. Gratulation. Ich dachte, es wäre mal an der Zeit, jemand anders gewinnen zu lassen, damit auch andere mal sehen, wie man sich dann fühlt."
+  ChangeChar richgirl campaign/rich-smile.png
+  HideChar richgirl
+  SayChar chairman "Von diesem Tage an soll diese gefährliche Strecke bekannt sein unter dem Namen [NAME]-Rennstrecke!"
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT deadly_race2_Success
+
+  ShowDlgScene
+  ChangeChar chairman campaign/chair.png
+  ShowChar chairman left
+  Delay 300
+  Say "[NAME] gewinnt schon wieder!"
+  Say "Wir nennen die Strecke ab heute [NAME]-Route!"
+  ChangeChar richgirl campaign/rich-smile.png
+  ShowChar richgirl right
+  SayChar richgirl "Gratulation. Eine eindrucksvolle Glückssträhne."
+  ChangeChar richgirl campaign/rich-smile.png
+  HideChar richgirl
+  ChangeChar halfbreed avatars/campaign/mixed-avatar.png
+  ShowChar halfbreed right
+  SayChar halfbreed "...!"
+  HideChar halfbreed
+  ChangeChar roughtrucker campaign/roughtrucker.png
+  ShowChar roughtrucker right
+  SayChar roughtrucker "Dieses Mal hab ich auf dich gesetzt!"
+  SayChar roughtrucker "Hat mir 30 Schleifen eingebracht!"
+  HideChar roughtrucker
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT deadly_race3_Success
+
+  ShowDlgScene
+  ChangeChar chairman campaign/chair.png
+  ShowChar chairman left
+  Delay 300
+  Say "Und die Trucker kommen in die Zielgerade!"
+  Say "Nach wem wird die Strecke benannt werden?"
+  Say "Es ist [NAME]! [NAME] hat das Rennen gewonnen!"
+  Say "Von diesem Tage an soll diese gefährliche Strecke bekannt sein unter dem Namen Straße von [NAME]!"
+  ChangeChar halfbreed avatars/campaign/mixed-avatar.png
+  ShowChar halfbreed right
+  SayChar halfbreed "..."
+  SayChar halfbreed "Kzzkh fwr'z. Kh kh, [NAME]! Qtzk kwrz'l."
+  HideChar halfbreed
+  ChangeChar richgirl campaign/rich-bored.png
+  ShowChar richgirl right
+  SayChar richgirl "Naja. Nach mir sind ja schon so wahnsinnig viele Strecken benannt worden."
+  ChangeChar richgirl campaign/rich-smile.png
+  SayChar richgirl "Gratulation!"
+  HideChar richgirl
+  Delay 300
+  HideChar Chairman
+  ChangeChar tutor campaign/tutor.png
+  Delay 300
+  ShowChar tutor left
+  AskChar tutor "Hey! Du hast gewonnen! Mein kleiner Neuling hat gewonnen!"
+  MENU
+    OPT "Hallo! Wieso waren Sie denn nicht im Rennen dabei?"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  SayChar tutor "Ach, einer meiner kleinen Neulinge wollte mitfliegen, also hab ich ihm den Vortritt gelassen."
+  ChangeChar roughtrucker campaign/roughtrucker.png
+  ShowChar roughtrucker right
+  Delay 300
+  SayChar roughtrucker "Zehn Jahre. Ich lasse seit zehn Jahren Meteoriten von mir abprallen und er nennt mich immer noch Neuling."
+  HideChar roughtrucker
+  SayChar tutor "Wie auch immer ... ich gratuliere, [NAME]."
+  Delay 300
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT deadly_race_Failure
+
+  ShowDlgScene
+  ChangeChar chairman campaign/chair-sorry.png
+  ShowChar chairman left
+  Delay 300
+  IF_ALL_RESIGNED
+    Say "Sie kommen aus der letzten Kurve ..."
+    Say "Und ... oh nein! Oh, was für ein kolossales Missgeschick! Überall Abflussrohre!"
+    Delay 300
+    Say "Na gut. Dann freuen wir uns auf die Wiederholung."
+    GO deadly_race_failure_end
+  END_OF_IF
+  IF_PROB 50
+    Say "Und die Teilnehmer betreten jetzt das Clubhaus."
+    Say "Alle sind gut geflogen, aber das Rennen kann nur einen Gewinner haben."
+    GO deadly_race_failure_cont
+  ELSE
+    Say "Das war wirklich ein großartiger Wettbewerb."
+    Say "Unter den Besten als Sieger hervorzugehen, ist nicht gerade einfach."
+    GO deadly_race_failure_cont
+  END_OF_IF
+
+  LABEL deadly_race_failure_cont
+  Say "Und der Gewinner ist ..."
+  IF_POSITION_ORDER 3 0
+    ChangeChar richgirl campaign/rich-smile.png
+    ShowChar richgirl right
+    SayChar chairman "... diese berühmte Truckerin!"
+    SayChar richgirl "Ach ja. das war wirklich viel zu einfach."
+    ChangeChar richgirl campaign/rich-smile.png
+    SayChar richgirl "Alle anderen haben aber ebenfalls ein gutes Rennen abgeliefert. Natürlich nicht so gut wie ich."
+    HideChar richgirl
+    GO deadly_race_failure_end
+  END_OF_IF
+  IF_POSITION_ORDER 2 0
+    ChangeChar halfbreed avatars/campaign/mixed-avatar.png
+    ShowChar halfbreed right
+    SayChar chairman "... dieses talentierte Alien!"
+    SayChar halfbreed "... ... !"
+    SayChar halfbreed "H' khwk!"
+    SayChar halfbreed "Ich gewonnen / ist Sieger / kriegt erster Preis!"
+    HideChar halfbreed
+    GO deadly_race_failure_end
+  END_OF_IF
+  IF_POSITION_ORDER 1 0
+    ChangeChar roughtrucker campaign/roughtrucker.png
+    ShowChar roughtrucker right
+    SayChar chairman "... dieser raubeinige Veteran!"
+    SayChar roughtrucker "Ganz genau! Ihr hättet auf mich setzen sollen."
+    SayChar roughtrucker "Endlich hat sich diese ewige Meteoritenknallerei mal bezahlt gemacht."
+    HideChar roughtrucker
+    GO deadly_race_failure_end
+  END_OF_IF
+
+  LABEL deadly_race_failure_end
+  SayChar chairman "Während der Gewinner den Siegestaumel auskostet, können die Verlierer Trost in der Tatsache finden, dass es noch viele andere gefährliche Strecken in der Galaxis gibt."
+  SayChar chairman "Vielleicht ja nächstes Mal."
+  SayChar chairman "Damit ist unsere Übertragung von Corp mbH Sportsender zu Ende."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT deadly_race3_Failure
+
+  ShowDlgScene
+  ChangeChar chairman campaign/chair-sorry.png
+  ShowChar chairman left
+  Delay 300
+  IF_ALL_RESIGNED
+    Say "Sie kommen aus der letzten Kurve ..."
+    Say "Und ... oh nein! Oh, was für ein kolossales Missgeschick! Überall Abflussrohre!"
+    Delay 300
+    Say "Na gut. Dann freuen wir uns auf die Wiederholung."
+    GO deadly_race_failure_end
+  END_OF_IF
+  IF_PROB 50
+    Say "Und die Teilnehmer betreten jetzt das Clubhaus."
+    Say "Alle sind gut geflogen, aber das Rennen kann nur einen Gewinner haben."
+    GO deadly_race_failure_cont
+  ELSE
+    Say "Das war wirklich ein großartiger Wettbewerb."
+    Say "Unter den Besten als Sieger hervorzugehen, ist nicht gerade einfach."
+    GO deadly_race_failure_cont
+  END_OF_IF
+
+  LABEL deadly_race_failure_cont
+  Say "Und der Gewinner ist ..."
+  IF_POSITION_ORDER 3 0
+    ChangeChar richgirl campaign/rich-smile.png
+    ShowChar richgirl right
+    SayChar chairman "... diese berühmte Truckerin!"
+    SayChar richgirl "Ach ja. das war wirklich viel zu einfach."
+    ChangeChar richgirl campaign/rich-smile.png
+    SayChar richgirl "Alle anderen haben aber ebenfalls ein gutes Rennen abgeliefert. Natürlich nicht so gut wie ich."
+    HideChar richgirl
+    GO deadly_race_failure_end
+  END_OF_IF
+  IF_POSITION_ORDER 2 0
+    ChangeChar halfbreed avatars/campaign/mixed-avatar.png
+    ShowChar halfbreed right
+    SayChar chairman "... dieses talentierte Alien!"
+    SayChar halfbreed "... ... !"
+    SayChar halfbreed "H' khwk!"
+    SayChar halfbreed "Ich gewonnen / ist Sieger / kriegt erster Preis!"
+    HideChar halfbreed
+    GO deadly_race_failure_end
+  END_OF_IF
+  IF_POSITION_ORDER 1 0
+    ChangeChar roughtrucker campaign/roughtrucker.png
+    ShowChar roughtrucker right
+    SayChar chairman "... dieser raubeinige Veteran!"
+    SayChar roughtrucker "Ganz genau! Ihr hättet auf mich setzen sollen."
+    SayChar roughtrucker "Endlich hat sich diese ewige Meteoritenknallerei mal bezahlt gemacht."
+    HideChar roughtrucker
+    GO deadly_race_failure_end
+  END_OF_IF
+
+  LABEL deadly_race_failure_end
+  SayChar chairman "Während der Gewinner den Siegestaumel auskostet, können die Verlierer Trost in der Tatsache finden, dass es noch viele andere gefährliche Strecken in der Galaxis gibt."
+  SayChar chairman "Vielleicht ja nächstes Mal."
+  SayChar chairman "Damit ist unsere Übertragung von Corp mbH Sportsender zu Ende."
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT vip_rockband_Dlg
+
+  ShowDlgScene
+  ChangeChar bartender campaign/bartender.png
+  ShowChar bartender left
+  Delay 400
+  Ask "Hallo. Was kann ich für Sie tun?"
+  MENU
+    OPT "Nichts, danke. Ich wollte mir nur Ihre Bar ansehen."
+      RESET rockbandOptCheckingOut
+      Ask "Ach so."
+      Delay 400
+      MENU
+        OPT "Kann ich etwas für Sie tun?"
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Also eigentlich bin ich hier, weil ich dachte, ICH könnte was für SIE tun."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Say "Gut, dass Sie fragen."
+  Say "Ich bereite die Bar gerade für einen großen Auftritt heute Abend vor und ich brauche noch einen Fahrer für die Rockband."
+  ChangeChar bartender campaign/bartender-close.png
+  Ask "Schon mal von Mega Massaker Deluxe gehört?"
+  MENU
+    OPT "Also, mit Massakern kenne ich mich ziemlich gut aus."
+      ChangeChar bartender campaign/bartender.png
+      Say "Mega Massaker Deluxe ist eine ziemlich bekannte Rockband."
+      Say "Es sind drei Bandmitglieder und jedes braucht eine eigene Luxuskabine."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Mega... was?"
+      ChangeChar bartender campaign/bartender.png
+      Say "Mega Massaker Deluxe. DIE heißeste Rockband des Universums."
+      Say "Es sind drei Bandmitglieder und jedes braucht eine eigene Luxuskabine."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Oh, MMD! Ich liebe MMD!"
+      ChangeChar bartender campaign/bartender.png
+      Say "Das tut doch jeder!"
+      ChangeChar bartender campaign/bartender-close.png
+      Say "Aber wussten Sie auch, dass jedes Bandmitglied eine EIGENE Luxuskabine braucht?"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL vip_rockband_continue
+  ChangeChar bartender campaign/bartender-close.png
+  Say "Die sind halt so. In einer Kabine ist eben nur Platz für zwei – den Rockstar und sein Ego."
+  ChangeChar bartender campaign/bartender.png
+  Ask "Aber die wissen wirklich, wie man abrockt!"
+  MENU
+    OPT "Wie haben Sie Mega Massaker Deluxe dazu gebracht, hier draußen aufzutreten?"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  ChangeChar bartender campaign/bartender.png
+  Say "Tja, um die Wahrheit zu sagen ..."
+  Say "... Ich glaube ihr Agent hat da was verwechselt. Da gibt es nämlich eine Bar auf der Wega mit demselben Namen."
+  Ask "Bitte sagen Sie denen das nicht."
+  MENU
+    OPT "Keine Sorge. Drei Rockstars bereit zur Auslieferung!"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Ask "Da wäre noch eine Kleinigkeit."
+  MENU
+    OPT "Oh nein!"
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Immer kommt da noch diese „Kleinigkeit“!"
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Erzählen Sie's mir lieber nicht."
+      SET rockbandDontTellMe
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Ask "Sie müssen Bühnenfeuerwerk mitbringen ..."
+  MENU
+    OPT "Damit meinen Sie Sprengstoff, nicht wahr?"
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Auf demselben Schiff wie die Rockstars?"
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF rockbandDontTellMe "Ich sagte doch, dass Sie's mir lieber nicht erzählen sollen."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Ask "... und Kisten mit Gesöff in sehr zerbrechlichen Glasflaschen."
+  MENU
+    OPT "Wollen Sie mich verarschen?"
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Drei VIP-Kabinen, Sprengstoff, zerbrechliche Fracht. Hört sich toll an."
+      Say "Ich wusste doch, dass ich auf Sie zählen kann."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Wissen Sie was? Vergessen Sie's. Ich werde erstmalig eine Mission ablehnen."
+      ChangeChar bartender campaign/bartender-close.png
+      Ask "Wie bitte?"
+      MENU
+        OPT "Na gut, ich mach's."
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  ChangeChar bartender campaign/bartender.png
+  Say "Viel Glück! Wenn Sie's schaffen, gibt's hier eine fette Party!"
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT finale
+
+  HideChar party
+  ShowChar party_right right
+  Delay 500
+  ChangeChar fireworks expansions/01_alien_technologies/images/finale_fireworks0.png
+  ShowChar fireworks righttop
+  Delay 500
+  Announce "Die Menschen in den Himmel Alle suchen plötzlich, wo das Feuerwerk zu starten."
+  Delay 500
+  ChangeChar fireworks expansions/01_alien_technologies/images/finale_fireworks1.png
+  Delay 500
+  ChangeChar fireworks expansions/01_alien_technologies/images/finale_fireworks2.png
+  Delay 500
+  ChangeChar fireworks expansions/01_alien_technologies/images/finale_fireworks3.png
+  Delay 500
+  ChangeChar fireworks expansions/01_alien_technologies/images/finale_fireworks4.png
+  Delay 500
+  ChangeChar fireworks expansions/01_alien_technologies/images/finale_fireworks1.png
+  Delay 500
+  ChangeChar fireworks expansions/01_alien_technologies/images/finale_fireworks2.png
+  Delay 500
+  ChangeChar fireworks expansions/01_alien_technologies/images/finale_fireworks3.png
+  Delay 500
+  ChangeChar fireworks expansions/01_alien_technologies/images/finale_fireworks4.png
+  Delay 500
+  ChangeChar fireworks expansions/01_alien_technologies/images/finale_fireworks1.png
+  Delay 500
+  ChangeChar fireworks expansions/01_alien_technologies/images/finale_fireworks2.png
+  Delay 500
+  ChangeChar fireworks expansions/01_alien_technologies/images/finale_fireworks3.png
+  Delay 500
+  ChangeChar fireworks expansions/01_alien_technologies/images/finale_fireworks4.png
+  Delay 500
+  ChangeChar fireworks expansions/01_alien_technologies/images/finale_fireworks5.png
+  Delay 1000
+  HideChar fireworks
+  Delay 500
+  Announce "Feuerwerk beenden, aber die Party geht weiter ..."
+  Delay 1500
+  HideChar party_right
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT vip_rockband1_Success
+
+  ShowDlgScene
+  ChangeChar bartender campaign/bartender.png
+  ShowChar bartender left
+  Delay 300
+  Say "Sie haben es geschafft! Ich weiß gar nicht, wie ich Ihnen danken soll."
+  Delay 300
+  ShowChar party righttop
+  Delay 500
+  SayChar bartender "Kunde aus der gesamten Galaxis sind hierhergekommen!"
+  Delay 300
+  ChangeChar cyan campaign/cyan.png
+  ShowChar cyan right
+  Delay 300
+  MENU
+    OPT "Hallo, Drama-Alien."
+      HideChar bartender
+      SayChar cyan "Seid gegrüßt! Wahrlich, das war ein Spektakel, das seinesgleichen sucht!"
+      MENU
+        OPT "Also eigentlich hat sich die Band nur aufgewärmt."
+          SayChar cyan "Ich sprach von EUREM Auftritt. Eine großartige Vorstellung!"
+          SayChar cyan "Was diese Band betrifft, fürchte ich, kann ich deren Perfektion nicht in ihrer Gänze würdigen. Der Xenomusikologe unseres Planeten jedoch versicherte mir, dass sie äußerst gut sind."
+        END_OF_OPT
+        EXIT_MENU
+      END_OF_MENU
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Hallo, Linguist."
+      HideChar bartender
+      SayChar cyan "Erlauben Sie mir, Ihnen zu Ihrem gelungenen Trucken zu gratulieren!"
+      SayChar cyan "Verblüffend, was Wesen mit solch rudimentärer Intelligenz zu leisten imstande sind."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Hallo, Xenomusikologe."
+      HideChar bartender
+      SayChar cyan "Yeaahhhh! Mega Massaker Deluxe! Yeaahhhhh!!!!"
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Hallo, Archäologe ohne Kleider."
+      HideChar bartender
+      SayChar cyan "?"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Delay 300
+  ChangeChar party expansions/01_alien_technologies/images/finale_party1.jpg
+  ShowChar merchant left
+  Delay 300
+  HideChar cyan
+  SayChar merchant "Was für eine tolle Party!"
+  SUB_SCRIPT merchantLaughA
+  SayChar merchant "Ich kann mich gar nicht erinnern, wann ich das letzte Mal so viel gelacht habe!"
+  ChangeChar junk_dealer expansions/01_alien_technologies/images/character_junk_dealer.png
+  ShowChar junk_dealer right
+  Delay 300
+  SayChar junk_dealer "Es war mir ein Vergnügen, mit Ihnen Geschäfte gemacht zu haben."
+  Delay 300
+  HideChar junk_dealer
+  ChangeChar merchant campaign/merch-disappointed.png
+  Delay 1000
+  SayChar merchant "Das war MEIN Text."
+  ShowChar mech right
+  SayChar mech "Hi."
+  SUB_SCRIPT merchantLaughA
+  Delay 200
+  ChangeChar party expansions/01_alien_technologies/images/finale_concert1.jpg
+  Delay 200
+  Announce "Die Band beginnt zu spielen."
+  Delay 500
+  AskChar mech "Tolle Party, was?"
+  MENU
+    OPT "Waaas?"
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Sorry, aber ich kann nichts verstehen."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  HideChar merchant
+  Delay 500
+  ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic.png
+  ShowChar catapult_fanatic left
+  SayChar catapult_fanatic "Iieeee! Mega Massaker Deluxe!"
+  ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic-happy-moving.png
+  Delay 300
+  ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic.png
+  Delay 300
+  ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic-happy-moving.png
+  AskChar mech "Ich sagte, „TOLLE PARTY!“"
+  MENU
+    OPT "JAAA! TOLLE PARTY!"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic.png
+  Delay 300
+  ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic-happy-moving.png
+  Delay 300
+  ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic.png
+  Delay 300
+  ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic-happy-moving.png
+  Delay 300
+  AskChar mech "MAGST DU MEGA MASSAKER DELUXE?"
+  MENU
+    OPT "WER DENN NICHT?"
+      EXIT_MENU
+    END_OF_OPT
+    OPT "DIE SIND WIE EINE WURZELBEHANDLUNG FÜR'S TROMMELFELL!"
+      EXIT_MENU
+    END_OF_OPT
+    OPT "DIESE MUSIK ZERSTÖRT MEIN GEHIRN!"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  SayChar mech "YEAH! SUUUPER!"
+  Delay 300
+  HideChar catapult_fanatic
+  Delay 300
+  ChangeChar party expansions/01_alien_technologies/images/finale_concert2.jpg
+  Announce "Die Band spielt weiter und die Leute sind begeistert."
+  Delay 1000
+  ChangeChar party expansions/01_alien_technologies/images/finale_concert3.jpg
+  Announce "Die Band spielte die letzte lange."
+  Delay 1000
+  ChangeChar party expansions/01_alien_technologies/images/finale_concert1.jpg
+  Announce "Die Band spielte nur zwei weitere Songs."
+  Delay 1000
+  ChangeChar party expansions/01_alien_technologies/images/finale_concert2.jpg
+  Announce "Menschen jubeln, die Band verlässt und die Party geht weiter."
+  Delay 1000
+  ChangeChar party expansions/01_alien_technologies/images/finale_party1.jpg
+  Delay 1000
+  AskChar mech "Oh, Gottseidank. Endlich wieder normal reden."
+  MENU
+    OPT "Danke, dass du deine großartigen Entwürfe mit mir geteilt hast."
+      ChangeChar mech campaign/mech-blush.png
+      Delay 500
+      Say "Jederzeit!"
+      ChangeChar mech campaign/mech.png
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Ich nehme an, du gehst jetzt, um jetzt an etwas Neuem zu arbeiten?"
+      ChangeChar mech campaign/mech-blush.png
+      Delay 500
+      Say "Ja, ich habe tatsächlich gerade eine Idee für eine neue Art Schalldämmung."
+      ChangeChar mech campaign/mech.png
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Delay 300
+  SayChar mech "Oh. Ich wollte dir einen Freund vorstellen. Er ist ebenfalls Erfinder."
+  ChangeChar designer campaign/designer.png
+  ShowChar designer left
+  Delay 400
+  SayChar mech "Er erfindet Spiele."
+  ChangeChar designer campaign/designer-hi.png
+  Delay 700
+  ChangeChar designer campaign/designer.png
+  Delay 300
+  SayChar designer "Du hast einen großartigen Job bei diesen Missionen gemacht."
+  AskChar designer "Sag mal, hast du dich je gefragt, was hinter diesen Sternen liegt?"
+  MENU
+    OPT "Ja, jetzt schon."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Eigentlich nicht."
+      Say "Naja, vielleicht solltest du das aber."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  AskChar designer "Hinter diesen Sternen warten interessante neue Mehrspieler-Missionen, voller aufregender Herausforderungen."
+  MENU
+    OPT "Du meinst neue Wege, Dinge in die Luft zu jagen?"
+      SayChar designer "Genau. Du kennst dich wirklich gut aus."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Gut, danke. Ich probiere das mal aus."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Delay 300
+  HideChar designer
+  HideChar mech
+  SUB_SCRIPT finale
+  Delay 600
+  ShowChar sailor_finale left
+  Say "... und das ist, was ich gehört habe."
+  Say "Einige Leute behaupten, sie waren dort an diesem Abend."
+  Say "Manche Leute sagen, dass epische Party an der Bar nie beendet wurde und wird noch im Gange."
+  Say "Andere sagen, [NAME] jetzt das Galaxy schweift, für neue Abenteuer zu suchen."
+  Say "Wer weiß?"
+  Delay 1500
+  HideChar sailor_finale
+  Delay 600
+  Announce "ENDE"
+  Delay 600
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT vip_rockband2_Success
+
+  ShowDlgScene
+  ChangeChar bartender campaign/bartender.png
+  ShowChar bartender left
+  Delay 300
+  Ask "Danke. Stelle die Getränkekisten einfach da drüben hin."
+  MENU
+    OPT "Wo sind denn alle? Hier ist es so still."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Das war's jetzt?"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Ask "Was haben Sie denn erwartet?"
+  MENU
+    OPT "Als ich diese Mission auf Level 1 gespielt habe, gab's eine fette Party."
+      Say "Hm. Wir können doch nicht immer eine Party schmeißen, wenn ein Trucker eine Mission beendet, oder?"
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Keine Ahnung. Nichts, denke ich."
+      Say "Gut. Dann sind Sie ja auch nicht enttäuscht."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Delay 3000
+  HideChar bartender
+  Delay 1500
+  ShowChar bartender left
+  ChangeChar tutor campaign/tutor-smile.png
+  ShowChar tutor right
+  SayChar tutor "ÜBERRASCHUNG!"
+  Delay 500
+  ShowChar party righttop
+  Delay 500
+  SayChar tutor "Wir schmeißen eine Party für dich, Neuling!"
+  Delay 300
+  HideChar bartender
+  Delay 300
+  ChangeChar foreman campaign/foreman-hello.png
+  ShowChar foreman left
+  Delay 300
+  SayChar foreman "Jungejunge! Eine Party für [g(meinen Trucker|meine Truckerin)]."
+  ChangeChar foreman campaign/foreman.png
+  SayChar foreman "Ich hab' [g(ihm|ihr)] alles beigebracht, was [g(er|sie)] weiß."
+  ChangeChar tutor campaign/tutor.png
+  SayChar tutor "Hast du nicht! Ich war's!"
+  ChangeChar foreman campaign/foreman-smile.png
+  SayChar foreman "Haha! Ich hab dich bloß hochgenommen. Ich habe [g(ihm|ihr)] alles beigebracht, was [g(er|sie)] über's in die-Luft-fliegen weiß."
+  Delay 300
+  HideChar foreman
+  HideChar tutor
+  Delay 300
+  ChangeChar pirate campaign/pirate.png
+  ShowChar pirate right
+  SayChar pirate "Johoho! Höllisch gute Mission!"
+  ChangeChar rat campaign/rat.png
+  ShowChar rat left
+  Delay 250
+  ChangeChar rat campaign/rat-turn.png
+  Delay 600
+  ChangeChar rat campaign/rat.png
+  Delay 400
+  ChangeChar rat campaign/rat-smile.png
+  Delay 1500
+  ChangeChar rat campaign/rat.png
+  Delay 150
+  AskChar rat "Und ... spendierst du mir jetzt einen Drink?"
+  MENU
+    OPT "Okay. Gut."
+      SayChar rat "Jaaa! So muss das sein!"
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Die Party ist für mich. Solltest DU mir keinen ausgeben?"
+      SayChar rat "Nö. Es ist Brauch, das es anders herum läuft."
+      SayChar rat "Du willst dich doch an die Bräuche halten, oder?"
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  HideChar pirate
+  Delay 300
+  ChangeChar richgirl campaign/rich-smile.png
+  ShowChar richgirl right
+  SayChar richgirl "Hi! Lass mich dir einen Drink ausgeben!"
+  Delay 300
+  ChangeChar rat campaign/rat-smile.png
+  Delay 300
+  SayChar rat "Dankeschön."
+  ChangeChar richgirl campaign/rich.png
+  SayChar richgirl "Nicht dir. Ich rede mit [g(dem Trucker|der Truckerin)] hier."
+  Delay 300
+  ChangeChar rat campaign/rat-frown.png
+  SayChar rat "Oh."
+  Delay 300
+  HideChar rat
+  Delay 300
+  ChangeChar richgirl campaign/rich-smile.png
+  Delay 400
+  ChangeChar richgirl campaign/rich-smile-cheer.png
+  Delay 400
+  ChangeChar richgirl campaign/rich-smile.png
+  Delay 300
+  ShowChar chairman left
+  SayChar chairman "Gut gemacht. Nicht nur in dieser Mission, ich spreche von allen Missionen."
+  SayChar chairman "Um genau zu sein, hast du alles derart gut gemacht, dass du schon fast so berühmt bist, wie ..."
+  Delay 300
+  ChangeChar richgirl campaign/rich.png
+  Delay 800
+  SayChar chairman "... Mega Massaker Deluxe."
+  ChangeChar richgirl campaign/rich-smile.png
+  Delay 800
+  HideChar chairman
+  HideChar richgirl
+  Delay 300
+  ChangeChar party expansions/01_alien_technologies/images/finale_concert1.jpg
+  Announce "Die Band beginnt zu spielen."
+  Delay 1000
+  ChangeChar party expansions/01_alien_technologies/images/finale_concert2.jpg
+  Announce "Es ist die gleiche Setlist sie jedes Mal zu spielen."
+  Delay 1000
+  ChangeChar party expansions/01_alien_technologies/images/finale_concert3.jpg
+  Announce "Nach dem dritten unnötige Solo, erinnern Sie sollte es einige schöne Feuerwerk direkt nach der Musik-Show sein."
+  Delay 1000
+  ChangeChar party expansions/01_alien_technologies/images/finale_party1.jpg
+  Delay 1000
+  SUB_SCRIPT finale
+  Delay 600
+  ShowChar sailor_finale left
+  Say "... und das ist genau das, was passiert ist."
+  Say "Ich weiß es, weil ich dort in der Nacht war."
+  Say "Und, wissen Sie, jetzt habe ich ein wenig durstig ..."
+  Say "... ja, was über eine weitere Runde?"
+  Delay 1500
+  HideChar sailor_finale
+  Delay 600
+  Announce "ENDE"
+  Delay 600
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT vip_rockband3_Success
+
+  ShowDlgScene
+  ChangeChar bartender campaign/bartender.png
+  ShowChar bartender left
+  Ask "Das war wirklich umwerfend! So viel Getränke und so viel Feuerwerk! Ich weiß gar nicht, wie du das immer anstellst."
+  MENU
+    OPT "Ach. papperlapapp. Ich mache bloß meinen Job."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Einfach war's nicht, muss ich sagen."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Der wirklich schwierige Teil war, die Rockstars schön weit weg vom Sprengstoff und Alkohol zu halten."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Say "Mit all dem Gesöff wird das bestimmt eine großartige Party!"
+  Delay 300
+  ShowChar party righttop
+  Delay 500
+  ShowChar foreman right
+  Delay 300
+  SayChar foreman "Mit all diesem Feuerwerk sollte das sogar ein Knaller werden!"
+  Delay 300
+  HideChar foreman
+  Delay 300
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
+  ShowChar artifact_runner right
+  SayChar artifact_runner "Naja, Sie mussten ja auch keine Artefakte transportieren. Trotzdem – gute Arbeit."
+  Delay 300
+  HideChar artifact_runner
+  Delay 300
+  HideChar bartender
+  Delay 300
+  ShowChar purpleDipl right
+  Delay 300
+  SayChar purpleDipl "Zzkgh't! T'kqw qw'ffr!"
+  Delay 300
+  ShowChar brown left
+  Delay 300
+  SayChar brown "..."
+  ChangeChar brown campaign/brown-purr.png
+  SayChar brown "...!"
+  Delay 300
+  HideChar purpleDipl
+  HideChar brown
+  Delay 300
+  ChangeChar ambassador campaign/ambassador.png
+  ShowChar ambassador left
+  Delay 300
+  SayChar ambassador "Ich kann dem nicht widersprechen! Meine beiden Kollegen hätten es nicht besser ausdrücken können!"
+  MENU
+    OPT "Danke."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Ähm, was haben sie denn genau gesagt?"
+      SayChar ambassador "Sie sagten, drei Rockstars auf einem derart langen Flug bei Laune zu halten, eine außergewöhnliche diplomatische Leistung gewesen ist."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  Delay 300
+  HideChar ambassador
+  Delay 300
+  ShowChar prisoner1 right
+  SayChar prisoner1 "Da ist [g(er|sie)]!"
+  SayChar prisoner1 "Mein Freund wollte [g(den Mann|die Frau)] treffen, [g(der|die)] all die anderen Trucker gerettet hat!"
+  Delay 300
+  ShowChar roughtrucker left
+  Delay 300
+  SayChar roughtrucker "Du warst das?"
+  SayChar roughtrucker "Hätte ich mir denken können."
+  Delay 300
+  HideChar roughtrucker
+  Delay 300
+  ChangeChar party expansions/01_alien_technologies/images/finale_concert1.jpg
+  Announce "Die Band beginnt zu spielen."
+  Delay 1000
+  SayChar prisoner1 "Oh! Sieht aus, als ob die Tanzfläche eröffnet wird!"
+  Delay 500
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
+  ShowChar artifact_runner left
+  Delay 500
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
+  Delay 250
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
+  Delay 250
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
+  Delay 250
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
+  Delay 250
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head-hand-up.png
+  Delay 250
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
+  Delay 250
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head-hand-up.png
+  Delay 250
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
+  Delay 250
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
+  Delay 250
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
+  Delay 250
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head.png
+  Delay 250
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
+  Delay 250
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head-hand-up.png
+  Delay 250
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
+  Delay 250
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist-leaned-head-hand-up.png
+  Delay 250
+  ChangeChar artifact_runner expansions/01_alien_technologies/images/archeologist.png
+  Delay 250
+  HideChar prisoner1
+  HideChar artifact_runner
+  Delay 300
+  ChangeChar party expansions/01_alien_technologies/images/finale_concert2.jpg
+  Announce "Die Band spielt ihre besten Songs."
+  Delay 1000
+  ChangeChar party expansions/01_alien_technologies/images/finale_concert3.jpg
+  Announce "Ist die Show fast vorbei, als die Band angekündigt, ihre Manager Nüsse aus irgendeinem Grund zu gehen und sie haben dringend zu verlassen."
+  Delay 1000
+  ChangeChar party expansions/01_alien_technologies/images/finale_party1.jpg
+  Delay 1000
+  Announce "Die Band verlässt und die Party geht weiter ..."
+  Delay 1000
+  Announce "... jeder scheint eine gute Zeit zu haben."
+  Delay 1000
+  SUB_SCRIPT finale
+  Delay 2000
+  ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic.png
+  ShowChar catapult_fanatic right
+  SayChar catapult_fanatic "Wann können wir endlich wieder fliegen?"
+  ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic-happy-moving.png
+  Delay 300
+  ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic.png
+  Delay 300
+  ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic-happy-moving.png
+  Delay 300
+  ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic.png
+  Delay 500
+  HideChar catapult_fanatic
+  Delay 600
+  Announce "ENDE"
+  Delay 600
+  HideDlgScene
+  RETURN
+END_OF_SCRIPT
+
+SCRIPT vip_rockband_Failure
+
+  ShowDlgScene
+  ChangeChar bartender campaign/bartender.png
+  ShowChar bartender left
+  Delay 300
+  IF_PROB 50
+    Say "Ach ja. Ich habe da wohl zu viel erwartet."
+    ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic.png
+    ShowChar catapult_fanatic right
+    SayChar catapult_fanatic "Ich bin bereit! Wo ist die Party?"
+    ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic-happy-moving.png
+    Delay 300
+    ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic.png
+    Delay 300
+    ChangeChar catapult_fanatic expansions/01_alien_technologies/images/catapult-fanatic-happy-moving.png
+    Delay 300
+    AskChar bartender "Mir gefällt nicht, wie er mit diesem Dosenöffner rumfuchtelt. Denken Sie, Sie könnten ..."
+    MENU
+      OPT "Ja sicher, ich versuche es nochmal."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    HideDlgScene
+    RETURN
+  ELSE
+    Say "Oh weh. Und ich habe so viele Leute zur Party eingeladen."
+    Say "Naja, wenigstens eine Person wird sich kaum beschweren."
+    Delay 300
+    ChangeChar brown campaign/brown.png
+    ShowChar brown right
+    Delay 300
+    SayChar brown "..."
+    Delay 250
+    HideDlgScene
+    RETURN
+  END_OF_IF
+END_OF_SCRIPT
+
+END_OF_SCRIPTS
