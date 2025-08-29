@@ -8,10 +8,16 @@ const { getLogger } = require('./src/utils/logger');
 const path = require('path');
 const fs = require('fs');
 
-// Usa configurazione specifica per server2
+// SOVRASCRIVE COMPLETAMENTE IL CONFIG PER TUTTO IL PROCESSO SERVER2
+// Questo fa sì che tutti i require('./src/config/config') usino config2
 const config2 = require('./src/config/config2');
+require.cache[require.resolve('./src/config/config')] = {
+  id: require.resolve('./src/config/config'),
+  exports: config2,
+  loaded: true
+};
 
-// Import routes
+// Import routes - ora useranno automaticamente config2
 const apiRoutes = require('./src/routes/apiRoutes');
 const scriptsRoutes = require('./src/routes/scriptsRoutes');
 const missionsRoutes = require('./src/routes/missionsRoutes');
@@ -23,11 +29,6 @@ const exportRoutes = require('./src/routes/exportRoutes');
 const app = express();
 const PORT = config2.PORT || 3002;
 const logger = getLogger();
-
-// Override del config per usare i path del secondo server
-const config = require('./src/config/config');
-config.GAME_HOST = config2.GAME_BASE_PATH || 'C:/Program Files (x86)/Steam/steamapps/common/Galaxy Trucker';
-config.SERVER_PORT = config2.PORT;
 
 // Verifica che il path del gioco esista
 const gamePath = config2.GAME_BASE_PATH || './GAMEFOLDER2';
