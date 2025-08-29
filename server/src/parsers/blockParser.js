@@ -721,7 +721,7 @@ function parseNextElement(lines, startIndex, language = 'EN', recursionDepth = 0
   // 2. Controlla se è un COMANDO
   const commandMatch = identifyCommand(line);
   if (commandMatch) {
-    return parseCommand(line, commandMatch, language, startIndex, recursionDepth);
+    return parseCommand(line, commandMatch, language, startIndex);
   }
   
   // 3. Fallback comando generico
@@ -1036,6 +1036,7 @@ function parseCommand(line, commandMatch, language, lineIndex) {
     if (commandDef.params && match.length > 1) {
       commandDef.params.forEach((paramDef, index) => {
         let paramValue = match[index + 1];
+        const [paramName, paramType] = paramDef.split(':');
         
         // Gestione speciale per comandi che supportano sia con che senza virgolette
         if ((commandName === 'ADDINFOWINDOW' || commandName === 'SHOWINFOWINDOW') && index === 0) {
@@ -1053,8 +1054,6 @@ function parseCommand(line, commandMatch, language, lineIndex) {
           // match[2] è per con virgolette, match[3] è per senza
           paramValue = match[2] || match[3];
         }
-        
-        const [paramName, paramType] = paramDef.split(':');
         
         if (paramType === 'multilingual') {
           commandObject.parameters[paramName] = { [language]: paramValue };
