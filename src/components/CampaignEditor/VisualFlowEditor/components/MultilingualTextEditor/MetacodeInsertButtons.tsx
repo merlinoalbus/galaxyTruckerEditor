@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Type, Hash, Image, User, ChevronDown, RefreshCw } from 'lucide-react';
+import { Type, Hash, Image, User, Monitor, ChevronDown, RefreshCw } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/locales';
 import { API_CONFIG } from '@/config/constants';
 
 interface MetacodeInsertButtonsProps {
   onInsert: (metacode: string) => void;
-  onOpenModal?: (type: 'gender' | 'number' | 'image', mousePos?: { x: number; y: number }) => void;
+  onOpenModal?: (type: 'gender' | 'number' | 'image' | 'viewport', mousePos?: { x: number; y: number }) => void;
   disabled?: boolean;
   focusedField?: string | null;
   currentLang?: string; // Lingua corrente del campo focalizzato
@@ -31,7 +31,7 @@ const useTop5Metacodes = (language?: string, scriptId?: string) => {
   useEffect(() => {
     // Non caricare metacodes per EN (non editabile)
     if (activeLang === 'EN') {
-      setTopMetacodes({ gender: [], number: [], image: [], name: [] });
+      setTopMetacodes({ gender: [], number: [], image: [], name: [], viewport: [] });
       setLoading(false);
       return;
     }
@@ -46,7 +46,7 @@ const useTop5Metacodes = (language?: string, scriptId?: string) => {
     // Se già in caricamento per questa lingua, non bloccare (permetti a tutti di inizializzarsi)
     if (loadingLanguages.has(activeLang)) {
       setLoading(false); // Non bloccare, sarà aggiornato quando il primo finisce
-      setTopMetacodes(metacodesCache[cacheKey] || { gender: [], number: [], image: [], name: [] });
+      setTopMetacodes(metacodesCache[cacheKey] || { gender: [], number: [], image: [], name: [], viewport: [] });
       return;
     }
 
@@ -61,14 +61,14 @@ const useTop5Metacodes = (language?: string, scriptId?: string) => {
           setTopMetacodes(result.data);
         } else {
           // Nessun fallback - solo dati reali
-          const emptyData = { gender: [], number: [], image: [], name: [] };
+          const emptyData = { gender: [], number: [], image: [], name: [], viewport: [] };
           metacodesCache[cacheKey] = emptyData;
           setTopMetacodes(emptyData);
         }
       } catch (error) {
         // Se il backend non è raggiungibile, lista vuota
         console.info(`Backend non disponibile - nessun top 5 per lingua ${activeLang}`);
-        const emptyData = { gender: [], number: [], image: [], name: [] };
+        const emptyData = { gender: [], number: [], image: [], name: [], viewport: [] };
         metacodesCache[cacheKey] = emptyData;
         setTopMetacodes(emptyData);
       } finally {
@@ -99,6 +99,7 @@ export const MetacodeInsertButtons: React.FC<MetacodeInsertButtonsProps> = ({
   const menuRef = useRef<HTMLDivElement>(null);
   const genderButtonRef = useRef<HTMLButtonElement>(null);
   const numberButtonRef = useRef<HTMLButtonElement>(null);
+  const viewportButtonRef = useRef<HTMLButtonElement>(null);
   const imageButtonRef = useRef<HTMLButtonElement>(null);
 
   // Chiudi menu quando si clicca fuori
@@ -126,7 +127,7 @@ export const MetacodeInsertButtons: React.FC<MetacodeInsertButtonsProps> = ({
     setActiveMenu(null);
   };
 
-  const handleCustomInsert = (type: 'gender' | 'number' | 'image', event: React.MouseEvent) => {
+  const handleCustomInsert = (type: 'gender' | 'number' | 'image' | 'viewport', event: React.MouseEvent) => {
     // CATTURA LA POSIZIONE DEL MOUSE DALL'EVENTO
     const mousePos = { x: event.clientX, y: event.clientY };
     
@@ -148,6 +149,9 @@ export const MetacodeInsertButtons: React.FC<MetacodeInsertButtonsProps> = ({
           break;
         case 'image':
           customCode = '[img()*1]';
+          break;
+        case 'viewport':
+          customCode = '[v(|)]';
           break;
       }
       onInsert(customCode);
@@ -214,6 +218,67 @@ export const MetacodeInsertButtons: React.FC<MetacodeInsertButtonsProps> = ({
                     {t('visualFlowEditor.metacode.genderMetacodes')}
                   </div>
                   {topMetacodes.gender.map((item: any, index: number) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => handleMetacodeSelect(item.code)}
+                      className="w-full flex items-center justify-between px-2 py-1 text-xs text-gray-300 hover:bg-slate-700 rounded transition-colors"
+                    >
+                      <span className="font-mono">{item.label}</span>
+                      <span className="text-[10px] text-gray-500">{item.usage}</span>
+                    </button>
+                  ))}
+                </>
+              ) : (
+                <div className="px-2 py-2 text-xs text-gray-500 text-center">
+                  {t('visualFlowEditor.metacode.noDataAvailable')}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Pulsante Viewport */}
+      <div className="relative">
+        <button
+          ref={viewportButtonRef}
+          type="button"
+          onClick={() => handleButtonClick('viewport')}
+          disabled={isDisabled}
+          className={`flex items-center gap-0.5 px-1.5 py-0.5 text-xs rounded transition-colors ${
+            isDisabled 
+              ? 'bg-slate-700/50 text-gray-500 cursor-not-allowed' 
+              : activeMenu === 'viewport'
+                ? 'bg-orange-500 text-white'
+                : 'bg-slate-700 text-gray-300 hover:bg-slate-600'
+          }`}
+          title={isDisabled ? t('visualFlowEditor.metacode.selectTextField') : t('visualFlowEditor.metacode.insertGenderMetacode')}
+        >
+          <Monitor className="w-3 h-3" />
+          <span className="text-[10px]">V</span>
+          <ChevronDown className="w-2.5 h-2.5" />
+        </button>
+        
+        {activeMenu === 'viewport' && !isDisabled && (
+          <div className="absolute top-full left-0 mt-1 w-48 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-50">
+            <div className="p-1">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCustomInsert('viewport', e);
+                }}
+                className="w-full px-2 py-1 text-xs text-orange-400 hover:bg-slate-700 rounded transition-colors text-left border-b border-slate-700 mb-1"
+              >
+                {t('visualFlowEditor.metacode.custom')}
+              </button>
+              {(topMetacodes?.viewport || []).length > 0 ? (
+                <>
+                  <div className="px-2 py-1 text-[10px] font-semibold text-gray-400 uppercase">
+                    Viewport Metacodes
+                  </div>
+                  {topMetacodes.viewport.map((item: any, index: number) => (
                     <button
                       key={index}
                       type="button"
@@ -413,12 +478,12 @@ export const refreshMetacodesCache = async (language: string = 'IT', scriptId?: 
       metacodesCache[cacheKey] = result.data;
       return result.data;
     } else {
-      const emptyData = { gender: [], number: [], image: [], name: [] };
+      const emptyData = { gender: [], number: [], image: [], name: [], viewport: [] };
       metacodesCache[cacheKey] = emptyData;
       return emptyData;
     }
   } catch (error) {
-    const emptyData = { gender: [], number: [], image: [], name: [] };
+    const emptyData = { gender: [], number: [], image: [], name: [], viewport: [] };
     metacodesCache[cacheKey] = emptyData;
     return emptyData;
   }

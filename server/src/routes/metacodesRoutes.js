@@ -14,10 +14,12 @@ const REGEX_CONSTANTS = {
   NUMBER_ITERATIONS: 500,
   IMAGE_ITERATIONS: 500,
   NAME_ITERATIONS: 1000,
+  VIEWPORT_ITERATIONS: 500,
   GENDER_TIMEOUT: 1000, // ms
   NUMBER_TIMEOUT: 1000, // ms
   IMAGE_TIMEOUT: 1000, // ms
-  NAME_TIMEOUT: 500 // ms
+  NAME_TIMEOUT: 500, // ms
+  VIEWPORT_TIMEOUT: 1000 // ms
 };
 
 const CACHE_CONSTANTS = {
@@ -177,7 +179,8 @@ async function analyzeMetacodesUsage() {
       gender: {},
       number: {},
       image: {},
-      name: { '[NAME]': 0 }
+      name: { '[NAME]': 0 },
+      viewport: {}
     };
   });
 
@@ -317,6 +320,14 @@ function analyzeContent(content, metacodesCount) {
       metacodesCount.image[key] = (metacodesCount.image[key] || 0) + 1;
     });
 
+    // Pattern per viewport [v(mobile|desktop)] - with safe execution
+    const viewportPattern = /\[v\(([^|)]*)\|([^|)]*)?\)\]/g;
+    const viewportMatches = safeRegexExec(viewportPattern, content, REGEX_CONSTANTS.VIEWPORT_ITERATIONS, REGEX_CONSTANTS.VIEWPORT_TIMEOUT);
+    viewportMatches.forEach(match => {
+      const key = `[v(${match[1]}|${match[2] || ''})]`;
+      metacodesCount.viewport[key] = (metacodesCount.viewport[key] || 0) + 1;
+    });
+
     // Pattern per nome - solo [NAME] - with safe execution and length limit
     const namePattern = /\[NAME\]/g;
     const nameMatches = safeRegexExec(namePattern, content, REGEX_CONSTANTS.NAME_ITERATIONS, REGEX_CONSTANTS.NAME_TIMEOUT);
@@ -346,7 +357,8 @@ function formatTop5Metacodes(metacodesCount) {
     gender: [],
     number: [],
     image: [],
-    name: []
+    name: [],
+    viewport: []
   };
 
   // Ordina e prendi top 5 per genere
@@ -396,6 +408,22 @@ function formatTop5Metacodes(metacodesCount) {
     }
     const path = match ? match[1] : 'unknown';
     const label = path.split('/').pop()?.split('.')[0] || 'img';
+    return { code, label, usage };
+  });
+
+  // Ordina e prendi top 5 per viewport
+  const viewportSorted = Object.entries(metacodesCount.viewport)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+  
+  result.viewport = viewportSorted.map(([code, usage]) => {
+    let match = null;
+    try {
+      match = code.match(/\[v\(([^|]*)\|([^|]*)\)\]/);
+    } catch (error) {
+      logger.warn('Regex timeout in viewport formatting:', error);
+    }
+    const label = match ? `${match[1] || '∅'}/${match[2] || '∅'}` : code;
     return { code, label, usage };
   });
 
@@ -480,7 +508,8 @@ router.get('/top5/:lang?', async (req, res) => {
           gender: [],
           number: [],
           image: [],
-          name: []
+          name: [],
+          viewport: []
         },
         language: requestedLang,
         message: 'Language not supported or no data available'
@@ -505,7 +534,8 @@ router.get('/top5/:lang?', async (req, res) => {
         gender: [],
         number: [],
         image: [],
-        name: []
+        name: [],
+        viewport: []
       }
     });
   }

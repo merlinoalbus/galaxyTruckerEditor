@@ -1,20 +1,22 @@
 // Parser e utilities per i metacodici del sistema multilingua
 
 export interface ParsedMetacode {
-  type: 'gender' | 'number' | 'image' | 'name';
+  type: 'gender' | 'number' | 'image' | 'name' | 'viewport';
   raw: string;
   start: number;
   end: number;
-  data: GenderData | NumberData | ImageData | string | null;
+  data: GenderData | NumberData | ImageData | ViewportData | string | null;
   prefix?: string; // Testo prima del metacodice (es: "Giovann" in "Giovann[g(i|a)]")
-  extendedRaw?: string; // Forma estesa completa (es: "Giovann[g(i|a)]")
+  extendedRaw?: string; // Forma estesa completa (es: "Giovann[g(i|a)]ino")
   extendedStart?: number; // Inizio della forma estesa
+  extendedEnd?: number; // Fine della forma estesa (include suffisso)
 }
 
 export interface GenderData {
   male: string;
   female: string;
   neutral: string;
+  suffix?: string;
 }
 
 export interface NumberData {
@@ -22,6 +24,13 @@ export interface NumberData {
     threshold: number;
     text: string;
   }>;
+  suffix?: string;
+}
+
+export interface ViewportData {
+  mobile: string;
+  desktop: string;
+  suffix?: string;
 }
 
 export interface ImageData {
@@ -35,6 +44,10 @@ const PATTERNS = {
   // Genere: pelos[g(o|a)] oppure pelos[g(o|a|neutro)] oppure Giovann[g(i|a)] => Maschile: peloso/Giovanni | Femminile: pelosa/Giovanna | Neutro: pelos/pelosneutro
   // Il pattern ora cattura correttamente anche testo esteso prima del metacodice
   gender: /\[g\(([^|)]*)\|([^|)]*)(?:\|([^)]*))?\)\]/g,
+  
+  // Viewport: Interface[v(Mobile|Desktop)] => Mobile: InterfaceMobile | Desktop: InterfaceDesktop
+  // Funziona esattamente come genere ma con 2 opzioni invece di 3
+  viewport: /\[v\(([^|)]*)\|([^|)]*)\)\]/g,
   
   // Numero: supporta quantificatori multipli [n(2:prove|6:test|10:altro)] o il formato legacy [n(1:o|2:i)]
   number: /\[n\((?:\d+:[^|)]+(?:\||(?=\))))+\)\]/g,
@@ -66,22 +79,32 @@ export function parseMetacodes(text: string): ParsedMetacode[] {
   let match;
   PATTERNS.gender.lastIndex = 0;
   while ((match = PATTERNS.gender.exec(text)) !== null) {
-    // Trova il prefisso (testo dall'ultimo spazio o ] prima della [)
+    // Trova il prefisso: prendiamo la parola immediatamente prima del metacodice
+    // (caratteri alfanumerici e lettere Unicode). Questo evita di includere
+    // punteggiatura o simboli nel prefisso.
     let prefixStart = match.index - 1;
     let prefix = '';
-    
-    // Cerca indietro fino a trovare uno spazio, ], o l'inizio del testo
-    while (prefixStart >= 0 && 
-           text[prefixStart] !== ' ' && 
-           text[prefixStart] !== '\n' && 
-           text[prefixStart] !== '\t' &&
-           text[prefixStart] !== ']') {
+
+    // Cerca indietro finché incontriamo caratteri di parola unicode
+    while (prefixStart >= 0 && /[\w\u00C0-\u024F\u1E00-\u1EFF]/.test(text[prefixStart])) {
       prefixStart--;
     }
     prefixStart++; // Torna al primo carattere del prefisso
-    
+
     if (prefixStart < match.index) {
       prefix = text.substring(prefixStart, match.index);
+    }
+    
+    // Trova il suffisso: sequenza continua di caratteri di parola unicode
+    // immediatamente dopo la chiusura del metacodice (es: "...][suff]")
+    let suffixStart = match.index + match[0].length;
+    let suffixEnd = suffixStart;
+    let suffix = '';
+    while (suffixEnd < text.length && /[\w\u00C0-\u024F\u1E00-\u1EFF]/.test(text[suffixEnd])) {
+      suffixEnd++;
+    }
+    if (suffixEnd > suffixStart) {
+      suffix = text.substring(suffixStart, suffixEnd);
     }
     
     metacodes.push({
@@ -92,33 +115,81 @@ export function parseMetacodes(text: string): ParsedMetacode[] {
       data: {
         male: match[1] || '',
         female: match[2] || '',
-        neutral: match[3] || ''
+        neutral: match[3] || '',
+        suffix: suffix
       } as GenderData,
       prefix: prefix,
-      extendedRaw: prefix + match[0],
-      extendedStart: prefixStart
+      extendedRaw: prefix + match[0] + suffix,
+      extendedStart: prefixStart,
+      extendedEnd: suffixEnd
+    });
+  }
+  
+  // Parse viewport metacodes con supporto per testo esteso  
+  PATTERNS.viewport.lastIndex = 0;
+  while ((match = PATTERNS.viewport.exec(text)) !== null) {
+    // Trova il prefisso: prendiamo la parola immediatamente prima del metacodice
+    let prefixStart = match.index - 1;
+    let prefix = '';
+    while (prefixStart >= 0 && /[\w\u00C0-\u024F\u1E00-\u1EFF]/.test(text[prefixStart])) {
+      prefixStart--;
+    }
+    prefixStart++;
+    if (prefixStart < match.index) {
+      prefix = text.substring(prefixStart, match.index);
+    }
+    
+    // Trova il suffisso: sequenza di caratteri di parola Unicode dopo il metacodice
+    let suffixStart = match.index + match[0].length;
+    let suffixEnd = suffixStart;
+    let suffix = '';
+    while (suffixEnd < text.length && /[\w\u00C0-\u024F\u1E00-\u1EFF]/.test(text[suffixEnd])) {
+      suffixEnd++;
+    }
+    if (suffixEnd > suffixStart) {
+      suffix = text.substring(suffixStart, suffixEnd);
+    }
+    
+    metacodes.push({
+      type: 'viewport',
+      raw: match[0],
+      start: match.index,
+      end: match.index + match[0].length,
+      data: {
+        mobile: match[1] || '',
+        desktop: match[2] || '',
+        suffix: suffix
+      } as ViewportData,
+      prefix: prefix,
+      extendedRaw: prefix + match[0] + suffix,
+      extendedStart: prefixStart,
+      extendedEnd: suffixEnd
     });
   }
   
   // Parse number metacodes con supporto per testo esteso
   PATTERNS.number.lastIndex = 0;
   while ((match = PATTERNS.number.exec(text)) !== null) {
-    // Trova il prefisso (testo dall'ultimo spazio o ] prima della [)
+    // Trova il prefisso: prendiamo la parola immediatamente prima del metacodice
     let prefixStart = match.index - 1;
     let prefix = '';
-    
-    // Cerca indietro fino a trovare uno spazio, ], o l'inizio del testo
-    while (prefixStart >= 0 && 
-           text[prefixStart] !== ' ' && 
-           text[prefixStart] !== '\n' && 
-           text[prefixStart] !== '\t' &&
-           text[prefixStart] !== ']') {
+    while (prefixStart >= 0 && /[\w\u00C0-\u024F\u1E00-\u1EFF]/.test(text[prefixStart])) {
       prefixStart--;
     }
-    prefixStart++; // Torna al primo carattere del prefisso
-    
+    prefixStart++;
     if (prefixStart < match.index) {
       prefix = text.substring(prefixStart, match.index);
+    }
+    
+    // Trova il suffisso: sequenza di caratteri di parola Unicode dopo il metacodice
+    let suffixStart = match.index + match[0].length;
+    let suffixEnd = suffixStart;
+    let suffix = '';
+    while (suffixEnd < text.length && /[\w\u00C0-\u024F\u1E00-\u1EFF]/.test(text[suffixEnd])) {
+      suffixEnd++;
+    }
+    if (suffixEnd > suffixStart) {
+      suffix = text.substring(suffixStart, suffixEnd);
     }
     
     // Estrai i quantificatori dal match
@@ -132,7 +203,7 @@ export function parseMetacodes(text: string): ParsedMetacode[] {
       if (threshold && text) {
         quantifiers.push({
           threshold: parseInt(threshold, 10),
-          text: text
+          text: text // Testo senza suffisso
         });
       }
     });
@@ -145,10 +216,11 @@ export function parseMetacodes(text: string): ParsedMetacode[] {
       raw: match[0],
       start: match.index,
       end: match.index + match[0].length,
-      data: { quantifiers } as NumberData,
+      data: { quantifiers, suffix } as NumberData,
       prefix: prefix,
-      extendedRaw: prefix + match[0],
-      extendedStart: prefixStart
+      extendedRaw: prefix + match[0] + suffix,
+      extendedStart: prefixStart,
+      extendedEnd: suffixEnd
     });
   }
   
@@ -192,7 +264,8 @@ export function resolveMetacode(
   genderState: 'male' | 'female' | 'disabled',
   numberState: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 20 | 30 | 40 | 50 | 100 | 'more' | 'disabled',
   playerName: string = 'Player',
-  numberValue?: number
+  numberValue?: number,
+  viewportState?: 'mobile' | 'desktop' | 'disabled'
 ): string {
   switch (metacode.type) {
     case 'gender':
@@ -201,15 +274,33 @@ export function resolveMetacode(
         // Mostra il metacodice esteso completo
         return metacode.extendedRaw || metacode.raw;
       }
-      // Costruisci la forma risolta con il prefisso
+      // Costruisci la forma risolta con prefisso e suffisso
       const prefix = metacode.prefix || '';
+      const suffix = genderData.suffix || '';
       if (genderState === 'male') {
-        return prefix + genderData.male;
+        return prefix + genderData.male + suffix;
       }
       if (genderState === 'female') {
-        return prefix + genderData.female;
+        return prefix + genderData.female + suffix;
       }
-      return prefix + (genderData.neutral || '');
+      return prefix + (genderData.neutral || '') + suffix;
+      
+    case 'viewport':
+      const viewportData = metacode.data as ViewportData;
+      if (viewportState === 'disabled') {
+        // Mostra il metacodice esteso completo
+        return metacode.extendedRaw || metacode.raw;
+      }
+      // Costruisci la forma risolta con prefisso e suffisso
+      const viewportPrefix = metacode.prefix || '';
+      const viewportSuffix = viewportData.suffix || '';
+      if (viewportState === 'mobile') {
+        return viewportPrefix + viewportData.mobile + viewportSuffix;
+      }
+      if (viewportState === 'desktop') {
+        return viewportPrefix + viewportData.desktop + viewportSuffix;
+      }
+      return viewportPrefix + viewportData.mobile + viewportSuffix;
       
     case 'number':
       const numberData = metacode.data as NumberData;
@@ -250,7 +341,8 @@ export function resolveMetacode(
         }
       }
       
-      return numPrefix + selectedText;
+      const numSuffix = numberData.suffix || '';
+      return numPrefix + selectedText + numSuffix;
       
     case 'image':
       const imageData = metacode.data as ImageData;
@@ -279,7 +371,8 @@ export function processText(
   genderState: 'male' | 'female' | 'disabled',
   numberState: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 20 | 30 | 40 | 50 | 100 | 'more' | 'disabled',
   playerName: string = 'Player',
-  numberValue?: number
+  numberValue?: number,
+  viewportState?: 'mobile' | 'desktop' | 'disabled'
 ): string {
   const metacodes = parseMetacodes(text);
   
@@ -298,9 +391,10 @@ export function processText(
     processedText += text.substring(lastEnd, actualStart);
     
     // Risolvi e aggiungi il metacodice
-    processedText += resolveMetacode(metacode, genderState, numberState, playerName, numberValue);
+    processedText += resolveMetacode(metacode, genderState, numberState, playerName, numberValue, viewportState);
     
-    lastEnd = metacode.end;
+    // Per pattern estesi, usa extendedEnd per saltare anche il suffisso
+    lastEnd = metacode.extendedEnd !== undefined ? metacode.extendedEnd : metacode.end;
   }
   
   // Aggiungi il testo rimanente
@@ -325,48 +419,94 @@ export function generateExtendedGenderCode(male: string, female: string, neutral
   
   // Trova il prefisso comune più lungo
   let commonPrefix = '';
-  const hasNeutral = neutral !== undefined && neutral !== null;
-  
+  const hasNeutral = neutral !== undefined && neutral !== null && neutral !== '';
+
   // Calcola la lunghezza minima considerando solo le stringhe non vuote
-  const lengths = [male.length, female.length];
-  if (hasNeutral && neutral) {
-    lengths.push(neutral.length);
+  const candidates = [male, female].concat(hasNeutral ? [neutral as string] : []);
+  const minLength = Math.min(...candidates.map(s => s.length));
+
+  for (let i = 0; i < minLength; i++) {
+    const ch = candidates[0][i];
+    if (candidates.every(s => s[i] === ch)) {
+      commonPrefix += ch;
+    } else {
+      break;
+    }
   }
-  const minLength = Math.min(...lengths.filter(l => l > 0));
+
+  // Rimuovi il prefisso comune dalle stringhe e calcola il suffisso comune
+  const remaining = candidates.map(s => s.substring(commonPrefix.length));
+  let commonSuffix = '';
+  const minRem = Math.min(...remaining.map(s => s.length));
+  for (let i = 1; i <= minRem; i++) {
+    const ch = remaining[0][remaining[0].length - i];
+    if (remaining.every(s => s[s.length - i] === ch)) {
+      commonSuffix = ch + commonSuffix;
+    } else {
+      break;
+    }
+  }
+
+  // Estrai le parti variabili (core) senza prefisso e suffisso comuni
+  const cores = candidates.map(s => s.substring(commonPrefix.length, s.length - commonSuffix.length || s.length));
+
+  // Genera il metacodice ottimizzato con suffisso riattaccato alla fine
+  if (hasNeutral) {
+    return `${commonPrefix}[g(${cores[0]}|${cores[1]}|${cores[2]})]${commonSuffix}`;
+  } else {
+    return `${commonPrefix}[g(${cores[0]}|${cores[1]})]${commonSuffix}`;
+  }
+}
+
+/**
+ * Genera il codice metacodice per viewport
+ */
+export function generateViewportCode(mobile: string, desktop: string): string {
+  return `[v(${mobile}|${desktop})]`;
+}
+
+/**
+ * Genera il codice metacodice esteso per viewport con ottimizzazione
+ * Es: "Mobile", "Desktop" => "Mobil[v(e|e)]" oppure "App", "Web" => "[v(App|Web)]"
+ */
+export function generateExtendedViewportCode(mobile: string, desktop: string): string {
+  if (!mobile && !desktop) return '';
+  
+  // Trova il prefisso comune più lungo
+  let commonPrefix = '';
+  const minLength = Math.min(mobile.length, desktop.length);
   
   for (let i = 0; i < minLength; i++) {
-    const maleChar = male[i] || '';
-    const femaleChar = female[i] || '';
-    
-    // Se neutral è presente, confronta anche con esso
-    if (hasNeutral && neutral) {
-      const neutralChar = neutral[i] || '';
-      if (maleChar === femaleChar && maleChar === neutralChar) {
-        commonPrefix += maleChar;
-      } else {
-        break;
-      }
+    if (mobile[i] === desktop[i]) {
+      commonPrefix += mobile[i];
     } else {
-      // Solo confronto male/female
-      if (maleChar === femaleChar) {
-        commonPrefix += maleChar;
-      } else {
-        break;
-      }
+      break;
     }
   }
   
-  // Estrai le parti variabili
-  const maleSuffix = male.substring(commonPrefix.length);
-  const femaleSuffix = female.substring(commonPrefix.length);
-  const neutralSuffix = neutral ? neutral.substring(commonPrefix.length) : '';
+  // Trova il suffisso comune più lungo (scorrendo dalla fine)
+  let commonSuffix = '';
+  const remainingMobile = mobile.substring(commonPrefix.length);
+  const remainingDesktop = desktop.substring(commonPrefix.length);
+  const suffixMinLength = Math.min(remainingMobile.length, remainingDesktop.length);
+  
+  for (let i = 1; i <= suffixMinLength; i++) {
+    const mobileChar = remainingMobile[remainingMobile.length - i];
+    const desktopChar = remainingDesktop[remainingDesktop.length - i];
+    
+    if (mobileChar === desktopChar) {
+      commonSuffix = mobileChar + commonSuffix;
+    } else {
+      break;
+    }
+  }
+  
+  // Estrai le parti variabili (senza prefisso e suffisso comuni)
+  const mobileCore = remainingMobile.substring(0, remainingMobile.length - commonSuffix.length);
+  const desktopCore = remainingDesktop.substring(0, remainingDesktop.length - commonSuffix.length);
   
   // Genera il metacodice ottimizzato
-  if (neutral) {
-    return `${commonPrefix}[g(${maleSuffix}|${femaleSuffix}|${neutralSuffix})]`;
-  } else {
-    return `${commonPrefix}[g(${maleSuffix}|${femaleSuffix})]`;
-  }
+  return `${commonPrefix}[v(${mobileCore}|${desktopCore})]${commonSuffix}`;
 }
 
 /**
@@ -397,34 +537,38 @@ export function generateExtendedNumberCode(quantifiers: Array<{threshold: number
   let commonPrefix = '';
   if (sorted.length > 0) {
     const firstText = sorted[0].text;
-    
     for (let i = 0; i < firstText.length; i++) {
       const char = firstText[i];
-      let allMatch = true;
-      
-      for (let j = 1; j < sorted.length; j++) {
-        if (!sorted[j].text || sorted[j].text[i] !== char) {
-          allMatch = false;
-          break;
-        }
-      }
-      
-      if (allMatch) {
+      if (sorted.every(s => s.text[i] === char)) {
         commonPrefix += char;
       } else {
         break;
       }
     }
   }
-  
-  // Estrai le parti variabili (suffissi dopo il prefisso comune)
+
+  // Calcola suffisso comune tra tutti i testi (dopo il prefisso)
+  const textsAfterPrefix = sorted.map(s => s.text.substring(commonPrefix.length));
+  let commonSuffix = '';
+  if (textsAfterPrefix.length > 0) {
+    const minRem = Math.min(...textsAfterPrefix.map(s => s.length));
+    for (let i = 1; i <= minRem; i++) {
+      const ch = textsAfterPrefix[0][textsAfterPrefix[0].length - i];
+      if (textsAfterPrefix.every(s => s[s.length - i] === ch)) {
+        commonSuffix = ch + commonSuffix;
+      } else {
+        break;
+      }
+    }
+  }
+
+  // Costruisci le parti centrali (senza prefisso e suffisso)
   const parts = sorted.map(q => {
-    const suffix = q.text.substring(commonPrefix.length);
-    return `${q.threshold}:${suffix}`;
+    const core = q.text.substring(commonPrefix.length, q.text.length - commonSuffix.length || q.text.length);
+    return `${q.threshold}:${core}`;
   });
-  
-  // Genera il metacodice ottimizzato
-  return `${commonPrefix}[n(${parts.join('|')})]`;
+
+  return `${commonPrefix}[n(${parts.join('|')})]${commonSuffix}`;
 }
 
 /**
@@ -450,7 +594,8 @@ export function extractBaseText(text: string, metacodeStart: number): string {
 export function getMetacodeContext(text: string, metacode: ParsedMetacode): string {
   // Trova l'inizio della parola prima del metacodice
   // Includiamo lettere, numeri e caratteri Unicode per supportare nomi completi
-  let wordStart = metacode.start - 1;
+  // Se il metacodice è esteso, considera extendedStart per includere il prefisso
+  let wordStart = (metacode.extendedStart !== undefined ? metacode.extendedStart : metacode.start) - 1;
   while (wordStart >= 0 && /[\w\u00C0-\u024F\u1E00-\u1EFF]/.test(text[wordStart])) {
     wordStart--;
   }

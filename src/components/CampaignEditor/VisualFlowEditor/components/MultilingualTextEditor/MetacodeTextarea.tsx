@@ -9,6 +9,7 @@ interface MetacodeTextareaProps {
   className?: string;
   genderState: 'male' | 'female' | 'disabled';
   numberState: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 20 | 30 | 40 | 50 | 100 | 'more' | 'disabled';
+  viewportState: 'mobile' | 'desktop' | 'disabled';
   onMetacodeClick?: (metacode: ParsedMetacode, mousePos?: { x: number; y: number }) => void;
   onFocus?: (cursorPosition: number) => void;
   onBlur?: () => void;
@@ -22,6 +23,7 @@ export const MetacodeTextarea: React.FC<MetacodeTextareaProps> = ({
   className = '',
   genderState,
   numberState,
+  viewportState,
   onMetacodeClick,
   onFocus,
   onBlur,
@@ -62,6 +64,7 @@ export const MetacodeTextarea: React.FC<MetacodeTextareaProps> = ({
       const isActive = 
         (metacode.type === 'gender' && genderState !== 'disabled') ||
         (metacode.type === 'number' && numberState !== 'disabled') ||
+        (metacode.type === 'viewport' && viewportState !== 'disabled') ||
         metacode.type === 'image' ||
         metacode.type === 'name';
       
@@ -72,14 +75,16 @@ export const MetacodeTextarea: React.FC<MetacodeTextareaProps> = ({
           genderState,
           numberState,
           t('visualFlowEditor.metacode.playerDefault'),
-          2
+          2,
+          viewportState
         );
         
         const bgColor = 
           metacode.type === 'gender' ? 'bg-blue-500/20' :
           metacode.type === 'number' ? 'bg-green-500/20' :
+          metacode.type === 'viewport' ? 'bg-orange-500/20' :
           metacode.type === 'image' ? 'bg-purple-500/20' :
-          metacode.type === 'name' ? 'bg-orange-500/20' :
+          metacode.type === 'name' ? 'bg-yellow-500/20' :
           'bg-gray-500/20';
         
         elements.push(
@@ -113,8 +118,9 @@ export const MetacodeTextarea: React.FC<MetacodeTextareaProps> = ({
         );
       }
       
-      // Aggiorna lastEnd con la fine del metacodice esteso
-      lastEnd = metacode.end;
+  // Aggiorna lastEnd con la fine del metacodice esteso (se presente) per evitare
+  // che il suffisso venga renderizzato di nuovo dopo la risoluzione del metacodice
+  lastEnd = metacode.extendedEnd !== undefined ? metacode.extendedEnd : metacode.end;
     });
     
     // Aggiungi testo rimanente
