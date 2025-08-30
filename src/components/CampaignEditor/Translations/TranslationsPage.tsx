@@ -1385,7 +1385,7 @@ export const TranslationsPage: React.FC = () => {
       
       // Estrai TUTTI i campi di traduzione dai blocchi (NON filtrati)
       const allFields = extractTranslationFields(allBlocks, availableLanguages);
-      
+
       // Applica filtro sui campi estratti se ricerca attiva
       let fields = allFields;
       if (globalSearchTerm && globalSearchTerm.trim()) {
@@ -1399,8 +1399,65 @@ export const TranslationsPage: React.FC = () => {
           }
           return false;
         });
+
+        // Se non troviamo campi ma la mission è stata segnalata dal batch search,
+        // facciamo un fallback più permissivo cercando il termine nella rappresentazione JSON
+        // di ogni blocco (utile se i campi sono annidati o hanno nomi inaspettati).
+        if (fields.length === 0 && globalSearchTerm.trim()) {
+          console.debug('Fallback: nessun campo trovato via extractTranslationFields, provo ricerca JSON nei blocchi mission.');
+          const matchingBlocks: IFlowBlock[] = [];
+          const searchLower = globalSearchTerm.toLowerCase();
+
+          const searchBlockRec = (list: IFlowBlock[]) => {
+            for (const b of list) {
+              try {
+                const jsonStr = JSON.stringify(b).toLowerCase();
+                if (jsonStr.includes(searchLower)) {
+                  matchingBlocks.push(b);
+                } else {
+                  // Ricorri nei figli
+                  if (Array.isArray((b as any).children) && (b as any).children.length > 0) {
+                    searchBlockRec((b as any).children);
+                  }
+                  if (Array.isArray((b as any).thenBlocks) && (b as any).thenBlocks.length > 0) {
+                    searchBlockRec((b as any).thenBlocks);
+                  }
+                  if (Array.isArray((b as any).elseBlocks) && (b as any).elseBlocks.length > 0) {
+                    searchBlockRec((b as any).elseBlocks);
+                  }
+                  if (Array.isArray((b as any).blockInit) && (b as any).blockInit.length > 0) {
+                    searchBlockRec((b as any).blockInit);
+                  }
+                  if (Array.isArray((b as any).blockStart) && (b as any).blockStart.length > 0) {
+                    searchBlockRec((b as any).blockStart);
+                  }
+                  if (Array.isArray((b as any).blockEvaluate) && (b as any).blockEvaluate.length > 0) {
+                    searchBlockRec((b as any).blockEvaluate);
+                  }
+                }
+              } catch (e) {
+                // Ignora errori di serializzazione
+              }
+            }
+          };
+
+          searchBlockRec(allBlocks);
+
+          if (matchingBlocks.length > 0) {
+            // Estrarre i campi di traduzione solo da matchingBlocks
+            const matchedFields = extractTranslationFields(matchingBlocks, availableLanguages);
+            if (matchedFields.length > 0) {
+              fields = matchedFields;
+              console.debug('Fallback: trovati campi estratti dai blocchi JSON matching:', matchedFields.length);
+            } else {
+              console.debug('Fallback: matchingBlocks trovato ma nessun campo estratto.');
+            }
+          } else {
+            console.debug('Fallback: nessun blocco JSON matchato dalla ricerca.');
+          }
+        }
       }
-      
+
       setTranslationFields(fields);
       setAllTranslationFields(allFields); // Salva copia completa per toggle
       

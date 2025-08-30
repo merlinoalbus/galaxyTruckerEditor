@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import { X } from 'lucide-react';
-import { ParsedMetacode, GenderData, generateExtendedGenderCode } from '../metacodeParser';
-import { useTranslation } from '@/locales';
-
-interface GenderMetacodeModalProps {
+import { X, Monitor } from 'lucide-react';
+import { ParsedMetacode, ViewportData, generateExtendedViewportCode } from '../metacodeParser';
+interface ViewportMetacodeModalProps {
   isOpen: boolean;
   onClose: () => void;
   metacode: ParsedMetacode | null;
@@ -13,7 +11,7 @@ interface GenderMetacodeModalProps {
   mousePosition?: { x: number; y: number } | null;
 }
 
-export const GenderMetacodeModal: React.FC<GenderMetacodeModalProps> = ({
+export const ViewportMetacodeModal: React.FC<ViewportMetacodeModalProps> = ({
   isOpen,
   onClose,
   metacode,
@@ -21,22 +19,26 @@ export const GenderMetacodeModal: React.FC<GenderMetacodeModalProps> = ({
   textContext = '',
   mousePosition
 }) => {
-  const { t } = useTranslation();
-  const [male, setMale] = useState('');
-  const [female, setFemale] = useState('');
-  const [neutral, setNeutral] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [desktop, setDesktop] = useState('');
   const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
 
+  // Preset suggeriti per viewport
+  const presets = [
+    { label: 'Mobile/Desktop', mobile: 'Mobile', desktop: 'Desktop' },
+    { label: 'App/Web', mobile: 'App', desktop: 'Web' },
+    { label: 'Touch/Click', mobile: 'Touch', desktop: 'Click' },
+    { label: 'Phone/Computer', mobile: 'Phone', desktop: 'Computer' },
+    { label: 'Small/Large', mobile: 'Small', desktop: 'Large' },
+  ];
+
   useEffect(() => {
-    if (!isOpen) return; // Non fare nulla se la modale non è aperta
+    if (!isOpen) return;
     
     if (mousePosition) {
-      // Le coordinate del mouse sono già relative al viewport (clientX/clientY)
-      // Non dobbiamo sottrarre lo scroll!
-      
       // Dimensioni approssimative della modale
       const modalWidth = 240; // w-60 = 15rem = 240px
-      const modalHeight = 200; // altezza stimata più realistica per 3 input + header + pulsanti
+      const modalHeight = 280; // più alta per i preset
       
       // Centra la modale rispetto al cursore
       let x = mousePosition.x - (modalWidth / 2);
@@ -71,33 +73,36 @@ export const GenderMetacodeModal: React.FC<GenderMetacodeModalProps> = ({
   }, [isOpen, mousePosition]);
 
   useEffect(() => {
-    if (metacode && metacode.type === 'gender') {
-      const data = metacode.data as GenderData;
-      // Se c'è un prefisso e/o suffisso, ricostruisci i valori completi
+    if (metacode && metacode.type === 'viewport') {
+      const data = metacode.data as ViewportData;
+      // Ricostruisci i valori completi con prefisso e suffisso
       const prefix = metacode.prefix || '';
       const suffix = data.suffix || '';
-      setMale(prefix + (data.male || '') + suffix);
-      setFemale(prefix + (data.female || '') + suffix);
-      setNeutral(data.neutral ? prefix + data.neutral + suffix : '');
+      setMobile(prefix + (data.mobile || '') + suffix);
+      setDesktop(prefix + (data.desktop || '') + suffix);
     } else {
-      setMale('');
-      setFemale('');
-      setNeutral('');
+      setMobile('');
+      setDesktop('');
     }
   }, [metacode]);
 
   const handleSave = () => {
-    // Usa generateExtendedGenderCode per ottimizzare automaticamente
-    const newCode = generateExtendedGenderCode(male, female, neutral || undefined);
+    // Usa sempre generateExtendedViewportCode che gestisce automaticamente i suffissi comuni
+    const newCode = generateExtendedViewportCode(mobile, desktop);
     onSave(newCode);
     onClose();
   };
 
-  const hasValidInput = male || female;
-  // Genera l'anteprima ottimizzata
+  const handlePresetClick = (preset: { mobile: string; desktop: string }) => {
+    setMobile(preset.mobile);
+    setDesktop(preset.desktop);
+  };
+
+  const hasValidInput = mobile || desktop;
+  // Genera l'anteprima con gestione automatica dei suffissi comuni
   const preview = hasValidInput 
-    ? generateExtendedGenderCode(male, female, neutral || undefined)
-    : '[g(...|...)]';
+    ? generateExtendedViewportCode(mobile, desktop)
+    : '[v(...|...)]';
 
   if (!isOpen) return null;
 
@@ -122,12 +127,15 @@ export const GenderMetacodeModal: React.FC<GenderMetacodeModalProps> = ({
         }}
       >
         <div className="bg-slate-900 rounded-xl shadow-2xl w-60 border border-slate-700 overflow-hidden max-h-[400px] overflow-y-auto">
-        {/* Header compatto con gradiente */}
-        <div className="bg-gradient-to-r from-blue-600 to-pink-600 px-3 py-2">
+        {/* Header compatto con gradiente verde-blu */}
+        <div className="bg-gradient-to-r from-green-600 to-blue-600 px-3 py-2">
           <div className="flex justify-between items-center">
-            <h3 className="text-xs font-semibold text-white">
-              {t('visualFlowEditor.metacode.genderAdaptation')}
-            </h3>
+            <div className="flex items-center gap-1">
+              <Monitor className="w-3 h-3 text-white" />
+              <h3 className="text-xs font-semibold text-white">
+                Viewport Adaptation
+              </h3>
+            </div>
             <button
               onClick={onClose}
               className="text-white/80 hover:text-white transition-colors"
@@ -138,46 +146,32 @@ export const GenderMetacodeModal: React.FC<GenderMetacodeModalProps> = ({
         </div>
 
         <div className="p-2">
-          {/* Layout come da specifica ASCII: Label verticale | Input orizzontale */}
+          {/* Layout come da specifica: Label verticale | Input orizzontale */}
           <div className="space-y-1.5">
-            {/* Riga Maschile */}
+            {/* Riga Mobile */}
+            <div className="flex items-center gap-2">
+              <label className="text-[10px] font-semibold text-green-400 w-14 text-right">
+                Mobile:
+              </label>
+              <input
+                type="text"
+                value={mobile}
+                onChange={(e) => setMobile(e.target.value)}
+                className="flex-1 px-1.5 py-0.5 bg-slate-800 text-white text-xs border border-slate-700 rounded focus:outline-none focus:ring-1 focus:ring-green-500 focus:border-green-500"
+                placeholder=""
+              />
+            </div>
+
+            {/* Riga Desktop */}
             <div className="flex items-center gap-2">
               <label className="text-[10px] font-semibold text-blue-400 w-14 text-right">
-                {t('visualFlowEditor.metacode.male')}:
+                Desktop:
               </label>
               <input
                 type="text"
-                value={male}
-                onChange={(e) => setMale(e.target.value)}
+                value={desktop}
+                onChange={(e) => setDesktop(e.target.value)}
                 className="flex-1 px-1.5 py-0.5 bg-slate-800 text-white text-xs border border-slate-700 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-                placeholder=""
-              />
-            </div>
-
-            {/* Riga Femminile */}
-            <div className="flex items-center gap-2">
-              <label className="text-[10px] font-semibold text-pink-400 w-14 text-right">
-                {t('visualFlowEditor.metacode.female')}:
-              </label>
-              <input
-                type="text"
-                value={female}
-                onChange={(e) => setFemale(e.target.value)}
-                className="flex-1 px-1.5 py-0.5 bg-slate-800 text-white text-xs border border-slate-700 rounded focus:outline-none focus:ring-1 focus:ring-pink-500 focus:border-pink-500"
-                placeholder=""
-              />
-            </div>
-
-            {/* Riga Neutro */}
-            <div className="flex items-center gap-2">
-              <label className="text-[10px] font-semibold text-gray-400 w-14 text-right">
-                {t('visualFlowEditor.metacode.neutral')}:
-              </label>
-              <input
-                type="text"
-                value={neutral}
-                onChange={(e) => setNeutral(e.target.value)}
-                className="flex-1 px-1.5 py-0.5 bg-slate-800 text-white text-xs border border-slate-700 rounded focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
                 placeholder=""
               />
             </div>
@@ -185,10 +179,29 @@ export const GenderMetacodeModal: React.FC<GenderMetacodeModalProps> = ({
 
           {/* Divider */}
           <div className="my-1.5 border-t border-slate-700"></div>
+
+          {/* Preset suggeriti */}
+          <div className="px-2 py-1">
+            <p className="text-[10px] text-gray-500 uppercase font-semibold mb-1">Preset:</p>
+            <div className="flex flex-wrap gap-1">
+              {presets.map((preset, index) => (
+                <button
+                  key={index}
+                  onClick={() => handlePresetClick(preset)}
+                  className="px-1.5 py-0.5 text-[9px] bg-slate-800 text-gray-300 rounded hover:bg-slate-700 hover:text-white transition-colors"
+                >
+                  {preset.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          {/* Divider */}
+          <div className="my-1.5 border-t border-slate-700"></div>
           
           {/* Risultato */}
           <div className="px-2 py-1">
-            <p className="text-[10px] text-gray-500 uppercase font-semibold">{t('visualFlowEditor.metacode.result')}:</p>
+            <p className="text-[10px] text-gray-500 uppercase font-semibold">Result:</p>
             <p className={`text-[11px] font-mono ${hasValidInput ? 'text-green-400' : 'text-yellow-400'}`}>
               {preview}
             </p>
@@ -203,14 +216,14 @@ export const GenderMetacodeModal: React.FC<GenderMetacodeModalProps> = ({
               onClick={onClose}
               className="flex-1 px-2 py-1 text-[10px] text-gray-300 bg-slate-800 rounded hover:bg-slate-700 transition-colors font-medium"
             >
-              {t('visualFlowEditor.metacode.cancel')}
+              Cancel
             </button>
             <button
               onClick={handleSave}
-              disabled={!male || !female}
-              className="flex-1 px-2 py-1 text-[10px] bg-gradient-to-r from-blue-500 to-pink-500 text-white rounded hover:from-blue-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium"
+              disabled={!mobile || !desktop}
+              className="flex-1 px-2 py-1 text-[10px] bg-gradient-to-r from-green-500 to-blue-500 text-white rounded hover:from-green-600 hover:to-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-medium"
             >
-              {t('visualFlowEditor.metacode.apply')}
+              Apply
             </button>
           </div>
           </div>

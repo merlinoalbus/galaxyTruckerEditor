@@ -32,12 +32,13 @@ export const NumberMetacodeModal: React.FC<NumberMetacodeModalProps> = ({
     if (metacode && metacode.type === 'number') {
       const data = metacode.data as NumberData;
       const prefix = metacode.prefix || '';
+      const suffix = data.suffix || '';
       
       if (data.quantifiers && data.quantifiers.length > 0) {
-        // Ricostruisci i quantificatori con il prefisso
+        // Ricostruisci i quantificatori con prefisso e suffisso
         setQuantifiers(data.quantifiers.map(q => ({
           threshold: q.threshold,
-          text: prefix + q.text
+          text: prefix + q.text + suffix
         })));
       } else {
         // Default per nuovo metacodice

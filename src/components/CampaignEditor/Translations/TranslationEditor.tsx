@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Copy, CopyCheck, Globe, Users, Wand2 } from 'lucide-react';
+import { ChevronDown, ChevronUp, Copy, CopyCheck, Globe, Users, Wand2, User, Crown, Smartphone, Monitor, X } from 'lucide-react';
 import { useTranslation } from '@/locales';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { TIMEOUT_CONSTANTS } from '@/constants/VisualFlowEditor.constants';
@@ -9,6 +9,7 @@ import { MetacodeInsertButtons } from '@/components/CampaignEditor/VisualFlowEdi
 import { GenderMetacodeModal } from '@/components/CampaignEditor/VisualFlowEditor/components/MultilingualTextEditor/modals/GenderMetacodeModal';
 import { NumberMetacodeModal } from '@/components/CampaignEditor/VisualFlowEditor/components/MultilingualTextEditor/modals/NumberMetacodeModal';
 import { ImageMetacodeModal } from '@/components/CampaignEditor/VisualFlowEditor/components/MultilingualTextEditor/modals/ImageMetacodeModal';
+import { ViewportMetacodeModal } from '@/components/CampaignEditor/VisualFlowEditor/components/MultilingualTextEditor/modals/ViewportMetacodeModal';
 import { API_CONFIG, API_ENDPOINTS } from '@/config';
 
 // Funzione helper per ottenere le lingue con traduzioni
@@ -90,6 +91,7 @@ export const TranslationEditor: React.FC<TranslationEditorProps> = ({
   // Stati per gli interruttori
   const [genderState, setGenderState] = useState<'male' | 'female' | 'disabled'>('disabled');
   const [numberState, setNumberState] = useState<0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 20 | 30 | 40 | 50 | 100 | 'more' | 'disabled'>('disabled');
+  const [viewportState, setViewportState] = useState<'mobile' | 'desktop' | 'disabled'>('disabled');
   
   // Stati per gestione metacodici
   const [selectedMetacode, setSelectedMetacode] = useState<ParsedMetacode | null>(null);
@@ -150,7 +152,9 @@ export const TranslationEditor: React.FC<TranslationEditorProps> = ({
       const startPos = selectedMetacode.extendedStart !== undefined 
         ? selectedMetacode.extendedStart 
         : selectedMetacode.start;
-      const endPos = selectedMetacode.end;
+      const endPos = selectedMetacode.extendedEnd !== undefined
+        ? selectedMetacode.extendedEnd
+        : selectedMetacode.end;
       
       const before = currentText.substring(0, startPos);
       const after = currentText.substring(endPos);
@@ -269,7 +273,7 @@ export const TranslationEditor: React.FC<TranslationEditorProps> = ({
               }`}
               title={t('visualFlowEditor.metacode.male')}
             >
-              M
+              <User className="w-3 h-3" />
             </button>
             <button
               type="button"
@@ -281,7 +285,7 @@ export const TranslationEditor: React.FC<TranslationEditorProps> = ({
               }`}
               title={t('visualFlowEditor.metacode.female')}
             >
-              F
+              <Crown className="w-3 h-3" />
             </button>
             <button
               type="button"
@@ -293,7 +297,47 @@ export const TranslationEditor: React.FC<TranslationEditorProps> = ({
               }`}
               title={t('visualFlowEditor.metacode.disabled')}
             >
-              ×
+              <X className="w-3 h-3" />
+            </button>
+          </div>
+
+          {/* Interruttore Viewport */}
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setViewportState('mobile')}
+              className={`px-2 py-0.5 text-xs transition-colors ${
+                viewportState === 'mobile' 
+                  ? 'bg-green-500 text-white' 
+                  : 'bg-slate-700 text-gray-400 hover:bg-slate-600'
+              }`}
+              title={t('visualFlowEditor.metacode.mobile')}
+            >
+              <Smartphone className="w-3 h-3" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewportState('desktop')}
+              className={`px-2 py-0.5 text-xs transition-colors ${
+                viewportState === 'desktop' 
+                  ? 'bg-blue-500 text-white' 
+                  : 'bg-slate-700 text-gray-400 hover:bg-slate-600'
+              }`}
+              title={t('visualFlowEditor.metacode.desktop')}
+            >
+              <Monitor className="w-3 h-3" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewportState('disabled')}
+              className={`px-2 py-0.5 text-xs transition-colors ${
+                viewportState === 'disabled' 
+                  ? 'bg-gray-600 text-white' 
+                  : 'bg-slate-700 text-gray-400 hover:bg-slate-600'
+              }`}
+              title={t('visualFlowEditor.metacode.disabled')}
+            >
+              <X className="w-3 h-3" />
             </button>
           </div>
 
@@ -406,6 +450,7 @@ export const TranslationEditor: React.FC<TranslationEditorProps> = ({
                         className="w-full bg-slate-700/50 text-white px-2 py-1 pr-16 rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none resize-y"
                         genderState={genderState}
                         numberState={numberState}
+                        viewportState={viewportState}
                         onMetacodeClick={(metacode, mousePos) => handleMetacodeClick(metacode, lang.code, mousePos)}
                         onFocus={(position) => handleFieldFocus(lang.code, position)}
                         onBlur={handleFieldBlur}
@@ -480,6 +525,7 @@ export const TranslationEditor: React.FC<TranslationEditorProps> = ({
                         className="w-full bg-slate-700/50 text-white px-2 py-1 pr-16 rounded text-xs border border-slate-600 focus:border-blue-500 focus:outline-none resize-y"
                         genderState={genderState}
                         numberState={numberState}
+                        viewportState={viewportState}
                         onMetacodeClick={(metacode, mousePos) => handleMetacodeClick(metacode, lang.code, mousePos)}
                         onFocus={(position) => handleFieldFocus(lang.code, position)}
                         onBlur={handleFieldBlur}
@@ -573,6 +619,19 @@ export const TranslationEditor: React.FC<TranslationEditorProps> = ({
         }}
         metacode={selectedMetacode}
         onSave={handleMetacodeSave}
+        mousePosition={mousePosition}
+      />
+      
+      <ViewportMetacodeModal
+        isOpen={activeModalType === 'viewport'}
+        onClose={() => {
+          setActiveModalType(null);
+          setSelectedMetacode(null);
+          setMousePosition(null);
+        }}
+        metacode={selectedMetacode}
+        onSave={handleMetacodeSave}
+        textContext={getTextContext()}
         mousePosition={mousePosition}
       />
       
