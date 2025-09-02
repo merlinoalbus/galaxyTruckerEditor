@@ -1,0 +1,3 @@
+[lfs]
+	fetchinclude = /server/GAMEFOLDER2/**
+	fetchexclude = /build/**,/node_modules/**
