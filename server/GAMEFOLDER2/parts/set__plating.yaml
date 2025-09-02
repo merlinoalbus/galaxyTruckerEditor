@@ -1,12 +1,3 @@
-- type: plating-L
-  connectors: [3, 0, 0, 2]
-- type: plating-L
-  connectors: [1, 0, 0, 3]
-- type: plating-L
-  connectors: [3, 0, 0, 1]
-- type: plating-L
-  connectors: [2, 0, 0, 3]
-- type: plating-U
-  connectors: [1, 0, 0, 0]
-- type: plating-U
-  connectors: [2, 0, 0, 0]
+version https://git-lfs.github.com/spec/v1
+oid sha256:d2e19ca24978f8285f1a50f15cdafd82845e3abc0ec17491a9bf59b30f51e49f
+size 269

@@ -1,21 +1,3 @@
-name: "SingleMissionTest1" # id of mission name string - localized 
-gameType: realtime #values: realtime/turnbased; If mentioned this value can not be changed in GUI setting (lobby) by player.
-deckScript: sm_Pirates_Deck  #adventure cards deck building script
-shipPlans: [I_growing2, II-double, III-double] # names of all available ship plans. If not mentioned default plans will be used. Should by only one ship plan for one flight.
-cannotInterconnectRadioactiveCargo: true
-opponents:
-  - "easy_basic"
-
-rounds:
-  - roundType: STI # STI/STII/STIII
-    pileConfig: cannons.yaml
-  - roundType: STII # STI/STII/STIII
-    pileConfig: cannons.yaml
-  - roundType: STIII # STI/STII/STIII
-    pileConfig: cannons.yaml
-
-# ==== RULES ====                               # You can mention only those values you want edit. But you have to repeat (copy&paste) the rules for each flight.
-evaluation:                     
-  STI:
-  STII:
-  STIII:
+version https://git-lfs.github.com/spec/v1
+oid sha256:1c69c014f83987fd5c1f1c2510a698a56bbb1bbb825aae0c0e0e2fc7d071bf62
+size 930

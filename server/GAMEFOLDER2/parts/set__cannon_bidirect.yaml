@@ -1,20 +1,3 @@
-- type: gunBidirect
-  connectors: [1, 0, 0, 2]
-- type: gunBidirect
-  connectors: [1, 0, 0, 2]
-- type: gunBidirect
-  connectors: [2, 0, 0, 1]
-- type: gunBidirect
-  connectors: [2, 0, 0, 1]
-- type: gunBidirect
-  connectors: [1, 0, 0, 3]
-- type: gunBidirect
-  connectors: [3, 0, 0, 1]
-- type: gunBidirect
-  connectors: [2, 0, 0, 3]
-- type: gunBidirect
-  connectors: [3, 0, 0, 2]
-- type: gunBidirect
-  connectors: [3, 0, 0, 0]
-- type: gunBidirect
-  connectors: [0, 0, 0, 3]
+version https://git-lfs.github.com/spec/v1
+oid sha256:f2537f1ed823a249dd393a44aaf7e7ec416d8add0cd766ded0c480a12b4142fc
+size 469

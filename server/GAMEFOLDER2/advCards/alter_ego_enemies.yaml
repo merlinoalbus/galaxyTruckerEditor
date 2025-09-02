@@ -1,24 +1,3 @@
-- type: pirates
-  round: 3
-  condition: 9
-  fire: uUuUu
-  credits: 9
-  days: -2
-- type: pirates
-  round: 3
-  condition: 8
-  fire: UdudU
-  credits: 8
-  days: -2
-- type: slavers
-  round: 3
-  condition: 10
-  payout: -5
-  credits: 9
-  days: -2
-- type: slavers
-  round: 3
-  condition: 9
-  payout: -4
-  credits: 9
-  days: -2
+version https://git-lfs.github.com/spec/v1
+oid sha256:7b0a9374bc86991c026d1f9e3f858a3581bd62b139f431b6170d14a168493035
+size 319

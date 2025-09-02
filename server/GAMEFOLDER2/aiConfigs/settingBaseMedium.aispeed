@@ -1,20 +1,3 @@
-##   Delays (ms)
-
-occupiedCardsDelay: 400 # ai wants look at pile but some else is holding it
-cardsLookingDelay: 4000
-startDelay: 500
-checkingAdvCardsDelay: 300 # 
-testedPartFitAfterExpectationDropDelay: 1000
-foundRevealedPartDelay: 1000
-    
-revealedDoNotFullfilDelay: 180 #Very important for building speed - speed of AI part finding on heap
-revealedDoNotFitDelay: 180 #Very important for building speed - speed of AI part finding on heap
-    
-pickPartDelay: 150
-revealPartDelay: 500
-placingRevealedPartDelay: 6000 # We revealed part and it fulfills our expectations
-refuseRevealedPartDelay: 3500
-placePartDelay: 2500
-turnClockDelay: 3000
-
-dropedPartProtectedTime: 4500 
+version https://git-lfs.github.com/spec/v1
+oid sha256:8b04cb75fa4b2368774797855536c9186fd1c53dd886bdda78cd583e1d337457
+size 672

@@ -1,18 +1,3 @@
-                                                  # expansion adventure config
-name:         ship_amoeba_title
-
-planetImg:    brownhome.png
-
-avatarImg:    campaign/cyan.png
-avatarColor:  avatarBgColor
-
-
-missions:
-- ship_amoeba1.yaml                                  # 1 star mission
-- ship_amoeba2.yaml                                  # 2 star mission
-- ship_amoeba3.yaml                                  # 3 star mission
-
-
-dialogScript:   ship_amoeba_Dlg
-endDialogsWin: [ship_amoeba1_Success, ship_amoeba2_Success, ship_amoeba3_Success]
-endDialogLoose: ship_amoeba_Failure
+version https://git-lfs.github.com/spec/v1
+oid sha256:1085f5fee6233519688534dede2ee62a5eaec274144b6b49f61ec658b3b05fc9
+size 574

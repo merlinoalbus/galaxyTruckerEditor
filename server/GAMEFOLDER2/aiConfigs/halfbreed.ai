@@ -1,9 +1,3 @@
-idName: "halfbreed"
-shipTypes: ["I", "II", "III-amoeba"]
-character: basic
-avatar: avatars/campaign/mixed-avatar.png
-color: "rgby"
-preferencesSettings: aiConfigs/settingRacer.aipref
-speedSettings: aiConfigs/settingBaseHard.aispeed
-difficulty: normal
-stupidity: 30
+version https://git-lfs.github.com/spec/v1
+oid sha256:9428269e042ae055474ea0021ae9ddf34de5b512bfa3c22f160addadfd62e3aa
+size 263

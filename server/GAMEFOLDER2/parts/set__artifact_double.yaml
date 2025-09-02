@@ -1,21 +1,3 @@
-- type: artifactX
-  connectors: [1, 1, 0, 0]
-  special: true
-- type: artifactX
-  connectors: [2, 2, 0, 0]
-  special: true
-- type: artifactX
-  connectors: [1, 0, 2, 0]
-  special: true
-- type: artifactX
-  connectors: [2, 1, 3, 0]
-  special: true
-- type: artifactX
-  connectors: [1, 3, 2, 0]
-  special: true
-- type: artifactX
-  connectors: [3, 3, 3, 3]
-  special: true
-- type: artifactX
-  connectors: [3, 0, 0, 0]  
-  special: true
+version https://git-lfs.github.com/spec/v1
+oid sha256:b3a9e8d7cb61c4b53aeeb631ea08701866f4ec4c1b89b1d94849abb99f38194b
+size 428

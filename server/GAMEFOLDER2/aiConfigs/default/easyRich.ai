@@ -1,9 +1,3 @@
-idName: "easy_rich"
-character: rich
-avatar: avatars/ai/easy_rich.png
-color: "gbyr"
-preferencesSettings: aiConfigs/settingRich.aipref
-speedSettings: aiConfigs/settingBaseEasy.aispeed
-difficulty: easy  #hard, medium, easy
-stupidity: 120
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:ff2b0121393c60fc9271da8cb4a8c5f5b966fff98e2318181138b00185559150
+size 236

@@ -1,6 +1,3 @@
-idName: "medium_random_pap"
-type: turn
-character: random
-avatar: avatars/ai/medium_random.png
-color: "ygbr"
-difficulty: medium
+version https://git-lfs.github.com/spec/v1
+oid sha256:98331bf8e21aa108545fb5234b02dcdfa065da7b281425f5605d58ff61b18a1a
+size 127

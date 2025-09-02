@@ -1,7 +1,3 @@
-SCRIPTS
-
-  SCRIPT test_backup_system
-    Say "DEBUG TEST: Backup manager debug active!"
-  END_OF_SCRIPT
-
-END_OF_SCRIPTS
+version https://git-lfs.github.com/spec/v1
+oid sha256:7664e1bb0d5c8bafa3f1722d5d4034162ee303d8bd8ee8a4c43af9abf7220c2a
+size 119

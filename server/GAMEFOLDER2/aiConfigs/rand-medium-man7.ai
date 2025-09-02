@@ -1,6 +1,3 @@
-idName: "rand-medium-man7"
-avatar: avatars/campaign/common/medium-man7.png
-color: "byrg"
-preferencesSettings: aiConfigs/settingRich.aipref
-speedSettings: aiConfigs/settingBaseMedium.aispeed
-stupidity: 60
+version https://git-lfs.github.com/spec/v1
+oid sha256:0e7b4965fcf8364873ef8fb53f6e4e6049403968d35158ba16f48ce849d2dccc
+size 203

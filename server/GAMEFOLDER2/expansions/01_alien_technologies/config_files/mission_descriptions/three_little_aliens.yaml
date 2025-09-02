@@ -1,18 +1,3 @@
-                                                  # expansion adventure config
-name:         three_little_aliens_title
-
-planetImg:    purplehome.png
-
-avatarImg:    campaign/ambassador.png
-avatarColor:  avatarBgColor
-
-
-missions:
-- three_little_aliens1.yaml                                  # 1 star mission
-- three_little_aliens2.yaml                                  # 2 star mission
-- three_little_aliens3.yaml                                  # 3 star mission
-
-
-dialogScript:   three_little_aliens_Dlg
-endDialogsWin: [three_little_aliens1_Success, three_little_aliens2_Success, three_little_aliens3_Success]
-endDialogLoose: three_little_aliens_Failure
+version https://git-lfs.github.com/spec/v1
+oid sha256:effc805b2bb028d9bb966d686df4de5c653af9bb24f46fb474fb04ab8565e8d3
+size 653

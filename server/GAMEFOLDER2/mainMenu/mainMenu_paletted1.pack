@@ -1,17 +1,3 @@
-mainMenu/flags_CS.png 290 614 209 357 
-mainMenu/flags_DE.png 288 974 150 256 
-mainMenu/flags_EN.png 273 1233 150 256 
-mainMenu/flags_ES.png 1 1400 256 150  rot
-mainMenu/flags_FR.png 260 1492 150 256 
-mainMenu/flags_IT.png 1 1553 256 150  rot
-mainMenu/flags_PL.png 1 1706 256 150  rot
-mainMenu/flags_RO.png 260 1751 150 256 
-mainMenu/flags_RU.png 1 1859 256 150  rot
-mainMenu/GT_box.png 1 1 500 349  rot
-mainMenu/ifo/metalfatigue.png 1 353 500 258 
-mainMenu/ifo/nut.png 441 1069 50 45 
-mainMenu/ifo/pipe.png 441 974 49 92  rot
-mainMenu/ifo/saltamortale1.png 1 614 286 279  rot
-mainMenu/ifo/saltamortale2.png 1 896 284 261 
-mainMenu/ifo/screw.png 441 1117 50 25 
-mainMenu/ifo/wreck.png 1 1160 269 237  rot
+version https://git-lfs.github.com/spec/v1
+oid sha256:1b325408fdac7ff8c70b3bc5c2ba899cc264c7b10a5e8b408da7d6922577cf1f
+size 704

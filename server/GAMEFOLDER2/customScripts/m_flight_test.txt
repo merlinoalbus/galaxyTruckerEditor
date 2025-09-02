@@ -1,27 +1,3 @@
-SCRIPTS
-
-MISSION flight_test
-  AddOpponent hard_safe
-  AddOpponent "hard_safe"
-  AddOpponent "hard_safe"
-  SetAdventureCardsConfigFile "advCards/flight_test.yaml"
-  SetLoadPileFromDeck
-  DoNotShuffleAdvCards
-  INIT_FLIGHT
-  SetShipType STI
-  LoadShipFromFile 0 "test.ship"
-  LoadShipFromFile 1 "test.ship"
-  LoadShipFromFile 2 "test.ship"
-  LoadShipFromFile 3 "test.ship"
-  SetPlayerOrder 0 2
-  SetPlayerOrder 1 1
-  SetPlayerOrder 2 3
-  SetPlayerOrder 3 4
-  START_FLIGHT
-  EVALUATE_FLIGHT
-  END_FLIGHT
-  SetMissionAsCompleted
-  FINISH_MISSION
-END_OF_MISSION
-
-END_OF_SCRIPTS
+version https://git-lfs.github.com/spec/v1
+oid sha256:b3214d73138d0c0e4b304964820669ac6b62ffdcc4c06dff0b4358a74e4a8fd9
+size 574

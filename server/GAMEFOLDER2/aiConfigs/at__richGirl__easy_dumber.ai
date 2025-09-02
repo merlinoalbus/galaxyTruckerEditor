@@ -1,9 +1,3 @@
-idName: "at__richGirl__easy_dumber"
-character: basic
-gender: female
-avatar: avatars/alien_technologies/rich.png
-color: "yrgb"
-preferencesSettings: aiConfigs/settingBase.aipref
-speedSettings: aiConfigs/settingBaseEasy.aispeed
-difficulty: easy  #hard, medium, easy
-stupidity: 150
+version https://git-lfs.github.com/spec/v1
+oid sha256:df84ab391c7c1b1c617c8efbd5d242c2b8509e3d2cf21eaece1cfc9410dd2292
+size 277

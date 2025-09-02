@@ -1,11 +1,3 @@
-version: 1
-missions:
-  - name: mm202
-    available: 1.1.2016
-    expired: 22.9.2016
-  - name: mm03
-    available: 1.1.2016
-    expired: 22.9.2016
-  - name: mm04
-    available: 1.5.2016
-    expired: 22.9.2016
+version https://git-lfs.github.com/spec/v1
+oid sha256:f6348f2f494610ce91811e8fdff6dddd9a9a10ecc02382a9f73a7714fd767445
+size 208

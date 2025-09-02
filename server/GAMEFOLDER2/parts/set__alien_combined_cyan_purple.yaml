@@ -1,8 +1,3 @@
-- type: alienSpecGun
-  connectors: [0, 1, 0, 2]
-- type: alienSpecGun
-  connectors: [0, 2, 0, 1]
-- type: alienSpecGun
-  connectors: [0, 1, 2, 0]
-- type: alienSpecGun
-  connectors: [0, 2, 1, 0]
+version https://git-lfs.github.com/spec/v1
+oid sha256:57baa26cc8827794e5d32befc3455154d6978e1bb8d96fb2e000b6e9dd81d8f8
+size 191

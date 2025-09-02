@@ -1,9 +1,3 @@
-idName: "easy_angry_pap"
-type: turn
-character: angry
-avatar: avatars/ai/easy_angry.png
-color: "gbyr"
-preferencesSettings: aiConfigs/settingAngry.aipref
-qualitySettings: aiConfigs/settingPaPAngry.aiqual
-difficulty: easy  
-stupidity: 120
+version https://git-lfs.github.com/spec/v1
+oid sha256:79ead0e93388cbaf36c7a8691e7ae0b0caf5357e648efda5e00838d05eebaaa9
+size 236

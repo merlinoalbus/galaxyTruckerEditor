@@ -1,27 +1,3 @@
-- type: meteoric
-  round: 2
-  meteors: ULRd
-- type: meteoric
-  round: 2
-  meteors: LlRr
-- type: meteoric
-  round: 2
-  meteors: uLdL
-- type: meteoric
-  round: 2
-  meteors: uRdR
-- type: meteoric
-  round: 2
-  meteors: uuLll
-- type: meteoric
-  round: 2
-  meteors: uuRrr
-- type: meteoric
-  round: 2
-  meteors: LLU
-- type: meteoric
-  round: 2
-  meteors: RRU
-- type: meteoric
-  round: 2
-  meteors: UUUU
+version https://git-lfs.github.com/spec/v1
+oid sha256:3c1fc823bc0eaf2b6cdb2ecff33fa1d6a5728a8442fa79e36e1676ea14f9d6d6
+size 396

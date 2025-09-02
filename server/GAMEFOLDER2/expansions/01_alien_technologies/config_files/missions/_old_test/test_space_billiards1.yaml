@@ -1,36 +1,3 @@
-name:         space_billiards_title                      # id of mission name string - localized 
-
-
-# txt + img
-new:          space_billiards_new
-rules:        space_billiards_rules
-objectives:   space_billiards1_objectives
-images:       [[advCards/space_billiards_preview.png, 182, 280]]
-
-
-gameType:     realtime                            # values: realtime/turnbased; If mentioned this value can not be changed in GUI setting (lobby) by player.
-
-
-rounds:
-- roundType:  STII
-  pileConfig: at__combined_cargo.yaml
-
-
-shipPlans:    [II]                         # names of all available ship plans. If not mentioned default plans will be used. Should by only one ship plan for one flight.
-
-
-opponents:
-- "easy_basic"
-- "easy_basic"
-
-
-deckScript:   at__Space_Billiards_Deck          # adventure cards deck building script
-
-
-winCondition:
-              scoreWinner: true                   # values: scoreWinner / didntGiveUp; used in expansion, to find ouf when is mission completed succefully
-              didntGiveUp: true
-
-
-evaluation:                                       # You can mention only those values you want edit. But you have to repeat (copy&paste) the rules for each flight.  
-  STI:
+version https://git-lfs.github.com/spec/v1
+oid sha256:5fa0e822dda773e2b128885464d0fd73953b3e0e3814c8c3cfb0a50a56ccdccc
+size 1196

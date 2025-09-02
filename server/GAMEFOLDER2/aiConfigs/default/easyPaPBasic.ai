@@ -1,9 +1,3 @@
-idName: "easy_basic_pap"
-type: turn
-character: basic
-avatar: avatars/ai/easy_basic.png
-color: "gbyr"
-preferencesSettings: aiConfigs/settingBase.aipref
-qualitySettings: aiConfigs/settingPaPBase.aiqual
-difficulty: easy  # 1- hard, 3 - normal, 6 - easy
-stupidity: 120
+version https://git-lfs.github.com/spec/v1
+oid sha256:dce08dd3e29d2ed271bfe764fee338526bbcd52afa104166575b56727c3e2345
+size 265

@@ -1,22 +1,3 @@
-SCRIPTS
-
-MISSION Tutorial
-  AddOpponent tutAI
-  SetFlightDeckPreparationScript "tutorialDeck"
-  SetTutorial
-  DoNotShuffleAdvCards
-  INIT_BUILD
-  AddShipParts "parts/tutorial.yaml"
-  SetSecretAdvPile 1 0
-  SetAdvPile 1 0
-  SetShipType STI
-  START_BUILDING
-  END_BUILDING
-  INIT_FLIGHT
-  START_FLIGHT
-  END_FLIGHT
-  EVALUATE_FLIGHT
-  FINISH_MISSION
-END_OF_MISSION
-
-END_OF_SCRIPTS
+version https://git-lfs.github.com/spec/v1
+oid sha256:82fcb1827736a16467a7f3a333fb636a8500eedb49d9cfe1246c1a5de4c3d573
+size 379

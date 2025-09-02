@@ -1,21 +1,3 @@
-- name: I-random1of3
-  type: STI
-  random: true
-  variantsCount: 3
-  slotsCount: 18
-  background: none
-  buildboardoffset: [3.4, 0]
-  boardoffset: [5, 5]
-  aside_slots:
-    2:
-      - background: doubleaside.png
-        position: [-1.6, 0.0]
-        positionOtherSide: [0.11, 0.0] # x-coord works in diferent way for randomly generated ship - it define wide of space between ship and aside slot group
-        size: [1.5, 1.5]
-        slots:
-          - [0.51, 0]
-          - [0, 0.51]    # stredy se nesmi prekryvat (navrat na drag start position dilku)
-  config: "levels/tiles.yaml"
-  avatarPosition: [0.2, 0.25]  # x-coord works in diferent way for randomly generated ship - it define wide of space between ship and avatar
-  avatarPositionOtherSide: [-1.4, 0.25] 
-  avatarSize: [1.2, 1.2]
+version https://git-lfs.github.com/spec/v1
+oid sha256:662f9156ae3ec3448964ac45d99d67a9d20f3d7ee32e506bb8a2865041a4c119
+size 791

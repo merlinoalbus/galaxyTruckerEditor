@@ -1,18 +1,3 @@
-                                                  # expansion adventure config
-name:         space_billiards_title
-
-planetImg:    regula.png
-
-avatarImg:    campaign/rich.png
-avatarColor:  avatarBgColor
-
-
-missions:
-- space_billiards1.yaml                                  # 1 star mission
-- space_billiards2.yaml                                  # 2 star mission
-- space_billiards3.yaml                                  # 3 star mission
-
-
-dialogScript:   space_billiards_Dlg
-endDialogsWin: [space_billiards1_Success, space_billiards2_Success, space_billiards3_Success]
-endDialogLoose: space_billiards_Failure
+version https://git-lfs.github.com/spec/v1
+oid sha256:0db42ae4c869c1fe76f4b3890e3d6e3a479bf70abd2463e79c7fbb2f9ea51d78
+size 607

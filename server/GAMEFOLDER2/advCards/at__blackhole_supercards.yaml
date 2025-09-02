@@ -1,20 +1,3 @@
-- type: blackhole
-  round: 1
-  super: true
-  condition: 5
-- type: blackhole
-  round: 2
-  super: true
-  condition: 5
-- type: blackhole
-  round: 2
-  super: true
-  condition: 6
-- type: blackhole
-  round: 3
-  super: true
-  condition: 7
-- type: blackhole
-  round: 3
-  super: true
-  condition: 8
+version https://git-lfs.github.com/spec/v1
+oid sha256:69618e6eef814b90b3f51cf38929e2b6c8fa7b01dbb78a837717992bd0a9b91d
+size 290

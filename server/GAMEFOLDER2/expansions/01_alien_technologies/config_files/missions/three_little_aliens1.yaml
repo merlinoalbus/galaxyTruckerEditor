@@ -1,36 +1,3 @@
-name:         three_little_aliens_title                      # id of mission name string - localized 
-
-
-# txt + img
-new:          three_little_aliens_new
-rules:        three_little_aliens1_rules
-objectives:   three_little_aliens1_objectives
-images:       [[parts/alienSpec.png, 256, 256, ["CyanAliens", "CyanAlienType1", "CyanAlienType2", "CyanAlienType3", "CombinedLifeSupport"]]]
-
-
-gameType:     realtime                            # values: realtime/turnbased; If mentioned this value can not be changed in GUI setting (lobby) by player.
-
-
-rounds:
-- roundType:  STI
-  pileConfig: at__three_little_aliens__easy.yaml
-
-
-shipPlans:    [I-random]                         # names of all available ship plans. If not mentioned default plans will be used. Should by only one ship plan for one flight.
-
-
-opponents:
-- at__rand-easy-woman2
-- at__rand-easy-man3
-#- "easy_basic"
-#- "easy_basic"
-
-
-deckScript:   at__Three_Little_Aliens_easy          # adventure cards deck building script
-
-
-winCondition:                                     # values: scoreWinner / didntGiveUp; used in expansion, to find ouf when is mission completed succefully
-              didntGiveUp: true
-              escortBrownAlien: true
-              escortPurpleAlien: true
-              escortCyanAlien: true
+version https://git-lfs.github.com/spec/v1
+oid sha256:773db5678be61c0a8153b4a837fff1c342b1d7f66a97150e0eef9e08c99eede3
+size 1277

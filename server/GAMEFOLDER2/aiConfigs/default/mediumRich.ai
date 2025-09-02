@@ -1,8 +1,3 @@
-idName: "medium_rich"
-character: rich
-avatar: avatars/ai/medium_rich.png
-color: "ygbr"
-preferencesSettings: aiConfigs/settingRich.aipref
-speedSettings: aiConfigs/settingBaseMedium.aispeed
-difficulty: medium  #hard, medium, easy
-stupidity: 80
+version https://git-lfs.github.com/spec/v1
+oid sha256:1cbe6ab7d53e14c279caca313476a05359c2157038e48b4f935eee7fdb81d993
+size 241

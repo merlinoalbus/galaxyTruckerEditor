@@ -1,9 +1,3 @@
-idName: "medium_basic_pap"
-type: turn
-character: basic
-avatar: avatars/ai/medium_basic.png
-color: "ygbr"
-preferencesSettings: aiConfigs/settingBase.aipref
-qualitySettings: aiConfigs/settingPaPBase.aiqual
-difficulty: medium
-stupidity: 80
+version https://git-lfs.github.com/spec/v1
+oid sha256:6c3460006248ce9a9f62cb43d8c40de9056b0ba650e2fcff190c09c11b010c39
+size 237

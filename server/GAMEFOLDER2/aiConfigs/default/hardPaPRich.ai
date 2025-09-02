@@ -1,9 +1,3 @@
-idName: "hard_rich_pap"
-type: turn
-character: rich
-avatar: avatars/ai/hard_rich.png
-color: "rygb"
-preferencesSettings: aiConfigs/settingRich.aipref
-qualitySettings: aiConfigs/settingPaPBase.aiqual
-difficulty: hard  # 1- hard, 3 - normal, 6 - easy
-stupidity: 20
+version https://git-lfs.github.com/spec/v1
+oid sha256:9228cfdfad5c75893ba0272d382e1af4f3e2dd581cd8bd91c8e9c7728ad65cde
+size 260

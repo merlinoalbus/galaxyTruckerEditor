@@ -1,9 +1,3 @@
-idName: "easy_safe_pap"
-type: turn
-character: safe
-avatar: avatars/ai/easy_safe.png
-color: "gbyr"
-preferencesSettings: aiConfigs/settingSafe.aipref
-qualitySettings: aiConfigs/settingPaPBase.aiqual
-difficulty: easy  # 1- hard, 3 - normal, 6 - easy
-stupidity: 120
+version https://git-lfs.github.com/spec/v1
+oid sha256:6987c5ca73f6acdb45967e62b295419030003acf502c5953fec6cc0df26a0166
+size 262

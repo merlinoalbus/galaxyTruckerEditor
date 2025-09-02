@@ -1,22 +1,3 @@
-- type: battery2
-  connectors: [3, 1, 2, 0]
-- type: battery2
-  connectors: [3, 2, 1, 0]
-- type: battery2
-  connectors: [3, 0, 3, 0]
-- type: battery2
-  connectors: [3, 2, 0, 0]
-- type: battery2
-  connectors: [3, 0, 0, 1]
-- type: battery2
-  connectors: [3, 0, 0, 0]
-- type: battery2
-  connectors: [3, 0, 0, 0]
-- type: battery2
-  connectors: [3, 1, 1, 1]
-- type: battery2
-  connectors: [3, 2, 2, 2]
-- type: battery2
-  connectors: [3, 1, 0, 0]
-- type: battery2
-  connectors: [3, 0, 0, 2]
+version https://git-lfs.github.com/spec/v1
+oid sha256:e3605ac82c2ef9e77ee9e603d41d8bef507df13a05bcdc57b3e1e75ae5f22200
+size 483

@@ -1,15 +1,3 @@
-hitsImportance: [[0.33, 0.33, 0.33, 0.33], [0.33, 0.33, 0.33, 0.33], [0.33, 0.33, 0.33, 0.33], [0.33, 0.33, 0.33, 0.33]] # small meteor, big meteor, small fire, big fire;  up, down, left, right
-daysLostImportance: 1
-crewLostImportance: 1
-goodsLostImportance: 0.33
-goodsGainImportance: 1
-sabotageImportance: 1
-    
-strengthValueConst: 105
-bigMeteorProtectConstant: 60
-speedConstant: 125
-crewLostConstant: 40
-crewConstant: 40
-cargoConstant: 75
-shieldConstant: 55
-batteryConstant: 65
+version https://git-lfs.github.com/spec/v1
+oid sha256:34809c1a5b0131ff10daef55b8ecf8bf5992c8eeaf19a123078c356dcfe9dcb6
+size 481

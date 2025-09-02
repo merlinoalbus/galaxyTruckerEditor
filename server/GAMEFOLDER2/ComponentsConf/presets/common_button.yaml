@@ -1,8 +1,3 @@
-class_name: CGEUITextButton
-size: [250, 120]
-text: Ok
-3patch: common/button.png
-font_size: 48
-text_fit: shrink_if_overflow
-padding: [35, 10, 35, 20]
-text_color: 00bedc
+version https://git-lfs.github.com/spec/v1
+oid sha256:645a50c13a033b3fa655196173be22f29cdda5c9501d4cbf0ad6f7afd3ee02cd
+size 167

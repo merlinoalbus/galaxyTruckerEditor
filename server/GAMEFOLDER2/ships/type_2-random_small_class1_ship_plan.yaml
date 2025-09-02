@@ -1,20 +1,3 @@
-- name: II-random_small_class1_ship_plan
-  type: STII
-  random: true
-  slotsCount: 18
-  background: none
-  buildboardoffset: [3.4, 0]
-  boardoffset: [5, 5]
-  aside_slots:
-    2:
-      - background: doubleaside.png
-        position: [-1.6, 0.0]
-        positionOtherSide: [0.1, 0.0] # x-coord works in diferent way for randomly generated ship - it define wide of space between ship and aside slot group
-        size: [1.5, 1.5]
-        slots:
-          - [0.51, 0]
-          - [0, 0.51]    # stredy se nesmi prekryvat (navrat na drag start position dilku)
-  config: "levels/tiles.yaml"
-  avatarPosition: [0.2, 0.25]  # x-coord works in diferent way for randomly generated ship - it define wide of space between ship and avatar
-  avatarPositionOtherSide: [-1.35, 0.25]
-  avatarSize: [1.2, 1.2]
+version https://git-lfs.github.com/spec/v1
+oid sha256:137cf041bc9ab5e80129e8e9565ca6284fc0ad283a7a867e58523ac30d374419
+size 792

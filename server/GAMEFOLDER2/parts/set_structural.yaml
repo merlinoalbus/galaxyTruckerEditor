@@ -1,16 +1,3 @@
-- type: nothing
-  connectors: [3, 2, 3, 0]
-- type: nothing
-  connectors: [3, 3, 2, 0]
-- type: nothing
-  connectors: [3, 1, 3, 1]
-- type: nothing
-  connectors: [3, 3, 2, 2]
-- type: nothing
-  connectors: [3, 3, 1, 2]
-- type: nothing
-  connectors: [3, 1, 3, 2]
-- type: nothing
-  connectors: [1, 3, 3, 0]
-- type: nothing
-  connectors: [3, 1, 3, 0]
+version https://git-lfs.github.com/spec/v1
+oid sha256:0433052373c9b06f81e96a45ca5e8704a3c5c34f8d3fd72a23120b366bb00b16
+size 343

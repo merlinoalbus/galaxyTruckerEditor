@@ -1,8 +1,3 @@
-idName: "hard_rich"
-character: rich
-avatar: avatars/ai/hard_rich.png
-color: "rygb"
-preferencesSettings: aiConfigs/settingRich.aipref
-speedSettings: aiConfigs/settingBase.aispeed
-difficulty: hard  #hard, medium, easy
-stupidity: 20
+version https://git-lfs.github.com/spec/v1
+oid sha256:9415bd763e8c90b93f0af702c5bf32855e17364983c3b9123ae7c7f740ab3a72
+size 229

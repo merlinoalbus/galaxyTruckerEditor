@@ -1,8 +1,3 @@
-idName: "hard_safe"
-character: safe
-avatar: avatars/ai/hard_safe.png
-color: "rygb"
-preferencesSettings: aiConfigs/settingSafe.aipref
-speedSettings: aiConfigs/settingBase.aispeed
-difficulty: hard  #hard, medium, easy
-stupidity: 20
+version https://git-lfs.github.com/spec/v1
+oid sha256:1194a29acfbf07e524f53b8cb9a843b070e9569eb9b42d041de47e3e34466c6a
+size 229

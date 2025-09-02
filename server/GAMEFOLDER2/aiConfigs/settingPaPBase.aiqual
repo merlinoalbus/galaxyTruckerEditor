@@ -1,15 +1,3 @@
-openConnectorsSanction: 100 # less means more open connections on ship borders
-
-buildOptimism: 1.1  # How much AI hurry
-    
-wantsRevealAdvCards: 90 # 0..100
-    
-# Following values edit carefully
-trustInRevealedInit: 1000
-expectedImprovementInit: 65
-dropImprovementConst: 10
-    
-#When revealed part do not fulfill expectations _trustInRevealed is lowered like this( _trustInRevealed -= _trustInRevealed * _settings->trustInRevealedDropConst;). Values closer to 1.0 cause that AI check more revealed parts (will be smarter but takes more computer time). 0.1f is smart enough when trustInRevealedInit == 100.
-trustInRevealedDropConst: 0.1  
-#When revealed part do not fulfill expectations, expectations should be lowered by small value. (_dropImprovementConst * _settings->revealedExpectationsDropConst). There is almost no delay. Works like we just look at heap of revealed parts and choose the best ones to try on ship.
-revealedExpectationsDropConst: 0.2
+version https://git-lfs.github.com/spec/v1
+oid sha256:047e56c6d5e5ce32c99533815f04293346946f345c1340412fd81c4c945ed18c
+size 956

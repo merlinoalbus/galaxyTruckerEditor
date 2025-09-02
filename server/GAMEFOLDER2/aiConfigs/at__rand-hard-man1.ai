@@ -1,7 +1,3 @@
-idName: "at__rand-hard-man1"
-avatar: avatars/campaign/common/medium-man5.png
-color: "byrg"
-preferencesSettings: aiConfigs/settingBase.aipref
-speedSettings: aiConfigs/settingBase.aispeed
-difficulty: hard  #hard, medium, easy
-stupidity: 20
+version https://git-lfs.github.com/spec/v1
+oid sha256:d05efa6026964ba8d5a0dd75cc99f29ffb241cdcbd7df88cb4e78dad2455f644
+size 237

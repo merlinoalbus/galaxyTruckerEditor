@@ -1,22 +1,3 @@
-- name: I-double
-  type: STI
-  background: none
-  width: 5
-  height: 5
-  buildboardoffset: [2, 0]
-  boardoffset: [5, 5]
-  indices: [1, 3, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 23, 24]
-  basic: 12
-  aside_slots:
-    2:
-      - background: doubleaside.png
-        position: [-1.0, 0.3]
-        positionOtherSide: [4.5, 0.3]
-        size: [1.5, 1.5]
-        slots:
-          - [0.51, 0]
-          - [0, 0.51]    # stredy se nesmi prekryvat (navrat na drag start position dilku)
-  config: "levels/tiles.yaml"
-  avatarPosition: [4.5, 0.2]
-  avatarPositionOtherSide: [-0.7, 0.2]
-  avatarSize: [1.2, 1.2]
+version https://git-lfs.github.com/spec/v1
+oid sha256:488bb26226947004a758231370f6297e1761f37a69d6fae1e547ecf6d10f2575
+size 617

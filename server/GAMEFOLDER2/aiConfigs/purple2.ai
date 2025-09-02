@@ -1,10 +1,3 @@
-idName: "purple2"
-gender: neutral
-character: angry
-avatar: avatars/campaign/purple.png
-color: "ybrg"
-preferencesSettings: aiConfigs/settingAngry.aipref
-speedSettings: aiConfigs/settingBaseMedium.aispeed
-difficulty: normal
-stupidity: 60
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:66e8fbc8601dce00dbc9efd9cee5103de74a6a1119d0f8257f126416cc41cde2
+size 237

@@ -1,12 +1,3 @@
-- type: cargo3
-  connectors: [2, 0, 0, 0]
-- type: cargo3
-  connectors: [1, 0, 0, 0]
-- type: cargo3
-  connectors: [1, 0, 1, 0]
-- type: cargo3
-  connectors: [2, 0, 2, 0]
-- type: cargo3
-  connectors: [2, 0, 1, 0]
-- type: cargo3
-  connectors: [2, 0, 1, 0]
+version https://git-lfs.github.com/spec/v1
+oid sha256:9e14fb0cbc08af8c0370716a39a40ead941454515b282c27306305bd76b4cbb8
+size 251

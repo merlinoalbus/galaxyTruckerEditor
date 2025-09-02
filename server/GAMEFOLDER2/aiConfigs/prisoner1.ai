@@ -1,8 +1,3 @@
-idName: "prisoner1"
-character: basic
-avatar: avatars/campaign/prisoner1.png
-color: "rygb"
-preferencesSettings: aiConfigs/settingBase.aipref
-speedSettings: aiConfigs/settingBaseMedium.aispeed
-difficulty: normal
-stupidity: 60
+version https://git-lfs.github.com/spec/v1
+oid sha256:71455eeb8ad9c2b0e8ec034adeb1b9949e78059710937d587b2493c413313798
+size 224

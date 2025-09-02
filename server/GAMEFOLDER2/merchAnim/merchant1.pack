@@ -1,17 +1,3 @@
-Merch_small/GT_merch_NohaLeva.png 1 647 187 159 
-Merch_small/GT_merch_NohaLevaChodidlo.png 402 647 106 160  rot
-Merch_small/GT_merch_NohaPrava.png 1846 600 185 186 
-Merch_small/GT_merch_NohaPravaChodidlo_sm.png 1654 600 190 182  rot
-Merch_small/GT_merch_RukaLeva_sm.png 1373 1 364 278  rot
-Merch_small/GT_merch_RukaPrava_sm.png 1163 598 230 215 
-Merch_small/GT_merch_pest_klep.png 904 602 257 202 
-Merch_small/GT_merch_pest_unklep.png 1395 576 257 211 
-Merch_small/GT_merch_rope_sm.png 190 647 210 135  rot
-Merch_small/GT_merch_shop_sm.png 547 1 450 599 
-Merch_small/GT_merch_torzo_sm.png 1 1 544 644 
-Merch_small/Klep_anim/hand1.png 999 295 349 301 
-Merch_small/Klep_anim/hand2.png 999 1 372 292 
-Merch_small/Klep_anim/hand3.png 547 602 355 201 
-Merch_small/Klep_anim/hand4.png 1739 1 290 302  rot
-Merch_small/Klep_anim/hand5.png 1373 281 318 293  rot
-Merch_small/Klep_anim/hand6.png 1693 305 318 293  rot
+version https://git-lfs.github.com/spec/v1
+oid sha256:f81e063dcc6e836ddf62154655bfba229e65903b806c6885c7d90084e9665de6
+size 907

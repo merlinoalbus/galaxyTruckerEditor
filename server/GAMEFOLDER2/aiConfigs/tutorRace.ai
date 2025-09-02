@@ -1,7 +1,3 @@
-idName: "tutorRace"
-shipTypes: ["I-double", "II-double", "III-double"]
-avatar: avatars/campaign/tutor.png
-color: "bgyr"
-preferencesSettings: aiConfigs/settingSafe.aipref
-speedSettings: aiConfigs/settingBase.aispeed
-stupidity: 10
+version https://git-lfs.github.com/spec/v1
+oid sha256:6c0bb33ea46186b98b4396c2fc91a69c0834e85b985296e0def6db470c11f4ec
+size 229

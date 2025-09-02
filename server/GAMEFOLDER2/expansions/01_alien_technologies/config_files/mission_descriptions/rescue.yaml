@@ -1,18 +1,3 @@
-                                                  # expansion adventure config
-name:         rescue_title
-
-planetImg:    lab.png
-
-avatarImg:    campaign/prisoner1-worried.png
-avatarColor:  avatarBgColor
-
-
-missions:
-- rescue1.yaml                                  # 1 star mission
-- rescue2.yaml                                  # 2 star mission
-- rescue3.yaml                                  # 3 star mission
-
-
-dialogScript:   rescue_Dlg
-endDialogsWin: [rescue1_Success, rescue2_Success, rescue3_Success]
-endDialogLoose: rescue_Failure
+version https://git-lfs.github.com/spec/v1
+oid sha256:618965c0bbe470372dc150bd06b3111fc2b971a34ee9e3e1fdd89061c7617cd1
+size 536

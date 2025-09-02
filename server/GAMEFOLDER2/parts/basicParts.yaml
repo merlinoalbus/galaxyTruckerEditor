@@ -1,8 +1,3 @@
-- type: basic1
-  connectors: [3, 3, 3, 3]
-- type: basic2
-  connectors: [3, 3, 3, 3]
-- type: basic3
-  connectors: [3, 3, 3, 3]
-- type: basic4
-  connectors: [3, 3, 3, 3]
+version https://git-lfs.github.com/spec/v1
+oid sha256:f14072f42624aa30bb83a02083f842e131dd0cfad7704356a9ccda38423a4b79
+size 167

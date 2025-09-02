@@ -1,8 +1,3 @@
-- type: alienSpecEngine
-  connectors: [0, 1, 0, 2]
-- type: alienSpecEngine
-  connectors: [0, 2, 0, 1]
-- type: alienSpecEngine
-  connectors: [0, 1, 2, 0]
-- type: alienSpecEngine
-  connectors: [0, 2, 1, 0]
+version https://git-lfs.github.com/spec/v1
+oid sha256:0e2d9f3a4983e8ebbf3f85aabf1cc3b0812c16c0e80489d17cc0a57bb42dc806
+size 203

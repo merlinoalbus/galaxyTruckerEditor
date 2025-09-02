@@ -1,36 +1,3 @@
-name:         junkyard_title                      # id of mission name string - localized 
-
-
-# txt + img
-new:          junkyard_new
-rules:        junkyard2_rules
-objectives:   junkyard2_objectives
-images:       [[advCards/junkyard_preview.png, 182, 280, ["Junkyard"]]]
-
-
-gameType:     realtime                            # values: realtime/turnbased; If mentioned this value can not be changed in GUI setting (lobby) by player.
-
-
-rounds:
-- roundType:  STII
-  pileConfig: at__junkyard.yaml
-
-
-shipPlans:    [II-random]                         # names of all available ship plans. If not mentioned default plans will be used. Should by only one ship plan for one flight.
-
-
-opponents:
-- "at__rand-easy-man3"
-- "at__rand-medium-woman1"
-
-
-deckScript:   at__Junkyard_Deck_easy                   # adventure cards deck building script
-
-
-winCondition:                                     # values: scoreWinner / didntGiveUp; used in expansion, to find ouf when is mission completed succefully
-              didntGiveUp: true
-              deliverCargoWorthOf: 20
-
-
-evaluation:                                       # You can mention only those values you want edit. But you have to repeat (copy&paste) the rules for each flight.  
-  STI:
+version https://git-lfs.github.com/spec/v1
+oid sha256:e150bc2889bdd2547790bbaddabc2ae2f8b445657cce7a6a7c51bd165fe12a7c
+size 1228

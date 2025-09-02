@@ -1,18 +1,3 @@
-                                                  # expansion adventure config
-name:         junkyard_title
-
-planetImg:    outpost.png
-
-avatarImg:    campaign/merch.png
-avatarColor:  avatarBgColor
-
-
-missions:
-- junkyard1.yaml                                  # 1 star mission
-- junkyard2.yaml                                  # 2 star mission
-- junkyard3.yaml                                  # 3 star mission
-
-
-dialogScript:   junkyard_Dlg
-endDialogsWin: [junkyard1_Success, junkyard2_Success, junkyard3_Success]
-endDialogLoose: junkyard_Failure
+version https://git-lfs.github.com/spec/v1
+oid sha256:4473b066f688a8add4ddf23c2414fc710b587b93a6b5e3e31ba1d1136ec4f213
+size 546

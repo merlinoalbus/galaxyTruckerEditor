@@ -1,14 +1,3 @@
-- type: openspace
-  round: 3
-- type: openspace
-  round: 3
-- type: stardust
-  round: 2
-- type: planets
-  round: 1
-  planets:
-    - cargo: r1
-    - cargo: y1
-    - cargo: g1
-    - cargo: b1
-  days: -1
+version https://git-lfs.github.com/spec/v1
+oid sha256:319a4bfa94e81b524e0407a0567f26dc64f76517d2f6d93bb21bec4bf3ab1e96
+size 199

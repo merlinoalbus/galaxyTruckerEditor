@@ -1,8 +1,3 @@
-idName: "roughTrucker"
-character: safe
-avatar: campaign/roughtrucker.png
-color: "bgyr"
-preferencesSettings: aiConfigs/settingRough.aipref
-speedSettings: aiConfigs/settingBaseEasy.aispeed
-difficulty: easy
-stupidity: 40
+version https://git-lfs.github.com/spec/v1
+oid sha256:1d9a582004d01be39439efc33f28acbf95516576459471ac568809fa1e601413
+size 217

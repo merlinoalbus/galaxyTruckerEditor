@@ -1,9 +1,3 @@
-idName: "medium_angry_pap"
-type: turn
-character: angry
-avatar: avatars/ai/medium_angry.png
-color: "ygbr"
-preferencesSettings: aiConfigs/settingAngry.aipref
-qualitySettings: aiConfigs/settingPaPAngry.aiqual
-difficulty: medium  
-stupidity: 80
+version https://git-lfs.github.com/spec/v1
+oid sha256:ebb682d88f9c510bf76e57624bfa1de76510be77ab61f4a004a5e75394f769e4
+size 241

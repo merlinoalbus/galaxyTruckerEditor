@@ -1,8 +1,3 @@
-idName: "at__rand-easy-woman2"
-gender: female
-avatar: avatars/campaign/common/easy-woman2.png
-color: "yrbg"
-preferencesSettings: aiConfigs/settingAngry.aipref
-speedSettings: aiConfigs/settingBaseEasy.aispeed
-difficulty: easy  #hard, medium, easy
-stupidity: 120
+version https://git-lfs.github.com/spec/v1
+oid sha256:fc85724b286b0691acdcac32c7ad502a1195b41ccc0b17f155abdbf76a8bf4bd
+size 260

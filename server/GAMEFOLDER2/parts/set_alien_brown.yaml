@@ -1,12 +1,3 @@
-- type: alienEngine
-  connectors: [3, 0, 0, 1]
-- type: alienEngine
-  connectors: [3, 1, 0, 0]
-- type: alienEngine
-  connectors: [3, 0, 0, 0]
-- type: alienEngine
-  connectors: [1, 2, 1, 0]
-- type: alienEngine
-  connectors: [3, 0, 2, 0]
-- type: alienEngine
-  connectors: [1, 1, 1, 0]
+version https://git-lfs.github.com/spec/v1
+oid sha256:fbab6ab792bc621ddd3fafe941aab8b56023c0b211429c47312740469d56eab5
+size 281

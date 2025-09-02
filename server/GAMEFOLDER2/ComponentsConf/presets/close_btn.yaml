@@ -1,5 +1,3 @@
-class_name: 'CGEUITextButton'
-name: 'closeButton'
-size: [80, 80]
-position: ['root.w - 150', '50']
-image: 'common/close_frame.png'
+version https://git-lfs.github.com/spec/v1
+oid sha256:e93fbd9510b0b992e2c8d72a0dd724cfe0fbde72aab44a9bf661078636c15c13
+size 130

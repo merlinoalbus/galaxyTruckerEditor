@@ -1,4 +1,3 @@
-- type: img
-  id: other
-  src: help/other.png
-  bounds: [448, 824, 640, 400]
+version https://git-lfs.github.com/spec/v1
+oid sha256:3cf657e2f65b9279164c81e7bf7ec40be4d7c0b48301cfa96e90450411096d73
+size 76

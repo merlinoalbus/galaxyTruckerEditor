@@ -1,15 +1,3 @@
-# expansion challenges mission list
-- ship_random.yaml
-- junkyard.yaml
-- bidir_cannons.yaml
-- three_little_aliens.yaml
-- ship_growing.yaml
-- plating.yaml
-- black_hole.yaml
-- catapult.yaml
-- space_billiards.yaml
-- ship_amoeba.yaml
-- rescue.yaml
-- artifact.yaml
-- deadly_race.yaml
-- vip_rockband.yaml
+version https://git-lfs.github.com/spec/v1
+oid sha256:6c5bff14cb1aa3519609eee53e36094557d8e999b8d85924d91b95f6f72e222e
+size 298

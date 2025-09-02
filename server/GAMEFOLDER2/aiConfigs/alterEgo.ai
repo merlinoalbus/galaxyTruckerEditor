@@ -1,8 +1,3 @@
-idName: "alterEgo"
-character: basic
-avatar: campaign/alterEgo.png
-color: "rygb"
-preferencesSettings: aiConfigs/settingBase.aipref
-speedSettings: aiConfigs/settingBase.aispeed
-difficulty: hard  #hard, medium, easy
-stupidity: 20
+version https://git-lfs.github.com/spec/v1
+oid sha256:5fe044d046eda47b8027a021d232b66781227ae39e76719a98767f5433445583
+size 226

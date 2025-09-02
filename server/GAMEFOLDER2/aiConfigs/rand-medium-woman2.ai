@@ -1,7 +1,3 @@
-idName: "rand-medium-woman2"
-gender: female
-avatar: avatars/campaign/common/medium-woman2.png
-color: "rygb"
-preferencesSettings: aiConfigs/settingRich.aipref
-speedSettings: aiConfigs/settingBaseMedium.aispeed
-stupidity: 60
+version https://git-lfs.github.com/spec/v1
+oid sha256:e623ba13c0dda8df16940ecdb9763c7c482192364c89962b22b93febbe88b06d
+size 222

@@ -1,10 +1,3 @@
-idName: "tutAI"
-character: basic
-avatar: campaign/tutor.png
-color: "ygbr"
-preferencesSettings: aiConfigs/settingTut.aipref
-qualitySettings: aiConfigs/settingTut.aiqual
-speedSettings: aiConfigs/settingBase.aispeed
-speed: 1
-difficulty: easy
-stupidity: 100
+version https://git-lfs.github.com/spec/v1
+oid sha256:f68122e4fb6021a83a0a1904a5d3a8803330f5d5062ffe3a633b9f9a049131d6
+size 254

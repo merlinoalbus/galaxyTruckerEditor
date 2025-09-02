@@ -1,7 +1,3 @@
-idName: "at__pirate-medium-man2"
-avatar: avatars/alien_technologies/pirate-man2.png
-color: "gybr"
-preferencesSettings: aiConfigs/settingBase.aipref
-speedSettings: aiConfigs/settingBaseMedium.aispeed
-difficulty: medium  #hard, medium, easy
-stupidity: 60
+version https://git-lfs.github.com/spec/v1
+oid sha256:d1213ecf47c9448dd48cacdbd95ad1572199673b4ec0a248e6ce3edade74a1d2
+size 252

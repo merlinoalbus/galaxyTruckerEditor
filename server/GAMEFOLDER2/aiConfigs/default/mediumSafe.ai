@@ -1,8 +1,3 @@
-idName: "medium_safe"
-character: safe
-avatar: avatars/ai/medium_safe.png
-color: "ygbr"
-preferencesSettings: aiConfigs/settingSafe.aipref
-speedSettings: aiConfigs/settingBaseMedium.aispeed
-difficulty: medium  #hard, medium, easy
-stupidity: 80
+version https://git-lfs.github.com/spec/v1
+oid sha256:38d4737394c5eb879c68ceb0550eaa2ef2674182b5be0af4c32e5653049289bd
+size 241

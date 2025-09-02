@@ -1,7 +1,3 @@
-PROTECTED_TURNS: [2, 4, 6, 6] # STI, STII, STIII, 
-FINAL_TURNS: 3
-STARTING_PTS: [[10], [9, 12], [8, 10, 12], [6, 8, 10, 12]]
-PTS_PER_TURN: 12
-PTS_PER_FINAL_TURN: 8
-PTS_TO_STORE: 3
-ADV_CARDS_PTS: [3, 4, 5, 5] # STI, STII, STIII, STIIIA
+version https://git-lfs.github.com/spec/v1
+oid sha256:57066b6eed73c130ad97f5005da219adc745a6f53d4a845102236bcf3fbb2f37
+size 234

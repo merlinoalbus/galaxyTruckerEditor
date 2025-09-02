@@ -1,5 +1,3 @@
-TileSize: 170                # velikost netazeneho dilku v retina px
-TileSizeDesktop: 115         # velikost netazeneho dilku v retine px pro desktop verzi
-TileDraggedSize: 214         # velikost tazeneho dilku v retina px
-TileDraggedSizeDesktop: 148  # velikost tazeneho dilku v retina px pro desktop verzi
-AsideSlots: 2                # pocatecni pocet odkladacich slotu (ship musi mit pro kazdy mozny pocet definici)
+version https://git-lfs.github.com/spec/v1
+oid sha256:a84cc5a11887e4d8b5ef317728812441ea162f75ebfb1756b1e917e19dc310a1
+size 420

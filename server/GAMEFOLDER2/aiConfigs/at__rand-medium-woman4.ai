@@ -1,8 +1,3 @@
-idName: "at__rand-medium-woman4"
-gender: female
-avatar: avatars/campaign/common/medium-woman4.png
-color: "yrbg"
-preferencesSettings: aiConfigs/settingAngry.aipref
-speedSettings: aiConfigs/settingBaseMedium.aispeed
-difficulty: medium  #hard, medium, easy
-stupidity: 60
+version https://git-lfs.github.com/spec/v1
+oid sha256:55b6a929a6a508bea16708b44c76e60760f8a3d23d38dfccd64b5f1279ea0117
+size 267

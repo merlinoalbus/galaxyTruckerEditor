@@ -1,8 +1,3 @@
-idName: "cyan2"
-avatar: avatars/campaign/cyan.png
-color: "ybrg"
-preferencesSettings: aiConfigs/settingRich.aipref
-speedSettings: aiConfigs/settingBaseMedium.aispeed
-difficulty: normal
-stupidity: 20
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:7e29cfc3ff1a3acace0134d2c974feb8b4e0cfaee7bc7a3d440dafe5d5dd32f2
+size 199

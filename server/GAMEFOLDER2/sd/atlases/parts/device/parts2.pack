@@ -1,30 +1,3 @@
-sd/parts/catapult_empty.png 2 2 256 256 
-sd/parts/engine.png 260 2 256 256 
-sd/parts/engineDouble.png 518 2 256 256 
-sd/parts/explosive.png 776 2 256 256 
-sd/parts/front.png 1034 2 256 256 
-sd/parts/glow.png 2 260 256 256 
-sd/parts/gun+engine.png 2 518 256 256 
-sd/parts/gun.png 2 776 256 256 
-sd/parts/gunBidirect.png 2 1034 256 256 
-sd/parts/gunBidirect_active.png 2 1292 256 256 
-sd/parts/gunDouble.png 260 260 256 256 
-sd/parts/gunDouble_active.png 518 260 256 256 
-sd/parts/gun_active.png 776 260 256 256 
-sd/parts/ingot1.png 1034 260 256 256 
-sd/parts/ingot2.png 260 518 256 256 
-sd/parts/ingot3.png 260 776 256 256 
-sd/parts/ingot4.png 260 1034 256 256 
-sd/parts/ingot5.png 260 1292 256 256 
-sd/parts/ingot6.png 518 518 256 256 
-sd/parts/ingot7.png 776 518 256 256 
-sd/parts/ingot8.png 1034 518 256 256 
-sd/parts/nothing.png 518 776 256 256 
-sd/parts/plating-L.png 518 1034 256 256 
-sd/parts/plating-U.png 518 1292 256 256 
-sd/parts/radioactive.png 776 776 256 256 
-sd/parts/radioactive_glow.png 1034 776 256 256 
-sd/parts/shield.png 776 1034 256 256 
-sd/parts/shield_active.png 776 1292 256 256 
-sd/parts/solar.png 1034 1034 256 256 
-sd/parts/solar_active.png 1034 1292 256 256 
+version https://git-lfs.github.com/spec/v1
+oid sha256:c1f17150032c9588c13e93ebaa5f22c8a9db60c258826c633385fddb212a0fe9
+size 1187

@@ -1,8 +1,3 @@
-idName: "at__halfbreed__hard_basic"
-character: basic
-avatar: avatars/alien_technologies/halfbreed.png
-color: "rgby"
-preferencesSettings: aiConfigs/settingBase.aipref
-speedSettings: aiConfigs/settingBase.aispeed
-difficulty: hard  #hard, medium, easy
-stupidity: 20
+version https://git-lfs.github.com/spec/v1
+oid sha256:532edbd69168ddb2a1fbbfc58b8a8f1b54a201e8447cc6c88bcf42a8377fbea5
+size 263

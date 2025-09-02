@@ -1,25 +1,3 @@
-gameSelectScreen/AI_Easy.png 1472 1713 126 161  rot
-gameSelectScreen/AI_Medium.png 1290 1855 161 126 
-gameSelectScreen/AI_hard.png 1600 1846 161 126 
-gameSelectScreen/Real-time.png 1453 1876 126 126 
-gameSelectScreen/Turn_based.png 1581 804 242 312 
-gameSelectScreen/Turn_based_active.png 0 1713 312 242  rot
-gameSelectScreen/activeIcon.png 1608 1204 212 212 
-gameSelectScreen/addAvatar.png 1302 1083 218 218 
-gameSelectScreen/at.png 314 1713 242 242 
-gameSelectScreen/at_active.png 558 1713 242 242 
-gameSelectScreen/avatarEmptyFrame.png 1302 804 277 277 
-gameSelectScreen/classic.png 802 1713 242 242 
-gameSelectScreen/classic_active.png 1046 1713 242 242 
-gameSelectScreen/empty.png 1704 0 118 121 
-gameSelectScreen/humanIcon.png 1290 1713 180 140 
-gameSelectScreen/input.png 1522 1118 278 84 
-gameSelectScreen/phaseIII_active.png 0 1311 400 400 
-gameSelectScreen/phaseIII_inactive.png 402 1311 400 400 
-gameSelectScreen/phaseII_active.png 804 1311 400 400 
-gameSelectScreen/phaseII_inactive.png 1206 1311 400 400 
-gameSelectScreen/phaseI_active.png 1302 0 400 400 
-gameSelectScreen/phaseI_inactive.png 1302 402 400 400 
-gameSelectScreen/real.png 1608 1418 212 212 
-gameSelectScreen/real_active.png 1608 1632 212 212 
-gameSelectScreen/selectWindow.png 0 0 1300 1309  rot
+version https://git-lfs.github.com/spec/v1
+oid sha256:35b13c72e13924cdfb5d44d6bc600796a99e47769ae841ced08b1d4aa6d372b5
+size 1274

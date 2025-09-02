@@ -1,8 +1,3 @@
-idName: "at__roughTrucker__medium_safe"
-character: safe
-avatar: avatars/alien_technologies/roughtrucker.png
-color: "bgyr"
-preferencesSettings: aiConfigs/settingSafe.aipref
-speedSettings: aiConfigs/settingBaseMedium.aispeed
-difficulty: medium  #hard, medium, easy
-stupidity: 80
+version https://git-lfs.github.com/spec/v1
+oid sha256:5adde847877a9025e41990ca0cb6c91cc6183d651abb29cb47726bc41938c5c0
+size 276

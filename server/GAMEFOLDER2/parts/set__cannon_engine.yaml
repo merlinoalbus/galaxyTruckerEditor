@@ -1,18 +1,3 @@
-- type: gun+engine
-  connectors: [1, 0, 0, 0]
-- type: gun+engine
-  connectors: [2, 0, 0, 0]
-- type: gun+engine
-  connectors: [3, 0, 0, 0]
-- type: gun+engine
-  connectors: [0, 0, 1, 0]
-- type: gun+engine
-  connectors: [0, 0, 2, 0]
-- type: gun+engine
-  connectors: [0, 0, 3, 0]
-- type: gun+engine
-  connectors: [1, 0, 1, 0]
-- type: gun+engine
-  connectors: [2, 0, 2, 0]
-- type: gun+engine
-  connectors: [3, 0, 3, 0]
+version https://git-lfs.github.com/spec/v1
+oid sha256:04a333c791d90e0a4e06f7ae1aec304b41612287f7287466f2a9807d72a4c62b
+size 414

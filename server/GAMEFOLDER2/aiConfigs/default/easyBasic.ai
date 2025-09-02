@@ -1,8 +1,3 @@
-idName: "easy_basic"
-character: basic
-avatar: avatars/ai/easy_basic.png
-color: "gbyr"
-preferencesSettings: aiConfigs/settingBase.aipref
-speedSettings: aiConfigs/settingBaseEasy.aispeed
-difficulty: easy  #hard, medium, easy
-stupidity: 120
+version https://git-lfs.github.com/spec/v1
+oid sha256:72f793c9ca3ed7ccd6dfa2461d0d2149eec99fa76966161e31f5b4e04c13444b
+size 237

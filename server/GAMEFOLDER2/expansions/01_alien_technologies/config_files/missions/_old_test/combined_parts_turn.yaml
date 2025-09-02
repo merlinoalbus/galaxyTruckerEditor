@@ -1,33 +1,3 @@
-name: essen_test01_title                       # id of mission name string - localized 
-
-gameType: turnbased                             # values: realtime/turnbased; If mentioned this value can not be changed in GUI setting (lobby) by player.
-
-
-deckScript: sm_Default_Deck                    # adventure cards deck building script
-
-shipPlans: [I-random, II, III]                          # names of all available ship plans. If not mentioned default plans will be used. Should by only one ship plan for one flight.
-
-# used in expansion, to find ouf when is mission completed succefully
-winCondition: scoreWinner                      # scoreWinner / didntGiveUp
-
-cannotInterconnectRadioactiveCargo: true
-
-
-opponents:
-  - "hard_basic"
-  - "hard_basic"
-  - "medium_basic"
-
-rounds:
-  - roundType: STI                              # STI/STII/STIII
-    pileConfig: combinedtest.yaml
-  - roundType: STII                              # STI/STII/STIII
-    pileConfig: combinedtest.yaml
-  - roundType: STIII                              # STI/STII/STIII
-    pileConfig: combinedtest.yaml
-
-# ==== RULES ====                               # You can mention only those values you want edit. But you have to repeat (copy&paste) the rules for each flight.
-evaluation:                     
-  STI:
-  STII:
-  STIII:
+version https://git-lfs.github.com/spec/v1
+oid sha256:93cf7c1697889681d3f809bbcba67a0279d8f471746c5f7de15409b73f6a461c
+size 1299

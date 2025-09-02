@@ -1,7 +1,3 @@
-idName: "at__rand-medium-man8"
-avatar: avatars/campaign/common/medium-man8.png
-color: "byrg"
-preferencesSettings: aiConfigs/settingAngry.aipref
-speedSettings: aiConfigs/settingBaseMedium.aispeed
-difficulty: medium  #hard, medium, easy
-stupidity: 60
+version https://git-lfs.github.com/spec/v1
+oid sha256:af18e5240d1740e574f8a6c09d3bc570243308fe69ca7532e39827d941019cf1
+size 248

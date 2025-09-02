@@ -1,6 +1,3 @@
-idName: "hard_random"
-character: random
-avatar: avatars/ai/hard_random.png
-color: "rygb"
-difficulty: hard  # 1- hard, 3 - normal, 6 - easy
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:4352845923473de4b94cff6a998896aa401648eabde6f25a3527e86493c6e6eb
+size 140

@@ -1,9 +1,3 @@
-idName: "richGirlRace"
-shipTypes: ["I-sport", "II-sport", "III"]
-gender: female
-avatar: campaign/rich.png
-color: "yrgb"
-preferencesSettings: aiConfigs/settingBase.aipref
-speedSettings: aiConfigs/settingBaseHard.aispeed
-difficulty: normal
-stupidity: 20
+version https://git-lfs.github.com/spec/v1
+oid sha256:139de47b4cc5420d92f0e7bb3096a0c8d89c0309904c61587d6e49085746dc99
+size 251

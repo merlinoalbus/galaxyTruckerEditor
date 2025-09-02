@@ -1,6 +1,3 @@
-idName: "rand-easy-man2"
-avatar: avatars/campaign/common/easy-man2.png
-color: "brgy"
-preferencesSettings: aiConfigs/settingSafe.aipref
-speedSettings: aiConfigs/settingBaseEasy.aispeed
-stupidity: 120
+version https://git-lfs.github.com/spec/v1
+oid sha256:ff3d83120625908603886256e793538158fabee7a2a43ea60eba906954114611
+size 198

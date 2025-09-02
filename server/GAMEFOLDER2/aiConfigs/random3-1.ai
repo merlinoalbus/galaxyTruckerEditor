@@ -1,8 +1,3 @@
-idName: "random3-1"
-name: "Richard"
-character: basic
-avatar: avatars/common/19.png
-color: "ygbr"
-preferencesSettings: aiConfigs/settingBase.aipref
-difficulty: hard  # 1- hard, 3 - normal, 6 - easy
-
+version https://git-lfs.github.com/spec/v1
+oid sha256:7567a24a87fe17acd2f3b2b7b5689a96b709d023f20e11626d304e68cf3d74b0
+size 198
