@@ -1,30 +1,30 @@
 ---
-MissionFlightDeckPrepScript: tutorialDeck
-MissionCampaignsourceNode:
-MissionCampaignDestNode:
-MissionDeckPrepScript:
-MissionPlayersCount: 1
+MissionFlightDeckPrepScript:
+MissionCampaignsourceNode: newbie
+MissionCampaignDestNode: bar
+MissionDeckPrepScript: firstMissionDeck
+MissionPlayersCount: 2
 DeviceArchitecture: X86
 MissionAdvCardFile: advCards/basic_deck.yaml
 MissionMultiplayer: n
 ActualProfileName: Merlinus
 MissionRoundCount: 0
-MissionScriptName: Tutorial
+MissionScriptName: firstMission
 DeviceS3EVersion: 4.40.0
-CampaignMission: n
+CampaignMission: y
 MissionRealtime: y
-MissionTutorial: y
+MissionTutorial: n
 OnlineAccUserID: 308117
 OnlineAccLogin: Merlinus
 BuildVersion: Apr 25 2025
-ActualScene: MainMenuScene
+ActualScene: CampaignScene
 DeviceClass:
 MissionType: scriptDriven
 DeviceUDID:
 MissionPaP: n
 DeviceID: Windows Desktop
 DeviceOS: WINDOWS
-Time: ! 'Sat Aug 30 00:16:39 2025
+Time: ! 'Tue Sep  2 15:45:27 2025
 
   '
 ...

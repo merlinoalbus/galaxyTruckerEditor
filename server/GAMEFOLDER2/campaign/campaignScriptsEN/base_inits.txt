@@ -24,6 +24,7 @@ SCRIPT newbie_init
   END_OF_IF
   MovePlayerToNode newbie
 END_OF_SCRIPT
+
 SCRIPT outpost_init
 
   SET merchantLeftAtPurple
@@ -51,6 +52,7 @@ SCRIPT outpost_init
     ResetFocus btutor
   END_OF_IF
 END_OF_SCRIPT
+
 SCRIPT bar_init
 
   IFNOT class3
@@ -75,6 +77,7 @@ SCRIPT bar_init
     ShowPath "R1-3b"
   END_OF_IF
 END_OF_SCRIPT
+
 SCRIPT regula_init
 
   IF forgeInitialized
@@ -116,6 +119,7 @@ SCRIPT regula_init
     ShowPath "R1-4b"
   END_OF_IF
 END_OF_SCRIPT
+
 SCRIPT workshop_init
 
   IF designDouble1Unlocked
@@ -155,6 +159,7 @@ SCRIPT workshop_init
     ShowPath R3-26b
   END_OF_IF
 END_OF_SCRIPT
+
 SCRIPT purpleHome_init
 
   SET merchantLeftAtPurple
@@ -180,6 +185,7 @@ SCRIPT purpleHome_init
     ShowNode regula
   END_OF_IF
 END_OF_SCRIPT
+
 SCRIPT brownHome_init
 
   IF shortcutEnabled
@@ -203,6 +209,7 @@ SCRIPT brownHome_init
   ShowPath R1-9a
   ShowPath R1-9b
 END_OF_SCRIPT
+
 SCRIPT cyanHome_init
 
   IF cyanHomeInitialized
@@ -221,6 +228,7 @@ SCRIPT cyanHome_init
   END_OF_IF
   ShowPath R2-20b
 END_OF_SCRIPT
+
 SCRIPT class2_inits
 
   SET class2
@@ -234,6 +242,7 @@ SCRIPT class2_inits
     HideButton bvip
   END_OF_IF
 END_OF_SCRIPT
+
 SCRIPT class3_inits
 
   SET class3
@@ -247,6 +256,7 @@ SCRIPT class3_inits
   ShowPath R3-10a
   ShowPath R3-10b
 END_OF_SCRIPT
+
 SCRIPT forge_init
 
   IF forgeInitialized
@@ -262,12 +272,14 @@ SCRIPT forge_init
     ShowPath R2-13b
   END_OF_IF
 END_OF_SCRIPT
+
 SCRIPT pirateTrap_init
 
   HidePath U2-17a
   ShowNode pirateHaven
   SUB_SCRIPT pirateHaven_init
 END_OF_SCRIPT
+
 SCRIPT pirateHaven_init
 
   IF pirateHavenInitialized
@@ -283,12 +295,14 @@ SCRIPT pirateHaven_init
   MovePlayerToNode pirateHaven
   HideNode pirateTrap
 END_OF_SCRIPT
+
 SCRIPT showDebugButtons
 
   IF barInitialized
     ShowButton bbarprogress
   END_OF_IF
 END_OF_SCRIPT
+
 SCRIPT registerVisited
 
   IF sailorFulfilled
@@ -301,25 +315,28 @@ SCRIPT registerVisited
     END_OF_IF
   END_OF_IF
 END_OF_SCRIPT
-  SCRIPT barDebug
-    IF_MAX visited 4
-      Announce "5 planets visited."
-      SET_TO visited 5
+
+SCRIPT barDebug
+
+  IF_MAX visited 4
+    Announce "5 planets visited."
+    SET_TO visited 5
+  ELSE
+    IF_MAX visited 6
+      Announce "7 planet visited."
+      SET_TO visited 7
+      SetFocus bguests
     ELSE
-      IF_MAX visited 6
-        Announce "7 planet visited."
-        SET_TO visited 7
-        SetFocus bguests
+      IF treasurePlanet
+        RESET treasurePlanet
+        Announce "Treasure found."
       ELSE
-        IF treasurePlanet
-          RESET treasurePlanet
-          Announce "Treasure found."
-        ELSE
-          Announce "No further progress here."
-        END_OF_IF
+        Announce "No further progress here."
       END_OF_IF
     END_OF_IF
-  END_OF_SCRIPT
+  END_OF_IF
+END_OF_SCRIPT
+
 SCRIPT mine0_init
 
   IF mine0Initialized
@@ -331,6 +348,7 @@ SCRIPT mine0_init
   ShowPath R2-14b
   ShowButton bmine0
 END_OF_SCRIPT
+
 SCRIPT mine1_init
 
   IF mine1Initialized
@@ -343,6 +361,7 @@ SCRIPT mine1_init
   ShowPath R1-22b
   ShowButton bmine1
 END_OF_SCRIPT
+
 SCRIPT mine2_init
 
   IF mine2Initialized
@@ -355,6 +374,7 @@ SCRIPT mine2_init
   ShowPath R2-23b
   ShowButton bmine2
 END_OF_SCRIPT
+
 SCRIPT mine3_init
 
   IF mine3Initialized
@@ -367,6 +387,7 @@ SCRIPT mine3_init
   ShowButton bmine3
   SetFocus bmine3
 END_OF_SCRIPT
+
 SCRIPT licenseApprovalCheck
 
   IF brownLicenseApproval
@@ -378,6 +399,7 @@ SCRIPT licenseApprovalCheck
   END_OF_IF
   RETURN
 END_OF_SCRIPT
+
 SCRIPT recommendationCheck
 
   IF recommendationDesigner
@@ -389,6 +411,7 @@ SCRIPT recommendationCheck
   END_OF_IF
   RETURN
 END_OF_SCRIPT
+
 SCRIPT club_init
 
   IF clubInitialized
@@ -404,6 +427,7 @@ SCRIPT club_init
     ShowPath R3-27b
   END_OF_IF
 END_OF_SCRIPT
+
 SCRIPT lab_init
 
   IF labInitialized

@@ -221,7 +221,8 @@ SingleArtifactText1: "Alien artifacts can be single or double. A single artifact
 DoubleArtifactTitle: "Double Artifact"
 DoubleArtifactText1: "A double artifact creates a dead zone that affects every component in its row AND column."
 ArtifactsDeadZoneTitle: "Artifact's Dead Zone"
-ArtifactsDeadZoneText1: "In artifact's dead zone, basically no components work and you can't have any astronauts, aliens, batteries or  cargo there. Cannons, catapults and engines don't add to your strength, and can't shoot. Etc."
+ArtifactsDeadZoneText1: "In artifact's dead zone, basically no components work and you can't have any astronauts, aliens, batteries or 
+cargo there. Cannons, catapults and engines don't add to your strength, and can't shoot. Etc."
 ArtifactsDeadZoneText2: "However, all connectors, indestructible plating, and special cargo components still work normally."
 ArtifactsDeadZoneText3: "An artifact cannot be in another artifact's dead zone."
 CannonEngineCombinedTitle: "Cannon Engine"

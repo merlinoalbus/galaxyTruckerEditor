@@ -101,7 +101,7 @@ SCRIPTS
       Say "Benvenut[g(o|a)] nel deposito dell'EssePiA S.p.A."
       Say "Qui è dove costruirai la tua prima astronave."
     ELSE
-      Say "Ciao novizi[g(o|a)]. Sono qui per farti da istruttore di volo.                                                                                                                                     ([v(Tap|Clicc)]a dove preferisci per continuare)"
+      Say "Ciao novizi[g(o|a)]. Sono qui per farti da istruttore di volo.                                                                                                                                    ([v(Tap|Clicc)]a dove preferisci per continuare)"
       Ask "Sei pront[g(o|a)] ad imparare i fondamenti del trasporto intergalattico?                                                                                                                   (scegli una risposta)"
       MENU
         OPT "Signorsì, signore!"
@@ -152,7 +152,7 @@ SCRIPTS
     ShowDlgScene
     ShowChar tutor right
     Delay 100
-    Say "Aspetta un attimo! Se riveli adesso il nuovo componente, il motore verrà saldato lì dove si trova adesso."
+    Say "Aspetta un attimo! Se riveli adesso il nuovo componente, il motore verrà saldato proprio lì dove si trova."
     Say "E la frittata sarebbe fatta: renderesti inaccessibile il lato destro della tua nave! Sarebbe proprio una *sola* gigante!"
     Delay 300
     HideChar tutor
@@ -190,7 +190,7 @@ SCRIPTS
       Say "Ottimo. Abbiamo costruito le nostre astronavi. Ora iniziamo la gara fino al punto di arrivo."
     END_OF_IF
     Say "Ci pagheranno per la consegna di queste tubature, ma non è di certo questa la principale fonte di reddito di un[g(|a)] camionista intergalattico."
-    Say "Con un pizzico di fortuna, lungo la rotta troveremo altre occasioni per racimolare un po' di grana."
+    Say "Con un pizzico di fortuna, lungo la rotta avremo altre occasioni per racimolare un po' di grana."
     HideChar tutor
     HideDlgScene
     AddInfoWindow "tutorial/infoFlight.png"
@@ -213,7 +213,6 @@ SCRIPTS
     HideDlgScene
   END_OF_SCRIPT
 SCRIPT tutorialFlightViews
-
   AddInfoWindow "tutorial/infoFlightViews.png"
   ShowInfoWindow "tutorial/infoFlightViews.png"
 END_OF_SCRIPT
@@ -277,7 +276,7 @@ END_OF_SCRIPT
     ShowChar tutor left
     Delay 200
     Say "Hai visto? Alcune carte offrono opportunità valide solo per il primo camionista. Io ero davanti, quindi ho potuto saccheggiare la Stazione Abbandonata prima che tu ne avessi possibilità."
-    Say "Però ho perso due giorni di volo, quindi adesso sei di nuovo prima. Uffa!"
+    Say "Però ho perso due giorni di volo, quindi adesso sei di nuovo prim[g(o|a)]. Uffa!"
     Ask "Sai già come funziona una Stazione Abbandonata?"
     MENU
       OPT "Certo."
@@ -292,192 +291,182 @@ END_OF_SCRIPT
     HideChar tutor
     HideDlgScene
   END_OF_SCRIPT
-SCRIPT tutorialMeteoricInfo
-
-  ShowDlgScene
-  Delay 200
-  ShowChar tutor left
-  Delay 200
-  Say "Uh oh. It's a meteor swarm."
-  Say "Before we try to fly through, I'd like you to read the card. [v(Tap|Click)] on it."
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
-SCRIPT tutorialMeteor1
-
-  ShowDlgScene
-  Delay 200
-  ShowChar tutor left
-  Delay 200
-  Say "The dice of fate have decided that the first LARGE meteor is coming down column 7. I'll be okay. I have a forward-pointing cannon in that column."
-  Say "You have a double cannon there. You should spend a battery to power it up. Otherwise, the meteor will destroy your cannon."
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
-SCRIPT tutorialMeteor2
-
-  ShowDlgScene
-  Delay 200
-  ShowChar tutor left
-  Delay 200
-  Say "SMALL meteors are mostly harmless ... unless they hit an exposed connector."
-  Say "Watch them bounce off our ships."
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
-SCRIPT tutorialMeteor3
-
-  ShowDlgScene
-  Delay 200
-  ShowChar tutor left
-  Delay 200
-  Say "Uh oh. This one is coming in row 5. That's bad because I have an exposed connector."
-  Say "Good thing I have a shield. It's that green component I forgot to tell you about."
-  Say "Watch me use it to protect my ship:"
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
+  SCRIPT tutorialMeteoricInfo
+    ShowDlgScene
+    Delay 200
+    ShowChar tutor left
+    Delay 200
+    Say "Oh, oh! È una Pioggia di Meteoriti."
+    Say "Prima di provare ad attraversarla, vorrei che leggessi la carta. [v(Tappal|Cliccaci sopr)]a per visualizzarla."
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
+  SCRIPT tutorialMeteor1
+    ShowDlgScene
+    Delay 200
+    ShowChar tutor left
+    Delay 200
+    Say "I dadi del destino hanno parlato, ed hanno deciso che il primo METEORITE GRANDE arriverà nella colonna 7. Tranquillo, per fortuna ho un cannone puntato proprio da quella parte."
+    Say "Tu invece hai un Cannone Doppio in quella colonna. Ti conviene usare una batteria per potenziarlo. Altrimenti, il meteorite lo distruggerà."
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
+  SCRIPT tutorialMeteor2
+    ShowDlgScene
+    Delay 200
+    ShowChar tutor left
+    Delay 200
+    Say "I Meteoriti PICCOLI sono quasi innocui... a meno che non colpiscano un connettore esposto."
+    Say "Guarda come rimbalzano sugli scafi delle nostre navi. Che spasso!"
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
+  SCRIPT tutorialMeteor3
+    ShowDlgScene
+    Delay 200
+    ShowChar tutor left
+    Delay 200
+    Say "Oh oh! Questo sta arrivando sulla riga 5. Non va bene, lì ho un connettore esposto!"
+    Say "Meno male che avevo lo scudo! Lo vedi? È quel componente verde di cui mi sono dimenticato di parlarti."
+    Say "Guarda mentre lo attivo per proteggere la mia astronave."
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
 SCRIPT tutorialShieldsInfo
 
   AddInfoWindow "tutorial/infoShield.png"
   AddInfoWindow "tutorial/infoShield2.png"
   ShowInfoWindow "tutorial/infoShield.png"
 END_OF_SCRIPT
-SCRIPT tutorialMeteor4
-
-  ShowDlgScene
-  Delay 200
-  ShowChar tutor left
-  Delay 200
-  Say "Oh no. A large meteor in column 8. I don't have a cannon there."
-  Say "Shields cannot protect me against LARGE meteors. I guess I can kiss that cargo hold goodbye."
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
-SCRIPT tutorialMeteorFinal
-
-  ShowDlgScene
-  Delay 200
-  ShowChar tutor left
-  Delay 200
-  Say "So, do you understand meteors?"
-  RESET playerPaysAttention
-  MENU
-    OPT "Yes, fully."
-      Say "Great."
-      EXIT_MENU
-    END_OF_OPT
-    OPT "Not really, but I can read the card info again."
-      Say "Great."
-      SET playerPaysAttention
-      EXIT_MENU
-    END_OF_OPT
-    OPT "Can you sum it up?"
-      Say "Sure. SMALL meteors either bounce off, or you can power up a shield to stop them. LARGE meteors can be stopped only by shooting them with a cannon in that column."
-      EXIT_MENU
-    END_OF_OPT
-  END_OF_MENU
-  Delay 500
-  Say "All right. I think you can handle the rest of the adventures without my help."
-  IFNOT playerPaysAttention
-    Say "Don't forget to read the info for cards you don't know."
-  END_OF_IF
-  Say "See you at the finish!"
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
+  SCRIPT tutorialMeteor4
+    ShowDlgScene
+    Delay 200
+    ShowChar tutor left
+    Delay 200
+    Say "Oh no! Un Meteorite GRANDE sulla colonna 8. Non ho un cannone lì. Che sfortuna!"
+    Say "Gli scudi non mi possono proteggere dai METEORE GRANDI. Immagino che dovrò dire addio alla mia Stiva. Porca paletta!"
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
+  SCRIPT tutorialMeteorFinal
+    ShowDlgScene
+    Delay 200
+    ShowChar tutor left
+    Delay 200
+    Say "Quindi hai capito come funzionano i meteoriti?"
+    RESET playerPaysAttention
+    MENU
+      OPT "Sì, cristallino."
+        Say "Perfetto."
+        EXIT_MENU
+      END_OF_OPT
+      OPT "Non proprio. Ma posso sempre rileggere i dettagli della carta."
+        Say "Ottimo."
+        SET playerPaysAttention
+        EXIT_MENU
+      END_OF_OPT
+      OPT "Puoi farmi tu un recap?"
+        Say "Certo. I Meteoriti PICCOLI rimbalzano o, in caso di connettori esposti puoi attivare uno scudo per fermarli. I Meteoriti GRANDI possono essere fermati solo sparandogli con un cannone orientato nella stessa colonna."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    Delay 500
+    Say "Molto bene. Credo che, a questo punto, tu abbia le basi e possa cavartela da solo con il resto delle Avventure."
+    IFNOT playerPaysAttention
+      Say "Non dimenticare di leggere i dettagli delle carte che non conosci."
+    END_OF_IF
+    Say "Ci si vede al traguardo!"
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
   SCRIPT tutorialResults
     ShowDlgScene
     Delay 200
     ShowChar tutor left
     Delay 200
-    Say "Ora contiamo quanti soldi abbiamo guadagnato. Ti spiegherei il dettaglio di questo processo in modo dettagliato punto per punto, ma immagino tu possa anche cavartela da sol[g(o|a)]."
+    Say "Ora contiamo quanti soldi abbiamo guadagnato. Ti spiegherei il dettaglio di questo processo in modo analitico punto per punto, ma immagino tu possa anche cavartela da sol[g(o|a)]."
     Say "Vedi quel punto interrogativo nell'angolo in alto a destra? La maggior parte delle schermate ne hanno uno. [v(Tappa|Clicca)]ndoci vedrai la spiegazione di dettaglio della schermata."
     HideChar tutor
     HideDlgScene
   END_OF_SCRIPT
-SCRIPT tutorialFinishZero
-
-  ShowDlgScene
-  Delay 200
-  ShowChar tutor left
-  Delay 200
-  Say "Hm. You didn't make any money."
-  Say "Well, you're still learning. I'm sure it will go better next time."
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
-SCRIPT tutorialFinishPlayerWon
-
-  ShowDlgScene
-  Delay 200
-  ShowChar tutor left
-  Delay 200
-  Say "I let you win this time so you wouldn't get discouraged."
-  Say "But that's not important. What's important is that you made good money. And that's what trucking is all about, right?"
-  IF_FROM_CAMPAIGN
-    Say "And now I'll take that money as payment for your tuition. I'm sure you'll be making more money soon. Pleasure doing business with you."
-    SetCredits 0
-  END_OF_IF
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
-SCRIPT tutorialFinishPlayerLost
-
-  ShowDlgScene
-  Delay 200
-  ShowChar tutor left
-  Delay 200
-  Say "I made more money than you did, so I won. But that's not important right now."
-  Say "What's important is that you made some money. And that's what trucking is all about, right?"
-  IF_FROM_CAMPAIGN
-    Say "And now I'll take that money as payment for your tuition. I'm sure you'll be making more money soon. Pleasure doing business with you."
-  END_OF_IF
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
-SCRIPT tutorialFinal
-
-  ShowDlgScene
-  Delay 200
-  ShowChar tutor left
-  Delay 200
-  IF_FROM_CAMPAIGN
-    Say "Well, that's it. Your training is over. You have a few more concepts to learn, but you can discover them during the campaign."
-    Say "Keep on truckin'!"
+  SCRIPT tutorialFinishZero
+    ShowDlgScene
+    Delay 200
+    ShowChar tutor left
+    Delay 200
+    Say "Mmmm. Sembra tu non abbia guadagnato nemmeno un credito."
+    Say "Beh, stai ancora imparando, dopotutto. Sono sicuro che la prossima volta andrà meglio."
     HideChar tutor
     HideDlgScene
-  ELSE
-    Say "That's it. Your training is done."
-    Say "Well, actually, there are a few more concepts to learn, but you can discover them in the campaign."
-    MENU
-      OPT "Okay. I'll try the campaign."
-        Say "Great. Keep on truckin'!"
-        HideChar tutor
-        HideDlgScene
-        EXIT_MENU
-      END_OF_OPT
-      OPT "Do you think you could explain everything now?"
-        Say "Okay."
-        ChangeChar tutor campaign/tutor-out.png
-        Say "Hey, old guy! [g(He|She|It)] wants the works!"
-        HideChar tutor
-        HideDlgScene
-        SET tutorialAdditionalConcepts
-        AddInfoWindow "tutorial/infoLookingAtCards.png"
-        AddInfoWindow "tutorial/infoAsideSlots.png"
-        AddInfoWindow "tutorial/infoPurpleLifeSupport.png"
-        AddInfoWindow "tutorial/infoPurpleAliens.png"
-        AddInfoWindow "tutorial/infoBrownLifeSupport.png"
-        AddInfoWindow "tutorial/infoBrownAliens.png"
-        AddInfoWindow "tutorial/infoShipInfo.png"
-        AddInfoWindow "tutorial/infoGivingUpFlight.png"
-        AddInfoWindow "tutorial/infoGivingUpFlight2.png"
-        ShowInfoWindow "tutorial/infoLookingAtCards.png"
-        EXIT_MENU
-      END_OF_OPT
-    END_OF_MENU
-  END_OF_IF
-END_OF_SCRIPT
+  END_OF_SCRIPT
+  SCRIPT tutorialFinishPlayerWon
+    ShowDlgScene
+    Delay 200
+    ShowChar tutor left
+    Delay 200
+    Say "Questa volta ti ho lasciato vincere, giusto per non demoralizzarti."
+    Say "Ma la cosa che conta è un'altra: hai raccolto un gran bel bottino di crediti. Ed è proprio questo il bello di questo lavoro, non credi?"
+    IF_FROM_CAMPAIGN
+      Say "Adesso prenderò questi crediti come commissione per il servizio di tutoring. Sono sicuro che presto guadagnerai molti più soldi. È stato un piacere fare affari con te."
+      SetCredits 0
+    END_OF_IF
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
+  SCRIPT tutorialFinishPlayerLost
+    ShowDlgScene
+    Delay 200
+    ShowChar tutor left
+    Delay 200
+    Say "Ho fatto più soldi di te, quindi ho vinto. Ma non è questa la cosa l'importante al momento."
+    Say "Quello che conta è che tu abbia racimolato un po' di crediti. È questo il bello del trasporto intergalattico, non credi?"
+    IF_FROM_CAMPAIGN
+      Say "Ora prenderò questi soldi come pagamento per il servizio di tutoring. Sono certo che guadagnerai presto molti più crediti di così. È stato un piacere fare affari con te."
+    END_OF_IF
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
+  SCRIPT tutorialFinal
+    ShowDlgScene
+    Delay 200
+    ShowChar tutor left
+    Delay 200
+    IF_FROM_CAMPAIGN
+      Say "Molto bene. E con questo è tutto. Il tuo addestramento è finito. Ci sono ancora un paio di cosette da imparare, ma le scoprirai direttamente durante la campagna."
+      Say "Tu non mollare! Continua a darci dentro!"
+      HideChar tutor
+      HideDlgScene
+    ELSE
+      Say "E questo è quanto. Il tuo addestramento è finito."
+      Say "Beh, a dire il vero, ci sarebbero ancora un paio di cosette che devi imparare, ma le scoprirai da solo durante la campagna."
+      MENU
+        OPT "Ok. Proverò la Campagna."
+          Say "Ottimo. Non mollare! Continua a darci dentro!"
+          HideChar tutor
+          HideDlgScene
+          EXIT_MENU
+        END_OF_OPT
+        OPT "Non potresti spiegarmi tutto adesso?"
+          Say "E va bene."
+          ChangeChar tutor campaign/tutor-out.png
+          Say "Ehi, nonnino! [g(Lui|Lei)] vuole il pacchetto completo!"
+          HideChar tutor
+          HideDlgScene
+          SET tutorialAdditionalConcepts
+          AddInfoWindow "tutorial/infoLookingAtCards.png"
+          AddInfoWindow "tutorial/infoAsideSlots.png"
+          AddInfoWindow "tutorial/infoPurpleLifeSupport.png"
+          AddInfoWindow "tutorial/infoPurpleAliens.png"
+          AddInfoWindow "tutorial/infoBrownLifeSupport.png"
+          AddInfoWindow "tutorial/infoBrownAliens.png"
+          AddInfoWindow "tutorial/infoShipInfo.png"
+          AddInfoWindow "tutorial/infoGivingUpFlight.png"
+          AddInfoWindow "tutorial/infoGivingUpFlight2.png"
+          ShowInfoWindow "tutorial/infoLookingAtCards.png"
+          EXIT_MENU
+        END_OF_OPT
+      END_OF_MENU
+    END_OF_IF
+  END_OF_SCRIPT
 
 END_OF_SCRIPTS

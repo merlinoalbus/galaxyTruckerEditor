@@ -102,8 +102,8 @@ continue: "Pokračovat"
 close: "Zavřít"
 back: "Zpět"
 warning: "Varování"
-"yes": "Ano"
-"no": "Ne"
+yes: "Ano"
+no: "Ne"
 ok: "OK"
 players_give_up_flight: "[vecP(, | a )] [vecPn(1:odstupuje|2:odstupují)] z letu."
 give_up_flight: "Odstoupit z tohoto letu."
@@ -216,15 +216,22 @@ stat_pl_has_lowest_stat: "[p] má [s(gun:nejmenší sílu <img src='flightScene/
 gets_under_fire: "a dostává se pod palbu."
 wait_for_others_to_load: "Čekej, než se ostatním hráčům nahraje letová fáze..."
 penalty: "Penalizace"
-card_help_openspace: "Všechny lodě se pohnou o tolik [i(advCards/icons/flight_day.png)] dopředu, kolik je síla jejich motorů.<br /><br /> Jednoduchý motor se počítá za 1, dvojitý motor za 2 (musíš zaplatit baterii). Hráči se rozhodují postupně od prvního, jestli a kolik dvojitých motorů zapojí.<br /><br /> Hnědý mimozemšťan přidává +2 k celkové síle motorů (pokud máš sílu alespoň 1).<br /><br /> POZOR: Loď, která má při této kartě sílu motorů 0, musí odstoupit z letu."
+card_help_openspace: "Všechny lodě se pohnou o tolik [i(advCards/icons/flight_day.png)] dopředu, kolik je síla jejich motorů.<br /><br />
+Jednoduchý motor se počítá za 1, dvojitý motor za 2 (musíš zaplatit baterii). Hráči se rozhodují postupně od prvního, jestli a kolik dvojitých motorů zapojí.<br /><br />
+Hnědý mimozemšťan přidává +2 k celkové síle motorů (pokud máš sílu alespoň 1).<br /><br />
+POZOR: Loď, která má při této kartě sílu motorů 0, musí odstoupit z letu."
 card_help_stardust: "Každý hráč se posune dozadu o tolik [i(advCards/icons/flight_day.png)], kolik má jeho loď otevřených přípojek."
 card_help_epidemic: "Epidemie postihne kabiny s posádkou, které spolu přímo sousedí. Každá taková kabina ztratí jednoho kosmonauta nebo mimozemšťana."
-card_help_sabotage: "Sabotéři napadnou loď s nejmenší posádkou (v případě rovnosti loď více vepředu) a snaží se na ni teleportovat bombu.<br /><br /> Souřadnice umístění bomby se určí hodem kostkami. Pokud je na nich nějaký dílek, tento dílek vybuchne. Pokud ne, proběhne ještě druhý a případně i třetí pokus. Pak to sabotéři vzdají."
-card_help_abandoned_station1: "Tuto opuštěnou stanici může vyrabovat hráč, který má aspoň [n] [n(1:člena|2:členy|5:členů)] posádky. Příležitost může využít pouze jeden hráč, první dostanou šanci ti, kdo letí vepředu.<br /><br /> Kdo stanici vyrabuje, získá"
+card_help_sabotage: "Sabotéři napadnou loď s nejmenší posádkou (v případě rovnosti loď více vepředu) a snaží se na ni teleportovat bombu.<br /><br />
+Souřadnice umístění bomby se určí hodem kostkami. Pokud je na nich nějaký dílek, tento dílek vybuchne. Pokud ne, proběhne ještě druhý a případně i třetí pokus. Pak to sabotéři vzdají."
+card_help_abandoned_station1: "Tuto opuštěnou stanici může vyrabovat hráč, který má aspoň [n] [n(1:člena|2:členy|5:členů)] posádky. Příležitost může využít pouze jeden hráč, první dostanou šanci ti, kdo letí vepředu.<br /><br />
+Kdo stanici vyrabuje, získá"
 card_help_abandoned_station2: "a ztratí [n] [i(advCards/icons/flight_day.png)]."
 card_help_abandoned_station3: "Poznámka: Při této kartě NEZTRÁCÍŠ posádku. Všichni se v pořádku vrátí na tvou loď."
-card_help_abandoned_ship: "Opuštěnou loď můžeš prodat své posádce. Může to udělat pouze jeden hráč, první dostanou šanci ti, kdo letí vepředu.<br /><br /> Tuto loď můžeš obsadit, pokud se vzdáš [n] [n(1:člena|2:členů|5:členů)] posádky. Získáš tím [n1] $ a ztratíš [n2] [i(advCards/icons/flight_day.png)]."
-card_help_planets: "Postupně od prvního si každý hráč může vybrat planetu, na které přistane. Na každé planetě smí přistát jen jeden hráč.<br /><br /> Hráči, kteří přistanou, získají zboží zobrazené na dané planetě, ale ztrácejí [n] [i(advCards/icons/flight_day.png)]."
+card_help_abandoned_ship: "Opuštěnou loď můžeš prodat své posádce. Může to udělat pouze jeden hráč, první dostanou šanci ti, kdo letí vepředu.<br /><br />
+Tuto loď můžeš obsadit, pokud se vzdáš [n] [n(1:člena|2:členů|5:členů)] posádky. Získáš tím [n1] $ a ztratíš [n2] [i(advCards/icons/flight_day.png)]."
+card_help_planets: "Postupně od prvního si každý hráč může vybrat planetu, na které přistane. Na každé planetě smí přistát jen jeden hráč.<br /><br />
+Hráči, kteří přistanou, získají zboží zobrazené na dané planetě, ale ztrácejí [n] [i(advCards/icons/flight_day.png)]."
 card_help_meteors_intro: "Všechny lodě čelí zobrazeným meteorům. Pro každý se kostkami určí přesný sloupec či řádek."
 card_help_meteors_small: "Malé meteory se od lodě odrazí, pokud nezasáhnou otevřenou přípojku. V tom případě je můžeš odrazit správně orientovaným štítem, pokud zaplatíš baterii [i(flightScene/dialog_battery.png)]. Pokud meteor zasáhne nechráněnou přípojku, je dotyčný dílek zničen."
 card_help_meteors_large: "Jediná šance, jak se ubránit velkému meteoru přilétajícímu zepředu, je sestřelit jej správně orientovaným dělem ve stejném sloupci. Pokud je to dvojité dělo, hráč za něj musí zaplatit [i(flightScene/dialog_battery.png)]."
@@ -238,9 +245,15 @@ card_help_slavers_loss: "[i(flightScene/dialog_fight_loss.png)]: Pokud máš men
 card_help_enemy_tie: "[i(flightScene/dialog_fight_tie.png)]: Pokud máš přesně stejnou sílu děl, nic se mu nestane a nepřátelé pokračují k dalšímu hráči."
 card_enemies_reward: "[i(flightScene/dialog_fight_win.png)]: Pokud máš větší sílu děl, pak [n1(0:piráty|1:otrokáře|2:pašeráky)] porazíš a můžeš si vyzvednout odměnu."
 card_enemies_days: "Ztratíš tím [n] [i(advCards/icons/flight_day.png)] (pokud se nerozhodneš odměnu odmítnout)."
-card_help_junkyard: "Na vrakovišti může každý hráč výměnou za zdroje nebo události získat jiné zdroje, náklad nebo kredity.<br /><br /> Každý hráč může přistát na jednom řádku (sektoru) vrakoviště. Nemůžeš si zvolit řádek, který už si vybral jiný hráč před tebou. Zároveň si nemůžeš vybrat řádek, na jehož zaplacení nemáš dostatek zdrojů. Tyto řádky jsou zašedlé.<br /><br /> V levé části řádku je vyznačeno, kolika nákladu, členů posádky či baterií se budeš muset vzdát nebo kolika meteorům nebo střelám budeš muset čelit.<br /><br /> Poté můžeš naložit náklad, posádku, baterie či získat kredity vyobrazené v pravé části řádku."
-card_help_black_hole: "Abys unikl[g(|a)] černé díře, potřebuješ, aby se síla tvých motorů přinejmenším vyrovnala síle černé díry.<br /><br /> Pokud nemáš dostatečně silné motory, můžeš rozdíl dorovnat a uniknout i tím, že se vzdáš částí lodi. Za každé 2 odhozené dílky se k síle tvých motorů přičte +1."
-card_help_space_billiards: "Každý hráč si vybrere řádek a soupeře (přetáhnutím šipky z příslušného řádku na kartě k soupeřově avataru na pravé straně obrazovky). Tento soupeř se bude muset proti zvolené sadě meteorů bránit.<br /><br /> Výběr soupeře není nijak omezen, jeden hráč může být nucen bránit se proti více sadám meteorů.<br /><br /> Tip: Tuto kartu můžete použít proti soupeři, který má nad tebou navrch, ale občas je větší legrace, poslat meteory proti lodi, u níž je nejpravděpodobnější, že ji to rozmlátí na maděru."
+card_help_junkyard: "Na vrakovišti může každý hráč výměnou za zdroje nebo události získat jiné zdroje, náklad nebo kredity.<br /><br />
+Každý hráč může přistát na jednom řádku (sektoru) vrakoviště. Nemůžeš si zvolit řádek, který už si vybral jiný hráč před tebou. Zároveň si nemůžeš vybrat řádek, na jehož zaplacení nemáš dostatek zdrojů. Tyto řádky jsou zašedlé.<br /><br />
+V levé části řádku je vyznačeno, kolika nákladu, členů posádky či baterií se budeš muset vzdát nebo kolika meteorům nebo střelám budeš muset čelit.<br /><br />
+Poté můžeš naložit náklad, posádku, baterie či získat kredity vyobrazené v pravé části řádku."
+card_help_black_hole: "Abys unikl[g(|a)] černé díře, potřebuješ, aby se síla tvých motorů přinejmenším vyrovnala síle černé díry.<br /><br />
+Pokud nemáš dostatečně silné motory, můžeš rozdíl dorovnat a uniknout i tím, že se vzdáš částí lodi. Za každé 2 odhozené dílky se k síle tvých motorů přičte +1."
+card_help_space_billiards: "Každý hráč si vybrere řádek a soupeře (přetáhnutím šipky z příslušného řádku na kartě k soupeřově avataru na pravé straně obrazovky). Tento soupeř se bude muset proti zvolené sadě meteorů bránit.<br /><br />
+Výběr soupeře není nijak omezen, jeden hráč může být nucen bránit se proti více sadám meteorů.<br /><br />
+Tip: Tuto kartu můžete použít proti soupeři, který má nad tebou navrch, ale občas je větší legrace, poslat meteory proti lodi, u níž je nejpravděpodobnější, že ji to rozmlátí na maděru."
 card_help_fire: "Přesný sloupec či řádek každé střely určí hod kostkami."
 card_help_small_shot: "Proti malé střele se můžeš bránit pomocí správně orientovaného štítu, pokud zaplatíš [i(flightScene/dialog_battery.png)]. V opačném případě je zasažený dílek zničen."
 card_help_large_shot: "Proti velkým střelám není obrany, zasažený dílek je vždy zničen."

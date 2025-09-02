@@ -1,0 +1,23 @@
+---
+shuttlesAvailable: n
+shipPlans: []
+currNode: newbie
+credits: 0
+version: 900
+nodes:
+- firstTimeVisited: n
+  buttons:
+  - setFocusIfCredits: -1
+    focus: y
+    name: btutor
+  isKnown: y
+  visited: y
+  name: newbie
+- firstTimeVisited: n
+  isKnown: n
+  visited: n
+  name: bar
+paths:
+- R1-1a
+- R1-1b
+...

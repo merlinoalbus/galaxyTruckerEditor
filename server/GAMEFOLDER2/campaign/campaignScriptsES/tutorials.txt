@@ -1,222 +1,236 @@
 SCRIPTS
 
-  SCRIPT campaignIntro
-    ShowDlgScene
-    Delay 1000
-    ShowChar tutor left
-    Delay 1000
-    RESET tutorialSeen
-    IF_TUTORIAL_SEEN
-      SET tutorialSeen
-    END_OF_IF
-    IFNOT tutorialSeen
-      Say "Hola, novat[g(o|a)]. A partir de ahora seré tu instructor de vuelo.                                                                          (Pulsa en cualquier lugar para continuar.)"
-      Ask "Vamos a ver... ¿Qué sabes de este juego?                                            (Elige una respuesta.)"
-    ELSE
-      Say "Hola, novat[g(o|a)]. A partir de ahora seré tu instructor de vuelo."
-      Ask "Vamos a ver... ¿Qué sabes de este juego?"
-    END_OF_IF
-    MENU
-      OPT "No tengo ni idea."
-        Say "No te preocupes."
-        Say "CoMoSEA me ha contratado para que haga de ti [g(un camionero|una camionera)] profesional."
-        Ask "He preparado un tutorial estupendo para ti."
-        SET playerIsBeginner
-        EXIT_MENU
-      END_OF_OPT
-      OPT "Sé cómo funciona el juego de mesa, pero es la primera vez que pruebo la versión digital."
-        Say "Oh, entonces no habrá problema. Las reglas son prácticamente las mismas."
-        Ask "Además, tengo preparado un tutorial estupendo para ti."
-        SET playerIsAdvanced
-        EXIT_MENU
-      END_OF_OPT
-      OPT "¿Empezamos de una vez? Ya sé jugar."
-        Say "Qué bien, otr[g(o|a)] listill[g(o|a)]."
-        IF_TUTORIAL_SEEN
-          Say "(Ha terminado el tutorial y se cree que lo sabe todo.)"
-        END_OF_IF
-        SET playerIsCocky
-        SET tutorialRefused
-        Say "Sube a la lanzadera para ir a Puerto Novato. Nos veremos allí."
-        GO campaignIntroEnd
-      END_OF_OPT
-    END_OF_MENU
-    MENU
-      OPT "Estoy list[g(o|a)] para el tutorial."
-        Say "Bien."
-        SET tutorialAsked
-        EXIT_MENU
-      END_OF_OPT
-      OPT_IF tutorialSeen "Ya he visto el tutorial, pero puedo repetirlo si quieres."
-        Say "Buena elección."
-        SET tutorialAsked
-        EXIT_MENU
-      END_OF_OPT
-      OPT_IF tutorialSeen "Gracias, pero ya he visto el tutorial."
-        Say "Ah, muy bien."
-        Say "(Por eso me resultabas tan familiar...)"
-        Say "Entonces podemos ir directamente a Puerto Novato."
-        SET tutorialSkipped
-        GO campaignIntroEnd
-      END_OF_OPT
-      OPT_IFNOT tutorialSeen "No me gustan los tutoriales. Deja que me lo salte."
-        Say "¿Estás segur[g(o|a)]?"
-        Say "Es la mejor manera de aprender a jugar."
-        Say "Además, podremos volar juntos hasta Puerto Novato."
-        Ask "Será divertido."
-        MENU
-          OPT "Vale, vamos a hacer el tutorial..."
-            Say "Buena elección."
-            SET tutorialAsked
-            EXIT_MENU
-          END_OF_OPT
-          OPT "No, gracias."
-            SET tutorialRefused
-            Say "Tú te lo pierdes."
-            Say "Sube a la lanzadera para ir a Puerto Novato. Nos veremos allí."
-            GO campaignIntroEnd
-          END_OF_OPT
-        END_OF_MENU
-      END_OF_OPT
-    END_OF_MENU
-    LABEL campaignIntroEnd
-    Delay 300
-    HideChar tutor
-    Delay 300
-    HideDlgScene
-    SUB_SCRIPT newbie_init
-    IF tutorialAsked
-      ACT_MISSION Tutorial
-      SetCredits 0
-    ELSE
-      CenterMapByNode newbie
-    END_OF_IF
-  END_OF_SCRIPT
-  SCRIPT tutorialIntro
-    ShowDlgScene
-    Delay 500
-    ShowChar tutor right
-    Delay 500
-    IF_FROM_CAMPAIGN
-      Say "Welcome to the warehouse of Corporation Incorporated."
-      Say "This is where you build your ship."
-    ELSE
-      Say "Hello. I'm here to be your flight instructor.                                                                                         ([v(tap|click)] anywhere to continue)"
-      Ask "Are you ready to learn the basics of galaxy trucking?                                                      (choose an answer)"
+SCRIPT campaignIntro
+
+  ShowDlgScene
+  Delay 1000
+  ShowChar tutor left
+  Delay 1000
+  RESET tutorialSeen
+  IF_TUTORIAL_SEEN
+    SET tutorialSeen
+  END_OF_IF
+  IFNOT tutorialSeen
+    Say "Hola, novat[g(o|a)]. A partir de ahora seré tu instructor de vuelo.                                                                          (Pulsa en cualquier lugar para continuar.)"
+    Ask "Vamos a ver... ¿Qué sabes de este juego?                                            (Elige una respuesta.)"
+  ELSE
+    Say "Hola, novat[g(o|a)]. A partir de ahora seré tu instructor de vuelo."
+    Ask "Vamos a ver... ¿Qué sabes de este juego?"
+  END_OF_IF
+  MENU
+    OPT "No tengo ni idea."
+      Say "No te preocupes."
+      Say "CoMoSEA me ha contratado para que haga de ti [g(un camionero|una camionera)] profesional."
+      Ask "He preparado un tutorial estupendo para ti."
+      SET playerIsBeginner
+      EXIT_MENU
+    END_OF_OPT
+    OPT "Sé cómo funciona el juego de mesa, pero es la primera vez que pruebo la versión digital."
+      Say "Oh, entonces no habrá problema. Las reglas son prácticamente las mismas."
+      Ask "Además, tengo preparado un tutorial estupendo para ti."
+      SET playerIsAdvanced
+      EXIT_MENU
+    END_OF_OPT
+    OPT "¿Empezamos de una vez? Ya sé jugar."
+      Say "Qué bien, otr[g(o|a)] listill[g(o|a)]."
+      IF_TUTORIAL_SEEN
+        Say "(Ha terminado el tutorial y se cree que lo sabe todo.)"
+      END_OF_IF
+      SET playerIsCocky
+      SET tutorialRefused
+      Say "Sube a la lanzadera para ir a Puerto Novato. Nos veremos allí."
+      GO campaignIntroEnd
+    END_OF_OPT
+  END_OF_MENU
+  MENU
+    OPT "Estoy list[g(o|a)] para el tutorial."
+      Say "Bien."
+      SET tutorialAsked
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF tutorialSeen "Ya he visto el tutorial, pero puedo repetirlo si quieres."
+      Say "Buena elección."
+      SET tutorialAsked
+      EXIT_MENU
+    END_OF_OPT
+    OPT_IF tutorialSeen "Gracias, pero ya he visto el tutorial."
+      Say "Ah, muy bien."
+      Say "(Por eso me resultabas tan familiar...)"
+      Say "Entonces podemos ir directamente a Puerto Novato."
+      SET tutorialSkipped
+      GO campaignIntroEnd
+    END_OF_OPT
+    OPT_IFNOT tutorialSeen "No me gustan los tutoriales. Deja que me lo salte."
+      Say "¿Estás segur[g(o|a)]?"
+      Say "Es la mejor manera de aprender a jugar."
+      Say "Además, podremos volar juntos hasta Puerto Novato."
+      Ask "Será divertido."
       MENU
-        OPT "Sir, yes, sir!"
-          Say "Good spirit!"
+        OPT "Vale, vamos a hacer el tutorial..."
+          Say "Buena elección."
+          SET tutorialAsked
           EXIT_MENU
         END_OF_OPT
-        OPT "Yeah, whatever."
-          Say "Hey, perk up! You're gonna build an actual space ship."
-          EXIT_MENU
-        END_OF_OPT
-        OPT "Um ... this isn't where I wanted to be. Can I leave?"
-          Say "*Sigh*"
-          Delay 300
-          Delay 300
-          Say "Hey, guys, we have another one. Throw [g(him|her)] out."
-          HideChar tutor
-          HideDlgScene
-          QuitCampaign
-          RETURN
+        OPT "No, gracias."
+          SET tutorialRefused
+          Say "Tú te lo pierdes."
+          Say "Sube a la lanzadera para ir a Puerto Novato. Nos veremos allí."
+          GO campaignIntroEnd
         END_OF_OPT
       END_OF_MENU
-    END_OF_IF
-    Delay 300
-    ChangeChar tutor campaign/tutor-out.png
-    Delay 400
-    Say "Hey, old man: Show us your infographics!"
-    Delay 300
-    ChangeChar tutor campaign/tutor.png
-    Delay 300
-    HideChar tutor
-    HideDlgScene
-    AddInfoWindow "tutorial/infoGameGoal.png"
-    AddInfoWindow "tutorial/infoGameGoal2.png"
-    AddInfoWindow "tutorial/infoGameGoal3.png"
-    AddInfoWindow "tutorial/infoGameGoal4.png"
-    ShowInfoWindow "tutorial/infoGameGoal.png"
-    ShowDlgScene
-    ChangeChar tutor campaign/tutor.png
-    ShowChar tutor right
-    Say "Simple, right? Let's start."
-    Say "I'll keep an eye on you in case you need help."
-    Delay 300
-    HideChar tutor
-    Delay 300
-    HideDlgScene
-  END_OF_SCRIPT
-  SCRIPT tutorialEngineWrong
-    ShowDlgScene
-    ShowChar tutor right
-    Delay 100
-    Say "¡Alto ahí! Si revelas un nuevo componente, el motor quedará soldado."
-    Say "Cambialo de sitio o no podrás acceder a la parte derecha de la nave."
-    Delay 300
-    HideChar tutor
-    HideDlgScene
-  END_OF_SCRIPT
-  SCRIPT tutorialEngineClever
-    ShowDlgScene
-    Delay 500
-    ShowChar tutor right
-    Delay 300
-    Say "¡Ah, bien pensado!"
-    Say "Si hubieras dejado el motor en la otra casilla, no podrías acceder a la parte derecha de la nave."
-    Delay 300
-    HideChar tutor
-    HideDlgScene
-  END_OF_SCRIPT
-  SCRIPT tutorialAIBuilding
-    ShowDlgScene
-    Delay 200
-    ShowChar tutor right
-    Delay 200
-    Say "Sí, [g(señor|señora)]. Ese es un buen sitio para colocar la bodega de carga. Lo estás haciendo muy bien."
-    Say "En una partida de verdad tendrás que enfrentarte a otros jugadores para conseguir las mejores piezas, así que fingiré ser tu rival."
-    HideChar tutor
-    HideDlgScene
-  END_OF_SCRIPT
-  SCRIPT tutorialFlightIntro
-    ShowDlgScene
-    Delay 200
-    ShowChar tutor left
-    Delay 200
-    IF_FROM_CAMPAIGN
-      Say "Perfecto, ya tenemos nuestras naves. Ahora vamos a echar una carrera hasta Puerto Novato."
-    ELSE
-      Say "Perfecto, ya tenemos nuestras naves. Ahora vamos a echar una carrera."
-    END_OF_IF
-    Say "Nos darán unos cuantos créditos por las tuberías que entreguemos, pero esa no es la principal fuente de ingresos de un camionero."
-    Say "Con un poco de suerte, tendremos oportunidad de hacer dinero por el camino."
-    HideChar tutor
-    HideDlgScene
-    AddInfoWindow "tutorial/infoFlight.png"
-    ShowInfoWindow "tutorial/infoFlight.png"
-    ShowDlgScene
-    ShowChar tutor left
-    Say "Como has terminado de construir la nave antes que yo, empezarás con cierta ventaja en la pantalla de vuelo."
-    Delay 400
-    SetFlightStatusBar "Escucha atentamente lo que dice tu instructor."
-    Delay 200
-    Say "Escúchame bien. Esto es importante. Recuerda vigilar la barra de estado que hay en la parte superior de la pantalla durante todo el vuelo."
-    Ask "Te indicará lo que está pasando y lo que debes hacer a continuación. La verás en todas tus partidas, no solo en el tutorial."
-    SetFlightStatusBar "Pulsa el botón para indicar que lo has entendido."
+    END_OF_OPT
+  END_OF_MENU
+
+  LABEL campaignIntroEnd
+  Delay 300
+  HideChar tutor
+  Delay 300
+  HideDlgScene
+  SUB_SCRIPT newbie_init
+  IF tutorialAsked
+    ACT_MISSION Tutorial
+    SetCredits 0
+  ELSE
+    CenterMapByNode newbie
+  END_OF_IF
+END_OF_SCRIPT
+
+SCRIPT tutorialIntro
+
+  ShowDlgScene
+  Delay 500
+  ShowChar tutor right
+  Delay 500
+  IF_FROM_CAMPAIGN
+    Say "Bienvenido al almacén de CoMoSEA."
+    Say "Aquí podrás construir tu nave."
+  ELSE
+    Say "Hola, novat[g(o|a)]. A partir de ahora seré tu instructor de vuelo.                                                                          (Pulsa en cualquier lugar para continuar.)"
+    Ask "¿Estás list[g(o|a)] para aprender las bases del juego?                                            (Elige una respuesta.)"
     MENU
-      OPT "Vale, entendido."
+      OPT "¡Señor, sí, señor!"
+        Say "¡Así me gusta!"
         EXIT_MENU
       END_OF_OPT
+      OPT "Ajá, lo que tú digas."
+        Say "¡Oye, espabila! ¡Que vas a construir una nave espacial!"
+        EXIT_MENU
+      END_OF_OPT
+      OPT "Hm... Yo no quería entrar aquí. ¿Puedo marcharme?"
+        Say "Ay..."
+        Delay 300
+        Delay 300
+        Say "¡Chicos! ¡Tenemos a otr[g(o|a)] de es[g(os|as)]! ¡Sacadl[g(o|a)] de aquí!"
+        HideChar tutor
+        HideDlgScene
+        QuitCampaign
+        RETURN
+      END_OF_OPT
     END_OF_MENU
-    HideChar tutor
-    HideDlgScene
-  END_OF_SCRIPT
+  END_OF_IF
+  Delay 300
+  ChangeChar tutor campaign/tutor-out.png
+  Delay 400
+  Say "Oye, abuelo. Saca las infografías."
+  Delay 300
+  ChangeChar tutor campaign/tutor.png
+  Delay 300
+  HideChar tutor
+  HideDlgScene
+  AddInfoWindow "tutorial/infoGameGoal.png"
+  AddInfoWindow "tutorial/infoGameGoal2.png"
+  AddInfoWindow "tutorial/infoGameGoal3.png"
+  AddInfoWindow "tutorial/infoGameGoal4.png"
+  ShowInfoWindow "tutorial/infoGameGoal.png"
+  ShowDlgScene
+  ChangeChar tutor campaign/tutor.png
+  ShowChar tutor right
+  Say "Fácil, ¿verdad? Ya podemos empezar."
+  Say "Te estaré observando por si necesitas mi ayuda."
+  Delay 300
+  HideChar tutor
+  Delay 300
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialEngineWrong
+
+  ShowDlgScene
+  ShowChar tutor right
+  Delay 100
+  Say "¡Alto ahí! Si revelas un nuevo componente, el motor quedará soldado."
+  Say "Cambialo de sitio o no podrás acceder a la parte derecha de la nave."
+  Delay 300
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialEngineClever
+
+  ShowDlgScene
+  Delay 500
+  ShowChar tutor right
+  Delay 300
+  Say "¡Ah, bien pensado!"
+  Say "Si hubieras dejado el motor en la otra casilla, no podrías acceder a la parte derecha de la nave."
+  Delay 300
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialAIBuilding
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor right
+  Delay 200
+  Say "Sí, [g(señor|señora)]. Ese es un buen sitio para colocar la bodega de carga. Lo estás haciendo muy bien."
+  Say "En una partida de verdad tendrás que enfrentarte a otros jugadores para conseguir las mejores piezas, así que fingiré ser tu rival."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialFlightIntro
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  IF_FROM_CAMPAIGN
+    Say "Perfecto, ya tenemos nuestras naves. Ahora vamos a echar una carrera hasta Puerto Novato."
+  ELSE
+    Say "Perfecto, ya tenemos nuestras naves. Ahora vamos a echar una carrera."
+  END_OF_IF
+  Say "Nos darán unos cuantos créditos por las tuberías que entreguemos, pero esa no es la principal fuente de ingresos de un camionero."
+  Say "Con un poco de suerte, tendremos oportunidad de hacer dinero por el camino."
+  HideChar tutor
+  HideDlgScene
+  AddInfoWindow "tutorial/infoFlight.png"
+  ShowInfoWindow "tutorial/infoFlight.png"
+  ShowDlgScene
+  ShowChar tutor left
+  Say "Como has terminado de construir la nave antes que yo, empezarás con cierta ventaja en la pantalla de vuelo."
+  Delay 400
+  SetFlightStatusBar "Escucha atentamente lo que dice tu instructor."
+  Delay 200
+  Say "Escúchame bien. Esto es importante. Recuerda vigilar la barra de estado que hay en la parte superior de la pantalla durante todo el vuelo."
+  Ask "Te indicará lo que está pasando y lo que debes hacer a continuación. La verás en todas tus partidas, no solo en el tutorial."
+  SetFlightStatusBar "Pulsa el botón para indicar que lo has entendido."
+  MENU
+    OPT "Vale, entendido."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
 SCRIPT tutorialFlightViews
 
   AddInfoWindow "tutorial/infoFlightViews.png"
   ShowInfoWindow "tutorial/infoFlightViews.png"
 END_OF_SCRIPT
+
 SCRIPT tutorialFlightAdvCards
 
   ShowDlgScene
@@ -228,71 +242,82 @@ SCRIPT tutorialFlightAdvCards
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
-  SCRIPT tutorialPlanetsHasRed
-    ShowDlgScene
-    Delay 200
-    ShowChar tutor left
-    Delay 200
-    Say "¿Ves la lista de precios que hay sobre mi cabeza?"
-    Say "Las mercancías más valiosas están en el primer planeta."
-    Say "Es una suerte que hayas añadido contenedores rojos a tu nave. De lo contrario, no podrías recogerlas."
-    HideChar tutor
-    HideDlgScene
-  END_OF_SCRIPT
-  SCRIPT tutorialPlanetsHasNoRed
-    ShowDlgScene
-    Delay 200
-    ShowChar tutor left
-    Delay 200
-    Say "¿Ves la lista de precios que hay sobre mi cabeza?"
-    Say "Las mercancías más valiosas están en el primer planeta."
-    Say "Es una pena que no hayas añadido contenedores rojos a tu nave. Sin ellos no podrás recoger mercancía roja. El mejor planeta para ti es el segundo."
-    HideChar tutor
-    HideDlgScene
-  END_OF_SCRIPT
-  SCRIPT tutorialPlanetLanding
-    ShowDlgScene
-    Delay 200
-    ShowChar tutor left
-    Delay 200
-    Say "¿Ves el número que hay en la esquina inferior derecha de la carta? Indica los días de vuelo que perderás si decides aprovechar esta oportunidad."
-    Say "Como yo no he aterrizado, tu nave es la única que ha retrocedido en la pantalla de vuelo. Puede que ahora la mía vaya en cabeza, pero tú transportas un puñado de mercancías por las que te pagarán bien."
-    Say "Los jugadores que van en cabeza son los primeros en decidir si aceptarán este tipo de oportunidades, pero también son el primer objetivo de las las naves enemigas."
-    Say "De acuerdo, ¡es hora de subir el cargamento a bordo!"
-    HideChar tutor
-    HideDlgScene
-  END_OF_SCRIPT
-  SCRIPT tutorialCardInfo
-    ShowDlgScene
-    Delay 200
-    ShowChar tutor left
-    Delay 200
-    Say "Te contaré un secreto sobre las cartas de aventura."
-    Say "Si quieres saber más acerca de alguna, solo tienes que pulsar sobre ella."
-    HideChar tutor
-    HideDlgScene
-  END_OF_SCRIPT
-  SCRIPT tutorialAbandonedStation
-    ShowDlgScene
-    Delay 200
-    ShowChar tutor left
-    Delay 200
-    Say "¿Has visto eso? Algunas cartas ofrecen oportunidades para un solo camionero. Como yo iba primero, he saqueado la estación abandonada sin darte la posibilidad de decidir."
-    Say "A cambio he perdido dos días de vuelo, así que vuelves a ir en cabeza."
-    Ask "¿Sabes cómo funcionan las estaciones abandonadas?"
-    MENU
-      OPT "Sí, señor."
-        Say "Fantástico. Incluso en el caso de que no lo supieras, podrías pulsar sobre la carta para descubrirlo."
-        EXIT_MENU
-      END_OF_OPT
-      OPT "No, pero puedo pulsar sobre la carta para descubrirlo."
-        Say "Muy bien. Me alegro de que estés prestando atención."
-        EXIT_MENU
-      END_OF_OPT
-    END_OF_MENU
-    HideChar tutor
-    HideDlgScene
-  END_OF_SCRIPT
+
+SCRIPT tutorialPlanetsHasRed
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "¿Ves la lista de precios que hay sobre mi cabeza?"
+  Say "Las mercancías más valiosas están en el primer planeta."
+  Say "Es una suerte que hayas añadido contenedores rojos a tu nave. De lo contrario, no podrías recogerlas."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialPlanetsHasNoRed
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "¿Ves la lista de precios que hay sobre mi cabeza?"
+  Say "Las mercancías más valiosas están en el primer planeta."
+  Say "Es una pena que no hayas añadido contenedores rojos a tu nave. Sin ellos no podrás recoger mercancía roja. El mejor planeta para ti es el segundo."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialPlanetLanding
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "¿Ves el número que hay en la esquina inferior derecha de la carta? Indica los días de vuelo que perderás si decides aprovechar esta oportunidad."
+  Say "Como yo no he aterrizado, tu nave es la única que ha retrocedido en la pantalla de vuelo. Puede que ahora la mía vaya en cabeza, pero tú transportas un puñado de mercancías por las que te pagarán bien."
+  Say "Los jugadores que van en cabeza son los primeros en decidir si aceptarán este tipo de oportunidades, pero también son el primer objetivo de las las naves enemigas."
+  Say "De acuerdo, ¡es hora de subir el cargamento a bordo!"
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialCardInfo
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "Te contaré un secreto sobre las cartas de aventura."
+  Say "Si quieres saber más acerca de alguna, solo tienes que pulsar sobre ella."
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
+SCRIPT tutorialAbandonedStation
+
+  ShowDlgScene
+  Delay 200
+  ShowChar tutor left
+  Delay 200
+  Say "¿Has visto eso? Algunas cartas ofrecen oportunidades para un solo camionero. Como yo iba primero, he saqueado la estación abandonada sin darte la posibilidad de decidir."
+  Say "A cambio he perdido dos días de vuelo, así que vuelves a ir en cabeza."
+  Ask "¿Sabes cómo funcionan las estaciones abandonadas?"
+  MENU
+    OPT "Sí, señor."
+      Say "Fantástico. Incluso en el caso de que no lo supieras, podrías pulsar sobre la carta para descubrirlo."
+      EXIT_MENU
+    END_OF_OPT
+    OPT "No, pero puedo pulsar sobre la carta para descubrirlo."
+      Say "Muy bien. Me alegro de que estés prestando atención."
+      EXIT_MENU
+    END_OF_OPT
+  END_OF_MENU
+  HideChar tutor
+  HideDlgScene
+END_OF_SCRIPT
+
 SCRIPT tutorialMeteoricInfo
 
   ShowDlgScene
@@ -304,6 +329,7 @@ SCRIPT tutorialMeteoricInfo
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialMeteor1
 
   ShowDlgScene
@@ -315,6 +341,7 @@ SCRIPT tutorialMeteor1
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialMeteor2
 
   ShowDlgScene
@@ -326,6 +353,7 @@ SCRIPT tutorialMeteor2
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialMeteor3
 
   ShowDlgScene
@@ -338,12 +366,14 @@ SCRIPT tutorialMeteor3
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialShieldsInfo
 
   AddInfoWindow "tutorial/infoShield.png"
   AddInfoWindow "tutorial/infoShield2.png"
   ShowInfoWindow "tutorial/infoShield.png"
 END_OF_SCRIPT
+
 SCRIPT tutorialMeteor4
 
   ShowDlgScene
@@ -355,6 +385,7 @@ SCRIPT tutorialMeteor4
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialMeteorFinal
 
   ShowDlgScene
@@ -387,6 +418,7 @@ SCRIPT tutorialMeteorFinal
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialResults
 
   ShowDlgScene
@@ -398,6 +430,7 @@ SCRIPT tutorialResults
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialFinishZero
 
   ShowDlgScene
@@ -409,6 +442,7 @@ SCRIPT tutorialFinishZero
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialFinishPlayerWon
 
   ShowDlgScene
@@ -424,6 +458,7 @@ SCRIPT tutorialFinishPlayerWon
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialFinishPlayerLost
 
   ShowDlgScene
@@ -438,6 +473,7 @@ SCRIPT tutorialFinishPlayerLost
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialFinal
 
   ShowDlgScene

@@ -161,12 +161,17 @@ ShipInfoText1: "Lorsque vous regardez les détails d'un vaisseau, un panneau d'i
 ShipInfoText2: "Remarque : C'est ici que se trouve la valeur d'Assurance de votre vaisseau. Elle correspond au nombre maximum de Crédits que vous pourriez avoir à payer en remboursement des composants perdus."
 GivingUpFlightTitle: "Abandonner"
 GivingUpFlightText1: "Trois situations vous obligent à abandonner :"
-GivingUpFlightText2: "[img(tutorial/indent.png)] Si vous n'avez plus d'équipage humain<br/> [img(tutorial/indent.png)] Si la puissance de vos moteurs est de 0 dans un Espace Intersidéral<br/> [img(tutorial/indent.png)] Pour différentes raisons prévues lors d'une campagne."
+GivingUpFlightText2: "[img(tutorial/indent.png)] Si vous n'avez plus d'équipage humain<br/>
+[img(tutorial/indent.png)] Si la puissance de vos moteurs est de 0 dans un Espace Intersidéral<br/>
+[img(tutorial/indent.png)] Pour différentes raisons prévues lors d'une campagne."
 GivingUpFlightText3: "Vous pouvez aussi décider d'abandonner volontairement. Ouvrez le panneau d'informations et cliquez sur le bouton \"Abandonner le vol\"."
 GivingUpFlightText4: "Vous ne pouvez pas abandonner pendant la résolution d'une aventure. Vous devez attendre qu'elle soit terminée."
 WhenYouGiveUpTitle: "Lorsque vous abandonnez"
 WhenYouGiveUpText1: "Que vous soyez forcé d'abandonner, ou que ce soit volontaire :"
-WhenYouGiveUpText2: "[img(tutorial/indent.png)] Les aventures suivantes n'affecteront pas votre vaisseau.<br/> [img(tutorial/indent.png)] Vous ne recevez pas de bonus en fin de vol<br/> [img(tutorial/indent.png)] Vous vendez vos marchandises à moitié prix<br/> [img(tutorial/indent.png)] Vous devez tout de même rembourser les composants perdus pendant le vol."
+WhenYouGiveUpText2: "[img(tutorial/indent.png)] Les aventures suivantes n'affecteront pas votre vaisseau.<br/>
+[img(tutorial/indent.png)] Vous ne recevez pas de bonus en fin de vol<br/>
+[img(tutorial/indent.png)] Vous vendez vos marchandises à moitié prix<br/>
+[img(tutorial/indent.png)] Vous devez tout de même rembourser les composants perdus pendant le vol."
 WhenYouGiveUpText3: "Si vous abandonnez pendant la campagne, vous retournez sur la station d'où vous avez décollé."
 WhenYouGiveUpText4: "Dans une partie personnalisée ou en ligne, abandonner n'entraine PAS une défaite automatique."
 WhenYouGiveUpText5: "Parfois, abandonner au bon moment vous permettra de gagner la partie !"

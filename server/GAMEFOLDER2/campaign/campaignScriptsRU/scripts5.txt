@@ -1,189 +1,189 @@
 SCRIPTS
 
-SCRIPT tutorClass3Dlg
+  SCRIPT tutorClass3Dlg
 
-  ShowDlgScene
-  ShowChar tutor left
-  RESET tutorCanAskForRec
-  IF clubTalk
-    IFNOT recommendationTutor
-      SET tutorCanAskForRec
+    ShowDlgScene
+    ShowChar tutor left
+    RESET tutorCanAskForRec
+    IF clubTalk
+      IFNOT recommendationTutor
+        SET tutorCanAskForRec
+      END_OF_IF
     END_OF_IF
-  END_OF_IF
-  Delay 500
-  IF tutorProgressTold
-    IF tutorWhatDoNext
-      IF tutorWhatBuyNext
-        IFNOT shuttlesRecommended
-          IFNOT tutorCanAskForRec
-            Say "Ha! It's the newbie! You're doing pretty good."
-            GO tutorClass3End
+    Delay 500
+    IF tutorProgressTold
+      IF tutorWhatDoNext
+        IF tutorWhatBuyNext
+          IFNOT shuttlesRecommended
+            IFNOT tutorCanAskForRec
+              Say "Ehilà! Guarda, guarda... [g(il|la)] Novellin[g(o|a)]! Sembra che te la stia cavando piuttosto bene."
+              GO tutorClass3End
+            END_OF_IF
           END_OF_IF
         END_OF_IF
       END_OF_IF
+      Ask "Ehilà! Guarda, guarda... [g(il|la)] Novellin[g(o|a)]! Sembra che te la stia cavando piuttosto bene."
+      GO tutorClass3MainQuerry
     END_OF_IF
-    Ask "Ha! It's the newbie! You're doing pretty good."
-    GO tutorClass3MainQuerry
-  END_OF_IF
-  SET tutorProgressTold
-  Say "Ha! It's my newbie!"
-  Ask "I don't see you around much anymore. It's like you don't care about trucking between here and the Space Bar."
-  MENU
-    OPT_IFNOT tutorTooEasy "That route was just too easy."
-      Say "Yeah, that's what all the newbies say. Then BLAM! They get obliterated by the first meteor."
-      Ask "You can't learn to be an ace trucker overnight."
-      SET tutorTooEasy
-    END_OF_OPT
-    OPT "Yeah, well, I have a class III license now."
-      Say "You kidding me?"
-      Ask "It takes a long time and a lot of work to get that license."
-      EXIT_MENU
-    END_OF_OPT
-  END_OF_MENU
+    SET tutorProgressTold
+    Say "Ah! Ma guarda, [g(il mio|la mia)] Novellin[g(o|a)] preferit[g(o|a)]!"
+    Ask "Non ti si vede più molto spesso da queste parti. Che succede? Non ti interessa più la rotta tra qui e il Bar Spaziale?"
+    MENU
+      OPT_IFNOT tutorTooEasy "In effetti la trovo troppo facile."
+        Say "Sì, sì, beh è quello che dicono tutti i Novellini. E poi... SBAM! Fanno una brutta fine contro il primo Meteorite che incontrano."
+        Ask "Non si diventa certo camionist[g(i|e)] provett[g(i|e)] dalla sera alla mattina."
+        SET tutorTooEasy
+      END_OF_OPT
+      OPT "Beh, ecco. Sappi che adesso ho una Licenza di Classe III."
+        Say "Cosa?! Mi prendi in giro?"
+        Ask "Ci vogliono tempo e fatica per ottenere quella licenza."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
 
-  LABEL tutorClass3MainQuerry
-  IF mine3Initialized
-    SET tutorWhatDoNext
-  END_OF_IF
-  IF shuttlesRecommended
-    SET tutorWhatBuyNext
-  END_OF_IF
-  MENU
-    OPT_IFNOT tutorLicensionShown "Look. Here's my license. I even have vouchers from two alien species."
-      Say "Wow! That's the real thing. I didn't know you had it in you, newbie."
-      SET tutorLicensionShown
-      SET tutorNoNewbie
-    END_OF_OPT
-    OPT_IF tutorNoNewbie "Isn't it about time you stopped calling me newbie?"
-      Say "No. Even with your class III license, you'll always be my little newbie."
-      RESET tutorNoNewbie
-    END_OF_OPT
-    OPT_IFNOT tutorWhatBuyNext "I'm wondering if there is anything left to buy."
-      SET tutorWhatBuyNext
-      Say "Not really. You already have the highest license a trucker can get."
-      Say "Now you can just sit back and enjoy your money. Spend it on whatever."
-      Ask "And, of course, you can take shuttles more often."
-      MENU
-        OPT "Shuttles? What are you talking about?"
-          EXIT_MENU
-        END_OF_OPT
-      END_OF_MENU
-      Ask "You know. Shuttles. I told you about them when you first got here."
-      SUB_SCRIPT tutorShuttleSubdlg
-    END_OF_OPT
-    OPT_IF shuttlesRecommended "I heard that it's possible to travel by shuttle."
-      RESET shuttlesRecommended
-      Ask "Of course. I told you all about shuttles when you first got here, didn't I?"
-      SUB_SCRIPT tutorShuttleSubdlg
-    END_OF_OPT
-    OPT_IFNOT tutorWhatDoNext "I'm wondering what I'm supposed to do next."
+    LABEL tutorClass3MainQuerry
+    IF mine3Initialized
       SET tutorWhatDoNext
-      Say "Oh, well, you have to figure that out yourself, newbie. No one can tell you what to do with your life."
-      Say "Well ... maybe one person can."
-      Say "I've heard there is a wise robotic guru who can help you find your purpose in life. They say he lives on one of the mining asteroids."
-      Say "But those are just rumors. What do robots know about life, eh newbie?"
-      IF mine3shown
-        ShowButton bmine3
-        SetFocus bmine3
-      END_OF_IF
-    END_OF_OPT
-    OPT_IF tutorCanAskForRec "I'm planning to join Club Gold really soon."
-      Say "Really? That went fast."
-      IF_TUTORIAL_SEEN
-        Say "I still remember you as the [g(guy|girl)] who was trying to figure out how to attach a cabin to a ship."
-      END_OF_IF
-      Say "But to tell you the truth, I always suspected you might have potential, newbie."
-      Say "Do you need my recommendation to get into Club Gold?"
-      MENU
-        OPT "Sorry. A recommendation only counts if it comes from a club member."
-          Say "Oh. I see. And you think your old instructor couldn't possibly be an elite trucker."
-          EXIT_MENU
-        END_OF_OPT
-        OPT "Are you a member?"
-          Say "Of course I am!"
-          EXIT_MENU
-        END_OF_OPT
-      END_OF_MENU
-      Say "What do you think I do when there aren't any newbies to teach? Sit around and eat pizza?"
-      Say "I even fly in the Transgalactic Trek. I almost won it, once. Competition is a little stiff."
-      MENU
-        OPT_IFNOT tutorKicksAss "Well, maybe we'll be competing against each other this year."
-          Say "Ha! I'd kick your ... I'd beat you, newbie. Beat you soundly."
-          SET tutorKicksAss
-        END_OF_OPT
-        OPT "So ... would you recommend me?"
-          Say "Sure, why not. It's been a while since I've trained such a good newbie."
-          Delay 500
-          Announce "Recommendation from flight instructor obtained."
-          Delay 500
-          SET recommendationTutor
-          SET recommendationTutorUntold
-          SUB_SCRIPT recommendationCheck
-          EXIT_MENU
-        END_OF_OPT
-      END_OF_MENU
-      RESET tutorCanAskForRec
-    END_OF_OPT
-    OPT "I just wanted you to see what's become of your student."
-      Say "Good work, newbie. You've done well for yourself."
-      EXIT_MENU
-    END_OF_OPT
-  END_OF_MENU
-  IF tutorWhatDoNext
-    IF tutorWhatBuyNext
-      ResetFocus btutor
     END_OF_IF
-  END_OF_IF
-  IF tutorCanAskForRec
-    SetFocus btutor
-  END_OF_IF
+    IF shuttlesRecommended
+      SET tutorWhatBuyNext
+    END_OF_IF
+    MENU
+      OPT_IFNOT tutorLicensionShown "Ecco, guarda. Questa è la mia licenza. Ed ho persino i  due nullaosta delle specie aliene."
+        Say "Wow! È autentica. Non pensavo che ce l'avresti fatta, novellin[g(o|a)]."
+        SET tutorLicensionShown
+        SET tutorNoNewbie
+      END_OF_OPT
+      OPT_IF tutorNoNewbie "Non credi sia ora di smetterla di chiamarmi novellin[g(o|a)]?"
+        Say "No. Anche se possiedi una tua licenza di Classe III, resterai sempre  [g(il|la)] mi[g(o|a)] piccol[g(o|a)] Novellin[g(o|a)]."
+        RESET tutorNoNewbie
+      END_OF_OPT
+      OPT_IFNOT tutorWhatBuyNext "Mi domando se ci sia rimasto qualcosa da comprare."
+        SET tutorWhatBuyNext
+        Say "Non proprio. Hai già acquisito la licenza più prestigiosa a cui un[g(|a)] camionista possa ambire."
+        Say "Ora non ti resta che sederti e goderti i tuoi soldi. Spendili come preferisci."
+        Ask "E, ovviamente, questo significa che potrai prendere molto più spesso le Navette Spaziali."
+        MENU
+          OPT "Navette Spaziali? Di cosa stai parlando?"
+            EXIT_MENU
+          END_OF_OPT
+        END_OF_MENU
+        Ask "Su dai... lo sai! Le navette! Te ne ho parlato subito appena ci siamo incontrati."
+        SUB_SCRIPT tutorShuttleSubdlg
+      END_OF_OPT
+      OPT_IF shuttlesRecommended "Ho sentito che è possibile viaggiare tra i pianeti utilizzando il Servizio Navetta."
+        RESET shuttlesRecommended
+        Ask "Certamente. Ti ho spiegato tutto sulle navette appena sei arrivato. Non ti ricordi?"
+        SUB_SCRIPT tutorShuttleSubdlg
+      END_OF_OPT
+      OPT_IFNOT tutorWhatDoNext "Mi sto giusto chiedendo cosa potrei fare adesso."
+        SET tutorWhatDoNext
+        Say "Oh, beh, devi capirlo da sol[g(o|a)], Novellin[g(o|a)]. Nessuno può dirti cosa devi fare della tua vita."
+        Say "Beh... in realtà forse una persona potrebbe."
+        Say "Ho sentito dire che c'è un Saggio Guru robotico che può aiutarti a trovare uno scopo nella vita. Dicono che viva su uno degli Asteroidi Minerari."
+        Say "Attenzione però... sono solo voci. E poi, cosa ne possono sapere i robot della vita, eh novellin[g(o|a)]?"
+        IF mine3shown
+          ShowButton bmine3
+          SetFocus bmine3
+        END_OF_IF
+      END_OF_OPT
+      OPT_IF tutorCanAskForRec "Ho intenzione di iscrivermi al Club Dorato."
+        Say "Davvero? Come vola il tempo."
+        IF_TUTORIAL_SEEN
+          Say "Mi ricordo come se fosse ieri di quel[g(|la)] ragazz[g(o|a)] che cercava di capire come saldare una Cabina alla sua nave."
+        END_OF_IF
+        Say "Ma a dirla tutta, ho sempre saputo che avessi del potenziale, Novellin[g(o|a)]."
+        Say "Hai bisogno della mia raccomandazione per entrare nel Club Dorato?"
+        MENU
+          OPT "Mi dispiace. Ma le raccomandazioni che mi servono valgono solo se provengono da un membro del Club."
+            Say "Ah. Capisco. E quindi presupponi sia impossibile che il tuo vecchio istruttore possa far parte dei Camionista d'Elite, giusto?"
+            EXIT_MENU
+          END_OF_OPT
+          OPT "Sei un membro del Club?"
+            Say "Certo che lo sono!"
+            EXIT_MENU
+          END_OF_OPT
+        END_OF_MENU
+        Say "Cosa pensi che faccia quando non ci sono Novellini da formare? Che me ne stia seduto qui tutto il giorno a mangiare pizza?"
+        Say "Partecipo anche alla Trasvolata Intergalattica. Una volta l'ho quasi vinta. In quella gara la competizione è spietata."
+        MENU
+          OPT_IFNOT tutorKicksAss "Chissà, magari quest'anno ci ritroveremo a competere uno contro l'altro."
+            Say "Ahahah! Ti farei il culo a stri... ehm voglio dire... ti batterei in un batter d'occhio, novellin[g(o|a)]. "
+            SET tutorKicksAss
+          END_OF_OPT
+          OPT "Quindi... mi raccomanderai?"
+            Say "Beh, perché no. È passato un po' di tempo dall'ultima volta che ho addestrato  un[g(|a)] novellin[g(o |a)] così brav[g(o|a)]."
+            Delay 500
+            Announce "Hai ottenuto una raccomandazione dall'istruttore di volo."
+            Delay 500
+            SET recommendationTutor
+            SET recommendationTutorUntold
+            SUB_SCRIPT recommendationCheck
+            EXIT_MENU
+          END_OF_OPT
+        END_OF_MENU
+        RESET tutorCanAskForRec
+      END_OF_OPT
+      OPT "Volevo solo farti vedere i progressi del[g( tuo studente|la tua studentessa)]."
+        Say "Ottimo lavoro, novellin[g(o|a)]. Te la stai cavando alla grande."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    IF tutorWhatDoNext
+      IF tutorWhatBuyNext
+        ResetFocus btutor
+      END_OF_IF
+    END_OF_IF
+    IF tutorCanAskForRec
+      SetFocus btutor
+    END_OF_IF
 
-  LABEL tutorClass3End
-  Delay 300
-  HideChar tutor
-  HideDlgScene
-END_OF_SCRIPT
+    LABEL tutorClass3End
+    Delay 300
+    HideChar tutor
+    HideDlgScene
+  END_OF_SCRIPT
 
-SCRIPT tutorShuttleSubdlg
+  SCRIPT tutorShuttleSubdlg
 
-  MENU
-    OPT "No, you didn't!"
-      EXIT_MENU
-    END_OF_OPT
-    OPT "Hm. I don't recall any such conversation."
-      EXIT_MENU
-    END_OF_OPT
-  END_OF_MENU
-  Say "Oh come on! I always tell every newbie:"
-  Say "And if you have enough spare change, you can take a shuttle between certain stations instead of trucking."
-  UnlockShuttles
-  SET shuttlesUnlocked
-  Delay 500
-  CenterMapByNode forge
-  Delay 1000
-  CenterMapByNode outpost
-  Delay 1000
-  CenterMapByNode bar
-  Delay 1000
-  CenterMapByNode regula
-  Delay 500
-  Say "See the shuttle icons?"
-  Say "They mark other stations with public shuttleports."
-  MENU
-    OPT "Oh. Thanks."
-      Say "No problem."
-      EXIT_MENU
-    END_OF_OPT
-    OPT "Hm. I'm pretty sure those icons weren't there before."
-      Say "Oh come on! They've been there the whole time."
-      Say "They're icons. They can't just appear and disappear on their own."
-      EXIT_MENU
-    END_OF_OPT
-  END_OF_MENU
-  Say "Anyway, if you're at a station with a shuttleport, you can buy a ticket to any other shuttleport."
-  Say "Just [v(tap|click)] on the destination and say you want to go there. Simple as pie, newbie."
-END_OF_SCRIPT
-
+    MENU
+      OPT "No! Non l'hai fatto!"
+        EXIT_MENU
+      END_OF_OPT
+      OPT "Mmm. Non ricordo di una conversazione del genere."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    Say "Ma dai! Lo dico sempre a ogni novellin[g(o|a)]:"
+    Say "'Se hai crediti a sufficienza, puoi prendere una navetta per spostarti tra una stazione e l'altra senza viaggiare con la tua astronave'."
+    UnlockShuttles
+    SET shuttlesUnlocked
+    Delay 500
+    CenterMapByNode forge
+    Delay 1000
+    CenterMapByNode outpost
+    Delay 1000
+    CenterMapByNode bar
+    Delay 1000
+    CenterMapByNode regula
+    Delay 500
+    Say "Vedi le icone delle navette?"
+    Say "Indicano le altre Stazioni che dispongono del Servizio Navetta."
+    MENU
+      OPT "Ah. Ok, grazie."
+        Say "Figurati."
+        EXIT_MENU
+      END_OF_OPT
+      OPT "Mmm. Sono quasi sicur[g(o|a)] che quelle icone non c'erano prima."
+        Say "Ma che dici! Sono sempre state lì."
+        Say "Si tratta di icone. Non possono certo apparire e scomparire da sole..."
+        EXIT_MENU
+      END_OF_OPT
+    END_OF_MENU
+    Say "Comunque, se ti trovi in una stazione con il Servizio Navetta, puoi sempre comprare il biglietto per usufruire del trasporto verso qualsiasi altro Porto con Navetta."
+    Say "Devi solo [v(tapp|clicc)]are sulla destinazione e confermare che vuoi andarci. Facile come bere un bicchier d'acqua, pivellin[g(o|a)]."
+  END_OF_SCRIPT
+  
 SCRIPT guruDlg
 
   ShowDlgScene
@@ -310,7 +310,6 @@ SCRIPT guruDlg
   HideChar guru
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT clubDlg
 
   ShowDlgScene
@@ -594,7 +593,6 @@ SCRIPT clubDlg
   HideChar chairman
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT merchCyanDlg
 
   IFNOT wasAtCyan
@@ -713,7 +711,6 @@ SCRIPT merchCyanDlg
   HideChar merchant
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT labDlg
 
   ShowDlgScene
@@ -1244,7 +1241,6 @@ SCRIPT labDlg
   HideChar designer
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT raceDlg
 
   ShowDlgScene
@@ -1263,7 +1259,6 @@ SCRIPT raceDlg
   HideChar chairman
   HideDlgScene
 END_OF_SCRIPT
-
 SCRIPT FinalRaceDlg
 
   ShowDlgScene

@@ -295,7 +295,11 @@ disconnect_by_oher_client: "Te has desconectado porque tu cuenta en línea se ha
 lobby_offline_msg: "¡Necesitas estar en línea para entrar en el salón de juego!"
 lobby_offline_msg_title: "Información"
 gdpr_win_title: "Acuerdo de términos de servicio y política de privacidad"
-gdpr_win_text: "Hola. Como ya sabrás, con la llegada del RGPD (Registro General de Protección de Datos), tenemos que pedirte tu conformidad con nuestros términos de servicio y política de privacidad. <br /><br />\nLa cuenta de CGE necesita recordar tus credenciales de inicio de sesión y el progreso de tus partidas en línea (y si utilizas la sincronización de cuenta, también tu progreso en las partidas de un jugador). Los datos que recogemos se utilizan únicamente para proporcionar una experiencia multijugador confortable, de modo que puedas jugar a Galaxy Trucker y a tus otros juegos de CGE con amigos o desconocidos en distintas plataformas.<br /><br />\nMás detalles aquí:"
+gdpr_win_text: "Hola. Como ya sabrás, con la llegada del RGPD (Registro General de Protección de Datos), tenemos que pedirte tu conformidad con nuestros términos de servicio y política de privacidad. <br /><br />
+
+La cuenta de CGE necesita recordar tus credenciales de inicio de sesión y el progreso de tus partidas en línea (y si utilizas la sincronización de cuenta, también tu progreso en las partidas de un jugador). Los datos que recogemos se utilizan únicamente para proporcionar una experiencia multijugador confortable, de modo que puedas jugar a Galaxy Trucker y a tus otros juegos de CGE con amigos o desconocidos en distintas plataformas.<br /><br />
+
+Más detalles aquí:"
 gdpr_win_note: "Esta decisión es reversible. Siempre puedes rescindir el acuerdo poniéndote en contacto con nuestro equipo de soporte a través del menú Extras."
 gdpr_win_checkbox: "He leído y acepto los términos de servicio y la política de privacidad"
 gdpr_win_disagree: "Ten en cuenta que si no aceptas los términos de servicio y la política de privacidad, no podrás utilizar todas las características del juego asociadas con tu cuenta de CGE, como por ejemplo el juego en línea. Siempre puedes cambiar de opinión y aceptar los términos de servicio y la política de privacidad a través del menú Perfil. Si tienes más preguntas, no dudes en ponerte en contacto con nuestro equipo de soporte a través de: appsupport@czechgames.com (en inglés)."

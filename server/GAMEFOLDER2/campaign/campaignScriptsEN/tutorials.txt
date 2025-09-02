@@ -94,62 +94,65 @@ SCRIPT campaignIntro
     CenterMapByNode newbie
   END_OF_IF
 END_OF_SCRIPT
-  SCRIPT tutorialIntro
-    ShowDlgScene
-    Delay 500
-    ShowChar tutor right
-    Delay 500
-    IF_FROM_CAMPAIGN
-      Say "Welcome to the warehouse of Corporation Incorporated."
-      Say "This is where you build your ship."
-    ELSE
-      Say "Hello. I'm here to be your flight instructor.                                                                                         ([v(tap|click)] anywhere to continue)"
-      Ask "Are you ready to learn the basics of galaxy trucking?                                                      (choose an answer)"
-      MENU
-        OPT "Sir, yes, sir!"
-          Say "Good spirit!"
-          EXIT_MENU
-        END_OF_OPT
-        OPT "Yeah, whatever."
-          Say "Hey, perk up! You're gonna build an actual space ship."
-          EXIT_MENU
-        END_OF_OPT
-        OPT "Um ... this isn't where I wanted to be. Can I leave?"
-          Say "*Sigh*"
-          Delay 300
-          Delay 300
-          Say "Hey, guys, we have another one. Throw [g(him|her)] out."
-          HideChar tutor
-          HideDlgScene
-          QuitCampaign
-          RETURN
-        END_OF_OPT
-      END_OF_MENU
-    END_OF_IF
-    Delay 300
-    ChangeChar tutor campaign/tutor-out.png
-    Delay 400
-    Say "Hey, old man: Show us your infographics!"
-    Delay 300
-    ChangeChar tutor campaign/tutor.png
-    Delay 300
-    HideChar tutor
-    HideDlgScene
-    AddInfoWindow "tutorial/infoGameGoal.png"
-    AddInfoWindow "tutorial/infoGameGoal2.png"
-    AddInfoWindow "tutorial/infoGameGoal3.png"
-    AddInfoWindow "tutorial/infoGameGoal4.png"
-    ShowInfoWindow "tutorial/infoGameGoal.png"
-    ShowDlgScene
-    ChangeChar tutor campaign/tutor.png
-    ShowChar tutor right
-    Say "Simple, right? Let's start."
-    Say "I'll keep an eye on you in case you need help."
-    Delay 300
-    HideChar tutor
-    Delay 300
-    HideDlgScene
-  END_OF_SCRIPT
+
+SCRIPT tutorialIntro
+
+  ShowDlgScene
+  Delay 500
+  ShowChar tutor right
+  Delay 500
+  IF_FROM_CAMPAIGN
+    Say "Welcome to the warehouse of Corporation Incorporated."
+    Say "This is where you build your ship."
+  ELSE
+    Say "Hello. I'm here to be your flight instructor.                                                                                         ([v(tap|click)] anywhere to continue)"
+    Ask "Are you ready to learn the basics of galaxy trucking?                                                      (choose an answer)"
+    MENU
+      OPT "Sir, yes, sir!"
+        Say "Good spirit!"
+        EXIT_MENU
+      END_OF_OPT
+      OPT "Yeah, whatever."
+        Say "Hey, perk up! You're gonna build an actual space ship."
+        EXIT_MENU
+      END_OF_OPT
+      OPT "Um ... this isn't where I wanted to be. Can I leave?"
+        Say "*Sigh*"
+        Delay 300
+        Delay 300
+        Say "Hey, guys, we have another one. Throw [g(him|her)] out."
+        HideChar tutor
+        HideDlgScene
+        QuitCampaign
+        RETURN
+      END_OF_OPT
+    END_OF_MENU
+  END_OF_IF
+  Delay 300
+  ChangeChar tutor campaign/tutor-out.png
+  Delay 400
+  Say "Hey, old man: Show us your infographics!"
+  Delay 300
+  ChangeChar tutor campaign/tutor.png
+  Delay 300
+  HideChar tutor
+  HideDlgScene
+  AddInfoWindow "tutorial/infoGameGoal.png"
+  AddInfoWindow "tutorial/infoGameGoal2.png"
+  AddInfoWindow "tutorial/infoGameGoal3.png"
+  AddInfoWindow "tutorial/infoGameGoal4.png"
+  ShowInfoWindow "tutorial/infoGameGoal.png"
+  ShowDlgScene
+  ChangeChar tutor campaign/tutor.png
+  ShowChar tutor right
+  Say "Simple, right? Let's start."
+  Say "I'll keep an eye on you in case you need help."
+  Delay 300
+  HideChar tutor
+  Delay 300
+  HideDlgScene
+END_OF_SCRIPT
+
 SCRIPT tutorialEngineWrong
 
   ShowDlgScene
@@ -161,6 +164,7 @@ SCRIPT tutorialEngineWrong
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialEngineClever
 
   ShowDlgScene
@@ -173,6 +177,7 @@ SCRIPT tutorialEngineClever
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialAIBuilding
 
   ShowDlgScene
@@ -184,6 +189,7 @@ SCRIPT tutorialAIBuilding
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialFlightIntro
 
   ShowDlgScene
@@ -218,11 +224,13 @@ SCRIPT tutorialFlightIntro
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialFlightViews
 
   AddInfoWindow "tutorial/infoFlightViews.png"
   ShowInfoWindow "tutorial/infoFlightViews.png"
 END_OF_SCRIPT
+
 SCRIPT tutorialFlightAdvCards
 
   ShowDlgScene
@@ -234,6 +242,7 @@ SCRIPT tutorialFlightAdvCards
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialPlanetsHasRed
 
   ShowDlgScene
@@ -246,6 +255,7 @@ SCRIPT tutorialPlanetsHasRed
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialPlanetsHasNoRed
 
   ShowDlgScene
@@ -258,6 +268,7 @@ SCRIPT tutorialPlanetsHasNoRed
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialPlanetLanding
 
   ShowDlgScene
@@ -271,6 +282,7 @@ SCRIPT tutorialPlanetLanding
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialCardInfo
 
   ShowDlgScene
@@ -282,6 +294,7 @@ SCRIPT tutorialCardInfo
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialAbandonedStation
 
   ShowDlgScene
@@ -304,6 +317,7 @@ SCRIPT tutorialAbandonedStation
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialMeteoricInfo
 
   ShowDlgScene
@@ -315,6 +329,7 @@ SCRIPT tutorialMeteoricInfo
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialMeteor1
 
   ShowDlgScene
@@ -326,6 +341,7 @@ SCRIPT tutorialMeteor1
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialMeteor2
 
   ShowDlgScene
@@ -337,6 +353,7 @@ SCRIPT tutorialMeteor2
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialMeteor3
 
   ShowDlgScene
@@ -349,12 +366,14 @@ SCRIPT tutorialMeteor3
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialShieldsInfo
 
   AddInfoWindow "tutorial/infoShield.png"
   AddInfoWindow "tutorial/infoShield2.png"
   ShowInfoWindow "tutorial/infoShield.png"
 END_OF_SCRIPT
+
 SCRIPT tutorialMeteor4
 
   ShowDlgScene
@@ -366,6 +385,7 @@ SCRIPT tutorialMeteor4
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialMeteorFinal
 
   ShowDlgScene
@@ -398,6 +418,7 @@ SCRIPT tutorialMeteorFinal
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialResults
 
   ShowDlgScene
@@ -409,6 +430,7 @@ SCRIPT tutorialResults
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialFinishZero
 
   ShowDlgScene
@@ -420,6 +442,7 @@ SCRIPT tutorialFinishZero
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialFinishPlayerWon
 
   ShowDlgScene
@@ -435,6 +458,7 @@ SCRIPT tutorialFinishPlayerWon
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialFinishPlayerLost
 
   ShowDlgScene
@@ -449,6 +473,7 @@ SCRIPT tutorialFinishPlayerLost
   HideChar tutor
   HideDlgScene
 END_OF_SCRIPT
+
 SCRIPT tutorialFinal
 
   ShowDlgScene

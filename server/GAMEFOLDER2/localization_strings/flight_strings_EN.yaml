@@ -102,8 +102,8 @@ continue: "Continue"
 close: "Done"
 back: "Back"
 warning: "Warning"
-"yes": "Yes"
-"no": "No"
+yes: "Yes"
+no: "No"
 ok: "OK"
 players_give_up_flight: "[vecP(, | and )] [vecPn(1:gives up|2:give up)] on the flight."
 give_up_flight: "Give up on this flight"
@@ -216,15 +216,21 @@ stat_pl_has_lowest_stat: "[p] has the [s(gun:weakest <img src='flightScene/dialo
 gets_under_fire: "and gets shot at."
 wait_for_others_to_load: "Waiting for players to load the flight screen ..."
 penalty: "Penalty"
-card_help_openspace: "All ships will move forward according to their engine strength [i(flightScene/dialog_engine.png)].<br /><br /> Single engines count +1. Double engines count +2, but only if you spend a battery [i(flightScene/dialog_battery.png)].<br /><br /> A ship with 0 engine strength will have to give up on the flight."
+card_help_openspace: "All ships will move forward according to their engine strength [i(flightScene/dialog_engine.png)].<br /><br />
+Single engines count +1. Double engines count +2, but only if you spend a battery [i(flightScene/dialog_battery.png)].<br /><br />
+A ship with 0 engine strength will have to give up on the flight."
 card_help_stardust: "Each player moves one [i(advCards/icons/flight_day.png)] backwards for each exposed connector on his or her ship."
 card_help_epidemic: "Each player loses one crew member (human or alien) in every occupied cabin directly connected to another occupied cabin."
-card_help_sabotage: "This adventure card blows up a random component on the ship with the smallest crew. If multiple ships are tied for smallest crew, the one in front is sabotaged. <br /><br /> Coordinates are determined by dice. If there is no component at those coordinates, new coordinates are rolled. If three sets of coordinates are rolled without hitting a component, the saboteurs give up and nothing happens."
+card_help_sabotage: "This adventure card blows up a random component on the ship with the smallest crew. If multiple ships are tied for smallest crew, the one in front is sabotaged. <br /><br />
+Coordinates are determined by dice. If there is no component at those coordinates, new coordinates are rolled. If three sets of coordinates are rolled without hitting a component, the saboteurs give up and nothing happens."
 card_help_abandoned_station1: "If you have [n] or more crew members, you can send them to explore the abandoned station and collect"
 card_help_abandoned_station2: ". If you do, you will move [n] [i(advCards/icons/flight_day.png)] backwards."
 card_help_abandoned_station3: "You WILL NOT LOSE crew members on this adventure. All of them will return to your ship."
-card_help_abandoned_ship: "You may give up [n] crew members to collect [n1] $.<br /><br /> If you do, you will move [n2] [i(advCards/icons/flight_day.png)] backwards."
-card_help_planets: "Each player may land on one of the planets and take the indicated goods.<br /><br /> You can't pick a planet already picked by another player.<br /><br /> Every player who picks a planet will move [n] [i(advCards/icons/flight_day.png)] backwards."
+card_help_abandoned_ship: "You may give up [n] crew members to collect [n1] $.<br /><br />
+If you do, you will move [n2] [i(advCards/icons/flight_day.png)] backwards."
+card_help_planets: "Each player may land on one of the planets and take the indicated goods.<br /><br />
+You can't pick a planet already picked by another player.<br /><br />
+Every player who picks a planet will move [n] [i(advCards/icons/flight_day.png)] backwards."
 card_help_meteors_intro: "All ships face all the depicted meteors. Dice are rolled for each meteor to determine its row or column."
 card_help_meteors_small: "A small meteor will just bounce harmlessly off your ship unless it hits an exposed connector. You can protect an exposed connector with a properly oriented shield if you spend a battery [i(flightScene/dialog_battery.png)]. A hit on an unprotected exposed connector destroys that component."
 card_help_meteors_large: "Against a large meteor from the front, your only defense is to shoot it with a cannon pointing at the meteor in the same column."
@@ -238,9 +244,16 @@ card_help_slavers_loss: "If you have strength less than [n], the slavers defeat 
 card_help_enemy_tie: "If you have strength exactly [n], you fight the enemies off [i(flightScene/dialog_fight_tie.png)]. You get no rewards or penalties, and they move on to the next target."
 card_enemies_reward: "If you have strength greater than [n], you defeat the [n1(0:pirates|1:slavers|2:smugglers)] [i(flightScene/dialog_fight_win.png)] and earn reward."
 card_enemies_days: "If you claim the reward, you move back [n] [i(advCards/icons/flight_day.png)]."
-card_help_junkyard: "In the junkyard, each player can exchange resources or events for other resources, cargo, or credits.<br /><br /> Each player may land on one row (section) of junkyard.<br /><br /> You can't pick a row already picked by another player. Also, you can't pick a row that you don't have enough resources to pay for. Such rows are faded to grey.<br /><br /> You have to give up a cargo, crew, batteries, or withstand meteors or missiles depicted in the left part of card row.<br /><br /> Then you may load a cargo, crew, batteries, or get some credits, depicted in the right part of the card row."
-card_help_black_hole: "To escape the black hole, you need your engine strength to match or exceed the black hole's strength.<br /><br /> If you can't match the black hole's strength, you can still escape by giving up two of your ship components, for each point of strength difference."
-card_help_space_billiards: "Each player chooses a row and an opponent (drag an arrow from the card row and release it on opponent's avatar on the right side of the screen). The opponent defends against those meteors.<br /><br /> There is no restriction on which opponent you can target. One player may have to defend against multiple rows of meteors.<br /><br /> Tip: You can use this card against a competitor to level the playing field, but sometimes it is more fun to send the meteors at the ship that is most likely to bust apart."
+card_help_junkyard: "In the junkyard, each player can exchange resources or events for other resources, cargo, or credits.<br /><br />
+Each player may land on one row (section) of junkyard.<br /><br />
+You can't pick a row already picked by another player. Also, you can't pick a row that you don't have enough resources to pay for. Such rows are faded to grey.<br /><br />
+You have to give up a cargo, crew, batteries, or withstand meteors or missiles depicted in the left part of card row.<br /><br />
+Then you may load a cargo, crew, batteries, or get some credits, depicted in the right part of the card row."
+card_help_black_hole: "To escape the black hole, you need your engine strength to match or exceed the black hole's strength.<br /><br />
+If you can't match the black hole's strength, you can still escape by giving up two of your ship components, for each point of strength difference."
+card_help_space_billiards: "Each player chooses a row and an opponent (drag an arrow from the card row and release it on opponent's avatar on the right side of the screen). The opponent defends against those meteors.<br /><br />
+There is no restriction on which opponent you can target. One player may have to defend against multiple rows of meteors.<br /><br />
+Tip: You can use this card against a competitor to level the playing field, but sometimes it is more fun to send the meteors at the ship that is most likely to bust apart."
 card_help_fire: "Dice are rolled to determine the row or column of each shot."
 card_help_small_shot: "Light cannon fire destroys the component it hits. You can protect your ship with a properly oriented shield if you spend a battery [i(flightScene/dialog_battery.png)]."
 card_help_large_shot: "There is no way to defend against heavy cannon fire. The component it hits is always destroyed."
@@ -268,7 +281,8 @@ info_prev_credits: "Credits from previous flights: [n] $"
 info_lost_components: "[i(flightScene/dialog_lost_part.png)] Components lost: [n] (Insurance: [n1])"
 info_lost_components_penalty: "Penalty for lost components: [n] $"
 info_final_order_reward: "[i(final/order.png)] Rewards for finishing: [s] $. Currently expecting [n] $."
-info_best_ship: "[i(final/finest.png)] Reward for fewest exposed connectors: [n] $.<br /> Currently would go to [vecP(, | and )]."
+info_best_ship: "[i(final/finest.png)] Reward for fewest exposed connectors: [n] $.<br />
+Currently would go to [vecP(, | and )]."
 info_cargo_value: "Cargo value: [n] $"
 info_crew: "Crew: [n]"
 info_energy: "Energy: [n] [i(flightScene/dialog_battery.png)]"
