@@ -1,0 +1,67 @@
+name: "multiplayer_mission216"                    # id of mission name string - localized 
+missionID: 216                                    # serial number of the mission
+
+alienTechnology: true
+
+
+
+# Monopols
+
+# ships: Amoeba ship.
+# rules: More and bigger cargo holds. 
+# rewards: A bonus of 3 $, 6 $, or 9 $ (depending on the flight) goes to the trucker who delivers the most blue cargo. The same bonus is applied for the most green, yellow and red cargo.
+# cards: Planets, junkyards, smugglers and abandoned stations are more frequent.
+
+
+
+
+    #gameType:                                  # Values: realtime/turnbased; If mentioned this value can not be changed in a lobby by player.
+
+fligthsAvailabelToChange: [STI, STII, STIII]    # Which flights can be turned on/off in a lobby by player. Other flights are locked.
+flightsPicked: [STI]
+
+playersCount: [2, 4]                            # [min, max]. Default is [2, 4]. Min can not be less then 2.
+
+# ==== SHIPS ====                               # Names of all available ship plans. If not mentioned default plans will be used. Should by only one ship plan for one flight.
+shipPlans: [I-amoeba_with_random_holes, II-amoeba_with_random_holes, III-amoeba_with_random_holes]
+
+
+# ==== TILES ===                                # Config file with list of all parts. Use 'pileConfig' or 'pileListConfig'.
+pileConfigSTI:   at__mm_monopols.yaml
+pileConfigSTII:  at__mm_monopols.yaml
+pileConfigSTIII: at__mm_monopols.yaml
+
+
+# ==== CARDS ===
+atUniversalDeckScript: at__mm_Monopols_Deck           # Used as digital and rough. (user can choose from 2 decks by default: digital and rough)
+
+    #customDeckScript: at__mm_Billiard_Race_Deck                         # Special custom deck, that doesn't fit to any deck category. If custom, digital and rough are set, user can choose from 3 decks.
+
+
+
+# ==== RULES ====                               # You can mention only those values you want edit. But you have to repeat (copy&paste) the rules for each flight.
+evaluation:                     
+  STI:
+    mostBlueCargo: 3
+    mostGreenCargo: 3
+    mostYellowCargo: 3
+    mostRedCargo: 3
+
+  STII:
+    mostBlueCargo: 6
+    mostGreenCargo: 6
+    mostYellowCargo: 6
+    mostRedCargo: 6
+
+  STIII:
+    mostBlueCargo: 9
+    mostGreenCargo: 9
+    mostYellowCargo: 9
+    mostRedCargo: 9
+
+
+
+# ==== Infoboards ====
+InfoBoards:
+  - default: [true]
+
