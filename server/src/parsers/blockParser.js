@@ -1535,7 +1535,9 @@ function serializeCommand(element, targetLanguage = 'EN') {
       
       if (paramValue !== undefined) {
         if (paramType === 'multilingual') {
-          parts.push(`"${getTextForLanguage(paramValue, targetLanguage)}"`);
+          // Non processare le virgolette esterne del comando, solo il contenuto
+          const processedText = getTextForLanguage(paramValue, targetLanguage);
+          parts.push(`"${processedText}"`);
         } else if (typeof paramValue === 'object' && paramValue !== null && !Array.isArray(paramValue)) {
           // Se è un oggetto, potrebbe essere multilingua anche se non marcato
           // Controlla se ha chiavi che sembrano codici lingua
@@ -1584,11 +1586,70 @@ function serializeCommand(element, targetLanguage = 'EN') {
  * Ottiene testo per lingua specifica
  */
 function getTextForLanguage(textObj, language) {
-  if (typeof textObj === 'string') return textObj;
-  if (typeof textObj === 'object' && textObj !== null) {
-    return textObj[language] || textObj['EN'] || Object.values(textObj)[0] || '';
+  let text = '';
+  
+  if (typeof textObj === 'string') {
+    text = textObj;
+  } else if (typeof textObj === 'object' && textObj !== null) {
+    text = textObj[language] || textObj['EN'] || Object.values(textObj)[0] || '';
+  } else {
+    return '';
   }
-  return '';
+  
+  // Applica trasformazioni al testo
+  text = processTextForSerialization(text);
+  
+  return text;
+}
+
+/**
+ * Processa il testo per la serializzazione:
+ * 1. Sostituisce virgolette dritte INTERNE con virgolette curve
+ * 2. Capitalizza vocali accentate all'inizio o dopo punto
+ */
+function processTextForSerialization(text) {
+  if (!text) return text;
+  
+  // 1. Sostituisce " con virgolette curve (solo quelle interne al testo)
+  // Usa " all'apertura e " alla chiusura
+  let result = '';
+  let quoteCount = 0;
+  
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === '"') {
+      // Sostituisce con U+201C per apertura e U+201D per chiusura
+      result += (quoteCount % 2 === 0) ? '\u201C' : '\u201D';
+      quoteCount++;
+    } else {
+      result += text[i];
+    }
+  }
+  
+  // 2. Capitalizza vocali accentate all'inizio o dopo punto
+  // Mappa vocali accentate minuscole -> maiuscole
+  const accentMap = {
+    'à': 'À', 'è': 'È', 'é': 'É', 'ì': 'Ì', 'ò': 'Ò', 'ù': 'Ù',
+    'á': 'Á', 'í': 'Í', 'ó': 'Ó', 'ú': 'Ú', 
+    'â': 'Â', 'ê': 'Ê', 'î': 'Î', 'ô': 'Ô', 'û': 'Û',
+    'ä': 'Ä', 'ë': 'Ë', 'ï': 'Ï', 'ö': 'Ö', 'ü': 'Ü',
+    'ã': 'Ã', 'õ': 'Õ', 'ñ': 'Ñ'
+  };
+  
+  // Capitalizza SOLO se è veramente una vocale accentata all'inizio
+  // Non capitalizzare se c'è già una lettera maiuscola prima
+  if (result.length > 0 && accentMap[result[0]]) {
+    // Verifica che sia davvero l'inizio di una frase
+    result = accentMap[result[0]] + result.substring(1);
+  }
+  
+  // Capitalizza dopo punto e spazio
+  for (let i = 2; i < result.length; i++) {
+    if (result[i-2] === '.' && result[i-1] === ' ' && accentMap[result[i]]) {
+      result = result.substring(0, i) + accentMap[result[i]] + result.substring(i + 1);
+    }
+  }
+  
+  return result;
 }
 
 module.exports = {
