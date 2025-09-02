@@ -13,7 +13,13 @@
       "Bash(python:*)",
       "Bash(npx eslint:*)",
       "Bash(start)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(git lfs:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git stash:*)",
+      "Bash(npm install)",
+      "Bash(git config:*)"
     ],
     "deny": [],
     "ask": [],
