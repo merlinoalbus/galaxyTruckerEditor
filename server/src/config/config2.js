@@ -7,7 +7,7 @@ const baseConfig = require('./config');
 // Carica configurazione specifica da variabili ambiente per BE2
 const GAME_HOST = process.env.GAME_HOST_BE2 || path.join(process.cwd(), 'GAMEFOLDER2');
 const SERVER_PORT = process.env.SERVER_PORT_BE2 || 3002;
-const HOST_ADDRESS = process.env.HOST_ADDRESS || 'localhost';
+const HOST_ADDRESS = process.env.HOST_ADDRESS || '0.0.0.0';
 const GAME_ROOT = GAME_HOST;
 
 // Crea nuovo config estendendo quello base ma con path diversi
@@ -28,7 +28,7 @@ const config2 = {
   API_MOUNT_POINT: '/api2',
   
   CORS_OPTIONS: {
-    origin: 'http://localhost:3000',
+    origin: 'http://0.0.0.0:3000',
     credentials: true
   }
 };

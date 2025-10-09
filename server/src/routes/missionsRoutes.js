@@ -338,7 +338,7 @@ router.get('/', async (req, res) => {
     
     // 1. Scansiona tutti i file mission multilingua da campaign
     for (const lang of languages) {
-      const missionsPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`);
+      const missionsPath = config.PATH_TEMPLATES.campaignScriptsDir(lang);
       
       if (await fs.pathExists(missionsPath)) {
         try {
@@ -601,7 +601,7 @@ router.post('/saveMission', async (req, res) => {
           }
         } else {
           // Mission standard campaign
-          missionPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`, fileName);
+          missionPath = path.join(config.PATH_TEMPLATES.campaignScriptsDir(lang), fileName);
         }
         
         // Assicurati che la directory esista
@@ -1385,7 +1385,7 @@ async function parseMissionSingleLanguage(missionName, language = 'EN', format =
     // Array delle directory da cercare in ordine di priorità
     const searchPaths = [
       // 1. Directory standard campaign
-      path.join(GAME_ROOT, 'campaign', `campaignScripts${language}`),
+      config.PATH_TEMPLATES.campaignScriptsDir(language),
       // 2. Custom missions multilingua
       path.join(GAME_ROOT, 'customScripts', language),
       // 3. Custom missions singola lingua (solo per EN o se non trovato altrove)
@@ -1565,7 +1565,7 @@ router.get('/translations/coverage', async (req, res) => {
     
     // Carica missions standard da tutte le lingue
     for (const lang of languages) {
-      const missionsPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`);
+      const missionsPath = config.PATH_TEMPLATES.campaignScriptsDir(lang);
       logger.info(`🔍 Checking path: ${missionsPath}`);
       if (await fs.pathExists(missionsPath)) {
         try {
@@ -1893,7 +1893,7 @@ router.post('/translations/batch-search', async (req, res) => {
     // Carica tutte le missions da tutte le lingue (simile all'endpoint GET / esistente)
     const languages = SUPPORTED_LANGUAGES;
     for (const lang of languages) {
-      const missionsPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`);
+      const missionsPath = config.PATH_TEMPLATES.campaignScriptsDir(lang);
       
       if (await fs.pathExists(missionsPath)) {
         try {
@@ -1969,7 +1969,7 @@ router.post('/translations/batch-search', async (req, res) => {
             if (missionData.isCustom && missionData.customPath) {
               filePath = missionData.customPath;
             } else {
-              filePath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`, fileName);
+              filePath = path.join(config.PATH_TEMPLATES.campaignScriptsDir(lang), fileName);
             }
             
             try {

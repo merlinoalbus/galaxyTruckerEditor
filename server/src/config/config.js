@@ -2,9 +2,9 @@
 const path = require('path');
 
 // Carica configurazione da variabili ambiente o usa default
-const GAME_HOST = process.env.GAME_HOST_BE1 || path.join(process.cwd(), 'GAMEFOLDER');
+const GAME_HOST = process.env.GAME_HOST_BE1 || path.join(process.cwd(), 'GAMEFOLDER2');
 const SERVER_PORT = process.env.SERVER_PORT_BE1 || 3001;
-const HOST_ADDRESS = process.env.HOST_ADDRESS || 'localhost';
+const HOST_ADDRESS = process.env.HOST_ADDRESS || '0.0.0.0';
 
 // Root directory del gioco - configurabile tramite GAME_HOST
 const GAME_ROOT = GAME_HOST;

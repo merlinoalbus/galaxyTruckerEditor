@@ -109,7 +109,7 @@ async function listAllScriptNames() {
   const languages = SUPPORTED_LANGUAGES;
   // campaign scripts per lang
   for (const lang of languages) {
-    const scriptsPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`);
+    const scriptsPath = config.PATH_TEMPLATES.campaignScriptsDir(lang);
     if (await fs.pathExists(scriptsPath)) {
       const files = await fs.readdir(scriptsPath).catch(() => []);
       for (const fileName of files.filter(f => f.endsWith('.txt'))) {
@@ -1128,7 +1128,7 @@ router.get('/', async (req, res) => {
     
     // 1. Scansiona tutti i file script multilingua da campaign
     for (const lang of languages) {
-      const scriptsPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`);
+      const scriptsPath = config.PATH_TEMPLATES.campaignScriptsDir(lang);
       
       if (await fs.pathExists(scriptsPath)) {
         try {
@@ -1419,7 +1419,7 @@ function buildScriptConnectionGraph(allScriptsData) {
 async function parseScriptSingleLanguage(scriptName, language, format) {
   try {
     // Cerca prima in campaign scripts
-    let scriptPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${language}`);
+    let scriptPath = config.PATH_TEMPLATES.campaignScriptsDir(language);
     let searchPaths = [scriptPath];
     
     // Aggiungi percorsi customScripts
@@ -2168,7 +2168,7 @@ router.post('/saveScript', async (req, res) => {
                 continue;
               }
               
-              const filePath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`, fileName);
+              const filePath = path.join(config.PATH_TEMPLATES.campaignScriptsDir(lang), fileName);
               await processFileForLanguage(filePath, fileScripts, lang, results);
             }
           } else {
@@ -2184,7 +2184,7 @@ router.post('/saveScript', async (req, res) => {
                 reason: 'EN files are protected from translations page modifications'
               });
             } else {
-              const filePath = path.join(GAME_ROOT, 'campaign', 'campaignScriptsEN', fileName);
+              const filePath = path.join(config.PATH_TEMPLATES.campaignScriptsDir('EN'), fileName);
               await processFileForLanguage(filePath, fileScripts, 'EN', results);
             }
           }
@@ -2550,7 +2550,7 @@ async function saveScriptMultilingual(scriptName, blocks, languages) {
         const fullScriptContent = scriptContent;
         
         // Salva nel file della lingua
-        const scriptPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${language}`, `${scriptName}.txt`);
+        const scriptPath = path.join(config.PATH_TEMPLATES.campaignScriptsDir(language), `${scriptName}.txt`);
         
         // Assicurati che la directory esista (dovrebbe già esistere dopo inizializzazione)
         const scriptDir = path.dirname(scriptPath);
@@ -2610,7 +2610,7 @@ async function saveScriptSingleLanguage(scriptName, blocks, language) {
     const scriptContent = convertBlocksToScript(blocks, language);
     const fullScriptContent = scriptContent;
     
-    const scriptPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${language}`, `${scriptName}.txt`);
+    const scriptPath = path.join(config.PATH_TEMPLATES.campaignScriptsDir(language), `${scriptName}.txt`);
     
     // Assicurati che la directory esista
     const scriptDir = path.dirname(scriptPath);

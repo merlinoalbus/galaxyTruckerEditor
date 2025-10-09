@@ -3,6 +3,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
 const { getLogger } = require('./logger');
+const config = require('../config/config');
 
 const logger = getLogger();
 
@@ -16,8 +17,8 @@ async function initializeLanguage(languageCode, gameRoot) {
   try {
     logger.info(`Initializing new language: ${languageCode}`);
     
-    // 1. Crea la cartella principale campaignScripts[LANG]
-    const campaignScriptsDir = path.join(gameRoot, 'campaign', `campaignScripts${languageCode}`);
+    // 1. Crea la cartella principale campaignScripts[LANG] - Utilizza config invece di hardcode
+    const campaignScriptsDir = path.resolve(gameRoot, path.relative(config.GAME_ROOT, config.PATH_TEMPLATES.campaignScriptsDir(languageCode)));
     
     // Verifica se la cartella esiste già
     if (await fs.pathExists(campaignScriptsDir)) {
@@ -90,7 +91,7 @@ async function initializeLanguage(languageCode, gameRoot) {
  * @returns {Promise<boolean>} - true se la lingua esiste
  */
 async function isLanguageInitialized(languageCode, gameRoot) {
-  const campaignScriptsDir = path.join(gameRoot, 'campaign', `campaignScripts${languageCode}`);
+  const campaignScriptsDir = path.resolve(gameRoot, path.relative(config.GAME_ROOT, config.PATH_TEMPLATES.campaignScriptsDir(languageCode)));
   return await fs.pathExists(campaignScriptsDir);
 }
 

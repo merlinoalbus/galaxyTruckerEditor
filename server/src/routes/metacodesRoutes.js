@@ -3,6 +3,7 @@ const router = express.Router();
 const fs = require('fs').promises;
 const path = require('path');
 const { getLogger } = require('../utils/logger');
+const config = require('../config/config');
 const logger = getLogger();
 
 // Constants
@@ -151,8 +152,8 @@ const CACHE_DURATION = CACHE_CONSTANTS.DURATION; // 1 ora
  * Restituisce solo dati reali, nessun default
  */
 async function analyzeMetacodesUsage() {
-  // Security: Use resolved absolute paths
-  const baseGameFolder = path.resolve(__dirname, '../../GAMEFOLDER');
+  // Security: Use resolved absolute paths from config
+  const baseGameFolder = path.resolve(config.GAME_ROOT);
   const customScriptsPath = path.join(baseGameFolder, 'customScripts');
   const campaignPath = path.join(baseGameFolder, 'campaign');
   const localizationPath = path.join(baseGameFolder, 'localization_strings');
@@ -212,7 +213,7 @@ async function analyzeMetacodesUsage() {
 
     // 2. Analizza file nelle cartelle campaignScripts[LANG] per ogni lingua
     for (const lang of supportedLangs) {
-      const langScriptsPath = path.join(campaignPath, `campaignScripts${lang}`);
+      const langScriptsPath = config.PATH_TEMPLATES.campaignScriptsDir(lang);
       try {
         const langFiles = await fs.readdir(langScriptsPath).catch(() => []);
         for (const file of langFiles) {

@@ -1409,7 +1409,7 @@ class LocalizationController {
       const allNodesData = [];
       for (const lang of languages) {
         try {
-          const filePath = path.join(__dirname, '../../GAMEFOLDER/campaign/campaignScripts' + lang + '/nodes.yaml');
+          const filePath = config.PATH_TEMPLATES.nodesYaml(lang);
           const fileContent = await fs.readFile(filePath, 'utf8');
           const yamlData = yaml.load(fileContent);
           
@@ -1517,7 +1517,7 @@ class LocalizationController {
       const allMissionsData = [];
       for (const lang of languages) {
         try {
-          const filePath = path.join(__dirname, '../../GAMEFOLDER/campaign/campaignScripts' + lang + '/missions.yaml');
+          const filePath = config.PATH_TEMPLATES.missionsYaml(lang);
           const fileContent = await fs.readFile(filePath, 'utf8');
           const yamlData = yaml.load(fileContent);
           

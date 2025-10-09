@@ -1045,7 +1045,7 @@ async function collectNodeButtons() {
   
   // Carica nodes.yaml multilingua
   for (const lang of languages) {
-    const nodesPath = path.join(GAME_ROOT, 'campaign', `campaignScripts${lang}`, 'nodes.yaml');
+    const nodesPath = config.PATH_TEMPLATES.nodesYaml(lang);
     
     if (await fs.pathExists(nodesPath)) {
       try {
